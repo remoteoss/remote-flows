@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "openapi-ts": "openapi-ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.8.1"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.64.4",
+    "@tsconfig/recommended": "^1.0.8"
+  }
+}
