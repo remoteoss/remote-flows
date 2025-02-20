@@ -1,5 +1,5 @@
-import React from "react";
-import { useRemoteFlowsSDK } from "../RemoteFlowsProvider";
+import React from 'react';
+import { useRemoteFlowsSDK } from '../RemoteFlowsProvider';
 
 export function CostCalculator() {
   const values = useRemoteFlowsSDK();

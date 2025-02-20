@@ -1,10 +1,10 @@
-import React, { createContext, useContext } from "react";
-import type { PropsWithChildren } from "react";
-import type { SetNonNullable } from "type-fest";
+import React, { createContext, useContext } from 'react';
+import type { PropsWithChildren } from 'react';
+import type { SetNonNullable } from 'type-fest';
 
-import { RemoteFlowsSDKProps } from "./types";
-import { client } from "./client/client.gen";
-import { clientCredentials } from "./auth/clientCredentials.js";
+import { RemoteFlowsSDKProps } from './types';
+import { client } from './client/client.gen';
+import { clientCredentials } from './auth/clientCredentials.js';
 
 const RemoteFlowSDKContext = createContext<RemoteFlowsSDKProps>({
   clientID: null,
@@ -19,7 +19,7 @@ export function RemoteFlowsSDK({
   children,
 }: PropsWithChildren<SetNonNullable<RemoteFlowsSDKProps>>) {
   if (!clientID || !clientSecret) {
-    throw new Error("clientID and clientSecret are required");
+    throw new Error('clientID and clientSecret are required');
   }
 
   client.setConfig({

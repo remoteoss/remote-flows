@@ -1,9 +1,9 @@
-import { createClient } from "@hey-api/client-fetch";
-import { BaseTokenResponse } from "../client";
-import { stringToBase64 } from "../utils/encoding";
+import { createClient } from '@hey-api/client-fetch';
+import { BaseTokenResponse } from '../client';
+import { stringToBase64 } from '../utils/encoding';
 
 const clientCredentialsClient = createClient({
-  baseUrl: "https://gateway.niceremote.com",
+  baseUrl: 'https://gateway.niceremote.com',
 });
 
 const sessions: { [key: string]: BaseTokenResponse } = {};
@@ -15,32 +15,32 @@ function hasTokenExpired(expiresAt: number | undefined) {
 export async function refreshToken(
   clientID: string,
   clientSecret: string,
-  refreshToken: string
+  refreshToken: string,
 ) {
-  const encodedCredentials = stringToBase64([clientID, clientSecret].join(":"));
+  const encodedCredentials = stringToBase64([clientID, clientSecret].join(':'));
 
   const sessionKey = refreshToken;
   let session = sessions[sessionKey];
 
   if (!session || hasTokenExpired(session.expires_in)) {
     const res = await clientCredentialsClient.post<BaseTokenResponse>({
-      url: "/auth/oauth2/token",
+      url: '/auth/oauth2/token',
       body: {
-        grant_type: "refresh_token",
+        grant_type: 'refresh_token',
         refresh_token: refreshToken,
       },
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Basic ${encodedCredentials}`,
       },
     });
 
     if (!res.data) {
-      throw new Error("Failed to fetch token");
+      throw new Error('Failed to fetch token');
     }
 
     if (res.response.status < 200 || res.response.status >= 300) {
-      throw new Error("Unexpected status code");
+      throw new Error('Unexpected status code');
     }
 
     sessions[sessionKey] = {

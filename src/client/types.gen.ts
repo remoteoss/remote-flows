@@ -4,35 +4,35 @@
  * Response schema listing many recurring_incentives
  */
 export type ListRecurringIncentivesResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        recurring_incentives?: Array<RecurringIncentive>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    recurring_incentives?: Array<RecurringIncentive>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Schema for creating a currency custom field definition
  */
 export type CreateCurrencyCustomFieldDefinitionParams = {
-    data_entry_access: CustomFieldDataEntryAccess;
-    metadata: {
-        currency?: CurrencyCode;
-    };
-    name: string;
-    required: boolean;
-    type: 'currency';
-    visibility_scope: CustomFieldVisibilityScope;
+  data_entry_access: CustomFieldDataEntryAccess;
+  metadata: {
+    currency?: CurrencyCode;
+  };
+  name: string;
+  required: boolean;
+  type: 'currency';
+  visibility_scope: CustomFieldVisibilityScope;
 };
 
 /**
@@ -49,9 +49,9 @@ export type ContractorInvoiceItemType = 'manual' | 'time_tracking' | 'expense';
  * Timesheet response
  */
 export type TimesheetResponse = {
-    data?: {
-        timesheet: Timesheet;
-    };
+  data?: {
+    timesheet: Timesheet;
+  };
 };
 
 /**
@@ -60,11 +60,11 @@ export type TimesheetResponse = {
 export type DateTime = string;
 
 export type MinimalRegion = {
-    child_regions?: Array<MinimalRegion>;
-    code?: string | null;
-    name: string;
-    slug: string;
-    status?: RegionStatus;
+  child_regions?: Array<MinimalRegion>;
+  code?: string | null;
+  name: string;
+  slug: string;
+  status?: RegionStatus;
 };
 
 /**
@@ -73,34 +73,65 @@ export type MinimalRegion = {
 export type CountryCode = string;
 
 export type TerminationOffboarding = {
-    additional_comments: string;
-    agrees_to_pto_amount?: string;
-    confidential: boolean;
-    employee_awareness?: {
-        date?: string | null;
-        note?: string | null;
-    };
-    employment_id: string;
-    id: string;
-    proposed_termination_date: string;
-    reason_description: string;
-    requested_by: string;
-    risk_assessment_reasons: Array<'caring_responsibilities' | 'disabled_or_health_condition' | 'family_leave' | 'member_of_union_or_works_council' | 'none_of_these' | 'pregnant_or_breastfeeding' | 'reported_concerns_with_workplace' | 'requested_medical_or_family_leave' | 'sick_leave'>;
-    status: 'submitted' | 'in_review' | 'done' | 'canceled';
-    submitted_at: string;
-    /**
-     * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
-     */
-    termination_date: string | null;
-    termination_reason: 'cancellation_before_start_date' | 'compliance_issue' | 'conversion_to_contractor' | 'dissatisfaction_with_remote_service' | 'end_of_fixed_term_contract_compliance_issue' | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties' | 'end_of_fixed_term_contract_local_regulations_max_term_reached' | 'end_of_fixed_term_contract_misconduct' | 'end_of_fixed_term_contract_operational_reasons' | 'end_of_fixed_term_contract_other' | 'end_of_fixed_term_contract_performance' | 'end_of_fixed_term_contract_redundancy' | 'end_of_fixed_term_contract_values' | 'gross_misconduct' | 'incapacity_to_perform_inherent_duties' | 'job_abandonment' | 'mutual_agreement' | 'other' | 'performance' | 'values' | 'workforce_reduction';
-    type: 'termination';
-    will_challenge_termination: boolean;
-    will_challenge_termination_description?: string;
+  additional_comments: string;
+  agrees_to_pto_amount?: string;
+  confidential: boolean;
+  employee_awareness?: {
+    date?: string | null;
+    note?: string | null;
+  };
+  employment_id: string;
+  id: string;
+  proposed_termination_date: string;
+  reason_description: string;
+  requested_by: string;
+  risk_assessment_reasons: Array<
+    | 'caring_responsibilities'
+    | 'disabled_or_health_condition'
+    | 'family_leave'
+    | 'member_of_union_or_works_council'
+    | 'none_of_these'
+    | 'pregnant_or_breastfeeding'
+    | 'reported_concerns_with_workplace'
+    | 'requested_medical_or_family_leave'
+    | 'sick_leave'
+  >;
+  status: 'submitted' | 'in_review' | 'done' | 'canceled';
+  submitted_at: string;
+  /**
+   * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
+   */
+  termination_date: string | null;
+  termination_reason:
+    | 'cancellation_before_start_date'
+    | 'compliance_issue'
+    | 'conversion_to_contractor'
+    | 'dissatisfaction_with_remote_service'
+    | 'end_of_fixed_term_contract_compliance_issue'
+    | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties'
+    | 'end_of_fixed_term_contract_local_regulations_max_term_reached'
+    | 'end_of_fixed_term_contract_misconduct'
+    | 'end_of_fixed_term_contract_operational_reasons'
+    | 'end_of_fixed_term_contract_other'
+    | 'end_of_fixed_term_contract_performance'
+    | 'end_of_fixed_term_contract_redundancy'
+    | 'end_of_fixed_term_contract_values'
+    | 'gross_misconduct'
+    | 'incapacity_to_perform_inherent_duties'
+    | 'job_abandonment'
+    | 'mutual_agreement'
+    | 'other'
+    | 'performance'
+    | 'values'
+    | 'workforce_reduction';
+  type: 'termination';
+  will_challenge_termination: boolean;
+  will_challenge_termination_description?: string;
 };
 
 export type BenefitProvider = {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 } | null;
 
 /**
@@ -109,141 +140,141 @@ export type BenefitProvider = {
  * passing the employment id
  */
 export type UnifiedEmploymentUpsertBenefitOffersRequest = {
-    [key: string]: unknown;
+  [key: string]: unknown;
 };
 
 /**
  * EmploymentCustomFieldValueResponse
  */
 export type EmploymentCustomFieldValueResponse = {
-    data: {
-        custom_field_value: EmploymentCustomFieldValue;
-    };
+  data: {
+    custom_field_value: EmploymentCustomFieldValue;
+  };
 };
 
 /**
  * Resignation response
  */
 export type ResignationResponse = {
-    data?: Resignation;
+  data?: Resignation;
 };
 
 /**
  * Schema for declined work authorization
  */
 export type DeclinedWorkAuthozation = {
-    employer_special_instructions?: string | null;
-    reason: string;
-    status: 'declined_by_manager';
+  employer_special_instructions?: string | null;
+  reason: string;
+  status: 'declined_by_manager';
 };
 
 export type CreateSsoConfigurationResponse = {
-    data: CreateSsoConfigurationResult;
+  data: CreateSsoConfigurationResult;
 };
 
 export type OfferedBenefitTier = {
-    benefit_tier: BenefitTier;
-    employee_stats: EmployeeStats;
+  benefit_tier: BenefitTier;
+  employee_stats: EmployeeStats;
 };
 
 /**
  * All the params needed upload a base64 file.
  */
 export type Base64File = {
-    /**
-     * The content in base64 encoding.
-     */
-    content: Blob | File;
-    /**
-     * The file name.
-     */
-    name: string;
+  /**
+   * The content in base64 encoding.
+   */
+  content: Blob | File;
+  /**
+   * The file name.
+   */
+  name: string;
 };
 
 /**
  * EmploymentCustomField
  */
 export type EmploymentCustomField = {
-    data_entry_access: CustomFieldDataEntryAccess;
-    id: string;
-    metadata: {
-        [key: string]: unknown;
-    } | null;
-    name: string;
-    required: boolean;
-    type: CustomFieldDataType;
-    visibility_scope: CustomFieldVisibilityScope;
+  data_entry_access: CustomFieldDataEntryAccess;
+  id: string;
+  metadata: {
+    [key: string]: unknown;
+  } | null;
+  name: string;
+  required: boolean;
+  type: CustomFieldDataType;
+  visibility_scope: CustomFieldVisibilityScope;
 };
 
 /**
  * Schema for updating a custom field value.
  */
 export type UpdateEmploymentCustomFieldValueParams = {
-    value: string | number | boolean;
+  value: string | number | boolean;
 };
 
 export type CompanyDepartmentCreatedResponse = {
-    company_department?: CompanyDepartment;
+  company_department?: CompanyDepartment;
 };
 
 export type CreateDataSyncParams = {
-    /**
-     * The types of data to synchronize.
-     */
-    data_types: Array<'benefits' | 'kdb' | 'countries'>;
+  /**
+   * The types of data to synchronize.
+   */
+  data_types: Array<'benefits' | 'kdb' | 'countries'>;
 };
 
 export type EmploymentContract = {
-    activated_at: DateTimeIso8601;
-    /**
-     * The id of the employment contract that was amended by this employment contract, if any.
-     */
-    amendment_contract_id: string | null;
-    compensation: Compensation;
-    /**
-     * Contract information. Its properties may vary depending on the country.
-     */
-    contract_details: {
-        [key: string]: unknown;
-    };
-    contract_id: string;
-    country: Country;
-    effective_at: DateTimeIso8601;
-    job_title: string;
-    status: EmploymentContractStatus;
+  activated_at: DateTimeIso8601;
+  /**
+   * The id of the employment contract that was amended by this employment contract, if any.
+   */
+  amendment_contract_id: string | null;
+  compensation: Compensation;
+  /**
+   * Contract information. Its properties may vary depending on the country.
+   */
+  contract_details: {
+    [key: string]: unknown;
+  };
+  contract_id: string;
+  country: Country;
+  effective_at: DateTimeIso8601;
+  job_title: string;
+  status: EmploymentContractStatus;
 };
 
 export type Holiday = {
-    /**
-     * Date of the holiday
-     */
-    day: string;
-    /**
-     * Name of the holiday
-     */
-    name: string;
-    /**
-     * Notes about the holiday
-     */
-    note?: string | null;
-    /**
-     * Date when the holiday is observed
-     */
-    observed_day?: string | null;
+  /**
+   * Date of the holiday
+   */
+  day: string;
+  /**
+   * Name of the holiday
+   */
+  name: string;
+  /**
+   * Notes about the holiday
+   */
+  note?: string | null;
+  /**
+   * Date when the holiday is observed
+   */
+  observed_day?: string | null;
 };
 
 export type UnifiedEmploymentBenefitGroup = {
-    filter: UnifiedMinimalBenefitGroup | null;
-    name: string | null;
-    slug: Slug;
+  filter: UnifiedMinimalBenefitGroup | null;
+  name: string | null;
+  slug: Slug;
 };
 
 /**
  * EmploymentCustomFieldValueJsonValue
  */
 export type EmploymentCustomFieldValueJsonValue = {
-    selected_option: string;
-    selected_option_label: string;
+  selected_option: string;
+  selected_option_label: string;
 };
 
 /**
@@ -255,159 +286,163 @@ export type CycleFrequency = 'monthly' | 'bi_monthly' | 'bi_weekly' | 'weekly';
  * Item in a billing document breakdown
  */
 export type BillingDocumentBreakdownItem = {
-    country_code: CountryCode;
-    description: string;
-    employment_id: UuidSlug;
-    fx_rate: string;
-    /**
-     * Invoice amount in cents
-     */
-    invoice_amount: number;
-    invoice_currency: CurrencyCode;
-    invoice_number: string;
-    invoice_period: string;
-    /**
-     * Source amount in cents
-     */
-    source_amount: number;
-    source_currency: CurrencyCode;
-    type: string;
-    variance_from_invoice: string | null;
+  country_code: CountryCode;
+  description: string;
+  employment_id: UuidSlug;
+  fx_rate: string;
+  /**
+   * Invoice amount in cents
+   */
+  invoice_amount: number;
+  invoice_currency: CurrencyCode;
+  invoice_number: string;
+  invoice_period: string;
+  /**
+   * Source amount in cents
+   */
+  source_amount: number;
+  source_currency: CurrencyCode;
+  type: string;
+  variance_from_invoice: string | null;
 };
 
 /**
  * Information about a billing document breakdown
  */
 export type BillingDocumentBreakdownResponse = {
-    data: {
-        billing_document_breakdown: Array<BillingDocumentBreakdownItem>;
-    };
+  data: {
+    billing_document_breakdown: Array<BillingDocumentBreakdownItem>;
+  };
 };
 
 export type MinimalCountry = {
-    alpha_2_code: string;
-    code: string;
-    features?: Array<string>;
-    name: string;
-    slug: string;
+  alpha_2_code: string;
+  code: string;
+  features?: Array<string>;
+  name: string;
+  slug: string;
 };
 
 /**
  * Complete information of an employment
  */
 export type Employment = {
-    /**
-     * Personal details information. Its properties may vary depending on the country.
-     */
-    personal_details: {
-        [key: string]: unknown;
-    };
-    short_id?: ShortId;
-    /**
-     * Name of related department, if any. Otherwise, null.
-     */
-    department?: string | null;
-    manager_email: string | null;
-    provisional_start_date?: ProvisionalStartDate;
-    /**
-     * Home address information. Its properties may vary depending on the country.
-     */
-    address_details: {
-        [key: string]: unknown;
-    };
-    pricing_plan_details: PricingPlanDetails;
-    full_name: string;
-    /**
-     * For the employment types `contractor`, `global_payroll_employee` and `direct_employee`, only [List employments](#operation/get_index_employment) and
-     * [Show employment](#operation/get_show_employment) operations are available.
-     *
-     */
-    type: 'employee' | 'contractor' | 'direct_employee' | 'global_payroll_employee';
-    employment_lifecycle_stage: EmploymentLifecycleStage;
-    /**
-     * Administrative information. Its properties may vary depending on the country.
-     */
-    administrative_details: {
-        [key: string]: unknown;
-    };
-    company_id: string;
-    work_email: string;
-    status: EmploymentStatus;
-    updated_at: string;
-    /**
-     * Employment basic information. Its properties may vary depending on the country.
-     *
-     */
-    basic_information?: {
-        [key: string]: unknown;
-    };
-    job_title: string;
-    id: string;
-    probation_period_end_date?: string;
-    /**
-     * Unique ID of related department, if any. Otherwise, null.
-     */
-    department_id?: string | null;
-    manager?: string;
-    /**
-     * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
-     */
-    external_id?: string;
-    personal_email: string;
-    country: Country;
-    user_status?: UserStatus;
-    seniority_date?: EmploymentSeniorityDate;
-    bank_account_details: Array<{
-        [key: string]: unknown;
-    }>;
-    files: Array<File>;
-    active_contract_id?: string;
-    /**
-     * Billing address information. Its properties may vary depending on the country.
-     */
-    billing_address_details: {
-        [key: string]: unknown;
-    };
-    onboarding_tasks: OnboardingTasks;
-    /**
-     * Contract information. Its properties may vary depending on the country.
-     */
-    contract_details: {
-        [key: string]: unknown;
-    };
-    /**
-     * Emergency contact information. Its properties may vary depending on the country.
-     */
-    emergency_contact_details: {
-        [key: string]: unknown;
-    };
-    eligible_for_onboarding_cancellation: boolean;
-    manager_employment_id: string | null;
-    created_at: string;
+  /**
+   * Personal details information. Its properties may vary depending on the country.
+   */
+  personal_details: {
+    [key: string]: unknown;
+  };
+  short_id?: ShortId;
+  /**
+   * Name of related department, if any. Otherwise, null.
+   */
+  department?: string | null;
+  manager_email: string | null;
+  provisional_start_date?: ProvisionalStartDate;
+  /**
+   * Home address information. Its properties may vary depending on the country.
+   */
+  address_details: {
+    [key: string]: unknown;
+  };
+  pricing_plan_details: PricingPlanDetails;
+  full_name: string;
+  /**
+   * For the employment types `contractor`, `global_payroll_employee` and `direct_employee`, only [List employments](#operation/get_index_employment) and
+   * [Show employment](#operation/get_show_employment) operations are available.
+   *
+   */
+  type:
+    | 'employee'
+    | 'contractor'
+    | 'direct_employee'
+    | 'global_payroll_employee';
+  employment_lifecycle_stage: EmploymentLifecycleStage;
+  /**
+   * Administrative information. Its properties may vary depending on the country.
+   */
+  administrative_details: {
+    [key: string]: unknown;
+  };
+  company_id: string;
+  work_email: string;
+  status: EmploymentStatus;
+  updated_at: string;
+  /**
+   * Employment basic information. Its properties may vary depending on the country.
+   *
+   */
+  basic_information?: {
+    [key: string]: unknown;
+  };
+  job_title: string;
+  id: string;
+  probation_period_end_date?: string;
+  /**
+   * Unique ID of related department, if any. Otherwise, null.
+   */
+  department_id?: string | null;
+  manager?: string;
+  /**
+   * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id?: string;
+  personal_email: string;
+  country: Country;
+  user_status?: UserStatus;
+  seniority_date?: EmploymentSeniorityDate;
+  bank_account_details: Array<{
+    [key: string]: unknown;
+  }>;
+  files: Array<File>;
+  active_contract_id?: string;
+  /**
+   * Billing address information. Its properties may vary depending on the country.
+   */
+  billing_address_details: {
+    [key: string]: unknown;
+  };
+  onboarding_tasks: OnboardingTasks;
+  /**
+   * Contract information. Its properties may vary depending on the country.
+   */
+  contract_details: {
+    [key: string]: unknown;
+  };
+  /**
+   * Emergency contact information. Its properties may vary depending on the country.
+   */
+  emergency_contact_details: {
+    [key: string]: unknown;
+  };
+  eligible_for_onboarding_cancellation: boolean;
+  manager_employment_id: string | null;
+  created_at: string;
 };
 
 /**
  * Response schema to show a Contractor Invoice
  */
 export type ContractorInvoiceResponse = {
-    data: {
-        contractor_invoice: ContractorInvoice;
-    };
+  data: {
+    contractor_invoice: ContractorInvoice;
+  };
 };
 
 /**
  * Holidays response
  */
 export type HolidaysResponse = {
-    data?: Array<Holiday>;
+  data?: Array<Holiday>;
 };
 
 export type BenefitOffersEmployment = {
-    country: Country;
-    given_name: string | null;
-    id: string;
-    name: string;
-    surname: string | null;
+  country: Country;
+  given_name: string | null;
+  id: string;
+  name: string;
+  surname: string | null;
 };
 
 /**
@@ -419,155 +454,161 @@ export type CurrencyCode = string | null;
  * Identity Verification
  */
 export type IdentityVerification = {
-    contract_id: string;
-    employment_document: EmploymentDocument;
-    employment_image: EmploymentImage;
-    status: string;
+  contract_id: string;
+  employment_document: EmploymentDocument;
+  employment_image: EmploymentImage;
+  status: string;
 };
 
 export type EmploymentContractPendingChangesResponse = {
-    data: {
-        pending_changes: Array<ContractPendingChanges>;
-    };
+  data: {
+    pending_changes: Array<ContractPendingChanges>;
+  };
 };
 
 /**
  * Incentive response
  */
 export type IncentiveResponse = {
-    data?: {
-        incentive: Incentive;
-    };
+  data?: {
+    incentive: Incentive;
+  };
 };
 
 /**
  * Expense response
  */
 export type ExpenseResponse = {
-    data: {
-        expense: ExpenseOrDraft;
-    };
+  data: {
+    expense: ExpenseOrDraft;
+  };
 };
 
 export type CostCalculatorEstimatePdfResponse = {
-    data: {
-        content: GenericFile;
-    };
+  data: {
+    content: GenericFile;
+  };
 };
 
 /**
  * Identity Verification response
  */
 export type IdentityVerificationResponse = {
-    data: {
-        identity_verification_data?: IdentityVerification;
-    };
+  data: {
+    identity_verification_data?: IdentityVerification;
+  };
 };
 
 export type ActionError = {
-    /**
-     * The action that lead to the error message.
-     */
-    action: string;
-    /**
-     * An error code that describes the nature of the error.
-     */
-    code: string;
-    /**
-     * A developer friendly error message that gives details on what the error was and how it may be remedied.
-     */
-    message: string;
+  /**
+   * The action that lead to the error message.
+   */
+  action: string;
+  /**
+   * An error code that describes the nature of the error.
+   */
+  code: string;
+  /**
+   * A developer friendly error message that gives details on what the error was and how it may be remedied.
+   */
+  message: string;
 };
 
 export type BenefitOfferByEmploymentResponse = {
-    data: {
-        benefit_offers_by_employment: Array<BenefitOffersByEmployment>;
-        company_id: string;
-        currency: Currency;
-    };
+  data: {
+    benefit_offers_by_employment: Array<BenefitOffersByEmployment>;
+    company_id: string;
+    currency: Currency;
+  };
 };
 
 /**
  * Complete information of an employment
  */
 export type EmploymentShowResponse = {
-    data: {
-        employment?: Employment & {
-            /**
-             * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
-             */
-            termination_date?: string | null;
-        };
+  data: {
+    employment?: Employment & {
+      /**
+       * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
+       */
+      termination_date?: string | null;
     };
+  };
 };
 
-export type OAuth2TokenParams = AuthorizationCodeParams | ClientCredentialsParams | RefreshTokenParams;
+export type OAuth2TokenParams =
+  | AuthorizationCodeParams
+  | ClientCredentialsParams
+  | RefreshTokenParams;
 
 /**
  * Sent back timesheet response
  */
 export type SentBackTimesheetResponse = {
-    data?: {
-        timesheet: SentBackTimesheet;
-    };
+  data?: {
+    timesheet: SentBackTimesheet;
+  };
 };
 
 /**
  * JSON schema response for benefit offers
  */
 export type UnifiedEmploymentsBenefitOffersJsonSchemaResponse = {
-    data?: JsonSchema;
+  data?: JsonSchema;
 };
 
 /**
  * A supported file
  */
 export type DownloadFileResponse = {
-    data: {
-        file: {
-            content: Blob | File;
-            id: string;
-            inserted_at: DateTimeIso8601;
-            name: string;
-            sub_type?: string | null;
-            type: string;
-        };
+  data: {
+    file: {
+      content: Blob | File;
+      id: string;
+      inserted_at: DateTimeIso8601;
+      name: string;
+      sub_type?: string | null;
+      type: string;
     };
+  };
 };
 
 /**
  * Minimal Timesheet
  */
 export type MinimalTimesheet = {
-    approval_required: boolean;
-    country_code: CountryCode;
-    employment_id: UuidSlug;
-    end_date: _Date;
-    id: UuidSlug;
-    notes: string | null;
-    start_date: _Date;
-    status: TimesheetStatus;
-    submitted_at: string | null;
+  approval_required: boolean;
+  country_code: CountryCode;
+  employment_id: UuidSlug;
+  end_date: _Date;
+  id: UuidSlug;
+  notes: string | null;
+  start_date: _Date;
+  status: TimesheetStatus;
+  submitted_at: string | null;
 };
 
 export type ConflictErrorResponse = ValidationError | MessageResponse;
 
-export type IdentityCurrentResponse = IdentityClientCredentialsResponse | IdentityCompanyAccessTokenResponse | IdentityCustomerAccessTokenResponse;
+export type IdentityCurrentResponse =
+  | IdentityClientCredentialsResponse
+  | IdentityCompanyAccessTokenResponse
+  | IdentityCustomerAccessTokenResponse;
 
 /**
  * Approve an expense
  */
 export type ApproveExpenseParams = {
-    status: 'approved';
+  status: 'approved';
 };
 
 /**
  * Type of day breakdown for the respective time of day
  */
 export type TypeOfDayBreakdown = {
-    holiday: HoursAndMinutes;
-    regular: HoursAndMinutes;
-    weekend: HoursAndMinutes;
+  holiday: HoursAndMinutes;
+  regular: HoursAndMinutes;
+  weekend: HoursAndMinutes;
 };
 
 export type MaybeBenefitTier = BenefitTier | null;
@@ -576,41 +617,41 @@ export type MaybeBenefitTier = BenefitTier | null;
  * Complete information of an employment
  */
 export type EmploymentBasicResponse = {
-    /**
-     * Employment basic information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `basic_information` as path parameters.
-     */
-    basic_information?: {
-        [key: string]: unknown;
-    };
-    company_id?: string;
-    country_code?: string;
-    created_at?: string;
-    employment_lifecycle_stage?: EmploymentLifecycleStage;
-    full_name?: string;
-    id?: UuidSlug;
-    job_title?: string;
-    personal_email?: string;
-    /**
-     * Required for employees, optional for contractors
-     */
-    provisional_start_date?: string;
-    type?: 'employee' | 'contractor';
-    updated_at?: string;
+  /**
+   * Employment basic information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `basic_information` as path parameters.
+   */
+  basic_information?: {
+    [key: string]: unknown;
+  };
+  company_id?: string;
+  country_code?: string;
+  created_at?: string;
+  employment_lifecycle_stage?: EmploymentLifecycleStage;
+  full_name?: string;
+  id?: UuidSlug;
+  job_title?: string;
+  personal_email?: string;
+  /**
+   * Required for employees, optional for contractors
+   */
+  provisional_start_date?: string;
+  type?: 'employee' | 'contractor';
+  updated_at?: string;
 };
 
 export type BenefitRenewalRequestsBenefitRenewalRequest = {
-    benefit_group: BenefitRenewalRequestsMinimalBenefitGroup;
-    benefit_renewal_response: BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
-    coverage_end_date: _Date;
-    coverage_start_date: _Date;
-    current_benefit_tier?: NullableMinimalBenefitTier;
-    id: string;
-    number_of_affected_employees: number;
-    renewal_selection_end_date: _Date;
-    renewal_selection_instructions: string;
-    renewal_selection_start_date: _Date;
+  benefit_group: BenefitRenewalRequestsMinimalBenefitGroup;
+  benefit_renewal_response: BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
+  coverage_end_date: _Date;
+  coverage_start_date: _Date;
+  current_benefit_tier?: NullableMinimalBenefitTier;
+  id: string;
+  number_of_affected_employees: number;
+  renewal_selection_end_date: _Date;
+  renewal_selection_instructions: string;
+  renewal_selection_start_date: _Date;
 };
 
 /**
@@ -619,14 +660,14 @@ export type BenefitRenewalRequestsBenefitRenewalRequest = {
 export type NullableDateTime = string | null;
 
 export type RefreshTokenParams = {
-    /**
-     * The Authorization flow
-     */
-    grant_type: 'refresh_token';
-    /**
-     * The refresh token generated in the Authorization Code flow
-     */
-    refresh_token: string;
+  /**
+   * The Authorization flow
+   */
+  grant_type: 'refresh_token';
+  /**
+   * The refresh token generated in the Authorization Code flow
+   */
+  refresh_token: string;
 };
 
 /**
@@ -651,16 +692,16 @@ export type RefreshTokenParams = {
  *
  */
 export type BenefitRenewalRequestsUpdateBenefitRenewalRequest = {
-    [key: string]: unknown;
+  [key: string]: unknown;
 };
 
 export type CompanyDepartment = {
-    /**
-     * Company ID
-     */
-    company_id: string;
-    id: string;
-    name: string;
+  /**
+   * Company ID
+   */
+  company_id: string;
+  id: string;
+  name: string;
 };
 
 export type ClientCredentialsResponse = BaseTokenResponse;
@@ -669,21 +710,21 @@ export type ClientCredentialsResponse = BaseTokenResponse;
  * Response schema listing many company_managers
  */
 export type CompanyManagersResponse = {
-    data?: {
-        company_managers?: Array<CompanyManager>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    company_managers?: Array<CompanyManager>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
@@ -702,98 +743,115 @@ export type CompanyManagersResponse = {
  * - `blocked`: The invoice is marked as blocked. It will not be paid out.
  *
  */
-export type ContractorInvoiceStatus = 'issued' | 'draft' | 'approved' | 'pending_payment' | 'externally_paid' | 'rejected' | 'blocked' | 'pay_out_scheduled' | 'enqueued' | 'processing' | 'manual_payout' | 'paid_out' | 'pay_out_failed' | 'funds_returned';
+export type ContractorInvoiceStatus =
+  | 'issued'
+  | 'draft'
+  | 'approved'
+  | 'pending_payment'
+  | 'externally_paid'
+  | 'rejected'
+  | 'blocked'
+  | 'pay_out_scheduled'
+  | 'enqueued'
+  | 'processing'
+  | 'manual_payout'
+  | 'paid_out'
+  | 'pay_out_failed'
+  | 'funds_returned';
 
 export type Compensation = {
-    amount: number | null;
-    currency_code: string | null;
+  amount: number | null;
+  currency_code: string | null;
 };
 
 export type AuthorizationCodeResponse = BaseTokenResponse & {
-    /**
-     * The ID of the connected company.
-     */
-    company_id?: string;
-    /**
-     * The refresh token. This token must be stored and used for issuing new access tokens for managing the company's resources.
-     */
-    refresh_token?: string;
-    /**
-     * The ID of the user who connected the company.
-     */
-    user_id?: string;
+  /**
+   * The ID of the connected company.
+   */
+  company_id?: string;
+  /**
+   * The refresh token. This token must be stored and used for issuing new access tokens for managing the company's resources.
+   */
+  refresh_token?: string;
+  /**
+   * The ID of the user who connected the company.
+   */
+  user_id?: string;
 };
 
-export type MaybeBenefitRenewalRequestsMinimalBenefitRenewalResponse = BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
+export type MaybeBenefitRenewalRequestsMinimalBenefitRenewalResponse =
+  BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
 
 /**
  * Error returned when a company with matching criteria already exists
  */
 export type CompanyAlreadyExistsErrorResponse = {
-    code?: string;
-    message?: string;
-    resource_id?: string;
-    resource_type?: string;
+  code?: string;
+  message?: string;
+  resource_id?: string;
+  resource_type?: string;
 };
 
 /**
  * Paginated response schema listing all Contractor Invoices.
  */
 export type ListContractorInvoicesResponse = {
-    data?: {
-        contractor_invoices?: Array<ContractorInvoice>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    contractor_invoices?: Array<ContractorInvoice>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 export type CostCalculatorEmploymentParam = {
-    age?: number;
-    annual_gross_salary?: number;
-    annual_gross_salary_in_employer_currency?: number;
-    benefits?: Array<CostCalculatorBenefitParam>;
-    employment_term?: EmploymentTermType;
-    region_slug: string;
-    regional_to_employer_exchange_rate?: string;
-    title?: string;
+  age?: number;
+  annual_gross_salary?: number;
+  annual_gross_salary_in_employer_currency?: number;
+  benefits?: Array<CostCalculatorBenefitParam>;
+  employment_term?: EmploymentTermType;
+  region_slug: string;
+  regional_to_employer_exchange_rate?: string;
+  title?: string;
 };
 
 /**
  * Schema for work authorization request
  */
 export type WorkAuthorizationRequestResponse = {
-    data: {
-        work_authorization_request: WorkAuthorizationRequest;
-    };
+  data: {
+    work_authorization_request: WorkAuthorizationRequest;
+  };
 };
 
 export type CompanyManagerResponse = {
-    data: CompanyManagerData;
+  data: CompanyManagerData;
 };
 
 export type UnlimitedDaysandHoursResponse = {
-    type: 'unlimited';
+  type: 'unlimited';
 };
 
-export type ValidateResignationRequestParams = ResignationAfterStartDateRequestParams | ResignationBeforeStartDateRequestParams;
+export type ValidateResignationRequestParams =
+  | ResignationAfterStartDateRequestParams
+  | ResignationBeforeStartDateRequestParams;
 
 /**
  * Includes requested timeoffs (not approved) in the past or in the future.
  */
 export type LimitedDaysandHoursResponse = {
-    days: number;
-    hours: number;
-    type: 'limited';
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -802,68 +860,74 @@ export type LimitedDaysandHoursResponse = {
 export type ContractorInvoiceId = string;
 
 export type NullableMinimalBenefitTier = {
-    description: string;
-    display_cost?: string | null;
-    id: string;
-    name: string;
+  description: string;
+  display_cost?: string | null;
+  id: string;
+  name: string;
 } | null;
 
 /**
  * Timeoff creation params
  */
 export type CreateTimeoffParams = {
-    document?: TimeoffDocumentParams;
-    employment_id: string;
-    end_date: string;
-    notes?: string;
-    start_date: string;
-    timeoff_days: Array<TimeoffDaysParams>;
-    timeoff_type: TimeoffType;
-    timezone: Timezone;
+  document?: TimeoffDocumentParams;
+  employment_id: string;
+  end_date: string;
+  notes?: string;
+  start_date: string;
+  timeoff_days: Array<TimeoffDaysParams>;
+  timeoff_type: TimeoffType;
+  timezone: Timezone;
 };
 
 export type ListDataSyncEventsResponse = {
-    data: {
-        data_sync_events: Array<DataSyncEvent>;
-    };
+  data: {
+    data_sync_events: Array<DataSyncEvent>;
+  };
 };
 
 /**
  * A supported country on Remote
  */
 export type Country = {
-    alpha_2_code: string;
-    code: string;
-    country_subdivisions?: Array<CountrySubdivision> | null;
-    name: string;
-    region?: string;
-    subregion?: string | null;
-    supported_json_schemas?: Array<string>;
+  alpha_2_code: string;
+  code: string;
+  country_subdivisions?: Array<CountrySubdivision> | null;
+  name: string;
+  region?: string;
+  subregion?: string | null;
+  supported_json_schemas?: Array<string>;
 };
 
 /**
  * Schema defining a bulk creation payload.
  */
 export type BulkContractorInvoiceScheduleCreateParams = {
-    /**
-     * List of invoice schedules payload.
-     */
-    contractor_invoice_schedules: Array<ContractorInvoiceScheduleCreateParams>;
+  /**
+   * List of invoice schedules payload.
+   */
+  contractor_invoice_schedules: Array<ContractorInvoiceScheduleCreateParams>;
 };
 
 export type CreateOffboardingParams = {
-    employment_id: string;
-    termination_details: TerminationDetailsParams;
-    /**
-     * The type of the offboarding request. For now, only `termination` is allowed.
-     */
-    type: 'termination';
+  employment_id: string;
+  termination_details: TerminationDetailsParams;
+  /**
+   * The type of the offboarding request. For now, only `termination` is allowed.
+   */
+  type: 'termination';
 };
 
 /**
  * The status of the user
  */
-export type UserStatus = 'active' | 'created' | 'initiated' | 'cancelled' | 'inactive' | 'deleted';
+export type UserStatus =
+  | 'active'
+  | 'created'
+  | 'initiated'
+  | 'cancelled'
+  | 'inactive'
+  | 'deleted';
 
 /**
  * `"status": "ok"` indicates that any recurring incentives with `pending` status were
@@ -875,111 +939,140 @@ export type UserStatus = 'active' | 'created' | 'initiated' | 'cancelled' | 'ina
  *
  */
 export type DeleteRecurringIncentiveResponse = {
-    data: {
-        already_scheduled_incentives: Array<Incentive>;
-        status?: string;
-    };
+  data: {
+    already_scheduled_incentives: Array<Incentive>;
+    status?: string;
+  };
 };
 
 /**
  * The metadata for a single select custom field
  */
 export type SingleSelectMetadata = {
-    options: Array<string>;
+  options: Array<string>;
 };
 
 export type CreateOneTimeIncentiveParams = CommonIncentiveParams & {
-    employment_id: string;
-    type: 'acting_up_allowance' | 'allowance' | 'car_allowance' | 'health_and_wellness_allowance' | 'internet_allowance' | 'meal_allowance' | 'on_call_allowance' | 'parenthood_allowance' | 'phone_allowance' | 'relocation_allowance' | 'travel_allowance' | 'work_from_home_allowance' | 'bonus' | 'holiday_bonus' | 'referral_bonus' | 'retention_bonus' | 'commission' | 'other' | 'overtime' | 'stipend' | 'signing_bonus';
+  employment_id: string;
+  type:
+    | 'acting_up_allowance'
+    | 'allowance'
+    | 'car_allowance'
+    | 'health_and_wellness_allowance'
+    | 'internet_allowance'
+    | 'meal_allowance'
+    | 'on_call_allowance'
+    | 'parenthood_allowance'
+    | 'phone_allowance'
+    | 'relocation_allowance'
+    | 'travel_allowance'
+    | 'work_from_home_allowance'
+    | 'bonus'
+    | 'holiday_bonus'
+    | 'referral_bonus'
+    | 'retention_bonus'
+    | 'commission'
+    | 'other'
+    | 'overtime'
+    | 'stipend'
+    | 'signing_bonus';
 };
 
 export type CompanyCreationResponse = {
-    data?: CompanyResponse | CompanyWithTokensResponse;
+  data?: CompanyResponse | CompanyWithTokensResponse;
 };
 
 export type MaybeCurrencyDefinition = CurrencyDefinition | null;
 
 export type BenefitGroup = {
-    id: string;
-    name: string;
-    policy_end_date: string;
-    policy_start_date: string;
+  id: string;
+  name: string;
+  policy_end_date: string;
+  policy_start_date: string;
 };
 
 /**
  * Timesheet response
  */
 export type MinimalTimesheetResponse = {
-    data?: {
-        timesheet: MinimalTimesheet;
-    };
+  data?: {
+    timesheet: MinimalTimesheet;
+  };
 };
 
 export type BenefitOffersByEmployment = {
-    benefit_offers: Array<BenefitOffer>;
-    costs: Costs;
-    employment: BenefitOffersEmployment;
+  benefit_offers: Array<BenefitOffer>;
+  costs: Costs;
+  employment: BenefitOffersEmployment;
 };
 
 export type InternalServerErrorResponse = ValidationError | MessageResponse;
 
 export type CostCalculatorEstimateParams = {
-    /**
-     * Currency Slug
-     */
-    employer_currency_slug: string;
-    employments: Array<CostCalculatorEmploymentParam>;
-    include_benefits?: boolean;
-    include_cost_breakdowns?: boolean;
+  /**
+   * Currency Slug
+   */
+  employer_currency_slug: string;
+  employments: Array<CostCalculatorEmploymentParam>;
+  include_benefits?: boolean;
+  include_cost_breakdowns?: boolean;
 };
 
 /**
  * Information of a billing document
  */
 export type BillingDocumentResponse = {
-    data: {
-        billing_document: BillingDocument;
-    };
+  data: {
+    billing_document: BillingDocument;
+  };
 };
 
 /**
  * The datatype of the custom field
  */
-export type CustomFieldSimpleDataType = 'string' | 'text' | 'integer' | 'date' | 'boolean' | 'percentage' | 'decimal' | 'link';
+export type CustomFieldSimpleDataType =
+  | 'string'
+  | 'text'
+  | 'integer'
+  | 'date'
+  | 'boolean'
+  | 'percentage'
+  | 'decimal'
+  | 'link';
 
 /**
  * Offboarding
  */
 export type Offboarding = {
-    offboarding?: ResignationOffboarding | TerminationOffboarding;
+  offboarding?: ResignationOffboarding | TerminationOffboarding;
 };
 
 export type CompanyManagerData = {
-    company_manager: CompanyManager;
+  company_manager: CompanyManager;
 };
 
 /**
  * Line Item schema for a Contractor Invoice.
  */
 export type ContractorInvoiceItem = {
-    /**
-     * Amount, in cents.
-     */
-    amount: number;
-    /**
-     * Describes invoice item intent.
-     */
-    description: string;
-    type: ContractorInvoiceItemType;
+  /**
+   * Amount, in cents.
+   */
+  amount: number;
+  /**
+   * Describes invoice item intent.
+   */
+  description: string;
+  type: ContractorInvoiceItemType;
 };
 
 /**
  * A single payslip.
  */
 export type PayslipResponse = {
-    data: {
-        payslip: Payslip;
-    };
+  data: {
+    payslip: Payslip;
+  };
 };
 
 /**
@@ -988,13 +1081,13 @@ export type PayslipResponse = {
 export type EmploymentBasicParams = CreateParams | CreateParamsDeprecated;
 
 export type NotFoundResponse = {
-    message?: string;
+  message?: string;
 };
 
 export type CostCalculatorEstimateResponse = {
-    data: {
-        employments?: Array<CostCalculatorEmployment>;
-    };
+  data: {
+    employments?: Array<CostCalculatorEmployment>;
+  };
 };
 
 /**
@@ -1003,72 +1096,95 @@ export type CostCalculatorEstimateResponse = {
 export type Timezone = string;
 
 export type CountrySummary = {
-    country: Country;
-    employee_stats: EmployeeStats;
-    offered_benefit_groups: Array<OfferedBenefitGroup>;
+  country: Country;
+  employee_stats: EmployeeStats;
+  offered_benefit_groups: Array<OfferedBenefitGroup>;
 };
 
 export type ResignationOffboarding = {
-    additional_comments?: string;
-    employer_awareness?: string;
-    employment_id: string;
-    id: string;
-    proposed_last_working_day: string;
-    reason_description?: string;
-    requested_by: string;
-    resignation_reason: 'cancellation_before_start_date' | 'company_culture_or_values' | 'conversion_to_contractor' | 'conversion_to_global_payroll' | 'dissatisfaction_with_remote_service' | 'incapacity_to_perform_inherent_duties' | 'infrastructure_challenges' | 'lack_of_recognition' | 'leadership' | 'mutual_agreement' | 'other' | 'other_job_opportunity' | 'personal_reasons' | 'position_does_not_meet_expectations' | 'relationship_with_coworkers' | 'relocation_from_entity_to_entity_by_employee' | 'relocation_leaving_remote' | 'remuneration_and_benefits' | 'retirement' | 'transfer_and_relocation_new_customer_and_new_country' | 'transfer_between_remote_customer' | 'transfer_from_remote_to_customer' | 'transfer_from_remote_to_other_eor';
-    status: 'submitted' | 'in_review' | 'done' | 'canceled';
-    submitted_at: string;
-    /**
-     * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
-     */
-    termination_date: string | null;
-    type: 'resignation';
+  additional_comments?: string;
+  employer_awareness?: string;
+  employment_id: string;
+  id: string;
+  proposed_last_working_day: string;
+  reason_description?: string;
+  requested_by: string;
+  resignation_reason:
+    | 'cancellation_before_start_date'
+    | 'company_culture_or_values'
+    | 'conversion_to_contractor'
+    | 'conversion_to_global_payroll'
+    | 'dissatisfaction_with_remote_service'
+    | 'incapacity_to_perform_inherent_duties'
+    | 'infrastructure_challenges'
+    | 'lack_of_recognition'
+    | 'leadership'
+    | 'mutual_agreement'
+    | 'other'
+    | 'other_job_opportunity'
+    | 'personal_reasons'
+    | 'position_does_not_meet_expectations'
+    | 'relationship_with_coworkers'
+    | 'relocation_from_entity_to_entity_by_employee'
+    | 'relocation_leaving_remote'
+    | 'remuneration_and_benefits'
+    | 'retirement'
+    | 'transfer_and_relocation_new_customer_and_new_country'
+    | 'transfer_between_remote_customer'
+    | 'transfer_from_remote_to_customer'
+    | 'transfer_from_remote_to_other_eor';
+  status: 'submitted' | 'in_review' | 'done' | 'canceled';
+  submitted_at: string;
+  /**
+   * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
+   */
+  termination_date: string | null;
+  type: 'resignation';
 };
 
 /**
  * Contractor Invoice Schedule.
  */
 export type ContractorInvoiceSchedule = {
-    currency: CurrencyCode;
-    /**
-     * Employment identifier.
-     */
-    employment_id: string;
-    /**
-     * Schedule identifier.
-     */
-    id: string;
-    /**
-     * List of invoice items that composes the overall invoice amount.
-     */
-    items: Array<ContractorInvoiceScheduleItem>;
-    /**
-     * Date time which next invoice will be generated.
-     */
-    next_invoice_at?: string | null;
-    /**
-     * Custom defined note.
-     */
-    note?: string | null;
-    /**
-     * Count of remaining invoices that should be generated.
-     */
-    nr_occurrences?: number | null;
-    /**
-     * Invoice identifier.
-     */
-    number?: string | null;
-    periodicity: ContractorInvoiceSchedulePeriodicity;
-    /**
-     * Date which invoices generation will start.
-     */
-    start_date: string;
-    status: ContractorInvoiceScheduleStatus;
-    /**
-     * Overall amount that is calculated by summing all invoice items.
-     */
-    total_amount: number;
+  currency: CurrencyCode;
+  /**
+   * Employment identifier.
+   */
+  employment_id: string;
+  /**
+   * Schedule identifier.
+   */
+  id: string;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Date time which next invoice will be generated.
+   */
+  next_invoice_at?: string | null;
+  /**
+   * Custom defined note.
+   */
+  note?: string | null;
+  /**
+   * Count of remaining invoices that should be generated.
+   */
+  nr_occurrences?: number | null;
+  /**
+   * Invoice identifier.
+   */
+  number?: string | null;
+  periodicity: ContractorInvoiceSchedulePeriodicity;
+  /**
+   * Date which invoices generation will start.
+   */
+  start_date: string;
+  status: ContractorInvoiceScheduleStatus;
+  /**
+   * Overall amount that is calculated by summing all invoice items.
+   */
+  total_amount: number;
 };
 
 /**
@@ -1077,130 +1193,140 @@ export type ContractorInvoiceSchedule = {
  *
  */
 export type FullParamsDeprecated = {
-    /**
-     * Home address information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `address_details` as path parameters.
-     */
-    address_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Administrative information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `administrative_details` as path parameters.
-     */
-    administrative_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Bank account information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `bank_account_details` as path parameters.
-     */
-    bank_account_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Billing address information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `billing_address_details` as path parameters.
-     */
-    billing_address_details?: {
-        [key: string]: unknown;
-    };
-    company_id?: string;
-    /**
-     * Contract information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `contract_details` as path parameters.
-     */
-    contract_details?: {
-        [key: string]: unknown;
-    };
-    country?: Country;
-    country_code: string;
-    /**
-     * Emergency contact information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `emergency_contact_details` as path parameters.
-     */
-    emergency_contact_details?: {
-        [key: string]: unknown;
-    };
-    full_name: string;
-    job_title: string;
-    /**
-     * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
-     * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
-     * **Update of this field is only available for active employments.**
-     *
-     */
-    manager_id?: string;
-    /**
-     * Personal details information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `personal_details` as path parameters.
-     */
-    personal_details?: {
-        [key: string]: unknown;
-    };
-    personal_email: string;
-    pricing_plan_details?: PricingPlanDetails;
-    provisional_start_date?: ProvisionalStartDate;
-    seniority_date?: EmploymentSeniorityDate;
+  /**
+   * Home address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `address_details` as path parameters.
+   */
+  address_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Administrative information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `administrative_details` as path parameters.
+   */
+  administrative_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Bank account information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `bank_account_details` as path parameters.
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Billing address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `billing_address_details` as path parameters.
+   */
+  billing_address_details?: {
+    [key: string]: unknown;
+  };
+  company_id?: string;
+  /**
+   * Contract information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `contract_details` as path parameters.
+   */
+  contract_details?: {
+    [key: string]: unknown;
+  };
+  country?: Country;
+  country_code: string;
+  /**
+   * Emergency contact information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `emergency_contact_details` as path parameters.
+   */
+  emergency_contact_details?: {
+    [key: string]: unknown;
+  };
+  full_name: string;
+  job_title: string;
+  /**
+   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
+   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
+   * **Update of this field is only available for active employments.**
+   *
+   */
+  manager_id?: string;
+  /**
+   * Personal details information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `personal_details` as path parameters.
+   */
+  personal_details?: {
+    [key: string]: unknown;
+  };
+  personal_email: string;
+  pricing_plan_details?: PricingPlanDetails;
+  provisional_start_date?: ProvisionalStartDate;
+  seniority_date?: EmploymentSeniorityDate;
 };
 
 /**
  * SSO Configuration Details response
  */
 export type SsoConfigurationDetailsResponse = {
-    data?: SsoConfigurationDetails;
+  data?: SsoConfigurationDetails;
 };
 
 /**
  * The datatype of the custom field
  */
-export type CustomFieldDataType = 'string' | 'text' | 'integer' | 'date' | 'boolean' | 'percentage' | 'decimal' | 'link' | 'currency' | 'single_select';
+export type CustomFieldDataType =
+  | 'string'
+  | 'text'
+  | 'integer'
+  | 'date'
+  | 'boolean'
+  | 'percentage'
+  | 'decimal'
+  | 'link'
+  | 'currency'
+  | 'single_select';
 
 /**
  * A supported file
  */
 export type File = {
-    id: string;
-    inserted_at: DateTimeIso8601;
-    name: string;
-    sub_type?: string | null;
-    type: string;
+  id: string;
+  inserted_at: DateTimeIso8601;
+  name: string;
+  sub_type?: string | null;
+  type: string;
 };
 
 export type ClientCredentialsParams = {
-    /**
-     * The client id generated during registration
-     */
-    client_id: string;
-    /**
-     * The Authorization flow
-     */
-    grant_type: 'client_credentials';
+  /**
+   * The client id generated during registration
+   */
+  client_id: string;
+  /**
+   * The Authorization flow
+   */
+  grant_type: 'client_credentials';
 };
 
 /**
  * Offboarding response
  */
 export type OffboardingResponse = {
-    data?: Offboarding;
+  data?: Offboarding;
 };
 
 /**
  * Employment document file
  */
 export type EmploymentDocument = {
-    id: string;
-    inserted_at: DateTimeIso8601;
-    name: string;
-    sub_type?: string | null;
-    type: string;
+  id: string;
+  inserted_at: DateTimeIso8601;
+  name: string;
+  sub_type?: string | null;
+  type: string;
 } | null;
 
 /**
@@ -1231,137 +1357,222 @@ export type EmploymentFullParams = FullParamsDeprecated | FullParams;
  * Response schema listing many custom_fields
  */
 export type ListEmploymentCustomFieldsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        custom_fields?: Array<EmploymentCustomField>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    custom_fields?: Array<EmploymentCustomField>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * A supported country on Remote
  */
 export type CostCalculatorCountryLevelRegion = {
-    availability: CostCalculatorCountryAvailability;
-    child_regions: Array<MinimalRegion>;
-    code: string;
-    currency: Currency;
-    has_additional_fields?: boolean;
-    name: string;
-    original_country_slug: string;
-    region_slug: string;
+  availability: CostCalculatorCountryAvailability;
+  child_regions: Array<MinimalRegion>;
+  code: string;
+  currency: Currency;
+  has_additional_fields?: boolean;
+  name: string;
+  original_country_slug: string;
+  region_slug: string;
 };
 
 /**
  * Webhook callback creation params
  */
 export type CreateWebhookCallbackParams = {
-    subscribed_events?: Array<'benefit_renewal_request.created' | 'billing_document.issued' | 'company.activated' | 'company.archived' | 'company.eor_hiring.additional_information_required' | 'company.eor_hiring.reserve_payment_requested' | 'company.eor_hiring.verification_completed' | 'contract_amendment.canceled' | 'contract_amendment.deleted' | 'contract_amendment.done' | 'contract_amendment.review_started' | 'contract_amendment.submitted' | 'custom_field.value_updated' | 'employment_contract.active_contract_updated' | 'employment.account.updated' | 'employment.details.updated' | 'employment.employment_agreement.available' | 'employment.eor_hiring.proof_of_payment_accepted' | 'employment.eor_hiring.invoice_created' | 'employment.no_longer_eligible_for_onboarding_cancellation' | 'employment.onboarding_task.completed' | 'employment.onboarding.completed' | 'employment.onboarding.cancelled' | 'employment.personal_information.updated' | 'employment.probation_completion_letter.cancelled' | 'employment.probation_completion_letter.completed' | 'employment.probation_completion_letter.submitted' | 'employment.probation.period_ending_reminder_sent' | 'employment.probation_period_extension.cancelled' | 'employment.probation_period_extension.completed' | 'employment.probation_period_extension.submitted' | 'employment.start_date.changed' | 'employment.user_status.activated' | 'employment.user_status.deactivated' | 'expense.approved' | 'expense.declined' | 'expense.deleted' | 'expense.reimbursed' | 'expense.submitted' | 'expense.updated' | 'identity_verification.verification_required' | 'incentive.created' | 'incentive.deleted' | 'incentive.paid' | 'incentive.processing_started' | 'incentive.updated' | 'offboarding.completed' | 'offboarding.deleted' | 'offboarding.done' | 'offboarding.review_started' | 'offboarding.submitted_to_payroll' | 'offboarding.submitted' | 'payslip.released' | 'sso_configuration.disabled' | 'sso_configuration.enabled' | 'sso_configuration.updated' | 'timeoff.approved' | 'timeoff.canceled' | 'timeoff.date_changed' | 'timeoff.declined' | 'timeoff.requested' | 'timeoff.taken' | 'timeoff.updated' | 'timesheet.submitted' | 'travel_letter.approved_by_manager' | 'travel_letter.approved_by_remote' | 'travel_letter.declined_by_manager' | 'travel_letter.declined_by_remote' | 'travel_letter.requested' | 'work_authorization.approved_by_manager' | 'work_authorization.approved_by_remote' | 'work_authorization.cancelled' | 'work_authorization.declined_by_manager' | 'work_authorization.declined_by_remote' | 'work_authorization.requested'>;
-    url: string;
+  subscribed_events?: Array<
+    | 'benefit_renewal_request.created'
+    | 'billing_document.issued'
+    | 'company.activated'
+    | 'company.archived'
+    | 'company.eor_hiring.additional_information_required'
+    | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.verification_completed'
+    | 'contract_amendment.canceled'
+    | 'contract_amendment.deleted'
+    | 'contract_amendment.done'
+    | 'contract_amendment.review_started'
+    | 'contract_amendment.submitted'
+    | 'custom_field.value_updated'
+    | 'employment_contract.active_contract_updated'
+    | 'employment.account.updated'
+    | 'employment.details.updated'
+    | 'employment.employment_agreement.available'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.invoice_created'
+    | 'employment.no_longer_eligible_for_onboarding_cancellation'
+    | 'employment.onboarding_task.completed'
+    | 'employment.onboarding.completed'
+    | 'employment.onboarding.cancelled'
+    | 'employment.personal_information.updated'
+    | 'employment.probation_completion_letter.cancelled'
+    | 'employment.probation_completion_letter.completed'
+    | 'employment.probation_completion_letter.submitted'
+    | 'employment.probation.period_ending_reminder_sent'
+    | 'employment.probation_period_extension.cancelled'
+    | 'employment.probation_period_extension.completed'
+    | 'employment.probation_period_extension.submitted'
+    | 'employment.start_date.changed'
+    | 'employment.user_status.activated'
+    | 'employment.user_status.deactivated'
+    | 'expense.approved'
+    | 'expense.declined'
+    | 'expense.deleted'
+    | 'expense.reimbursed'
+    | 'expense.submitted'
+    | 'expense.updated'
+    | 'identity_verification.verification_required'
+    | 'incentive.created'
+    | 'incentive.deleted'
+    | 'incentive.paid'
+    | 'incentive.processing_started'
+    | 'incentive.updated'
+    | 'offboarding.completed'
+    | 'offboarding.deleted'
+    | 'offboarding.done'
+    | 'offboarding.review_started'
+    | 'offboarding.submitted_to_payroll'
+    | 'offboarding.submitted'
+    | 'payslip.released'
+    | 'sso_configuration.disabled'
+    | 'sso_configuration.enabled'
+    | 'sso_configuration.updated'
+    | 'timeoff.approved'
+    | 'timeoff.canceled'
+    | 'timeoff.date_changed'
+    | 'timeoff.declined'
+    | 'timeoff.requested'
+    | 'timeoff.taken'
+    | 'timeoff.updated'
+    | 'timesheet.submitted'
+    | 'travel_letter.approved_by_manager'
+    | 'travel_letter.approved_by_remote'
+    | 'travel_letter.declined_by_manager'
+    | 'travel_letter.declined_by_remote'
+    | 'travel_letter.requested'
+    | 'work_authorization.approved_by_manager'
+    | 'work_authorization.approved_by_remote'
+    | 'work_authorization.cancelled'
+    | 'work_authorization.declined_by_manager'
+    | 'work_authorization.declined_by_remote'
+    | 'work_authorization.requested'
+  >;
+  url: string;
 };
 
 /**
  * Employment image file
  */
 export type EmploymentImage = {
-    id: string;
-    inserted_at: DateTimeIso8601;
-    name: string;
-    sub_type?: string | null;
-    type: string;
+  id: string;
+  inserted_at: DateTimeIso8601;
+  name: string;
+  sub_type?: string | null;
+  type: string;
 } | null;
 
 export type OffboardingFile = {
-    /**
-     * The content in base64 encoding
-     */
-    content: Blob | File;
-    /**
-     * The file name
-     */
-    name: string;
+  /**
+   * The content in base64 encoding
+   */
+  content: Blob | File;
+  /**
+   * The file name
+   */
+  name: string;
 };
 
 export type ContractPendingChanges = {
-    /**
-     * Describes all the changes requested for the contract and contract details with all their previous and current values.
-     * Its properties may vary depending on the country.
-     *
-     */
-    changes: {
-        [key: string]: unknown;
-    };
-    contract_id: string;
-    effective_at: DateTimeIso8601;
-    /**
-     * Indicates if the contract is pending an action to be activated when effective_at is reached.
-     * If true, it means that an action needs to be performed, either a verification by Remote or a signature from the
-     * employer or the employee. If false, then the contract will be active when effective_at is reached.
-     *
-     */
-    pending_action_for_activation?: boolean;
+  /**
+   * Describes all the changes requested for the contract and contract details with all their previous and current values.
+   * Its properties may vary depending on the country.
+   *
+   */
+  changes: {
+    [key: string]: unknown;
+  };
+  contract_id: string;
+  effective_at: DateTimeIso8601;
+  /**
+   * Indicates if the contract is pending an action to be activated when effective_at is reached.
+   * If true, it means that an action needs to be performed, either a verification by Remote or a signature from the
+   * employer or the employee. If false, then the contract will be active when effective_at is reached.
+   *
+   */
+  pending_action_for_activation?: boolean;
 };
 
 export type RefreshTokenResponse = BaseTokenResponse & {
-    /**
-     * The refresh token
-     */
-    refresh_token?: string;
+  /**
+   * The refresh token
+   */
+  refresh_token?: string;
 };
 
-export type UnprocessableEntityResponse = {
-    errors: {
+export type UnprocessableEntityResponse =
+  | {
+      errors: {
         [key: string]: unknown;
+      };
+    }
+  | {
+      message:
+        | string
+        | ParameterError
+        | Array<ParameterError>
+        | ActionError
+        | Array<ActionError>;
     };
-} | {
-    message: string | ParameterError | Array<ParameterError> | ActionError | Array<ActionError>;
-};
 
 /**
  * List of countries supported by Remote API
  */
 export type CountriesResponse = {
-    data?: Array<Country>;
+  data?: Array<Country>;
 };
 
 export type DataSyncEvent = {
-    data_type: 'benefits' | 'kdb' | 'countries';
-    inserted_at: string;
-    status: 'pass' | 'fail';
+  data_type: 'benefits' | 'kdb' | 'countries';
+  inserted_at: string;
+  status: 'pass' | 'fail';
 };
 
 /**
  * Sent back timesheet
  */
 export type SentBackTimesheet = {
-    id: UuidSlug;
-    sent_back: boolean;
-    sent_back_reason: string;
-    status: TimesheetStatus;
+  id: UuidSlug;
+  sent_back: boolean;
+  sent_back_reason: string;
+  status: TimesheetStatus;
 };
 
 /**
  * Schema for updating a work authorization request
  */
-export type UpdateWorkAuthorizationRequestParams = ApprovedWorkAuthozation | DeclinedWorkAuthozation;
+export type UpdateWorkAuthorizationRequestParams =
+  | ApprovedWorkAuthozation
+  | DeclinedWorkAuthozation;
 
 /**
  * Benefit Renewal Request Response
  */
 export type BenefitRenewalRequestsBenefitRenewalRequestResponse = {
-    data: {
-        benefit_renewal_request: BenefitRenewalRequestsBenefitRenewalRequest;
-    };
+  data: {
+    benefit_renewal_request: BenefitRenewalRequestsBenefitRenewalRequest;
+  };
 };
 
 export type EmploymentTermType = 'fixed' | 'indefinite';
@@ -1370,37 +1581,37 @@ export type EmploymentTermType = 'fixed' | 'indefinite';
  * Paginated response schema listing all Contractor Invoice Schedules.
  */
 export type ListContractorInvoiceSchedulesResponse = {
-    data?: {
-        contractor_invoice_schedules?: Array<ContractorInvoiceSchedule>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    contractor_invoice_schedules?: Array<ContractorInvoiceSchedule>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * The type of money in general use in a particular country
  */
 export type Currency = {
-    code: string;
-    name?: string;
-    slug: string;
-    symbol: string;
+  code: string;
+  name?: string;
+  slug: string;
+  symbol: string;
 };
 
 export type BenefitRenewalRequestsMinimalBenefitGroup = {
-    country_code: string;
-    id: string;
-    name: string;
+  country_code: string;
+  id: string;
+  name: string;
 };
 
 /**
@@ -1412,14 +1623,14 @@ export type OptionValue = string;
  * JSON Schema
  */
 export type JsonSchema = {
-    schema?: {
-        properties: {
-            [key: string]: unknown;
-        };
-        required?: Array<string>;
-        'x-jsf-order'?: Array<string>;
+  schema?: {
+    properties: {
+      [key: string]: unknown;
     };
-    version?: number;
+    required?: Array<string>;
+    'x-jsf-order'?: Array<string>;
+  };
+  version?: number;
 };
 
 /**
@@ -1441,22 +1652,25 @@ export type TaskStatus = 'completed' | 'pending';
 export type RegionStatus = 'active' | 'inactive';
 
 export type CostCalculatorCost = {
-    amount: number;
-    description: string | null;
-    name: string;
-    zendesk_article_url: string | null;
+  amount: number;
+  description: string | null;
+  name: string;
+  zendesk_article_url: string | null;
 };
 
 export type MaybeUnifiedMinimalBenefitGroup = UnifiedMinimalBenefitGroup | null;
 
-export type OAuth2Tokens = AuthorizationCodeResponse | ClientCredentialsResponse | RefreshTokenResponse;
+export type OAuth2Tokens =
+  | AuthorizationCodeResponse
+  | ClientCredentialsResponse
+  | RefreshTokenResponse;
 
 /**
  * Schema for approved work authorization
  */
 export type ApprovedWorkAuthozation = {
-    employer_special_instructions?: string | null;
-    status: 'approved_by_manager';
+  employer_special_instructions?: string | null;
+  status: 'approved_by_manager';
 };
 
 /**
@@ -1465,281 +1679,356 @@ export type ApprovedWorkAuthozation = {
  *
  */
 export type CreateParamsDeprecated = {
-    /**
-     * This optional field is deprecated.
-     */
-    company_id?: string;
-    country_code: string;
-    full_name: string;
-    job_title: string;
-    personal_email: string;
-    provisional_start_date?: ProvisionalStartDate;
-    seniority_date?: EmploymentSeniorityDate;
-    /**
-     * If not provided, it will default to `employee`.
-     */
-    type?: 'employee' | 'contractor';
+  /**
+   * This optional field is deprecated.
+   */
+  company_id?: string;
+  country_code: string;
+  full_name: string;
+  job_title: string;
+  personal_email: string;
+  provisional_start_date?: ProvisionalStartDate;
+  seniority_date?: EmploymentSeniorityDate;
+  /**
+   * If not provided, it will default to `employee`.
+   */
+  type?: 'employee' | 'contractor';
 };
 
 export type WebhookTriggerEmploymentParams = {
-    employment_id: string;
-    event_type: 'benefit_renewal_request.created' | 'billing_document.issued' | 'company.activated' | 'company.archived' | 'company.eor_hiring.additional_information_required' | 'company.eor_hiring.reserve_payment_requested' | 'company.eor_hiring.verification_completed' | 'contract_amendment.canceled' | 'contract_amendment.deleted' | 'contract_amendment.done' | 'contract_amendment.review_started' | 'contract_amendment.submitted' | 'custom_field.value_updated' | 'employment_contract.active_contract_updated' | 'employment.account.updated' | 'employment.details.updated' | 'employment.employment_agreement.available' | 'employment.eor_hiring.proof_of_payment_accepted' | 'employment.eor_hiring.invoice_created' | 'employment.no_longer_eligible_for_onboarding_cancellation' | 'employment.onboarding_task.completed' | 'employment.onboarding.completed' | 'employment.onboarding.cancelled' | 'employment.personal_information.updated' | 'employment.probation_completion_letter.cancelled' | 'employment.probation_completion_letter.completed' | 'employment.probation_completion_letter.submitted' | 'employment.probation.period_ending_reminder_sent' | 'employment.probation_period_extension.cancelled' | 'employment.probation_period_extension.completed' | 'employment.probation_period_extension.submitted' | 'employment.start_date.changed' | 'employment.user_status.activated' | 'employment.user_status.deactivated' | 'expense.approved' | 'expense.declined' | 'expense.deleted' | 'expense.reimbursed' | 'expense.submitted' | 'expense.updated' | 'identity_verification.verification_required' | 'incentive.created' | 'incentive.deleted' | 'incentive.paid' | 'incentive.processing_started' | 'incentive.updated' | 'offboarding.completed' | 'offboarding.deleted' | 'offboarding.done' | 'offboarding.review_started' | 'offboarding.submitted_to_payroll' | 'offboarding.submitted' | 'payslip.released' | 'sso_configuration.disabled' | 'sso_configuration.enabled' | 'sso_configuration.updated' | 'timeoff.approved' | 'timeoff.canceled' | 'timeoff.date_changed' | 'timeoff.declined' | 'timeoff.requested' | 'timeoff.taken' | 'timeoff.updated' | 'timesheet.submitted' | 'travel_letter.approved_by_manager' | 'travel_letter.approved_by_remote' | 'travel_letter.declined_by_manager' | 'travel_letter.declined_by_remote' | 'travel_letter.requested' | 'work_authorization.approved_by_manager' | 'work_authorization.approved_by_remote' | 'work_authorization.cancelled' | 'work_authorization.declined_by_manager' | 'work_authorization.declined_by_remote' | 'work_authorization.requested';
+  employment_id: string;
+  event_type:
+    | 'benefit_renewal_request.created'
+    | 'billing_document.issued'
+    | 'company.activated'
+    | 'company.archived'
+    | 'company.eor_hiring.additional_information_required'
+    | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.verification_completed'
+    | 'contract_amendment.canceled'
+    | 'contract_amendment.deleted'
+    | 'contract_amendment.done'
+    | 'contract_amendment.review_started'
+    | 'contract_amendment.submitted'
+    | 'custom_field.value_updated'
+    | 'employment_contract.active_contract_updated'
+    | 'employment.account.updated'
+    | 'employment.details.updated'
+    | 'employment.employment_agreement.available'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.invoice_created'
+    | 'employment.no_longer_eligible_for_onboarding_cancellation'
+    | 'employment.onboarding_task.completed'
+    | 'employment.onboarding.completed'
+    | 'employment.onboarding.cancelled'
+    | 'employment.personal_information.updated'
+    | 'employment.probation_completion_letter.cancelled'
+    | 'employment.probation_completion_letter.completed'
+    | 'employment.probation_completion_letter.submitted'
+    | 'employment.probation.period_ending_reminder_sent'
+    | 'employment.probation_period_extension.cancelled'
+    | 'employment.probation_period_extension.completed'
+    | 'employment.probation_period_extension.submitted'
+    | 'employment.start_date.changed'
+    | 'employment.user_status.activated'
+    | 'employment.user_status.deactivated'
+    | 'expense.approved'
+    | 'expense.declined'
+    | 'expense.deleted'
+    | 'expense.reimbursed'
+    | 'expense.submitted'
+    | 'expense.updated'
+    | 'identity_verification.verification_required'
+    | 'incentive.created'
+    | 'incentive.deleted'
+    | 'incentive.paid'
+    | 'incentive.processing_started'
+    | 'incentive.updated'
+    | 'offboarding.completed'
+    | 'offboarding.deleted'
+    | 'offboarding.done'
+    | 'offboarding.review_started'
+    | 'offboarding.submitted_to_payroll'
+    | 'offboarding.submitted'
+    | 'payslip.released'
+    | 'sso_configuration.disabled'
+    | 'sso_configuration.enabled'
+    | 'sso_configuration.updated'
+    | 'timeoff.approved'
+    | 'timeoff.canceled'
+    | 'timeoff.date_changed'
+    | 'timeoff.declined'
+    | 'timeoff.requested'
+    | 'timeoff.taken'
+    | 'timeoff.updated'
+    | 'timesheet.submitted'
+    | 'travel_letter.approved_by_manager'
+    | 'travel_letter.approved_by_remote'
+    | 'travel_letter.declined_by_manager'
+    | 'travel_letter.declined_by_remote'
+    | 'travel_letter.requested'
+    | 'work_authorization.approved_by_manager'
+    | 'work_authorization.approved_by_remote'
+    | 'work_authorization.cancelled'
+    | 'work_authorization.declined_by_manager'
+    | 'work_authorization.declined_by_remote'
+    | 'work_authorization.requested';
 };
 
 /**
  * Timeoff days params
  */
 export type TimeoffDaysParams = {
-    day?: _Date;
-    hours?: number;
+  day?: _Date;
+  hours?: number;
 };
 
 export type IdentityUser = {
-    email: string;
-    id: string;
-    name: string;
-    status: string;
+  email: string;
+  id: string;
+  name: string;
+  status: string;
 };
 
 export type CreateParams = {
-    /**
-     * Employment basic information. When using this field, the same other root level fields (full_name, personal_email, job_title,
-     * provisional_start_date, and seniority_date) will be ignored.
-     * Its properties may vary depending on the country, you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `employment_basic_information` as path parameters.
-     *
-     */
-    basic_information?: {
-        [key: string]: unknown;
-    };
-    /**
-     * This optional field is deprecated.
-     */
-    company_id?: string;
-    country_code: string;
-    /**
-     * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
-     */
-    external_id?: string;
-    /**
-     * If not provided, it will default to `employee`.
-     */
-    type?: 'employee' | 'contractor';
+  /**
+   * Employment basic information. When using this field, the same other root level fields (full_name, personal_email, job_title,
+   * provisional_start_date, and seniority_date) will be ignored.
+   * Its properties may vary depending on the country, you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   *
+   */
+  basic_information?: {
+    [key: string]: unknown;
+  };
+  /**
+   * This optional field is deprecated.
+   */
+  company_id?: string;
+  country_code: string;
+  /**
+   * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id?: string;
+  /**
+   * If not provided, it will default to `employee`.
+   */
+  type?: 'employee' | 'contractor';
 };
 
 export type CostCalculatorCosts = {
-    /**
-     * The list of all annual benefit costs
-     */
-    annual_benefits_breakdown?: Array<CostCalculatorCost>;
-    /**
-     * The annual benefits total that a company must pay for this employment
-     */
-    annual_benefits_total?: number;
-    /**
-     * The list of all annual employer contribution costs
-     */
-    annual_contributions_breakdown?: Array<CostCalculatorCost>;
-    /**
-     * The annual contributions that a company must pay for this employment
-     */
-    annual_contributions_total: number;
-    /**
-     * The annual gross salary that the employee is going to earn
-     */
-    annual_gross_salary: number;
-    annual_indirect_tax?: number;
-    /**
-     * The annual gross salary + annual contributions + annual fee (monthly fee * 12) + extra statutory payments if applicable
-     */
-    annual_total: number;
-    currency: Currency;
-    /**
-     * The list of all annual extra statutory payment costs
-     */
-    extra_statutory_payments_breakdown?: Array<CostCalculatorCost>;
-    /**
-     * 13th month salary, this happens for countries such as Philippines
-     */
-    extra_statutory_payments_total: number;
-    /**
-     * The list of all monthly benefit costs
-     */
-    monthly_benefits_breakdown?: Array<CostCalculatorCost>;
-    /**
-     * The benefits total that the company pays monthly
-     */
-    monthly_benefits_total?: number;
-    /**
-     * The list of all monthly employer contribution costs
-     */
-    monthly_contributions_breakdown?: Array<CostCalculatorCost>;
-    /**
-     * The contributions that the company pays monthly
-     */
-    monthly_contributions_total: number;
-    /**
-     * The gross monthly salary for the Employee
-     */
-    monthly_gross_salary: number;
-    monthly_indirect_tax?: number;
-    /**
-     * Monthly gross salary + monthly contributions  (doesn't include fee)
-     */
-    monthly_tce: number;
-    /**
-     * Monthly gross salary + monthly contributions + monthly fee
-     */
-    monthly_total: number;
+  /**
+   * The list of all annual benefit costs
+   */
+  annual_benefits_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * The annual benefits total that a company must pay for this employment
+   */
+  annual_benefits_total?: number;
+  /**
+   * The list of all annual employer contribution costs
+   */
+  annual_contributions_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * The annual contributions that a company must pay for this employment
+   */
+  annual_contributions_total: number;
+  /**
+   * The annual gross salary that the employee is going to earn
+   */
+  annual_gross_salary: number;
+  annual_indirect_tax?: number;
+  /**
+   * The annual gross salary + annual contributions + annual fee (monthly fee * 12) + extra statutory payments if applicable
+   */
+  annual_total: number;
+  currency: Currency;
+  /**
+   * The list of all annual extra statutory payment costs
+   */
+  extra_statutory_payments_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * 13th month salary, this happens for countries such as Philippines
+   */
+  extra_statutory_payments_total: number;
+  /**
+   * The list of all monthly benefit costs
+   */
+  monthly_benefits_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * The benefits total that the company pays monthly
+   */
+  monthly_benefits_total?: number;
+  /**
+   * The list of all monthly employer contribution costs
+   */
+  monthly_contributions_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * The contributions that the company pays monthly
+   */
+  monthly_contributions_total: number;
+  /**
+   * The gross monthly salary for the Employee
+   */
+  monthly_gross_salary: number;
+  monthly_indirect_tax?: number;
+  /**
+   * Monthly gross salary + monthly contributions  (doesn't include fee)
+   */
+  monthly_tce: number;
+  /**
+   * Monthly gross salary + monthly contributions + monthly fee
+   */
+  monthly_total: number;
 };
 
 /**
  * Probation completion letter request
  */
 export type ProbationCompletionLetter = {
-    employment_id: string;
-    id: string;
-    letter: ProbationCompletionLetterFile;
-    status: 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
-    submitted_at: DateTimeIso8601;
-    zendesk_ticket_url: string | null;
+  employment_id: string;
+  id: string;
+  letter: ProbationCompletionLetterFile;
+  status: 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
+  submitted_at: DateTimeIso8601;
+  zendesk_ticket_url: string | null;
 };
 
 export type TimeoffDaysAndHours = {
-    days?: number;
-    hours?: number;
+  days?: number;
+  hours?: number;
 };
 
 /**
  * Shows a company
  */
 export type CompanyResponse = {
-    company?: Company;
+  company?: Company;
 };
 
 export type UnifiedEmploymentBenefitTier = {
-    display_cost?: string | null;
-    name?: string;
-    slug?: Slug;
+  display_cost?: string | null;
+  name?: string;
+  slug?: Slug;
 };
 
 export type CompanyManagerParams = {
-    /**
-     * The Company ID. Required if the access token can access multiple companies. Optional otherwise.
-     */
-    company_id?: string;
-    /**
-     * The work email of the company manager
-     */
-    email: string;
-    /**
-     * The name of the company manager
-     */
-    name: string;
-    /**
-     * The role assigned for the new manager. The value should be one of the following:
-     *
-     * - `admin`: an Admin can manage most of the resources in remote.
-     * - `onboarding_manager`: an Onboarding Manager can add, see and manage new hires.
-     * - `people_manager`: a People Manager can view employee profiles of the team members they manage and approve and decline time off and expenses for their employees.
-     *
-     */
-    role: string;
+  /**
+   * The Company ID. Required if the access token can access multiple companies. Optional otherwise.
+   */
+  company_id?: string;
+  /**
+   * The work email of the company manager
+   */
+  email: string;
+  /**
+   * The name of the company manager
+   */
+  name: string;
+  /**
+   * The role assigned for the new manager. The value should be one of the following:
+   *
+   * - `admin`: an Admin can manage most of the resources in remote.
+   * - `onboarding_manager`: an Onboarding Manager can add, see and manage new hires.
+   * - `people_manager`: a People Manager can view employee profiles of the team members they manage and approve and decline time off and expenses for their employees.
+   *
+   */
+  role: string;
 };
 
 /**
  * Response schema listing many travel_letter_requests
  */
 export type ListTravelLettersResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-        travel_letter_requests?: Array<TravelLetterRequest>;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+    travel_letter_requests?: Array<TravelLetterRequest>;
+  };
 };
 
 /**
  * Shows a company with its refresh and access tokens. Please contact Remote if you need the tokens when creating a company.
  */
 export type CompanyWithTokensResponse = {
-    company?: Company;
-    tokens?: OAuth2Tokens;
+  company?: Company;
+  tokens?: OAuth2Tokens;
 };
 
 /**
  * Payload shape used to create invoice schedules.
  */
 export type ContractorInvoiceScheduleCreateParams = {
-    currency: CurrencyCode;
-    /**
-     * Employment identifier
-     */
-    employment_id: string;
-    /**
-     * List of invoice items that composes the overall invoice amount.
-     */
-    items: Array<ContractorInvoiceScheduleItem>;
-    /**
-     * Custom defined note.
-     */
-    note?: string;
-    /**
-     * Count of invoices that should be generated during schedule lifetime.
-     */
-    nr_occurrences?: number;
-    /**
-     * Invoice identifier.
-     */
-    number?: string;
-    periodicity: ContractorInvoiceSchedulePeriodicity;
-    /**
-     * Date of the first contractor invoice generation.
-     */
-    start_date: string;
+  currency: CurrencyCode;
+  /**
+   * Employment identifier
+   */
+  employment_id: string;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string;
+  /**
+   * Count of invoices that should be generated during schedule lifetime.
+   */
+  nr_occurrences?: number;
+  /**
+   * Invoice identifier.
+   */
+  number?: string;
+  periodicity: ContractorInvoiceSchedulePeriodicity;
+  /**
+   * Date of the first contractor invoice generation.
+   */
+  start_date: string;
 };
 
 /**
  * Response schema listing many offboardings
  */
 export type ListOffboardingResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        offboardings?: Array<Offboarding>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    offboardings?: Array<Offboarding>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Response schema for listing leave policies summary
  */
 export type ListLeavePoliciesSummaryResponse = {
-    data: Array<LeavePolicySummary>;
+  data: Array<LeavePolicySummary>;
 };
 
 export type OfferedBenefitGroup = {
-    benefit_group: BenefitGroup;
-    employee_stats: EmployeeStats;
-    offered_benefit_tiers: Array<OfferedBenefitTier>;
+  benefit_group: BenefitGroup;
+  employee_stats: EmployeeStats;
+  offered_benefit_tiers: Array<OfferedBenefitTier>;
 };
 
 export type TimeoffBalanceNotSupportedResponse = ResourceErrorResponse;
@@ -1748,85 +2037,89 @@ export type TimeoffBalanceNotSupportedResponse = ResourceErrorResponse;
  * Information about a list of billing documents
  */
 export type BillingDocumentsResponse = {
-    data: {
-        billing_documents: Array<{
-            bill_from?: string | null;
-            billing_document_period?: string;
-            billing_document_type?: 'reconciliation_invoice' | 'prefunding_invoice' | 'supplemental_service_invoice' | 'reconciliation_credit_note';
-            id?: string;
-        }>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page: number;
-        /**
-         * The total number of records returned counting all pages
-         */
-        total_count: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages: number;
-    };
+  data: {
+    billing_documents: Array<{
+      bill_from?: string | null;
+      billing_document_period?: string;
+      billing_document_type?:
+        | 'reconciliation_invoice'
+        | 'prefunding_invoice'
+        | 'supplemental_service_invoice'
+        | 'reconciliation_credit_note';
+      id?: string;
+    }>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page: number;
+    /**
+     * The total number of records returned counting all pages
+     */
+    total_count: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages: number;
+  };
 };
 
 /**
  * Payload shape used to update invoice schedules.
  */
 export type UpdateScheduleContractorInvoiceParams = {
-    currency?: CurrencyCode;
-    /**
-     * List of invoice items that composes the overall invoice amount.
-     */
-    items?: Array<ContractorInvoiceScheduleItem>;
-    /**
-     * Custom defined note.
-     */
-    note?: string | null;
-    /**
-     * Count of remaining invoices that should be generated.
-     */
-    nr_occurrences?: number | null;
-    /**
-     * Invoice identifier.
-     */
-    number?: string | null;
-    periodicity?: ContractorInvoiceSchedulePeriodicity;
-    start_date?: _Date;
+  currency?: CurrencyCode;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items?: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string | null;
+  /**
+   * Count of remaining invoices that should be generated.
+   */
+  nr_occurrences?: number | null;
+  /**
+   * Invoice identifier.
+   */
+  number?: string | null;
+  periodicity?: ContractorInvoiceSchedulePeriodicity;
+  start_date?: _Date;
 };
 
 export type CommonIncentiveParams = {
-    /**
-     * The amount (in the currency of the employment) to be given to the employee.
-     *
-     * This field accepts fractional amounts as well. However to avoid precision issues
-     * and errors that can arise from storing fractional amounts, the Remote API only
-     * accepts currencies and their fractional amounts as integers. This means you
-     * should append fractional amounts to the end of the amount you're passing in with
-     * this field.
-     *
-     * For example, if the incentive you're offering is EUR 500.25, you would specify `50025` as
-     * the amount for this field.
-     *
-     */
-    amount?: number;
-    amount_tax_type?: AmountTaxType;
-    /**
-     * The date at which the incentive should take effect.
-     *
-     * Note that the incentive is not paid out on the effective date, but during the
-     * next payroll cycle. The effective date determines which payroll cycle the
-     * incentive will be paid out in.
-     *
-     * The effective date needs to be today or a future date.
-     *
-     * Note for recurring incentives: since the months don't have the same amount of days,
-     * if day of month of `effective_date` is one of [28, 29, 30, 31] it will be transformed to
-     * the last day of each month, avoiding the possibility of skipping a month in the recurrence.
-     *
-     */
-    effective_date?: string;
-    note?: string | null;
+  /**
+   * The amount (in the currency of the employment) to be given to the employee.
+   *
+   * This field accepts fractional amounts as well. However to avoid precision issues
+   * and errors that can arise from storing fractional amounts, the Remote API only
+   * accepts currencies and their fractional amounts as integers. This means you
+   * should append fractional amounts to the end of the amount you're passing in with
+   * this field.
+   *
+   * For example, if the incentive you're offering is EUR 500.25, you would specify `50025` as
+   * the amount for this field.
+   *
+   */
+  amount?: number;
+  amount_tax_type?: AmountTaxType;
+  /**
+   * The date at which the incentive should take effect.
+   *
+   * Note that the incentive is not paid out on the effective date, but during the
+   * next payroll cycle. The effective date determines which payroll cycle the
+   * incentive will be paid out in.
+   *
+   * The effective date needs to be today or a future date.
+   *
+   * Note for recurring incentives: since the months don't have the same amount of days,
+   * if day of month of `effective_date` is one of [28, 29, 30, 31] it will be transformed to
+   * the last day of each month, avoiding the possibility of skipping a month in the recurrence.
+   *
+   */
+  effective_date?: string;
+  note?: string | null;
 };
 
 /**
@@ -1841,7 +2134,14 @@ export type CommonIncentiveParams = {
  * - `inactive`: Does not create any further contractor invoices but it's still possible for the employer to activate it again.
  *
  */
-export type ContractorInvoiceScheduleStatus = 'inactive' | 'completed' | 'active' | 'processing' | 'pending_company_action' | 'pending_contractor_action' | 'generation_failed_unrelated_to_withdrawal_method';
+export type ContractorInvoiceScheduleStatus =
+  | 'inactive'
+  | 'completed'
+  | 'active'
+  | 'processing'
+  | 'pending_company_action'
+  | 'pending_contractor_action'
+  | 'generation_failed_unrelated_to_withdrawal_method';
 
 /**
  * Required params to update an employment in the Sandbox environment.
@@ -1850,32 +2150,53 @@ export type ContractorInvoiceScheduleStatus = 'inactive' | 'completed' | 'active
  *
  */
 export type EmploymentUpdateParams = {
-    status?: EmploymentStatus;
+  status?: EmploymentStatus;
 };
 
 export type UpdateOffboardingParams = {
-    termination_details: {
-        /**
-         * In most cases, employee needs to be notified before termination. The required notice period depends on local labor laws, the employment agreement, and other factors. Remote will use those factors to determine the required notice period. Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.
-         */
-        proposed_termination_date?: string;
-        /**
-         * Description of the reason for termination
-         */
-        reason_description?: string;
-        /**
-         * Choose an accurate termination reason to avoid unfair or unlawful dismissal claims.
-         *
-         * If the termination is created before the employee's start date, this field
-         * will be set to `cancellation_before_start_date`.
-         *
-         */
-        termination_reason?: 'cancellation_before_start_date' | 'compliance_issue' | 'conversion_to_contractor' | 'dissatisfaction_with_remote_service' | 'end_of_fixed_term_contract_compliance_issue' | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties' | 'end_of_fixed_term_contract_local_regulations_max_term_reached' | 'end_of_fixed_term_contract_misconduct' | 'end_of_fixed_term_contract_operational_reasons' | 'end_of_fixed_term_contract_other' | 'end_of_fixed_term_contract_performance' | 'end_of_fixed_term_contract_redundancy' | 'end_of_fixed_term_contract_values' | 'gross_misconduct' | 'incapacity_to_perform_inherent_duties' | 'job_abandonment' | 'mutual_agreement' | 'other' | 'performance' | 'values' | 'workforce_reduction';
-    };
+  termination_details: {
+    /**
+     * In most cases, employee needs to be notified before termination. The required notice period depends on local labor laws, the employment agreement, and other factors. Remote will use those factors to determine the required notice period. Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.
+     */
+    proposed_termination_date?: string;
+    /**
+     * Description of the reason for termination
+     */
+    reason_description?: string;
+    /**
+     * Choose an accurate termination reason to avoid unfair or unlawful dismissal claims.
+     *
+     * If the termination is created before the employee's start date, this field
+     * will be set to `cancellation_before_start_date`.
+     *
+     */
+    termination_reason?:
+      | 'cancellation_before_start_date'
+      | 'compliance_issue'
+      | 'conversion_to_contractor'
+      | 'dissatisfaction_with_remote_service'
+      | 'end_of_fixed_term_contract_compliance_issue'
+      | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties'
+      | 'end_of_fixed_term_contract_local_regulations_max_term_reached'
+      | 'end_of_fixed_term_contract_misconduct'
+      | 'end_of_fixed_term_contract_operational_reasons'
+      | 'end_of_fixed_term_contract_other'
+      | 'end_of_fixed_term_contract_performance'
+      | 'end_of_fixed_term_contract_redundancy'
+      | 'end_of_fixed_term_contract_values'
+      | 'gross_misconduct'
+      | 'incapacity_to_perform_inherent_duties'
+      | 'job_abandonment'
+      | 'mutual_agreement'
+      | 'other'
+      | 'performance'
+      | 'values'
+      | 'workforce_reduction';
+  };
 };
 
 export type CostCalculatorListCountryResponse = {
-    data: Array<CostCalculatorCountryLevelRegion>;
+  data: Array<CostCalculatorCountryLevelRegion>;
 };
 
 /**
@@ -1889,69 +2210,75 @@ export type CostCalculatorCountryAvailability = 'active' | 'coming_soon';
  * Information of a billing document
  */
 export type BillingDocument = {
-    billing_document_currency: string;
-    billing_document_number: string;
-    billing_document_period: string;
-    billing_document_type: string;
-    company_id: string;
-    id: string;
-    issued_date: string;
-    items: Array<BillingDocumentAmountItem>;
-    total: number;
+  billing_document_currency: string;
+  billing_document_number: string;
+  billing_document_period: string;
+  billing_document_type: string;
+  company_id: string;
+  id: string;
+  issued_date: string;
+  items: Array<BillingDocumentAmountItem>;
+  total: number;
 };
 
 /**
  * The details of the requested changes for the contract amendment.
  */
 export type RequestDetails = {
-    additional_comments?: string | null;
-    effective_date?: string;
-    reason_for_change?: 'annual_pay_adjustment' | 'country_rule_change' | 'error_correction' | 'job_change_reevaluation' | 'promotion' | 'other';
-    /**
-     * This is filled when the reason_for_change is 'other'.
-     */
-    reason_for_change_description?: string | null;
-    salary_decrease_details?: SalaryDecreaseDetails;
+  additional_comments?: string | null;
+  effective_date?: string;
+  reason_for_change?:
+    | 'annual_pay_adjustment'
+    | 'country_rule_change'
+    | 'error_correction'
+    | 'job_change_reevaluation'
+    | 'promotion'
+    | 'other';
+  /**
+   * This is filled when the reason_for_change is 'other'.
+   */
+  reason_for_change_description?: string | null;
+  salary_decrease_details?: SalaryDecreaseDetails;
 };
 
 /**
  * Schema for travel letter request
  */
 export type TravelLetterResponse = {
-    data: {
-        travel_letter_request: TravelLetterRequest;
-    };
+  data: {
+    travel_letter_request: TravelLetterRequest;
+  };
 };
 
 /**
  * Params to create a time tracking
  */
 export type TimeTrackingParams = {
-    clock_in: DateTimeIso8601;
-    clock_out: DateTimeIso8601;
-    notes?: string | null;
-    timezone: Timezone;
-    type: 'regular_hours' | 'overtime' | 'on_call' | 'break' | 'unpaid_break';
+  clock_in: DateTimeIso8601;
+  clock_out: DateTimeIso8601;
+  notes?: string | null;
+  timezone: Timezone;
+  type: 'regular_hours' | 'overtime' | 'on_call' | 'break' | 'unpaid_break';
 };
 
 export type UnifiedMinimalBenefitGroup = {
-    name: string | null;
-    slug: Slug;
+  name: string | null;
+  slug: Slug;
 };
 
 export type Payslip = {
-    employment_id: string;
-    expected_payout_date?: _Date;
-    id: string;
-    issued_at: string;
-    /**
-     * This field is only shown if available
-     */
-    net_pay_converted_amount?: number;
-    /**
-     * This field is only shown if available
-     */
-    net_pay_source_amount?: number;
+  employment_id: string;
+  expected_payout_date?: _Date;
+  id: string;
+  issued_at: string;
+  /**
+   * This field is only shown if available
+   */
+  net_pay_converted_amount?: number;
+  /**
+   * This field is only shown if available
+   */
+  net_pay_source_amount?: number;
 };
 
 /**
@@ -1963,26 +2290,30 @@ export type UpdateExpenseParams = ApproveExpenseParams | DeclineExpenseParams;
  * Minimal information of an employment.
  */
 export type MinimalEmployment = {
-    country: Country;
-    /**
-     * Name of related department, if any. Otherwise, null.
-     */
-    department?: string | null;
-    /**
-     * Unique ID of related department, if any. Otherwise, null.
-     */
-    department_id?: string | null;
-    /**
-     * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
-     */
-    external_id: string | null;
-    full_name: string;
-    id: string;
-    job_title: string;
-    personal_email: string;
-    short_id: ShortId;
-    status: EmploymentStatus;
-    type: 'employee' | 'contractor' | 'direct_employee' | 'global_payroll_employee';
+  country: Country;
+  /**
+   * Name of related department, if any. Otherwise, null.
+   */
+  department?: string | null;
+  /**
+   * Unique ID of related department, if any. Otherwise, null.
+   */
+  department_id?: string | null;
+  /**
+   * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id: string | null;
+  full_name: string;
+  id: string;
+  job_title: string;
+  personal_email: string;
+  short_id: ShortId;
+  status: EmploymentStatus;
+  type:
+    | 'employee'
+    | 'contractor'
+    | 'direct_employee'
+    | 'global_payroll_employee';
 };
 
 /**
@@ -1996,72 +2327,88 @@ export type MinimalEmployment = {
 export type ProvisionalStartDate = string;
 
 export type ResourceErrorResponse = {
-    message: {
-        code?: 'resource_not_eligible' | 'resource_already_exists' | 'action_unrecognized' | 'action_invalid' | 'parameter_invalid_date' | 'resource_invalid_state' | 'parameter_value_invalid' | 'parameter_value_unknown' | 'request_body_empty' | 'request_internal_server_error' | 'parameter_required_missing' | 'parameter_one_of_required_missing' | 'parameter_unknown' | 'parameter_map_empty' | 'parameter_too_many' | 'resource_not_supported_for_country';
-        message?: string;
-        resource_id?: string | null;
-        resource_type?: string;
-    };
+  message: {
+    code?:
+      | 'resource_not_eligible'
+      | 'resource_already_exists'
+      | 'action_unrecognized'
+      | 'action_invalid'
+      | 'parameter_invalid_date'
+      | 'resource_invalid_state'
+      | 'parameter_value_invalid'
+      | 'parameter_value_unknown'
+      | 'request_body_empty'
+      | 'request_internal_server_error'
+      | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
+      | 'parameter_unknown'
+      | 'parameter_map_empty'
+      | 'parameter_too_many'
+      | 'resource_not_supported_for_country';
+    message?: string;
+    resource_id?: string | null;
+    resource_type?: string;
+  };
 };
 
 export type TimeoffBalance = {
-    /**
-     * Number of time off days for the employment, based on their contract.
-     *
-     * The value of this field is `0` if the employment's contract does not
-     * include that information.
-     *
-     */
-    contractual_entitled?: number;
-    /**
-     * Leave entitlement type for the employment, based on their contract.
-     *
-     * The value of this field is `fixed` when the employment has a fixed
-     * limit of time off days to be taken, and `unlimited` otherwise.
-     *
-     */
-    contractual_leave_entitlement_type: string;
-    /**
-     * Number of time off days taken by the employment as of today.
-     *
-     * You can get a list of taken time off data for this employment using the
-     * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
-     *
-     */
-    taken: TimeoffDaysAndHours | null;
-    /**
-     * A list of individual time off entitlements for the employment. This list
-     * gives more granular details for the type of time off that's available
-     * to the employment.
-     *
-     */
-    timeoff_entitlements: Array<TimeoffEntitlement>;
-    /**
-     * Number of time off days for the employment, based on their contract and
-     * any additional time off that's granted to them.
-     *
-     * This is the sum of all `entitled` fields in the `leave_entitlements`
-     * array, but does not take the hours into account.
-     *
-     */
-    total_entitled_days?: number;
-    /**
-     * Number of future, approved time off days for the employment, as of today.
-     *
-     * You can get a list of approved time off data for this employment using the
-     * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
-     *
-     */
-    upcoming_approved: TimeoffDaysAndHours | null;
-    /**
-     * Number of future, requested time off days for the employment, as of today.
-     *
-     * You can get a list of requested time off data for this employment using the
-     * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
-     *
-     */
-    upcoming_requested: TimeoffDaysAndHours | null;
-    working_hours_per_day: number;
+  /**
+   * Number of time off days for the employment, based on their contract.
+   *
+   * The value of this field is `0` if the employment's contract does not
+   * include that information.
+   *
+   */
+  contractual_entitled?: number;
+  /**
+   * Leave entitlement type for the employment, based on their contract.
+   *
+   * The value of this field is `fixed` when the employment has a fixed
+   * limit of time off days to be taken, and `unlimited` otherwise.
+   *
+   */
+  contractual_leave_entitlement_type: string;
+  /**
+   * Number of time off days taken by the employment as of today.
+   *
+   * You can get a list of taken time off data for this employment using the
+   * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
+   *
+   */
+  taken: TimeoffDaysAndHours | null;
+  /**
+   * A list of individual time off entitlements for the employment. This list
+   * gives more granular details for the type of time off that's available
+   * to the employment.
+   *
+   */
+  timeoff_entitlements: Array<TimeoffEntitlement>;
+  /**
+   * Number of time off days for the employment, based on their contract and
+   * any additional time off that's granted to them.
+   *
+   * This is the sum of all `entitled` fields in the `leave_entitlements`
+   * array, but does not take the hours into account.
+   *
+   */
+  total_entitled_days?: number;
+  /**
+   * Number of future, approved time off days for the employment, as of today.
+   *
+   * You can get a list of approved time off data for this employment using the
+   * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
+   *
+   */
+  upcoming_approved: TimeoffDaysAndHours | null;
+  /**
+   * Number of future, requested time off days for the employment, as of today.
+   *
+   * You can get a list of requested time off data for this employment using the
+   * [list time off endpoint](#tag/Time-Off/operation/get_index_timeoff).
+   *
+   */
+  upcoming_requested: TimeoffDaysAndHours | null;
+  working_hours_per_day: number;
 };
 
 /**
@@ -2081,225 +2428,228 @@ export type AmountTaxType = 'gross' | 'net';
  * Contract Amendment
  */
 export type ContractAmendment = {
-    amendment_contract_id: string | null;
-    /**
-     * Describes all the changes requested for the contract and contract details with all their previous and current values.
-     */
-    changes: {
-        [key: string]: unknown;
-    };
-    employment_id: string;
-    id: string;
-    request_details: RequestDetails;
-    requested_by: string;
-    status: ContractAmendmentStatus;
-    submitted_at: string;
-    zendesk_ticket_url: string | null;
+  amendment_contract_id: string | null;
+  /**
+   * Describes all the changes requested for the contract and contract details with all their previous and current values.
+   */
+  changes: {
+    [key: string]: unknown;
+  };
+  employment_id: string;
+  id: string;
+  request_details: RequestDetails;
+  requested_by: string;
+  status: ContractAmendmentStatus;
+  submitted_at: string;
+  zendesk_ticket_url: string | null;
 };
 
 /**
  * Schema for approved travel letter
  */
 export type ApprovedTravelLetter = {
-    employer_special_instructions?: string | null;
-    responsible_for_accommodation_cost: 'employee' | 'employer';
-    responsible_for_meal_cost: 'employee' | 'employer';
-    responsible_for_travel_cost: 'employee' | 'employer';
-    status: 'approved_by_manager';
+  employer_special_instructions?: string | null;
+  responsible_for_accommodation_cost: 'employee' | 'employer';
+  responsible_for_meal_cost: 'employee' | 'employer';
+  responsible_for_travel_cost: 'employee' | 'employer';
+  status: 'approved_by_manager';
 };
 
 export type DeclineTimeoffParams = {
-    decline_reason: string | null;
+  decline_reason: string | null;
 };
 
 /**
  * Description and status of an onboarding task.
  */
 export type TaskDescription = {
-    description?: string;
-    /**
-     * The status of the task
-     */
-    status?: 'completed' | 'pending';
+  description?: string;
+  /**
+   * The status of the task
+   */
+  status?: 'completed' | 'pending';
 };
 
-export type TimeoffBalanceNotFoundResponse = TimeoffBalanceNotSupportedResponse | NotFoundResponse;
+export type TimeoffBalanceNotFoundResponse =
+  | TimeoffBalanceNotSupportedResponse
+  | NotFoundResponse;
 
 /**
  * Response schema listing many timesheets
  */
 export type ListTimesheetsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        timesheets?: Array<Timesheet>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    timesheets?: Array<Timesheet>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Timeoff document params
  */
 export type TimeoffDocumentParams = {
-    /**
-     * The binary content of the file encoded with base64
-     */
-    content: string;
-    /**
-     * The file name of the document
-     */
-    name: string;
+  /**
+   * The binary content of the file encoded with base64
+   */
+  content: string;
+  /**
+   * The file name of the document
+   */
+  name: string;
 };
 
 export type Costs = {
-    employee_cost: number;
-    employer_cost: number;
+  employee_cost: number;
+  employer_cost: number;
 } | null;
 
-export type MaybeUnifiedEmploymentBenefitTier = UnifiedEmploymentBenefitTier | null;
+export type MaybeUnifiedEmploymentBenefitTier =
+  UnifiedEmploymentBenefitTier | null;
 
 /**
  * A subdivision of a supported country on Remote
  */
 export type CountrySubdivision = {
-    code?: string;
-    name: string;
-    subdivision_type?: string;
+  code?: string;
+  name: string;
+  subdivision_type?: string;
 };
 
 export type ResignationAfterStartDateRequestParams = {
-    accepts_proposed_notice: boolean;
-    agrees_to_pto_amount: boolean;
+  accepts_proposed_notice: boolean;
+  agrees_to_pto_amount: boolean;
+  /**
+   * Required if `agrees_to_pto_amount` is set to false.
+   */
+  agrees_to_pto_amount_notes?: string;
+  agrees_to_resignation_reason: boolean;
+  /**
+   * required if `agrees_to_resignation_reason` is set to false.
+   */
+  agrees_to_resignation_reason_notes?: string;
+  has_additional_information: boolean;
+  /**
+   * required if `has_additional_information` is set to true.
+   */
+  has_additional_information_notes?: string;
+  has_more_salary_info: boolean;
+  /**
+   * required if `has_more_salary_info` is set to true.
+   */
+  has_more_salary_info_notes?: string;
+  is_owed_outstanding_reimbursements: boolean;
+  /**
+   * required if `is_owed_outstanding_reimbursements` is set to true.
+   */
+  owed_outstanding_reimbursements?: {
     /**
-     * Required if `agrees_to_pto_amount` is set to false.
-     */
-    agrees_to_pto_amount_notes?: string;
-    agrees_to_resignation_reason: boolean;
-    /**
-     * required if `agrees_to_resignation_reason` is set to false.
-     */
-    agrees_to_resignation_reason_notes?: string;
-    has_additional_information: boolean;
-    /**
-     * required if `has_additional_information` is set to true.
-     */
-    has_additional_information_notes?: string;
-    has_more_salary_info: boolean;
-    /**
-     * required if `has_more_salary_info` is set to true.
-     */
-    has_more_salary_info_notes?: string;
-    is_owed_outstanding_reimbursements: boolean;
-    /**
-     * required if `is_owed_outstanding_reimbursements` is set to true.
-     */
-    owed_outstanding_reimbursements?: {
-        /**
-         * The amount (in the currency of the employment) to be given to the employee.
-         *
-         * This field accepts fractional amounts as well. However to avoid precision issues
-         * and errors that can arise from storing fractional amounts, the Remote API only
-         * accepts currencies and their fractional amounts as integers. This means you
-         * should append fractional amounts to the end of the amount you're passing in with
-         * this field.
-         *
-         * For example, if the amount you're offering is EUR 500.25, you would specify `50025` as
-         * the amount for this field.
-         *
-         */
-        amount?: number;
-        notes?: string;
-    };
-    /**
-     * Required if `accepts_proposed_notice` is set to false.
-     */
-    proposed_last_date?: {
-        date?: string;
-        notes?: string;
-    };
-    /**
-     * Paid time off accuracy
+     * The amount (in the currency of the employment) to be given to the employee.
      *
-     * Typically, any vacation pay accrued and unpaid at the time
-     * of termination must be paid out to the employee. To avoid overpaying or underpaying,
-     * please make sure we have an accurate account of their paid time off by querying the
-     * [Show Time Off Balance](#operation/get_show_timeoff_balance) endpoint,
-     * filtering by the `employment_id`.
-     * This optional document should be sent in case of any discrepancies.
+     * This field accepts fractional amounts as well. However to avoid precision issues
+     * and errors that can arise from storing fractional amounts, the Remote API only
+     * accepts currencies and their fractional amounts as integers. This means you
+     * should append fractional amounts to the end of the amount you're passing in with
+     * this field.
+     *
+     * For example, if the amount you're offering is EUR 500.25, you would specify `50025` as
+     * the amount for this field.
      *
      */
-    timesheet_file?: ResignationFile;
-    will_take_more_pto: boolean;
-    /**
-     * required if `will_take_more_pto` is set to true.
-     */
-    will_take_more_pto_notes?: string;
+    amount?: number;
+    notes?: string;
+  };
+  /**
+   * Required if `accepts_proposed_notice` is set to false.
+   */
+  proposed_last_date?: {
+    date?: string;
+    notes?: string;
+  };
+  /**
+   * Paid time off accuracy
+   *
+   * Typically, any vacation pay accrued and unpaid at the time
+   * of termination must be paid out to the employee. To avoid overpaying or underpaying,
+   * please make sure we have an accurate account of their paid time off by querying the
+   * [Show Time Off Balance](#operation/get_show_timeoff_balance) endpoint,
+   * filtering by the `employment_id`.
+   * This optional document should be sent in case of any discrepancies.
+   *
+   */
+  timesheet_file?: ResignationFile;
+  will_take_more_pto: boolean;
+  /**
+   * required if `will_take_more_pto` is set to true.
+   */
+  will_take_more_pto_notes?: string;
 };
 
 /**
  * Update timeoff params
  */
 export type UpdateApprovedTimeoffParams = {
-    approved_at?: DateTimeIso8601;
-    approver_id?: NullableApproverId;
-    /**
-     * The reason for cancelling a time off. Required when updating to status `cancelled`.
-     */
-    cancel_reason: string;
-    document?: TimeoffDocumentParams;
-    /**
-     * The reason for the update. Required when updating the time off data but not changing the status.
-     */
-    edit_reason: string;
-    end_date?: _Date;
-    notes?: string;
-    start_date?: _Date;
-    /**
-     * @deprecated
-     */
-    status?: 'approved' | 'cancelled';
-    timeoff_days?: Array<TimeoffDaysParams>;
-    timeoff_type?: TimeoffType;
-    timezone?: Timezone;
+  approved_at?: DateTimeIso8601;
+  approver_id?: NullableApproverId;
+  /**
+   * The reason for cancelling a time off. Required when updating to status `cancelled`.
+   */
+  cancel_reason: string;
+  document?: TimeoffDocumentParams;
+  /**
+   * The reason for the update. Required when updating the time off data but not changing the status.
+   */
+  edit_reason: string;
+  end_date?: _Date;
+  notes?: string;
+  start_date?: _Date;
+  /**
+   * @deprecated
+   */
+  status?: 'approved' | 'cancelled';
+  timeoff_days?: Array<TimeoffDaysParams>;
+  timeoff_type?: TimeoffType;
+  timezone?: Timezone;
 };
 
 /**
  * Probation completion letter request response
  */
 export type ProbationCompletionLetterResponse = {
-    data: {
-        probation_completion_letter: ProbationCompletionLetter;
-    };
+  data: {
+    probation_completion_letter: ProbationCompletionLetter;
+  };
 };
 
 /**
  * Response schema listing many timeoffs
  */
 export type ListTimeoffResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        timeoffs?: Array<Timeoff>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    timeoffs?: Array<Timeoff>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
@@ -2311,372 +2661,435 @@ export type ListTimeoffResponse = {
  * There are no flows that change the status of an expense to `draft` automatically. This is purely a manual action by the employee.
  *
  */
-export type ExpenseOrDraft = ({
-    status?: 'approved';
-} & Expense) | ({
-    status?: 'archived';
-} & DraftExpense);
+export type ExpenseOrDraft =
+  | ({
+      status?: 'approved';
+    } & Expense)
+  | ({
+      status?: 'archived';
+    } & DraftExpense);
 
 export type ListCompanyDepartmentsPaginatedResponse = {
-    current_page: number;
-    data: {
-        company_departments: Array<CompanyDepartment>;
-    };
-    total_count: number;
-    total_pages: number;
+  current_page: number;
+  data: {
+    company_departments: Array<CompanyDepartment>;
+  };
+  total_count: number;
+  total_pages: number;
 };
 
 export type MagicLinkResponse = {
-    data: {
-        url: string;
-    };
+  data: {
+    url: string;
+  };
 };
 
 /**
  * The stage of employment lifecycle. When it's `onboarded` means the employee is ready to commence or has already commenced.
  */
-export type EmploymentLifecycleStage = 'employment_creation' | 'employee_self_enrollment' | 'right_to_work_check' | 'contract_signing' | 'remote_enrollment' | 'onboarded' | 'offboarded';
+export type EmploymentLifecycleStage =
+  | 'employment_creation'
+  | 'employee_self_enrollment'
+  | 'right_to_work_check'
+  | 'contract_signing'
+  | 'remote_enrollment'
+  | 'onboarded'
+  | 'offboarded';
 
 export type RecurringIncentive = {
-    amount: number;
-    amount_tax_type: AmountTaxType;
-    employment_id: string;
-    end_date?: string | null;
-    id: string;
-    note?: string | null;
-    start_date: string;
-    status: 'active' | 'inactive';
-    type: 'acting_up_allowance' | 'allowance' | 'car_allowance' | 'health_and_wellness_allowance' | 'internet_allowance' | 'meal_allowance' | 'on_call_allowance' | 'parenthood_allowance' | 'phone_allowance' | 'relocation_allowance' | 'travel_allowance' | 'work_from_home_allowance' | 'bonus' | 'holiday_bonus' | 'referral_bonus' | 'retention_bonus' | 'commission' | 'other' | 'overtime' | 'stipend';
+  amount: number;
+  amount_tax_type: AmountTaxType;
+  employment_id: string;
+  end_date?: string | null;
+  id: string;
+  note?: string | null;
+  start_date: string;
+  status: 'active' | 'inactive';
+  type:
+    | 'acting_up_allowance'
+    | 'allowance'
+    | 'car_allowance'
+    | 'health_and_wellness_allowance'
+    | 'internet_allowance'
+    | 'meal_allowance'
+    | 'on_call_allowance'
+    | 'parenthood_allowance'
+    | 'phone_allowance'
+    | 'relocation_allowance'
+    | 'travel_allowance'
+    | 'work_from_home_allowance'
+    | 'bonus'
+    | 'holiday_bonus'
+    | 'referral_bonus'
+    | 'retention_bonus'
+    | 'commission'
+    | 'other'
+    | 'overtime'
+    | 'stipend';
 };
 
 export type IdentityCustomerAccessTokenResponse = {
-    data: {
-        company: IdentityCompany;
-        user: IdentityUser;
-    };
+  data: {
+    company: IdentityCompany;
+    user: IdentityUser;
+  };
 };
 
 export type ValidationError = {
-    errors: {
-        [key: string]: unknown;
-    };
+  errors: {
+    [key: string]: unknown;
+  };
 };
 
-export type ProbationExtensionStatus = 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
+export type ProbationExtensionStatus =
+  | 'submitted'
+  | 'in_review'
+  | 'done'
+  | 'canceled'
+  | 'deleted';
 
 /**
  * Contract Amendment Automatable response
  */
 export type ContractAmendmentAutomatableResponse = {
-    data?: {
-        /**
-         * If true, it means that the contract amendment request is automatable.
-         */
-        automatable?: boolean;
-        /**
-         * The message to explain how the contract amendment request will be processed depending if it is automatable or not.
-         */
-        message?: string;
-    };
+  data?: {
+    /**
+     * If true, it means that the contract amendment request is automatable.
+     */
+    automatable?: boolean;
+    /**
+     * The message to explain how the contract amendment request will be processed depending if it is automatable or not.
+     */
+    message?: string;
+  };
 };
 
 export type BenefitOffer = {
-    benefit_group: BenefitGroup;
-    benefit_tier: BenefitTier | null;
-    benefits: Array<Benefit>;
-    costs: Costs;
+  benefit_group: BenefitGroup;
+  benefit_tier: BenefitTier | null;
+  benefits: Array<Benefit>;
+  costs: Costs;
 };
 
 export type Incentive = {
-    amount: number;
-    amount_tax_type: AmountTaxType;
-    effective_date: string | null;
-    employment_id: string;
-    expected_payout_date?: string | null;
-    id: string;
-    note?: string | null;
-    recurring_incentive_id?: string | null;
-    status: string;
-    type: string;
+  amount: number;
+  amount_tax_type: AmountTaxType;
+  effective_date: string | null;
+  employment_id: string;
+  expected_payout_date?: string | null;
+  id: string;
+  note?: string | null;
+  recurring_incentive_id?: string | null;
+  status: string;
+  type: string;
 };
 
 /**
  * Object with required and optional fields, its descriptions and suggested presentation
  */
 export type CountryFormResponse = {
-    data?: {
-        [key: string]: unknown;
-    };
+  data?: {
+    [key: string]: unknown;
+  };
 };
 
 export type HoursAndMinutes = {
-    hours?: number;
-    minutes?: number;
+  hours?: number;
+  minutes?: number;
 };
 
 /**
  * Schema for declined travel letter
  */
 export type DeclinedTravelLetter = {
-    employer_special_instructions?: string | null;
-    reason: string;
-    status: 'declined_by_manager';
+  employer_special_instructions?: string | null;
+  reason: string;
+  status: 'declined_by_manager';
 };
 
 export type SsoConfiguration = {
-    audience_uri: string;
-    domain: string;
-    identity_provider_url: string;
-    sso_url: string;
+  audience_uri: string;
+  domain: string;
+  identity_provider_url: string;
+  sso_url: string;
 };
 
 /**
  * Object with required and optional fields, its descriptions and suggested presentation
  */
 export type ContractAmendmentFormResponse = {
-    data?: {
-        [key: string]: unknown;
-    };
+  data?: {
+    [key: string]: unknown;
+  };
 };
 
 /**
  * All tasks that need to be completed before marking the employment as ready
  */
 export type OnboardingTasks = {
-    address_details: TaskDescription;
-    administrative_details: TaskDescription;
-    bank_account_details: TaskDescription;
-    billing_address_details: TaskDescription;
-    contract_details: TaskDescription;
-    emergency_contact_details: TaskDescription;
-    employment_document_details: TaskDescription;
-    personal_details: TaskDescription;
-    pricing_plan_details: TaskDescription;
+  address_details: TaskDescription;
+  administrative_details: TaskDescription;
+  bank_account_details: TaskDescription;
+  billing_address_details: TaskDescription;
+  contract_details: TaskDescription;
+  emergency_contact_details: TaskDescription;
+  employment_document_details: TaskDescription;
+  personal_details: TaskDescription;
+  pricing_plan_details: TaskDescription;
 };
 
 /**
  * The data entry access of the custom field
  */
-export type CustomFieldDataEntryAccess = 'company_admin_only' | 'employee_only' | 'everyone';
+export type CustomFieldDataEntryAccess =
+  | 'company_admin_only'
+  | 'employee_only'
+  | 'everyone';
 
 export type UpdateIncentiveParams = CommonIncentiveParams & {
-    /**
-     * A valid type according to the payment frequency
-     */
-    type?: string;
+  /**
+   * A valid type according to the payment frequency
+   */
+  type?: string;
 };
 
 /**
  * Parameters to upload a file
  */
 export type FileParams = {
-    employment_id: string;
-    file: Blob | File;
+  employment_id: string;
+  file: Blob | File;
 };
 
 /**
  * Leave Policy Summary
  */
 export type LeavePolicySummary = {
-    /**
-     * The annual balance represents the balance for the current entitlement period.
-     * Unlike the regular balance, it does not account for accrued value and only considers the annual entitlement as the basis for calculations.
-     *
-     */
-    annual_balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
-    /**
-     * The annual entitlement represents what an employee is entitled to in the current entitlement period.
-     * It does not account for any accrued value.
-     *
-     */
-    annual_entitlement: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
-    /**
-     * The balance is the entitlement minus the taken timeoff (i.e 10 entitlement - 3 taken = 7 balance)
-     */
-    balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
-    /**
-     * The current entitlement is the accrued time entitled for the employee plus any other extra entitlements (such as carryover).
-     */
-    current_entitlement: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
-    leave_policy: EmployeeLeavePolicy;
-    /**
-     * Includes requested timeoffs (not approved) in the past or in the future.
-     */
-    pending_approval: {
-        days: number;
-        hours: number;
-        type: 'limited';
-    };
-    /**
-     * Includes all time off (past and future, pending or approved).
-     */
-    taken: {
-        days: number;
-        hours: number;
-        type: 'limited';
-    };
-    /**
-     * Includes all upcoming approved time off.
-     */
-    upcoming_approved: {
-        days: number;
-        hours: number;
-        type: 'limited';
-    };
-    /**
-     * Includes all upcoming requested time off.
-     */
-    upcoming_requested: {
-        days: number;
-        hours: number;
-        type: 'limited';
-    };
-    /**
-     * Includes only approved time off in the past.
-     */
-    used: {
-        days: number;
-        hours: number;
-        type: 'limited';
-    };
-    working_hours_per_day: number;
+  /**
+   * The annual balance represents the balance for the current entitlement period.
+   * Unlike the regular balance, it does not account for accrued value and only considers the annual entitlement as the basis for calculations.
+   *
+   */
+  annual_balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
+  /**
+   * The annual entitlement represents what an employee is entitled to in the current entitlement period.
+   * It does not account for any accrued value.
+   *
+   */
+  annual_entitlement:
+    | UnlimitedDaysandHoursResponse
+    | LimitedDaysandHoursResponse;
+  /**
+   * The balance is the entitlement minus the taken timeoff (i.e 10 entitlement - 3 taken = 7 balance)
+   */
+  balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
+  /**
+   * The current entitlement is the accrued time entitled for the employee plus any other extra entitlements (such as carryover).
+   */
+  current_entitlement:
+    | UnlimitedDaysandHoursResponse
+    | LimitedDaysandHoursResponse;
+  leave_policy: EmployeeLeavePolicy;
+  /**
+   * Includes requested timeoffs (not approved) in the past or in the future.
+   */
+  pending_approval: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  /**
+   * Includes all time off (past and future, pending or approved).
+   */
+  taken: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  /**
+   * Includes all upcoming approved time off.
+   */
+  upcoming_approved: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  /**
+   * Includes all upcoming requested time off.
+   */
+  upcoming_requested: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  /**
+   * Includes only approved time off in the past.
+   */
+  used: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  working_hours_per_day: number;
 };
 
 export type EmploymentCreationResponse = {
-    data?: {
-        employment?: EmploymentBasicResponse;
-    };
+  data?: {
+    employment?: EmploymentBasicResponse;
+  };
 };
 
 /**
  * Parameters to complete onboarding
  */
 export type CompleteOnboarding = {
-    employment_id?: string;
+  employment_id?: string;
 };
 
 /**
  * The status of employment
  */
-export type EmploymentStatus = 'active' | 'created' | 'created_awaiting_reserve' | 'created_reserve_paid' | 'initiated' | 'invited' | 'pending' | 'review' | 'archived' | 'deleted';
+export type EmploymentStatus =
+  | 'active'
+  | 'created'
+  | 'created_awaiting_reserve'
+  | 'created_reserve_paid'
+  | 'initiated'
+  | 'invited'
+  | 'pending'
+  | 'review'
+  | 'archived'
+  | 'deleted';
 
 export type CostCalculatorEmployment = {
-    country: MinimalCountry;
-    employer_currency_costs: CostCalculatorCosts;
-    has_extra_statutory_payment: boolean;
-    region: MinimalRegion;
-    regional_currency_costs: CostCalculatorCosts;
+  country: MinimalCountry;
+  employer_currency_costs: CostCalculatorCosts;
+  has_extra_statutory_payment: boolean;
+  region: MinimalRegion;
+  regional_currency_costs: CostCalculatorCosts;
 };
 
 export type CreateCompanyParams = {
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `address_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    address_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `bank_account_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    bank_account_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * The company owner email.
-     *
-     * This value cannot be changed once set.
-     *
-     */
-    company_owner_email: string;
-    /**
-     * The company owner name.
-     *
-     * This value cannot be changed from the Remote API once set.
-     *
-     */
-    company_owner_name: string;
-    /**
-     * 3-letter country code of the country the company address is located in.
-     *
-     * For a list of countries supported through the Remote API, make a call to the [list countries endpoint](#tag/Countries/operation/get_supported_country). This endpoint will also include the 3-letter country codes you can use for this field.
-     *
-     */
-    country_code: string;
-    /**
-     * Desired currency for invoicing and displaying converted salaries in Remote UI regardless of the employee's country.
-     */
-    desired_currency: 'AUD' | 'CAD' | 'CHF' | 'DKK' | 'EUR' | 'GBP' | 'JPY' | 'NOK' | 'NZD' | 'SEK' | 'SGD' | 'USD';
-    /**
-     * The domain of the company. Use this field to specify the company domain name when it's different from the domain in the company owner's email.
-     */
-    email_domain?: string;
-    /**
-     * Id of the company as represented in the external partner system.
-     */
-    external_id?: string;
-    /**
-     * The company name
-     */
-    name: string;
-    /**
-     * A phone number the company can be contacted with.
-     */
-    phone_number?: string;
-    /**
-     * The company registration number. This field or `tax_number` (but not both) should be submitted.
-     */
-    registration_number?: string;
-    /**
-     * The tax identifier of the company. This field or `registration_number` (but not both) should be submitted.
-     */
-    tax_number?: string;
-    /**
-     * Date and time the Terms of Service were accepted. To ensure users read the most recent version of Remote's Terms of Service, their action cannot have been done more than fifteen minutes ago. The UTC offset must be included in the ISO 8601 format: `YYYY-MM-DD HOURS:MINUTES:SECONDSZ`
-     */
-    terms_of_service_accepted_at: string;
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `address_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  address_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `bank_account_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * The company owner email.
+   *
+   * This value cannot be changed once set.
+   *
+   */
+  company_owner_email: string;
+  /**
+   * The company owner name.
+   *
+   * This value cannot be changed from the Remote API once set.
+   *
+   */
+  company_owner_name: string;
+  /**
+   * 3-letter country code of the country the company address is located in.
+   *
+   * For a list of countries supported through the Remote API, make a call to the [list countries endpoint](#tag/Countries/operation/get_supported_country). This endpoint will also include the 3-letter country codes you can use for this field.
+   *
+   */
+  country_code: string;
+  /**
+   * Desired currency for invoicing and displaying converted salaries in Remote UI regardless of the employee's country.
+   */
+  desired_currency:
+    | 'AUD'
+    | 'CAD'
+    | 'CHF'
+    | 'DKK'
+    | 'EUR'
+    | 'GBP'
+    | 'JPY'
+    | 'NOK'
+    | 'NZD'
+    | 'SEK'
+    | 'SGD'
+    | 'USD';
+  /**
+   * The domain of the company. Use this field to specify the company domain name when it's different from the domain in the company owner's email.
+   */
+  email_domain?: string;
+  /**
+   * Id of the company as represented in the external partner system.
+   */
+  external_id?: string;
+  /**
+   * The company name
+   */
+  name: string;
+  /**
+   * A phone number the company can be contacted with.
+   */
+  phone_number?: string;
+  /**
+   * The company registration number. This field or `tax_number` (but not both) should be submitted.
+   */
+  registration_number?: string;
+  /**
+   * The tax identifier of the company. This field or `registration_number` (but not both) should be submitted.
+   */
+  tax_number?: string;
+  /**
+   * Date and time the Terms of Service were accepted. To ensure users read the most recent version of Remote's Terms of Service, their action cannot have been done more than fifteen minutes ago. The UTC offset must be included in the ISO 8601 format: `YYYY-MM-DD HOURS:MINUTES:SECONDSZ`
+   */
+  terms_of_service_accepted_at: string;
 };
 
 /**
  * Response schema listing many payroll_calendars
  */
 export type PayrollCalendarsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        payroll_calendars?: Array<PayrollCalendar>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    payroll_calendars?: Array<PayrollCalendar>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Response schema to show a Contractor Invoice Schedule
  */
 export type ContractorInvoiceScheduleResponse = {
-    data: {
-        contractor_invoice_schedule: ContractorInvoiceSchedule;
-    };
+  data: {
+    contractor_invoice_schedule: ContractorInvoiceSchedule;
+  };
 };
 
 export type Slug = string;
 
 export type BenefitRenewalRequestsMinimalBenefitRenewalResponse = {
-    benefit_tier: NullableMinimalBenefitTier;
-    updated_at: DateTime;
+  benefit_tier: NullableMinimalBenefitTier;
+  updated_at: DateTime;
 };
 
 export type UuidSlug = string;
@@ -2685,41 +3098,41 @@ export type UuidSlug = string;
  * Params to create a timesheet
  */
 export type CreateTimesheetParams = {
-    employment_id: UuidSlug;
-    end_date: _Date;
-    start_date: _Date;
-    time_trackings: Array<TimeTrackingParams>;
+  employment_id: UuidSlug;
+  end_date: _Date;
+  start_date: _Date;
+  time_trackings: Array<TimeTrackingParams>;
 };
 
 export type EmployeeStats = {
-    number_of_employees_enrolled: number;
-    number_of_employees_offered: number;
+  number_of_employees_enrolled: number;
+  number_of_employees_offered: number;
 };
 
 /**
  * Timesheet
  */
 export type Timesheet = {
-    approval_required: boolean;
-    break_hours: HoursAndMinutes;
-    country_code: CountryCode;
-    employment_id: UuidSlug;
-    end_date: _Date;
-    holiday_hours: HoursAndMinutes;
-    id: UuidSlug;
-    night_hours: HoursAndMinutes;
-    notes: string | null;
-    on_call_hours: HoursAndMinutes;
-    overtime_hours: HoursAndMinutes;
-    regular_hours: HoursAndMinutes;
-    start_date: _Date;
-    status: TimesheetStatus;
-    submitted_at: string | null;
-    time_trackings: Array<TimeTracking>;
-    timeoff_hours?: HoursAndMinutes;
-    total_hours: HoursAndMinutes;
-    unpaid_break_hours: HoursAndMinutes;
-    weekend_hours: HoursAndMinutes;
+  approval_required: boolean;
+  break_hours: HoursAndMinutes;
+  country_code: CountryCode;
+  employment_id: UuidSlug;
+  end_date: _Date;
+  holiday_hours: HoursAndMinutes;
+  id: UuidSlug;
+  night_hours: HoursAndMinutes;
+  notes: string | null;
+  on_call_hours: HoursAndMinutes;
+  overtime_hours: HoursAndMinutes;
+  regular_hours: HoursAndMinutes;
+  start_date: _Date;
+  status: TimesheetStatus;
+  submitted_at: string | null;
+  time_trackings: Array<TimeTracking>;
+  timeoff_hours?: HoursAndMinutes;
+  total_hours: HoursAndMinutes;
+  unpaid_break_hours: HoursAndMinutes;
+  weekend_hours: HoursAndMinutes;
 };
 
 /**
@@ -2729,58 +3142,58 @@ export type Timesheet = {
  *
  */
 export type Benefit = {
-    costs: Costs;
-    coverage_end_date: string;
-    coverage_start_date: string;
-    id: string;
-    name: string;
-    projected_costs: Costs;
-    provider: BenefitProvider;
-    status: 'offered' | 'enrolled' | 'waived';
-    type: string;
+  costs: Costs;
+  coverage_end_date: string;
+  coverage_start_date: string;
+  id: string;
+  name: string;
+  projected_costs: Costs;
+  provider: BenefitProvider;
+  status: 'offered' | 'enrolled' | 'waived';
+  type: string;
 };
 
 export type BaseTokenResponse = {
-    /**
-     * A JWT token.
-     */
-    access_token?: string;
-    /**
-     * Number of seconds until token is expired.
-     */
-    expires_in?: number;
-    /**
-     * The type of the token. For now, always `Bearer`.
-     */
-    token_type?: string;
+  /**
+   * A JWT token.
+   */
+  access_token?: string;
+  /**
+   * Number of seconds until token is expired.
+   */
+  expires_in?: number;
+  /**
+   * The type of the token. For now, always `Bearer`.
+   */
+  token_type?: string;
 };
 
 /**
  * Response schema listing many expenses
  */
 export type ListExpenseResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        expenses?: Array<ExpenseOrDraft>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    expenses?: Array<ExpenseOrDraft>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * SSO Configuration response
  */
 export type SsoConfigurationResponse = {
-    data?: SsoConfiguration;
+  data?: SsoConfiguration;
 };
 
 /**
@@ -2788,46 +3201,46 @@ export type SsoConfigurationResponse = {
  *
  */
 export type BenefitRenewalRequestsBenefitRenewalRequestFormResponse = {
-    data?: {
-        [key: string]: unknown;
-    };
+  data?: {
+    [key: string]: unknown;
+  };
 };
 
 /**
  * Approved timeoff creation params
  */
 export type CreateApprovedTimeoffParams = CreateTimeoffParams & {
-    approved_at: DateTimeIso8601;
-    approver_id: NullableApproverId;
-    status: 'approved';
+  approved_at: DateTimeIso8601;
+  approver_id: NullableApproverId;
+  status: 'approved';
 };
 
 /**
  * Timeoff response
  */
 export type TimeoffResponse = {
-    data: {
-        timeoff: Timeoff;
-    };
+  data: {
+    timeoff: Timeoff;
+  };
 };
 
 export type ResignationBeforeStartDateRequestParams = {
-    proposed_resignation_accepted: boolean;
-    /**
-     * Required if `proposed_resignation_accepted` is set to false.
-     */
-    proposed_resignation_accepted_notes?: string;
+  proposed_resignation_accepted: boolean;
+  /**
+   * Required if `proposed_resignation_accepted` is set to false.
+   */
+  proposed_resignation_accepted_notes?: string;
 };
 
 export type SsoConfigurationDetails = {
-    audience_uri: string;
-    sso_url: string;
+  audience_uri: string;
+  sso_url: string;
 };
 
 export type SuccessResponse = {
-    data: {
-        status?: string;
-    };
+  data: {
+    status?: string;
+  };
 };
 
 /**
@@ -2839,15 +3252,15 @@ export type CustomFieldVisibilityScope = 'company_admin_only' | 'everyone';
  * Time breakdown for a TimeTracking
  */
 export type TimeBreakdown = {
-    day: TypeOfDayBreakdown;
-    night: TypeOfDayBreakdown;
+  day: TypeOfDayBreakdown;
+  night: TypeOfDayBreakdown;
 };
 
 export type PayrollCalendar = {
-    country: Country;
-    cycle_frequency: CycleFrequency;
-    cycles: Array<Cycle>;
-    owned_by_remote: boolean;
+  country: Country;
+  cycle_frequency: CycleFrequency;
+  cycles: Array<Cycle>;
+  owned_by_remote: boolean;
 };
 
 /**
@@ -2858,207 +3271,217 @@ export type PayslipDownloadResponse = Blob | File;
 /**
  * Schema for updating travel letter request parameters
  */
-export type UpdateTravelLetterRequestParams = ApprovedTravelLetter | DeclinedTravelLetter;
+export type UpdateTravelLetterRequestParams =
+  | ApprovedTravelLetter
+  | DeclinedTravelLetter;
 
 /**
  * Travel Letter Request
  */
 export type TravelLetterRequest = {
-    additional_information: string;
-    destination_country: Country;
-    embassy_address: string;
-    employer_approver: TravelLetterUser;
-    employer_special_instructions: string | null;
-    id: string;
-    reason: string;
-    requires_travel_address: boolean;
-    responsible_for_accommodation_cost: 'employee' | 'employer';
-    responsible_for_meal_cost: 'employee' | 'employer';
-    responsible_for_travel_cost: 'employee' | 'employer';
-    status: 'pending' | 'cancelled' | 'declined_by_manager' | 'declined_by_remote' | 'approved_by_manager' | 'approved_by_remote';
-    submitted_at: DateTimeIso8601;
-    travel_address: string | null;
-    travel_date_end: _Date;
-    travel_date_start: _Date;
-    travel_document_number: string;
-    travel_reason: string;
-    travel_reason_details: string;
-    user: TravelLetterUser;
+  additional_information: string;
+  destination_country: Country;
+  embassy_address: string;
+  employer_approver: TravelLetterUser;
+  employer_special_instructions: string | null;
+  id: string;
+  reason: string;
+  requires_travel_address: boolean;
+  responsible_for_accommodation_cost: 'employee' | 'employer';
+  responsible_for_meal_cost: 'employee' | 'employer';
+  responsible_for_travel_cost: 'employee' | 'employer';
+  status:
+    | 'pending'
+    | 'cancelled'
+    | 'declined_by_manager'
+    | 'declined_by_remote'
+    | 'approved_by_manager'
+    | 'approved_by_remote';
+  submitted_at: DateTimeIso8601;
+  travel_address: string | null;
+  travel_date_end: _Date;
+  travel_date_start: _Date;
+  travel_document_number: string;
+  travel_reason: string;
+  travel_reason_details: string;
+  user: TravelLetterUser;
 };
 
 /**
  * Resignation
  */
 export type Resignation = {
-    resignation?: ResignationBeforeStartDate | ResignationAfterStartDate;
+  resignation?: ResignationBeforeStartDate | ResignationAfterStartDate;
 };
 
 /**
  * Leave Policy abstraction representation for the employee
  */
 export type EmployeeLeavePolicy = {
-    description: string | null;
-    leave_type: TimeoffType;
-    name: string;
-    unit: 'days' | 'hours' | 'unlimited';
+  description: string | null;
+  leave_type: TimeoffType;
+  name: string;
+  unit: 'days' | 'hours' | 'unlimited';
 };
 
 export type CreateSsoConfigurationParams = {
-    certificate: Blob | File;
-    domain: string;
-    identity_provider_url: string;
+  certificate: Blob | File;
+  domain: string;
+  identity_provider_url: string;
 };
 
 /**
  * Magic link params
  */
-export type MagicLinkParams = {
-    employment_id: UuidSlug;
-    user_id?: UuidSlug;
-} | {
-    user_id?: UuidSlug;
-};
+export type MagicLinkParams =
+  | {
+      employment_id: UuidSlug;
+      user_id?: UuidSlug;
+    }
+  | {
+      user_id?: UuidSlug;
+    };
 
 /**
  * Response schema listing many work_authorization_requests
  */
 export type ListWorkAuthorizationRequestsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-        work_authorization_requests?: Array<WorkAuthorizationRequest>;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+    work_authorization_requests?: Array<WorkAuthorizationRequest>;
+  };
 };
 
 /**
  * CreateEmploymentCustomFieldResponse
  */
 export type CreateEmploymentCustomFieldResponse = {
-    data: {
-        custom_field: EmploymentCustomField;
-    };
+  data: {
+    custom_field: EmploymentCustomField;
+  };
 };
 
 export type FullParams = {
-    /**
-     * Home address information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `address_details` as path parameters.
-     */
-    address_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Administrative information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `administrative_details` as path parameters.
-     */
-    administrative_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Bank account information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `bank_account_details` as path parameters.
-     */
-    bank_account_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Employment basic information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `employment_basic_information` as path parameters.
-     */
-    basic_information?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Billing address information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `billing_address_details` as path parameters.
-     */
-    billing_address_details?: {
-        [key: string]: unknown;
-    };
-    company_id?: string;
-    /**
-     * Contract information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `contract_details` as path parameters.
-     */
-    contract_details?: {
-        [key: string]: unknown;
-    };
-    country?: Country;
-    country_code: string;
-    /**
-     * The department of the employment. The department must belong to the same company as the employment.
-     *
-     */
-    department_id?: string;
-    /**
-     * Emergency contact information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `emergency_contact_details` as path parameters.
-     */
-    emergency_contact_details?: {
-        [key: string]: unknown;
-    };
-    full_name: string;
-    job_title: string;
-    /**
-     * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
-     * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
-     * **Update of this field is only available for active employments.**
-     *
-     */
-    manager_id?: string;
-    /**
-     * Personal details information. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-     * passing the country code and `personal_details` as path parameters.
-     */
-    personal_details?: {
-        [key: string]: unknown;
-    };
-    pricing_plan_details?: PricingPlanDetails;
-    /**
-     * The work email of the employment.
-     */
-    work_email?: string;
+  /**
+   * Home address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `address_details` as path parameters.
+   */
+  address_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Administrative information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `administrative_details` as path parameters.
+   */
+  administrative_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Bank account information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `bank_account_details` as path parameters.
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Employment basic information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   */
+  basic_information?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Billing address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `billing_address_details` as path parameters.
+   */
+  billing_address_details?: {
+    [key: string]: unknown;
+  };
+  company_id?: string;
+  /**
+   * Contract information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `contract_details` as path parameters.
+   */
+  contract_details?: {
+    [key: string]: unknown;
+  };
+  country?: Country;
+  country_code: string;
+  /**
+   * The department of the employment. The department must belong to the same company as the employment.
+   *
+   */
+  department_id?: string;
+  /**
+   * Emergency contact information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `emergency_contact_details` as path parameters.
+   */
+  emergency_contact_details?: {
+    [key: string]: unknown;
+  };
+  full_name: string;
+  job_title: string;
+  /**
+   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
+   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
+   * **Update of this field is only available for active employments.**
+   *
+   */
+  manager_id?: string;
+  /**
+   * Personal details information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `personal_details` as path parameters.
+   */
+  personal_details?: {
+    [key: string]: unknown;
+  };
+  pricing_plan_details?: PricingPlanDetails;
+  /**
+   * The work email of the employment.
+   */
+  work_email?: string;
 };
 
 export type CompanyManager = {
-    /**
-     * Company ID
-     */
-    company_id: string;
-    /**
-     * Company Manager role.
-     */
-    role: string;
-    /**
-     * User Email
-     */
-    user_email: string;
-    /**
-     * User ID
-     */
-    user_id: string;
-    /**
-     * User's name
-     */
-    user_name: string;
+  /**
+   * Company ID
+   */
+  company_id: string;
+  /**
+   * Company Manager role.
+   */
+  role: string;
+  /**
+   * User Email
+   */
+  user_email: string;
+  /**
+   * User ID
+   */
+  user_id: string;
+  /**
+   * User's name
+   */
+  user_name: string;
 };
 
 /**
@@ -3067,79 +3490,79 @@ export type CompanyManager = {
 export type EmploymentContractStatus = 'active' | 'inactive' | 'pending';
 
 export type Company = {
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `address_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    address_details: {
-        [key: string]: unknown;
-    };
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `bank_account_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    bank_account_details?: {
-        [key: string]: unknown;
-    };
-    company_owner_email: string;
-    company_owner_name?: string;
-    company_owner_user_id: string;
-    country_code: string;
-    created_at: string;
-    desired_currency: string;
-    external_id?: string | null;
-    id: string;
-    name: string;
-    phone_number?: string;
-    registration_number?: string | null;
-    /**
-     * The company status determines what a company is allowed to do:
-     * - `pending`: The company has been created and the company owner invited. Remote is waiting for the company owner to complete onboarding.
-     * - `review`: The company is under review. In rare occasions, a company may not automatically get created in `active` status because Remote needs to
-     * manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
-     * through the Remote API.
-     * - `active`: The company owner has completed onboarding and the company is ready to employ.
-     * - `archived`: The company is no longer active on the Remote platform and no changes can be made to the company.
-     *
-     */
-    status: 'pending' | 'review' | 'active' | 'archived';
-    tax_number?: string | null;
-    terms_of_service_accepted_at: string;
-    updated_at: string;
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `address_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  address_details: {
+    [key: string]: unknown;
+  };
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `bank_account_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  company_owner_email: string;
+  company_owner_name?: string;
+  company_owner_user_id: string;
+  country_code: string;
+  created_at: string;
+  desired_currency: string;
+  external_id?: string | null;
+  id: string;
+  name: string;
+  phone_number?: string;
+  registration_number?: string | null;
+  /**
+   * The company status determines what a company is allowed to do:
+   * - `pending`: The company has been created and the company owner invited. Remote is waiting for the company owner to complete onboarding.
+   * - `review`: The company is under review. In rare occasions, a company may not automatically get created in `active` status because Remote needs to
+   * manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
+   * through the Remote API.
+   * - `active`: The company owner has completed onboarding and the company is ready to employ.
+   * - `archived`: The company is no longer active on the Remote platform and no changes can be made to the company.
+   *
+   */
+  status: 'pending' | 'review' | 'active' | 'archived';
+  tax_number?: string | null;
+  terms_of_service_accepted_at: string;
+  updated_at: string;
 };
 
 /**
  * Schema for creating a single select custom field definition
  */
 export type CreateSingleSelectCustomFieldDefinitionParams = {
-    data_entry_access: CustomFieldDataEntryAccess;
-    metadata: SingleSelectMetadata;
-    name: string;
-    required: boolean;
-    type: 'single_select';
-    visibility_scope: CustomFieldVisibilityScope;
+  data_entry_access: CustomFieldDataEntryAccess;
+  metadata: SingleSelectMetadata;
+  name: string;
+  required: boolean;
+  type: 'single_select';
+  visibility_scope: CustomFieldVisibilityScope;
 };
 
 export type IdentityCompanyAccessTokenResponse = {
-    data: {
-        client_id: string;
-        company: IdentityCompany;
-        integration: IdentityIntegration;
-        user: IdentityUser;
-    };
+  data: {
+    client_id: string;
+    company: IdentityCompany;
+    integration: IdentityIntegration;
+    user: IdentityUser;
+  };
 };
 
 /**
  * Travel Letter User
  */
 export type TravelLetterUser = {
-    email: string;
-    id: string;
-    name: string;
+  email: string;
+  id: string;
+  name: string;
 } | null;
 
 export type ParameterErrors = Array<ParameterError>;
@@ -3148,409 +3571,565 @@ export type ParameterErrors = Array<ParameterError>;
  * The benefit offer for an employment schema
  */
 export type UnifiedEmploymentBenefitOffer = {
-    benefit_group: UnifiedEmploymentBenefitGroup;
-    benefit_tier: UnifiedEmploymentBenefitTier | null;
+  benefit_group: UnifiedEmploymentBenefitGroup;
+  benefit_tier: UnifiedEmploymentBenefitTier | null;
 };
 
-export type TimesheetStatus = 'open' | 'submitted' | 'approved' | 'in_calibration' | 'processed';
+export type TimesheetStatus =
+  | 'open'
+  | 'submitted'
+  | 'approved'
+  | 'in_calibration'
+  | 'processed';
 
 /**
  * Detailed breakdown of an employment's time off balance.
  *
  */
 export type TimeoffEntitlement = {
-    /**
-     * Indicates whether this entitlement can expire.
-     *
-     * When `false`, `expiry_date` will be `nil`.
-     *
-     */
-    can_expire: boolean;
-    /**
-     * Indicates how much this time off this entitlement contributes to the total time
-     * off entitlement.
-     *
-     */
-    entitled: TimeoffDaysAndHours;
-    /**
-     * Indicates the date this entitlement expires and is no longer counted
-     * towards the total time off entitlement for the employment.
-     *
-     * When this entitlement doesn't expire, `expiry_date` will be set to
-     * `nil`. Use the `can_expire` parameter to determine whether
-     * an entitlement can expire or not.
-     *
-     */
-    expiry_date: string | null;
-    name: string | null;
-    /**
-     * Indicates how much time off the employment has remaining in this entitlement.
-     *
-     */
-    remaining: TimeoffDaysAndHours;
-    /**
-     * Indicates how much time off the employment has taken from this entitlement.
-     *
-     */
-    taken: TimeoffDaysAndHours;
-    /**
-     * Indicates the type of the time off entitlement.
-     *
-     * `annual_paid_timeoff` entitlements are calculated from the employment's
-     * contract. All other time off entitlements are granted by the employer
-     * or automatically by the country of employment.
-     *
-     */
-    type: 'carryover_pto' | 'additional_pto' | 'transfer_pto' | 'annual_paid_timeoff';
+  /**
+   * Indicates whether this entitlement can expire.
+   *
+   * When `false`, `expiry_date` will be `nil`.
+   *
+   */
+  can_expire: boolean;
+  /**
+   * Indicates how much this time off this entitlement contributes to the total time
+   * off entitlement.
+   *
+   */
+  entitled: TimeoffDaysAndHours;
+  /**
+   * Indicates the date this entitlement expires and is no longer counted
+   * towards the total time off entitlement for the employment.
+   *
+   * When this entitlement doesn't expire, `expiry_date` will be set to
+   * `nil`. Use the `can_expire` parameter to determine whether
+   * an entitlement can expire or not.
+   *
+   */
+  expiry_date: string | null;
+  name: string | null;
+  /**
+   * Indicates how much time off the employment has remaining in this entitlement.
+   *
+   */
+  remaining: TimeoffDaysAndHours;
+  /**
+   * Indicates how much time off the employment has taken from this entitlement.
+   *
+   */
+  taken: TimeoffDaysAndHours;
+  /**
+   * Indicates the type of the time off entitlement.
+   *
+   * `annual_paid_timeoff` entitlements are calculated from the employment's
+   * contract. All other time off entitlements are granted by the employer
+   * or automatically by the country of employment.
+   *
+   */
+  type:
+    | 'carryover_pto'
+    | 'additional_pto'
+    | 'transfer_pto'
+    | 'annual_paid_timeoff';
 };
 
 export type TooManyRequestsResponse = {
-    message?: string;
+  message?: string;
 };
 
 /**
  * Recurring Incentive response
  */
 export type RecurringIncentiveResponse = {
-    data?: {
-        recurring_incentive: RecurringIncentive;
-    };
+  data?: {
+    recurring_incentive: RecurringIncentive;
+  };
 };
 
 export type WebhookTriggerBillingParams = {
-    document_type: 'supplemental_service_invoice' | 'reconciliation_invoice' | 'prefunding_invoice' | 'supplemental_service_credit_note' | 'reconciliation_credit_note' | 'prefunding_credit_note';
-    event_type: 'billing_document.issued';
+  document_type:
+    | 'supplemental_service_invoice'
+    | 'reconciliation_invoice'
+    | 'prefunding_invoice'
+    | 'supplemental_service_credit_note'
+    | 'reconciliation_credit_note'
+    | 'prefunding_credit_note';
+  event_type: 'billing_document.issued';
 };
 
 export type CreateRecurringIncentiveParams = CommonIncentiveParams & {
-    /**
-     * How many times the payment will repeat. At the moment we only fully support monthly frequency.
-     *
-     * This field is only necessary if the recurring incentive has an end date.
-     *
-     */
-    duration_in_months?: string;
-    employment_id: string;
-    type: 'acting_up_allowance' | 'allowance' | 'car_allowance' | 'health_and_wellness_allowance' | 'internet_allowance' | 'meal_allowance' | 'on_call_allowance' | 'parenthood_allowance' | 'phone_allowance' | 'relocation_allowance' | 'travel_allowance' | 'work_from_home_allowance' | 'bonus' | 'holiday_bonus' | 'referral_bonus' | 'retention_bonus' | 'commission' | 'other' | 'overtime' | 'stipend';
+  /**
+   * How many times the payment will repeat. At the moment we only fully support monthly frequency.
+   *
+   * This field is only necessary if the recurring incentive has an end date.
+   *
+   */
+  duration_in_months?: string;
+  employment_id: string;
+  type:
+    | 'acting_up_allowance'
+    | 'allowance'
+    | 'car_allowance'
+    | 'health_and_wellness_allowance'
+    | 'internet_allowance'
+    | 'meal_allowance'
+    | 'on_call_allowance'
+    | 'parenthood_allowance'
+    | 'phone_allowance'
+    | 'relocation_allowance'
+    | 'travel_allowance'
+    | 'work_from_home_allowance'
+    | 'bonus'
+    | 'holiday_bonus'
+    | 'referral_bonus'
+    | 'retention_bonus'
+    | 'commission'
+    | 'other'
+    | 'overtime'
+    | 'stipend';
 };
 
 /**
  * A supported file
  */
 export type UploadFileResponse = {
-    data?: {
-        file: File;
-    };
+  data?: {
+    file: File;
+  };
 };
 
 export type IdentityCompany = {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 };
 
 /**
  * Schema for creating a general custom field definition
  */
 export type CreateGeneralCustomFieldDefinitionParams = {
-    data_entry_access: CustomFieldDataEntryAccess;
-    name: string;
-    required: boolean;
-    type: CustomFieldSimpleDataType;
-    visibility_scope: CustomFieldVisibilityScope;
+  data_entry_access: CustomFieldDataEntryAccess;
+  name: string;
+  required: boolean;
+  type: CustomFieldSimpleDataType;
+  visibility_scope: CustomFieldVisibilityScope;
 };
 
 export type ConflictResponse = {
-    message?: string;
+  message?: string;
 };
 
 export type CountrySummariesResponse = {
-    data: {
-        company_id: string;
-        country_summaries: Array<CountrySummary>;
-    };
+  data: {
+    company_id: string;
+    country_summaries: Array<CountrySummary>;
+  };
 };
 
 /**
  * Currency object without a UUID identifier
  */
 export type CurrencyDefinition = {
-    code: string;
-    name: string;
-    symbol: string;
+  code: string;
+  name: string;
+  symbol: string;
 };
 
 export type WebhookCallback = {
-    id: string;
-    /**
-     * This key will be used to sign the signature provided with webhook requests we
-     * send to the `url` you provided for this webhook callback.
-     *
-     * The webhook signature will be included in a custom header, `X-Remote-Signature`.
-     * You can use this signature to verify that requests are coming from Remote and
-     * not some unauthorized third-party.
-     *
-     */
-    signing_key?: string;
-    subscribed_events?: Array<'benefit_renewal_request.created' | 'billing_document.issued' | 'company.activated' | 'company.archived' | 'company.eor_hiring.additional_information_required' | 'company.eor_hiring.reserve_payment_requested' | 'company.eor_hiring.verification_completed' | 'contract_amendment.canceled' | 'contract_amendment.deleted' | 'contract_amendment.done' | 'contract_amendment.review_started' | 'contract_amendment.submitted' | 'custom_field.value_updated' | 'employment_contract.active_contract_updated' | 'employment.account.updated' | 'employment.details.updated' | 'employment.employment_agreement.available' | 'employment.eor_hiring.proof_of_payment_accepted' | 'employment.eor_hiring.invoice_created' | 'employment.no_longer_eligible_for_onboarding_cancellation' | 'employment.onboarding_task.completed' | 'employment.onboarding.completed' | 'employment.onboarding.cancelled' | 'employment.personal_information.updated' | 'employment.probation_completion_letter.cancelled' | 'employment.probation_completion_letter.completed' | 'employment.probation_completion_letter.submitted' | 'employment.probation.period_ending_reminder_sent' | 'employment.probation_period_extension.cancelled' | 'employment.probation_period_extension.completed' | 'employment.probation_period_extension.submitted' | 'employment.start_date.changed' | 'employment.user_status.activated' | 'employment.user_status.deactivated' | 'expense.approved' | 'expense.declined' | 'expense.deleted' | 'expense.reimbursed' | 'expense.submitted' | 'expense.updated' | 'identity_verification.verification_required' | 'incentive.created' | 'incentive.deleted' | 'incentive.paid' | 'incentive.processing_started' | 'incentive.updated' | 'offboarding.completed' | 'offboarding.deleted' | 'offboarding.done' | 'offboarding.review_started' | 'offboarding.submitted_to_payroll' | 'offboarding.submitted' | 'payslip.released' | 'sso_configuration.disabled' | 'sso_configuration.enabled' | 'sso_configuration.updated' | 'timeoff.approved' | 'timeoff.canceled' | 'timeoff.date_changed' | 'timeoff.declined' | 'timeoff.requested' | 'timeoff.taken' | 'timeoff.updated' | 'timesheet.submitted' | 'travel_letter.approved_by_manager' | 'travel_letter.approved_by_remote' | 'travel_letter.declined_by_manager' | 'travel_letter.declined_by_remote' | 'travel_letter.requested' | 'work_authorization.approved_by_manager' | 'work_authorization.approved_by_remote' | 'work_authorization.cancelled' | 'work_authorization.declined_by_manager' | 'work_authorization.declined_by_remote' | 'work_authorization.requested'>;
-    url: string;
+  id: string;
+  /**
+   * This key will be used to sign the signature provided with webhook requests we
+   * send to the `url` you provided for this webhook callback.
+   *
+   * The webhook signature will be included in a custom header, `X-Remote-Signature`.
+   * You can use this signature to verify that requests are coming from Remote and
+   * not some unauthorized third-party.
+   *
+   */
+  signing_key?: string;
+  subscribed_events?: Array<
+    | 'benefit_renewal_request.created'
+    | 'billing_document.issued'
+    | 'company.activated'
+    | 'company.archived'
+    | 'company.eor_hiring.additional_information_required'
+    | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.verification_completed'
+    | 'contract_amendment.canceled'
+    | 'contract_amendment.deleted'
+    | 'contract_amendment.done'
+    | 'contract_amendment.review_started'
+    | 'contract_amendment.submitted'
+    | 'custom_field.value_updated'
+    | 'employment_contract.active_contract_updated'
+    | 'employment.account.updated'
+    | 'employment.details.updated'
+    | 'employment.employment_agreement.available'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.invoice_created'
+    | 'employment.no_longer_eligible_for_onboarding_cancellation'
+    | 'employment.onboarding_task.completed'
+    | 'employment.onboarding.completed'
+    | 'employment.onboarding.cancelled'
+    | 'employment.personal_information.updated'
+    | 'employment.probation_completion_letter.cancelled'
+    | 'employment.probation_completion_letter.completed'
+    | 'employment.probation_completion_letter.submitted'
+    | 'employment.probation.period_ending_reminder_sent'
+    | 'employment.probation_period_extension.cancelled'
+    | 'employment.probation_period_extension.completed'
+    | 'employment.probation_period_extension.submitted'
+    | 'employment.start_date.changed'
+    | 'employment.user_status.activated'
+    | 'employment.user_status.deactivated'
+    | 'expense.approved'
+    | 'expense.declined'
+    | 'expense.deleted'
+    | 'expense.reimbursed'
+    | 'expense.submitted'
+    | 'expense.updated'
+    | 'identity_verification.verification_required'
+    | 'incentive.created'
+    | 'incentive.deleted'
+    | 'incentive.paid'
+    | 'incentive.processing_started'
+    | 'incentive.updated'
+    | 'offboarding.completed'
+    | 'offboarding.deleted'
+    | 'offboarding.done'
+    | 'offboarding.review_started'
+    | 'offboarding.submitted_to_payroll'
+    | 'offboarding.submitted'
+    | 'payslip.released'
+    | 'sso_configuration.disabled'
+    | 'sso_configuration.enabled'
+    | 'sso_configuration.updated'
+    | 'timeoff.approved'
+    | 'timeoff.canceled'
+    | 'timeoff.date_changed'
+    | 'timeoff.declined'
+    | 'timeoff.requested'
+    | 'timeoff.taken'
+    | 'timeoff.updated'
+    | 'timesheet.submitted'
+    | 'travel_letter.approved_by_manager'
+    | 'travel_letter.approved_by_remote'
+    | 'travel_letter.declined_by_manager'
+    | 'travel_letter.declined_by_remote'
+    | 'travel_letter.requested'
+    | 'work_authorization.approved_by_manager'
+    | 'work_authorization.approved_by_remote'
+    | 'work_authorization.cancelled'
+    | 'work_authorization.declined_by_manager'
+    | 'work_authorization.declined_by_remote'
+    | 'work_authorization.requested'
+  >;
+  url: string;
 };
 
 /**
  * TimeoffDay schema
  */
 export type TimeoffDay = {
-    day: _Date;
-    hours: number;
+  day: _Date;
+  hours: number;
 };
 
-export type BadRequestResponse = {
-    message: string;
-} | {
-    message?: {
+export type BadRequestResponse =
+  | {
+      message: string;
+    }
+  | {
+      message?: {
         code: string;
         message: string;
+      };
     };
-};
 
 /**
  * Response schema listing many employments
  */
 export type ListEmploymentsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        employments?: Array<MinimalEmployment>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    employments?: Array<MinimalEmployment>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Response schema listing many payslips
  */
 export type ListPayslipsResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        payslips?: Array<Payslip>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    payslips?: Array<Payslip>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Params to send a timesheet back to the employee for review or modification
  */
 export type SendBackTimesheetParams = {
-    sent_back_reason: string;
+  sent_back_reason: string;
 };
 
 export type UnauthorizedResponse = {
-    message: string;
+  message: string;
 };
 
 /**
  * Selected type of payment.
  */
 export type PricingPlanDetails = {
-    frequency: 'annually' | 'monthly';
+  frequency: 'annually' | 'monthly';
 };
 
 export type UpdateCompanyParams = {
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `address_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    address_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
-     * Use the desired country and `bank_account_details` as the form name for the placeholders.
-     * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
-     *
-     */
-    bank_account_details?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Country of company address
-     */
-    country_code?: string;
-    /**
-     * Desired currency for invoicing and displaying converted salaries in Remote UI regardless of the employee's country.
-     *
-     * This field is only accepted if company is in status `pending`. Please contact Remote if you wish to update it.
-     *
-     */
-    desired_currency?: 'AUD' | 'CAD' | 'CHF' | 'DKK' | 'EUR' | 'GBP' | 'JPY' | 'NOK' | 'NZD' | 'SEK' | 'SGD' | 'USD';
-    /**
-     * This field is only accepted if company is in status `pending`. Please contact Remote if you wish to update it.
-     *
-     */
-    name?: string;
-    /**
-     * A phone number the company can be contacted with.
-     */
-    phone_number?: string;
-    /**
-     * The company registration number. This field or tax_number (but not both) should be submitted.
-     *
-     * This field is only accepted if company is in status `pending`.
-     *
-     */
-    registration_number?: string;
-    /**
-     *   The tax identifier of the company. This field or registration_number (but not both) should be submitted.
-     *
-     * This field is only accepted if company is in status `pending`.
-     *
-     */
-    tax_number?: string;
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `address_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  address_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
+   * Use the desired country and `bank_account_details` as the form name for the placeholders.
+   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   *
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Country of company address
+   */
+  country_code?: string;
+  /**
+   * Desired currency for invoicing and displaying converted salaries in Remote UI regardless of the employee's country.
+   *
+   * This field is only accepted if company is in status `pending`. Please contact Remote if you wish to update it.
+   *
+   */
+  desired_currency?:
+    | 'AUD'
+    | 'CAD'
+    | 'CHF'
+    | 'DKK'
+    | 'EUR'
+    | 'GBP'
+    | 'JPY'
+    | 'NOK'
+    | 'NZD'
+    | 'SEK'
+    | 'SGD'
+    | 'USD';
+  /**
+   * This field is only accepted if company is in status `pending`. Please contact Remote if you wish to update it.
+   *
+   */
+  name?: string;
+  /**
+   * A phone number the company can be contacted with.
+   */
+  phone_number?: string;
+  /**
+   * The company registration number. This field or tax_number (but not both) should be submitted.
+   *
+   * This field is only accepted if company is in status `pending`.
+   *
+   */
+  registration_number?: string;
+  /**
+   *   The tax identifier of the company. This field or registration_number (but not both) should be submitted.
+   *
+   * This field is only accepted if company is in status `pending`.
+   *
+   */
+  tax_number?: string;
 };
 
 export type ResignationBeforeStartDate = {
-    contract_job_title: string;
-    contract_start_date: string;
-    /**
-     * UTC date
-     */
-    resignation_date: string;
-    resignation_reason_label: string;
+  contract_job_title: string;
+  contract_start_date: string;
+  /**
+   * UTC date
+   */
+  resignation_date: string;
+  resignation_reason_label: string;
 };
 
 /**
  * Draft expense
  */
 export type DraftExpense = {
-    amount: number | null;
-    /**
-     * Categories allowed for an expense
-     */
-    category?: 'car_rental' | 'coworking_office' | 'education_training' | 'entertainment' | 'flight' | 'fuel' | 'gifts' | 'insurance' | 'lodging' | 'meals' | 'mileage' | 'other' | 'parking_toll' | 'per_diem' | 'subscription' | 'tech_equipment' | 'telecommunication' | 'transport' | 'utilities' | 'vaccination_testing' | 'visa' | 'wellness' | 'coworking' | 'home_office' | 'phone_utilities' | 'travel';
-    converted_amount: number | null;
-    converted_currency: CurrencyDefinition | null;
-    converted_tax_amount: number | null;
-    currency: CurrencyDefinition | null;
-    employment_id: string;
-    expense_date: string | null;
-    id: string;
-    invoice_period?: string | null;
-    notes?: string | null;
-    reason?: string | null;
-    receipts?: Array<File>;
-    reviewed_at?: string | null;
-    reviewer?: {
-        user_email?: string;
-        user_id?: string;
-        user_name?: string;
-    } | null;
-    /**
-     * Draft status
-     */
-    status?: 'draft' | 'archived';
-    tax_amount: number | null;
-    title: string | null;
+  amount: number | null;
+  /**
+   * Categories allowed for an expense
+   */
+  category?:
+    | 'car_rental'
+    | 'coworking_office'
+    | 'education_training'
+    | 'entertainment'
+    | 'flight'
+    | 'fuel'
+    | 'gifts'
+    | 'insurance'
+    | 'lodging'
+    | 'meals'
+    | 'mileage'
+    | 'other'
+    | 'parking_toll'
+    | 'per_diem'
+    | 'subscription'
+    | 'tech_equipment'
+    | 'telecommunication'
+    | 'transport'
+    | 'utilities'
+    | 'vaccination_testing'
+    | 'visa'
+    | 'wellness'
+    | 'coworking'
+    | 'home_office'
+    | 'phone_utilities'
+    | 'travel';
+  converted_amount: number | null;
+  converted_currency: CurrencyDefinition | null;
+  converted_tax_amount: number | null;
+  currency: CurrencyDefinition | null;
+  employment_id: string;
+  expense_date: string | null;
+  id: string;
+  invoice_period?: string | null;
+  notes?: string | null;
+  reason?: string | null;
+  receipts?: Array<File>;
+  reviewed_at?: string | null;
+  reviewer?: {
+    user_email?: string;
+    user_id?: string;
+    user_name?: string;
+  } | null;
+  /**
+   * Draft status
+   */
+  status?: 'draft' | 'archived';
+  tax_amount: number | null;
+  title: string | null;
 };
 
 /**
  * Response containing the lists of succeeded and failed schedules.
  */
 export type BulkContractorInvoiceScheduleCreateResponse = {
-    data: {
-        failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-        successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
+  data: {
+    failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
+    successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
+  };
 };
 
 export type IdentityIntegration = {
-    contact_email: string;
-    display_name: string;
-    name: string;
+  contact_email: string;
+  display_name: string;
+  name: string;
 };
 
 /**
  * Time Off Balance response
  */
 export type TimeoffBalanceResponse = {
-    data: {
-        timeoff_balance: TimeoffBalance;
-    };
+  data: {
+    timeoff_balance: TimeoffBalance;
+  };
 };
 
 /**
  * Set of invoice schedule attributes with failed validation.
  */
 export type ContractorInvoiceScheduleCreateResponseFailure = {
-    currency: CurrencyCode;
-    /**
-     * Employment identifier
-     */
-    employment_id: string;
-    errors: {
-        currency?: Array<string>;
-        employment_id?: Array<string>;
-        items?: Array<{
-            amount?: Array<string>;
-            description?: Array<string>;
-        }>;
-        note?: Array<string>;
-        nr_occurrences?: Array<string>;
-        number?: Array<string>;
-        periodicity?: Array<string>;
-        start_date?: Array<string>;
-    };
-    /**
-     * List of invoice items that composes the overall invoice amount.
-     */
-    items: Array<ContractorInvoiceScheduleItem>;
-    /**
-     * Custom defined note.
-     */
-    note?: string;
-    /**
-     * Count of invoices that should be generated during schedule lifetime.
-     */
-    nr_occurrences?: number;
-    /**
-     * Invoice identifier.
-     */
-    number?: string;
-    periodicity: ContractorInvoiceSchedulePeriodicity;
-    /**
-     * Date of the first contractor invoice generation.
-     */
-    start_date: string;
+  currency: CurrencyCode;
+  /**
+   * Employment identifier
+   */
+  employment_id: string;
+  errors: {
+    currency?: Array<string>;
+    employment_id?: Array<string>;
+    items?: Array<{
+      amount?: Array<string>;
+      description?: Array<string>;
+    }>;
+    note?: Array<string>;
+    nr_occurrences?: Array<string>;
+    number?: Array<string>;
+    periodicity?: Array<string>;
+    start_date?: Array<string>;
+  };
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string;
+  /**
+   * Count of invoices that should be generated during schedule lifetime.
+   */
+  nr_occurrences?: number;
+  /**
+   * Invoice identifier.
+   */
+  number?: string;
+  periodicity: ContractorInvoiceSchedulePeriodicity;
+  /**
+   * Date of the first contractor invoice generation.
+   */
+  start_date: string;
 };
 
 /**
  * Work Authorization User
  */
 export type WorkAuthorizationUser = {
-    email: string;
-    id: string;
-    name: string;
+  email: string;
+  id: string;
+  name: string;
 } | null;
 
-export type ContractAmendmentStatus = 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
+export type ContractAmendmentStatus =
+  | 'submitted'
+  | 'in_review'
+  | 'done'
+  | 'canceled'
+  | 'deleted';
 
 /**
  * Defines how often contractor invoices will be generated.
@@ -3562,7 +4141,11 @@ export type ContractAmendmentStatus = 'submitted' | 'in_review' | 'done' | 'canc
  * - `weekly`: Invoices will be generated each week.
  *
  */
-export type ContractorInvoiceSchedulePeriodicity = 'bi_weekly' | 'monthly' | 'semi_monthly' | 'weekly';
+export type ContractorInvoiceSchedulePeriodicity =
+  | 'bi_weekly'
+  | 'monthly'
+  | 'semi_monthly'
+  | 'weekly';
 
 /**
  *   All the params needed to create an expense.
@@ -3571,40 +4154,64 @@ export type ContractorInvoiceSchedulePeriodicity = 'bi_weekly' | 'monthly' | 'se
  *
  */
 export type ParamsToCreateExpense = {
-    amount: number;
-    /**
-     * Categories allowed for an expense.<br/>
-     * Note: `coworking`, `home_office`, `phone_utilities`, `travel` are deprecated and will be removed in the future.
-     *
-     */
-    category: 'car_rental' | 'coworking_office' | 'education_training' | 'entertainment' | 'flight' | 'fuel' | 'gifts' | 'insurance' | 'lodging' | 'meals' | 'other' | 'parking_toll' | 'subscription' | 'tech_equipment' | 'telecommunication' | 'transport' | 'utilities' | 'vaccination_testing' | 'visa' | 'wellness' | 'coworking' | 'home_office' | 'phone_utilities' | 'travel';
-    /**
-     *   The three-letter code for the expense currency.<br/>
-     * Examples: `"USD"`, `"EUR"`, `"CAD"`
-     *
-     */
-    currency: string;
-    /**
-     * The ID for the employment to which this expense relates.
-     */
-    employment_id: string;
-    /**
-     * Date of the purchase, which must be in the past
-     */
-    expense_date: string;
-    receipt?: Base64File;
-    receipts?: Array<Base64File>;
-    /**
-     * The date and time that the expense was reviewed in ISO8601 format. If not provided, it defaults to the current datetime.
-     */
-    reviewed_at?: string;
-    /**
-     * If the person reviewing the expense is a user in Remote, you can provide its user id for this field. If a value is not provided, defaults to the user that generated the API token.
-     */
-    reviewer_id?: string;
-    tax_amount?: number;
-    timezone?: Timezone;
-    title: string;
+  amount: number;
+  /**
+   * Categories allowed for an expense.<br/>
+   * Note: `coworking`, `home_office`, `phone_utilities`, `travel` are deprecated and will be removed in the future.
+   *
+   */
+  category:
+    | 'car_rental'
+    | 'coworking_office'
+    | 'education_training'
+    | 'entertainment'
+    | 'flight'
+    | 'fuel'
+    | 'gifts'
+    | 'insurance'
+    | 'lodging'
+    | 'meals'
+    | 'other'
+    | 'parking_toll'
+    | 'subscription'
+    | 'tech_equipment'
+    | 'telecommunication'
+    | 'transport'
+    | 'utilities'
+    | 'vaccination_testing'
+    | 'visa'
+    | 'wellness'
+    | 'coworking'
+    | 'home_office'
+    | 'phone_utilities'
+    | 'travel';
+  /**
+   *   The three-letter code for the expense currency.<br/>
+   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *
+   */
+  currency: string;
+  /**
+   * The ID for the employment to which this expense relates.
+   */
+  employment_id: string;
+  /**
+   * Date of the purchase, which must be in the past
+   */
+  expense_date: string;
+  receipt?: Base64File;
+  receipts?: Array<Base64File>;
+  /**
+   * The date and time that the expense was reviewed in ISO8601 format. If not provided, it defaults to the current datetime.
+   */
+  reviewed_at?: string;
+  /**
+   * If the person reviewing the expense is a user in Remote, you can provide its user id for this field. If a value is not provided, defaults to the user that generated the API token.
+   */
+  reviewer_id?: string;
+  tax_amount?: number;
+  timezone?: Timezone;
+  title: string;
 };
 
 /**
@@ -3613,26 +4220,26 @@ export type ParamsToCreateExpense = {
 export type DepartmentId = string | null;
 
 export type CreateProbationCompletionLetterParams = {
-    /**
-     * The employment ID.
-     */
-    employment_id: string;
+  /**
+   * The employment ID.
+   */
+  employment_id: string;
 };
 
 /**
  * The list of benefit offers for an employment schema
  */
 export type UnifiedEmploymentListBenefitOffers = {
-    data: Array<UnifiedEmploymentBenefitOffer>;
+  data: Array<UnifiedEmploymentBenefitOffer>;
 };
 
 /**
  * Object with required and optional fields, its descriptions and suggested presentation
  */
 export type CompanyFormResponse = {
-    data?: {
-        [key: string]: unknown;
-    };
+  data?: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -3647,7 +4254,7 @@ export type DateTimeIso8601 = string;
  * Shows a list of companies
  */
 export type CompaniesResponse = {
-    companies?: Array<Company>;
+  companies?: Array<Company>;
 };
 
 export type ActionErrors = Array<ActionError>;
@@ -3656,71 +4263,80 @@ export type ActionErrors = Array<ActionError>;
  * Schema for work authorization request
  */
 export type WorkAuthorizationRequest = {
-    additional_information: string;
-    destination_country: Country;
-    employer_approver: WorkAuthorizationUser;
-    employer_special_instructions: string | null;
-    id: string;
-    reason: string;
-    status: 'pending' | 'cancelled' | 'declined_by_manager' | 'declined_by_remote' | 'approved_by_manager' | 'approved_by_remote';
-    submitted_at: DateTimeIso8601;
-    travel_date_end: _Date;
-    travel_date_start: _Date;
-    travel_document_number: string;
-    user: WorkAuthorizationUser;
-    will_negotiate_or_sign_contracts: boolean | null;
-    work_location: string | null;
+  additional_information: string;
+  destination_country: Country;
+  employer_approver: WorkAuthorizationUser;
+  employer_special_instructions: string | null;
+  id: string;
+  reason: string;
+  status:
+    | 'pending'
+    | 'cancelled'
+    | 'declined_by_manager'
+    | 'declined_by_remote'
+    | 'approved_by_manager'
+    | 'approved_by_remote';
+  submitted_at: DateTimeIso8601;
+  travel_date_end: _Date;
+  travel_date_start: _Date;
+  travel_document_number: string;
+  user: WorkAuthorizationUser;
+  will_negotiate_or_sign_contracts: boolean | null;
+  work_location: string | null;
 };
 
 /**
  * Cancel timeoff params
  */
 export type CancelTimeoffParams = {
-    cancel_reason: string;
+  cancel_reason: string;
 };
 
 /**
  * Time off types response
  */
 export type ListTimeoffTypesResponse = {
-    data?: {
-        description?: string | null;
-        name?: TimeoffType;
-    };
+  data?: {
+    description?: string | null;
+    name?: TimeoffType;
+  };
 };
 
 export type ResignationFile = {
-    /**
-     * The content in base64 encoding
-     */
-    content: Blob | File;
-    /**
-     * The file name
-     */
-    name: string;
+  /**
+   * The content in base64 encoding
+   */
+  content: Blob | File;
+  /**
+   * The file name
+   */
+  name: string;
 };
 
 /**
  * Schema for creating a custom field definition
  */
-export type CreateCustomFieldDefinitionParams = CreateGeneralCustomFieldDefinitionParams | CreateSingleSelectCustomFieldDefinitionParams | CreateCurrencyCustomFieldDefinitionParams;
+export type CreateCustomFieldDefinitionParams =
+  | CreateGeneralCustomFieldDefinitionParams
+  | CreateSingleSelectCustomFieldDefinitionParams
+  | CreateCurrencyCustomFieldDefinitionParams;
 
 export type CostCalculatorBenefitParam = {
-    /**
-     * Benefit Group Slug
-     */
-    benefit_group_slug: string;
-    /**
-     * Benefit Tier Slug
-     */
-    benefit_tier_slug: string;
+  /**
+   * Benefit Group Slug
+   */
+  benefit_group_slug: string;
+  /**
+   * Benefit Tier Slug
+   */
+  benefit_tier_slug: string;
 };
 
 export type BenefitTier = {
-    description: string;
-    id: string;
-    name: string;
-    providers: Array<BenefitProvider>;
+  description: string;
+  id: string;
+  name: string;
+  providers: Array<BenefitProvider>;
 };
 
 /**
@@ -3729,88 +4345,119 @@ export type BenefitTier = {
 export type ScheduleId = string;
 
 export type TerminationDetailsParams = {
+  /**
+   * Additional details regarding the termination process.
+   */
+  additional_comments?: string;
+  /**
+   * Confidential requests are visible for who authorized the token or integration. Non-confidential requests are visible to all admins in the company.
+   */
+  confidential: boolean;
+  /**
+   * Remote advises not to inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there. This field is only required if employee was informed before creating the offboarding request.
+   */
+  employee_awareness?: {
     /**
-     * Additional details regarding the termination process.
+     * When the employee was told about the termination.
      */
-    additional_comments?: string;
+    date?: string | null;
     /**
-     * Confidential requests are visible for who authorized the token or integration. Non-confidential requests are visible to all admins in the company.
+     * Notes describing how the termination was shared with the employee. Remote advises being as specific as possible, and include details about the employee’s response, if applicable.
      */
-    confidential: boolean;
-    /**
-     * Remote advises not to inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there. This field is only required if employee was informed before creating the offboarding request.
-     */
-    employee_awareness?: {
-        /**
-         * When the employee was told about the termination.
-         */
-        date?: string | null;
-        /**
-         * Notes describing how the termination was shared with the employee. Remote advises being as specific as possible, and include details about the employee’s response, if applicable.
-         */
-        note?: string | null;
-    };
-    /**
-     * Remote will use this email address for post-termination communication.
-     * If it is not provided, this field will be derived from the employment record. Therefore, it is important to ensure that it is not a company email.
-     *
-     */
-    personal_email?: string;
-    /**
-     * In most cases, employee needs to be notified before termination. The required notice period depends on local labor laws, the employment agreement, and other factors. Remote will use those factors to determine the required notice period. Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.
-     */
-    proposed_termination_date: string;
-    /**
-     * Description of the reason for termination
-     */
-    reason_description: string;
-    /**
-     * Possible reasons for offboarding risk assessment
-     */
-    risk_assessment_reasons: Array<'caring_responsibilities' | 'disabled_or_health_condition' | 'family_leave' | 'member_of_union_or_works_council' | 'none_of_these' | 'pregnant_or_breastfeeding' | 'reported_concerns_with_workplace' | 'requested_medical_or_family_leave' | 'sick_leave'>;
-    /**
-     * Choose an accurate termination reason to avoid unfair or unlawful dismissal claims.
-     *
-     * If the termination is created before the employee's start date, this field
-     * will be set to `cancellation_before_start_date`.
-     *
-     */
-    termination_reason: 'cancellation_before_start_date' | 'compliance_issue' | 'conversion_to_contractor' | 'dissatisfaction_with_remote_service' | 'end_of_fixed_term_contract_compliance_issue' | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties' | 'end_of_fixed_term_contract_local_regulations_max_term_reached' | 'end_of_fixed_term_contract_misconduct' | 'end_of_fixed_term_contract_operational_reasons' | 'end_of_fixed_term_contract_other' | 'end_of_fixed_term_contract_performance' | 'end_of_fixed_term_contract_redundancy' | 'end_of_fixed_term_contract_values' | 'gross_misconduct' | 'incapacity_to_perform_inherent_duties' | 'job_abandonment' | 'mutual_agreement' | 'other' | 'performance' | 'values' | 'workforce_reduction';
-    /**
-     * Any supporting documents regarding the termination reason
-     */
-    termination_reason_files?: Array<OffboardingFile>;
-    /**
-     * Paid time off accuracy
-     *
-     * Typically, any vacation pay accrued and unpaid at the time
-     * of termination must be paid out to the employee. To avoid overpaying or underpaying,
-     * please make sure we have an accurate account of their paid time off by querying the
-     * [Show Time Off Balance](#operation/get_show_timeoff_balance) endpoint,
-     * filtering by the `employment_id`.
-     * This optional document should be sent in case of any discrepancies.
-     *
-     */
-    timesheet_file?: OffboardingFile;
-    /**
-     * Whether is it likely or not that the employee will challenge their termination
-     */
-    will_challenge_termination: boolean;
-    /**
-     * If it is likely that the employee will challenge their termination, please provide additional details explaining the risk
-     */
-    will_challenge_termination_description?: string;
+    note?: string | null;
+  };
+  /**
+   * Remote will use this email address for post-termination communication.
+   * If it is not provided, this field will be derived from the employment record. Therefore, it is important to ensure that it is not a company email.
+   *
+   */
+  personal_email?: string;
+  /**
+   * In most cases, employee needs to be notified before termination. The required notice period depends on local labor laws, the employment agreement, and other factors. Remote will use those factors to determine the required notice period. Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.
+   */
+  proposed_termination_date: string;
+  /**
+   * Description of the reason for termination
+   */
+  reason_description: string;
+  /**
+   * Possible reasons for offboarding risk assessment
+   */
+  risk_assessment_reasons: Array<
+    | 'caring_responsibilities'
+    | 'disabled_or_health_condition'
+    | 'family_leave'
+    | 'member_of_union_or_works_council'
+    | 'none_of_these'
+    | 'pregnant_or_breastfeeding'
+    | 'reported_concerns_with_workplace'
+    | 'requested_medical_or_family_leave'
+    | 'sick_leave'
+  >;
+  /**
+   * Choose an accurate termination reason to avoid unfair or unlawful dismissal claims.
+   *
+   * If the termination is created before the employee's start date, this field
+   * will be set to `cancellation_before_start_date`.
+   *
+   */
+  termination_reason:
+    | 'cancellation_before_start_date'
+    | 'compliance_issue'
+    | 'conversion_to_contractor'
+    | 'dissatisfaction_with_remote_service'
+    | 'end_of_fixed_term_contract_compliance_issue'
+    | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties'
+    | 'end_of_fixed_term_contract_local_regulations_max_term_reached'
+    | 'end_of_fixed_term_contract_misconduct'
+    | 'end_of_fixed_term_contract_operational_reasons'
+    | 'end_of_fixed_term_contract_other'
+    | 'end_of_fixed_term_contract_performance'
+    | 'end_of_fixed_term_contract_redundancy'
+    | 'end_of_fixed_term_contract_values'
+    | 'gross_misconduct'
+    | 'incapacity_to_perform_inherent_duties'
+    | 'job_abandonment'
+    | 'mutual_agreement'
+    | 'other'
+    | 'performance'
+    | 'values'
+    | 'workforce_reduction';
+  /**
+   * Any supporting documents regarding the termination reason
+   */
+  termination_reason_files?: Array<OffboardingFile>;
+  /**
+   * Paid time off accuracy
+   *
+   * Typically, any vacation pay accrued and unpaid at the time
+   * of termination must be paid out to the employee. To avoid overpaying or underpaying,
+   * please make sure we have an accurate account of their paid time off by querying the
+   * [Show Time Off Balance](#operation/get_show_timeoff_balance) endpoint,
+   * filtering by the `employment_id`.
+   * This optional document should be sent in case of any discrepancies.
+   *
+   */
+  timesheet_file?: OffboardingFile;
+  /**
+   * Whether is it likely or not that the employee will challenge their termination
+   */
+  will_challenge_termination: boolean;
+  /**
+   * If it is likely that the employee will challenge their termination, please provide additional details explaining the risk
+   */
+  will_challenge_termination_description?: string;
 };
 
 export type ProbationExtensionFile = {
-    /**
-     * The content of the file encoded in base64.
-     */
-    content: Blob | File;
-    /**
-     * The name of the file.
-     */
-    name: string;
+  /**
+   * The content of the file encoded in base64.
+   */
+  content: Blob | File;
+  /**
+   * The name of the file.
+   */
+  name: string;
 };
 
 /**
@@ -3819,111 +4466,113 @@ export type ProbationExtensionFile = {
 export type _Date = string;
 
 export type Cycle = {
-    employee_inclusion_cutoff_date?: string;
-    end_date?: string;
-    input_cutoff_date?: string;
-    payment_date?: string;
-    start_date?: string;
+  employee_inclusion_cutoff_date?: string;
+  end_date?: string;
+  input_cutoff_date?: string;
+  payment_date?: string;
+  start_date?: string;
 };
 
 /**
  * Required params to trigger a webhook event in the Sandbox environment
  */
-export type WebhookTriggerParams = WebhookTriggerEmploymentParams | WebhookTriggerBillingParams;
+export type WebhookTriggerParams =
+  | WebhookTriggerEmploymentParams
+  | WebhookTriggerBillingParams;
 
 export type ParameterError = {
-    /**
-     * An error code that describes the nature of the error.
-     */
-    code: string;
-    /**
-     * A developer friendly error message that gives details on what the error was and how it may be remedied.
-     */
-    message: string;
-    /**
-     * The parameter that lead to the error message.
-     */
-    param: string;
+  /**
+   * An error code that describes the nature of the error.
+   */
+  code: string;
+  /**
+   * A developer friendly error message that gives details on what the error was and how it may be remedied.
+   */
+  message: string;
+  /**
+   * The parameter that lead to the error message.
+   */
+  param: string;
 };
 
 export type CreateSsoConfigurationResult = {
-    audience_uri: string;
-    certificate: Blob | File;
-    domain: string;
-    identity_provider_url: string;
-    sso_url: string;
+  audience_uri: string;
+  certificate: Blob | File;
+  domain: string;
+  identity_provider_url: string;
+  sso_url: string;
 };
 
 /**
  * Benefit Renewal Request Form
  */
 export type BenefitRenewalRequestsCreateBenefitRenewalRequest = {
-    benefit_group_id: string;
+  benefit_group_id: string;
 };
 
 export type CreateProbationExtensionParams = {
-    /**
-     * Any additional details that need to be considered for the probation extension.
-     */
-    additional_details?: string;
-    /**
-     * The date when the discussion with the employee took place. Is required when `was_employee_informed` is `true` and should be in the past.
-     */
-    date_of_discussion_with_employee?: string;
-    /**
-     * The number of days to add to the existing probation end date.
-     */
-    duration_of_extension_in_days: number;
-    /**
-     * The employment ID that is related to the probation extension request.
-     */
-    employment_id: string;
-    /**
-     * The reason for the probation extension.
-     */
-    reason_for_extension: string;
-    /**
-     * Upload performance improvement plan or any other supporting document.
-     * This optional document can be sent only if `was_employee_informed` is `true`.
-     *
-     */
-    supporting_document?: ProbationExtensionFile;
-    /**
-     * Whether the employee was informed about the probation extension.
-     */
-    was_employee_informed: boolean;
+  /**
+   * Any additional details that need to be considered for the probation extension.
+   */
+  additional_details?: string;
+  /**
+   * The date when the discussion with the employee took place. Is required when `was_employee_informed` is `true` and should be in the past.
+   */
+  date_of_discussion_with_employee?: string;
+  /**
+   * The number of days to add to the existing probation end date.
+   */
+  duration_of_extension_in_days: number;
+  /**
+   * The employment ID that is related to the probation extension request.
+   */
+  employment_id: string;
+  /**
+   * The reason for the probation extension.
+   */
+  reason_for_extension: string;
+  /**
+   * Upload performance improvement plan or any other supporting document.
+   * This optional document can be sent only if `was_employee_informed` is `true`.
+   *
+   */
+  supporting_document?: ProbationExtensionFile;
+  /**
+   * Whether the employee was informed about the probation extension.
+   */
+  was_employee_informed: boolean;
 };
 
 /**
  * Response schema listing many incentives
  */
 export type ListIncentivesResponse = {
-    data?: {
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        incentives?: Array<Incentive>;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    incentives?: Array<Incentive>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Probation completion letter file
  */
 export type ProbationCompletionLetterFile = {
-    id: string;
-    inserted_at: DateTimeIso8601;
-    name: string;
-    sub_type?: string | null;
-    type: string;
+  id: string;
+  inserted_at: DateTimeIso8601;
+  name: string;
+  sub_type?: string | null;
+  type: string;
 } | null;
 
 export type GenericFile = Blob | File;
@@ -3932,421 +4581,574 @@ export type GenericFile = Blob | File;
  * Webhook callback update params
  */
 export type UpdateWebhookCallbackParams = {
-    subscribed_events: Array<'benefit_renewal_request.created' | 'billing_document.issued' | 'company.activated' | 'company.archived' | 'company.eor_hiring.additional_information_required' | 'company.eor_hiring.reserve_payment_requested' | 'company.eor_hiring.verification_completed' | 'contract_amendment.canceled' | 'contract_amendment.deleted' | 'contract_amendment.done' | 'contract_amendment.review_started' | 'contract_amendment.submitted' | 'custom_field.value_updated' | 'employment_contract.active_contract_updated' | 'employment.account.updated' | 'employment.details.updated' | 'employment.employment_agreement.available' | 'employment.eor_hiring.proof_of_payment_accepted' | 'employment.eor_hiring.invoice_created' | 'employment.no_longer_eligible_for_onboarding_cancellation' | 'employment.onboarding_task.completed' | 'employment.onboarding.completed' | 'employment.onboarding.cancelled' | 'employment.personal_information.updated' | 'employment.probation_completion_letter.cancelled' | 'employment.probation_completion_letter.completed' | 'employment.probation_completion_letter.submitted' | 'employment.probation.period_ending_reminder_sent' | 'employment.probation_period_extension.cancelled' | 'employment.probation_period_extension.completed' | 'employment.probation_period_extension.submitted' | 'employment.start_date.changed' | 'employment.user_status.activated' | 'employment.user_status.deactivated' | 'expense.approved' | 'expense.declined' | 'expense.deleted' | 'expense.reimbursed' | 'expense.submitted' | 'expense.updated' | 'identity_verification.verification_required' | 'incentive.created' | 'incentive.deleted' | 'incentive.paid' | 'incentive.processing_started' | 'incentive.updated' | 'offboarding.completed' | 'offboarding.deleted' | 'offboarding.done' | 'offboarding.review_started' | 'offboarding.submitted_to_payroll' | 'offboarding.submitted' | 'payslip.released' | 'sso_configuration.disabled' | 'sso_configuration.enabled' | 'sso_configuration.updated' | 'timeoff.approved' | 'timeoff.canceled' | 'timeoff.date_changed' | 'timeoff.declined' | 'timeoff.requested' | 'timeoff.taken' | 'timeoff.updated' | 'timesheet.submitted' | 'travel_letter.approved_by_manager' | 'travel_letter.approved_by_remote' | 'travel_letter.declined_by_manager' | 'travel_letter.declined_by_remote' | 'travel_letter.requested' | 'work_authorization.approved_by_manager' | 'work_authorization.approved_by_remote' | 'work_authorization.cancelled' | 'work_authorization.declined_by_manager' | 'work_authorization.declined_by_remote' | 'work_authorization.requested'>;
-    url?: string;
+  subscribed_events: Array<
+    | 'benefit_renewal_request.created'
+    | 'billing_document.issued'
+    | 'company.activated'
+    | 'company.archived'
+    | 'company.eor_hiring.additional_information_required'
+    | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.verification_completed'
+    | 'contract_amendment.canceled'
+    | 'contract_amendment.deleted'
+    | 'contract_amendment.done'
+    | 'contract_amendment.review_started'
+    | 'contract_amendment.submitted'
+    | 'custom_field.value_updated'
+    | 'employment_contract.active_contract_updated'
+    | 'employment.account.updated'
+    | 'employment.details.updated'
+    | 'employment.employment_agreement.available'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.invoice_created'
+    | 'employment.no_longer_eligible_for_onboarding_cancellation'
+    | 'employment.onboarding_task.completed'
+    | 'employment.onboarding.completed'
+    | 'employment.onboarding.cancelled'
+    | 'employment.personal_information.updated'
+    | 'employment.probation_completion_letter.cancelled'
+    | 'employment.probation_completion_letter.completed'
+    | 'employment.probation_completion_letter.submitted'
+    | 'employment.probation.period_ending_reminder_sent'
+    | 'employment.probation_period_extension.cancelled'
+    | 'employment.probation_period_extension.completed'
+    | 'employment.probation_period_extension.submitted'
+    | 'employment.start_date.changed'
+    | 'employment.user_status.activated'
+    | 'employment.user_status.deactivated'
+    | 'expense.approved'
+    | 'expense.declined'
+    | 'expense.deleted'
+    | 'expense.reimbursed'
+    | 'expense.submitted'
+    | 'expense.updated'
+    | 'identity_verification.verification_required'
+    | 'incentive.created'
+    | 'incentive.deleted'
+    | 'incentive.paid'
+    | 'incentive.processing_started'
+    | 'incentive.updated'
+    | 'offboarding.completed'
+    | 'offboarding.deleted'
+    | 'offboarding.done'
+    | 'offboarding.review_started'
+    | 'offboarding.submitted_to_payroll'
+    | 'offboarding.submitted'
+    | 'payslip.released'
+    | 'sso_configuration.disabled'
+    | 'sso_configuration.enabled'
+    | 'sso_configuration.updated'
+    | 'timeoff.approved'
+    | 'timeoff.canceled'
+    | 'timeoff.date_changed'
+    | 'timeoff.declined'
+    | 'timeoff.requested'
+    | 'timeoff.taken'
+    | 'timeoff.updated'
+    | 'timesheet.submitted'
+    | 'travel_letter.approved_by_manager'
+    | 'travel_letter.approved_by_remote'
+    | 'travel_letter.declined_by_manager'
+    | 'travel_letter.declined_by_remote'
+    | 'travel_letter.requested'
+    | 'work_authorization.approved_by_manager'
+    | 'work_authorization.approved_by_remote'
+    | 'work_authorization.cancelled'
+    | 'work_authorization.declined_by_manager'
+    | 'work_authorization.declined_by_remote'
+    | 'work_authorization.requested'
+  >;
+  url?: string;
 };
 
-export type TimeoffType = 'paid_time_off' | 'sick_leave' | 'public_holiday' | 'unpaid_leave' | 'extended_leave' | 'in_lieu_time' | 'maternity_leave' | 'paternity_leave' | 'parental_leave' | 'bereavement' | 'military_leave' | 'other';
+export type TimeoffType =
+  | 'paid_time_off'
+  | 'sick_leave'
+  | 'public_holiday'
+  | 'unpaid_leave'
+  | 'extended_leave'
+  | 'in_lieu_time'
+  | 'maternity_leave'
+  | 'paternity_leave'
+  | 'parental_leave'
+  | 'bereavement'
+  | 'military_leave'
+  | 'other';
 
 export type CreateCompanyDepartmentParams = {
-    /**
-     * The Company ID. Required in all cases, whether the API credentials have access to multiple companies or just one.
-     */
-    company_id: string;
-    /**
-     * The name of the company department. May be non-unique and limited to 255 characters, maximum.
-     */
-    name: string;
+  /**
+   * The Company ID. Required in all cases, whether the API credentials have access to multiple companies or just one.
+   */
+  company_id: string;
+  /**
+   * The name of the company department. May be non-unique and limited to 255 characters, maximum.
+   */
+  name: string;
 };
 
 /**
  * Response schema listing many benefit_renewal_requests
  */
 export type BenefitRenewalRequestsListBenefitRenewalRequestResponse = {
-    data?: {
-        benefit_renewal_requests?: Array<BenefitRenewalRequestsBenefitRenewalRequest>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    benefit_renewal_requests?: Array<BenefitRenewalRequestsBenefitRenewalRequest>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
  * Probation Extension Response
  */
 export type ProbationExtensionResponse = {
-    data?: {
-        probation_extension: ProbationExtension;
-    };
+  data?: {
+    probation_extension: ProbationExtension;
+  };
 };
 
 export type ListEmploymentContractResponse = {
-    data: {
-        employment_contracts: Array<EmploymentContract>;
-    };
+  data: {
+    employment_contracts: Array<EmploymentContract>;
+  };
 };
 
 export type MessageResponse = {
-    message: string;
+  message: string;
 };
 
 export type IdentityClientCredentialsResponse = {
-    data: {
-        client_id: string;
-        integration: IdentityIntegration;
-    };
+  data: {
+    client_id: string;
+    integration: IdentityIntegration;
+  };
 };
 
 export type CreateContractAmendmentParams = {
-    /**
-     * The contract ID of the contract that needs to be amended.
-     */
-    amendment_contract_id: string;
-    /**
-     * Contract amendment informations. As its properties may vary depending on the country,
-     * you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
-     * passing the country code, `contract_amendment` and the employment ID as request body.
-     */
-    contract_amendment: {
-        [key: string]: unknown;
-    };
-    /**
-     * The employment ID that is related to the contract amendment request.
-     */
-    employment_id: string;
+  /**
+   * The contract ID of the contract that needs to be amended.
+   */
+  amendment_contract_id: string;
+  /**
+   * Contract amendment informations. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
+   * passing the country code, `contract_amendment` and the employment ID as request body.
+   */
+  contract_amendment: {
+    [key: string]: unknown;
+  };
+  /**
+   * The employment ID that is related to the contract amendment request.
+   */
+  employment_id: string;
 };
 
 /**
  * Probation Extension
  */
 export type ProbationExtension = {
-    employment_id: string;
-    id: string;
-    requested_by: string;
-    status: ProbationExtensionStatus;
-    submitted_at: string;
-    zendesk_ticket_url: string | null;
+  employment_id: string;
+  id: string;
+  requested_by: string;
+  status: ProbationExtensionStatus;
+  submitted_at: string;
+  zendesk_ticket_url: string | null;
 };
 
 /**
  * Error returned when the company already have employees in countries supported by the integration.
  */
 export type CompanyNotEligibleForCreationErrorResponse = {
-    code?: string;
-    message?: string;
-    resource_id?: string;
-    resource_type?: string;
+  code?: string;
+  message?: string;
+  resource_id?: string;
+  resource_type?: string;
 };
 
 /**
  * Minimal Contract Amendment
  */
 export type MinimalContractAmendment = {
-    employment_id: string;
-    id: string;
-    job_title?: string;
-    reason_for_change: 'annual_pay_adjustment' | 'country_rule_change' | 'error_correction' | 'job_change_reevaluation' | 'promotion' | 'other';
-    requested_by: string;
-    requested_effective_date: string;
-    status: ContractAmendmentStatus;
-    submitted_at: string;
+  employment_id: string;
+  id: string;
+  job_title?: string;
+  reason_for_change:
+    | 'annual_pay_adjustment'
+    | 'country_rule_change'
+    | 'error_correction'
+    | 'job_change_reevaluation'
+    | 'promotion'
+    | 'other';
+  requested_by: string;
+  requested_effective_date: string;
+  status: ContractAmendmentStatus;
+  submitted_at: string;
 };
 
 /**
  * The details of the salary decrease request if there is one
  */
 export type SalaryDecreaseDetails = {
-    salary_decrease_reason?: 'change_in_working_hours' | 'trade_salary_for_equity' | 'error_in_initial_salary' | 'role_change_or_demotion' | 'compensation_restructure' | 'other';
-    salary_decrease_reason_description?: string | null;
-    was_employee_informed?: string;
+  salary_decrease_reason?:
+    | 'change_in_working_hours'
+    | 'trade_salary_for_equity'
+    | 'error_in_initial_salary'
+    | 'role_change_or_demotion'
+    | 'compensation_restructure'
+    | 'other';
+  salary_decrease_reason_description?: string | null;
+  was_employee_informed?: string;
 } | null;
 
 /**
  * JSON Schema Response
  */
 export type JsonSchemaResponse = {
-    data?: JsonSchema;
+  data?: JsonSchema;
 };
 
 /**
  * Response schema listing many contract_amendments
  */
 export type ListContractAmendmentResponse = {
-    data?: {
-        contract_amendments?: Array<MinimalContractAmendment>;
-        /**
-         * The current page among all of the total_pages
-         */
-        current_page?: number;
-        /**
-         * The total number of records in the result
-         */
-        total_count?: number;
-        /**
-         * The total number of pages the user can go through
-         */
-        total_pages?: number;
-    };
+  data?: {
+    contract_amendments?: Array<MinimalContractAmendment>;
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 export type AuthorizationCodeParams = {
-    /**
-     * The authorization code generated in Authorization Code flow
-     */
-    code: string;
-    /**
-     * The Authorization flow
-     */
-    grant_type: 'authorization_code';
+  /**
+   * The authorization code generated in Authorization Code flow
+   */
+  code: string;
+  /**
+   * The Authorization flow
+   */
+  grant_type: 'authorization_code';
 };
 
 /**
  * Decline an expense
  */
 export type DeclineExpenseParams = {
-    /**
-     * Reason for declination.
-     */
-    reason: string;
-    status: 'declined';
+  /**
+   * Reason for declination.
+   */
+  reason: string;
+  status: 'declined';
 };
 
 /**
  * EmploymentCustomFieldValue
  */
 export type EmploymentCustomFieldValue = {
-    custom_field_id: string;
-    value: string | number | boolean | number | EmploymentCustomFieldValueJsonValue | null;
+  custom_field_id: string;
+  value:
+    | string
+    | number
+    | boolean
+    | number
+    | EmploymentCustomFieldValueJsonValue
+    | null;
 };
 
 export type RequestError = {
-    errors: {
-        /**
-         * An error code that describes the nature of the error.
-         */
-        code: string;
-        /**
-         * A developer friendly error message that gives details on what the error was and how it may be remedied.
-         */
-        message: string;
-    };
+  errors: {
+    /**
+     * An error code that describes the nature of the error.
+     */
+    code: string;
+    /**
+     * A developer friendly error message that gives details on what the error was and how it may be remedied.
+     */
+    message: string;
+  };
 };
 
 export type Timeoff = {
-    approved_at?: string | null;
-    approver_id?: NullableApproverId;
-    cancel_reason?: string | null;
-    cancelled_at?: NullableDateTime;
-    document?: File;
-    employment_id: string;
-    end_date: string;
-    id: string;
-    notes?: string | null;
-    start_date: string;
-    status: string;
-    timeoff_days: Array<TimeoffDay>;
-    timeoff_type: TimeoffType;
-    timezone: Timezone;
+  approved_at?: string | null;
+  approver_id?: NullableApproverId;
+  cancel_reason?: string | null;
+  cancelled_at?: NullableDateTime;
+  document?: File;
+  employment_id: string;
+  end_date: string;
+  id: string;
+  notes?: string | null;
+  start_date: string;
+  status: string;
+  timeoff_days: Array<TimeoffDay>;
+  timeoff_type: TimeoffType;
+  timezone: Timezone;
 };
 
 /**
  * Approve timeoff params
  */
 export type ApproveTimeoffParams = {
-    approver_id: NullableApproverId;
+  approver_id: NullableApproverId;
 };
 
 /**
  * Time tracking schema
  */
 export type TimeTracking = {
-    clock_in: DateTimeIso8601;
-    clock_out: DateTimeIso8601;
-    has_holiday_hours: boolean;
-    has_night_hours: boolean;
-    has_weekend_hours: boolean;
-    holiday_hours: HoursAndMinutes;
-    night_hours: HoursAndMinutes;
-    notes: string | null;
-    time_breakdown: TimeBreakdown;
-    timezone: Timezone;
-    total_hours: HoursAndMinutes;
-    type: 'regular_hours' | 'overtime' | 'on_call' | 'break' | 'unpaid_break' | 'time_off' | 'public_holiday';
-    weekend_hours: HoursAndMinutes;
+  clock_in: DateTimeIso8601;
+  clock_out: DateTimeIso8601;
+  has_holiday_hours: boolean;
+  has_night_hours: boolean;
+  has_weekend_hours: boolean;
+  holiday_hours: HoursAndMinutes;
+  night_hours: HoursAndMinutes;
+  notes: string | null;
+  time_breakdown: TimeBreakdown;
+  timezone: Timezone;
+  total_hours: HoursAndMinutes;
+  type:
+    | 'regular_hours'
+    | 'overtime'
+    | 'on_call'
+    | 'break'
+    | 'unpaid_break'
+    | 'time_off'
+    | 'public_holiday';
+  weekend_hours: HoursAndMinutes;
 };
 
-export type TimeoffStatus = 'approved' | 'cancelled' | 'declined' | 'requested' | 'taken' | 'cancel_requested';
+export type TimeoffStatus =
+  | 'approved'
+  | 'cancelled'
+  | 'declined'
+  | 'requested'
+  | 'taken'
+  | 'cancel_requested';
 
 /**
  * Create Benefit Renewal Request Response
  */
 export type BenefitRenewalRequestsCreateBenefitRenewalRequestResponse = {
-    data: {
-        benefit_renewal_request: BenefitRenewalRequestsBenefitRenewalRequest;
-    };
+  data: {
+    benefit_renewal_request: BenefitRenewalRequestsBenefitRenewalRequest;
+  };
 };
 
 /**
  * Line Item schema for a Contractor Invoice Schedule
  */
 export type ContractorInvoiceScheduleItem = {
-    /**
-     * Amount, in cents.
-     */
-    amount: number;
-    /**
-     * Describes invoice item intent.
-     */
-    description: string;
+  /**
+   * Amount, in cents.
+   */
+  amount: number;
+  /**
+   * Describes invoice item intent.
+   */
+  description: string;
 };
 
 export type ForbiddenResponse = {
-    message: string;
+  message: string;
 };
 
 export type ResignationAfterStartDate = {
-    contract_currency_code: string;
-    contract_job_title: string;
-    contract_proabtion_period_passed: boolean;
-    contract_probation_period_end_date: string | null;
-    contract_start_date: string;
-    days_of_notice: number;
-    paid_timeoffs_breakdown_labels: Array<string>;
-    proposed_last_day: string;
-    /**
-     * UTC date
-     */
-    resignation_date: string;
-    resignation_reason_label: string;
+  contract_currency_code: string;
+  contract_job_title: string;
+  contract_proabtion_period_passed: boolean;
+  contract_probation_period_end_date: string | null;
+  contract_start_date: string;
+  days_of_notice: number;
+  paid_timeoffs_breakdown_labels: Array<string>;
+  proposed_last_day: string;
+  /**
+   * UTC date
+   */
+  resignation_date: string;
+  resignation_reason_label: string;
 };
 
 export type CompanyCreationConflictErrorResponse = {
-    message?: CompanyAlreadyExistsErrorResponse | CompanyNotEligibleForCreationErrorResponse;
+  message?:
+    | CompanyAlreadyExistsErrorResponse
+    | CompanyNotEligibleForCreationErrorResponse;
 };
 
 /**
  * Webhook callback response
  */
 export type WebhookCallbackResponse = {
-    data: {
-        webhook_callback: WebhookCallback;
-    };
+  data: {
+    webhook_callback: WebhookCallback;
+  };
 };
 
 /**
  * Complete information of an employment
  */
 export type EmploymentResponse = {
-    data: {
-        employment?: Employment;
-    };
+  data: {
+    employment?: Employment;
+  };
 };
 
 /**
  * Expense
  */
 export type Expense = {
-    amount: number;
-    /**
-     * Categories allowed for an expense
-     */
-    category?: 'car_rental' | 'coworking_office' | 'education_training' | 'entertainment' | 'flight' | 'fuel' | 'gifts' | 'insurance' | 'lodging' | 'meals' | 'mileage' | 'other' | 'parking_toll' | 'per_diem' | 'subscription' | 'tech_equipment' | 'telecommunication' | 'transport' | 'utilities' | 'vaccination_testing' | 'visa' | 'wellness' | 'coworking' | 'home_office' | 'phone_utilities' | 'travel';
-    converted_amount: number;
-    converted_currency: CurrencyDefinition;
-    converted_tax_amount: number;
-    currency: CurrencyDefinition;
-    employment_id: string;
-    expense_date: string;
-    id: string;
-    invoice_period?: string | null;
-    notes?: string | null;
-    reason?: string | null;
-    receipts?: Array<File>;
-    reviewed_at?: string | null;
-    reviewer?: {
-        user_email?: string;
-        user_id?: string;
-        user_name?: string;
-    } | null;
-    /**
-     * Expense status
-     */
-    status?: 'canceled' | 'pending' | 'declined' | 'approved' | 'processing' | 'reimbursed';
-    tax_amount: number;
-    title: string;
+  amount: number;
+  /**
+   * Categories allowed for an expense
+   */
+  category?:
+    | 'car_rental'
+    | 'coworking_office'
+    | 'education_training'
+    | 'entertainment'
+    | 'flight'
+    | 'fuel'
+    | 'gifts'
+    | 'insurance'
+    | 'lodging'
+    | 'meals'
+    | 'mileage'
+    | 'other'
+    | 'parking_toll'
+    | 'per_diem'
+    | 'subscription'
+    | 'tech_equipment'
+    | 'telecommunication'
+    | 'transport'
+    | 'utilities'
+    | 'vaccination_testing'
+    | 'visa'
+    | 'wellness'
+    | 'coworking'
+    | 'home_office'
+    | 'phone_utilities'
+    | 'travel';
+  converted_amount: number;
+  converted_currency: CurrencyDefinition;
+  converted_tax_amount: number;
+  currency: CurrencyDefinition;
+  employment_id: string;
+  expense_date: string;
+  id: string;
+  invoice_period?: string | null;
+  notes?: string | null;
+  reason?: string | null;
+  receipts?: Array<File>;
+  reviewed_at?: string | null;
+  reviewer?: {
+    user_email?: string;
+    user_id?: string;
+    user_name?: string;
+  } | null;
+  /**
+   * Expense status
+   */
+  status?:
+    | 'canceled'
+    | 'pending'
+    | 'declined'
+    | 'approved'
+    | 'processing'
+    | 'reimbursed';
+  tax_amount: number;
+  title: string;
 };
 
 /**
  * Contractor Invoice
  */
 export type ContractorInvoice = {
-    /**
-     * Overall amount that is calculated by summing all invoice items.
-     */
-    amount: number;
-    /**
-     * The datetime which contractor invoice has been approved and it's pending for payment.
-     */
-    approved_at?: string | null;
-    /**
-     * Invoice schedule that might have generated contractor invoice.
-     */
-    contractor_invoice_schedule_id?: string | null;
-    currency: CurrencyCode;
-    /**
-     * The issuance date specified by a contractor.
-     */
-    date: string;
-    /**
-     * Custom defined description.
-     */
-    description?: string | null;
-    /**
-     * The payment deadline chosen by the contractor while creating an invoice.
-     */
-    due_date?: string | null;
-    /**
-     * Employment identifier associated with the contractor invoice.
-     */
-    employment_id?: string;
-    /**
-     * Contractor Invoice identifier.
-     */
-    id: string;
-    /**
-     * Invoice line items.
-     */
-    items: Array<ContractorInvoiceItem>;
-    /**
-     * Invoice identifier.
-     */
-    number?: string | null;
-    /**
-     * Date and time which invoice was paid to contractor.
-     */
-    paid_out_at?: string | null;
-    /**
-     * The amount the company needs to pay (pay in amount).
-     */
-    source_amount: number;
-    source_currency: CurrencyCode;
-    status: ContractorInvoiceStatus;
-    /**
-     * The amount the contractor receives (pay out amount). Can be null if pay out is not guaranteed.
-     */
-    target_amount?: number | null;
-    /**
-     * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
-     */
-    target_currency?: string | null;
+  /**
+   * Overall amount that is calculated by summing all invoice items.
+   */
+  amount: number;
+  /**
+   * The datetime which contractor invoice has been approved and it's pending for payment.
+   */
+  approved_at?: string | null;
+  /**
+   * Invoice schedule that might have generated contractor invoice.
+   */
+  contractor_invoice_schedule_id?: string | null;
+  currency: CurrencyCode;
+  /**
+   * The issuance date specified by a contractor.
+   */
+  date: string;
+  /**
+   * Custom defined description.
+   */
+  description?: string | null;
+  /**
+   * The payment deadline chosen by the contractor while creating an invoice.
+   */
+  due_date?: string | null;
+  /**
+   * Employment identifier associated with the contractor invoice.
+   */
+  employment_id?: string;
+  /**
+   * Contractor Invoice identifier.
+   */
+  id: string;
+  /**
+   * Invoice line items.
+   */
+  items: Array<ContractorInvoiceItem>;
+  /**
+   * Invoice identifier.
+   */
+  number?: string | null;
+  /**
+   * Date and time which invoice was paid to contractor.
+   */
+  paid_out_at?: string | null;
+  /**
+   * The amount the company needs to pay (pay in amount).
+   */
+  source_amount: number;
+  source_currency: CurrencyCode;
+  status: ContractorInvoiceStatus;
+  /**
+   * The amount the contractor receives (pay out amount). Can be null if pay out is not guaranteed.
+   */
+  target_amount?: number | null;
+  /**
+   * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
+   */
+  target_currency?: string | null;
 };
 
 export type BillingDocumentAmountItem = {
-    billing_document_amount: number;
-    billing_document_currency: string | null;
-    employment_id?: string | null;
-    source_amount?: number;
-    source_currency?: string | null;
-    type: string;
+  billing_document_amount: number;
+  billing_document_currency: string | null;
+  employment_id?: string | null;
+  source_amount?: number;
+  source_currency?: string | null;
+  type: string;
 };
 
 /**
@@ -4358,6755 +5160,7039 @@ export type EmploymentId = string;
  * Contract Amendment response
  */
 export type ContractAmendmentResponse = {
-    data?: {
-        contract_amendment: ContractAmendment;
-    };
+  data?: {
+    contract_amendment: ContractAmendment;
+  };
 };
 
 /**
  * Set of invoice schedule attributes that were successfully created.
  */
 export type ContractorInvoiceScheduleCreateResponseSuccess = {
-    currency: CurrencyCode;
-    /**
-     * Employment identifier
-     */
-    employment_id: string;
-    id: UuidSlug;
-    /**
-     * List of invoice items that composes the overall invoice amount.
-     */
-    items: Array<ContractorInvoiceScheduleItem>;
-    /**
-     * Custom defined note.
-     */
-    note?: string;
-    /**
-     * Count of invoices that should be generated during schedule lifetime.
-     */
-    nr_occurrences?: number;
-    /**
-     * Invoice identifier.
-     */
-    number?: string;
-    periodicity: ContractorInvoiceSchedulePeriodicity;
-    /**
-     * Date of the first contractor invoice generation.
-     */
-    start_date: string;
+  currency: CurrencyCode;
+  /**
+   * Employment identifier
+   */
+  employment_id: string;
+  id: UuidSlug;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string;
+  /**
+   * Count of invoices that should be generated during schedule lifetime.
+   */
+  nr_occurrences?: number;
+  /**
+   * Invoice identifier.
+   */
+  number?: string;
+  periodicity: ContractorInvoiceSchedulePeriodicity;
+  /**
+   * Date of the first contractor invoice generation.
+   */
+  start_date: string;
 };
 
 export type GetIndexOffboardingData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filter by Employment ID
-         */
-        employment_id?: string;
-        /**
-         * Filter by offboarding type
-         */
-        type?: string;
-        /**
-         * By default, the results do not include confidential termination requests.
-         * Send `include_confidential=true` to include confidential requests in the response.
-         *
-         */
-        include_confidential?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/offboardings';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by Employment ID
+     */
+    employment_id?: string;
+    /**
+     * Filter by offboarding type
+     */
+    type?: string;
+    /**
+     * By default, the results do not include confidential termination requests.
+     * Send `include_confidential=true` to include confidential requests in the response.
+     *
+     */
+    include_confidential?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/offboardings';
 };
 
 export type GetIndexOffboardingErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexOffboardingError = GetIndexOffboardingErrors[keyof GetIndexOffboardingErrors];
+export type GetIndexOffboardingError =
+  GetIndexOffboardingErrors[keyof GetIndexOffboardingErrors];
 
 export type GetIndexOffboardingResponses = {
-    /**
-     * Success
-     */
-    200: ListOffboardingResponse;
+  /**
+   * Success
+   */
+  200: ListOffboardingResponse;
 };
 
-export type GetIndexOffboardingResponse = GetIndexOffboardingResponses[keyof GetIndexOffboardingResponses];
+export type GetIndexOffboardingResponse =
+  GetIndexOffboardingResponses[keyof GetIndexOffboardingResponses];
 
 export type PostCreateOffboardingData = {
-    /**
-     * Offboarding
-     */
-    body?: CreateOffboardingParams;
-    path?: never;
-    query?: never;
-    url: '/v1/offboardings';
+  /**
+   * Offboarding
+   */
+  body?: CreateOffboardingParams;
+  path?: never;
+  query?: never;
+  url: '/v1/offboardings';
 };
 
 export type PostCreateOffboardingErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
-    /**
-     * Internal Server Error
-     */
-    500: RequestError;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+  /**
+   * Internal Server Error
+   */
+  500: RequestError;
 };
 
-export type PostCreateOffboardingError = PostCreateOffboardingErrors[keyof PostCreateOffboardingErrors];
+export type PostCreateOffboardingError =
+  PostCreateOffboardingErrors[keyof PostCreateOffboardingErrors];
 
 export type PostCreateOffboardingResponses = {
-    /**
-     * Success
-     */
-    201: OffboardingResponse;
+  /**
+   * Success
+   */
+  201: OffboardingResponse;
 };
 
-export type PostCreateOffboardingResponse = PostCreateOffboardingResponses[keyof PostCreateOffboardingResponses];
+export type PostCreateOffboardingResponse =
+  PostCreateOffboardingResponses[keyof PostCreateOffboardingResponses];
 
 export type GetShowTimesheetData = {
-    body?: never;
-    path: {
-        /**
-         * Timesheet ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/timesheets/{id}';
+  body?: never;
+  path: {
+    /**
+     * Timesheet ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/timesheets/{id}';
 };
 
 export type GetShowTimesheetErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowTimesheetError = GetShowTimesheetErrors[keyof GetShowTimesheetErrors];
+export type GetShowTimesheetError =
+  GetShowTimesheetErrors[keyof GetShowTimesheetErrors];
 
 export type GetShowTimesheetResponses = {
-    /**
-     * Success
-     */
-    200: TimesheetResponse;
+  /**
+   * Success
+   */
+  200: TimesheetResponse;
 };
 
-export type GetShowTimesheetResponse = GetShowTimesheetResponses[keyof GetShowTimesheetResponses];
+export type GetShowTimesheetResponse =
+  GetShowTimesheetResponses[keyof GetShowTimesheetResponses];
 
 export type PostUpdateCancelOnboardingData = {
-    body?: never;
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/cancel-onboarding/{employment_id}';
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/cancel-onboarding/{employment_id}';
 };
 
 export type PostUpdateCancelOnboardingErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostUpdateCancelOnboardingError = PostUpdateCancelOnboardingErrors[keyof PostUpdateCancelOnboardingErrors];
+export type PostUpdateCancelOnboardingError =
+  PostUpdateCancelOnboardingErrors[keyof PostUpdateCancelOnboardingErrors];
 
 export type PostUpdateCancelOnboardingResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostUpdateCancelOnboardingResponse = PostUpdateCancelOnboardingResponses[keyof PostUpdateCancelOnboardingResponses];
+export type PostUpdateCancelOnboardingResponse =
+  PostUpdateCancelOnboardingResponses[keyof PostUpdateCancelOnboardingResponses];
 
 export type GetShowContractAmendmentSchemaData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query: {
-        /**
-         * The ID of the employment concerned by the contract amendment request.
-         */
-        employment_id: string;
-        /**
-         * Country code according to ISO 3-digit alphabetic codes.
-         */
-        country_code: string;
-        /**
-         * Name of the desired form
-         */
-        form?: 'contract_amendment';
-    };
-    url: '/v1/contract-amendments/schema';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * The ID of the employment concerned by the contract amendment request.
+     */
+    employment_id: string;
+    /**
+     * Country code according to ISO 3-digit alphabetic codes.
+     */
+    country_code: string;
+    /**
+     * Name of the desired form
+     */
+    form?: 'contract_amendment';
+  };
+  url: '/v1/contract-amendments/schema';
 };
 
 export type GetShowContractAmendmentSchemaErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractAmendmentSchemaError = GetShowContractAmendmentSchemaErrors[keyof GetShowContractAmendmentSchemaErrors];
+export type GetShowContractAmendmentSchemaError =
+  GetShowContractAmendmentSchemaErrors[keyof GetShowContractAmendmentSchemaErrors];
 
 export type GetShowContractAmendmentSchemaResponses = {
-    /**
-     * Success
-     */
-    200: ContractAmendmentFormResponse;
+  /**
+   * Success
+   */
+  200: ContractAmendmentFormResponse;
 };
 
-export type GetShowContractAmendmentSchemaResponse = GetShowContractAmendmentSchemaResponses[keyof GetShowContractAmendmentSchemaResponses];
+export type GetShowContractAmendmentSchemaResponse =
+  GetShowContractAmendmentSchemaResponses[keyof GetShowContractAmendmentSchemaResponses];
 
 export type GetIndexDataSyncData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/v1/data-sync';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/data-sync';
 };
 
 export type GetIndexDataSyncErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexDataSyncError = GetIndexDataSyncErrors[keyof GetIndexDataSyncErrors];
+export type GetIndexDataSyncError =
+  GetIndexDataSyncErrors[keyof GetIndexDataSyncErrors];
 
 export type GetIndexDataSyncResponses = {
-    /**
-     * Success
-     */
-    200: ListDataSyncEventsResponse;
+  /**
+   * Success
+   */
+  200: ListDataSyncEventsResponse;
 };
 
-export type GetIndexDataSyncResponse = GetIndexDataSyncResponses[keyof GetIndexDataSyncResponses];
+export type GetIndexDataSyncResponse =
+  GetIndexDataSyncResponses[keyof GetIndexDataSyncResponses];
 
 export type PostCreateDataSyncData = {
-    /**
-     * DataSync
-     */
-    body: CreateDataSyncParams;
-    path?: never;
-    query?: never;
-    url: '/v1/data-sync';
+  /**
+   * DataSync
+   */
+  body: CreateDataSyncParams;
+  path?: never;
+  query?: never;
+  url: '/v1/data-sync';
 };
 
 export type PostCreateDataSyncErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictErrorResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictErrorResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateDataSyncError = PostCreateDataSyncErrors[keyof PostCreateDataSyncErrors];
+export type PostCreateDataSyncError =
+  PostCreateDataSyncErrors[keyof PostCreateDataSyncErrors];
 
 export type PostCreateDataSyncResponses = {
-    /**
-     * Accepted
-     */
-    202: unknown;
+  /**
+   * Accepted
+   */
+  202: unknown;
 };
 
 export type GetShowProbationCompletionLetterData = {
-    body?: never;
-    path: {
-        /**
-         * probation completion letter ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/probation-completion-letter/{id}';
+  body?: never;
+  path: {
+    /**
+     * probation completion letter ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/probation-completion-letter/{id}';
 };
 
 export type GetShowProbationCompletionLetterErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowProbationCompletionLetterError = GetShowProbationCompletionLetterErrors[keyof GetShowProbationCompletionLetterErrors];
+export type GetShowProbationCompletionLetterError =
+  GetShowProbationCompletionLetterErrors[keyof GetShowProbationCompletionLetterErrors];
 
 export type GetShowProbationCompletionLetterResponses = {
-    /**
-     * Success
-     */
-    200: ProbationCompletionLetterResponse;
+  /**
+   * Success
+   */
+  200: ProbationCompletionLetterResponse;
 };
 
-export type GetShowProbationCompletionLetterResponse = GetShowProbationCompletionLetterResponses[keyof GetShowProbationCompletionLetterResponses];
+export type GetShowProbationCompletionLetterResponse =
+  GetShowProbationCompletionLetterResponses[keyof GetShowProbationCompletionLetterResponses];
 
 export type GetShowContractorInvoiceData = {
-    body?: never;
-    path: {
-        /**
-         * Resource unique identifier
-         */
-        id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/contractor-invoices/{id}';
+  body?: never;
+  path: {
+    /**
+     * Resource unique identifier
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/contractor-invoices/{id}';
 };
 
 export type GetShowContractorInvoiceErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractorInvoiceError = GetShowContractorInvoiceErrors[keyof GetShowContractorInvoiceErrors];
+export type GetShowContractorInvoiceError =
+  GetShowContractorInvoiceErrors[keyof GetShowContractorInvoiceErrors];
 
 export type GetShowContractorInvoiceResponses = {
-    /**
-     * Success
-     */
-    200: ContractorInvoiceResponse;
+  /**
+   * Success
+   */
+  200: ContractorInvoiceResponse;
 };
 
-export type GetShowContractorInvoiceResponse = GetShowContractorInvoiceResponses[keyof GetShowContractorInvoiceResponses];
+export type GetShowContractorInvoiceResponse =
+  GetShowContractorInvoiceResponses[keyof GetShowContractorInvoiceResponses];
 
 export type GetIndexEmploymentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Company ID
-         */
-        company_id?: string;
-        /**
-         * Filters the results by employments whose login email matches the value
-         */
-        email?: string;
-        /**
-         * Filters the results by employments whose status matches the value.
-         * Also supports `incomplete` to get all employments that are not onboarded yet.
-         *
-         */
-        status?: string;
-        /**
-         * Filters the results by employments whose employment product type matches the value
-         * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
-         *
-         */
-        employment_type?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/employments';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Company ID
+     */
+    company_id?: string;
+    /**
+     * Filters the results by employments whose login email matches the value
+     */
+    email?: string;
+    /**
+     * Filters the results by employments whose status matches the value.
+     * Also supports `incomplete` to get all employments that are not onboarded yet.
+     *
+     */
+    status?: string;
+    /**
+     * Filters the results by employments whose employment product type matches the value
+     * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
+     *
+     */
+    employment_type?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments';
 };
 
 export type GetIndexEmploymentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexEmploymentError = GetIndexEmploymentErrors[keyof GetIndexEmploymentErrors];
+export type GetIndexEmploymentError =
+  GetIndexEmploymentErrors[keyof GetIndexEmploymentErrors];
 
 export type GetIndexEmploymentResponses = {
-    /**
-     * Success
-     */
-    200: ListEmploymentsResponse;
+  /**
+   * Success
+   */
+  200: ListEmploymentsResponse;
 };
 
-export type GetIndexEmploymentResponse = GetIndexEmploymentResponses[keyof GetIndexEmploymentResponses];
+export type GetIndexEmploymentResponse =
+  GetIndexEmploymentResponses[keyof GetIndexEmploymentResponses];
 
 export type PostCreateEmployment2Data = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentBasicParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentBasicParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/employments';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/employments';
 };
 
 export type PostCreateEmployment2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateEmployment2Error = PostCreateEmployment2Errors[keyof PostCreateEmployment2Errors];
+export type PostCreateEmployment2Error =
+  PostCreateEmployment2Errors[keyof PostCreateEmployment2Errors];
 
 export type PostCreateEmployment2Responses = {
-    /**
-     * Success
-     */
-    201: EmploymentCreationResponse;
+  /**
+   * Success
+   */
+  201: EmploymentCreationResponse;
 };
 
-export type PostCreateEmployment2Response = PostCreateEmployment2Responses[keyof PostCreateEmployment2Responses];
+export type PostCreateEmployment2Response =
+  PostCreateEmployment2Responses[keyof PostCreateEmployment2Responses];
 
 export type GetIndexContractorInvoiceData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filters contractor invoices by status matching the value.
-         */
-        status?: ContractorInvoiceStatus;
-        /**
-         * Filters contractor invoices by invoice schedule ID matching the value.
-         */
-        contractor_invoice_schedule_id?: UuidSlug;
-        /**
-         * Filters contractor invoices by date greater than or equal to the value.
-         */
-        date_from?: _Date;
-        /**
-         * Filters contractor invoices by date less than or equal to the value.
-         */
-        date_to?: _Date;
-        /**
-         * Filters contractor invoices by due date greater than or equal to the value.
-         */
-        due_date_from?: _Date;
-        /**
-         * Filters contractor invoices by due date less than or equal to the value.
-         */
-        due_date_to?: _Date;
-        /**
-         * Filters contractor invoices by approved date greater than or equal to the value.
-         */
-        approved_date_from?: _Date;
-        /**
-         * Filters contractor invoices by approved date less than or equal to the value.
-         */
-        approved_date_to?: _Date;
-        /**
-         * Filters contractor invoices by paid out date greater than or equal to the value.
-         */
-        paid_out_date_from?: _Date;
-        /**
-         * Filters contractor invoices by paid out date less than or equal to the value.
-         */
-        paid_out_date_to?: _Date;
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'date' | 'due_date' | 'approved_at' | 'paid_out_at';
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/contractor-invoices';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filters contractor invoices by status matching the value.
+     */
+    status?: ContractorInvoiceStatus;
+    /**
+     * Filters contractor invoices by invoice schedule ID matching the value.
+     */
+    contractor_invoice_schedule_id?: UuidSlug;
+    /**
+     * Filters contractor invoices by date greater than or equal to the value.
+     */
+    date_from?: _Date;
+    /**
+     * Filters contractor invoices by date less than or equal to the value.
+     */
+    date_to?: _Date;
+    /**
+     * Filters contractor invoices by due date greater than or equal to the value.
+     */
+    due_date_from?: _Date;
+    /**
+     * Filters contractor invoices by due date less than or equal to the value.
+     */
+    due_date_to?: _Date;
+    /**
+     * Filters contractor invoices by approved date greater than or equal to the value.
+     */
+    approved_date_from?: _Date;
+    /**
+     * Filters contractor invoices by approved date less than or equal to the value.
+     */
+    approved_date_to?: _Date;
+    /**
+     * Filters contractor invoices by paid out date greater than or equal to the value.
+     */
+    paid_out_date_from?: _Date;
+    /**
+     * Filters contractor invoices by paid out date less than or equal to the value.
+     */
+    paid_out_date_to?: _Date;
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'date' | 'due_date' | 'approved_at' | 'paid_out_at';
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/contractor-invoices';
 };
 
 export type GetIndexContractorInvoiceErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexContractorInvoiceError = GetIndexContractorInvoiceErrors[keyof GetIndexContractorInvoiceErrors];
+export type GetIndexContractorInvoiceError =
+  GetIndexContractorInvoiceErrors[keyof GetIndexContractorInvoiceErrors];
 
 export type GetIndexContractorInvoiceResponses = {
-    /**
-     * Success
-     */
-    200: ListContractorInvoicesResponse;
+  /**
+   * Success
+   */
+  200: ListContractorInvoicesResponse;
 };
 
-export type GetIndexContractorInvoiceResponse = GetIndexContractorInvoiceResponses[keyof GetIndexContractorInvoiceResponses];
+export type GetIndexContractorInvoiceResponse =
+  GetIndexContractorInvoiceResponses[keyof GetIndexContractorInvoiceResponses];
 
 export type GetDetailsSsoConfigurationData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/v1/sso-configuration/details';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/sso-configuration/details';
 };
 
 export type GetDetailsSsoConfigurationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetDetailsSsoConfigurationError = GetDetailsSsoConfigurationErrors[keyof GetDetailsSsoConfigurationErrors];
+export type GetDetailsSsoConfigurationError =
+  GetDetailsSsoConfigurationErrors[keyof GetDetailsSsoConfigurationErrors];
 
 export type GetDetailsSsoConfigurationResponses = {
-    /**
-     * Success
-     */
-    200: SsoConfigurationDetailsResponse;
+  /**
+   * Success
+   */
+  200: SsoConfigurationDetailsResponse;
 };
 
-export type GetDetailsSsoConfigurationResponse = GetDetailsSsoConfigurationResponses[keyof GetDetailsSsoConfigurationResponses];
+export type GetDetailsSsoConfigurationResponse =
+  GetDetailsSsoConfigurationResponses[keyof GetDetailsSsoConfigurationResponses];
 
 export type PostCreateEstimationData = {
+  /**
+   * Estimate params
+   */
+  body: CostCalculatorEstimateParams;
+  headers: {
     /**
-     * Estimate params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: CostCalculatorEstimateParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/cost-calculator/estimation';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/cost-calculator/estimation';
 };
 
 export type PostCreateEstimationErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEstimationError = PostCreateEstimationErrors[keyof PostCreateEstimationErrors];
+export type PostCreateEstimationError =
+  PostCreateEstimationErrors[keyof PostCreateEstimationErrors];
 
 export type PostCreateEstimationResponses = {
-    /**
-     * Success
-     */
-    200: CostCalculatorEstimateResponse;
+  /**
+   * Success
+   */
+  200: CostCalculatorEstimateResponse;
 };
 
-export type PostCreateEstimationResponse = PostCreateEstimationResponses[keyof PostCreateEstimationResponses];
+export type PostCreateEstimationResponse =
+  PostCreateEstimationResponses[keyof PostCreateEstimationResponses];
 
 export type GetShowCompanySchemaData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Country code according to ISO 3-digit alphabetic codes.
-         */
-        country_code: string;
-        /**
-         * Name of the desired form
-         */
-        form: 'address_details';
-    };
-    url: '/v1/companies/schema';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes.
+     */
+    country_code: string;
+    /**
+     * Name of the desired form
+     */
+    form: 'address_details';
+  };
+  url: '/v1/companies/schema';
 };
 
 export type GetShowCompanySchemaErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowCompanySchemaError = GetShowCompanySchemaErrors[keyof GetShowCompanySchemaErrors];
+export type GetShowCompanySchemaError =
+  GetShowCompanySchemaErrors[keyof GetShowCompanySchemaErrors];
 
 export type GetShowCompanySchemaResponses = {
-    /**
-     * Success
-     */
-    200: CompanyFormResponse;
+  /**
+   * Success
+   */
+  200: CompanyFormResponse;
 };
 
-export type GetShowCompanySchemaResponse = GetShowCompanySchemaResponses[keyof GetShowCompanySchemaResponses];
+export type GetShowCompanySchemaResponse =
+  GetShowCompanySchemaResponses[keyof GetShowCompanySchemaResponses];
 
 export type GetIndexBenefitOfferData = {
-    body?: never;
-    path: {
-        /**
-         * Unique identifier of the employment
-         */
-        employment_id: UuidSlug;
-    };
-    query?: {
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/employments/{employment_id}/benefit-offers';
+  body?: never;
+  path: {
+    /**
+     * Unique identifier of the employment
+     */
+    employment_id: UuidSlug;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
 export type GetIndexBenefitOfferErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBenefitOfferError = GetIndexBenefitOfferErrors[keyof GetIndexBenefitOfferErrors];
+export type GetIndexBenefitOfferError =
+  GetIndexBenefitOfferErrors[keyof GetIndexBenefitOfferErrors];
 
 export type GetIndexBenefitOfferResponses = {
-    /**
-     * Success
-     */
-    200: UnifiedEmploymentListBenefitOffers;
+  /**
+   * Success
+   */
+  200: UnifiedEmploymentListBenefitOffers;
 };
 
-export type GetIndexBenefitOfferResponse = GetIndexBenefitOfferResponses[keyof GetIndexBenefitOfferResponses];
+export type GetIndexBenefitOfferResponse =
+  GetIndexBenefitOfferResponses[keyof GetIndexBenefitOfferResponses];
 
 export type PutUpdateBenefitOfferData = {
+  /**
+   * Upsert employment benefit offers request
+   */
+  body: UnifiedEmploymentUpsertBenefitOffersRequest;
+  path: {
     /**
-     * Upsert employment benefit offers request
+     * Unique identifier of the employment
      */
-    body: UnifiedEmploymentUpsertBenefitOffersRequest;
-    path: {
-        /**
-         * Unique identifier of the employment
-         */
-        employment_id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/employments/{employment_id}/benefit-offers';
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
 export type PutUpdateBenefitOfferErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PutUpdateBenefitOfferError = PutUpdateBenefitOfferErrors[keyof PutUpdateBenefitOfferErrors];
+export type PutUpdateBenefitOfferError =
+  PutUpdateBenefitOfferErrors[keyof PutUpdateBenefitOfferErrors];
 
 export type PutUpdateBenefitOfferResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PutUpdateBenefitOfferResponse = PutUpdateBenefitOfferResponses[keyof PutUpdateBenefitOfferResponses];
+export type PutUpdateBenefitOfferResponse =
+  PutUpdateBenefitOfferResponses[keyof PutUpdateBenefitOfferResponses];
 
 export type GetGetIdentityVerificationDataIdentityVerificationData = {
-    body?: never;
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/identity-verification/{employment_id}';
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/identity-verification/{employment_id}';
 };
 
 export type GetGetIdentityVerificationDataIdentityVerificationErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetGetIdentityVerificationDataIdentityVerificationError = GetGetIdentityVerificationDataIdentityVerificationErrors[keyof GetGetIdentityVerificationDataIdentityVerificationErrors];
+export type GetGetIdentityVerificationDataIdentityVerificationError =
+  GetGetIdentityVerificationDataIdentityVerificationErrors[keyof GetGetIdentityVerificationDataIdentityVerificationErrors];
 
 export type GetGetIdentityVerificationDataIdentityVerificationResponses = {
-    /**
-     * Success
-     */
-    200: IdentityVerificationResponse;
+  /**
+   * Success
+   */
+  200: IdentityVerificationResponse;
 };
 
-export type GetGetIdentityVerificationDataIdentityVerificationResponse = GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
+export type GetGetIdentityVerificationDataIdentityVerificationResponse =
+  GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
 
 export type GetIndexHolidayData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Country code according to ISO 3166-1 3-digit alphabetic codes
-         */
-        country_code: string;
-        /**
-         * Year for the holidays
-         */
-        year: string;
-    };
-    query?: {
-        /**
-         * Country subdivision code according to ISO 3166-2 codes
-         */
-        country_subdivision_code?: string;
-    };
-    url: '/v1/countries/{country_code}/holidays/{year}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Country code according to ISO 3166-1 3-digit alphabetic codes
+     */
+    country_code: string;
+    /**
+     * Year for the holidays
+     */
+    year: string;
+  };
+  query?: {
+    /**
+     * Country subdivision code according to ISO 3166-2 codes
+     */
+    country_subdivision_code?: string;
+  };
+  url: '/v1/countries/{country_code}/holidays/{year}';
 };
 
 export type GetIndexHolidayErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexHolidayError = GetIndexHolidayErrors[keyof GetIndexHolidayErrors];
+export type GetIndexHolidayError =
+  GetIndexHolidayErrors[keyof GetIndexHolidayErrors];
 
 export type GetIndexHolidayResponses = {
-    /**
-     * Success
-     */
-    200: HolidaysResponse;
+  /**
+   * Success
+   */
+  200: HolidaysResponse;
 };
 
-export type GetIndexHolidayResponse = GetIndexHolidayResponses[keyof GetIndexHolidayResponses];
+export type GetIndexHolidayResponse =
+  GetIndexHolidayResponses[keyof GetIndexHolidayResponses];
 
 export type PostCreateCancellationData = {
+  /**
+   * CancelTimeoff
+   */
+  body: CancelTimeoffParams;
+  path: {
     /**
-     * CancelTimeoff
+     * Time Off ID
      */
-    body: CancelTimeoffParams;
-    path: {
-        /**
-         * Time Off ID
-         */
-        timeoff_id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{timeoff_id}/cancel';
+    timeoff_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{timeoff_id}/cancel';
 };
 
 export type PostCreateCancellationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateCancellationError = PostCreateCancellationErrors[keyof PostCreateCancellationErrors];
+export type PostCreateCancellationError =
+  PostCreateCancellationErrors[keyof PostCreateCancellationErrors];
 
 export type PostCreateCancellationResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type PostCreateCancellationResponse = PostCreateCancellationResponses[keyof PostCreateCancellationResponses];
+export type PostCreateCancellationResponse =
+  PostCreateCancellationResponses[keyof PostCreateCancellationResponses];
 
 export type GetIndexRecurringIncentiveData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Filter by recurring incentive status: active or deactive.
-         */
-        status?: string;
-        /**
-         * Filter by recurring incentive type.
-         */
-        type?: string;
-        /**
-         * Filter by recurring incentives that contain the value in their notes.
-         */
-        note?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/incentives/recurring';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Filter by recurring incentive status: active or deactive.
+     */
+    status?: string;
+    /**
+     * Filter by recurring incentive type.
+     */
+    type?: string;
+    /**
+     * Filter by recurring incentives that contain the value in their notes.
+     */
+    note?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/incentives/recurring';
 };
 
 export type GetIndexRecurringIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexRecurringIncentiveError = GetIndexRecurringIncentiveErrors[keyof GetIndexRecurringIncentiveErrors];
+export type GetIndexRecurringIncentiveError =
+  GetIndexRecurringIncentiveErrors[keyof GetIndexRecurringIncentiveErrors];
 
 export type GetIndexRecurringIncentiveResponses = {
-    /**
-     * Success
-     */
-    201: ListRecurringIncentivesResponse;
+  /**
+   * Success
+   */
+  201: ListRecurringIncentivesResponse;
 };
 
-export type GetIndexRecurringIncentiveResponse = GetIndexRecurringIncentiveResponses[keyof GetIndexRecurringIncentiveResponses];
+export type GetIndexRecurringIncentiveResponse =
+  GetIndexRecurringIncentiveResponses[keyof GetIndexRecurringIncentiveResponses];
 
 export type PostCreateRecurringIncentiveData = {
+  /**
+   * RecurringIncentive
+   */
+  body?: CreateRecurringIncentiveParams;
+  headers: {
     /**
-     * RecurringIncentive
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CreateRecurringIncentiveParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/incentives/recurring';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/incentives/recurring';
 };
 
 export type PostCreateRecurringIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateRecurringIncentiveError = PostCreateRecurringIncentiveErrors[keyof PostCreateRecurringIncentiveErrors];
+export type PostCreateRecurringIncentiveError =
+  PostCreateRecurringIncentiveErrors[keyof PostCreateRecurringIncentiveErrors];
 
 export type PostCreateRecurringIncentiveResponses = {
-    /**
-     * Success
-     */
-    201: RecurringIncentiveResponse;
+  /**
+   * Success
+   */
+  201: RecurringIncentiveResponse;
 };
 
-export type PostCreateRecurringIncentiveResponse = PostCreateRecurringIncentiveResponses[keyof PostCreateRecurringIncentiveResponses];
+export type PostCreateRecurringIncentiveResponse =
+  PostCreateRecurringIncentiveResponses[keyof PostCreateRecurringIncentiveResponses];
 
 export type PostCreateBenefitRenewalRequestData = {
+  /**
+   * Benefit Renewal Request
+   */
+  body: BenefitRenewalRequestsCreateBenefitRenewalRequest;
+  headers: {
     /**
-     * Benefit Renewal Request
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: BenefitRenewalRequestsCreateBenefitRenewalRequest;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/sandbox/benefit-renewal-requests';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/sandbox/benefit-renewal-requests';
 };
 
 export type PostCreateBenefitRenewalRequestErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateBenefitRenewalRequestError = PostCreateBenefitRenewalRequestErrors[keyof PostCreateBenefitRenewalRequestErrors];
+export type PostCreateBenefitRenewalRequestError =
+  PostCreateBenefitRenewalRequestErrors[keyof PostCreateBenefitRenewalRequestErrors];
 
 export type PostCreateBenefitRenewalRequestResponses = {
-    /**
-     * Success
-     */
-    200: BenefitRenewalRequestsCreateBenefitRenewalRequestResponse;
+  /**
+   * Success
+   */
+  200: BenefitRenewalRequestsCreateBenefitRenewalRequestResponse;
 };
 
-export type PostCreateBenefitRenewalRequestResponse = PostCreateBenefitRenewalRequestResponses[keyof PostCreateBenefitRenewalRequestResponses];
+export type PostCreateBenefitRenewalRequestResponse =
+  PostCreateBenefitRenewalRequestResponses[keyof PostCreateBenefitRenewalRequestResponses];
 
 export type GetIndexExpenseData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/expenses';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/expenses';
 };
 
 export type GetIndexExpenseErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexExpenseError = GetIndexExpenseErrors[keyof GetIndexExpenseErrors];
+export type GetIndexExpenseError =
+  GetIndexExpenseErrors[keyof GetIndexExpenseErrors];
 
 export type GetIndexExpenseResponses = {
-    /**
-     * Success
-     */
-    201: ListExpenseResponse;
+  /**
+   * Success
+   */
+  201: ListExpenseResponse;
 };
 
-export type GetIndexExpenseResponse = GetIndexExpenseResponses[keyof GetIndexExpenseResponses];
+export type GetIndexExpenseResponse =
+  GetIndexExpenseResponses[keyof GetIndexExpenseResponses];
 
 export type PostCreateExpenseData = {
+  /**
+   * Expenses
+   */
+  body?: ParamsToCreateExpense;
+  headers: {
     /**
-     * Expenses
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: ParamsToCreateExpense;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/expenses';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/expenses';
 };
 
 export type PostCreateExpenseErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateExpenseError = PostCreateExpenseErrors[keyof PostCreateExpenseErrors];
+export type PostCreateExpenseError =
+  PostCreateExpenseErrors[keyof PostCreateExpenseErrors];
 
 export type PostCreateExpenseResponses = {
-    /**
-     * Success
-     */
-    201: ExpenseResponse;
+  /**
+   * Success
+   */
+  201: ExpenseResponse;
 };
 
-export type PostCreateExpenseResponse = PostCreateExpenseResponses[keyof PostCreateExpenseResponses];
+export type PostCreateExpenseResponse =
+  PostCreateExpenseResponses[keyof PostCreateExpenseResponses];
 
 export type GetShowSsoConfigurationData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/v1/sso-configuration';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/sso-configuration';
 };
 
 export type GetShowSsoConfigurationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowSsoConfigurationError = GetShowSsoConfigurationErrors[keyof GetShowSsoConfigurationErrors];
+export type GetShowSsoConfigurationError =
+  GetShowSsoConfigurationErrors[keyof GetShowSsoConfigurationErrors];
 
 export type GetShowSsoConfigurationResponses = {
-    /**
-     * Success
-     */
-    200: SsoConfigurationResponse;
+  /**
+   * Success
+   */
+  200: SsoConfigurationResponse;
 };
 
-export type GetShowSsoConfigurationResponse = GetShowSsoConfigurationResponses[keyof GetShowSsoConfigurationResponses];
+export type GetShowSsoConfigurationResponse =
+  GetShowSsoConfigurationResponses[keyof GetShowSsoConfigurationResponses];
 
 export type PostCreateSsoConfigurationData = {
-    /**
-     * CreateSSOConfiguration
-     */
-    body: CreateSsoConfigurationParams;
-    path?: never;
-    query?: never;
-    url: '/v1/sso-configuration';
+  /**
+   * CreateSSOConfiguration
+   */
+  body: CreateSsoConfigurationParams;
+  path?: never;
+  query?: never;
+  url: '/v1/sso-configuration';
 };
 
 export type PostCreateSsoConfigurationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateSsoConfigurationError = PostCreateSsoConfigurationErrors[keyof PostCreateSsoConfigurationErrors];
+export type PostCreateSsoConfigurationError =
+  PostCreateSsoConfigurationErrors[keyof PostCreateSsoConfigurationErrors];
 
 export type PostCreateSsoConfigurationResponses = {
-    /**
-     * Created
-     */
-    201: CreateSsoConfigurationResponse;
+  /**
+   * Created
+   */
+  201: CreateSsoConfigurationResponse;
 };
 
-export type PostCreateSsoConfigurationResponse = PostCreateSsoConfigurationResponses[keyof PostCreateSsoConfigurationResponses];
+export type PostCreateSsoConfigurationResponse =
+  PostCreateSsoConfigurationResponses[keyof PostCreateSsoConfigurationResponses];
 
 export type PutApproveContractAmendmentData = {
-    body?: never;
-    path: {
-        /**
-         * Contract amendment request ID
-         */
-        contract_amendment_request_id: string;
-    };
-    query?: never;
-    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
+  body?: never;
+  path: {
+    /**
+     * Contract amendment request ID
+     */
+    contract_amendment_request_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
 };
 
 export type PutApproveContractAmendmentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PutApproveContractAmendmentError = PutApproveContractAmendmentErrors[keyof PutApproveContractAmendmentErrors];
+export type PutApproveContractAmendmentError =
+  PutApproveContractAmendmentErrors[keyof PutApproveContractAmendmentErrors];
 
 export type PutApproveContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: ContractAmendmentResponse;
+  /**
+   * Success
+   */
+  200: ContractAmendmentResponse;
 };
 
-export type PutApproveContractAmendmentResponse = PutApproveContractAmendmentResponses[keyof PutApproveContractAmendmentResponses];
+export type PutApproveContractAmendmentResponse =
+  PutApproveContractAmendmentResponses[keyof PutApproveContractAmendmentResponses];
 
 export type GetSchemaBenefitRenewalRequestData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Benefit Renewal Request Id
-         */
-        benefit_renewal_request_id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Benefit Renewal Request Id
+     */
+    benefit_renewal_request_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
 };
 
 export type GetSchemaBenefitRenewalRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetSchemaBenefitRenewalRequestError = GetSchemaBenefitRenewalRequestErrors[keyof GetSchemaBenefitRenewalRequestErrors];
+export type GetSchemaBenefitRenewalRequestError =
+  GetSchemaBenefitRenewalRequestErrors[keyof GetSchemaBenefitRenewalRequestErrors];
 
 export type GetSchemaBenefitRenewalRequestResponses = {
-    /**
-     * Success
-     */
-    200: BenefitRenewalRequestsBenefitRenewalRequestFormResponse;
+  /**
+   * Success
+   */
+  200: BenefitRenewalRequestsBenefitRenewalRequestFormResponse;
 };
 
-export type GetSchemaBenefitRenewalRequestResponse = GetSchemaBenefitRenewalRequestResponses[keyof GetSchemaBenefitRenewalRequestResponses];
+export type GetSchemaBenefitRenewalRequestResponse =
+  GetSchemaBenefitRenewalRequestResponses[keyof GetSchemaBenefitRenewalRequestResponses];
 
 export type DeleteDeleteRecurringIncentiveData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Recurring Incentive ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/incentives/recurring/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Recurring Incentive ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/incentives/recurring/{id}';
 };
 
 export type DeleteDeleteRecurringIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteRecurringIncentiveError = DeleteDeleteRecurringIncentiveErrors[keyof DeleteDeleteRecurringIncentiveErrors];
+export type DeleteDeleteRecurringIncentiveError =
+  DeleteDeleteRecurringIncentiveErrors[keyof DeleteDeleteRecurringIncentiveErrors];
 
 export type DeleteDeleteRecurringIncentiveResponses = {
-    /**
-     * Success
-     */
-    200: DeleteRecurringIncentiveResponse;
+  /**
+   * Success
+   */
+  200: DeleteRecurringIncentiveResponse;
 };
 
-export type DeleteDeleteRecurringIncentiveResponse = DeleteDeleteRecurringIncentiveResponses[keyof DeleteDeleteRecurringIncentiveResponses];
+export type DeleteDeleteRecurringIncentiveResponse =
+  DeleteDeleteRecurringIncentiveResponses[keyof DeleteDeleteRecurringIncentiveResponses];
 
 export type GetIndexIncentiveData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Filter by Employment ID
-         */
-        employment_id?: string;
-        /**
-         * Filter by Incentive status
-         */
-        status?: string;
-        /**
-         * Filter by Recurring Incentive id
-         */
-        recurring_incentive_id?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/incentives';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Filter by Employment ID
+     */
+    employment_id?: string;
+    /**
+     * Filter by Incentive status
+     */
+    status?: string;
+    /**
+     * Filter by Recurring Incentive id
+     */
+    recurring_incentive_id?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/incentives';
 };
 
 export type GetIndexIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexIncentiveError = GetIndexIncentiveErrors[keyof GetIndexIncentiveErrors];
+export type GetIndexIncentiveError =
+  GetIndexIncentiveErrors[keyof GetIndexIncentiveErrors];
 
 export type GetIndexIncentiveResponses = {
-    /**
-     * Success
-     */
-    200: ListIncentivesResponse;
+  /**
+   * Success
+   */
+  200: ListIncentivesResponse;
 };
 
-export type GetIndexIncentiveResponse = GetIndexIncentiveResponses[keyof GetIndexIncentiveResponses];
+export type GetIndexIncentiveResponse =
+  GetIndexIncentiveResponses[keyof GetIndexIncentiveResponses];
 
 export type PostCreateIncentiveData = {
+  /**
+   * Incentive
+   */
+  body?: CreateOneTimeIncentiveParams;
+  headers: {
     /**
-     * Incentive
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CreateOneTimeIncentiveParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/incentives';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/incentives';
 };
 
 export type PostCreateIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateIncentiveError = PostCreateIncentiveErrors[keyof PostCreateIncentiveErrors];
+export type PostCreateIncentiveError =
+  PostCreateIncentiveErrors[keyof PostCreateIncentiveErrors];
 
 export type PostCreateIncentiveResponses = {
-    /**
-     * Success
-     */
-    201: IncentiveResponse;
+  /**
+   * Success
+   */
+  201: IncentiveResponse;
 };
 
-export type PostCreateIncentiveResponse = PostCreateIncentiveResponses[keyof PostCreateIncentiveResponses];
+export type PostCreateIncentiveResponse =
+  PostCreateIncentiveResponses[keyof PostCreateIncentiveResponses];
 
 export type PostCreateProbationCompletionLetterData = {
-    /**
-     * Work Authorization Request
-     */
-    body: CreateProbationCompletionLetterParams;
-    path?: never;
-    query?: never;
-    url: '/v1/probation-completion-letter';
+  /**
+   * Work Authorization Request
+   */
+  body: CreateProbationCompletionLetterParams;
+  path?: never;
+  query?: never;
+  url: '/v1/probation-completion-letter';
 };
 
 export type PostCreateProbationCompletionLetterErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateProbationCompletionLetterError = PostCreateProbationCompletionLetterErrors[keyof PostCreateProbationCompletionLetterErrors];
+export type PostCreateProbationCompletionLetterError =
+  PostCreateProbationCompletionLetterErrors[keyof PostCreateProbationCompletionLetterErrors];
 
 export type PostCreateProbationCompletionLetterResponses = {
-    /**
-     * Success
-     */
-    200: ProbationCompletionLetterResponse;
+  /**
+   * Success
+   */
+  200: ProbationCompletionLetterResponse;
 };
 
-export type PostCreateProbationCompletionLetterResponse = PostCreateProbationCompletionLetterResponses[keyof PostCreateProbationCompletionLetterResponses];
+export type PostCreateProbationCompletionLetterResponse =
+  PostCreateProbationCompletionLetterResponses[keyof PostCreateProbationCompletionLetterResponses];
 
 export type GetShowScheduledContractorInvoiceData = {
-    body?: never;
-    path: {
-        /**
-         * Resource unique identifier
-         */
-        id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/contractor-invoice-schedules/{id}';
+  body?: never;
+  path: {
+    /**
+     * Resource unique identifier
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type GetShowScheduledContractorInvoiceErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowScheduledContractorInvoiceError = GetShowScheduledContractorInvoiceErrors[keyof GetShowScheduledContractorInvoiceErrors];
+export type GetShowScheduledContractorInvoiceError =
+  GetShowScheduledContractorInvoiceErrors[keyof GetShowScheduledContractorInvoiceErrors];
 
 export type GetShowScheduledContractorInvoiceResponses = {
-    /**
-     * Success
-     */
-    200: ContractorInvoiceScheduleResponse;
+  /**
+   * Success
+   */
+  200: ContractorInvoiceScheduleResponse;
 };
 
-export type GetShowScheduledContractorInvoiceResponse = GetShowScheduledContractorInvoiceResponses[keyof GetShowScheduledContractorInvoiceResponses];
+export type GetShowScheduledContractorInvoiceResponse =
+  GetShowScheduledContractorInvoiceResponses[keyof GetShowScheduledContractorInvoiceResponses];
 
 export type PatchUpdateScheduledContractorInvoice2Data = {
+  /**
+   * Update parameters
+   */
+  body: UpdateScheduleContractorInvoiceParams;
+  path: {
     /**
-     * Update parameters
+     * Resource unique identifier
      */
-    body: UpdateScheduleContractorInvoiceParams;
-    path: {
-        /**
-         * Resource unique identifier
-         */
-        id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/contractor-invoice-schedules/{id}';
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type PatchUpdateScheduledContractorInvoice2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoice2Error = PatchUpdateScheduledContractorInvoice2Errors[keyof PatchUpdateScheduledContractorInvoice2Errors];
+export type PatchUpdateScheduledContractorInvoice2Error =
+  PatchUpdateScheduledContractorInvoice2Errors[keyof PatchUpdateScheduledContractorInvoice2Errors];
 
 export type PatchUpdateScheduledContractorInvoice2Responses = {
-    /**
-     * Success
-     */
-    200: ContractorInvoiceScheduleResponse;
+  /**
+   * Success
+   */
+  200: ContractorInvoiceScheduleResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoice2Response = PatchUpdateScheduledContractorInvoice2Responses[keyof PatchUpdateScheduledContractorInvoice2Responses];
+export type PatchUpdateScheduledContractorInvoice2Response =
+  PatchUpdateScheduledContractorInvoice2Responses[keyof PatchUpdateScheduledContractorInvoice2Responses];
 
 export type PatchUpdateScheduledContractorInvoiceData = {
+  /**
+   * Update parameters
+   */
+  body: UpdateScheduleContractorInvoiceParams;
+  path: {
     /**
-     * Update parameters
+     * Resource unique identifier
      */
-    body: UpdateScheduleContractorInvoiceParams;
-    path: {
-        /**
-         * Resource unique identifier
-         */
-        id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/contractor-invoice-schedules/{id}';
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type PatchUpdateScheduledContractorInvoiceErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoiceError = PatchUpdateScheduledContractorInvoiceErrors[keyof PatchUpdateScheduledContractorInvoiceErrors];
+export type PatchUpdateScheduledContractorInvoiceError =
+  PatchUpdateScheduledContractorInvoiceErrors[keyof PatchUpdateScheduledContractorInvoiceErrors];
 
 export type PatchUpdateScheduledContractorInvoiceResponses = {
-    /**
-     * Success
-     */
-    200: ContractorInvoiceScheduleResponse;
+  /**
+   * Success
+   */
+  200: ContractorInvoiceScheduleResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoiceResponse = PatchUpdateScheduledContractorInvoiceResponses[keyof PatchUpdateScheduledContractorInvoiceResponses];
+export type PatchUpdateScheduledContractorInvoiceResponse =
+  PatchUpdateScheduledContractorInvoiceResponses[keyof PatchUpdateScheduledContractorInvoiceResponses];
 
 export type GetShowBillingDocumentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * The billing document's ID
-         */
-        billing_document_id: string;
-    };
-    query?: never;
-    url: '/v1/billing-documents/{billing_document_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * The billing document's ID
+     */
+    billing_document_id: string;
+  };
+  query?: never;
+  url: '/v1/billing-documents/{billing_document_id}';
 };
 
 export type GetShowBillingDocumentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowBillingDocumentError = GetShowBillingDocumentErrors[keyof GetShowBillingDocumentErrors];
+export type GetShowBillingDocumentError =
+  GetShowBillingDocumentErrors[keyof GetShowBillingDocumentErrors];
 
 export type GetShowBillingDocumentResponses = {
-    /**
-     * Success
-     */
-    200: BillingDocumentResponse;
+  /**
+   * Success
+   */
+  200: BillingDocumentResponse;
 };
 
-export type GetShowBillingDocumentResponse = GetShowBillingDocumentResponses[keyof GetShowBillingDocumentResponses];
+export type GetShowBillingDocumentResponse =
+  GetShowBillingDocumentResponses[keyof GetShowBillingDocumentResponses];
 
 export type PostCreateEstimationPdfData = {
-    /**
-     * Estimate params
-     */
-    body?: CostCalculatorEstimateParams;
-    path?: never;
-    query?: never;
-    url: '/v1/cost-calculator/estimation-pdf';
+  /**
+   * Estimate params
+   */
+  body?: CostCalculatorEstimateParams;
+  path?: never;
+  query?: never;
+  url: '/v1/cost-calculator/estimation-pdf';
 };
 
 export type PostCreateEstimationPdfErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEstimationPdfError = PostCreateEstimationPdfErrors[keyof PostCreateEstimationPdfErrors];
+export type PostCreateEstimationPdfError =
+  PostCreateEstimationPdfErrors[keyof PostCreateEstimationPdfErrors];
 
 export type PostCreateEstimationPdfResponses = {
-    /**
-     * Success
-     */
-    200: CostCalculatorEstimatePdfResponse;
+  /**
+   * Success
+   */
+  200: CostCalculatorEstimatePdfResponse;
 };
 
-export type PostCreateEstimationPdfResponse = PostCreateEstimationPdfResponses[keyof PostCreateEstimationPdfResponses];
+export type PostCreateEstimationPdfResponse =
+  PostCreateEstimationPdfResponses[keyof PostCreateEstimationPdfResponses];
 
 export type GetShowWorkAuthorizationRequestData = {
-    body?: never;
-    path: {
-        /**
-         * work authorization request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/work-authorization-requests/{id}';
+  body?: never;
+  path: {
+    /**
+     * work authorization request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type GetShowWorkAuthorizationRequestErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowWorkAuthorizationRequestError = GetShowWorkAuthorizationRequestErrors[keyof GetShowWorkAuthorizationRequestErrors];
+export type GetShowWorkAuthorizationRequestError =
+  GetShowWorkAuthorizationRequestErrors[keyof GetShowWorkAuthorizationRequestErrors];
 
 export type GetShowWorkAuthorizationRequestResponses = {
-    /**
-     * Success
-     */
-    200: WorkAuthorizationRequestResponse;
+  /**
+   * Success
+   */
+  200: WorkAuthorizationRequestResponse;
 };
 
-export type GetShowWorkAuthorizationRequestResponse = GetShowWorkAuthorizationRequestResponses[keyof GetShowWorkAuthorizationRequestResponses];
+export type GetShowWorkAuthorizationRequestResponse =
+  GetShowWorkAuthorizationRequestResponses[keyof GetShowWorkAuthorizationRequestResponses];
 
 export type PatchUpdateWorkAuthorizationRequest2Data = {
+  /**
+   * Work Authorization Request
+   */
+  body: UpdateWorkAuthorizationRequestParams;
+  path: {
     /**
-     * Work Authorization Request
+     * work authorization request ID
      */
-    body: UpdateWorkAuthorizationRequestParams;
-    path: {
-        /**
-         * work authorization request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/work-authorization-requests/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type PatchUpdateWorkAuthorizationRequest2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequest2Error = PatchUpdateWorkAuthorizationRequest2Errors[keyof PatchUpdateWorkAuthorizationRequest2Errors];
+export type PatchUpdateWorkAuthorizationRequest2Error =
+  PatchUpdateWorkAuthorizationRequest2Errors[keyof PatchUpdateWorkAuthorizationRequest2Errors];
 
 export type PatchUpdateWorkAuthorizationRequest2Responses = {
-    /**
-     * Success
-     */
-    200: WorkAuthorizationRequestResponse;
+  /**
+   * Success
+   */
+  200: WorkAuthorizationRequestResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequest2Response = PatchUpdateWorkAuthorizationRequest2Responses[keyof PatchUpdateWorkAuthorizationRequest2Responses];
+export type PatchUpdateWorkAuthorizationRequest2Response =
+  PatchUpdateWorkAuthorizationRequest2Responses[keyof PatchUpdateWorkAuthorizationRequest2Responses];
 
 export type PatchUpdateWorkAuthorizationRequestData = {
+  /**
+   * Work Authorization Request
+   */
+  body: UpdateWorkAuthorizationRequestParams;
+  path: {
     /**
-     * Work Authorization Request
+     * work authorization request ID
      */
-    body: UpdateWorkAuthorizationRequestParams;
-    path: {
-        /**
-         * work authorization request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/work-authorization-requests/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type PatchUpdateWorkAuthorizationRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequestError = PatchUpdateWorkAuthorizationRequestErrors[keyof PatchUpdateWorkAuthorizationRequestErrors];
+export type PatchUpdateWorkAuthorizationRequestError =
+  PatchUpdateWorkAuthorizationRequestErrors[keyof PatchUpdateWorkAuthorizationRequestErrors];
 
 export type PatchUpdateWorkAuthorizationRequestResponses = {
-    /**
-     * Success
-     */
-    200: WorkAuthorizationRequestResponse;
+  /**
+   * Success
+   */
+  200: WorkAuthorizationRequestResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequestResponse = PatchUpdateWorkAuthorizationRequestResponses[keyof PatchUpdateWorkAuthorizationRequestResponses];
+export type PatchUpdateWorkAuthorizationRequestResponse =
+  PatchUpdateWorkAuthorizationRequestResponses[keyof PatchUpdateWorkAuthorizationRequestResponses];
 
 export type PostCreateProbationExtensionData = {
-    /**
-     * ProbationExtension
-     */
-    body: CreateProbationExtensionParams;
-    path?: never;
-    query?: never;
-    url: '/v1/probation-extensions';
+  /**
+   * ProbationExtension
+   */
+  body: CreateProbationExtensionParams;
+  path?: never;
+  query?: never;
+  url: '/v1/probation-extensions';
 };
 
 export type PostCreateProbationExtensionErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateProbationExtensionError = PostCreateProbationExtensionErrors[keyof PostCreateProbationExtensionErrors];
+export type PostCreateProbationExtensionError =
+  PostCreateProbationExtensionErrors[keyof PostCreateProbationExtensionErrors];
 
 export type PostCreateProbationExtensionResponses = {
-    /**
-     * Success
-     */
-    200: ProbationExtensionResponse;
+  /**
+   * Success
+   */
+  200: ProbationExtensionResponse;
 };
 
-export type PostCreateProbationExtensionResponse = PostCreateProbationExtensionResponses[keyof PostCreateProbationExtensionResponses];
+export type PostCreateProbationExtensionResponse =
+  PostCreateProbationExtensionResponses[keyof PostCreateProbationExtensionResponses];
 
 export type GetShowCompanyData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Company ID
-         */
-        company_id: string;
-    };
-    query?: never;
-    url: '/v1/companies/{company_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}';
 };
 
 export type GetShowCompanyErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowCompanyError = GetShowCompanyErrors[keyof GetShowCompanyErrors];
+export type GetShowCompanyError =
+  GetShowCompanyErrors[keyof GetShowCompanyErrors];
 
 export type GetShowCompanyResponses = {
-    /**
-     * Success
-     */
-    200: CompanyResponse;
+  /**
+   * Success
+   */
+  200: CompanyResponse;
 };
 
-export type GetShowCompanyResponse = GetShowCompanyResponses[keyof GetShowCompanyResponses];
+export type GetShowCompanyResponse =
+  GetShowCompanyResponses[keyof GetShowCompanyResponses];
 
 export type PatchUpdateCompany2Data = {
+  /**
+   * Update Company params
+   */
+  body?: UpdateCompanyParams;
+  headers: {
     /**
-     * Update Company params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: UpdateCompanyParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Company ID
-         */
-        company_id: string;
-    };
-    query?: never;
-    url: '/v1/companies/{company_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}';
 };
 
 export type PatchUpdateCompany2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateCompany2Error = PatchUpdateCompany2Errors[keyof PatchUpdateCompany2Errors];
+export type PatchUpdateCompany2Error =
+  PatchUpdateCompany2Errors[keyof PatchUpdateCompany2Errors];
 
 export type PatchUpdateCompany2Responses = {
-    /**
-     * Success
-     */
-    200: CompanyResponse;
+  /**
+   * Success
+   */
+  200: CompanyResponse;
 };
 
-export type PatchUpdateCompany2Response = PatchUpdateCompany2Responses[keyof PatchUpdateCompany2Responses];
+export type PatchUpdateCompany2Response =
+  PatchUpdateCompany2Responses[keyof PatchUpdateCompany2Responses];
 
 export type PatchUpdateCompanyData = {
+  /**
+   * Update Company params
+   */
+  body?: UpdateCompanyParams;
+  headers: {
     /**
-     * Update Company params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: UpdateCompanyParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Company ID
-         */
-        company_id: string;
-    };
-    query?: never;
-    url: '/v1/companies/{company_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}';
 };
 
 export type PatchUpdateCompanyErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateCompanyError = PatchUpdateCompanyErrors[keyof PatchUpdateCompanyErrors];
+export type PatchUpdateCompanyError =
+  PatchUpdateCompanyErrors[keyof PatchUpdateCompanyErrors];
 
 export type PatchUpdateCompanyResponses = {
-    /**
-     * Success
-     */
-    200: CompanyResponse;
+  /**
+   * Success
+   */
+  200: CompanyResponse;
 };
 
-export type PatchUpdateCompanyResponse = PatchUpdateCompanyResponses[keyof PatchUpdateCompanyResponses];
+export type PatchUpdateCompanyResponse =
+  PatchUpdateCompanyResponses[keyof PatchUpdateCompanyResponses];
 
 export type GetDownloadResignationLetterData = {
-    body?: never;
-    path: {
-        /**
-         * Offboarding request ID
-         */
-        offboarding_request_id: string;
-    };
-    query?: never;
-    url: '/v1/resignations/{offboarding_request_id}/resignation-letter';
+  body?: never;
+  path: {
+    /**
+     * Offboarding request ID
+     */
+    offboarding_request_id: string;
+  };
+  query?: never;
+  url: '/v1/resignations/{offboarding_request_id}/resignation-letter';
 };
 
 export type GetDownloadResignationLetterErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetDownloadResignationLetterError = GetDownloadResignationLetterErrors[keyof GetDownloadResignationLetterErrors];
+export type GetDownloadResignationLetterError =
+  GetDownloadResignationLetterErrors[keyof GetDownloadResignationLetterErrors];
 
 export type GetDownloadResignationLetterResponses = {
-    /**
-     * Success
-     */
-    200: GenericFile;
+  /**
+   * Success
+   */
+  200: GenericFile;
 };
 
-export type GetDownloadResignationLetterResponse = GetDownloadResignationLetterResponses[keyof GetDownloadResignationLetterResponses];
+export type GetDownloadResignationLetterResponse =
+  GetDownloadResignationLetterResponses[keyof GetDownloadResignationLetterResponses];
 
 export type GetIndexContractAmendmentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Employment ID
-         */
-        employment_id?: string;
-        /**
-         * Contract Amendment status
-         */
-        status?: ContractAmendmentStatus;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/contract-amendments';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Employment ID
+     */
+    employment_id?: string;
+    /**
+     * Contract Amendment status
+     */
+    status?: ContractAmendmentStatus;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/contract-amendments';
 };
 
 export type GetIndexContractAmendmentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexContractAmendmentError = GetIndexContractAmendmentErrors[keyof GetIndexContractAmendmentErrors];
+export type GetIndexContractAmendmentError =
+  GetIndexContractAmendmentErrors[keyof GetIndexContractAmendmentErrors];
 
 export type GetIndexContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: ListContractAmendmentResponse;
+  /**
+   * Success
+   */
+  200: ListContractAmendmentResponse;
 };
 
-export type GetIndexContractAmendmentResponse = GetIndexContractAmendmentResponses[keyof GetIndexContractAmendmentResponses];
+export type GetIndexContractAmendmentResponse =
+  GetIndexContractAmendmentResponses[keyof GetIndexContractAmendmentResponses];
 
 export type PostCreateContractAmendmentData = {
+  /**
+   * Contract Amendment
+   */
+  body?: CreateContractAmendmentParams;
+  headers: {
     /**
-     * Contract Amendment
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CreateContractAmendmentParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/contract-amendments';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/contract-amendments';
 };
 
 export type PostCreateContractAmendmentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateContractAmendmentError = PostCreateContractAmendmentErrors[keyof PostCreateContractAmendmentErrors];
+export type PostCreateContractAmendmentError =
+  PostCreateContractAmendmentErrors[keyof PostCreateContractAmendmentErrors];
 
 export type PostCreateContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: ContractAmendmentResponse;
+  /**
+   * Success
+   */
+  200: ContractAmendmentResponse;
 };
 
-export type PostCreateContractAmendmentResponse = PostCreateContractAmendmentResponses[keyof PostCreateContractAmendmentResponses];
+export type PostCreateContractAmendmentResponse =
+  PostCreateContractAmendmentResponses[keyof PostCreateContractAmendmentResponses];
 
 export type GetDownloadExpenseReceiptData = {
-    body?: never;
-    path: {
-        /**
-         * The expense ID
-         */
-        expense_id: string;
-    };
-    query?: never;
-    url: '/v1/expenses/{expense_id}/receipt';
+  body?: never;
+  path: {
+    /**
+     * The expense ID
+     */
+    expense_id: string;
+  };
+  query?: never;
+  url: '/v1/expenses/{expense_id}/receipt';
 };
 
 export type GetDownloadExpenseReceiptErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetDownloadExpenseReceiptError = GetDownloadExpenseReceiptErrors[keyof GetDownloadExpenseReceiptErrors];
+export type GetDownloadExpenseReceiptError =
+  GetDownloadExpenseReceiptErrors[keyof GetDownloadExpenseReceiptErrors];
 
 export type GetDownloadExpenseReceiptResponses = {
-    /**
-     * Success
-     */
-    200: GenericFile;
+  /**
+   * Success
+   */
+  200: GenericFile;
 };
 
-export type GetDownloadExpenseReceiptResponse = GetDownloadExpenseReceiptResponses[keyof GetDownloadExpenseReceiptResponses];
+export type GetDownloadExpenseReceiptResponse =
+  GetDownloadExpenseReceiptResponses[keyof GetDownloadExpenseReceiptResponses];
 
 export type GetShowTravelLetterRequestData = {
-    body?: never;
-    path: {
-        /**
-         * travel letter request ID
-         */
-        id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/travel-letter-requests/{id}';
+  body?: never;
+  path: {
+    /**
+     * travel letter request ID
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type GetShowTravelLetterRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowTravelLetterRequestError = GetShowTravelLetterRequestErrors[keyof GetShowTravelLetterRequestErrors];
+export type GetShowTravelLetterRequestError =
+  GetShowTravelLetterRequestErrors[keyof GetShowTravelLetterRequestErrors];
 
 export type GetShowTravelLetterRequestResponses = {
-    /**
-     * Success
-     */
-    200: TravelLetterResponse;
+  /**
+   * Success
+   */
+  200: TravelLetterResponse;
 };
 
-export type GetShowTravelLetterRequestResponse = GetShowTravelLetterRequestResponses[keyof GetShowTravelLetterRequestResponses];
+export type GetShowTravelLetterRequestResponse =
+  GetShowTravelLetterRequestResponses[keyof GetShowTravelLetterRequestResponses];
 
 export type PatchUpdateTravelLetterRequest2Data = {
+  /**
+   * Travel letter Request
+   */
+  body: UpdateTravelLetterRequestParams;
+  path: {
     /**
-     * Travel letter Request
+     * Travel letter Request ID
      */
-    body: UpdateTravelLetterRequestParams;
-    path: {
-        /**
-         * Travel letter Request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/travel-letter-requests/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type PatchUpdateTravelLetterRequest2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateTravelLetterRequest2Error = PatchUpdateTravelLetterRequest2Errors[keyof PatchUpdateTravelLetterRequest2Errors];
+export type PatchUpdateTravelLetterRequest2Error =
+  PatchUpdateTravelLetterRequest2Errors[keyof PatchUpdateTravelLetterRequest2Errors];
 
 export type PatchUpdateTravelLetterRequest2Responses = {
-    /**
-     * Success
-     */
-    200: TravelLetterResponse;
+  /**
+   * Success
+   */
+  200: TravelLetterResponse;
 };
 
-export type PatchUpdateTravelLetterRequest2Response = PatchUpdateTravelLetterRequest2Responses[keyof PatchUpdateTravelLetterRequest2Responses];
+export type PatchUpdateTravelLetterRequest2Response =
+  PatchUpdateTravelLetterRequest2Responses[keyof PatchUpdateTravelLetterRequest2Responses];
 
 export type PatchUpdateTravelLetterRequestData = {
+  /**
+   * Travel letter Request
+   */
+  body: UpdateTravelLetterRequestParams;
+  path: {
     /**
-     * Travel letter Request
+     * Travel letter Request ID
      */
-    body: UpdateTravelLetterRequestParams;
-    path: {
-        /**
-         * Travel letter Request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/travel-letter-requests/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type PatchUpdateTravelLetterRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateTravelLetterRequestError = PatchUpdateTravelLetterRequestErrors[keyof PatchUpdateTravelLetterRequestErrors];
+export type PatchUpdateTravelLetterRequestError =
+  PatchUpdateTravelLetterRequestErrors[keyof PatchUpdateTravelLetterRequestErrors];
 
 export type PatchUpdateTravelLetterRequestResponses = {
-    /**
-     * Success
-     */
-    200: TravelLetterResponse;
+  /**
+   * Success
+   */
+  200: TravelLetterResponse;
 };
 
-export type PatchUpdateTravelLetterRequestResponse = PatchUpdateTravelLetterRequestResponses[keyof PatchUpdateTravelLetterRequestResponses];
+export type PatchUpdateTravelLetterRequestResponse =
+  PatchUpdateTravelLetterRequestResponses[keyof PatchUpdateTravelLetterRequestResponses];
 
 export type GetShowTimeoffBalanceData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID for which to show the time off balance
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff-balances/{employment_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID for which to show the time off balance
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff-balances/{employment_id}';
 };
 
 export type GetShowTimeoffBalanceErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * TimeoffBalanceNotFoundResponse
-     */
-    404: TimeoffBalanceNotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * TimeoffBalanceNotFoundResponse
+   */
+  404: TimeoffBalanceNotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowTimeoffBalanceError = GetShowTimeoffBalanceErrors[keyof GetShowTimeoffBalanceErrors];
+export type GetShowTimeoffBalanceError =
+  GetShowTimeoffBalanceErrors[keyof GetShowTimeoffBalanceErrors];
 
 export type GetShowTimeoffBalanceResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffBalanceResponse;
+  /**
+   * Success
+   */
+  200: TimeoffBalanceResponse;
 };
 
-export type GetShowTimeoffBalanceResponse = GetShowTimeoffBalanceResponses[keyof GetShowTimeoffBalanceResponses];
+export type GetShowTimeoffBalanceResponse =
+  GetShowTimeoffBalanceResponses[keyof GetShowTimeoffBalanceResponses];
 
 export type GetShowFormCountryData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Country code according to ISO 3-digit alphabetic codes
-         */
-        country_code: string;
-        /**
-         * Name of the desired form
-         */
-        form: string;
-    };
-    query?: {
-        /**
-         * Required for `contract_amendment` form
-         */
-        employment_id?: string;
-        /**
-         * FOR TESTING PURPOSES ONLY: Include scheduled benefit groups.
-         */
-        only_for_testing_include_scheduled_benefit_groups?: boolean;
-        /**
-         * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
-         */
-        skip_benefits?: boolean;
-    };
-    url: '/v1/countries/{country_code}/{form}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes
+     */
+    country_code: string;
+    /**
+     * Name of the desired form
+     */
+    form: string;
+  };
+  query?: {
+    /**
+     * Required for `contract_amendment` form
+     */
+    employment_id?: string;
+    /**
+     * FOR TESTING PURPOSES ONLY: Include scheduled benefit groups.
+     */
+    only_for_testing_include_scheduled_benefit_groups?: boolean;
+    /**
+     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
+     */
+    skip_benefits?: boolean;
+  };
+  url: '/v1/countries/{country_code}/{form}';
 };
 
 export type GetShowFormCountryErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowFormCountryError = GetShowFormCountryErrors[keyof GetShowFormCountryErrors];
+export type GetShowFormCountryError =
+  GetShowFormCountryErrors[keyof GetShowFormCountryErrors];
 
 export type GetShowFormCountryResponses = {
-    /**
-     * Success
-     */
-    200: CountryFormResponse;
+  /**
+   * Success
+   */
+  200: CountryFormResponse;
 };
 
-export type GetShowFormCountryResponse = GetShowFormCountryResponses[keyof GetShowFormCountryResponses];
+export type GetShowFormCountryResponse =
+  GetShowFormCountryResponses[keyof GetShowFormCountryResponses];
 
 export type GetShowFileData = {
-    body?: never;
-    path: {
-        /**
-         * File ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/files/{id}';
+  body?: never;
+  path: {
+    /**
+     * File ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/files/{id}';
 };
 
 export type GetShowFileErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
 export type GetShowFileError = GetShowFileErrors[keyof GetShowFileErrors];
 
 export type GetShowFileResponses = {
-    /**
-     * Success
-     */
-    200: DownloadFileResponse;
+  /**
+   * Success
+   */
+  200: DownloadFileResponse;
 };
 
-export type GetShowFileResponse = GetShowFileResponses[keyof GetShowFileResponses];
+export type GetShowFileResponse =
+  GetShowFileResponses[keyof GetShowFileResponses];
 
 export type GetShowContractAmendmentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Contract amendment request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/contract-amendments/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Contract amendment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/contract-amendments/{id}';
 };
 
 export type GetShowContractAmendmentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractAmendmentError = GetShowContractAmendmentErrors[keyof GetShowContractAmendmentErrors];
+export type GetShowContractAmendmentError =
+  GetShowContractAmendmentErrors[keyof GetShowContractAmendmentErrors];
 
 export type GetShowContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: ContractAmendmentResponse;
+  /**
+   * Success
+   */
+  200: ContractAmendmentResponse;
 };
 
-export type GetShowContractAmendmentResponse = GetShowContractAmendmentResponses[keyof GetShowContractAmendmentResponses];
+export type GetShowContractAmendmentResponse =
+  GetShowContractAmendmentResponses[keyof GetShowContractAmendmentResponses];
 
 export type GetIndexCompanyManagerData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * A Company ID to filter the results (only applicable for Integration Partners).
-         */
-        company_id?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/company-managers';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * A Company ID to filter the results (only applicable for Integration Partners).
+     */
+    company_id?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/company-managers';
 };
 
 export type GetIndexCompanyManagerErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexCompanyManagerError = GetIndexCompanyManagerErrors[keyof GetIndexCompanyManagerErrors];
+export type GetIndexCompanyManagerError =
+  GetIndexCompanyManagerErrors[keyof GetIndexCompanyManagerErrors];
 
 export type GetIndexCompanyManagerResponses = {
-    /**
-     * Success
-     */
-    200: CompanyManagersResponse;
+  /**
+   * Success
+   */
+  200: CompanyManagersResponse;
 };
 
-export type GetIndexCompanyManagerResponse = GetIndexCompanyManagerResponses[keyof GetIndexCompanyManagerResponses];
+export type GetIndexCompanyManagerResponse =
+  GetIndexCompanyManagerResponses[keyof GetIndexCompanyManagerResponses];
 
 export type PostCreateCompanyManagerData = {
+  /**
+   * Company Manager params
+   */
+  body?: CompanyManagerParams;
+  headers: {
     /**
-     * Company Manager params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CompanyManagerParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Complementary action(s) to perform when creating a company manager:
-         *
-         * - `no_invite` skips the email invitation step
-         *
-         */
-        actions?: string;
-    };
-    url: '/v1/company-managers';
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Complementary action(s) to perform when creating a company manager:
+     *
+     * - `no_invite` skips the email invitation step
+     *
+     */
+    actions?: string;
+  };
+  url: '/v1/company-managers';
 };
 
 export type PostCreateCompanyManagerErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateCompanyManagerError = PostCreateCompanyManagerErrors[keyof PostCreateCompanyManagerErrors];
+export type PostCreateCompanyManagerError =
+  PostCreateCompanyManagerErrors[keyof PostCreateCompanyManagerErrors];
 
 export type PostCreateCompanyManagerResponses = {
-    /**
-     * Success
-     */
-    201: CompanyManagerData;
+  /**
+   * Success
+   */
+  201: CompanyManagerData;
 };
 
-export type PostCreateCompanyManagerResponse = PostCreateCompanyManagerResponses[keyof PostCreateCompanyManagerResponses];
+export type PostCreateCompanyManagerResponse =
+  PostCreateCompanyManagerResponses[keyof PostCreateCompanyManagerResponses];
 
 export type GetIndexCountryData = {
-    body?: never;
-    headers: {
-        /**
-         * Authorization header with basic authentication encoded with Base64.
-         * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/cost-calculator/countries';
+  body?: never;
+  headers: {
+    /**
+     * Authorization header with basic authentication encoded with Base64.
+     * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/cost-calculator/countries';
 };
 
 export type GetIndexCountryResponses = {
-    /**
-     * Success
-     */
-    200: CostCalculatorListCountryResponse;
+  /**
+   * Success
+   */
+  200: CostCalculatorListCountryResponse;
 };
 
-export type GetIndexCountryResponse = GetIndexCountryResponses[keyof GetIndexCountryResponses];
+export type GetIndexCountryResponse =
+  GetIndexCountryResponses[keyof GetIndexCountryResponses];
 
 export type PostDeclineIdentityVerificationData = {
-    body?: never;
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/identity-verification/{employment_id}/decline';
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/identity-verification/{employment_id}/decline';
 };
 
 export type PostDeclineIdentityVerificationErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostDeclineIdentityVerificationError = PostDeclineIdentityVerificationErrors[keyof PostDeclineIdentityVerificationErrors];
+export type PostDeclineIdentityVerificationError =
+  PostDeclineIdentityVerificationErrors[keyof PostDeclineIdentityVerificationErrors];
 
 export type PostDeclineIdentityVerificationResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostDeclineIdentityVerificationResponse = PostDeclineIdentityVerificationResponses[keyof PostDeclineIdentityVerificationResponses];
+export type PostDeclineIdentityVerificationResponse =
+  PostDeclineIdentityVerificationResponses[keyof PostDeclineIdentityVerificationResponses];
 
 export type GetIndexBillingDocumentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * The month for the billing documents (in ISO-8601 format)
-         */
-        period?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/billing-documents';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * The month for the billing documents (in ISO-8601 format)
+     */
+    period?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/billing-documents';
 };
 
 export type GetIndexBillingDocumentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBillingDocumentError = GetIndexBillingDocumentErrors[keyof GetIndexBillingDocumentErrors];
+export type GetIndexBillingDocumentError =
+  GetIndexBillingDocumentErrors[keyof GetIndexBillingDocumentErrors];
 
 export type GetIndexBillingDocumentResponses = {
-    /**
-     * Success
-     */
-    200: BillingDocumentsResponse;
+  /**
+   * Success
+   */
+  200: BillingDocumentsResponse;
 };
 
-export type GetIndexBillingDocumentResponse = GetIndexBillingDocumentResponses[keyof GetIndexBillingDocumentResponses];
+export type GetIndexBillingDocumentResponse =
+  GetIndexBillingDocumentResponses[keyof GetIndexBillingDocumentResponses];
 
 export type DeleteDeleteWebhookCallbackData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Webhook Callback ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/webhook-callbacks/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Webhook Callback ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/webhook-callbacks/{id}';
 };
 
 export type DeleteDeleteWebhookCallbackErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type DeleteDeleteWebhookCallbackError = DeleteDeleteWebhookCallbackErrors[keyof DeleteDeleteWebhookCallbackErrors];
+export type DeleteDeleteWebhookCallbackError =
+  DeleteDeleteWebhookCallbackErrors[keyof DeleteDeleteWebhookCallbackErrors];
 
 export type DeleteDeleteWebhookCallbackResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type DeleteDeleteWebhookCallbackResponse = DeleteDeleteWebhookCallbackResponses[keyof DeleteDeleteWebhookCallbackResponses];
+export type DeleteDeleteWebhookCallbackResponse =
+  DeleteDeleteWebhookCallbackResponses[keyof DeleteDeleteWebhookCallbackResponses];
 
 export type PatchUpdateWebhookCallbackData = {
+  /**
+   * WebhookCallback
+   */
+  body?: UpdateWebhookCallbackParams;
+  path: {
     /**
-     * WebhookCallback
+     * Webhook Callback ID
      */
-    body?: UpdateWebhookCallbackParams;
-    path: {
-        /**
-         * Webhook Callback ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/webhook-callbacks/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/webhook-callbacks/{id}';
 };
 
 export type PatchUpdateWebhookCallbackErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWebhookCallbackError = PatchUpdateWebhookCallbackErrors[keyof PatchUpdateWebhookCallbackErrors];
+export type PatchUpdateWebhookCallbackError =
+  PatchUpdateWebhookCallbackErrors[keyof PatchUpdateWebhookCallbackErrors];
 
 export type PatchUpdateWebhookCallbackResponses = {
-    /**
-     * Success
-     */
-    200: WebhookCallbackResponse;
+  /**
+   * Success
+   */
+  200: WebhookCallbackResponse;
 };
 
-export type PatchUpdateWebhookCallbackResponse = PatchUpdateWebhookCallbackResponses[keyof PatchUpdateWebhookCallbackResponses];
+export type PatchUpdateWebhookCallbackResponse =
+  PatchUpdateWebhookCallbackResponses[keyof PatchUpdateWebhookCallbackResponses];
 
 export type GetIndexTravelLetterRequestData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filter results on the given status
-         */
-        status?: 'pending' | 'cancelled' | 'declined_by_manager' | 'declined_by_remote' | 'approved_by_manager' | 'approved_by_remote';
-        /**
-         * Filter results on the given employment slug
-         */
-        employment_id?: string;
-        /**
-         * Filter results on the given employee name
-         */
-        employee_name?: string;
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'submitted_at';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/travel-letter-requests';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter results on the given status
+     */
+    status?:
+      | 'pending'
+      | 'cancelled'
+      | 'declined_by_manager'
+      | 'declined_by_remote'
+      | 'approved_by_manager'
+      | 'approved_by_remote';
+    /**
+     * Filter results on the given employment slug
+     */
+    employment_id?: string;
+    /**
+     * Filter results on the given employee name
+     */
+    employee_name?: string;
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'submitted_at';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/travel-letter-requests';
 };
 
 export type GetIndexTravelLetterRequestErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexTravelLetterRequestError = GetIndexTravelLetterRequestErrors[keyof GetIndexTravelLetterRequestErrors];
+export type GetIndexTravelLetterRequestError =
+  GetIndexTravelLetterRequestErrors[keyof GetIndexTravelLetterRequestErrors];
 
 export type GetIndexTravelLetterRequestResponses = {
-    /**
-     * Success
-     */
-    200: ListTravelLettersResponse;
+  /**
+   * Success
+   */
+  200: ListTravelLettersResponse;
 };
 
-export type GetIndexTravelLetterRequestResponse = GetIndexTravelLetterRequestResponses[keyof GetIndexTravelLetterRequestResponses];
+export type GetIndexTravelLetterRequestResponse =
+  GetIndexTravelLetterRequestResponses[keyof GetIndexTravelLetterRequestResponses];
 
 export type GetIndexBenefitRenewalRequestData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/benefit-renewal-requests';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/benefit-renewal-requests';
 };
 
 export type GetIndexBenefitRenewalRequestErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexBenefitRenewalRequestError = GetIndexBenefitRenewalRequestErrors[keyof GetIndexBenefitRenewalRequestErrors];
+export type GetIndexBenefitRenewalRequestError =
+  GetIndexBenefitRenewalRequestErrors[keyof GetIndexBenefitRenewalRequestErrors];
 
 export type GetIndexBenefitRenewalRequestResponses = {
-    /**
-     * Success
-     */
-    200: BenefitRenewalRequestsListBenefitRenewalRequestResponse;
+  /**
+   * Success
+   */
+  200: BenefitRenewalRequestsListBenefitRenewalRequestResponse;
 };
 
-export type GetIndexBenefitRenewalRequestResponse = GetIndexBenefitRenewalRequestResponses[keyof GetIndexBenefitRenewalRequestResponses];
+export type GetIndexBenefitRenewalRequestResponse =
+  GetIndexBenefitRenewalRequestResponses[keyof GetIndexBenefitRenewalRequestResponses];
 
 export type PostCreateWebhookCallbackData = {
+  /**
+   * WebhookCallback
+   */
+  body?: CreateWebhookCallbackParams;
+  headers: {
     /**
-     * WebhookCallback
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CreateWebhookCallbackParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/webhook-callbacks';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/webhook-callbacks';
 };
 
 export type PostCreateWebhookCallbackErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateWebhookCallbackError = PostCreateWebhookCallbackErrors[keyof PostCreateWebhookCallbackErrors];
+export type PostCreateWebhookCallbackError =
+  PostCreateWebhookCallbackErrors[keyof PostCreateWebhookCallbackErrors];
 
 export type PostCreateWebhookCallbackResponses = {
-    /**
-     * Success
-     */
-    200: WebhookCallbackResponse;
+  /**
+   * Success
+   */
+  200: WebhookCallbackResponse;
 };
 
-export type PostCreateWebhookCallbackResponse = PostCreateWebhookCallbackResponses[keyof PostCreateWebhookCallbackResponses];
+export type PostCreateWebhookCallbackResponse =
+  PostCreateWebhookCallbackResponses[keyof PostCreateWebhookCallbackResponses];
 
 export type PostApproveTimesheetData = {
-    body?: never;
-    path: {
-        /**
-         * Timesheet ID
-         */
-        timesheet_id: string;
-    };
-    query?: never;
-    url: '/v1/timesheets/{timesheet_id}/approve';
+  body?: never;
+  path: {
+    /**
+     * Timesheet ID
+     */
+    timesheet_id: string;
+  };
+  query?: never;
+  url: '/v1/timesheets/{timesheet_id}/approve';
 };
 
 export type PostApproveTimesheetErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostApproveTimesheetError = PostApproveTimesheetErrors[keyof PostApproveTimesheetErrors];
+export type PostApproveTimesheetError =
+  PostApproveTimesheetErrors[keyof PostApproveTimesheetErrors];
 
 export type PostApproveTimesheetResponses = {
-    /**
-     * Success
-     */
-    200: MinimalTimesheetResponse;
+  /**
+   * Success
+   */
+  200: MinimalTimesheetResponse;
 };
 
-export type PostApproveTimesheetResponse = PostApproveTimesheetResponses[keyof PostApproveTimesheetResponses];
+export type PostApproveTimesheetResponse =
+  PostApproveTimesheetResponses[keyof PostApproveTimesheetResponses];
 
 export type GetShowPayslipData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Payslip ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/payslips/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Payslip ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/payslips/{id}';
 };
 
 export type GetShowPayslipErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowPayslipError = GetShowPayslipErrors[keyof GetShowPayslipErrors];
+export type GetShowPayslipError =
+  GetShowPayslipErrors[keyof GetShowPayslipErrors];
 
 export type GetShowPayslipResponses = {
-    /**
-     * Success
-     */
-    200: PayslipResponse;
+  /**
+   * Success
+   */
+  200: PayslipResponse;
 };
 
-export type GetShowPayslipResponse = GetShowPayslipResponses[keyof GetShowPayslipResponses];
+export type GetShowPayslipResponse =
+  GetShowPayslipResponses[keyof GetShowPayslipResponses];
 
 export type GetIndexLeavePoliciesSummaryData = {
-    body?: never;
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/leave-policies/summary/{employment_id}';
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/leave-policies/summary/{employment_id}';
 };
 
 export type GetIndexLeavePoliciesSummaryErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexLeavePoliciesSummaryError = GetIndexLeavePoliciesSummaryErrors[keyof GetIndexLeavePoliciesSummaryErrors];
+export type GetIndexLeavePoliciesSummaryError =
+  GetIndexLeavePoliciesSummaryErrors[keyof GetIndexLeavePoliciesSummaryErrors];
 
 export type GetIndexLeavePoliciesSummaryResponses = {
-    /**
-     * Success
-     */
-    200: ListLeavePoliciesSummaryResponse;
+  /**
+   * Success
+   */
+  200: ListLeavePoliciesSummaryResponse;
 };
 
-export type GetIndexLeavePoliciesSummaryResponse = GetIndexLeavePoliciesSummaryResponses[keyof GetIndexLeavePoliciesSummaryResponses];
+export type GetIndexLeavePoliciesSummaryResponse =
+  GetIndexLeavePoliciesSummaryResponses[keyof GetIndexLeavePoliciesSummaryResponses];
 
 export type GetIndexCompanyDepartmentData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Company ID
-         */
-        company_id: string;
-        /**
-         * Paginate option. Default: true. When true, paginates response; otherwise, does not.
-         */
-        paginate?: boolean;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/company-departments';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+    /**
+     * Paginate option. Default: true. When true, paginates response; otherwise, does not.
+     */
+    paginate?: boolean;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/company-departments';
 };
 
 export type GetIndexCompanyDepartmentErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexCompanyDepartmentError = GetIndexCompanyDepartmentErrors[keyof GetIndexCompanyDepartmentErrors];
+export type GetIndexCompanyDepartmentError =
+  GetIndexCompanyDepartmentErrors[keyof GetIndexCompanyDepartmentErrors];
 
 export type GetIndexCompanyDepartmentResponses = {
-    /**
-     * Success
-     */
-    200: ListCompanyDepartmentsPaginatedResponse;
+  /**
+   * Success
+   */
+  200: ListCompanyDepartmentsPaginatedResponse;
 };
 
-export type GetIndexCompanyDepartmentResponse = GetIndexCompanyDepartmentResponses[keyof GetIndexCompanyDepartmentResponses];
+export type GetIndexCompanyDepartmentResponse =
+  GetIndexCompanyDepartmentResponses[keyof GetIndexCompanyDepartmentResponses];
 
 export type PostCreateCompanyDepartmentData = {
-    /**
-     * Create Company Department request params
-     */
-    body: CreateCompanyDepartmentParams;
-    path?: never;
-    query?: never;
-    url: '/v1/company-departments';
+  /**
+   * Create Company Department request params
+   */
+  body: CreateCompanyDepartmentParams;
+  path?: never;
+  query?: never;
+  url: '/v1/company-departments';
 };
 
 export type PostCreateCompanyDepartmentErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateCompanyDepartmentError = PostCreateCompanyDepartmentErrors[keyof PostCreateCompanyDepartmentErrors];
+export type PostCreateCompanyDepartmentError =
+  PostCreateCompanyDepartmentErrors[keyof PostCreateCompanyDepartmentErrors];
 
 export type PostCreateCompanyDepartmentResponses = {
-    /**
-     * Created
-     */
-    201: CompanyDepartmentCreatedResponse;
+  /**
+   * Created
+   */
+  201: CompanyDepartmentCreatedResponse;
 };
 
-export type PostCreateCompanyDepartmentResponse = PostCreateCompanyDepartmentResponses[keyof PostCreateCompanyDepartmentResponses];
+export type PostCreateCompanyDepartmentResponse =
+  PostCreateCompanyDepartmentResponses[keyof PostCreateCompanyDepartmentResponses];
 
 export type GetShowSchemaData = {
-    body?: never;
-    path: {
-        /**
-         * Unique identifier of the employment
-         */
-        employment_id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/employments/{employment_id}/benefit-offers/schema';
+  body?: never;
+  path: {
+    /**
+     * Unique identifier of the employment
+     */
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/benefit-offers/schema';
 };
 
 export type GetShowSchemaErrors = {
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
 export type GetShowSchemaError = GetShowSchemaErrors[keyof GetShowSchemaErrors];
 
 export type GetShowSchemaResponses = {
-    /**
-     * Success
-     */
-    200: UnifiedEmploymentsBenefitOffersJsonSchemaResponse;
+  /**
+   * Success
+   */
+  200: UnifiedEmploymentsBenefitOffersJsonSchemaResponse;
 };
 
-export type GetShowSchemaResponse = GetShowSchemaResponses[keyof GetShowSchemaResponses];
+export type GetShowSchemaResponse =
+  GetShowSchemaResponses[keyof GetShowSchemaResponses];
 
 export type GetIndexTimesheetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filter timesheets by their status
-         */
-        status?: TimesheetStatus;
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'submitted_at';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/timesheets';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter timesheets by their status
+     */
+    status?: TimesheetStatus;
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'submitted_at';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/timesheets';
 };
 
 export type GetIndexTimesheetErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexTimesheetError = GetIndexTimesheetErrors[keyof GetIndexTimesheetErrors];
+export type GetIndexTimesheetError =
+  GetIndexTimesheetErrors[keyof GetIndexTimesheetErrors];
 
 export type GetIndexTimesheetResponses = {
-    /**
-     * Success
-     */
-    200: ListTimesheetsResponse;
+  /**
+   * Success
+   */
+  200: ListTimesheetsResponse;
 };
 
-export type GetIndexTimesheetResponse = GetIndexTimesheetResponses[keyof GetIndexTimesheetResponses];
+export type GetIndexTimesheetResponse =
+  GetIndexTimesheetResponses[keyof GetIndexTimesheetResponses];
 
 export type GetShowEmploymentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/employments/{employment_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}';
 };
 
 export type GetShowEmploymentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowEmploymentError = GetShowEmploymentErrors[keyof GetShowEmploymentErrors];
+export type GetShowEmploymentError =
+  GetShowEmploymentErrors[keyof GetShowEmploymentErrors];
 
 export type GetShowEmploymentResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentShowResponse;
+  /**
+   * Success
+   */
+  200: EmploymentShowResponse;
 };
 
-export type GetShowEmploymentResponse = GetShowEmploymentResponses[keyof GetShowEmploymentResponses];
+export type GetShowEmploymentResponse =
+  GetShowEmploymentResponses[keyof GetShowEmploymentResponses];
 
 export type PatchUpdateEmployment2Data = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentFullParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentFullParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: {
-        /**
-         * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
-         */
-        skip_benefits?: boolean;
-    };
-    url: '/v1/employments/{employment_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
+     */
+    skip_benefits?: boolean;
+  };
+  url: '/v1/employments/{employment_id}';
 };
 
 export type PatchUpdateEmployment2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment2Error = PatchUpdateEmployment2Errors[keyof PatchUpdateEmployment2Errors];
+export type PatchUpdateEmployment2Error =
+  PatchUpdateEmployment2Errors[keyof PatchUpdateEmployment2Errors];
 
 export type PatchUpdateEmployment2Responses = {
-    /**
-     * Success
-     */
-    200: EmploymentResponse;
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment2Response = PatchUpdateEmployment2Responses[keyof PatchUpdateEmployment2Responses];
+export type PatchUpdateEmployment2Response =
+  PatchUpdateEmployment2Responses[keyof PatchUpdateEmployment2Responses];
 
 export type PatchUpdateEmploymentData = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentFullParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentFullParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: {
-        /**
-         * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
-         */
-        skip_benefits?: boolean;
-    };
-    url: '/v1/employments/{employment_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
+     */
+    skip_benefits?: boolean;
+  };
+  url: '/v1/employments/{employment_id}';
 };
 
 export type PatchUpdateEmploymentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmploymentError = PatchUpdateEmploymentErrors[keyof PatchUpdateEmploymentErrors];
+export type PatchUpdateEmploymentError =
+  PatchUpdateEmploymentErrors[keyof PatchUpdateEmploymentErrors];
 
 export type PatchUpdateEmploymentResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentResponse;
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
 };
 
-export type PatchUpdateEmploymentResponse = PatchUpdateEmploymentResponses[keyof PatchUpdateEmploymentResponses];
+export type PatchUpdateEmploymentResponse =
+  PatchUpdateEmploymentResponses[keyof PatchUpdateEmploymentResponses];
 
 export type GetIndexPayrollCalendarData = {
-    body?: never;
-    path: {
-        /**
-         * The cycle for which to list the payroll calendars. Format: YYYY-MM
-         */
-        cycle: string;
-    };
-    query?: {
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/payroll-calendars/{cycle}';
+  body?: never;
+  path: {
+    /**
+     * The cycle for which to list the payroll calendars. Format: YYYY-MM
+     */
+    cycle: string;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/payroll-calendars/{cycle}';
 };
 
 export type GetIndexPayrollCalendarErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexPayrollCalendarError = GetIndexPayrollCalendarErrors[keyof GetIndexPayrollCalendarErrors];
+export type GetIndexPayrollCalendarError =
+  GetIndexPayrollCalendarErrors[keyof GetIndexPayrollCalendarErrors];
 
 export type GetIndexPayrollCalendarResponses = {
-    /**
-     * Success
-     */
-    200: PayrollCalendarsResponse;
+  /**
+   * Success
+   */
+  200: PayrollCalendarsResponse;
 };
 
-export type GetIndexPayrollCalendarResponse = GetIndexPayrollCalendarResponses[keyof GetIndexPayrollCalendarResponses];
+export type GetIndexPayrollCalendarResponse =
+  GetIndexPayrollCalendarResponses[keyof GetIndexPayrollCalendarResponses];
 
 export type GetShowRegionFieldData = {
-    body?: never;
-    path: {
-        /**
-         * Slug
-         */
-        slug: string;
-    };
-    query?: never;
-    url: '/v1/cost-calculator/regions/{slug}/fields';
+  body?: never;
+  path: {
+    /**
+     * Slug
+     */
+    slug: string;
+  };
+  query?: never;
+  url: '/v1/cost-calculator/regions/{slug}/fields';
 };
 
 export type GetShowRegionFieldErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Internal Server Error
-     */
-    500: InternalServerErrorResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Internal Server Error
+   */
+  500: InternalServerErrorResponse;
 };
 
-export type GetShowRegionFieldError = GetShowRegionFieldErrors[keyof GetShowRegionFieldErrors];
+export type GetShowRegionFieldError =
+  GetShowRegionFieldErrors[keyof GetShowRegionFieldErrors];
 
 export type GetShowRegionFieldResponses = {
-    /**
-     * Success
-     */
-    200: JsonSchemaResponse;
+  /**
+   * Success
+   */
+  200: JsonSchemaResponse;
 };
 
-export type GetShowRegionFieldResponse = GetShowRegionFieldResponses[keyof GetShowRegionFieldResponses];
+export type GetShowRegionFieldResponse =
+  GetShowRegionFieldResponses[keyof GetShowRegionFieldResponses];
 
 export type GetShowOffboardingData = {
-    body?: never;
-    path: {
-        /**
-         * Offboarding request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/offboardings/{id}';
+  body?: never;
+  path: {
+    /**
+     * Offboarding request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/offboardings/{id}';
 };
 
 export type GetShowOffboardingErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowOffboardingError = GetShowOffboardingErrors[keyof GetShowOffboardingErrors];
+export type GetShowOffboardingError =
+  GetShowOffboardingErrors[keyof GetShowOffboardingErrors];
 
 export type GetShowOffboardingResponses = {
-    /**
-     * Success
-     */
-    200: OffboardingResponse;
+  /**
+   * Success
+   */
+  200: OffboardingResponse;
 };
 
-export type GetShowOffboardingResponse = GetShowOffboardingResponses[keyof GetShowOffboardingResponses];
+export type GetShowOffboardingResponse =
+  GetShowOffboardingResponses[keyof GetShowOffboardingResponses];
 
 export type PostCreateEmploymentData = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentBasicParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentBasicParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/sandbox/employments';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/sandbox/employments';
 };
 
 export type PostCreateEmploymentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateEmploymentError = PostCreateEmploymentErrors[keyof PostCreateEmploymentErrors];
+export type PostCreateEmploymentError =
+  PostCreateEmploymentErrors[keyof PostCreateEmploymentErrors];
 
 export type PostCreateEmploymentResponses = {
-    /**
-     * Success
-     */
-    201: EmploymentCreationResponse;
+  /**
+   * Success
+   */
+  201: EmploymentCreationResponse;
 };
 
-export type PostCreateEmploymentResponse = PostCreateEmploymentResponses[keyof PostCreateEmploymentResponses];
+export type PostCreateEmploymentResponse =
+  PostCreateEmploymentResponses[keyof PostCreateEmploymentResponses];
 
 export type GetSupportedCountryData = {
-    body?: never;
-    headers: {
-        /**
-         * This endpoint works with any of the access tokens provided. You can use an access
-         * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/countries';
+  body?: never;
+  headers: {
+    /**
+     * This endpoint works with any of the access tokens provided. You can use an access
+     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/countries';
 };
 
 export type GetSupportedCountryErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetSupportedCountryError = GetSupportedCountryErrors[keyof GetSupportedCountryErrors];
+export type GetSupportedCountryError =
+  GetSupportedCountryErrors[keyof GetSupportedCountryErrors];
 
 export type GetSupportedCountryResponses = {
-    /**
-     * Success
-     */
-    200: CountriesResponse;
+  /**
+   * Success
+   */
+  200: CountriesResponse;
 };
 
-export type GetSupportedCountryResponse = GetSupportedCountryResponses[keyof GetSupportedCountryResponses];
+export type GetSupportedCountryResponse =
+  GetSupportedCountryResponses[keyof GetSupportedCountryResponses];
 
 export type PostCompleteOnboardingEmploymentData = {
+  /**
+   * Employment slug
+   */
+  body: CompleteOnboarding;
+  headers: {
     /**
-     * Employment slug
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: CompleteOnboarding;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/ready';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/ready';
 };
 
 export type PostCompleteOnboardingEmploymentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCompleteOnboardingEmploymentError = PostCompleteOnboardingEmploymentErrors[keyof PostCompleteOnboardingEmploymentErrors];
+export type PostCompleteOnboardingEmploymentError =
+  PostCompleteOnboardingEmploymentErrors[keyof PostCompleteOnboardingEmploymentErrors];
 
 export type PostCompleteOnboardingEmploymentResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentResponse;
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
 };
 
-export type PostCompleteOnboardingEmploymentResponse = PostCompleteOnboardingEmploymentResponses[keyof PostCompleteOnboardingEmploymentResponses];
+export type PostCompleteOnboardingEmploymentResponse =
+  PostCompleteOnboardingEmploymentResponses[keyof PostCompleteOnboardingEmploymentResponses];
 
 export type GetTimeoffTypesTimeoffData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/timeoff/types';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/timeoff/types';
 };
 
 export type GetTimeoffTypesTimeoffErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetTimeoffTypesTimeoffError = GetTimeoffTypesTimeoffErrors[keyof GetTimeoffTypesTimeoffErrors];
+export type GetTimeoffTypesTimeoffError =
+  GetTimeoffTypesTimeoffErrors[keyof GetTimeoffTypesTimeoffErrors];
 
 export type GetTimeoffTypesTimeoffResponses = {
-    /**
-     * Success
-     */
-    200: ListTimeoffTypesResponse;
+  /**
+   * Success
+   */
+  200: ListTimeoffTypesResponse;
 };
 
-export type GetTimeoffTypesTimeoffResponse = GetTimeoffTypesTimeoffResponses[keyof GetTimeoffTypesTimeoffResponses];
+export type GetTimeoffTypesTimeoffResponse =
+  GetTimeoffTypesTimeoffResponses[keyof GetTimeoffTypesTimeoffResponses];
 
 export type PostTriggerWebhookCallbackData = {
-    /**
-     * Webhook Trigger Params
-     */
-    body?: WebhookTriggerParams;
-    path?: never;
-    query?: never;
-    url: '/v1/sandbox/webhook-callbacks/trigger';
+  /**
+   * Webhook Trigger Params
+   */
+  body?: WebhookTriggerParams;
+  path?: never;
+  query?: never;
+  url: '/v1/sandbox/webhook-callbacks/trigger';
 };
 
 export type PostTriggerWebhookCallbackErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostTriggerWebhookCallbackError = PostTriggerWebhookCallbackErrors[keyof PostTriggerWebhookCallbackErrors];
+export type PostTriggerWebhookCallbackError =
+  PostTriggerWebhookCallbackErrors[keyof PostTriggerWebhookCallbackErrors];
 
 export type PostTriggerWebhookCallbackResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostTriggerWebhookCallbackResponse = PostTriggerWebhookCallbackResponses[keyof PostTriggerWebhookCallbackResponses];
+export type PostTriggerWebhookCallbackResponse =
+  PostTriggerWebhookCallbackResponses[keyof PostTriggerWebhookCallbackResponses];
 
 export type GetDownloadPayslipPayslipData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Payslip ID
-         */
-        payslip_id: string;
-    };
-    query?: never;
-    url: '/v1/payslips/{payslip_id}/pdf';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Payslip ID
+     */
+    payslip_id: string;
+  };
+  query?: never;
+  url: '/v1/payslips/{payslip_id}/pdf';
 };
 
 export type GetDownloadPayslipPayslipErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetDownloadPayslipPayslipError = GetDownloadPayslipPayslipErrors[keyof GetDownloadPayslipPayslipErrors];
+export type GetDownloadPayslipPayslipError =
+  GetDownloadPayslipPayslipErrors[keyof GetDownloadPayslipPayslipErrors];
 
 export type GetDownloadPayslipPayslipResponses = {
-    /**
-     * Success
-     */
-    200: PayslipDownloadResponse;
+  /**
+   * Success
+   */
+  200: PayslipDownloadResponse;
 };
 
-export type GetDownloadPayslipPayslipResponse = GetDownloadPayslipPayslipResponses[keyof GetDownloadPayslipPayslipResponses];
+export type GetDownloadPayslipPayslipResponse =
+  GetDownloadPayslipPayslipResponses[keyof GetDownloadPayslipPayslipResponses];
 
 export type GetShowTimeoffData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Timeoff ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{id}';
 };
 
 export type GetShowTimeoffErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowTimeoffError = GetShowTimeoffErrors[keyof GetShowTimeoffErrors];
+export type GetShowTimeoffError =
+  GetShowTimeoffErrors[keyof GetShowTimeoffErrors];
 
 export type GetShowTimeoffResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type GetShowTimeoffResponse = GetShowTimeoffResponses[keyof GetShowTimeoffResponses];
+export type GetShowTimeoffResponse =
+  GetShowTimeoffResponses[keyof GetShowTimeoffResponses];
 
 export type PatchUpdateTimeoff2Data = {
+  /**
+   * UpdateTimeoff
+   */
+  body: UpdateApprovedTimeoffParams;
+  headers: {
     /**
-     * UpdateTimeoff
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: UpdateApprovedTimeoffParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Timeoff ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{id}';
 };
 
 export type PatchUpdateTimeoff2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateTimeoff2Error = PatchUpdateTimeoff2Errors[keyof PatchUpdateTimeoff2Errors];
+export type PatchUpdateTimeoff2Error =
+  PatchUpdateTimeoff2Errors[keyof PatchUpdateTimeoff2Errors];
 
 export type PatchUpdateTimeoff2Responses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type PatchUpdateTimeoff2Response = PatchUpdateTimeoff2Responses[keyof PatchUpdateTimeoff2Responses];
+export type PatchUpdateTimeoff2Response =
+  PatchUpdateTimeoff2Responses[keyof PatchUpdateTimeoff2Responses];
 
 export type PatchUpdateTimeoffData = {
+  /**
+   * UpdateTimeoff
+   */
+  body: UpdateApprovedTimeoffParams;
+  headers: {
     /**
-     * UpdateTimeoff
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: UpdateApprovedTimeoffParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Timeoff ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{id}';
 };
 
 export type PatchUpdateTimeoffErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateTimeoffError = PatchUpdateTimeoffErrors[keyof PatchUpdateTimeoffErrors];
+export type PatchUpdateTimeoffError =
+  PatchUpdateTimeoffErrors[keyof PatchUpdateTimeoffErrors];
 
 export type PatchUpdateTimeoffResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type PatchUpdateTimeoffResponse = PatchUpdateTimeoffResponses[keyof PatchUpdateTimeoffResponses];
+export type PatchUpdateTimeoffResponse =
+  PatchUpdateTimeoffResponses[keyof PatchUpdateTimeoffResponses];
 
 export type PostCreateDeclineData = {
+  /**
+   * DeclineTimeoff
+   */
+  body: DeclineTimeoffParams;
+  path: {
     /**
-     * DeclineTimeoff
+     * Time Off ID
      */
-    body: DeclineTimeoffParams;
-    path: {
-        /**
-         * Time Off ID
-         */
-        timeoff_id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{timeoff_id}/decline';
+    timeoff_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{timeoff_id}/decline';
 };
 
 export type PostCreateDeclineErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateDeclineError = PostCreateDeclineErrors[keyof PostCreateDeclineErrors];
+export type PostCreateDeclineError =
+  PostCreateDeclineErrors[keyof PostCreateDeclineErrors];
 
 export type PostCreateDeclineResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type PostCreateDeclineResponse = PostCreateDeclineResponses[keyof PostCreateDeclineResponses];
+export type PostCreateDeclineResponse =
+  PostCreateDeclineResponses[keyof PostCreateDeclineResponses];
 
 export type PostAutomatableContractAmendmentData = {
+  /**
+   * Contract Amendment
+   */
+  body?: CreateContractAmendmentParams;
+  headers: {
     /**
-     * Contract Amendment
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: CreateContractAmendmentParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/contract-amendments/automatable';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/contract-amendments/automatable';
 };
 
 export type PostAutomatableContractAmendmentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostAutomatableContractAmendmentError = PostAutomatableContractAmendmentErrors[keyof PostAutomatableContractAmendmentErrors];
+export type PostAutomatableContractAmendmentError =
+  PostAutomatableContractAmendmentErrors[keyof PostAutomatableContractAmendmentErrors];
 
 export type PostAutomatableContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: ContractAmendmentAutomatableResponse;
+  /**
+   * Success
+   */
+  200: ContractAmendmentAutomatableResponse;
 };
 
-export type PostAutomatableContractAmendmentResponse = PostAutomatableContractAmendmentResponses[keyof PostAutomatableContractAmendmentResponses];
+export type PostAutomatableContractAmendmentResponse =
+  PostAutomatableContractAmendmentResponses[keyof PostAutomatableContractAmendmentResponses];
 
 export type PostCreateApprovalData = {
+  /**
+   * ApproveTimeoff
+   */
+  body: ApproveTimeoffParams;
+  path: {
     /**
-     * ApproveTimeoff
+     * Time Off ID
      */
-    body: ApproveTimeoffParams;
-    path: {
-        /**
-         * Time Off ID
-         */
-        timeoff_id: string;
-    };
-    query?: never;
-    url: '/v1/timeoff/{timeoff_id}/approve';
+    timeoff_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{timeoff_id}/approve';
 };
 
 export type PostCreateApprovalErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateApprovalError = PostCreateApprovalErrors[keyof PostCreateApprovalErrors];
+export type PostCreateApprovalError =
+  PostCreateApprovalErrors[keyof PostCreateApprovalErrors];
 
 export type PostCreateApprovalResponses = {
-    /**
-     * Success
-     */
-    200: TimeoffResponse;
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
 };
 
-export type PostCreateApprovalResponse = PostCreateApprovalResponses[keyof PostCreateApprovalResponses];
+export type PostCreateApprovalResponse =
+  PostCreateApprovalResponses[keyof PostCreateApprovalResponses];
 
 export type GetIndexEmploymentCustomFieldData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/custom-fields';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/custom-fields';
 };
 
 export type GetIndexEmploymentCustomFieldErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentCustomFieldError = GetIndexEmploymentCustomFieldErrors[keyof GetIndexEmploymentCustomFieldErrors];
+export type GetIndexEmploymentCustomFieldError =
+  GetIndexEmploymentCustomFieldErrors[keyof GetIndexEmploymentCustomFieldErrors];
 
 export type GetIndexEmploymentCustomFieldResponses = {
-    /**
-     * Success
-     */
-    200: ListEmploymentCustomFieldsResponse;
+  /**
+   * Success
+   */
+  200: ListEmploymentCustomFieldsResponse;
 };
 
-export type GetIndexEmploymentCustomFieldResponse = GetIndexEmploymentCustomFieldResponses[keyof GetIndexEmploymentCustomFieldResponses];
+export type GetIndexEmploymentCustomFieldResponse =
+  GetIndexEmploymentCustomFieldResponses[keyof GetIndexEmploymentCustomFieldResponses];
 
 export type PostCreateEmploymentCustomFieldData = {
-    /**
-     * Custom Field Definition Create Parameters
-     */
-    body: CreateCustomFieldDefinitionParams;
-    path?: never;
-    query?: never;
-    url: '/v1/custom-fields';
+  /**
+   * Custom Field Definition Create Parameters
+   */
+  body: CreateCustomFieldDefinitionParams;
+  path?: never;
+  query?: never;
+  url: '/v1/custom-fields';
 };
 
 export type PostCreateEmploymentCustomFieldErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEmploymentCustomFieldError = PostCreateEmploymentCustomFieldErrors[keyof PostCreateEmploymentCustomFieldErrors];
+export type PostCreateEmploymentCustomFieldError =
+  PostCreateEmploymentCustomFieldErrors[keyof PostCreateEmploymentCustomFieldErrors];
 
 export type PostCreateEmploymentCustomFieldResponses = {
-    /**
-     * Success
-     */
-    200: CreateEmploymentCustomFieldResponse;
+  /**
+   * Success
+   */
+  200: CreateEmploymentCustomFieldResponse;
 };
 
-export type PostCreateEmploymentCustomFieldResponse = PostCreateEmploymentCustomFieldResponses[keyof PostCreateEmploymentCustomFieldResponses];
+export type PostCreateEmploymentCustomFieldResponse =
+  PostCreateEmploymentCustomFieldResponses[keyof PostCreateEmploymentCustomFieldResponses];
 
 export type PatchUpdateEmployment4Data = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentUpdateParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentUpdateParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/sandbox/employments/{employment_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}';
 };
 
 export type PatchUpdateEmployment4Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment4Error = PatchUpdateEmployment4Errors[keyof PatchUpdateEmployment4Errors];
+export type PatchUpdateEmployment4Error =
+  PatchUpdateEmployment4Errors[keyof PatchUpdateEmployment4Errors];
 
 export type PatchUpdateEmployment4Responses = {
-    /**
-     * Success
-     */
-    200: EmploymentResponse;
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment4Response = PatchUpdateEmployment4Responses[keyof PatchUpdateEmployment4Responses];
+export type PatchUpdateEmployment4Response =
+  PatchUpdateEmployment4Responses[keyof PatchUpdateEmployment4Responses];
 
 export type PatchUpdateEmployment3Data = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentUpdateParams;
+  headers: {
     /**
-     * Employment params
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: EmploymentUpdateParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/sandbox/employments/{employment_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}';
 };
 
 export type PatchUpdateEmployment3Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment3Error = PatchUpdateEmployment3Errors[keyof PatchUpdateEmployment3Errors];
+export type PatchUpdateEmployment3Error =
+  PatchUpdateEmployment3Errors[keyof PatchUpdateEmployment3Errors];
 
 export type PatchUpdateEmployment3Responses = {
-    /**
-     * Success
-     */
-    200: EmploymentResponse;
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment3Response = PatchUpdateEmployment3Responses[keyof PatchUpdateEmployment3Responses];
+export type PatchUpdateEmployment3Response =
+  PatchUpdateEmployment3Responses[keyof PatchUpdateEmployment3Responses];
 
 export type GetPendingChangesEmploymentContractData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/employment-contracts/{employment_id}/pending-changes';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employment-contracts/{employment_id}/pending-changes';
 };
 
 export type GetPendingChangesEmploymentContractErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetPendingChangesEmploymentContractError = GetPendingChangesEmploymentContractErrors[keyof GetPendingChangesEmploymentContractErrors];
+export type GetPendingChangesEmploymentContractError =
+  GetPendingChangesEmploymentContractErrors[keyof GetPendingChangesEmploymentContractErrors];
 
 export type GetPendingChangesEmploymentContractResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentContractPendingChangesResponse;
+  /**
+   * Success
+   */
+  200: EmploymentContractPendingChangesResponse;
 };
 
-export type GetPendingChangesEmploymentContractResponse = GetPendingChangesEmploymentContractResponses[keyof GetPendingChangesEmploymentContractResponses];
+export type GetPendingChangesEmploymentContractResponse =
+  GetPendingChangesEmploymentContractResponses[keyof GetPendingChangesEmploymentContractResponses];
 
 export type GetShowResignationData = {
-    body?: never;
-    path: {
-        /**
-         * Offboarding request ID
-         */
-        offboarding_request_id: string;
-    };
-    query?: never;
-    url: '/v1/resignations/{offboarding_request_id}';
+  body?: never;
+  path: {
+    /**
+     * Offboarding request ID
+     */
+    offboarding_request_id: string;
+  };
+  query?: never;
+  url: '/v1/resignations/{offboarding_request_id}';
 };
 
 export type GetShowResignationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowResignationError = GetShowResignationErrors[keyof GetShowResignationErrors];
+export type GetShowResignationError =
+  GetShowResignationErrors[keyof GetShowResignationErrors];
 
 export type GetShowResignationResponses = {
-    /**
-     * Success
-     */
-    200: ResignationResponse;
+  /**
+   * Success
+   */
+  200: ResignationResponse;
 };
 
-export type GetShowResignationResponse = GetShowResignationResponses[keyof GetShowResignationResponses];
+export type GetShowResignationResponse =
+  GetShowResignationResponses[keyof GetShowResignationResponses];
 
 export type PostUploadEmployeeFileFileData = {
+  /**
+   * File
+   */
+  body: FileParams;
+  headers: {
     /**
-     * File
+     * This endpoint works with any of the access tokens provided. You can use an access
+     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     *
      */
-    body: FileParams;
-    headers: {
-        /**
-         * This endpoint works with any of the access tokens provided. You can use an access
-         * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/documents';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/documents';
 };
 
 export type PostUploadEmployeeFileFileErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostUploadEmployeeFileFileError = PostUploadEmployeeFileFileErrors[keyof PostUploadEmployeeFileFileErrors];
+export type PostUploadEmployeeFileFileError =
+  PostUploadEmployeeFileFileErrors[keyof PostUploadEmployeeFileFileErrors];
 
 export type PostUploadEmployeeFileFileResponses = {
-    /**
-     * Success
-     */
-    200: UploadFileResponse;
+  /**
+   * Success
+   */
+  200: UploadFileResponse;
 };
 
-export type PostUploadEmployeeFileFileResponse = PostUploadEmployeeFileFileResponses[keyof PostUploadEmployeeFileFileResponses];
+export type PostUploadEmployeeFileFileResponse =
+  PostUploadEmployeeFileFileResponses[keyof PostUploadEmployeeFileFileResponses];
 
 export type PostInviteEmploymentInvitationData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/employments/{employment_id}/invite';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/invite';
 };
 
 export type PostInviteEmploymentInvitationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostInviteEmploymentInvitationError = PostInviteEmploymentInvitationErrors[keyof PostInviteEmploymentInvitationErrors];
+export type PostInviteEmploymentInvitationError =
+  PostInviteEmploymentInvitationErrors[keyof PostInviteEmploymentInvitationErrors];
 
 export type PostInviteEmploymentInvitationResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostInviteEmploymentInvitationResponse = PostInviteEmploymentInvitationResponses[keyof PostInviteEmploymentInvitationResponses];
+export type PostInviteEmploymentInvitationResponse =
+  PostInviteEmploymentInvitationResponses[keyof PostInviteEmploymentInvitationResponses];
 
 export type GetShowExpenseData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Expense ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/expenses/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Expense ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/expenses/{id}';
 };
 
 export type GetShowExpenseErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowExpenseError = GetShowExpenseErrors[keyof GetShowExpenseErrors];
+export type GetShowExpenseError =
+  GetShowExpenseErrors[keyof GetShowExpenseErrors];
 
 export type GetShowExpenseResponses = {
-    /**
-     * Success
-     */
-    200: ExpenseResponse;
+  /**
+   * Success
+   */
+  200: ExpenseResponse;
 };
 
-export type GetShowExpenseResponse = GetShowExpenseResponses[keyof GetShowExpenseResponses];
+export type GetShowExpenseResponse =
+  GetShowExpenseResponses[keyof GetShowExpenseResponses];
 
 export type PatchUpdateExpense2Data = {
+  /**
+   * Expenses
+   */
+  body?: UpdateExpenseParams;
+  path: {
     /**
-     * Expenses
+     * Expense ID
      */
-    body?: UpdateExpenseParams;
-    path: {
-        /**
-         * Expense ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/expenses/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/expenses/{id}';
 };
 
 export type PatchUpdateExpense2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateExpense2Error = PatchUpdateExpense2Errors[keyof PatchUpdateExpense2Errors];
+export type PatchUpdateExpense2Error =
+  PatchUpdateExpense2Errors[keyof PatchUpdateExpense2Errors];
 
 export type PatchUpdateExpense2Responses = {
-    /**
-     * Success
-     */
-    200: ExpenseResponse;
+  /**
+   * Success
+   */
+  200: ExpenseResponse;
 };
 
-export type PatchUpdateExpense2Response = PatchUpdateExpense2Responses[keyof PatchUpdateExpense2Responses];
+export type PatchUpdateExpense2Response =
+  PatchUpdateExpense2Responses[keyof PatchUpdateExpense2Responses];
 
 export type PatchUpdateExpenseData = {
+  /**
+   * Expenses
+   */
+  body?: UpdateExpenseParams;
+  path: {
     /**
-     * Expenses
+     * Expense ID
      */
-    body?: UpdateExpenseParams;
-    path: {
-        /**
-         * Expense ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/expenses/{id}';
+    id: string;
+  };
+  query?: never;
+  url: '/v1/expenses/{id}';
 };
 
 export type PatchUpdateExpenseErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateExpenseError = PatchUpdateExpenseErrors[keyof PatchUpdateExpenseErrors];
+export type PatchUpdateExpenseError =
+  PatchUpdateExpenseErrors[keyof PatchUpdateExpenseErrors];
 
 export type PatchUpdateExpenseResponses = {
-    /**
-     * Success
-     */
-    200: ExpenseResponse;
+  /**
+   * Success
+   */
+  200: ExpenseResponse;
 };
 
-export type PatchUpdateExpenseResponse = PatchUpdateExpenseResponses[keyof PatchUpdateExpenseResponses];
+export type PatchUpdateExpenseResponse =
+  PatchUpdateExpenseResponses[keyof PatchUpdateExpenseResponses];
 
 export type GetShowBenefitRenewalRequestData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Benefit Renewal Request Id
-         */
-        benefit_renewal_request_id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Benefit Renewal Request Id
+     */
+    benefit_renewal_request_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
 export type GetShowBenefitRenewalRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowBenefitRenewalRequestError = GetShowBenefitRenewalRequestErrors[keyof GetShowBenefitRenewalRequestErrors];
+export type GetShowBenefitRenewalRequestError =
+  GetShowBenefitRenewalRequestErrors[keyof GetShowBenefitRenewalRequestErrors];
 
 export type GetShowBenefitRenewalRequestResponses = {
-    /**
-     * Success
-     */
-    200: BenefitRenewalRequestsBenefitRenewalRequestResponse;
+  /**
+   * Success
+   */
+  200: BenefitRenewalRequestsBenefitRenewalRequestResponse;
 };
 
-export type GetShowBenefitRenewalRequestResponse = GetShowBenefitRenewalRequestResponses[keyof GetShowBenefitRenewalRequestResponses];
+export type GetShowBenefitRenewalRequestResponse =
+  GetShowBenefitRenewalRequestResponses[keyof GetShowBenefitRenewalRequestResponses];
 
 export type PostUpdateBenefitRenewalRequestData = {
+  /**
+   * Benefit Renewal Request Response
+   */
+  body?: BenefitRenewalRequestsUpdateBenefitRenewalRequest;
+  headers: {
     /**
-     * Benefit Renewal Request Response
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: BenefitRenewalRequestsUpdateBenefitRenewalRequest;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Benefit Renewal Request Id
-         */
-        benefit_renewal_request_id: UuidSlug;
-    };
-    query?: never;
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Benefit Renewal Request Id
+     */
+    benefit_renewal_request_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
 export type PostUpdateBenefitRenewalRequestErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostUpdateBenefitRenewalRequestError = PostUpdateBenefitRenewalRequestErrors[keyof PostUpdateBenefitRenewalRequestErrors];
+export type PostUpdateBenefitRenewalRequestError =
+  PostUpdateBenefitRenewalRequestErrors[keyof PostUpdateBenefitRenewalRequestErrors];
 
 export type PostUpdateBenefitRenewalRequestResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostUpdateBenefitRenewalRequestResponse = PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
+export type PostUpdateBenefitRenewalRequestResponse =
+  PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
 
 export type PutValidateResignationData = {
+  /**
+   * ValidateResignation
+   */
+  body: ValidateResignationRequestParams;
+  path: {
     /**
-     * ValidateResignation
+     * Offboarding request ID
      */
-    body: ValidateResignationRequestParams;
-    path: {
-        /**
-         * Offboarding request ID
-         */
-        offboarding_request_id: string;
-    };
-    query?: never;
-    url: '/v1/resignations/{offboarding_request_id}/validate';
+    offboarding_request_id: string;
+  };
+  query?: never;
+  url: '/v1/resignations/{offboarding_request_id}/validate';
 };
 
 export type PutValidateResignationErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PutValidateResignationError = PutValidateResignationErrors[keyof PutValidateResignationErrors];
+export type PutValidateResignationError =
+  PutValidateResignationErrors[keyof PutValidateResignationErrors];
 
 export type PutValidateResignationResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PutValidateResignationResponse = PutValidateResignationResponses[keyof PutValidateResignationResponses];
+export type PutValidateResignationResponse =
+  PutValidateResignationResponses[keyof PutValidateResignationResponses];
 
 export type GetShowEmploymentCustomFieldValueData = {
-    body?: never;
-    path: {
-        /**
-         * Custom field ID
-         */
-        custom_field_id: string;
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+  body?: never;
+  path: {
+    /**
+     * Custom field ID
+     */
+    custom_field_id: string;
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type GetShowEmploymentCustomFieldValueErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowEmploymentCustomFieldValueError = GetShowEmploymentCustomFieldValueErrors[keyof GetShowEmploymentCustomFieldValueErrors];
+export type GetShowEmploymentCustomFieldValueError =
+  GetShowEmploymentCustomFieldValueErrors[keyof GetShowEmploymentCustomFieldValueErrors];
 
 export type GetShowEmploymentCustomFieldValueResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentCustomFieldValueResponse;
+  /**
+   * Success
+   */
+  200: EmploymentCustomFieldValueResponse;
 };
 
-export type GetShowEmploymentCustomFieldValueResponse = GetShowEmploymentCustomFieldValueResponses[keyof GetShowEmploymentCustomFieldValueResponses];
+export type GetShowEmploymentCustomFieldValueResponse =
+  GetShowEmploymentCustomFieldValueResponses[keyof GetShowEmploymentCustomFieldValueResponses];
 
 export type PatchUpdateEmploymentCustomFieldValue2Data = {
+  /**
+   * Custom Field Value Update Parameters
+   */
+  body: UpdateEmploymentCustomFieldValueParams;
+  path: {
     /**
-     * Custom Field Value Update Parameters
+     * Custom field ID
      */
-    body: UpdateEmploymentCustomFieldValueParams;
-    path: {
-        /**
-         * Custom field ID
-         */
-        custom_field_id: string;
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+    custom_field_id: string;
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type PatchUpdateEmploymentCustomFieldValue2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValue2Error = PatchUpdateEmploymentCustomFieldValue2Errors[keyof PatchUpdateEmploymentCustomFieldValue2Errors];
+export type PatchUpdateEmploymentCustomFieldValue2Error =
+  PatchUpdateEmploymentCustomFieldValue2Errors[keyof PatchUpdateEmploymentCustomFieldValue2Errors];
 
 export type PatchUpdateEmploymentCustomFieldValue2Responses = {
-    /**
-     * Success
-     */
-    200: EmploymentCustomFieldValueResponse;
+  /**
+   * Success
+   */
+  200: EmploymentCustomFieldValueResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValue2Response = PatchUpdateEmploymentCustomFieldValue2Responses[keyof PatchUpdateEmploymentCustomFieldValue2Responses];
+export type PatchUpdateEmploymentCustomFieldValue2Response =
+  PatchUpdateEmploymentCustomFieldValue2Responses[keyof PatchUpdateEmploymentCustomFieldValue2Responses];
 
 export type PatchUpdateEmploymentCustomFieldValueData = {
+  /**
+   * Custom Field Value Update Parameters
+   */
+  body: UpdateEmploymentCustomFieldValueParams;
+  path: {
     /**
-     * Custom Field Value Update Parameters
+     * Custom field ID
      */
-    body: UpdateEmploymentCustomFieldValueParams;
-    path: {
-        /**
-         * Custom field ID
-         */
-        custom_field_id: string;
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+    custom_field_id: string;
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type PatchUpdateEmploymentCustomFieldValueErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValueError = PatchUpdateEmploymentCustomFieldValueErrors[keyof PatchUpdateEmploymentCustomFieldValueErrors];
+export type PatchUpdateEmploymentCustomFieldValueError =
+  PatchUpdateEmploymentCustomFieldValueErrors[keyof PatchUpdateEmploymentCustomFieldValueErrors];
 
 export type PatchUpdateEmploymentCustomFieldValueResponses = {
-    /**
-     * Success
-     */
-    200: EmploymentCustomFieldValueResponse;
+  /**
+   * Success
+   */
+  200: EmploymentCustomFieldValueResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValueResponse = PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
+export type PatchUpdateEmploymentCustomFieldValueResponse =
+  PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
 
 export type GetCurrentIdentityData = {
-    body?: never;
-    headers: {
-        /**
-         * This endpoint works with any of the access tokens provided. You can use an access
-         * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/identity/current';
+  body?: never;
+  headers: {
+    /**
+     * This endpoint works with any of the access tokens provided. You can use an access
+     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/identity/current';
 };
 
 export type GetCurrentIdentityErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetCurrentIdentityError = GetCurrentIdentityErrors[keyof GetCurrentIdentityErrors];
+export type GetCurrentIdentityError =
+  GetCurrentIdentityErrors[keyof GetCurrentIdentityErrors];
 
 export type GetCurrentIdentityResponses = {
-    /**
-     * Success
-     */
-    201: IdentityCurrentResponse;
+  /**
+   * Success
+   */
+  201: IdentityCurrentResponse;
 };
 
-export type GetCurrentIdentityResponse = GetCurrentIdentityResponses[keyof GetCurrentIdentityResponses];
+export type GetCurrentIdentityResponse =
+  GetCurrentIdentityResponses[keyof GetCurrentIdentityResponses];
 
 export type DeleteDeleteIncentiveData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Incentive ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/incentives/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Incentive ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/incentives/{id}';
 };
 
 export type DeleteDeleteIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteIncentiveError = DeleteDeleteIncentiveErrors[keyof DeleteDeleteIncentiveErrors];
+export type DeleteDeleteIncentiveError =
+  DeleteDeleteIncentiveErrors[keyof DeleteDeleteIncentiveErrors];
 
 export type DeleteDeleteIncentiveResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type DeleteDeleteIncentiveResponse = DeleteDeleteIncentiveResponses[keyof DeleteDeleteIncentiveResponses];
+export type DeleteDeleteIncentiveResponse =
+  DeleteDeleteIncentiveResponses[keyof DeleteDeleteIncentiveResponses];
 
 export type GetShowIncentiveData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Incentive ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/incentives/{id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Incentive ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/incentives/{id}';
 };
 
 export type GetShowIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowIncentiveError = GetShowIncentiveErrors[keyof GetShowIncentiveErrors];
+export type GetShowIncentiveError =
+  GetShowIncentiveErrors[keyof GetShowIncentiveErrors];
 
 export type GetShowIncentiveResponses = {
-    /**
-     * Success
-     */
-    200: IncentiveResponse;
+  /**
+   * Success
+   */
+  200: IncentiveResponse;
 };
 
-export type GetShowIncentiveResponse = GetShowIncentiveResponses[keyof GetShowIncentiveResponses];
+export type GetShowIncentiveResponse =
+  GetShowIncentiveResponses[keyof GetShowIncentiveResponses];
 
 export type PatchUpdateIncentive2Data = {
+  /**
+   * Incentive
+   */
+  body?: UpdateIncentiveParams;
+  headers: {
     /**
-     * Incentive
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: UpdateIncentiveParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Incentive ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/incentives/{id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Incentive ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/incentives/{id}';
 };
 
 export type PatchUpdateIncentive2Errors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateIncentive2Error = PatchUpdateIncentive2Errors[keyof PatchUpdateIncentive2Errors];
+export type PatchUpdateIncentive2Error =
+  PatchUpdateIncentive2Errors[keyof PatchUpdateIncentive2Errors];
 
 export type PatchUpdateIncentive2Responses = {
-    /**
-     * Success
-     */
-    200: IncentiveResponse;
+  /**
+   * Success
+   */
+  200: IncentiveResponse;
 };
 
-export type PatchUpdateIncentive2Response = PatchUpdateIncentive2Responses[keyof PatchUpdateIncentive2Responses];
+export type PatchUpdateIncentive2Response =
+  PatchUpdateIncentive2Responses[keyof PatchUpdateIncentive2Responses];
 
 export type PatchUpdateIncentiveData = {
+  /**
+   * Incentive
+   */
+  body?: UpdateIncentiveParams;
+  headers: {
     /**
-     * Incentive
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body?: UpdateIncentiveParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * Incentive ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/incentives/{id}';
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Incentive ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/incentives/{id}';
 };
 
 export type PatchUpdateIncentiveErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Conflict
-     */
-    409: ConflictResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateIncentiveError = PatchUpdateIncentiveErrors[keyof PatchUpdateIncentiveErrors];
+export type PatchUpdateIncentiveError =
+  PatchUpdateIncentiveErrors[keyof PatchUpdateIncentiveErrors];
 
 export type PatchUpdateIncentiveResponses = {
-    /**
-     * Success
-     */
-    200: IncentiveResponse;
+  /**
+   * Success
+   */
+  200: IncentiveResponse;
 };
 
-export type PatchUpdateIncentiveResponse = PatchUpdateIncentiveResponses[keyof PatchUpdateIncentiveResponses];
+export type PatchUpdateIncentiveResponse =
+  PatchUpdateIncentiveResponses[keyof PatchUpdateIncentiveResponses];
 
 export type GetIndexWorkAuthorizationRequestData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filter results on the given status
-         */
-        status?: 'pending' | 'cancelled' | 'declined_by_manager' | 'declined_by_remote' | 'approved_by_manager' | 'approved_by_remote';
-        /**
-         * Filter results on the given employment slug
-         */
-        employment_id?: string;
-        /**
-         * Filter results on the given employee name
-         */
-        employee_name?: string;
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'submitted_at';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/work-authorization-requests';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter results on the given status
+     */
+    status?:
+      | 'pending'
+      | 'cancelled'
+      | 'declined_by_manager'
+      | 'declined_by_remote'
+      | 'approved_by_manager'
+      | 'approved_by_remote';
+    /**
+     * Filter results on the given employment slug
+     */
+    employment_id?: string;
+    /**
+     * Filter results on the given employee name
+     */
+    employee_name?: string;
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'submitted_at';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/work-authorization-requests';
 };
 
 export type GetIndexWorkAuthorizationRequestErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexWorkAuthorizationRequestError = GetIndexWorkAuthorizationRequestErrors[keyof GetIndexWorkAuthorizationRequestErrors];
+export type GetIndexWorkAuthorizationRequestError =
+  GetIndexWorkAuthorizationRequestErrors[keyof GetIndexWorkAuthorizationRequestErrors];
 
 export type GetIndexWorkAuthorizationRequestResponses = {
-    /**
-     * Success
-     */
-    200: ListWorkAuthorizationRequestsResponse;
+  /**
+   * Success
+   */
+  200: ListWorkAuthorizationRequestsResponse;
 };
 
-export type GetIndexWorkAuthorizationRequestResponse = GetIndexWorkAuthorizationRequestResponses[keyof GetIndexWorkAuthorizationRequestResponses];
+export type GetIndexWorkAuthorizationRequestResponse =
+  GetIndexWorkAuthorizationRequestResponses[keyof GetIndexWorkAuthorizationRequestResponses];
 
 export type GetIndexBenefitOffersCountrySummaryData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/benefit-offers/country-summaries';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/benefit-offers/country-summaries';
 };
 
 export type GetIndexBenefitOffersCountrySummaryErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBenefitOffersCountrySummaryError = GetIndexBenefitOffersCountrySummaryErrors[keyof GetIndexBenefitOffersCountrySummaryErrors];
+export type GetIndexBenefitOffersCountrySummaryError =
+  GetIndexBenefitOffersCountrySummaryErrors[keyof GetIndexBenefitOffersCountrySummaryErrors];
 
 export type GetIndexBenefitOffersCountrySummaryResponses = {
-    /**
-     * Success
-     */
-    200: CountrySummariesResponse;
+  /**
+   * Success
+   */
+  200: CountrySummariesResponse;
 };
 
-export type GetIndexBenefitOffersCountrySummaryResponse = GetIndexBenefitOffersCountrySummaryResponses[keyof GetIndexBenefitOffersCountrySummaryResponses];
+export type GetIndexBenefitOffersCountrySummaryResponse =
+  GetIndexBenefitOffersCountrySummaryResponses[keyof GetIndexBenefitOffersCountrySummaryResponses];
 
 export type GetIndexBenefitOffersByEmploymentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/benefit-offers';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/benefit-offers';
 };
 
 export type GetIndexBenefitOffersByEmploymentErrors = {
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
 };
 
-export type GetIndexBenefitOffersByEmploymentError = GetIndexBenefitOffersByEmploymentErrors[keyof GetIndexBenefitOffersByEmploymentErrors];
+export type GetIndexBenefitOffersByEmploymentError =
+  GetIndexBenefitOffersByEmploymentErrors[keyof GetIndexBenefitOffersByEmploymentErrors];
 
 export type GetIndexBenefitOffersByEmploymentResponses = {
-    /**
-     * Success
-     */
-    200: BenefitOfferByEmploymentResponse;
+  /**
+   * Success
+   */
+  200: BenefitOfferByEmploymentResponse;
 };
 
-export type GetIndexBenefitOffersByEmploymentResponse = GetIndexBenefitOffersByEmploymentResponses[keyof GetIndexBenefitOffersByEmploymentResponses];
+export type GetIndexBenefitOffersByEmploymentResponse =
+  GetIndexBenefitOffersByEmploymentResponses[keyof GetIndexBenefitOffersByEmploymentResponses];
 
 export type PutCancelContractAmendmentData = {
-    body?: never;
-    path: {
-        /**
-         * Contract amendment request ID
-         */
-        contract_amendment_request_id: string;
-    };
-    query?: never;
-    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
+  body?: never;
+  path: {
+    /**
+     * Contract amendment request ID
+     */
+    contract_amendment_request_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
 };
 
 export type PutCancelContractAmendmentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PutCancelContractAmendmentError = PutCancelContractAmendmentErrors[keyof PutCancelContractAmendmentErrors];
+export type PutCancelContractAmendmentError =
+  PutCancelContractAmendmentErrors[keyof PutCancelContractAmendmentErrors];
 
 export type PutCancelContractAmendmentResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PutCancelContractAmendmentResponse = PutCancelContractAmendmentResponses[keyof PutCancelContractAmendmentResponses];
+export type PutCancelContractAmendmentResponse =
+  PutCancelContractAmendmentResponses[keyof PutCancelContractAmendmentResponses];
 
 export type GetShowProbationExtensionData = {
-    body?: never;
-    path: {
-        /**
-         * Probation Extension Request ID
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v1/probation-extensions/{id}';
+  body?: never;
+  path: {
+    /**
+     * Probation Extension Request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/probation-extensions/{id}';
 };
 
 export type GetShowProbationExtensionErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetShowProbationExtensionError = GetShowProbationExtensionErrors[keyof GetShowProbationExtensionErrors];
+export type GetShowProbationExtensionError =
+  GetShowProbationExtensionErrors[keyof GetShowProbationExtensionErrors];
 
 export type GetShowProbationExtensionResponses = {
-    /**
-     * Success
-     */
-    200: ProbationExtensionResponse;
+  /**
+   * Success
+   */
+  200: ProbationExtensionResponse;
 };
 
-export type GetShowProbationExtensionResponse = GetShowProbationExtensionResponses[keyof GetShowProbationExtensionResponses];
+export type GetShowProbationExtensionResponse =
+  GetShowProbationExtensionResponses[keyof GetShowProbationExtensionResponses];
 
 export type GetIndexPayslipData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Employment ID
-         */
-        employment_id?: string;
-        /**
-         * Filters by payslips `issued_at` field, after or on the same day than the given date
-         */
-        start_date?: string;
-        /**
-         * Filters by payslips `issued_at` field, before or or the same day than the given date
-         */
-        end_date?: string;
-        /**
-         * Filters by payslips `expected_payout_date` field, after or on the same day than the given date
-         */
-        expected_payout_start_date?: string;
-        /**
-         * Filters by payslips `expected_payout_date` field, before or or the same day than the given date
-         */
-        expected_payout_end_date?: string;
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Change the amount of records returned per page, defaults to 20, limited to 100
-         */
-        page_size?: number;
-    };
-    url: '/v1/payslips';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Employment ID
+     */
+    employment_id?: string;
+    /**
+     * Filters by payslips `issued_at` field, after or on the same day than the given date
+     */
+    start_date?: string;
+    /**
+     * Filters by payslips `issued_at` field, before or or the same day than the given date
+     */
+    end_date?: string;
+    /**
+     * Filters by payslips `expected_payout_date` field, after or on the same day than the given date
+     */
+    expected_payout_start_date?: string;
+    /**
+     * Filters by payslips `expected_payout_date` field, before or or the same day than the given date
+     */
+    expected_payout_end_date?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/payslips';
 };
 
 export type GetIndexPayslipErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexPayslipError = GetIndexPayslipErrors[keyof GetIndexPayslipErrors];
+export type GetIndexPayslipError =
+  GetIndexPayslipErrors[keyof GetIndexPayslipErrors];
 
 export type GetIndexPayslipResponses = {
-    /**
-     * Success
-     */
-    200: ListPayslipsResponse;
+  /**
+   * Success
+   */
+  200: ListPayslipsResponse;
 };
 
-export type GetIndexPayslipResponse = GetIndexPayslipResponses[keyof GetIndexPayslipResponses];
+export type GetIndexPayslipResponse =
+  GetIndexPayslipResponses[keyof GetIndexPayslipResponses];
 
 export type GetDownloadByIdExpenseReceiptData = {
-    body?: never;
-    path: {
-        /**
-         * The expense ID
-         */
-        expense_id: string;
-        /**
-         * The receipt ID
-         */
-        receipt_id: string;
-    };
-    query?: never;
-    url: '/v1/expenses/{expense_id}/receipts/{receipt_id}';
+  body?: never;
+  path: {
+    /**
+     * The expense ID
+     */
+    expense_id: string;
+    /**
+     * The receipt ID
+     */
+    receipt_id: string;
+  };
+  query?: never;
+  url: '/v1/expenses/{expense_id}/receipts/{receipt_id}';
 };
 
 export type GetDownloadByIdExpenseReceiptErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetDownloadByIdExpenseReceiptError = GetDownloadByIdExpenseReceiptErrors[keyof GetDownloadByIdExpenseReceiptErrors];
+export type GetDownloadByIdExpenseReceiptError =
+  GetDownloadByIdExpenseReceiptErrors[keyof GetDownloadByIdExpenseReceiptErrors];
 
 export type GetDownloadByIdExpenseReceiptResponses = {
-    /**
-     * Success
-     */
-    200: GenericFile;
+  /**
+   * Success
+   */
+  200: GenericFile;
 };
 
-export type GetDownloadByIdExpenseReceiptResponse = GetDownloadByIdExpenseReceiptResponses[keyof GetDownloadByIdExpenseReceiptResponses];
+export type GetDownloadByIdExpenseReceiptResponse =
+  GetDownloadByIdExpenseReceiptResponses[keyof GetDownloadByIdExpenseReceiptResponses];
 
 export type PostTokenOAuth2TokenData = {
+  /**
+   * OAuth2Token
+   */
+  body?: OAuth2TokenParams;
+  headers: {
     /**
-     * OAuth2Token
+     * Authorization header with basic authentication encoded with Base64.
+     * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
+     *
      */
-    body?: OAuth2TokenParams;
-    headers: {
-        /**
-         * Authorization header with basic authentication encoded with Base64.
-         * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/auth/oauth2/token';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/auth/oauth2/token';
 };
 
 export type PostTokenOAuth2TokenErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostTokenOAuth2TokenError = PostTokenOAuth2TokenErrors[keyof PostTokenOAuth2TokenErrors];
+export type PostTokenOAuth2TokenError =
+  PostTokenOAuth2TokenErrors[keyof PostTokenOAuth2TokenErrors];
 
 export type PostTokenOAuth2TokenResponses = {
-    /**
-     * Success
-     */
-    200: OAuth2Tokens;
+  /**
+   * Success
+   */
+  200: OAuth2Tokens;
 };
 
-export type PostTokenOAuth2TokenResponse = PostTokenOAuth2TokenResponses[keyof PostTokenOAuth2TokenResponses];
+export type PostTokenOAuth2TokenResponse =
+  PostTokenOAuth2TokenResponses[keyof PostTokenOAuth2TokenResponses];
 
 export type GetIndexTimeoffData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Only show time off for a specific employment
-         */
-        employment_id?: string;
-        /**
-         * Filter time off by its type
-         */
-        timeoff_type?: TimeoffType;
-        /**
-         * Filter time off by its status
-         */
-        status?: TimeoffStatus;
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'timeoff_type' | 'status';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/timeoff';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Only show time off for a specific employment
+     */
+    employment_id?: string;
+    /**
+     * Filter time off by its type
+     */
+    timeoff_type?: TimeoffType;
+    /**
+     * Filter time off by its status
+     */
+    status?: TimeoffStatus;
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'timeoff_type' | 'status';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/timeoff';
 };
 
 export type GetIndexTimeoffErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexTimeoffError = GetIndexTimeoffErrors[keyof GetIndexTimeoffErrors];
+export type GetIndexTimeoffError =
+  GetIndexTimeoffErrors[keyof GetIndexTimeoffErrors];
 
 export type GetIndexTimeoffResponses = {
-    /**
-     * Success
-     */
-    200: ListTimeoffResponse;
+  /**
+   * Success
+   */
+  200: ListTimeoffResponse;
 };
 
-export type GetIndexTimeoffResponse = GetIndexTimeoffResponses[keyof GetIndexTimeoffResponses];
+export type GetIndexTimeoffResponse =
+  GetIndexTimeoffResponses[keyof GetIndexTimeoffResponses];
 
 export type PostCreateTimeoffData = {
+  /**
+   * Timeoff
+   */
+  body: CreateApprovedTimeoffParams;
+  headers: {
     /**
-     * Timeoff
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
      */
-    body: CreateApprovedTimeoffParams;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/timeoff';
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/timeoff';
 };
 
 export type PostCreateTimeoffErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateTimeoffError = PostCreateTimeoffErrors[keyof PostCreateTimeoffErrors];
+export type PostCreateTimeoffError =
+  PostCreateTimeoffErrors[keyof PostCreateTimeoffErrors];
 
 export type PostCreateTimeoffResponses = {
-    /**
-     * Created
-     */
-    201: TimeoffResponse;
+  /**
+   * Created
+   */
+  201: TimeoffResponse;
 };
 
-export type PostCreateTimeoffResponse = PostCreateTimeoffResponses[keyof PostCreateTimeoffResponses];
+export type PostCreateTimeoffResponse =
+  PostCreateTimeoffResponses[keyof PostCreateTimeoffResponses];
 
 export type GetIndexEmploymentContractData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    url: '/v1/employment-contracts';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  url: '/v1/employment-contracts';
 };
 
 export type GetIndexEmploymentContractErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentContractError = GetIndexEmploymentContractErrors[keyof GetIndexEmploymentContractErrors];
+export type GetIndexEmploymentContractError =
+  GetIndexEmploymentContractErrors[keyof GetIndexEmploymentContractErrors];
 
 export type GetIndexEmploymentContractResponses = {
-    /**
-     * Success
-     */
-    200: ListEmploymentContractResponse;
+  /**
+   * Success
+   */
+  200: ListEmploymentContractResponse;
 };
 
-export type GetIndexEmploymentContractResponse = GetIndexEmploymentContractResponses[keyof GetIndexEmploymentContractResponses];
+export type GetIndexEmploymentContractResponse =
+  GetIndexEmploymentContractResponses[keyof GetIndexEmploymentContractResponses];
 
 export type GetIndexCompanyData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Client Credentials flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: never;
-    url: '/v1/companies';
+  body?: never;
+  headers: {
+    /**
+     * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Client Credentials flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/companies';
 };
 
 export type GetIndexCompanyErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetIndexCompanyError = GetIndexCompanyErrors[keyof GetIndexCompanyErrors];
+export type GetIndexCompanyError =
+  GetIndexCompanyErrors[keyof GetIndexCompanyErrors];
 
 export type GetIndexCompanyResponses = {
-    /**
-     * Success
-     */
-    200: CompaniesResponse;
+  /**
+   * Success
+   */
+  200: CompaniesResponse;
 };
 
-export type GetIndexCompanyResponse = GetIndexCompanyResponses[keyof GetIndexCompanyResponses];
+export type GetIndexCompanyResponse =
+  GetIndexCompanyResponses[keyof GetIndexCompanyResponses];
 
 export type PostCreateCompanyData = {
+  /**
+   * Create Company params
+   */
+  body?: CreateCompanyParams;
+  headers: {
     /**
-     * Create Company params
+     * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Client Credentials flow.
+     *
      */
-    body?: CreateCompanyParams;
-    headers: {
-        /**
-         * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Client Credentials flow.
-         *
-         */
-        Authorization: string;
-    };
-    path?: never;
-    query?: {
-        /**
-         * Complementary action(s) to perform when creating a company:
-         *
-         * - `get_oauth_access_tokens` returns the user's access and refresh tokens
-         * - `send_create_password_email ` sends a reset password token to the company owner's email so they can log in using Remote UI (not needed if integration plans to use SSO only)
-         *
-         * If `action` contains `send_create_password_email` you can redirect the user to [https://employ.remote.com/api-integration-new-password-send](https://employ.remote.com/api-integration-new-password-send)
-         *
-         */
-        action?: string;
-    };
-    url: '/v1/companies';
+    Authorization: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Complementary action(s) to perform when creating a company:
+     *
+     * - `get_oauth_access_tokens` returns the user's access and refresh tokens
+     * - `send_create_password_email ` sends a reset password token to the company owner's email so they can log in using Remote UI (not needed if integration plans to use SSO only)
+     *
+     * If `action` contains `send_create_password_email` you can redirect the user to [https://employ.remote.com/api-integration-new-password-send](https://employ.remote.com/api-integration-new-password-send)
+     *
+     */
+    action?: string;
+  };
+  url: '/v1/companies';
 };
 
 export type PostCreateCompanyErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Conflict
-     */
-    409: CompanyCreationConflictErrorResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: CompanyCreationConflictErrorResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type PostCreateCompanyError = PostCreateCompanyErrors[keyof PostCreateCompanyErrors];
+export type PostCreateCompanyError =
+  PostCreateCompanyErrors[keyof PostCreateCompanyErrors];
 
 export type PostCreateCompanyResponses = {
-    /**
-     * Created
-     */
-    201: CompanyCreationResponse;
+  /**
+   * Created
+   */
+  201: CompanyCreationResponse;
 };
 
-export type PostCreateCompanyResponse = PostCreateCompanyResponses[keyof PostCreateCompanyResponses];
+export type PostCreateCompanyResponse =
+  PostCreateCompanyResponses[keyof PostCreateCompanyResponses];
 
 export type PostSendBackTimesheetData = {
+  /**
+   * SendBackTimesheetParams
+   */
+  body?: SendBackTimesheetParams;
+  path: {
     /**
-     * SendBackTimesheetParams
+     * Timesheet ID
      */
-    body?: SendBackTimesheetParams;
-    path: {
-        /**
-         * Timesheet ID
-         */
-        timesheet_id: string;
-    };
-    query?: never;
-    url: '/v1/timesheets/{timesheet_id}/send-back';
+    timesheet_id: string;
+  };
+  query?: never;
+  url: '/v1/timesheets/{timesheet_id}/send-back';
 };
 
 export type PostSendBackTimesheetErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostSendBackTimesheetError = PostSendBackTimesheetErrors[keyof PostSendBackTimesheetErrors];
+export type PostSendBackTimesheetError =
+  PostSendBackTimesheetErrors[keyof PostSendBackTimesheetErrors];
 
 export type PostSendBackTimesheetResponses = {
-    /**
-     * Success
-     */
-    200: SentBackTimesheetResponse;
+  /**
+   * Success
+   */
+  200: SentBackTimesheetResponse;
 };
 
-export type PostSendBackTimesheetResponse = PostSendBackTimesheetResponses[keyof PostSendBackTimesheetResponses];
+export type PostSendBackTimesheetResponse =
+  PostSendBackTimesheetResponses[keyof PostSendBackTimesheetResponses];
 
 export type DeleteDeleteCompanyManagerData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * User ID
-         */
-        user_id: string;
-    };
-    query?: never;
-    url: '/v1/company-managers/{user_id}';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * User ID
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: '/v1/company-managers/{user_id}';
 };
 
 export type DeleteDeleteCompanyManagerErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteCompanyManagerError = DeleteDeleteCompanyManagerErrors[keyof DeleteDeleteCompanyManagerErrors];
+export type DeleteDeleteCompanyManagerError =
+  DeleteDeleteCompanyManagerErrors[keyof DeleteDeleteCompanyManagerErrors];
 
 export type DeleteDeleteCompanyManagerResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type DeleteDeleteCompanyManagerResponse = DeleteDeleteCompanyManagerResponses[keyof DeleteDeleteCompanyManagerResponses];
+export type DeleteDeleteCompanyManagerResponse =
+  DeleteDeleteCompanyManagerResponses[keyof DeleteDeleteCompanyManagerResponses];
 
 export type GetShowCompanyManagerData = {
-    body?: never;
-    path: {
-        /**
-         * User ID
-         */
-        user_id: string;
-    };
-    query?: never;
-    url: '/v1/company-managers/{user_id}';
+  body?: never;
+  path: {
+    /**
+     * User ID
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: '/v1/company-managers/{user_id}';
 };
 
 export type GetShowCompanyManagerErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Too many requests
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetShowCompanyManagerError = GetShowCompanyManagerErrors[keyof GetShowCompanyManagerErrors];
+export type GetShowCompanyManagerError =
+  GetShowCompanyManagerErrors[keyof GetShowCompanyManagerErrors];
 
 export type GetShowCompanyManagerResponses = {
-    /**
-     * Success
-     */
-    200: CompanyManagerResponse;
+  /**
+   * Success
+   */
+  200: CompanyManagerResponse;
 };
 
-export type GetShowCompanyManagerResponse = GetShowCompanyManagerResponses[keyof GetShowCompanyManagerResponses];
+export type GetShowCompanyManagerResponse =
+  GetShowCompanyManagerResponses[keyof GetShowCompanyManagerResponses];
 
 export type GetIndexScheduledContractorInvoiceData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filters contractor invoice schedules by start date greater than or equal to the value.
-         */
-        start_date_from?: _Date;
-        /**
-         * Filters contractor invoice schedules by start date less than or equal to the value.
-         */
-        start_date_to?: _Date;
-        /**
-         * Filters contractor invoice schedules by next invoice date greater than or equal to the value.
-         */
-        next_invoice_date_from?: _Date;
-        /**
-         * Filters contractor invoice schedules by next invoice date less than or equal to the value.
-         */
-        next_invoice_date_to?: _Date;
-        /**
-         * Filters contractor invoice schedules by status matching the value.
-         */
-        status?: ContractorInvoiceScheduleStatus;
-        /**
-         * Filters contractor invoice schedules by employment id matching the value.
-         */
-        employment_id?: UuidSlug;
-        /**
-         * Filters contractor invoice schedules by periodicity matching the value.
-         */
-        periodicity?: ContractorInvoiceSchedulePeriodicity;
-        /**
-         * Filters contractor invoice schedules by currency matching the value.
-         */
-        currency?: string;
-        /**
-         * Field to sort by
-         */
-        sort_by?: 'number' | 'total_amount' | 'next_invoice_at' | 'start_date' | 'nr_occurrences';
-        /**
-         * Sort order
-         */
-        order?: 'asc' | 'desc';
-        /**
-         * Starts fetching records after the given page
-         */
-        page?: number;
-        /**
-         * Number of items per page
-         */
-        page_size?: number;
-    };
-    url: '/v1/contractor-invoice-schedules';
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filters contractor invoice schedules by start date greater than or equal to the value.
+     */
+    start_date_from?: _Date;
+    /**
+     * Filters contractor invoice schedules by start date less than or equal to the value.
+     */
+    start_date_to?: _Date;
+    /**
+     * Filters contractor invoice schedules by next invoice date greater than or equal to the value.
+     */
+    next_invoice_date_from?: _Date;
+    /**
+     * Filters contractor invoice schedules by next invoice date less than or equal to the value.
+     */
+    next_invoice_date_to?: _Date;
+    /**
+     * Filters contractor invoice schedules by status matching the value.
+     */
+    status?: ContractorInvoiceScheduleStatus;
+    /**
+     * Filters contractor invoice schedules by employment id matching the value.
+     */
+    employment_id?: UuidSlug;
+    /**
+     * Filters contractor invoice schedules by periodicity matching the value.
+     */
+    periodicity?: ContractorInvoiceSchedulePeriodicity;
+    /**
+     * Filters contractor invoice schedules by currency matching the value.
+     */
+    currency?: string;
+    /**
+     * Field to sort by
+     */
+    sort_by?:
+      | 'number'
+      | 'total_amount'
+      | 'next_invoice_at'
+      | 'start_date'
+      | 'nr_occurrences';
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/contractor-invoice-schedules';
 };
 
 export type GetIndexScheduledContractorInvoiceErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
 };
 
-export type GetIndexScheduledContractorInvoiceError = GetIndexScheduledContractorInvoiceErrors[keyof GetIndexScheduledContractorInvoiceErrors];
+export type GetIndexScheduledContractorInvoiceError =
+  GetIndexScheduledContractorInvoiceErrors[keyof GetIndexScheduledContractorInvoiceErrors];
 
 export type GetIndexScheduledContractorInvoiceResponses = {
-    /**
-     * Success
-     */
-    200: ListContractorInvoiceSchedulesResponse;
+  /**
+   * Success
+   */
+  200: ListContractorInvoiceSchedulesResponse;
 };
 
-export type GetIndexScheduledContractorInvoiceResponse = GetIndexScheduledContractorInvoiceResponses[keyof GetIndexScheduledContractorInvoiceResponses];
+export type GetIndexScheduledContractorInvoiceResponse =
+  GetIndexScheduledContractorInvoiceResponses[keyof GetIndexScheduledContractorInvoiceResponses];
 
 export type PostBulkCreateScheduledContractorInvoiceData = {
-    /**
-     * Bulk creation payload
-     */
-    body: BulkContractorInvoiceScheduleCreateParams;
-    path?: never;
-    query?: never;
-    url: '/v1/contractor-invoice-schedules';
+  /**
+   * Bulk creation payload
+   */
+  body: BulkContractorInvoiceScheduleCreateParams;
+  path?: never;
+  query?: never;
+  url: '/v1/contractor-invoice-schedules';
 };
 
 export type PostBulkCreateScheduledContractorInvoiceErrors = {
-    /**
-     * Forbidden
-     */
-    403: ForbiddenResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Response containing the lists of succeeded and failed schedules.
-     */
-    422: {
-        data: {
-            failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-            successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-        };
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Response containing the lists of succeeded and failed schedules.
+   */
+  422: {
+    data: {
+      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
+      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
     };
+  };
 };
 
-export type PostBulkCreateScheduledContractorInvoiceError = PostBulkCreateScheduledContractorInvoiceErrors[keyof PostBulkCreateScheduledContractorInvoiceErrors];
+export type PostBulkCreateScheduledContractorInvoiceError =
+  PostBulkCreateScheduledContractorInvoiceErrors[keyof PostBulkCreateScheduledContractorInvoiceErrors];
 
 export type PostBulkCreateScheduledContractorInvoiceResponses = {
-    /**
-     * Response containing the lists of succeeded and failed schedules.
-     */
-    201: {
-        data: {
-            failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-            successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-        };
+  /**
+   * Response containing the lists of succeeded and failed schedules.
+   */
+  201: {
+    data: {
+      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
+      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
     };
-    /**
-     * Response containing the lists of succeeded and failed schedules.
-     */
-    207: {
-        data: {
-            failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-            successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-        };
+  };
+  /**
+   * Response containing the lists of succeeded and failed schedules.
+   */
+  207: {
+    data: {
+      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
+      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
     };
+  };
 };
 
-export type PostBulkCreateScheduledContractorInvoiceResponse = PostBulkCreateScheduledContractorInvoiceResponses[keyof PostBulkCreateScheduledContractorInvoiceResponses];
+export type PostBulkCreateScheduledContractorInvoiceResponse =
+  PostBulkCreateScheduledContractorInvoiceResponses[keyof PostBulkCreateScheduledContractorInvoiceResponses];
 
 export type GetGetBreakdownBillingDocumentData = {
-    body?: never;
-    path: {
-        /**
-         * The billing document's ID
-         */
-        billing_document_id: string;
-    };
-    query?: {
-        /**
-         * Filters the results by the type of the billing breakdown item.
-         */
-        type?: string;
-    };
-    url: '/v1/billing-documents/{billing_document_id}/breakdown';
+  body?: never;
+  path: {
+    /**
+     * The billing document's ID
+     */
+    billing_document_id: string;
+  };
+  query?: {
+    /**
+     * Filters the results by the type of the billing breakdown item.
+     */
+    type?: string;
+  };
+  url: '/v1/billing-documents/{billing_document_id}/breakdown';
 };
 
 export type GetGetBreakdownBillingDocumentErrors = {
-    /**
-     * Bad Request
-     */
-    400: BadRequestResponse;
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
-    /**
-     * Unprocessable Entity
-     */
-    429: TooManyRequestsResponse;
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
 };
 
-export type GetGetBreakdownBillingDocumentError = GetGetBreakdownBillingDocumentErrors[keyof GetGetBreakdownBillingDocumentErrors];
+export type GetGetBreakdownBillingDocumentError =
+  GetGetBreakdownBillingDocumentErrors[keyof GetGetBreakdownBillingDocumentErrors];
 
 export type GetGetBreakdownBillingDocumentResponses = {
-    /**
-     * Success
-     */
-    200: BillingDocumentBreakdownResponse;
+  /**
+   * Success
+   */
+  200: BillingDocumentBreakdownResponse;
 };
 
-export type GetGetBreakdownBillingDocumentResponse = GetGetBreakdownBillingDocumentResponses[keyof GetGetBreakdownBillingDocumentResponses];
+export type GetGetBreakdownBillingDocumentResponse =
+  GetGetBreakdownBillingDocumentResponses[keyof GetGetBreakdownBillingDocumentResponses];
 
 export type PostVerifyIdentityVerificationData = {
-    body?: never;
-    path: {
-        /**
-         * Employment ID
-         */
-        employment_id: string;
-    };
-    query?: never;
-    url: '/v1/identity-verification/{employment_id}/verify';
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/identity-verification/{employment_id}/verify';
 };
 
 export type PostVerifyIdentityVerificationErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type PostVerifyIdentityVerificationError = PostVerifyIdentityVerificationErrors[keyof PostVerifyIdentityVerificationErrors];
+export type PostVerifyIdentityVerificationError =
+  PostVerifyIdentityVerificationErrors[keyof PostVerifyIdentityVerificationErrors];
 
 export type PostVerifyIdentityVerificationResponses = {
-    /**
-     * Success
-     */
-    200: SuccessResponse;
+  /**
+   * Success
+   */
+  200: SuccessResponse;
 };
 
-export type PostVerifyIdentityVerificationResponse = PostVerifyIdentityVerificationResponses[keyof PostVerifyIdentityVerificationResponses];
+export type PostVerifyIdentityVerificationResponse =
+  PostVerifyIdentityVerificationResponses[keyof PostVerifyIdentityVerificationResponses];
 
 export type GetDownloadPdfBillingDocumentData = {
-    body?: never;
-    headers: {
-        /**
-         * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-         *
-         * The refresh token needs to have been obtained through the Authorization Code flow.
-         *
-         */
-        Authorization: string;
-    };
-    path: {
-        /**
-         * The billing document's ID
-         */
-        billing_document_id: string;
-    };
-    query?: never;
-    url: '/v1/billing-documents/{billing_document_id}/pdf';
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * The billing document's ID
+     */
+    billing_document_id: string;
+  };
+  query?: never;
+  url: '/v1/billing-documents/{billing_document_id}/pdf';
 };
 
 export type GetDownloadPdfBillingDocumentErrors = {
-    /**
-     * Unauthorized
-     */
-    401: UnauthorizedResponse;
-    /**
-     * Not Found
-     */
-    404: NotFoundResponse;
-    /**
-     * Unprocessable Entity
-     */
-    422: UnprocessableEntityResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
 };
 
-export type GetDownloadPdfBillingDocumentError = GetDownloadPdfBillingDocumentErrors[keyof GetDownloadPdfBillingDocumentErrors];
+export type GetDownloadPdfBillingDocumentError =
+  GetDownloadPdfBillingDocumentErrors[keyof GetDownloadPdfBillingDocumentErrors];
 
 export type GetDownloadPdfBillingDocumentResponses = {
-    /**
-     * Success
-     */
-    200: GenericFile;
+  /**
+   * Success
+   */
+  200: GenericFile;
 };
 
-export type GetDownloadPdfBillingDocumentResponse = GetDownloadPdfBillingDocumentResponses[keyof GetDownloadPdfBillingDocumentResponses];
+export type GetDownloadPdfBillingDocumentResponse =
+  GetDownloadPdfBillingDocumentResponses[keyof GetDownloadPdfBillingDocumentResponses];
 
 export type ClientOptions = {
-    baseUrl: 'https://gateway.remote.com/' | 'https://gateway.remote-sandbox.com/' | (string & {});
+  baseUrl:
+    | 'https://gateway.remote.com/'
+    | 'https://gateway.remote-sandbox.com/'
+    | (string & {});
 };
