@@ -6,7 +6,7 @@ const clientCredentialsClient = createClient({
   baseUrl: "https://gateway.niceremote.com",
 });
 
-const sessions: { [key: string]: BaseTokenResponse } = {};
+let session: BaseTokenResponse = {};
 
 function hasTokenExpired(expiresAt: number | undefined) {
   return !expiresAt || Date.now() + 60000 > expiresAt;
@@ -14,13 +14,9 @@ function hasTokenExpired(expiresAt: number | undefined) {
 
 export async function clientCredentials(
   clientID: string,
-  clientSecret: string,
-  refreshToken: string
+  clientSecret: string
 ) {
   const encodedCredentials = stringToBase64([clientID, clientSecret].join(":"));
-
-  const sessionKey = refreshToken;
-  let session = sessions[sessionKey];
 
   if (!session || hasTokenExpired(session.expires_in)) {
     const res = await clientCredentialsClient.post<BaseTokenResponse>({
@@ -42,7 +38,7 @@ export async function clientCredentials(
       throw new Error("Unexpected status code");
     }
 
-    sessions[sessionKey] = {
+    session = {
       ...res.data,
       ...(res.data.expires_in && {
         expires_in: Date.now() + res.data.expires_in * 1000,
@@ -50,5 +46,5 @@ export async function clientCredentials(
     };
   }
 
-  return sessions[sessionKey]?.access_token;
+  return session.access_token;
 }
