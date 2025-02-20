@@ -1,13 +1,45 @@
 {
+  "name": "remote-flows",
+  "version": "0.0.1",
   "scripts": {
+    "build": "NODE_ENV=production tsup",
+    "dev": "NODE_ENV=development tsup --watch",
+    "check-exports": "attw --pack .",
     "openapi-ts": "openapi-ts",
-    "build": "tsc"
+    "prepack": "npm run build"
   },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    },
+    "./flows/*": {
+      "import": {
+        "types": "./dist/flows/*.d.ts",
+        "import": "./dist/flows/*.js"
+      },
+      "default": "./dist/flows/*.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
-    "@hey-api/client-fetch": "^0.8.1"
+    "@hey-api/client-fetch": "^0.8.1",
+    "react": "^18.0.0",
+    "type-fest": "^4.35.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@hey-api/openapi-ts": "^0.64.4",
-    "@tsconfig/recommended": "^1.0.8"
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "tsup": "^8.3.6"
   }
 }
