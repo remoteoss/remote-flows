@@ -11,6 +11,7 @@ export const tsup: Options = {
   minify: true,
   sourcemap: true,
   format: ['esm'],
+  outDir: 'dist',
   env: {
     REMOTE_GATEWAY_URL:
       env === 'production'

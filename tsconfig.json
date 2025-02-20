@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "target": "esnext",
-    "module": "commonjs",
+    "module": "Preserve",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -16,7 +16,6 @@
     "lib": ["es2021", "dom"],
     "skipLibCheck": true,
     "noEmit": true,
-    "outDir": "dist",
     "esModuleInterop": true
   },
   "include": ["src"]
