@@ -4,7 +4,7 @@
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
-    "check-exports": "attw --pack .",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "check-format": "prettier --check .",
     "dev": "NODE_ENV=development tsup --watch",
     "lint": "tsc",
@@ -13,15 +13,14 @@
     "prepack": "npm run build"
   },
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
         "import": "./dist/index.js"
-      }
+      },
+      "default": "./dist/index.js"
     },
     "./flows/*": {
       "import": {
