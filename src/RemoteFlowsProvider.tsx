@@ -1,37 +1,46 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useRef } from 'react';
 import type { PropsWithChildren } from 'react';
-import type { SetNonNullable } from 'type-fest';
+import { Client, createClient } from '@hey-api/client-fetch';
 
 import { RemoteFlowsSDKProps } from './types';
 import { client } from './client/client.gen';
-import { clientCredentials } from './auth/clientCredentials.js';
+import { BaseTokenResponse } from './client';
 
-const RemoteFlowSDKContext = createContext<RemoteFlowsSDKProps>({
-  clientID: null,
-  clientSecret: null,
+const RemoteFlowContext = createContext<{ client: Client | null }>({
+  client: null,
 });
 
-export const useRemoteFlowsSDK = () => useContext(RemoteFlowSDKContext);
+export const useClient = () => useContext(RemoteFlowContext);
 
-export function RemoteFlowsSDK({
-  clientID,
-  clientSecret,
+export function RemoteFlows({
+  auth,
   children,
-}: PropsWithChildren<SetNonNullable<RemoteFlowsSDKProps>>) {
-  if (!clientID || !clientSecret) {
-    throw new Error('clientID and clientSecret are required');
-  }
+}: PropsWithChildren<RemoteFlowsSDKProps>) {
+  const session = useRef<BaseTokenResponse | null>(null);
+  const remoteApiClient = useRef(
+    createClient({
+      ...client.getConfig(),
+      auth: async () => {
+        function hasTokenExpired(expiresAt: number | undefined) {
+          return !expiresAt || Date.now() + 60000 > expiresAt;
+        }
 
-  client.setConfig({
-    baseUrl: process.env.REMOTE_GATEWAY_URL,
-    auth: async () => {
-      return clientCredentials(clientID, clientSecret);
-    },
-  });
+        if (!session.current || hasTokenExpired(session.current.expires_in)) {
+          try {
+            session.current = await auth();
+          } catch {
+            console.error('Failed to fetch the access token');
+            return '';
+          }
+        }
+        return session.current?.access_token;
+      },
+    }),
+  );
 
   return (
-    <RemoteFlowSDKContext.Provider value={{ clientID, clientSecret }}>
+    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
       {children}
-    </RemoteFlowSDKContext.Provider>
+    </RemoteFlowContext.Provider>
   );
 }

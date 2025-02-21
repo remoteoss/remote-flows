@@ -1,4 +1,8 @@
+type AuthResponse = {
+  access_token: string;
+  expires_in: number;
+};
+
 export type RemoteFlowsSDKProps = {
-  clientID: string | null;
-  clientSecret: string | null;
+  auth: () => Promise<AuthResponse>;
 };

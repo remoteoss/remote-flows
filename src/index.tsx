@@ -1,1 +1,1 @@
-export { RemoteFlowsSDK } from './RemoteFlowsProvider';
+export { RemoteFlows } from './RemoteFlowsProvider';

@@ -1,12 +1,8 @@
 import React from 'react';
-import { useRemoteFlowsSDK } from '../RemoteFlowsProvider';
+import { useClient } from '../RemoteFlowsProvider';
 
 export function CostCalculator() {
-  const values = useRemoteFlowsSDK();
-
-  return (
-    <div>
-      CostCalculator {values.clientID} {values.clientSecret}
-    </div>
-  );
+  const value = useClient();
+  console.log(value);
+  return <div>CostCalculator</div>;
 }
