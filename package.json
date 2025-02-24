@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
+    "@radix-ui/react-select": "^2.1.6",
     "react-aria-components": "^1.6.0",
     "type-fest": "^4.35.0"
   },
