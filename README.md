@@ -36,17 +36,17 @@ This will create a global symlink for your package.
 2. In the root directory of your test application, run:
 
 ```sh
-npm link remote-flows
+npm link @remoteoss/remote-flows
 ```
 
 This will create a symlink from the `node_modules` folder of your test application to the global symlink created in the previous step.
 
-3. Now you can import and use the `remote-flows` package in your test application as if it were installed from npm.
+3. Now you can import and use the `@remoteoss/remote-flows` package in your test application as if it were installed from npm.
 
 4. To unlink the package when you are done testing, run the following commands in your test application directory:
 
 ```sh
-npm unlink remote-flows
+npm unlink @remoteoss/remote-flows
 ```
 
 And in the root directory of your package:
