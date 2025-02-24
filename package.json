@@ -33,9 +33,13 @@
   "files": [
     "dist"
   ],
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
-    "react": "^18.0.0",
+    "react-aria-components": "^1.6.0",
     "type-fest": "^4.35.0"
   },
   "devDependencies": {
