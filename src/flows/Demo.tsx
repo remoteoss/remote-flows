@@ -1,32 +1,26 @@
 import React, { useState } from 'react';
 import { Select } from '../ui/Select';
+import { Theme } from '@radix-ui/themes';
+import '@radix-ui/themes/styles.css';
 
 export const Demo = () => {
-  const [animal, setAnimal] = useState<string>('');
+  const [value, setValue] = useState('dragon');
   const options = [
-    {
-      id: '1',
-      name: 'Dragon',
-    },
-    {
-      id: '2',
-      name: 'Tiger',
-    },
-    {
-      id: '3',
-      name: 'Lion',
-    },
+    { label: 'Dragon', value: 'dragon' },
+    { label: 'Phoenix', value: 'phoenix' },
+    { label: 'Unicorn', value: 'unicorn' },
   ];
 
   return (
-    <>
+    <Theme>
       <Select
-        label="Select animal"
-        value={animal}
-        onChange={(value) => setAnimal(value)}
+        value={value}
+        onChange={(value) => setValue(value)}
         options={options}
-      ></Select>
-      {animal}
-    </>
+        description="Your spirit animal"
+        name="spirit-animal"
+        label="Select your animal"
+      />
+    </Theme>
   );
 };

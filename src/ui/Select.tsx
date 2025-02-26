@@ -1,94 +1,55 @@
-'use client';
+import React from 'react';
+import { Select as SelectRadix } from '@radix-ui/themes';
+import { FormGroup } from './FormGroup';
+import type { FormGroupProps } from './FormGroup';
+import './Select.css';
 
-import * as React from 'react';
-import * as SelectPrimitive from '@radix-ui/react-select';
-
-const SelectRoot = SelectPrimitive.Root;
-
-const SelectValue = SelectPrimitive.Value;
-
-const SelectTrigger = React.forwardRef<
-  React.ComponentRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger className={className} ref={ref} {...props}>
-    {children}
-  </SelectPrimitive.Trigger>
-));
-
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-
-const SelectScrollUpButton = React.forwardRef<
-  React.ComponentRef<typeof SelectPrimitive.ScrollUpButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollUpButton
-    ref={ref}
-    {...props}
-  ></SelectPrimitive.ScrollUpButton>
-));
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
-
-const SelectScrollDownButton = React.forwardRef<
-  React.ComponentRef<typeof SelectPrimitive.ScrollDownButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollDownButton
-    ref={ref}
-    {...props}
-  ></SelectPrimitive.ScrollDownButton>
-));
-SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName;
-
-const SelectContent = React.forwardRef<
-  React.ComponentRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content ref={ref} position={position} {...props}>
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport>{children}</SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
-SelectContent.displayName = SelectPrimitive.Content.displayName;
-
-const SelectItem = React.forwardRef<
-  React.ComponentRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item ref={ref} {...props}>
-    <span>
-      <SelectPrimitive.ItemIndicator></SelectPrimitive.ItemIndicator>
-    </span>
-
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-));
-SelectItem.displayName = SelectPrimitive.Item.displayName;
-
-type SelectProps = {
-  label: string;
+type Props = Omit<FormGroupProps, 'children'> & {
+  /**
+   * Value to control the current selected option.
+   */
   value: string;
+  /**
+   * Options to be displayed in the dropdown menu.
+   */
+  options: { label: string; value: string }[];
+
+  /**
+   * Callback function that is called when the current value changes.
+   */
   onChange: (value: string) => void;
-  options: { id: string; name: string }[];
 };
 
-export const Select = ({ label, value, onChange, options }: SelectProps) => {
+export const Select = ({
+  value,
+  onChange,
+  options,
+  description,
+  name,
+  id,
+  label,
+}: Props) => {
+  const htmlFor = id || name;
   return (
-    <SelectRoot onValueChange={onChange} value={value}>
-      <SelectTrigger>
-        <SelectValue placeholder={label} />
-      </SelectTrigger>
-      <SelectContent>
-        {options?.map((option) => (
-          <SelectItem key={option.id} value={option.id.toString()}>
-            {option.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </SelectRoot>
+    <FormGroup label={label} name={name} id={id} description={description}>
+      <SelectRadix.Root value={value} onValueChange={onChange}>
+        <SelectRadix.Trigger
+          id={htmlFor}
+          aria-describedby={`${htmlFor}-help-text`}
+          className="rmt-SelectTrigger"
+        />
+        <SelectRadix.Content className="rmt-SelectContent">
+          {options.map((option) => (
+            <SelectRadix.Item
+              className="rmt-SelectItem"
+              key={option.value}
+              value={option.value}
+            >
+              {option.label}
+            </SelectRadix.Item>
+          ))}
+        </SelectRadix.Content>
+      </SelectRadix.Root>
+    </FormGroup>
   );
 };
