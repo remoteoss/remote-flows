@@ -1,0 +1,24 @@
+:root {
+  --rmt-form-group-gap: 8px;
+  --rmt-form-group-padding: 0 8px;
+  --rmt-form-group-label-font-size: 0.875rem;
+  --rmt-form-group-description-color: #6b7280;
+  --rmt-form-group-description-font-size: 0.75rem;
+}
+
+.rmt-FormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rmt-form-group-gap);
+}
+
+.rmt-FormGroupLabel {
+  padding: var(--rmt-form-group-padding);
+  font-size: var(--rmt-form-group-label-font-size);
+}
+
+.rmt-FormGroupDescription {
+  font-size: var(--rmt-form-group-description-font-size);
+  color: var(--rmt-form-group-description-color);
+  padding: var(--rmt-form-group-padding);
+}

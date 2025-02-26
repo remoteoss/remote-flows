@@ -6,7 +6,7 @@ export const tsup: Options = {
   target: 'esnext',
   clean: true,
   dts: true,
-  entry: ['src/index.tsx', 'src/flows'],
+  entry: ['src/index.tsx', 'src/flows/*.tsx'],
   keepNames: true,
   minify: true,
   sourcemap: true,
