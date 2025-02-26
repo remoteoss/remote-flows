@@ -5,10 +5,17 @@ import '@radix-ui/themes/styles.css';
 
 export const Demo = () => {
   const [value, setValue] = useState('dragon');
+  const [selectedCountry, setSelectedCountry] = useState('us');
   const options = [
     { label: 'Dragon', value: 'dragon' },
     { label: 'Phoenix', value: 'phoenix' },
     { label: 'Unicorn', value: 'unicorn' },
+  ];
+
+  const optionsCountries = [
+    { label: 'United States', value: 'us' },
+    { label: 'Canada', value: 'ca' },
+    { label: 'Mexico', value: 'mx' },
   ];
 
   return (
