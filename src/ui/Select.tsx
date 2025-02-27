@@ -38,7 +38,7 @@ export const Select = ({
           aria-describedby={`${htmlFor}-help-text`}
           className="rmt-SelectTrigger"
         />
-        <SelectRadix.Content className="rmt-SelectContent">
+        <SelectRadix.Content className="rmt-SelectContent" position="popper">
           {options.map((option) => (
             <SelectRadix.Item
               className="rmt-SelectItem"
