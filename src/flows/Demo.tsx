@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import type { Option } from '../ui/Select';
 import { Select } from '../ui/Select';
 import { Theme } from '@radix-ui/themes';
+import { SelectCountries } from '../ui/SelectCountries';
+import { SVGSprite } from '../ui/SVGSprite';
 import '@radix-ui/themes/styles.css';
-
-function CustomOption({ label, ...props }: Option) {
-  return <Select.Item {...props}>{label}</Select.Item>;
-}
 
 export const Demo = () => {
   const [value, setValue] = useState('dragon');
@@ -25,6 +22,7 @@ export const Demo = () => {
 
   return (
     <Theme>
+      <SVGSprite />
       <Select
         value={value}
         onChange={(value) => setValue(value)}
@@ -33,17 +31,13 @@ export const Demo = () => {
         name="spirit-animal"
         label="Select your animal"
       />
-
-      <Select
+      <SelectCountries
         value={selectedCountry}
         onChange={(value) => setSelectedCountry(value)}
         options={optionsCountries}
         description="Your employment country"
         name="spirit-animal"
         label="Select your country"
-        components={{
-          Option: CustomOption,
-        }}
       />
     </Theme>
   );

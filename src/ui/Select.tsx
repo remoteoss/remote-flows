@@ -34,7 +34,7 @@ export type Option = {
   value: string;
 };
 
-type Props = Omit<FormGroupProps, 'children'> & {
+export type SelectProps = Omit<FormGroupProps, 'children'> & {
   /**
    * Value to control the current selected option.
    */
@@ -78,7 +78,7 @@ export const Select = ({
   open,
   placeholder,
   components = { Option: null },
-}: Props) => {
+}: SelectProps) => {
   const htmlFor = id || name;
   const addOpenProp = open ? { open: true } : {};
   return (
