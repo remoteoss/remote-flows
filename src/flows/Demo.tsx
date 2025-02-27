@@ -36,6 +36,7 @@ export const Demo = () => {
         onChange={(value) => setSelectedCountry(value)}
         options={optionsCountries}
         description="Your employment country"
+        placeholder="Select your country..."
         name="spirit-animal"
         label="Select your country"
       />

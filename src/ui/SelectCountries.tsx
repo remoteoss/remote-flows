@@ -24,6 +24,7 @@ export const SelectCountries = ({
   description,
   name,
   label,
+  ...props
 }: SelectCountriesProps) => {
   return (
     <Select
@@ -36,6 +37,7 @@ export const SelectCountries = ({
       components={{
         Option: CustomOption,
       }}
+      {...props}
     />
   );
 };

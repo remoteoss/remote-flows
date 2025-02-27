@@ -12,11 +12,10 @@ const territoryToCountry: Record<string, string> = {
   'Wallis and Futuna Islands': 'France',
 };
 
-function getSvgFlagName(country: string | { name: string }) {
+function getSvgFlagName(country: string) {
   if (!country) return null;
 
-  const countryName = typeof country === 'string' ? country : country.name;
-  const flagCountryName = territoryToCountry[countryName] || countryName;
+  const flagCountryName = territoryToCountry[country] || country;
   let name = flagCountryName.toLowerCase();
   name = name.replace(/ /g, '-').replace(/\./g, '');
 
@@ -41,8 +40,6 @@ export const FlagIcon = ({
   ...props
 }: FlagIconProps) => {
   const href = `#${getSvgFlagName(name)}`;
-
-  console.log('href', href);
 
   return (
     <SvgUse
