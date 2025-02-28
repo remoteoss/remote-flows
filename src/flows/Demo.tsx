@@ -4,10 +4,12 @@ import { Theme } from '@radix-ui/themes';
 import { SelectCountries } from '../ui/SelectCountries';
 import { SVGSprite } from '../ui/SVGSprite';
 import '@radix-ui/themes/styles.css';
+import { CurrencyInput } from '../ui/CurrencyInput';
 
 export const Demo = () => {
   const [value, setValue] = useState('dragon');
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [annualSalary, setAnnualSalary] = useState('');
   const options = [
     { label: 'Dragon', value: 'dragon' },
     { label: 'Phoenix', value: 'phoenix' },
@@ -19,6 +21,10 @@ export const Demo = () => {
     { label: 'Canada', value: 'ca' },
     { label: 'Mexico', value: 'mx' },
   ];
+
+  const onChangeSalary = (value?: string) => {
+    setAnnualSalary(value || '');
+  };
 
   return (
     <Theme>
@@ -39,6 +45,15 @@ export const Demo = () => {
         placeholder="Select your country..."
         name="spirit-animal"
         label="Select your country"
+      />
+
+      <CurrencyInput
+        value={annualSalary}
+        label="Employee's annual salary"
+        name="salary"
+        locale={'US-en'}
+        inputMode={'decimal'}
+        onChange={onChangeSalary}
       />
     </Theme>
   );
