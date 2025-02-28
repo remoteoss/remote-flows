@@ -4,4 +4,10 @@
   --rmt-font-size-md: 1rem;
   --rmt-primary-color: #0061ff;
   --rmt-text-color: #0f1419;
+
+  /* Forms */
+
+  --rmt-input-padding: 8px 16px;
+  --rmt-input-border-color: #9aa6b2;
+  --rmt-input-min-height: 44px;
 }
