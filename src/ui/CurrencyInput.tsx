@@ -2,6 +2,7 @@ import React from 'react';
 import ReactCurrencyInput from 'react-currency-input-field';
 import type { CurrencyInputProps as ReactCurrencyInputProps } from 'react-currency-input-field';
 import { FormGroup, FormGroupProps } from './FormGroup';
+import './CurrencyInput.css';
 
 type CurrencyInputProps = Omit<FormGroupProps, 'children'> & {
   locale: string;
@@ -40,6 +41,7 @@ export const CurrencyInput = ({
         decimalSeparator="."
         groupSeparator=","
         value={value}
+        className="rmt-CurrencyInput"
       />
     </FormGroup>
   );

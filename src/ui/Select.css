@@ -1,8 +1,6 @@
 @import './css/primitives.css';
 
 :root {
-  --rmt-select-trigger-padding: 8px 16px;
-  --rmt-select-trigger-min-height: 44px;
   --rmt-select-arrow-size: 1rem;
   --rmt-select-content-padding: 0;
   --rmt-select-item-active: #e3e9ef;
@@ -17,11 +15,12 @@
 .rmt-SelectTrigger {
   display: flex;
   width: 100%;
-  font-size: var(--rmt-font-size-md);
+  font-size: var(--rmt-font-size-sm);
   color: var(--rmt-text-color);
   border-radius: var(--rmt-border-radius-md);
-  padding: var(--rmt-select-trigger-padding);
-  min-height: var(--rmt-select-trigger-min-height);
+  border: 1px solid var(--rmt-input-border-color);
+  padding: var(--rmt-input-padding);
+  min-height: var(--rmt-input-min-height);
 }
 
 .rmt-SelectTrigger:hover {

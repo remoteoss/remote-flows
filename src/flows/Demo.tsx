@@ -3,8 +3,8 @@ import { Select } from '../ui/Select';
 import { Theme } from '@radix-ui/themes';
 import { SelectCountries } from '../ui/SelectCountries';
 import { SVGSprite } from '../ui/SVGSprite';
-import '@radix-ui/themes/styles.css';
 import { CurrencyInput } from '../ui/CurrencyInput';
+import '@radix-ui/themes/styles.css';
 
 export const Demo = () => {
   const [value, setValue] = useState('dragon');

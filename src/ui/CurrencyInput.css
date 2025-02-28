@@ -1,0 +1,17 @@
+@import './css/primitives.css';
+
+.rmt-CurrencyInput {
+  box-sizing: border-box;
+  display: flex;
+  padding: var(--rmt-input-padding);
+  border: 1px solid var(--rmt-input-border-color);
+  border-radius: var(--rmt-border-radius-md);
+  font-size: var(--rmt-font-size-md);
+  color: var(--rmt-text-color);
+  min-height: var(--rmt-input-min-height);
+}
+
+.rmt-CurrencyInput:hover {
+  border-color: var(--rmt-primary-color);
+  box-shadow: var(--rmt-primary-color) 0px 0px 0px 1px;
+}
