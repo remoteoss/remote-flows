@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useClient } from '../RemoteFlowsProvider';
 import { getIndexCountry, getShowCompany } from '../client/sdk.gen';
-import type { GetIndexCountryResponse } from '../client';
+import type { GetIndexCountryResponse, MinimalRegion } from '../client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +26,7 @@ import { Button } from '../components/button';
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
   currency: z.string().min(1, 'Currency is required'),
+  region: z.string().optional(),
   salary: z.number().min(1, 'Amount must be greater than 0'),
 });
 
@@ -42,15 +43,28 @@ export function CostCalculator({ companyId }: Props) {
     defaultValues: {
       country: '',
       currency: '',
+      region: '',
       salary: undefined,
     },
     mode: 'onBlur',
   });
+  const selectedCountry = form.watch('country');
   const [countries, setCountries] = React.useState<
     GetIndexCountryResponse['data']
   >([]);
 
+  console.log({ countries });
+
+  const [regions, setRegions] = useState<MinimalRegion[]>([]);
+
   const [currencies, setCurrencies] = React.useState<any>([]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      const country = countries.find((c) => c.code === selectedCountry);
+      setRegions(country ? country.child_regions : []);
+    }
+  }, [selectedCountry, countries]);
 
   useEffect(() => {
     if (client) {
@@ -133,6 +147,41 @@ export function CostCalculator({ companyId }: Props) {
             </FormItem>
           )}
         />
+        {regions.length > 0 && (
+          <FormField
+            control={form.control}
+            name="region"
+            render={({ field }) => (
+              <FormItem>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger
+                      className={cn(
+                        'border-2',
+                        form.formState.errors.region
+                          ? 'border-red-500'
+                          : 'border-gray-200',
+                      )}
+                    >
+                      <SelectValue placeholder="Select region" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {regions?.map((region) => (
+                      <SelectItem
+                        key={region.slug}
+                        value={region.slug.toString()}
+                      >
+                        {region.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
