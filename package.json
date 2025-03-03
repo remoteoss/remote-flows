@@ -39,8 +39,16 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
+    "@hookform/resolvers": "^3.9.1",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-select": "^2.1.6",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "0.477.0",
     "react-aria-components": "^1.6.0",
-    "type-fest": "^4.35.0"
+    "react-hook-form": "^7.54.2",
+    "tailwind-merge": "^2.5.5",
+    "type-fest": "^4.35.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.3",
