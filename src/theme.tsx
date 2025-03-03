@@ -1,32 +1,21 @@
-import React, {
-  createContext,
-  PropsWithChildren,
-  useEffect,
-  useMemo,
-} from 'react';
-import { IThemeRGB } from './types';
+import React, { createContext, useEffect, useMemo } from 'react';
 import applyTheme from '@/src/utils/applyTheme';
+import { ThemeProviderProps } from './types';
 
-type Props = PropsWithChildren<{
-  themeRGB: IThemeRGB;
-}>;
-
-type ThemeContextType = {
-  themeRGB: IThemeRGB;
-};
-
-const ThemeContext = createContext<ThemeContextType>({
-  themeRGB: {} as IThemeRGB,
+const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({
+  theme: undefined,
 });
 
-export default function ThemeProvider(props: Props) {
+export function ThemeProvider(props: ThemeProviderProps) {
   useEffect(() => {
-    applyTheme(props.themeRGB);
+    if (props.theme) {
+      applyTheme(props.theme);
+    }
   }, []);
 
   const value = useMemo(() => {
-    return { themeRGB: props.themeRGB };
-  }, [props.themeRGB]);
+    return { theme: props.theme };
+  }, [props.theme]);
 
   return (
     <ThemeContext.Provider value={value}>

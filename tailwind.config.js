@@ -12,8 +12,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        // sans: 'inherit', // Make the default sans-serif inherit from the parent app
-        roboto: ['Roboto', 'sans-serif'],
+        sans: 'inherit', // Make the default sans-serif inherit from the parent app
       },
     },
   },

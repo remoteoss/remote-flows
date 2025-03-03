@@ -1,28 +1,51 @@
-import { IThemeRGB, IThemeVariables } from '../styles/types';
+import {
+  CssThemeColors,
+  SpacingThemeVariables,
+  ThemeColors,
+  ThemeProviderProps,
+} from '../types';
 
-export default function applyTheme(themeRGB: IThemeRGB) {
-  const themeObject: IThemeVariables = mapTheme(themeRGB);
+export default function applyTheme(theme?: ThemeProviderProps['theme']) {
   const root = document.documentElement;
+  if (theme?.colors) {
+    const themeColors = mapThemeColors(theme.colors);
+    Object.keys(themeColors).forEach((v) => {
+      const propertyVal = themeColors[v as keyof CssThemeColors];
+      if (propertyVal) {
+        root.style.setProperty(v, propertyVal);
+      }
+    });
+  }
 
-  Object.keys(themeObject).forEach((v) => {
-    const propertyVal = themeObject[v as keyof IThemeVariables];
-    const validation = validateRGB(propertyVal);
-    if (!validation) {
-      throw new Error(`Invalid RGB value for ${v}: ${propertyVal}`);
-    }
-
-    root.style.setProperty(v, propertyVal);
-  });
+  if (theme?.spacing) {
+    const themeSpacing = mapThemeSpacing(theme.spacing);
+    Object.keys(themeSpacing).forEach((v) => {
+      const propertyVal = themeSpacing[v as keyof SpacingThemeVariables];
+      if (propertyVal) {
+        root.style.setProperty(v, propertyVal);
+      }
+    });
+  }
 }
 
-function mapTheme(rgb: IThemeRGB): IThemeVariables {
-  return {
-    '--color-accent-1': rgb['rgb-accent-1'] ?? '',
-  };
+function mapThemeColors(colors: ThemeColors): Partial<CssThemeColors> {
+  const result: Partial<CssThemeColors> = {};
+  if (colors?.['input']) {
+    result['--input'] = colors['input'];
+  }
+  if (colors?.['primary']) {
+    result['--primary'] = colors['primary'];
+  }
+  if (colors?.['primary']) {
+    result['--primary'] = colors['primary'];
+  }
+  return result;
 }
 
-function validateRGB(rgb: string): boolean {
-  if (!rgb) return true;
-  const rgbRegex = /^(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})$/;
-  return rgbRegex.test(rgb);
+function mapThemeSpacing(spacing: string): Partial<SpacingThemeVariables> {
+  const result: Partial<SpacingThemeVariables> = {};
+  if (spacing) {
+    result['--spacing'] = spacing;
+  }
+  return result;
 }
