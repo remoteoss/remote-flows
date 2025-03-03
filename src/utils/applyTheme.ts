@@ -36,8 +36,8 @@ function mapThemeColors(colors: ThemeColors): Partial<CssThemeColors> {
   if (colors?.['primary']) {
     result['--primary'] = colors['primary'];
   }
-  if (colors?.['primary']) {
-    result['--primary'] = colors['primary'];
+  if (colors?.['accent']) {
+    result['--accent'] = colors['accent'];
   }
   return result;
 }

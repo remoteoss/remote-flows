@@ -21,11 +21,11 @@ export type ThemeProviderProps = PropsWithChildren<{
     | undefined;
 }>;
 
-export type ThemeColors = {
+export type ThemeColors = Partial<{
   input: string;
   primary: string;
   accent: string;
-};
+}>;
 
 export type CssThemeColors = {
   [K in keyof ThemeColors as `--${K}`]: string;
