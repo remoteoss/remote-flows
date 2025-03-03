@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '../components/select';
 import { cn } from '../utils/classNames';
-import { Input } from '../components/Input';
+import { Input } from '../components/input';
 import { Button } from '../components/button';
 
 const formSchema = z.object({
