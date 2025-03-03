@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useClient } from '../RemoteFlowsProvider';
-import { getIndexCountry, getShowCompany } from '../client/sdk.gen';
+import {
+  getIndexCountry,
+  getShowCompany,
+  getShowRegionField,
+} from '../client/sdk.gen';
 import type { GetIndexCountryResponse, MinimalRegion } from '../client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import {
   Form,
   FormControl,
@@ -38,6 +43,7 @@ type Props = {
 
 export function CostCalculator({ companyId }: Props) {
   const { client } = useClient();
+  const [jsonForm, setJsonForm] = useState<any>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,16 +59,52 @@ export function CostCalculator({ companyId }: Props) {
     GetIndexCountryResponse['data']
   >([]);
 
-  console.log({ countries });
-
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
 
   const [currencies, setCurrencies] = React.useState<any>([]);
 
+  const [isLoadingSchema, setIsLoadingSchema] = useState(false);
+
+  async function loadJsonForm(regionSlug: string) {
+    try {
+      setJsonForm(null);
+      setIsLoadingSchema(true);
+
+      const res = await getShowRegionField({
+        path: { slug: regionSlug },
+      });
+
+      console.log({ res });
+
+      setJsonForm(
+        createHeadlessForm(res?.data?.schema || {}, {
+          strictInputType: false,
+        }),
+      );
+    } catch (e) {
+      console.error(e);
+      setJsonForm(null);
+    } finally {
+      setIsLoadingSchema(false);
+    }
+  }
+
   useEffect(() => {
     if (selectedCountry) {
       const country = countries.find((c) => c.code === selectedCountry);
-      setRegions(country ? country.child_regions : []);
+      if (country?.child_regions.length !== 0) {
+        setRegions(country ? country.child_regions : []);
+      }
+
+      console.log({ country });
+
+      if (
+        country?.child_regions.length === 0 &&
+        country.has_additional_fields
+      ) {
+        // test this with italy
+        loadJsonForm(country.region_slug);
+      }
     }
   }, [selectedCountry, countries]);
 
