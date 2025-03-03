@@ -9,15 +9,14 @@ import {
   SelectValue,
 } from '@/src/components/ui/select';
 
-interface FloatingLabelSelectProps {
+type SelectFieldProps = {
   label: string;
   placeholder?: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
   onChange?: (value: string) => void;
   className?: string;
-  error?: string;
-}
+};
 
 export function SelectField({
   label,
@@ -25,7 +24,7 @@ export function SelectField({
   defaultValue,
   onChange,
   className,
-}: FloatingLabelSelectProps) {
+}: SelectFieldProps) {
   const [value, setValue] = React.useState(defaultValue || '');
 
   const handleValueChange = (newValue: string) => {
@@ -33,6 +32,7 @@ export function SelectField({
     onChange?.(newValue);
   };
 
+  // @TODO: wrap with shadcn FormField component
   return (
     <div className={className}>
       <Select value={value} onValueChange={handleValueChange}>
