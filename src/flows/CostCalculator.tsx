@@ -27,6 +27,8 @@ import {
 import { cn } from '../utils/classNames';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
+import { Client } from '@hey-api/client-fetch';
+import { JSONSchemaFormFields } from '../components/json-schema-form';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
@@ -71,13 +73,15 @@ export function CostCalculator({ companyId }: Props) {
       setIsLoadingSchema(true);
 
       const res = await getShowRegionField({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         path: { slug: regionSlug },
       });
 
-      console.log({ res });
-
       setJsonForm(
-        createHeadlessForm(res?.data?.schema || {}, {
+        createHeadlessForm(res?.data?.data?.schema || {}, {
           strictInputType: false,
         }),
       );
@@ -95,8 +99,6 @@ export function CostCalculator({ companyId }: Props) {
       if (country?.child_regions.length !== 0) {
         setRegions(country ? country.child_regions : []);
       }
-
-      console.log({ country });
 
       if (
         country?.child_regions.length === 0 &&
@@ -286,6 +288,8 @@ export function CostCalculator({ companyId }: Props) {
             </FormItem>
           )}
         />
+
+        {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
 
         <Button
           type="submit"
