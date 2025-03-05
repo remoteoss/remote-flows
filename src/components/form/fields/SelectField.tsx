@@ -17,7 +17,6 @@ type SelectFieldProps = {
   placeholder?: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
-  onChange?: (value: string) => void;
   className?: string;
 };
 
@@ -26,7 +25,6 @@ export function SelectField({
   name,
   options,
   defaultValue,
-  onChange,
   className,
 }: SelectFieldProps) {
   const { control } = useFormContext();
@@ -40,13 +38,7 @@ export function SelectField({
         render={({ field, fieldState }) => (
           <FormItem>
             <FormControl>
-              <Select
-                value={field.value}
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                }}
-              >
+              <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger aria-invalid={Boolean(fieldState.error)}>
                   <span className={'text-foreground'}>
                     <SelectValue placeholder={label} />
