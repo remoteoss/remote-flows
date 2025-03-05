@@ -37,7 +37,7 @@ export function SelectField({
     <div className={className}>
       <Select value={value} onValueChange={handleValueChange}>
         <SelectTrigger>
-          <span className="text-primary">
+          <span className="text-foreground">
             <SelectValue placeholder={label} />
           </span>
         </SelectTrigger>

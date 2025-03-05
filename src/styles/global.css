@@ -4,36 +4,28 @@
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: #0f1419;
+  --foreground: var(--primaryForeground, #4b5865);
   --card: oklch(1 0 0);
-  --card-foreground: #0f1419;
+  --card-foreground: var(--primaryForeground, #4b5865);
   --popover: oklch(1 0 0);
-  --popover-foreground: #0f1419;
-  --primary: #4b5865;
-  --primary-foreground: oklch(0.985 0 0);
+  --popover-foreground: var(--primaryForeground, #4b5865);
+  --primary: var(--primaryBackground, #ffffff);
+  --primary-foreground: var(--primaryForeground, #4b5865);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --accent: #e3e9ef;
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: var(--accentBackground, #e3e9ef);
+  --accent-foreground: var(--accentForeground, #0f1419);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: var(--primary);
-  --input: #9aa6b2;
+  --border: var(--borderInput, '#9aa6b2');
+  --input: var(--borderInput, '#9aa6b2');
   --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: #0f1419;
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: var(--borderRadius, 0.625rem);
 }
 
 @theme inline {
-  --muted-foreground: var(--primary);
+  --muted-foreground: var(--primary-foreground);
   /* --font-roboto: 'Roboto', sans-serif; */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -64,17 +56,11 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 2px);
   --radius-xxl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
+  --text-xs: calc(var(--fontSizeBase) * 0.75);
+  --text-sm: calc(var(--fontSizeBase) * 0.875);
+  --text-base: var(--fontSizeBase, 1rem);
+  --text-xl: calc(var(--fontSizeBase) * 1.25);
+  --text-2xl: calc(var(--fontSizeBase) * 1.375);
 }
 
 @layer base {

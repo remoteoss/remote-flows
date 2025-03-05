@@ -3,12 +3,12 @@ import applyTheme from '@/src/utils/applyTheme';
 import { ThemeProviderProps } from './types';
 
 const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({
-  theme: undefined,
+  theme: {},
 });
 
 export function ThemeProvider(props: ThemeProviderProps) {
   useEffect(() => {
-    if (props.theme) {
+    if (Object.keys(props.theme).length > 0) {
       applyTheme(props.theme);
     }
   }, []);

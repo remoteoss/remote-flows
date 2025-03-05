@@ -1,51 +1,64 @@
 import {
+  CssThemeBorder,
   CssThemeColors,
-  SpacingThemeVariables,
+  CssThemeFont,
+  CssThemeSpacing,
   ThemeColors,
+  ThemeFont,
   ThemeProviderProps,
 } from '../types';
 
-export default function applyTheme(theme?: ThemeProviderProps['theme']) {
+function setCssProperties(variables: Record<string, string>) {
   const root = document.documentElement;
-  if (theme?.colors) {
-    const themeColors = mapThemeColors(theme.colors);
-    Object.keys(themeColors).forEach((v) => {
-      const propertyVal = themeColors[v as keyof CssThemeColors];
-      if (propertyVal) {
-        root.style.setProperty(v, propertyVal);
-      }
-    });
+  Object.keys(variables).forEach((v) => {
+    const propertyVal = variables[v];
+    if (propertyVal) {
+      root.style.setProperty(v, propertyVal);
+    }
+  });
+}
+
+export default function applyTheme(theme: ThemeProviderProps['theme']) {
+  if (theme.colors) {
+    setCssProperties(mapThemeColors(theme.colors));
   }
 
-  if (theme?.spacing) {
-    const themeSpacing = mapThemeSpacing(theme.spacing);
-    Object.keys(themeSpacing).forEach((v) => {
-      const propertyVal = themeSpacing[v as keyof SpacingThemeVariables];
-      if (propertyVal) {
-        root.style.setProperty(v, propertyVal);
-      }
-    });
+  if (theme.spacing) {
+    setCssProperties(mapThemeSpacing(theme.spacing));
+  }
+
+  if (theme.borderRadius) {
+    setCssProperties(mapThemeBorderRadius(theme.borderRadius));
+  }
+
+  if (theme.font) {
+    setCssProperties(mapThemeFont(theme.font));
   }
 }
 
-function mapThemeColors(colors: ThemeColors): Partial<CssThemeColors> {
-  const result: Partial<CssThemeColors> = {};
-  if (colors?.['input']) {
-    result['--input'] = colors['input'];
-  }
-  if (colors?.['primary']) {
-    result['--primary'] = colors['primary'];
-  }
-  if (colors?.['accent']) {
-    result['--accent'] = colors['accent'];
-  }
+function mapThemeColors(colors: ThemeColors): CssThemeColors {
+  const result: CssThemeColors = {};
+  Object.keys(colors).forEach((key) => {
+    result[`--${key}` as keyof CssThemeColors] =
+      colors[key as keyof ThemeColors];
+  });
   return result;
 }
 
-function mapThemeSpacing(spacing: string): Partial<SpacingThemeVariables> {
-  const result: Partial<SpacingThemeVariables> = {};
-  if (spacing) {
-    result['--spacing'] = spacing;
-  }
-  return result;
+function mapThemeSpacing(spacing: string): CssThemeSpacing {
+  return {
+    '--spacing': spacing,
+  };
+}
+
+function mapThemeBorderRadius(borderRadius: string): CssThemeBorder {
+  return {
+    '--radius': borderRadius,
+  };
+}
+
+function mapThemeFont(font: ThemeFont): CssThemeFont {
+  return {
+    '--fontSizeBase': font.fontSizeBase,
+  };
 }
