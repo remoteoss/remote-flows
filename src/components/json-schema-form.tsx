@@ -1,16 +1,13 @@
 import React from 'react';
 import type { Fields } from '@remoteoss/json-schema-form';
+import { RadioField } from '@/src/components/form/fields/RadioField';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
 };
 
-const FieldRadio = () => {
-  return <p>FieldRadio</p>;
-};
-
 const fieldsMapConfig = {
-  radio: FieldRadio,
+  radio: RadioField,
 };
 
 export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {

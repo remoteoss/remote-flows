@@ -7,7 +7,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './form';
+} from '../../form';
 
 type RadioFieldItemProps = {
   label: string;

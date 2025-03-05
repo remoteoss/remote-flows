@@ -29,7 +29,6 @@ import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
-import { RadioField } from '../components/radio-field';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
@@ -295,16 +294,6 @@ export function CostCalculator({ companyId }: Props) {
                 <FormMessage />
               </FormItem>
             )}
-          />
-
-          <RadioField
-            name="type"
-            control={form.control}
-            label="Type"
-            options={[
-              { label: 'All notifications', value: 'all' },
-              { label: 'None', value: 'none' },
-            ]}
           />
 
           {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
