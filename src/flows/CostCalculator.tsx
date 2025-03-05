@@ -13,8 +13,10 @@ import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '../components/form';
 import {
@@ -29,12 +31,14 @@ import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
+import { RadioGroup, RadioGroupItem } from '../components/radio';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
   currency: z.string().min(1, 'Currency is required'),
   region: z.string().optional(),
   salary: z.number().min(1, 'Amount must be greater than 0'),
+  type: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -53,6 +57,7 @@ export function CostCalculator({ companyId }: Props) {
       currency: '',
       region: '',
       salary: undefined,
+      type: '',
     },
     mode: 'onBlur',
   });
@@ -285,6 +290,50 @@ export function CostCalculator({ companyId }: Props) {
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Notification Type</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="all" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      All notifications
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="mentions" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Mentions only</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="none" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      No notifications
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+              <FormDescription>
+                Select the types of notifications you'd like to receive.
+              </FormDescription>
             </FormItem>
           )}
         />
