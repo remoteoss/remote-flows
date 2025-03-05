@@ -4,7 +4,7 @@
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css",
     "check-format": "prettier --check .",
     "dev": "NODE_ENV=development tsup --watch",
     "lint": "tsc",
@@ -28,6 +28,12 @@
         "import": "./dist/flows/*.js"
       },
       "default": "./dist/flows/*.js"
+    },
+    "./index.css": {
+      "import": {
+        "import": "./dist/index.css"
+      },
+      "default": "./dist/index.css"
     }
   },
   "files": [
@@ -39,7 +45,16 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
+    "@radix-ui/react-select": "^2.1.6",
+    "@tailwindcss/cli": "^4.0.9",
+    "@tailwindcss/postcss": "^4.0.9",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.477.0",
+    "postcss": "^8.5.3",
     "react-aria-components": "^1.6.0",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss": "^4.0.9",
+    "tailwindcss-animate": "^1.0.7",
     "type-fest": "^4.35.0"
   },
   "devDependencies": {
