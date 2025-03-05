@@ -24,11 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/select';
-import { cn } from '../utils/classNames';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
+import { cn } from '@/src/lib/utils';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
@@ -62,6 +62,7 @@ export function CostCalculator({ companyId }: Props) {
     mode: 'onBlur',
   });
   const selectedCountry = form.watch('country');
+  const selectedRegion = form.watch('region');
   const [countries, setCountries] = React.useState<
     GetIndexCountryResponse['data']
   >([]);
@@ -116,6 +117,12 @@ export function CostCalculator({ companyId }: Props) {
   }, [selectedCountry, countries]);
 
   useEffect(() => {
+    if (selectedRegion) {
+      loadJsonForm(selectedRegion);
+    }
+  }, [selectedRegion]);
+
+  useEffect(() => {
     if (client) {
       getIndexCountry({
         client: client,
@@ -125,6 +132,13 @@ export function CostCalculator({ companyId }: Props) {
       })
         .then((res) => {
           if (res.data?.data) {
+            const filteredCountries = res.data?.data.filter(
+              (country) =>
+                country.has_additional_fields &&
+                country.child_regions.length > 0,
+            );
+
+            console.log({ filteredCountries });
             setCountries(res.data?.data);
           }
         })
@@ -157,9 +171,10 @@ export function CostCalculator({ companyId }: Props) {
   }, [companyId]);
 
   const handleSubmit = (values: FormValues) => {
-    console.log({ values });
     setSavedValues(values);
   };
+
+  console.log({ jsonForm });
 
   return (
     <>
