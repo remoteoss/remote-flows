@@ -13,10 +13,8 @@ import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '../components/form';
 import {
@@ -31,14 +29,16 @@ import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
-import { RadioGroup, RadioGroupItem } from '../components/radio';
+import { RadioField } from '../components/radio-field';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
-  currency: z.string().min(1, 'Currency is required'),
+  currency: z.string().optional(),
   region: z.string().optional(),
   salary: z.number().min(1, 'Amount must be greater than 0'),
-  type: z.string().optional(),
+  type: z.enum(['all', 'none'], {
+    required_error: 'You need to select a type preference.',
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -49,6 +49,7 @@ type Props = {
 
 export function CostCalculator({ companyId }: Props) {
   const { client } = useClient();
+  const [savedValues, setSavedValues] = useState<FormValues | null>(null);
   const [jsonForm, setJsonForm] = useState<any>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,7 +58,7 @@ export function CostCalculator({ companyId }: Props) {
       currency: '',
       region: '',
       salary: undefined,
-      type: '',
+      type: undefined,
     },
     mode: 'onBlur',
   });
@@ -158,48 +159,16 @@ export function CostCalculator({ companyId }: Props) {
 
   const handleSubmit = (values: FormValues) => {
     console.log({ values });
+    setSavedValues(values);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger
-                    className={cn(
-                      'border-2',
-                      form.formState.errors.country
-                        ? 'border-red-500'
-                        : 'border-gray-200',
-                    )}
-                  >
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {countries?.map((country) => (
-                    <SelectItem
-                      key={country.code}
-                      value={country.code.toString()}
-                    >
-                      {country.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {regions.length > 0 && (
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="region"
+            name="country"
             render={({ field }) => (
               <FormItem>
                 <Select onValueChange={field.onChange} value={field.value}>
@@ -207,21 +176,21 @@ export function CostCalculator({ companyId }: Props) {
                     <SelectTrigger
                       className={cn(
                         'border-2',
-                        form.formState.errors.region
+                        form.formState.errors.country
                           ? 'border-red-500'
                           : 'border-gray-200',
                       )}
                     >
-                      <SelectValue placeholder="Select region" />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {regions?.map((region) => (
+                    {countries?.map((country) => (
                       <SelectItem
-                        key={region.slug}
-                        value={region.slug.toString()}
+                        key={country.code}
+                        value={country.code.toString()}
                       >
-                        {region.name}
+                        {country.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -230,123 +199,130 @@ export function CostCalculator({ companyId }: Props) {
               </FormItem>
             )}
           />
-        )}
+          {regions.length > 0 && (
+            <FormField
+              control={form.control}
+              name="region"
+              render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger
+                        className={cn(
+                          'border-2',
+                          form.formState.errors.region
+                            ? 'border-red-500'
+                            : 'border-gray-200',
+                        )}
+                      >
+                        <SelectValue placeholder="Select region" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {regions?.map((region) => (
+                        <SelectItem
+                          key={region.slug}
+                          value={region.slug.toString()}
+                        >
+                          {region.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-        <FormField
-          control={form.control}
-          name="currency"
-          render={({ field }) => (
-            <FormItem>
-              <Select onValueChange={field.onChange} value={field.value}>
+          <FormField
+            control={form.control}
+            name="currency"
+            render={({ field }) => (
+              <FormItem>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger
+                      className={cn(
+                        'border-2',
+                        form.formState.errors.country
+                          ? 'border-red-500'
+                          : 'border-gray-200',
+                      )}
+                    >
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {currencies?.map((currency: string) => (
+                      <SelectItem key={currency} value={currency}>
+                        {currency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="salary"
+            render={({ field }) => (
+              <FormItem>
                 <FormControl>
-                  <SelectTrigger
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="Amount"
+                    {...field}
+                    value={field.value === undefined ? '' : field.value}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(
+                        value === '' ? undefined : Number.parseFloat(value),
+                      );
+                    }}
                     className={cn(
                       'border-2',
-                      form.formState.errors.country
+                      form.formState.errors.salary
                         ? 'border-red-500'
                         : 'border-gray-200',
                     )}
-                  >
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
+                  />
                 </FormControl>
-                <SelectContent>
-                  {currencies?.map((currency: string) => (
-                    <SelectItem key={currency} value={currency}>
-                      {currency}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="salary"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="Amount"
-                  {...field}
-                  value={field.value === undefined ? '' : field.value}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(
-                      value === '' ? undefined : Number.parseFloat(value),
-                    );
-                  }}
-                  className={cn(
-                    'border-2',
-                    form.formState.errors.salary
-                      ? 'border-red-500'
-                      : 'border-gray-200',
-                  )}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <RadioField
+            name="type"
+            control={form.control}
+            label="Type"
+            options={[
+              { label: 'All notifications', value: 'all' },
+              { label: 'None', value: 'none' },
+            ]}
+          />
 
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Notification Type</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="all" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      All notifications
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="mentions" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Mentions only</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="none" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      No notifications
-                    </FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-              <FormDescription>
-                Select the types of notifications you'd like to receive.
-              </FormDescription>
-            </FormItem>
-          )}
-        />
+          {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
 
-        {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
-
-        <Button
-          type="submit"
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
-        >
-          Save
-        </Button>
-      </form>
-    </Form>
+          <Button
+            type="submit"
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+          >
+            Save
+          </Button>
+        </form>
+      </Form>
+      {savedValues && (
+        <div>
+          <h2>Saved Values</h2>
+          <pre>{JSON.stringify(savedValues, null, 2)}</pre>
+        </div>
+      )}
+    </>
   );
 }
