@@ -8,49 +8,57 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/select';
+import { FormControl, FormField, FormItem, FormMessage } from '../../ui/form';
+import { useFormContext } from 'react-hook-form';
 
 type SelectFieldProps = {
   label: string;
+  name: string;
   placeholder?: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
-  onChange?: (value: string) => void;
   className?: string;
 };
 
 export function SelectField({
   label,
+  name,
   options,
   defaultValue,
-  onChange,
   className,
 }: SelectFieldProps) {
-  const [value, setValue] = React.useState(defaultValue || '');
+  const { control } = useFormContext();
 
-  const handleValueChange = (newValue: string) => {
-    setValue(newValue);
-    onChange?.(newValue);
-  };
-
-  // @TODO: wrap with shadcn FormField component
   return (
     <div className={className}>
-      <Select value={value} onValueChange={handleValueChange}>
-        <SelectTrigger>
-          <span className="text-foreground">
-            <SelectValue placeholder={label} />
-          </span>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <FormField
+        defaultValue={defaultValue}
+        control={control}
+        name={name}
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <FormControl>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger aria-invalid={Boolean(fieldState.error)}>
+                  <span className={'text-foreground'}>
+                    <SelectValue placeholder={label} />
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {options.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

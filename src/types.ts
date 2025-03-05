@@ -26,6 +26,8 @@ export type ThemeColors = Partial<{
   primaryForeground: string;
   accentBackground: string;
   accentForeground: string;
+  dangerBackground: string;
+  dangerForeground: string;
 }>;
 
 export type CssThemeColors = {
