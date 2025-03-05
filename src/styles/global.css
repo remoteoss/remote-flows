@@ -7,7 +7,7 @@
   --foreground: var(--primaryForeground, #4b5865);
   --card: oklch(1 0 0);
   --card-foreground: var(--primaryForeground, #4b5865);
-  --popover: oklch(1 0 0);
+  --popover: var(--primaryBackground, #ffffff);
   --popover-foreground: var(--primaryForeground, #4b5865);
   --primary: var(--primaryBackground, #ffffff);
   --primary-foreground: var(--primaryForeground, #4b5865);
