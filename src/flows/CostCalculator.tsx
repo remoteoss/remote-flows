@@ -9,11 +9,16 @@ import { Button } from '../components/ui/button';
 import { TextField } from '../components/form/fields/TextField';
 
 import { RadioGroupField } from '../components/form/fields/RadioGroupField';
+import { FieldSetField } from '../components/form/fields/FieldSetField';
 
 const formSchema = z
   .object({
     country: z.string({ required_error: 'Required.' }).min(1),
     name: z.string({ required_error: 'Required.' }).min(1),
+    benefits: z.object({
+      slug: z.string({ required_error: 'Required.' }).min(1),
+      name: z.string({ required_error: 'Required.' }).min(1),
+    }),
   })
   .required();
 
@@ -23,6 +28,13 @@ const countryOptions = [
   { value: 'uk', label: 'United Kingdom' },
   { value: 'au', label: 'Australia' },
   { value: 'jp', label: 'Japan' },
+];
+
+const lifeInsuranceOptions = [
+  { value: 'us', label: 'Basic Life Insurance - $50k' },
+  { value: 'ca', label: 'Basic Life Insurance - $100k' },
+  { value: 'uk', label: 'Basic Life Insurance - $150k' },
+  { value: 'au', label: 'Basic Life Insurance - $200k' },
 ];
 
 export function CostCalculator() {
@@ -59,6 +71,26 @@ export function CostCalculator() {
             options={[
               { value: 'indefinite', label: 'Indefinite' },
               { value: 'fixed', label: 'Fixed Term' },
+            ]}
+          />
+          <FieldSetField
+            legend="Benefits"
+            name="benefits"
+            fields={[
+              {
+                label: 'Life Insurance',
+                name: 'slug',
+                type: 'select',
+                description:
+                  'Employers have the option to offer Life Insurance.',
+                options: lifeInsuranceOptions,
+              },
+              {
+                label: 'Life Insurance Name',
+                name: 'name',
+                type: 'text',
+                description: 'What is the insurance name',
+              },
             ]}
           />
           <Button type="submit" className="w-full my-4" variant={'secondary'}>
