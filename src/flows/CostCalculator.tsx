@@ -164,7 +164,10 @@ export function CostCalculator({ companyId }: Props) {
   const handleSubmit = (values: FormValues) => {
     const { handleValidation } = jsonForm;
     const formErrors = handleValidation(values);
-    if (formErrors && Object.keys(formErrors.formErrors).length > 0) {
+    if (
+      formErrors?.formErrors &&
+      Object.keys(formErrors.formErrors).length > 0
+    ) {
       Object.entries(formErrors.formErrors).forEach(([field, message]) => {
         form.setError(field as any, {
           type: 'manual',
