@@ -8,6 +8,8 @@ import { SelectField } from '../components/form/fields/SelectField';
 import { Button } from '../components/ui/button';
 import { TextField } from '../components/form/fields/TextField';
 
+import { RadioGroupField } from '../components/form/fields/RadioGroupField';
+
 const formSchema = z
   .object({
     country: z.string({ required_error: 'Required.' }).min(1),
@@ -50,6 +52,14 @@ export function CostCalculator() {
             label="Select a country"
             name="country"
             options={countryOptions}
+          />
+          <RadioGroupField
+            label="Contract duration"
+            name="duration"
+            options={[
+              { value: 'indefinite', label: 'Indefinite' },
+              { value: 'fixed', label: 'Fixed Term' },
+            ]}
           />
           <Button type="submit" className="w-full my-4" variant={'secondary'}>
             Submit

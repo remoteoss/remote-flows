@@ -37,16 +37,18 @@ export function TextField({ name, description, label, type }: TextFieldProps) {
       <FormField
         control={control}
         name={name}
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem className="TextField__Item">
             <FormLabel className="TextField__Label">{label}</FormLabel>
             <FormControl>
               <Input {...field} {...typeAttrs} className="TextField__Input" />
             </FormControl>
-            <FormDescription className="TextField__Description">
-              {description}
-            </FormDescription>
-            <FormMessage className="TextField__Error" />
+            {description && (
+              <FormDescription className="TextField__Description">
+                {description}
+              </FormDescription>
+            )}
+            {fieldState.error && <FormMessage className="TextField__Error" />}
           </FormItem>
         )}
       />
