@@ -36,8 +36,16 @@ export function CostCalculator() {
   return (
     <div style={{ maxWidth: 400, margin: '0 auto' }}>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <TextField type="text" name="name" label="Name" />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 flex flex-col gap-8"
+        >
+          <TextField
+            type="text"
+            name="name"
+            label="Name"
+            description="What is your name"
+          />
           <SelectField
             label="Select a country"
             name="country"
