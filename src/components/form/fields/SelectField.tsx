@@ -10,6 +10,7 @@ import {
 } from '@/src/components/ui/select';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +22,7 @@ type SelectFieldProps = {
   label: string;
   name: string;
   placeholder?: string;
+  description?: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
   className?: string;
@@ -31,6 +33,7 @@ export function SelectField({
   name,
   options,
   defaultValue,
+  description,
 }: SelectFieldProps) {
   const { control } = useFormContext();
 
@@ -62,6 +65,7 @@ export function SelectField({
               </Select>
             </div>
           </FormControl>
+          <FormDescription>{description}</FormDescription>
           <FormMessage />
         </FormItem>
       )}
