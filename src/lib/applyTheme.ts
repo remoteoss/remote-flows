@@ -18,24 +18,6 @@ function setCssProperties(variables: Record<string, string>) {
   });
 }
 
-export default function applyTheme(theme: ThemeProviderProps['theme']) {
-  if (theme.colors) {
-    setCssProperties(mapThemeColors(theme.colors));
-  }
-
-  if (theme.spacing) {
-    setCssProperties(mapThemeSpacing(theme.spacing));
-  }
-
-  if (theme.borderRadius) {
-    setCssProperties(mapThemeBorderRadius(theme.borderRadius));
-  }
-
-  if (theme.font) {
-    setCssProperties(mapThemeFont(theme.font));
-  }
-}
-
 function mapThemeColors(colors: ThemeColors): CssThemeColors {
   const result: CssThemeColors = {};
   Object.keys(colors).forEach((key) => {
@@ -61,4 +43,22 @@ function mapThemeFont(font: ThemeFont): CssThemeFont {
   return {
     '--fontSizeBase': font.fontSizeBase,
   };
+}
+
+export function applyTheme(theme: ThemeProviderProps['theme']) {
+  if (theme?.colors) {
+    setCssProperties(mapThemeColors(theme.colors));
+  }
+
+  if (theme?.spacing) {
+    setCssProperties(mapThemeSpacing(theme.spacing));
+  }
+
+  if (theme?.borderRadius) {
+    setCssProperties(mapThemeBorderRadius(theme.borderRadius));
+  }
+
+  if (theme?.font) {
+    setCssProperties(mapThemeFont(theme.font));
+  }
 }

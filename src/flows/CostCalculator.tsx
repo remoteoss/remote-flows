@@ -11,7 +11,7 @@ import { TextField } from '../components/form/fields/TextField';
 const formSchema = z
   .object({
     country: z.string({ required_error: 'Required.' }).min(1),
-    age: z.string({ required_error: 'Required.' }).min(1),
+    name: z.string({ required_error: 'Required.' }).min(1),
   })
   .required();
 
@@ -37,7 +37,7 @@ export function CostCalculator() {
     <div style={{ maxWidth: 400, margin: '0 auto' }}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <TextField name="age" label="Age" />
+          <TextField type="text" name="name" label="Name" />
           <SelectField
             label="Select a country"
             name="country"
