@@ -1,15 +1,9 @@
 import React from 'react';
 import type { Fields } from '@remoteoss/json-schema-form';
-import { RadioField } from '@/src/components/form/fields/RadioField';
-import { NumberInputField } from '@/src/components/form/fields/NumberInputField';
+import { fieldsMapConfig } from '@/src/components/form/fields/fieldsMapping';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
-};
-
-const fieldsMapConfig = {
-  radio: RadioField,
-  number: NumberInputField,
 };
 
 export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {

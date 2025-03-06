@@ -29,6 +29,7 @@ import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
 import { cn } from '@/src/lib/utils';
+import { benefitsJsonSchema } from '@/src/flows/benefitsJsonSchema';
 
 const formSchema = z.object({
   country: z.string().min(1, 'Country is required'),
@@ -49,7 +50,11 @@ type Props = {
 export function CostCalculator({ companyId }: Props) {
   const { client } = useClient();
   const [savedValues, setSavedValues] = useState<FormValues | null>(null);
-  const [jsonForm, setJsonForm] = useState<any>(null);
+  const [jsonForm, setJsonForm] = useState<any>(
+    createHeadlessForm(benefitsJsonSchema.data.schema || {}, {
+      strictInputType: false,
+    }),
+  );
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -132,13 +137,6 @@ export function CostCalculator({ companyId }: Props) {
       })
         .then((res) => {
           if (res.data?.data) {
-            const filteredCountries = res.data?.data.filter(
-              (country) =>
-                country.has_additional_fields &&
-                country.child_regions.length > 0,
-            );
-
-            console.log({ filteredCountries });
             setCountries(res.data?.data);
           }
         })
