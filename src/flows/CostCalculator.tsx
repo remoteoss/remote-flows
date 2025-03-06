@@ -4,8 +4,13 @@ import {
   getIndexCountry,
   getShowCompany,
   getShowRegionField,
+  postCreateEstimation,
 } from '../client/sdk.gen';
-import type { GetIndexCountryResponse, MinimalRegion } from '../client';
+import type {
+  EmploymentTermType,
+  GetIndexCountryResponse,
+  MinimalRegion,
+} from '../client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -176,6 +181,36 @@ export function CostCalculator({ companyId }: Props) {
       });
       return;
     }
+
+    postCreateEstimation({
+      client: client as Client,
+      headers: {
+        Authorization: ``,
+      },
+      body: {
+        employer_currency_slug: values.currency as string,
+        include_benefits: false,
+        include_cost_breakdowns: false,
+        employments: [
+          {
+            region_slug: values.region as string,
+            annual_gross_salary: values.salary as number,
+            annual_gross_salary_in_employer_currency: values.salary as number,
+            employment_term:
+              (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
+            title: 'My first estimation',
+            regional_to_employer_exchange_rate: '1',
+            age: (values.age as number) ?? undefined,
+          },
+        ],
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     setSavedValues(values);
   };
 
