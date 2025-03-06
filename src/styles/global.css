@@ -9,29 +9,24 @@
   --card-foreground: var(--primaryForeground, #4b5865);
   --popover: var(--primaryBackground, #ffffff);
   --popover-foreground: var(--primaryForeground, #4b5865);
-  --primary: var(--primaryBackground, #ffffff);
+  --primary: var(--primaryBackground, #0061ff);
   --primary-foreground: var(--primaryForeground, #4b5865);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --accent: var(--accentBackground, #e3e9ef);
   --accent-foreground: var(--accentForeground, #0f1419);
-  --destructive-default-mix: color-mix(
-    in srgb,
-    var(--destructive-foreground) 10%,
-    white 90%
-  );
-  --destructive: var(--dangerBackground, var(--destructive-default-mix));
+  --destructive: var(--dangerBackground, #d92020);
   --destructive-foreground: var(--dangerForeground, #d92020);
   --border: var(--borderInput, '#9aa6b2');
   --input: var(--borderInput, '#9aa6b2');
   --ring: oklch(0.708 0 0);
   --radius: var(--borderRadius, 0.625rem);
+  --focused: var(--borderRadius, #0061ff);
 }
 
 @theme inline {
   --muted-foreground: var(--primary-foreground);
-  /* --font-roboto: 'Roboto', sans-serif; */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -51,6 +46,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-focused: var(--focused);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

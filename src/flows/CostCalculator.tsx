@@ -6,10 +6,12 @@ import { Form } from '../components/ui/form';
 import { useForm } from 'react-hook-form';
 import { SelectField } from '../components/form/fields/SelectField';
 import { Button } from '../components/ui/button';
+import { TextField } from '../components/form/fields/TextField';
 
 const formSchema = z
   .object({
-    country: z.string({ required_error: 'Is required.' }).min(1),
+    country: z.string({ required_error: 'Required.' }).min(1),
+    age: z.string({ required_error: 'Required.' }).min(1),
   })
   .required();
 
@@ -32,17 +34,20 @@ export function CostCalculator() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <SelectField
-          label="Select a country"
-          name="country"
-          options={countryOptions}
-        />
-        <Button type="submit" className="w-full">
-          Submit
-        </Button>
-      </form>
-    </Form>
+    <div style={{ maxWidth: 400, margin: '0 auto' }}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <TextField name="age" label="Age" />
+          <SelectField
+            label="Select a country"
+            name="country"
+            options={countryOptions}
+          />
+          <Button type="submit" className="w-full my-4" variant={'secondary'}>
+            Submit
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }
