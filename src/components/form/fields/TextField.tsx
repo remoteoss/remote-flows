@@ -11,12 +11,10 @@ import {
 import { Input } from '../../ui/input';
 import { useFormContext } from 'react-hook-form';
 
-type TextFieldProps = {
-  name: string;
-  className?: string;
+type TextFieldProps = React.ComponentProps<'input'> & {
   label: string;
-  description?: string;
-  type?: React.ComponentProps<'input'>['type'];
+  description: string;
+  name: string;
 };
 
 type InputModeAttrsProps = Pick<
