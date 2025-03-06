@@ -8,13 +8,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/select';
-import { FormControl, FormField, FormItem, FormMessage } from '../../ui/form';
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../../ui/form';
 import { useFormContext } from 'react-hook-form';
 
 type SelectFieldProps = {
   label: string;
   name: string;
   placeholder?: string;
+  description?: string;
   options: { value: string; label: string }[];
   defaultValue?: string;
   className?: string;
@@ -25,23 +33,24 @@ export function SelectField({
   name,
   options,
   defaultValue,
-  className,
+  description,
 }: SelectFieldProps) {
   const { control } = useFormContext();
 
   return (
-    <div className={className}>
-      <FormField
-        defaultValue={defaultValue}
-        control={control}
-        name={name}
-        render={({ field, fieldState }) => (
-          <FormItem>
-            <FormControl>
+    <FormField
+      defaultValue={defaultValue}
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <div className="relative">
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger aria-invalid={Boolean(fieldState.error)}>
-                  <span className={'text-foreground'}>
-                    <SelectValue placeholder={label} />
+                  <span className="absolute">
+                    <SelectValue />
                   </span>
                 </SelectTrigger>
                 <SelectContent>
@@ -54,11 +63,12 @@ export function SelectField({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
+            </div>
+          </FormControl>
+          <FormDescription>{description}</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

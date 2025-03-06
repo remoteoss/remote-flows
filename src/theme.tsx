@@ -1,21 +1,26 @@
 import React, { createContext, useEffect, useMemo } from 'react';
-import applyTheme from '@/src/utils/applyTheme';
+import { applyTheme } from '@/src/lib/applyTheme';
+import { applyCssRules } from '@/src/lib/applyRules';
 import { ThemeProviderProps } from './types';
 
 const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({
   theme: {},
+  rules: {},
 });
 
 export function ThemeProvider(props: ThemeProviderProps) {
   useEffect(() => {
-    if (Object.keys(props.theme).length > 0) {
+    if (props.theme && Object.keys(props.theme).length > 0) {
       applyTheme(props.theme);
+    }
+    if (props.rules && Object.keys(props.rules).length > 0) {
+      applyCssRules(props.rules);
     }
   }, []);
 
   const value = useMemo(() => {
-    return { theme: props.theme };
-  }, [props.theme]);
+    return { theme: props.theme, rules: props.rules };
+  }, [props.theme, props.rules]);
 
   return (
     <ThemeContext.Provider value={value}>

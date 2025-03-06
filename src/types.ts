@@ -12,13 +12,16 @@ export type RemoteFlowsSDKProps = {
 
 // theme type
 export type ThemeProviderProps = PropsWithChildren<{
-  theme: {
-    colors?: ThemeColors;
-    spacing?: string;
-    borderRadius?: string;
-    font?: ThemeFont;
-  };
+  theme?: Partial<{
+    colors: ThemeColors;
+    spacing: string;
+    borderRadius: string;
+    font: ThemeFont;
+  }>;
+  rules?: Rules;
 }>;
+
+export type Rules = {};
 
 export type ThemeColors = Partial<{
   borderInput: string;
