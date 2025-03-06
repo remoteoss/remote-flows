@@ -29,17 +29,15 @@ import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
 import { cn } from '@/src/lib/utils';
-import { benefitsJsonSchema } from '@/src/flows/benefitsJsonSchema';
 
-const formSchema = z.object({
-  country: z.string().min(1, 'Country is required'),
-  currency: z.string().optional(),
-  region: z.string().optional(),
-  salary: z.number().min(1, 'Amount must be greater than 0'),
-  type: z.enum(['all', 'none'], {
-    required_error: 'You need to select a type preference.',
-  }),
-});
+const formSchema = z
+  .object({
+    country: z.string().min(1, 'Country is required'),
+    currency: z.string().optional(),
+    region: z.string().optional(),
+    salary: z.number().min(1, 'Amount must be greater than 0'),
+  })
+  .passthrough();
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -50,11 +48,7 @@ type Props = {
 export function CostCalculator({ companyId }: Props) {
   const { client } = useClient();
   const [savedValues, setSavedValues] = useState<FormValues | null>(null);
-  const [jsonForm, setJsonForm] = useState<any>(
-    createHeadlessForm(benefitsJsonSchema.data.schema || {}, {
-      strictInputType: false,
-    }),
-  );
+  const [jsonForm, setJsonForm] = useState<any>();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,7 +56,6 @@ export function CostCalculator({ companyId }: Props) {
       currency: '',
       region: '',
       salary: undefined,
-      type: undefined,
     },
     mode: 'onBlur',
   });
@@ -169,10 +162,19 @@ export function CostCalculator({ companyId }: Props) {
   }, [companyId]);
 
   const handleSubmit = (values: FormValues) => {
+    const { handleValidation } = jsonForm;
+    const formErrors = handleValidation(values);
+    if (formErrors && Object.keys(formErrors.formErrors).length > 0) {
+      Object.entries(formErrors.formErrors).forEach(([field, message]) => {
+        form.setError(field as any, {
+          type: 'manual',
+          message: message as string,
+        });
+      });
+      return;
+    }
     setSavedValues(values);
   };
-
-  console.log({ jsonForm });
 
   return (
     <>

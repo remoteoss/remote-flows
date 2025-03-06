@@ -1,5 +1,4 @@
 import React from 'react';
-import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
 import {
   FormControl,
   FormDescription,
@@ -12,15 +11,36 @@ import {
 type RadioFieldItemProps = {
   label: string;
   value: string;
+  name: string;
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const RadioFieldItem = ({ value, label }: RadioFieldItemProps) => {
+const RadioFieldItem = ({
+  value,
+  label,
+  name,
+  checked,
+  onChange,
+}: RadioFieldItemProps) => {
   return (
     <FormItem className="flex items-center space-x-3 space-y-0">
       <FormControl>
-        <RadioGroupItem value={value} />
+        <input
+          type="radio"
+          id={`${name}-${value}`}
+          name={name}
+          value={value}
+          checked={checked}
+          onChange={onChange}
+        />
       </FormControl>
-      <FormLabel className="font-normal">{label}</FormLabel>
+      <label
+        htmlFor={`${name}-${value}`}
+        className="font-normal cursor-pointer"
+      >
+        {label}
+      </label>
     </FormItem>
   );
 };
@@ -49,21 +69,18 @@ export const RadioField = ({
           <FormItem className="space-y-3">
             <FormLabel>{label}</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                className="flex flex-col space-y-1"
-              >
-                {options.map((option) => {
-                  return (
-                    <RadioFieldItem
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    />
-                  );
-                })}
-              </RadioGroup>
+              <div className="flex flex-col space-y-1">
+                {options.map((option) => (
+                  <RadioFieldItem
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
+                    name={name}
+                    checked={field.value === option.value}
+                    onChange={field.onChange}
+                  />
+                ))}
+              </div>
             </FormControl>
             <FormMessage />
             {description && <FormDescription>{description}</FormDescription>}
