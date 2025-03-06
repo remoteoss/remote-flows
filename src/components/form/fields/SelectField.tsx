@@ -65,8 +65,8 @@ export function SelectField({
               </Select>
             </div>
           </FormControl>
-          <FormDescription>{description}</FormDescription>
-          <FormMessage />
+          {description && <FormDescription>{description}</FormDescription>}
+          {fieldState.error && <FormMessage />}
         </FormItem>
       )}
     />
