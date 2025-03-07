@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RadioGroup } from '@/src/components/ui/radio-group';
 import { SupportedTypes } from './types';
 import { TextField } from './TextField';
-import { SelectField as FieldWithOptions } from './SelectField';
+import { SelectField } from './SelectField';
 
 type FieldBase = {
   label: string;
@@ -28,40 +28,28 @@ type FieldSetProps = {
   fields: Field[];
 };
 
+const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
+  text: TextField,
+  select: SelectField,
+  radio: RadioGroup,
+  number: (props) => <TextField {...props} type="text" />,
+  fieldset: FieldSetField,
+};
+
 export function FieldSetField({ legend, name, fields }: FieldSetProps) {
   return (
     <fieldset className="border-1 border-input p-4 rounded-xl">
       <legend className="text-sm font-semibold px-2">{legend}</legend>
       <div className="grid gap-4">
         {fields.map((field) => {
-          if (field.type === 'select') {
-            return (
-              <FieldWithOptions
-                {...field}
-                key={field.name}
-                name={`${name}.${field.name}`}
-              />
-            );
-          }
-          if (field.type === 'text') {
-            return (
-              <TextField
-                {...field}
-                key={field.name}
-                name={`${name}.${field.name}`}
-              />
-            );
-          }
-          if (field.type === 'radio') {
-            return (
-              <RadioGroup
-                {...field}
-                key={field.name}
-                name={`${name}.${field.name}`}
-              />
-            );
-          }
-          return null;
+          const FieldComponent = fieldsMap[field.type];
+          return (
+            <FieldComponent
+              {...field}
+              key={field.name}
+              name={`${name}.${field.name}`}
+            />
+          );
         })}
       </div>
     </fieldset>
