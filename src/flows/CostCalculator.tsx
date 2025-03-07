@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useClient } from '../RemoteFlowsProvider';
 import {
   getIndexCountry,
@@ -12,10 +12,9 @@ import type {
   MinimalRegion,
 } from '../client';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { Form } from '../components/form';
+import * as yup from 'yup';
 
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
@@ -23,17 +22,16 @@ import { JSONSchemaFormFields } from '../components/json-schema-form';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { companyCurrencies } from '@/src/flows/companyCurrencies';
+import { useYupValidationResolver } from '@/src/components/form/yupValidationResolver';
 
-const formSchema = z
-  .object({
-    country: z.string().min(1, 'Country is required'),
-    currency: z.string().optional(),
-    region: z.string().optional(),
-    salary: z.string().min(1, 'Amount must be greater than 0'),
-  })
-  .passthrough();
+const validationSchema = yup.object({
+  country: yup.string().required('Country is required'),
+  currency: yup.string().required('Currency is required'),
+  region: yup.string(),
+  salary: yup.string().required('Salary is required'),
+});
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = yup.InferType<typeof validationSchema>;
 
 type Props = {
   onSubmit: (data: CostCalculatorEstimateResponse | undefined) => void;
@@ -41,9 +39,10 @@ type Props = {
 
 export function CostCalculator({ onSubmit }: Props) {
   const { client } = useClient();
+  const resolver = useYupValidationResolver(validationSchema);
   const [jsonForm, setJsonForm] = useState<any>();
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: resolver,
     defaultValues: {
       country: '',
       currency: '',
@@ -96,11 +95,11 @@ export function CostCalculator({ onSubmit }: Props) {
         path: { slug: regionSlug },
       });
 
-      setJsonForm(
-        createHeadlessForm(res?.data?.data?.schema || {}, {
-          strictInputType: false,
-        }),
-      );
+      const jsonSchemaForm = createHeadlessForm(res?.data?.data?.schema || {}, {
+        strictInputType: false,
+      });
+
+      setJsonForm(jsonSchemaForm);
     } catch (e) {
       console.error(e);
       setJsonForm(null);
