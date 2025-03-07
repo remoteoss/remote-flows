@@ -43,20 +43,27 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
+        <FormItem className="SelectField__Item">
+          <FormLabel className="SelectField__Label">{label}</FormLabel>
           <FormControl>
             <div className="relative">
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger aria-invalid={Boolean(fieldState.error)}>
+                <SelectTrigger
+                  className="SelectField__Trigger"
+                  aria-invalid={Boolean(fieldState.error)}
+                >
                   <span className="absolute">
                     <SelectValue />
                   </span>
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
+                <SelectContent className="SelectField__Content">
+                  <SelectGroup className="SelectField__Group">
                     {options.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="SelectField__SelectItem"
+                      >
                         {option.label}
                       </SelectItem>
                     ))}

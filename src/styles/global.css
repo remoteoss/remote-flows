@@ -1,14 +1,12 @@
 @import 'tailwindcss';
 
-@plugin 'tailwindcss-animate';
-
 :root {
   --background: oklch(1 0 0);
   --foreground: var(--primaryForeground, #4b5865);
   --card: oklch(1 0 0);
   --card-foreground: var(--primaryForeground, #4b5865);
-  --popover: var(--primaryBackground, #ffffff);
-  --popover-foreground: var(--primaryForeground, #4b5865);
+  --popover: var(--popoverPrimaryBackground, #ffffff);
+  --popover-foreground: var(--popoverPrimaryForeground, #4b5865);
   --primary: var(--primaryBackground, #0061ff);
   --primary-foreground: var(--primaryForeground, #4b5865);
   --secondary: oklch(0.97 0 0);
@@ -16,13 +14,13 @@
   --muted: oklch(0.97 0 0);
   --accent: var(--accentBackground, #e3e9ef);
   --accent-foreground: var(--accentForeground, #0f1419);
-  --destructive: var(--dangerBackground, #d92020);
-  --destructive-foreground: var(--dangerForeground, #d92020);
-  --border: var(--borderInput, '#9aa6b2');
-  --input: var(--borderInput, '#9aa6b2');
+  --destructive: var(--danger, #d92020);
+  --border: var(--borderInput, #9aa6b2);
+  --input: var(--borderInput, #9aa6b2);
+  --base: var(--textBase, #0f1419);
   --ring: oklch(0.708 0 0);
   --radius: var(--borderRadius, 0.625rem);
-  --focused: var(--borderRadius, #0061ff);
+  --focused: var(--focus, #0061ff);
 }
 
 @theme inline {
@@ -42,16 +40,11 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-base-color: var(--base);
   --color-ring: var(--ring);
   --color-focused: var(--focused);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

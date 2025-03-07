@@ -24,13 +24,19 @@ export type ThemeProviderProps = PropsWithChildren<{
 export type Rules = {};
 
 export type ThemeColors = Partial<{
+  focus: string;
   borderInput: string;
   primaryBackground: string;
   primaryForeground: string;
   accentBackground: string;
   accentForeground: string;
-  dangerBackground: string;
-  dangerForeground: string;
+  danger: string;
+  /**
+   * Used for the background of select options popover
+   */
+  popoverPrimaryBackground: string;
+  popoverPrimaryForeground: string;
+  textBase: string;
 }>;
 
 export type CssThemeColors = {
