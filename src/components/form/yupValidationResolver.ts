@@ -33,32 +33,63 @@ export const useYupValidationResolver = <T extends AnyObjectSchema>(
 ): Resolver<InferType<T>> =>
   useCallback(
     async (data: FieldValues) => {
+      let yupValues;
+      let yupErrors = {};
+      let hasYupErrors = false;
+
       try {
-        const values = await validationSchema.validate(data, {
+        yupValues = await validationSchema.validate(data, {
           abortEarly: false,
         });
-
-        const dynamicValues = await JSONSchemaValidation.current?.(data);
-
-        if (dynamicValues) {
-          return {
-            values: {},
-            errors: iterateErrors(dynamicValues.yupError),
-          };
-        }
-
-        return {
-          values,
-          errors: {},
-        };
       } catch (error) {
-        const errors = iterateErrors(error as ValidationError);
+        hasYupErrors = true;
+        yupErrors = iterateErrors(error as ValidationError);
+      }
 
+      const dynamicValues = await JSONSchemaValidation.current?.(data);
+      console.log({ dynamicValues });
+      let jsonErrors = {};
+      let hasJsonErrors = false;
+
+      if (
+        dynamicValues?.formErrors &&
+        Object.keys(dynamicValues.formErrors).length > 0
+      ) {
+        hasJsonErrors = true;
+        // If we have dynamic form errors, convert them to the expected format
+        if (dynamicValues.yupError) {
+          // If the dynamic validation returns a yupError object, use iterateErrors
+          jsonErrors = iterateErrors(dynamicValues.yupError);
+        } else {
+          // Otherwise, manually format the errors
+          jsonErrors = Object.entries(dynamicValues.formErrors).reduce(
+            (acc, [field, message]) => ({
+              ...acc,
+              [field]: {
+                type: 'validation',
+                message: message as string,
+              },
+            }),
+            {},
+          );
+        }
+      }
+
+      const combinedErrors = { ...yupErrors, ...jsonErrors };
+
+      // Return based on validation results
+      if (hasYupErrors || hasJsonErrors) {
         return {
           values: {},
-          errors,
+          errors: combinedErrors,
         };
       }
+
+      // Both validations passed
+      return {
+        values: yupValues,
+        errors: {},
+      };
     },
     [validationSchema],
   );
