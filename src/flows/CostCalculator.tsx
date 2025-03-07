@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useClient } from '../RemoteFlowsProvider';
 import {
   getIndexCountry,
-  getShowCompany,
   getShowRegionField,
   postCreateEstimation,
 } from '../client/sdk.gen';
-import type { GetIndexCountryResponse, MinimalRegion } from '../client';
+import type {
+  CostCalculatorEstimateResponse,
+  EmploymentTermType,
+  GetIndexCountryResponse,
+  MinimalRegion,
+} from '../client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +22,7 @@ import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
+import { companyCurrencies } from '@/src/flows/companyCurrencies';
 
 const formSchema = z
   .object({
@@ -31,12 +36,11 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 type Props = {
-  companyId: string;
+  onSubmit: (data: CostCalculatorEstimateResponse | undefined) => void;
 };
 
-export function CostCalculator({ companyId }: Props) {
+export function CostCalculator({ onSubmit }: Props) {
   const { client } = useClient();
-  const [savedValues, setSavedValues] = useState<FormValues | null>(null);
   const [jsonForm, setJsonForm] = useState<any>();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -56,7 +60,9 @@ export function CostCalculator({ companyId }: Props) {
 
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
 
-  const [currencies, setCurrencies] = React.useState<any>([]);
+  const [currencies, setCurrencies] = React.useState<any>(
+    companyCurrencies.data,
+  );
 
   const [isLoadingSchema, setIsLoadingSchema] = useState(false);
 
@@ -145,7 +151,7 @@ export function CostCalculator({ companyId }: Props) {
     }
   }, [client]);
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (client && companyId) {
       getShowCompany({
         client: client,
@@ -165,7 +171,7 @@ export function CostCalculator({ companyId }: Props) {
           console.error(err);
         });
     }
-  }, [companyId]);
+  }, [companyId]); */
 
   const findSlugInCountry = (countryCode: string) => {
     const country = countries.find((c) => c.code === countryCode);
@@ -194,15 +200,15 @@ export function CostCalculator({ companyId }: Props) {
 
     console.log({ currencies });
 
-    /* const payload = {
+    const payload = {
       employer_currency_slug: values.currency as string,
       include_benefits: false,
       include_cost_breakdowns: false,
       employments: [
         {
           region_slug: regionSlug as string,
-          annual_gross_salary: values.salary as number,
-          annual_gross_salary_in_employer_currency: values.salary as number,
+          annual_gross_salary: parseFloat(values.salary),
+          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: 'My first estimation',
@@ -210,25 +216,22 @@ export function CostCalculator({ companyId }: Props) {
           age: (values.age as number) ?? undefined,
         },
       ],
-    }; */
+    };
 
     postCreateEstimation({
       client: client as Client,
       headers: {
         Authorization: ``,
       },
-      body: {
-        employer_currency_slug: values.currency as string,
-        employments: [],
-      },
+      body: payload,
     })
       .then((res) => {
         console.log(res);
+        onSubmit(res.data);
       })
       .catch((err) => {
         console.error(err);
       });
-    setSavedValues(values);
   };
 
   return (
@@ -267,12 +270,6 @@ export function CostCalculator({ companyId }: Props) {
           </Button>
         </form>
       </Form>
-      {savedValues && (
-        <div>
-          <h2>Saved Values</h2>
-          <pre>{JSON.stringify(savedValues, null, 2)}</pre>
-        </div>
-      )}
     </>
   );
 }
