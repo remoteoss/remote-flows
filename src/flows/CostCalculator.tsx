@@ -11,25 +11,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '../components/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/select';
-import { Input } from '../components/input';
+import { Form } from '../components/form';
+
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/json-schema-form';
-import { cn } from '@/src/lib/utils';
+import { SelectField } from '@/src/components/form/fields/SelectField';
+import { TextField } from '@/src/components/form/fields/TextField';
 
 const formSchema = z
   .object({
@@ -71,6 +59,23 @@ export function CostCalculator({ companyId }: Props) {
   const [currencies, setCurrencies] = React.useState<any>([]);
 
   const [isLoadingSchema, setIsLoadingSchema] = useState(false);
+
+  const optionsCountries = countries.map((country) => ({
+    value: country.code,
+    label: country.name,
+  }));
+
+  const optionsRegions = regions.map((region) => ({
+    value: region.slug,
+    label: region.name,
+  }));
+
+  const currenciesOptions = currencies.map(
+    (currency: { code: string; slug: string }) => ({
+      value: currency.slug,
+      label: currency.code,
+    }),
+  );
 
   async function loadJsonForm(regionSlug: string) {
     try {
@@ -230,138 +235,27 @@ export function CostCalculator({ companyId }: Props) {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
+          <SelectField
             name="country"
-            render={({ field }) => (
-              <FormItem>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger
-                      className={cn(
-                        'border-2',
-                        form.formState.errors.country
-                          ? 'border-red-500'
-                          : 'border-gray-200',
-                      )}
-                    >
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {countries?.map((country) => (
-                      <SelectItem
-                        key={country.code}
-                        value={country.code.toString()}
-                      >
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Country"
+            options={optionsCountries}
           />
-          {regions.length > 0 && (
-            <FormField
-              control={form.control}
+
+          {optionsRegions.length > 0 && (
+            <SelectField
               name="region"
-              render={({ field }) => (
-                <FormItem>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger
-                        className={cn(
-                          'border-2',
-                          form.formState.errors.region
-                            ? 'border-red-500'
-                            : 'border-gray-200',
-                        )}
-                      >
-                        <SelectValue placeholder="Select region" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {regions?.map((region) => (
-                        <SelectItem
-                          key={region.slug}
-                          value={region.slug.toString()}
-                        >
-                          {region.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Region"
+              options={optionsRegions}
             />
           )}
 
-          <FormField
-            control={form.control}
+          <SelectField
             name="currency"
-            render={({ field }) => (
-              <FormItem>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger
-                      className={cn(
-                        'border-2',
-                        form.formState.errors.country
-                          ? 'border-red-500'
-                          : 'border-gray-200',
-                      )}
-                    >
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {currencies?.map(
-                      (currency: { code: string; slug: string }) => (
-                        <SelectItem key={currency.slug} value={currency.slug}>
-                          {currency.code}
-                        </SelectItem>
-                      ),
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Currency"
+            options={currenciesOptions}
           />
 
-          <FormField
-            control={form.control}
-            name="salary"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="Amount"
-                    {...field}
-                    value={field.value === undefined ? '' : field.value}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(
-                        value === '' ? undefined : Number.parseFloat(value),
-                      );
-                    }}
-                    className={cn(
-                      'border-2',
-                      form.formState.errors.salary
-                        ? 'border-red-500'
-                        : 'border-gray-200',
-                    )}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TextField name="salary" label="Salary" type="number" />
 
           {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
 
