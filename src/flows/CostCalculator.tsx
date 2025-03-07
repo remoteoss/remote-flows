@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import * as yup from 'yup';
 import { useClient } from '../RemoteFlowsProvider';
 import {
   getIndexCountry,
@@ -14,7 +15,6 @@ import type {
 import { useForm } from 'react-hook-form';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { Form } from '../components/form';
-import * as yup from 'yup';
 
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
