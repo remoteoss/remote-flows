@@ -24,7 +24,7 @@ const formSchema = z
     country: z.string().min(1, 'Country is required'),
     currency: z.string().optional(),
     region: z.string().optional(),
-    salary: z.number().min(1, 'Amount must be greater than 0'),
+    salary: z.string().min(1, 'Amount must be greater than 0'),
   })
   .passthrough();
 
