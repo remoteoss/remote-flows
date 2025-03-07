@@ -6,11 +6,7 @@ import {
   getShowRegionField,
   postCreateEstimation,
 } from '../client/sdk.gen';
-import type {
-  EmploymentTermType,
-  GetIndexCountryResponse,
-  MinimalRegion,
-} from '../client';
+import type { GetIndexCountryResponse, MinimalRegion } from '../client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -166,6 +162,11 @@ export function CostCalculator({ companyId }: Props) {
     }
   }, [companyId]);
 
+  const findSlugInCountry = (countryCode: string) => {
+    const country = countries.find((c) => c.code === countryCode);
+    return country?.region_slug;
+  };
+
   const handleSubmit = (values: FormValues) => {
     const { handleValidation } = jsonForm;
     const formErrors = handleValidation(values);
@@ -182,6 +183,30 @@ export function CostCalculator({ companyId }: Props) {
       return;
     }
 
+    const regionSlug = values.region
+      ? values.region
+      : findSlugInCountry(values.country);
+
+    console.log({ currencies });
+
+    /* const payload = {
+      employer_currency_slug: values.currency as string,
+      include_benefits: false,
+      include_cost_breakdowns: false,
+      employments: [
+        {
+          region_slug: regionSlug as string,
+          annual_gross_salary: values.salary as number,
+          annual_gross_salary_in_employer_currency: values.salary as number,
+          employment_term:
+            (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
+          title: 'My first estimation',
+          regional_to_employer_exchange_rate: '1',
+          age: (values.age as number) ?? undefined,
+        },
+      ],
+    }; */
+
     postCreateEstimation({
       client: client as Client,
       headers: {
@@ -189,20 +214,7 @@ export function CostCalculator({ companyId }: Props) {
       },
       body: {
         employer_currency_slug: values.currency as string,
-        include_benefits: false,
-        include_cost_breakdowns: false,
-        employments: [
-          {
-            region_slug: values.region as string,
-            annual_gross_salary: values.salary as number,
-            annual_gross_salary_in_employer_currency: values.salary as number,
-            employment_term:
-              (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
-            title: 'My first estimation',
-            regional_to_employer_exchange_rate: '1',
-            age: (values.age as number) ?? undefined,
-          },
-        ],
+        employments: [],
       },
     })
       .then((res) => {
@@ -306,11 +318,13 @@ export function CostCalculator({ companyId }: Props) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {currencies?.map((currency: string) => (
-                      <SelectItem key={currency} value={currency}>
-                        {currency}
-                      </SelectItem>
-                    ))}
+                    {currencies?.map(
+                      (currency: { code: string; slug: string }) => (
+                        <SelectItem key={currency.slug} value={currency.slug}>
+                          {currency.code}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
