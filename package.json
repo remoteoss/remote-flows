@@ -63,7 +63,7 @@
     "tailwindcss": "^4.0.9",
     "tailwindcss-animate": "^1.0.7",
     "type-fest": "^4.35.0",
-    "yup": "^0.30.0",
+    "yup": "^0.32.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -71,7 +71,6 @@
     "@hey-api/openapi-ts": "^0.64.4",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
-    "@types/yup": "^0.32.0",
     "prettier": "^3.5.1",
     "tsup": "^8.3.6"
   }

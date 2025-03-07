@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import * as yup from 'yup';
+import React, { useEffect, useRef, useState } from 'react';
+import { object, string } from 'yup';
+import type { InferType } from 'yup';
 import { useClient } from '../RemoteFlowsProvider';
 import {
   getIndexCountry,
@@ -22,16 +23,21 @@ import { JSONSchemaFormFields } from '../components/json-schema-form';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { companyCurrencies } from '@/src/flows/companyCurrencies';
-import { useYupValidationResolver } from '@/src/components/form/yupValidationResolver';
+import {
+  JSONSchemaValidation,
+  useYupValidationResolver,
+} from '@/src/components/form/yupValidationResolver';
 
-const validationSchema = yup.object({
-  country: yup.string().required('Country is required'),
-  currency: yup.string().required('Currency is required'),
-  region: yup.string(),
-  salary: yup.string().required('Salary is required'),
+const validationSchema = object({
+  country: string().required('Country is required'),
+  currency: string().required('Currency is required'),
+  region: string(),
+  salary: string().required('Salary is required'),
 });
 
-type FormValues = yup.InferType<typeof validationSchema>;
+type FormValues = InferType<typeof validationSchema> & {
+  [key: string]: any;
+};
 
 type Props = {
   onSubmit: (data: CostCalculatorEstimateResponse | undefined) => void;
@@ -39,7 +45,11 @@ type Props = {
 
 export function CostCalculator({ onSubmit }: Props) {
   const { client } = useClient();
-  const resolver = useYupValidationResolver(validationSchema);
+  const handleJSONSchemaValidation = useRef<JSONSchemaValidation>(null);
+  const resolver = useYupValidationResolver(
+    validationSchema,
+    handleJSONSchemaValidation,
+  );
   const [jsonForm, setJsonForm] = useState<any>();
   const form = useForm<FormValues>({
     resolver: resolver,
@@ -98,6 +108,8 @@ export function CostCalculator({ onSubmit }: Props) {
       const jsonSchemaForm = createHeadlessForm(res?.data?.data?.schema || {}, {
         strictInputType: false,
       });
+
+      handleJSONSchemaValidation.current = jsonSchemaForm.handleValidation;
 
       setJsonForm(jsonSchemaForm);
     } catch (e) {
@@ -178,26 +190,9 @@ export function CostCalculator({ onSubmit }: Props) {
   };
 
   const handleSubmit = (values: FormValues) => {
-    const { handleValidation } = jsonForm;
-    const formErrors = handleValidation(values);
-    if (
-      formErrors?.formErrors &&
-      Object.keys(formErrors.formErrors).length > 0
-    ) {
-      Object.entries(formErrors.formErrors).forEach(([field, message]) => {
-        form.setError(field as any, {
-          type: 'manual',
-          message: message as string,
-        });
-      });
-      return;
-    }
-
     const regionSlug = values.region
       ? values.region
       : findSlugInCountry(values.country);
-
-    console.log({ currencies });
 
     const payload = {
       employer_currency_slug: values.currency as string,
