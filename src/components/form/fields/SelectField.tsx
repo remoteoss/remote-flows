@@ -23,7 +23,7 @@ type SelectFieldProps = {
   name: string;
   placeholder?: string;
   description?: string;
-  options: { value: string; label: string }[];
+  options: Array<{ value: string; label: string }>;
   defaultValue?: string;
   className?: string;
 };
