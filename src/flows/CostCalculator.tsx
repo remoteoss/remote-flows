@@ -14,7 +14,10 @@ import type {
   MinimalRegion,
 } from '../client';
 import { useForm } from 'react-hook-form';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import {
+  createHeadlessForm,
+  HeadlessFormOutput,
+} from '@remoteoss/json-schema-form';
 import { Form } from '../components/ui/form';
 
 import { Button } from '../components/ui/button';
@@ -23,10 +26,7 @@ import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { companyCurrencies } from '@/src/flows/companyCurrencies';
-import {
-  JSONSchemaValidation,
-  useYupValidationResolver,
-} from '@/src/components/form/yupValidationResolver';
+import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 
 const validationSchema = object({
   country: string().required('Country is required'),
@@ -45,8 +45,9 @@ type Props = {
 
 export function CostCalculator({ onSubmit }: Props) {
   const { client } = useClient();
-  const handleJSONSchemaValidation = useRef<JSONSchemaValidation>(null);
-  const resolver = useYupValidationResolver(
+  const handleJSONSchemaValidation =
+    useRef<HeadlessFormOutput['handleValidation']>(null);
+  const resolver = useValidationFormResolver(
     validationSchema,
     handleJSONSchemaValidation,
   );
@@ -190,6 +191,7 @@ export function CostCalculator({ onSubmit }: Props) {
   };
 
   const handleSubmit = (values: FormValues) => {
+    console.log({ values });
     const regionSlug = values.region
       ? values.region
       : findSlugInCountry(values.country);
@@ -220,7 +222,6 @@ export function CostCalculator({ onSubmit }: Props) {
       body: payload,
     })
       .then((res) => {
-        console.log(res);
         onSubmit(res.data);
       })
       .catch((err) => {

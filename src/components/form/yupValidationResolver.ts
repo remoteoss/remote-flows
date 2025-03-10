@@ -1,10 +1,20 @@
+import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { useCallback } from 'react';
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { InferType, ValidationError, AnyObjectSchema } from 'yup';
 
-export type JSONSchemaValidation = (
-  values: Record<string, unknown>,
-) => { yupError: any; formErrors: any } | null;
+const useValidationYupResolver = <T extends AnyObjectSchema>(
+  validationSchema: T,
+) => {
+  return useCallback(
+    async (data: FieldValues) => {
+      await validationSchema.validate(data, {
+        abortEarly: false,
+      });
+    },
+    [validationSchema],
+  );
+};
 
 function iterateErrors(error: ValidationError) {
   const errors = (error as ValidationError).inner.reduce(
@@ -12,7 +22,6 @@ function iterateErrors(error: ValidationError) {
       allErrors: Record<string, { type: string; message: string }>,
       currentError: ValidationError,
     ) => {
-      console.log({ allErrors, currentError });
       return {
         ...allErrors,
         [currentError.path as string]: {
@@ -27,26 +36,30 @@ function iterateErrors(error: ValidationError) {
   return errors;
 }
 
-export const useYupValidationResolver = <T extends AnyObjectSchema>(
+export const useValidationFormResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
-  JSONSchemaValidation: React.MutableRefObject<JSONSchemaValidation | null>,
-): Resolver<InferType<T>> =>
-  useCallback(
+  JSONSchemaValidation: React.MutableRefObject<
+    HeadlessFormOutput['handleValidation'] | null
+  >,
+): Resolver<InferType<T>> => {
+  const yupValidation = useValidationYupResolver(validationSchema);
+  return useCallback(
     async (data: FieldValues) => {
       let yupValues;
       let yupErrors = {};
       let hasYupErrors = false;
 
       try {
-        yupValues = await validationSchema.validate(data, {
-          abortEarly: false,
-        });
+        yupValues = await yupValidation(data);
       } catch (error) {
         hasYupErrors = true;
         yupErrors = iterateErrors(error as ValidationError);
       }
 
+      console.log({ yupValues });
+
       const dynamicValues = await JSONSchemaValidation.current?.(data);
+      console.log({ dynamicValues });
       let jsonErrors = {};
       let hasJsonErrors = false;
 
@@ -78,11 +91,14 @@ export const useYupValidationResolver = <T extends AnyObjectSchema>(
 
       // Return based on validation results
       if (hasYupErrors || hasJsonErrors) {
+        console.log('returning errors', combinedErrors);
         return {
           values: {},
           errors: combinedErrors,
         };
       }
+
+      console.log('success', yupValues);
 
       // Both validations passed
       return {
@@ -92,3 +108,4 @@ export const useYupValidationResolver = <T extends AnyObjectSchema>(
     },
     [validationSchema],
   );
+};
