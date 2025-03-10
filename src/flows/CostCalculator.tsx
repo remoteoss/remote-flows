@@ -70,11 +70,7 @@ export function CostCalculator({ onSubmit }: Props) {
 
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
 
-  const [currencies, setCurrencies] = React.useState<any>(
-    companyCurrencies.data,
-  );
-
-  const [isLoadingSchema, setIsLoadingSchema] = useState(false);
+  const [currencies] = React.useState<any>(companyCurrencies.data);
 
   const optionsCountries = countries.map((country) => ({
     value: country.code,
@@ -96,7 +92,6 @@ export function CostCalculator({ onSubmit }: Props) {
   async function loadJsonForm(regionSlug: string) {
     try {
       setJsonForm(null);
-      setIsLoadingSchema(true);
 
       const res = await getShowRegionField({
         client: client as Client,
@@ -116,8 +111,6 @@ export function CostCalculator({ onSubmit }: Props) {
     } catch (e) {
       console.error(e);
       setJsonForm(null);
-    } finally {
-      setIsLoadingSchema(false);
     }
   }
 
