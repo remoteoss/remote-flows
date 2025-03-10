@@ -45,7 +45,6 @@ export function CostCalculator({ onSubmit }: Props) {
     validationSchema,
     handleJSONSchemaValidation,
   );
-  const [regionSlug, setRegionSlug] = useState<string | null>(null);
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
@@ -57,12 +56,13 @@ export function CostCalculator({ onSubmit }: Props) {
     mode: 'onBlur',
   });
   const selectedCountryForm = form.watch('country');
-  const selectedRegion = form.watch('region');
+  console.log({ region: form.watch('region') });
+  const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
   const { data: currencies = [] } = useCompanyCurrencies();
   const { data: countries = [] } = useCalculatorCountries();
   const { data: jsonSchemaRegionFields } =
-    useCalculatorLoadRegionFieldsSchemaForm(regionSlug);
+    useCalculatorLoadRegionFieldsSchemaForm(form.watch('region') || regionSlug);
   const mutation = useCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
@@ -96,12 +96,6 @@ export function CostCalculator({ onSubmit }: Props) {
       }
     }
   }, [selectedCountry, countries]);
-
-  useEffect(() => {
-    if (selectedRegion) {
-      setRegionSlug(selectedRegion);
-    }
-  }, [selectedRegion]);
 
   const handleSubmit = (values: FormValues) => {
     const regionSlug = values.region
