@@ -15,9 +15,9 @@ import type {
 } from '../client';
 import { useForm } from 'react-hook-form';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
-import { Form } from '../components/form';
+import { Form } from '../components/ui/form';
 
-import { Button } from '../components/button';
+import { Button } from '../components/ui/button';
 import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
