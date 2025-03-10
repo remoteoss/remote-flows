@@ -165,7 +165,6 @@ export function CostCalculator({ onSubmit }: Props) {
 
   useEffect(() => {
     if (selectedCountry) {
-      console.log({ selectedCountry });
       if (
         selectedCountry?.childRegions.length === 0 &&
         selectedCountry.hasAdditionalFields
