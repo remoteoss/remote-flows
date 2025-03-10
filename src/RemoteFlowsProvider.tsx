@@ -39,8 +39,6 @@ export function RemoteFlows({
     }),
   );
 
-  console.log({ remoteApiClient: remoteApiClient.current.getConfig() });
-
   return (
     <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
       {children}

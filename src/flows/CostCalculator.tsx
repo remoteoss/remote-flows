@@ -19,7 +19,7 @@ import { Form } from '../components/form';
 
 import { Button } from '../components/button';
 import { Client } from '@hey-api/client-fetch';
-import { JSONSchemaFormFields } from '../components/json-schema-form';
+import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { companyCurrencies } from '@/src/flows/companyCurrencies';
