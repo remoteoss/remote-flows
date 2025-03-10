@@ -51,7 +51,6 @@
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@remoteoss/json-schema-form": "0.11.10-beta.0",
-    "@remoteoss/remote-flows": "file:../remote-flows",
     "@tailwindcss/cli": "^4.0.9",
     "@tailwindcss/postcss": "^4.0.9",
     "@tanstack/react-query": "^5.67.2",
