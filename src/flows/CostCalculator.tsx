@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { object, string } from 'yup';
 import type { InferType } from 'yup';
 import { useClient } from '../RemoteFlowsProvider';
@@ -11,7 +11,6 @@ import {
 import type {
   CostCalculatorEstimateResponse,
   EmploymentTermType,
-  MinimalRegion,
 } from '../client';
 import { useForm } from 'react-hook-form';
 import {
@@ -53,6 +52,27 @@ const useCalculatorCountries = () => {
   });
 };
 
+const useCalculatorLoadRegionFieldsSchemaForm = (regionSlug: string | null) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['cost-calculator-region-fields', regionSlug],
+    queryFn: () => {
+      return getShowRegionField({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { slug: regionSlug as string },
+      });
+    },
+    enabled: !!client && !!regionSlug,
+    select: (data) =>
+      createHeadlessForm(data?.data?.data?.schema || {}, {
+        strictInputType: false,
+      }),
+  });
+};
+
 const useCompanyCurrencies = () => {
   const { client } = useClient();
 
@@ -67,7 +87,11 @@ const useCompanyCurrencies = () => {
       });
     },
     enabled: !!client,
-    select: (data) => data.data?.data?.company_currencies,
+    select: (data) =>
+      data.data?.data?.company_currencies.map((currency) => ({
+        value: currency.slug,
+        label: currency.code,
+      })),
   });
 };
 
@@ -94,7 +118,7 @@ export function CostCalculator({ onSubmit }: Props) {
     validationSchema,
     handleJSONSchemaValidation,
   );
-  const [jsonForm, setJsonForm] = useState<any>();
+  const [regionSlug, setRegionSlug] = useState<string | null>(null);
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
@@ -108,64 +132,38 @@ export function CostCalculator({ onSubmit }: Props) {
   const selectedCountry = form.watch('country');
   const selectedRegion = form.watch('region');
 
-  const [regions, setRegions] = useState<MinimalRegion[]>([]);
   const { data: currencies = [] } = useCompanyCurrencies();
   const { data: countries = [] } = useCalculatorCountries();
+  const { data: jsonSchemaForm } =
+    useCalculatorLoadRegionFieldsSchemaForm(regionSlug);
 
-  const optionsRegions = regions.map((region) => ({
-    value: region.slug,
-    label: region.name,
-  }));
-
-  const currenciesOptions = currencies.map(
-    (currency: { code: string; slug: string }) => ({
-      value: currency.slug,
-      label: currency.code,
-    }),
-  );
-
-  async function loadJsonForm(regionSlug: string) {
-    try {
-      setJsonForm(null);
-
-      const res = await getShowRegionField({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { slug: regionSlug },
-      });
-
-      const jsonSchemaForm = createHeadlessForm(res?.data?.data?.schema || {}, {
-        strictInputType: false,
-      });
-
-      handleJSONSchemaValidation.current = jsonSchemaForm.handleValidation;
-
-      setJsonForm(jsonSchemaForm);
-    } catch (e) {
-      console.error(e);
-      setJsonForm(null);
+  const regions = useMemo(() => {
+    if (selectedCountry) {
+      const country = countries?.find((c) => c.value === selectedCountry);
+      return (
+        country?.childRegions.map((region) => ({
+          value: region.slug,
+          label: region.name,
+        })) ?? []
+      );
     }
-  }
+    return [];
+  }, [selectedCountry, countries]);
 
   useEffect(() => {
     if (selectedCountry) {
       const country = countries?.find((c) => c.value === selectedCountry);
-      if (country?.childRegions.length !== 0) {
-        setRegions(country ? country.childRegions : []);
-      }
 
       if (country?.childRegions.length === 0 && country.hasAdditionalFields) {
         // test this with italy
-        loadJsonForm(country.regionSlug);
+        setRegionSlug(country.regionSlug);
       }
     }
   }, [selectedCountry, countries]);
 
   useEffect(() => {
     if (selectedRegion) {
-      loadJsonForm(selectedRegion);
+      setRegionSlug(selectedRegion);
     }
   }, [selectedRegion]);
 
@@ -218,23 +216,17 @@ export function CostCalculator({ onSubmit }: Props) {
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <SelectField name="country" label="Country" options={countries} />
 
-          {optionsRegions.length > 0 && (
-            <SelectField
-              name="region"
-              label="Region"
-              options={optionsRegions}
-            />
+          {regions.length > 0 && (
+            <SelectField name="region" label="Region" options={regions} />
           )}
 
-          <SelectField
-            name="currency"
-            label="Currency"
-            options={currenciesOptions}
-          />
+          <SelectField name="currency" label="Currency" options={currencies} />
 
           <TextField name="salary" label="Salary" type="number" />
 
-          {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
+          {jsonSchemaForm && (
+            <JSONSchemaFormFields fields={jsonSchemaForm.fields} />
+          )}
 
           <Button
             type="submit"
