@@ -124,7 +124,7 @@ type FormValues = InferType<typeof validationSchema> & {
 };
 
 type Props = {
-  onSubmit: (data: CostCalculatorEstimateResponse | undefined) => void;
+  onSubmit: (data: CostCalculatorEstimateResponse) => void;
 };
 
 export function CostCalculator({ onSubmit }: Props) {
@@ -223,7 +223,9 @@ export function CostCalculator({ onSubmit }: Props) {
 
     mutation.mutate(payload, {
       onSuccess: (data) => {
-        onSubmit(data.data);
+        if (data?.data) {
+          onSubmit(data.data);
+        }
       },
       onError: (error) => {
         console.error(error);
