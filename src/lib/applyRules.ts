@@ -1,4 +1,4 @@
-import { ThemeProviderProps } from '../types';
+import { ThemeProviderProps } from '@/src/types/theme';
 
 export function applyCssRules(rules: ThemeProviderProps['rules']) {
   if (!rules) return;
