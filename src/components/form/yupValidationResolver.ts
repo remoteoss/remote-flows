@@ -8,7 +8,7 @@ const useValidationYupResolver = <T extends AnyObjectSchema>(
 ) => {
   return useCallback(
     async (data: FieldValues) => {
-      await validationSchema.validate(data, {
+      return await validationSchema.validate(data, {
         abortEarly: false,
       });
     },

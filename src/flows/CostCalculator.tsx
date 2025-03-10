@@ -3,6 +3,7 @@ import { object, string } from 'yup';
 import type { InferType } from 'yup';
 import { useClient } from '../RemoteFlowsProvider';
 import {
+  getIndexCompanyCurrency,
   getIndexCountry,
   getShowRegionField,
   postCreateEstimation,
@@ -70,7 +71,7 @@ export function CostCalculator({ onSubmit }: Props) {
 
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
 
-  const [currencies] = React.useState<any>(companyCurrencies.data);
+  const [currencies, setCurrencies] = React.useState<any>([]);
 
   const optionsCountries = countries.map((country) => ({
     value: country.code,
@@ -156,27 +157,24 @@ export function CostCalculator({ onSubmit }: Props) {
     }
   }, [client]);
 
-  /*  useEffect(() => {
-    if (client && companyId) {
-      getShowCompany({
+  useEffect(() => {
+    if (client) {
+      getIndexCompanyCurrency({
         client: client,
         headers: {
           Authorization: ``,
         },
-        path: {
-          company_id: companyId,
-        },
       })
         .then((res) => {
-          if (res.data?.data.company.supported_currencies) {
-            setCurrencies(res.data?.data.company.supported_currencies);
+          if (res.data?.data) {
+            setCurrencies(res.data?.data.company_currencies);
           }
         })
         .catch((err) => {
           console.error(err);
         });
     }
-  }, [companyId]); */
+  }, []);
 
   const findSlugInCountry = (countryCode: string) => {
     const country = countries.find((c) => c.code === countryCode);
