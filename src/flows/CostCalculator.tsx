@@ -27,6 +27,32 @@ import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useQuery } from '@tanstack/react-query';
+
+const useCalculatorCountries = () => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['cost-calculator-countries'],
+    queryFn: () => {
+      return getIndexCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+    },
+    enabled: !!client,
+    select: (data) =>
+      data.data?.data.map((country) => ({
+        value: country.code,
+        label: country.name,
+        childRegions: country.child_regions,
+        hasAdditionalFields: country.has_additional_fields,
+        regionSlug: country.region_slug,
+      })),
+  });
+};
 
 const validationSchema = object({
   country: string().required('Country is required'),
@@ -64,18 +90,11 @@ export function CostCalculator({ onSubmit }: Props) {
   });
   const selectedCountry = form.watch('country');
   const selectedRegion = form.watch('region');
-  const [countries, setCountries] = React.useState<
-    GetIndexCountryResponse['data']
-  >([]);
 
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
 
   const [currencies, setCurrencies] = React.useState<any>([]);
-
-  const optionsCountries = countries.map((country) => ({
-    value: country.code,
-    label: country.name,
-  }));
+  const { data: countries = [] } = useCalculatorCountries();
 
   const optionsRegions = regions.map((region) => ({
     value: region.slug,
@@ -116,17 +135,14 @@ export function CostCalculator({ onSubmit }: Props) {
 
   useEffect(() => {
     if (selectedCountry) {
-      const country = countries.find((c) => c.code === selectedCountry);
-      if (country?.child_regions.length !== 0) {
-        setRegions(country ? country.child_regions : []);
+      const country = countries?.find((c) => c.value === selectedCountry);
+      if (country?.childRegions.length !== 0) {
+        setRegions(country ? country.childRegions : []);
       }
 
-      if (
-        country?.child_regions.length === 0 &&
-        country.has_additional_fields
-      ) {
+      if (country?.childRegions.length === 0 && country.hasAdditionalFields) {
         // test this with italy
-        loadJsonForm(country.region_slug);
+        loadJsonForm(country.regionSlug);
       }
     }
   }, [selectedCountry, countries]);
@@ -136,25 +152,6 @@ export function CostCalculator({ onSubmit }: Props) {
       loadJsonForm(selectedRegion);
     }
   }, [selectedRegion]);
-
-  useEffect(() => {
-    if (client) {
-      getIndexCountry({
-        client: client,
-        headers: {
-          Authorization: ``,
-        },
-      })
-        .then((res) => {
-          if (res.data?.data) {
-            setCountries(res.data?.data);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, [client]);
 
   useEffect(() => {
     if (client) {
@@ -176,8 +173,8 @@ export function CostCalculator({ onSubmit }: Props) {
   }, []);
 
   const findSlugInCountry = (countryCode: string) => {
-    const country = countries.find((c) => c.code === countryCode);
-    return country?.region_slug;
+    const country = countries?.find((c) => c.value === countryCode);
+    return country?.regionSlug;
   };
 
   const handleSubmit = (values: FormValues) => {
@@ -222,11 +219,7 @@ export function CostCalculator({ onSubmit }: Props) {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <SelectField
-            name="country"
-            label="Country"
-            options={optionsCountries}
-          />
+          <SelectField name="country" label="Country" options={countries} />
 
           {optionsRegions.length > 0 && (
             <SelectField
