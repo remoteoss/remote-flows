@@ -60,6 +60,9 @@ import type {
   GetGetIdentityVerificationDataIdentityVerificationData,
   GetGetIdentityVerificationDataIdentityVerificationResponse,
   GetGetIdentityVerificationDataIdentityVerificationError,
+  PostBypassEligibilityChecksCompanyData,
+  PostBypassEligibilityChecksCompanyResponse,
+  PostBypassEligibilityChecksCompanyError,
   GetIndexHolidayData,
   GetIndexHolidayResponse,
   GetIndexHolidayError,
@@ -284,6 +287,9 @@ import type {
   PostCreateEmploymentCustomFieldData,
   PostCreateEmploymentCustomFieldResponse,
   PostCreateEmploymentCustomFieldError,
+  GetIndexCompanyCurrencyData,
+  GetIndexCompanyCurrencyResponse,
+  GetIndexCompanyCurrencyError,
   PatchUpdateEmployment4Data,
   PatchUpdateEmployment4Response,
   PatchUpdateEmployment4Error,
@@ -922,6 +928,34 @@ export const getGetIdentityVerificationDataIdentityVerification = <
       },
     ],
     url: '/v1/identity-verification/{employment_id}',
+    ...options,
+  });
+};
+
+/**
+ * Pass KYB
+ * Pass KYB and credit risk for a company without the intervention of a Remote admin.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postBypassEligibilityChecksCompany = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostBypassEligibilityChecksCompanyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostBypassEligibilityChecksCompanyResponse,
+    PostBypassEligibilityChecksCompanyError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
     ...options,
   });
 };
@@ -3100,6 +3134,29 @@ export const postCreateEmploymentCustomField = <
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+/**
+ * List company supported currencies
+ * List company supported currencies
+ */
+export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexCompanyCurrencyData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexCompanyCurrencyResponse,
+    GetIndexCompanyCurrencyError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/company-currencies',
+    ...options,
   });
 };
 
