@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useMemo } from 'react';
 import { applyTheme } from '@/src/lib/applyTheme';
 import { applyCssRules } from '@/src/lib/applyRules';
-import { ThemeProviderProps } from './types';
+import { ThemeProviderProps } from './types/theme';
 
 const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({
   theme: {},

@@ -1,60 +1,62 @@
-import { PropsWithChildren } from 'react';
+export interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+  slug: string;
+}
 
-// auth types
-type AuthResponse = {
-  access_token: string;
-  expires_in: number;
-};
+export interface Country {
+  code: string;
+  name: string;
+  slug: string;
+  alpha_2_code: string;
+  currency?: Currency;
+}
 
-export type RemoteFlowsSDKProps = {
-  auth: () => Promise<AuthResponse>;
-};
+export interface Region {
+  code: string;
+  name: string;
+  status: string;
+  country: Country;
+  slug: string;
+  child_regions: any[];
+  parent_region: null;
+}
 
-// theme type
-export type ThemeProviderProps = PropsWithChildren<{
-  theme?: Partial<{
-    colors: ThemeColors;
-    spacing: string;
-    borderRadius: string;
-    font: ThemeFont;
-  }>;
-  rules?: Rules;
-}>;
+export interface CostItem {
+  name: string;
+  description: string;
+  amount: number;
+  zendesk_article_url: string | null;
+}
 
-export type Rules = {};
+export interface CurrencyCosts {
+  currency: Currency;
+  annual_gross_salary: number;
+  annual_benefits_breakdown: CostItem[];
+  annual_benefits_total: number;
+  annual_contributions_breakdown: CostItem[];
+  annual_contributions_total: number;
+  annual_total: number;
+  extra_statutory_payments_breakdown: any[];
+  extra_statutory_payments_total: number;
+  monthly_benefits_breakdown: CostItem[];
+  monthly_benefits_total: number;
+  monthly_contributions_breakdown: CostItem[];
+  monthly_contributions_total: number;
+  monthly_gross_salary: number;
+  monthly_tce: number;
+  monthly_total: number;
+}
 
-export type ThemeColors = Partial<{
-  focus: string;
-  borderInput: string;
-  primaryBackground: string;
-  primaryForeground: string;
-  accentBackground: string;
-  accentForeground: string;
-  danger: string;
-  /**
-   * Used for the background of select options popover
-   */
-  popoverPrimaryBackground: string;
-  popoverPrimaryForeground: string;
-  textBase: string;
-}>;
+export interface Employment {
+  country: Country;
+  region: Region;
+  employer_currency_costs: CurrencyCosts;
+  has_extra_statutory_payment: boolean;
+  regional_currency_costs: CurrencyCosts;
+}
 
-export type CssThemeColors = {
-  [K in keyof ThemeColors as `--${K}`]: string;
-};
-
-export type ThemeFont = {
-  fontSizeBase: string;
-};
-
-export type CssThemeFont = {
-  '--fontSizeBase': string;
-};
-
-export type CssThemeSpacing = {
-  '--spacing': string;
-};
-
-export type CssThemeBorder = {
-  '--radius': string;
-};
+export interface EmploymentData {
+  employments: Employment[];
+}
