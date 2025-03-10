@@ -129,7 +129,7 @@ export function CostCalculator({ onSubmit }: Props) {
     },
     mode: 'onBlur',
   });
-  const selectedCountry = form.watch('country');
+  const selectedCountryForm = form.watch('country');
   const selectedRegion = form.watch('region');
 
   const { data: currencies = [] } = useCompanyCurrencies();
@@ -137,11 +137,24 @@ export function CostCalculator({ onSubmit }: Props) {
   const { data: jsonSchemaForm } =
     useCalculatorLoadRegionFieldsSchemaForm(regionSlug);
 
+  const selectedCountry = useMemo(() => {
+    if (!selectedCountryForm) {
+      return null;
+    }
+
+    const country = countries?.find((c) => c.value === selectedCountryForm);
+
+    if (!country) {
+      return null;
+    }
+
+    return country;
+  }, [selectedCountryForm]);
+
   const regions = useMemo(() => {
     if (selectedCountry) {
-      const country = countries?.find((c) => c.value === selectedCountry);
       return (
-        country?.childRegions.map((region) => ({
+        selectedCountry?.childRegions.map((region) => ({
           value: region.slug,
           label: region.name,
         })) ?? []
@@ -152,11 +165,13 @@ export function CostCalculator({ onSubmit }: Props) {
 
   useEffect(() => {
     if (selectedCountry) {
-      const country = countries?.find((c) => c.value === selectedCountry);
-
-      if (country?.childRegions.length === 0 && country.hasAdditionalFields) {
+      console.log({ selectedCountry });
+      if (
+        selectedCountry?.childRegions.length === 0 &&
+        selectedCountry.hasAdditionalFields
+      ) {
         // test this with italy
-        setRegionSlug(country.regionSlug);
+        setRegionSlug(selectedCountry.regionSlug);
       }
     }
   }, [selectedCountry, countries]);
@@ -167,15 +182,10 @@ export function CostCalculator({ onSubmit }: Props) {
     }
   }, [selectedRegion]);
 
-  const findSlugInCountry = (countryCode: string) => {
-    const country = countries?.find((c) => c.value === countryCode);
-    return country?.regionSlug;
-  };
-
   const handleSubmit = (values: FormValues) => {
     const regionSlug = values.region
       ? values.region
-      : findSlugInCountry(values.country);
+      : selectedCountry?.regionSlug;
 
     const payload = {
       employer_currency_slug: values.currency as string,
