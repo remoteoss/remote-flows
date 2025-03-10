@@ -48,7 +48,7 @@ export function CostCalculator() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '0 auto' }}>
+    <div style={{ maxWidth: 400, margin: '20px auto' }}>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -93,7 +93,7 @@ export function CostCalculator() {
               },
             ]}
           />
-          <Button type="submit" className="w-full my-4" variant={'secondary'}>
+          <Button type="submit" className="w-full my-4">
             Submit
           </Button>
         </form>

@@ -2,9 +2,9 @@ import React, { createContext, useContext, useRef } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Client, createClient } from '@hey-api/client-fetch';
 
-import { RemoteFlowsSDKProps } from './types';
 import { client } from './client/client.gen';
 import { BaseTokenResponse } from './client';
+import { RemoteFlowsSDKProps } from './types/remoteFlows';
 
 const RemoteFlowContext = createContext<{ client: Client | null }>({
   client: null,

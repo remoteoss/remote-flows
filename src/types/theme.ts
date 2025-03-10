@@ -1,16 +1,5 @@
 import { PropsWithChildren } from 'react';
 
-// auth types
-type AuthResponse = {
-  access_token: string;
-  expires_in: number;
-};
-
-export type RemoteFlowsSDKProps = {
-  auth: () => Promise<AuthResponse>;
-};
-
-// theme type
 export type ThemeProviderProps = PropsWithChildren<{
   theme?: Partial<{
     colors: ThemeColors;
@@ -24,13 +13,19 @@ export type ThemeProviderProps = PropsWithChildren<{
 export type Rules = {};
 
 export type ThemeColors = Partial<{
+  focus: string;
   borderInput: string;
   primaryBackground: string;
   primaryForeground: string;
   accentBackground: string;
   accentForeground: string;
-  dangerBackground: string;
-  dangerForeground: string;
+  danger: string;
+  /**
+   * Used for the background of select options popover
+   */
+  popoverPrimaryBackground: string;
+  popoverPrimaryForeground: string;
+  textBase: string;
 }>;
 
 export type CssThemeColors = {

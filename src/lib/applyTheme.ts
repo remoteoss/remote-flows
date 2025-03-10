@@ -6,7 +6,7 @@ import {
   ThemeColors,
   ThemeFont,
   ThemeProviderProps,
-} from '../types';
+} from '@/src/types/theme';
 
 function setCssProperties(variables: Record<string, string>) {
   const root = document.documentElement;
