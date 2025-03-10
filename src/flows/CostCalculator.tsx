@@ -26,7 +26,6 @@ import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
-import { companyCurrencies } from '@/src/flows/companyCurrencies';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 
 const validationSchema = object({
