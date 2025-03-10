@@ -9,6 +9,7 @@ import {
   postCreateEstimation,
 } from '../client/sdk.gen';
 import type {
+  CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
   EmploymentTermType,
 } from '../client';
@@ -25,7 +26,7 @@ import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const useCalculatorCountries = () => {
   const { client } = useClient();
@@ -95,6 +96,22 @@ const useCompanyCurrencies = () => {
   });
 };
 
+const useCalculatorEstimation = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: (payload: CostCalculatorEstimateParams) => {
+      return postCreateEstimation({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
+};
+
 const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
@@ -111,7 +128,6 @@ type Props = {
 };
 
 export function CostCalculator({ onSubmit }: Props) {
-  const { client } = useClient();
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
@@ -136,6 +152,7 @@ export function CostCalculator({ onSubmit }: Props) {
   const { data: countries = [] } = useCalculatorCountries();
   const { data: jsonSchemaForm } =
     useCalculatorLoadRegionFieldsSchemaForm(regionSlug);
+  const mutation = useCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
     if (!selectedCountryForm) {
@@ -204,19 +221,14 @@ export function CostCalculator({ onSubmit }: Props) {
       ],
     };
 
-    postCreateEstimation({
-      client: client as Client,
-      headers: {
-        Authorization: ``,
+    mutation.mutate(payload, {
+      onSuccess: (data) => {
+        onSubmit(data.data);
       },
-      body: payload,
-    })
-      .then((res) => {
-        onSubmit(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (
