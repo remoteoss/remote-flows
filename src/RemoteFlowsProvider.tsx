@@ -43,8 +43,10 @@ export function RemoteFlows({
   );
 
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </RemoteFlowContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+        {children}
+      </RemoteFlowContext.Provider>
+    </QueryClientProvider>
   );
 }
