@@ -56,10 +56,7 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
         yupErrors = iterateErrors(error as ValidationError);
       }
 
-      console.log({ yupValues });
-
       const dynamicValues = await JSONSchemaValidation.current?.(data);
-      console.log({ dynamicValues });
       let jsonErrors = {};
       let hasJsonErrors = false;
 
@@ -91,14 +88,11 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
 
       // Return based on validation results
       if (hasYupErrors || hasJsonErrors) {
-        console.log('returning errors', combinedErrors);
         return {
           values: {},
           errors: combinedErrors,
         };
       }
-
-      console.log('success', yupValues);
 
       // Both validations passed
       return {

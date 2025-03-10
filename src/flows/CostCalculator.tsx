@@ -182,7 +182,6 @@ export function CostCalculator({ onSubmit }: Props) {
   };
 
   const handleSubmit = (values: FormValues) => {
-    console.log({ values });
     const regionSlug = values.region
       ? values.region
       : findSlugInCountry(values.country);
