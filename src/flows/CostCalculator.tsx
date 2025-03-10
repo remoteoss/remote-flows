@@ -196,8 +196,8 @@ export function CostCalculator({ onSubmit }: Props) {
 
     const payload = {
       employer_currency_slug: values.currency as string,
-      include_benefits: false,
-      include_cost_breakdowns: false,
+      include_benefits: true,
+      include_cost_breakdowns: true,
       employments: [
         {
           region_slug: regionSlug as string,

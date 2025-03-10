@@ -47,7 +47,6 @@ export const useYupValidationResolver = <T extends AnyObjectSchema>(
       }
 
       const dynamicValues = await JSONSchemaValidation.current?.(data);
-      console.log({ dynamicValues });
       let jsonErrors = {};
       let hasJsonErrors = false;
 
