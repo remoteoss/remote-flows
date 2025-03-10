@@ -558,6 +558,15 @@ export type UnifiedEmploymentsBenefitOffersJsonSchemaResponse = {
 };
 
 /**
+ * Company currencies
+ */
+export type CompanyCurrenciesResponse = {
+  data?: {
+    company_currencies: Array<CompanyCurrency>;
+  };
+};
+
+/**
  * A supported file
  */
 export type DownloadFileResponse = {
@@ -1427,6 +1436,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.start_date.changed'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
+    | 'employment.user_status.initiated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -1732,6 +1742,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.start_date.changed'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
+    | 'employment.user_status.initiated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -2299,6 +2310,7 @@ export type MinimalEmployment = {
    * Unique ID of related department, if any. Otherwise, null.
    */
   department_id?: string | null;
+  employment_lifecycle_stage: EmploymentLifecycleStage;
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
@@ -3335,11 +3347,76 @@ export type CreateSsoConfigurationParams = {
  */
 export type MagicLinkParams =
   | {
-      employment_id: UuidSlug;
-      user_id?: UuidSlug;
+      /**
+       * The path to which the user will be redirected to after login. This field has a max length of 255 characters.
+       *
+       * If not specified, `/dashboard` will be used by default.
+       *
+       * Must begin with a forward slash (`/`) and, at least one path segment is required  (`/dashboard` e.g.).
+       * An ending forward slash (`/`) is not allowed and path segments can only include alphanumeric characters, underscore (`_`) and hyphen (`-`).
+       *
+       * An optional query string can be specified too. If present, the query string must start with a question mark (`?`)
+       * and must include at least one key value pair. Both, keys and values, can only include
+       * alphanumeric characters, underscore (`_`), hyphen (`-`) or percent encoded values such as `%20` (space character).
+       * Additional key value pairs are allowed using ampersand (`&`).
+       *
+       * Query keys require at least one alphanumeric, underscore (`_`), hyphen (`-`) or valid percent encoded.
+       * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
+       *
+       * Some **Valid** examples for `path`:
+       * - o `/dashboard`
+       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=exclude_linked_drafts&filters%5B0%5D%5Bvalue%5D=true`
+       * - o `/dashboard?key=value&foo=bar`
+       *
+       * Some **Invalid** examples for `path`:
+       * - x `missing_forward_slash`
+       * - x `/invalid//path`
+       * - x `//some`
+       * - x `/?key=value`
+       * - x `/some/i.n:valid*`
+       * - x `/invalid/end/slash/`
+       * - x `/some?malformed_percent_encoded_key%1=value`
+       *
+       */
+      path?: string;
+      user_id: UuidSlug;
     }
   | {
-      user_id?: UuidSlug;
+      employment_id: UuidSlug;
+      /**
+       * The path to which the user will be redirected to after login. This field has a max length of 255 characters.
+       *
+       * If not specified, `/dashboard` will be used by default.
+       *
+       * Must begin with a forward slash (`/`) and, at least one path segment is required  (`/dashboard` e.g.).
+       * An ending forward slash (`/`) is not allowed and path segments can only include alphanumeric characters, underscore (`_`) and hyphen (`-`).
+       *
+       * An optional query string can be specified too. If present, the query string must start with a question mark (`?`)
+       * and must include at least one key value pair. Both, keys and values, can only include
+       * alphanumeric characters, underscore (`_`), hyphen (`-`) or percent encoded values such as `%20` (space character).
+       * Additional key value pairs are allowed using ampersand (`&`).
+       *
+       * Query keys require at least one alphanumeric, underscore (`_`), hyphen (`-`) or valid percent encoded.
+       * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
+       *
+       * Some **Valid** examples for `path`:
+       * - o `/dashboard`
+       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=exclude_linked_drafts&filters%5B0%5D%5Bvalue%5D=true`
+       * - o `/dashboard?key=value&foo=bar`
+       *
+       * Some **Invalid** examples for `path`:
+       * - x `missing_forward_slash`
+       * - x `/invalid//path`
+       * - x `//some`
+       * - x `/?key=value`
+       * - x `/some/i.n:valid*`
+       * - x `/invalid/end/slash/`
+       * - x `/some?malformed_percent_encoded_key%1=value`
+       *
+       */
+      path?: string;
     };
 
 /**
@@ -3784,6 +3861,7 @@ export type WebhookCallback = {
     | 'employment.start_date.changed'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
+    | 'employment.user_status.initiated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -3895,6 +3973,14 @@ export type ListPayslipsResponse = {
  */
 export type SendBackTimesheetParams = {
   sent_back_reason: string;
+};
+
+/**
+ * Company currency
+ */
+export type CompanyCurrency = {
+  code: string;
+  slug: string;
 };
 
 export type UnauthorizedResponse = {
@@ -4616,6 +4702,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.start_date.changed'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
+    | 'employment.user_status.initiated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -5648,10 +5735,24 @@ export type GetIndexEmploymentData = {
     email?: string;
     /**
      * Filters the results by employments whose status matches the value.
-     * Also supports `incomplete` to get all employments that are not onboarded yet.
+     * Supports multiple values separated by commas.
+     * Also supports the value `incomplete` to get all employments that are not onboarded yet.
      *
      */
-    status?: string;
+    status?:
+      | 'active'
+      | 'created'
+      | 'created_awaiting_reserve'
+      | 'created_reserve_paid'
+      | 'initiated'
+      | 'invited'
+      | 'pending'
+      | 'pre_hire'
+      | 'review'
+      | 'job_title_review'
+      | 'archived'
+      | 'deleted'
+      | 'incomplete';
     /**
      * Filters the results by employments whose employment product type matches the value
      * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
@@ -6122,6 +6223,54 @@ export type GetGetIdentityVerificationDataIdentityVerificationResponses = {
 
 export type GetGetIdentityVerificationDataIdentityVerificationResponse =
   GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
+
+export type PostBypassEligibilityChecksCompanyData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks';
+};
+
+export type PostBypassEligibilityChecksCompanyErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostBypassEligibilityChecksCompanyError =
+  PostBypassEligibilityChecksCompanyErrors[keyof PostBypassEligibilityChecksCompanyErrors];
+
+export type PostBypassEligibilityChecksCompanyResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostBypassEligibilityChecksCompanyResponse =
+  PostBypassEligibilityChecksCompanyResponses[keyof PostBypassEligibilityChecksCompanyResponses];
 
 export type GetIndexHolidayData = {
   body?: never;
@@ -7939,6 +8088,10 @@ export type GetShowFormCountryData = {
      * FOR TESTING PURPOSES ONLY: Include scheduled benefit groups.
      */
     only_for_testing_include_scheduled_benefit_groups?: boolean;
+    /**
+     * TEMPORARY: Includes new EOR fields for Neo Canada.
+     */
+    include_neo_eor_fields?: boolean;
     /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
@@ -9944,6 +10097,33 @@ export type PostCreateEmploymentCustomFieldResponses = {
 
 export type PostCreateEmploymentCustomFieldResponse =
   PostCreateEmploymentCustomFieldResponses[keyof PostCreateEmploymentCustomFieldResponses];
+
+export type GetIndexCompanyCurrencyData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/company-currencies';
+};
+
+export type GetIndexCompanyCurrencyErrors = {
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetIndexCompanyCurrencyError =
+  GetIndexCompanyCurrencyErrors[keyof GetIndexCompanyCurrencyErrors];
+
+export type GetIndexCompanyCurrencyResponses = {
+  /**
+   * Success
+   */
+  200: CompanyCurrenciesResponse;
+};
+
+export type GetIndexCompanyCurrencyResponse =
+  GetIndexCompanyCurrencyResponses[keyof GetIndexCompanyCurrencyResponses];
 
 export type PatchUpdateEmployment4Data = {
   /**
