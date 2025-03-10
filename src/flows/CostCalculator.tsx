@@ -11,7 +11,6 @@ import {
 import type {
   CostCalculatorEstimateResponse,
   EmploymentTermType,
-  GetIndexCountryResponse,
   MinimalRegion,
 } from '../client';
 import { useForm } from 'react-hook-form';
@@ -54,6 +53,24 @@ const useCalculatorCountries = () => {
   });
 };
 
+const useCompanyCurrencies = () => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['company-currencies'],
+    queryFn: () => {
+      return getIndexCompanyCurrency({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+    },
+    enabled: !!client,
+    select: (data) => data.data?.data?.company_currencies,
+  });
+};
+
 const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
@@ -92,8 +109,7 @@ export function CostCalculator({ onSubmit }: Props) {
   const selectedRegion = form.watch('region');
 
   const [regions, setRegions] = useState<MinimalRegion[]>([]);
-
-  const [currencies, setCurrencies] = React.useState<any>([]);
+  const { data: currencies = [] } = useCompanyCurrencies();
   const { data: countries = [] } = useCalculatorCountries();
 
   const optionsRegions = regions.map((region) => ({
@@ -152,25 +168,6 @@ export function CostCalculator({ onSubmit }: Props) {
       loadJsonForm(selectedRegion);
     }
   }, [selectedRegion]);
-
-  useEffect(() => {
-    if (client) {
-      getIndexCompanyCurrency({
-        client: client,
-        headers: {
-          Authorization: ``,
-        },
-      })
-        .then((res) => {
-          if (res.data?.data) {
-            setCurrencies(res.data?.data.company_currencies);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, []);
 
   const findSlugInCountry = (countryCode: string) => {
     const country = countries?.find((c) => c.value === countryCode);
