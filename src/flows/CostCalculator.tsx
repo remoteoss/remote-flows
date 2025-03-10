@@ -1,122 +1,33 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { object, string } from 'yup';
+import { number, object, string } from 'yup';
 import type { InferType } from 'yup';
-import { useClient } from '../RemoteFlowsProvider';
-import {
-  getIndexCompanyCurrency,
-  getIndexCountry,
-  getShowRegionField,
-  postCreateEstimation,
-} from '../client/sdk.gen';
 import type {
-  CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
   EmploymentTermType,
 } from '../client';
 import { useForm } from 'react-hook-form';
-import {
-  createHeadlessForm,
-  HeadlessFormOutput,
-} from '@remoteoss/json-schema-form';
+import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { Form } from '../components/ui/form';
 
 import { Button } from '../components/ui/button';
-import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import { useMutation, useQuery } from '@tanstack/react-query';
-
-const useCalculatorCountries = () => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['cost-calculator-countries'],
-    queryFn: () => {
-      return getIndexCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-    },
-    enabled: !!client,
-    select: (data) =>
-      data.data?.data.map((country) => ({
-        value: country.code,
-        label: country.name,
-        childRegions: country.child_regions,
-        hasAdditionalFields: country.has_additional_fields,
-        regionSlug: country.region_slug,
-      })),
-  });
-};
-
-const useCalculatorLoadRegionFieldsSchemaForm = (regionSlug: string | null) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['cost-calculator-region-fields', regionSlug],
-    queryFn: () => {
-      return getShowRegionField({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { slug: regionSlug as string },
-      });
-    },
-    enabled: !!client && !!regionSlug,
-    select: (data) =>
-      createHeadlessForm(data?.data?.data?.schema || {}, {
-        strictInputType: false,
-      }),
-  });
-};
-
-const useCompanyCurrencies = () => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['company-currencies'],
-    queryFn: () => {
-      return getIndexCompanyCurrency({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-    },
-    enabled: !!client,
-    select: (data) =>
-      data.data?.data?.company_currencies.map((currency) => ({
-        value: currency.slug,
-        label: currency.code,
-      })),
-  });
-};
-
-const useCalculatorEstimation = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimation({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
+import {
+  useCalculatorCountries,
+  useCalculatorEstimation,
+  useCalculatorLoadRegionFieldsSchemaForm,
+  useCompanyCurrencies,
+} from '@/src/flows/hooks';
 
 const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
   region: string(),
-  salary: string().required('Salary is required'),
+  salary: number()
+    .typeError('Salary must be a number')
+    .required('Salary is required'),
 });
 
 type FormValues = InferType<typeof validationSchema> & {
@@ -150,7 +61,7 @@ export function CostCalculator({ onSubmit }: Props) {
 
   const { data: currencies = [] } = useCompanyCurrencies();
   const { data: countries = [] } = useCalculatorCountries();
-  const { data: jsonSchemaForm } =
+  const { data: jsonSchemaRegionFields } =
     useCalculatorLoadRegionFieldsSchemaForm(regionSlug);
   const mutation = useCalculatorEstimation();
 
@@ -168,17 +79,11 @@ export function CostCalculator({ onSubmit }: Props) {
     return country;
   }, [selectedCountryForm]);
 
-  const regions = useMemo(() => {
-    if (selectedCountry) {
-      return (
-        selectedCountry?.childRegions.map((region) => ({
-          value: region.slug,
-          label: region.name,
-        })) ?? []
-      );
-    }
-    return [];
-  }, [selectedCountry, countries]);
+  const regions =
+    selectedCountry?.childRegions.map((region) => ({
+      value: region.slug,
+      label: region.name,
+    })) ?? [];
 
   useEffect(() => {
     if (selectedCountry) {
@@ -210,8 +115,8 @@ export function CostCalculator({ onSubmit }: Props) {
       employments: [
         {
           region_slug: regionSlug as string,
-          annual_gross_salary: parseFloat(values.salary),
-          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
+          annual_gross_salary: values.salary,
+          annual_gross_salary_in_employer_currency: values.salary,
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: 'My first estimation',
@@ -247,8 +152,8 @@ export function CostCalculator({ onSubmit }: Props) {
 
           <TextField name="salary" label="Salary" type="number" />
 
-          {jsonSchemaForm && (
-            <JSONSchemaFormFields fields={jsonSchemaForm.fields} />
+          {jsonSchemaRegionFields && (
+            <JSONSchemaFormFields fields={jsonSchemaRegionFields.fields} />
           )}
 
           <Button
