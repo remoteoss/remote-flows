@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useRef } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Client, createClient } from '@hey-api/client-fetch';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { RemoteFlowsSDKProps } from './types';
 import { client } from './client/client.gen';
@@ -9,6 +10,8 @@ import { BaseTokenResponse } from './client';
 const RemoteFlowContext = createContext<{ client: Client | null }>({
   client: null,
 });
+
+const queryClient = new QueryClient();
 
 export const useClient = () => useContext(RemoteFlowContext);
 
@@ -40,8 +43,10 @@ export function RemoteFlows({
   );
 
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
-      {children}
-    </RemoteFlowContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+        {children}
+      </RemoteFlowContext.Provider>
+    </QueryClientProvider>
   );
 }
