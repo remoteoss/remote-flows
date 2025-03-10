@@ -9,7 +9,7 @@ import {
 import { formatCurrency } from '@/src/lib/utils';
 
 type VisualBreakDownProps = {
-  chartData: { name: string; value: number; color: string }[];
+  chartData: { name: string; value: number | undefined; color: string }[];
   currency: string;
 };
 
