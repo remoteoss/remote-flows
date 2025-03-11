@@ -1,6 +1,7 @@
 import React from 'react';
-import type { Fields } from '@remoteoss/json-schema-form';
-import { fieldsMapConfig } from '@/src/components/form/fields/fieldsMapping';
+import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { Fields } from '@remoteoss/json-schema-form';
+import { SupportedTypes } from '@/src/components/form/fields/types';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
@@ -16,7 +17,7 @@ export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
           return null; // Skip hidden or deprecated fields
         }
 
-        const FieldComponent = fieldsMapConfig[field.inputType as string];
+        const FieldComponent = fieldsMap[field.inputType as SupportedTypes];
 
         return FieldComponent ? (
           <FieldComponent key={field.name} {...field} />

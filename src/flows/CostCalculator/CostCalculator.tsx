@@ -2,88 +2,89 @@ import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import React, { useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import type { InferType } from 'yup';
-import { number, object, string } from 'yup';
+import { object, string } from 'yup';
+
 import type {
   CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
   EmploymentTermType,
-} from '../../client';
-import { Form } from '../../components/ui/form';
+} from '@/src/client';
+import { Form } from '@/src/components/ui/form';
 
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
+import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { Button } from '@/src/components/ui/button';
 import {
   useCalculatorLoadRegionFieldsSchemaForm,
   useCompanyCurrencies,
   useCostCalculatorCountries,
   useCostCalculatorEstimation,
 } from '@/src/flows/CostCalculator/hooks';
-import { JSONSchemaFormFields } from '../../components/form/JSONSchemaForm';
-import { Button } from '../../components/ui/button';
 
 const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
   region: string(),
-  salary: number()
+  salary: string()
     .typeError('Salary must be a number')
     .required('Salary is required'),
 });
 
 type FormValues = InferType<typeof validationSchema> & {
-  [key: string]: any;
+  contract_duration_type?: EmploymentTermType;
+  age?: number;
 };
 
 type Props = Partial<{
   /**
-   * Estimation params allows you customize the params send to /cost-calculator/estimation endpoint
-   * */
+   * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
+   */
   estimationParams: {
     /**
-     * Title of the estimation, default is 'My first estimation'
+     * Title of the estimation. Default is 'My first estimation'.
      */
     title?: string;
     /**
-     * Include benefits in the estimation, default is false
+     * Include benefits in the estimation. Default is false.
      */
     includeBenefits?: boolean;
     /**
-     * Include cost breakdowns in the estimation, default is false
+     * Include cost breakdowns in the estimation. Default is false.
      */
     includeCostBreakdowns?: boolean;
   };
   /**
-   * Default values for the form fields
+   * Default values for the form fields.
    */
   defaultValues: {
     /**
-     * Default value for the country field
+     * Default value for the country field.
      */
     country?: string;
     /**
-     * Default value for the currency field
+     * Default value for the currency field.
      */
     currency?: string;
     /**
-     * Default value for the region field
+     * Default value for the salary field.
      */
-    region?: string;
-    /**
-     * Default value for the salary field
-     */
-    salary?: number;
+    salary?: string;
   };
   /**
-   * Callback function to handle the form submit, when the submit button is clicked, we emit the payload sent back to you
+   * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
+   * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
   onSubmit: (data: CostCalculatorEstimateParams) => void;
   /**
-   * Callback function to handle the success when the estimation succeeds, we send you the CostCalculatorEstimateResponse
+   * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
+   * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
   onSuccess: (data: CostCalculatorEstimateResponse) => void;
   /**
-   * Callback function to handle the error when the estimation fails
+   * Callback function to handle the error when the estimation fails.
+   * @param error - The error object.
    */
   onError: (error: Error) => void;
 }>;
@@ -94,12 +95,15 @@ export function CostCalculator({
     includeBenefits: false,
     includeCostBreakdowns: false,
   },
-  defaultValues,
+  defaultValues = {
+    country: '',
+    currency: '',
+    salary: '',
+  },
   onSubmit,
   onError,
   onSuccess,
 }: Props) {
-  console.log({ defaultValues });
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
@@ -109,10 +113,10 @@ export function CostCalculator({
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
-      country: '',
-      currency: '',
+      country: defaultValues?.country,
+      currency: defaultValues?.currency,
       region: '',
-      salary: undefined,
+      salary: defaultValues?.salary,
     },
     mode: 'onBlur',
   });
@@ -137,7 +141,7 @@ export function CostCalculator({
     }
 
     return country;
-  }, [selectCountryField]);
+  }, [selectCountryField, countries]);
 
   const regions =
     selectedCountry?.childRegions.map((region) => ({
@@ -146,18 +150,20 @@ export function CostCalculator({
     })) ?? [];
 
   const handleSubmit = (values: FormValues) => {
-    console.log({ contract_type: values.contract_duration_type });
     const regionSlug = values.region || selectedCountry?.regionSlug;
+    const currencySlug = currencies.find(
+      (currency) => currency.value === values.currency,
+    )?.slug;
 
     const payload = {
-      employer_currency_slug: values.currency as string,
+      employer_currency_slug: currencySlug as string,
       include_benefits: estimationParams.includeBenefits,
       include_cost_breakdowns: estimationParams.includeCostBreakdowns,
       employments: [
         {
           region_slug: regionSlug as string,
-          annual_gross_salary: values.salary,
-          annual_gross_salary_in_employer_currency: values.salary,
+          annual_gross_salary: parseFloat(values.salary),
+          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: estimationParams.title,

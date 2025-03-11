@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
   FormDescription,
@@ -9,6 +7,8 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
+import * as React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 type RadioGroupFieldProps = {
   name: string;
@@ -25,6 +25,7 @@ export function RadioGroupField({
   label,
   options,
 }: RadioGroupFieldProps) {
+  console.log(options);
   const { control } = useFormContext();
   return (
     <FormField
@@ -41,11 +42,13 @@ export function RadioGroupField({
               className="flex flex-col space-y-1"
             >
               {options.map((option) => (
-                <FormItem className="flex items-center space-x-3 space-y-0">
+                <FormItem className="flex items-center space-x-3 space-y-0 gap-0">
                   <FormControl>
                     <RadioGroupItem value={option.value} />
                   </FormControl>
-                  <FormLabel className="font-normal">{option.label}</FormLabel>
+                  <FormLabel className="font-normal mb-0">
+                    {option.label}
+                  </FormLabel>
                 </FormItem>
               ))}
             </RadioGroup>
