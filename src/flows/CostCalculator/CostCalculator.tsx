@@ -32,7 +32,8 @@ const validationSchema = object({
 });
 
 type FormValues = InferType<typeof validationSchema> & {
-  [key: string]: any;
+  contract_duration_type?: EmploymentTermType;
+  age?: number;
 };
 
 type Props = Partial<{
@@ -136,7 +137,7 @@ export function CostCalculator({
     }
 
     return country;
-  }, [selectCountryField]);
+  }, [selectCountryField, countries]);
 
   const regions =
     selectedCountry?.childRegions.map((region) => ({
@@ -155,7 +156,6 @@ export function CostCalculator({
   }, [selectedCountry, countries]);
 
   const handleSubmit = (values: FormValues) => {
-    console.log({ contract_type: values.contract_duration_type });
     const regionSlug = values.region || selectedCountry?.regionSlug;
     const currencySlug = currencies.find(
       (currency) => currency.value === values.currency,
