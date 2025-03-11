@@ -25,7 +25,6 @@ export function RadioGroupField({
   label,
   options,
 }: RadioGroupFieldProps) {
-  console.log(options);
   const { control } = useFormContext();
   return (
     <FormField
