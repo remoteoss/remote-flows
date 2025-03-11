@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { number, object, string } from 'yup';
+import { object, string } from 'yup';
 import type { InferType } from 'yup';
 import type {
   CostCalculatorEstimateParams,
@@ -26,7 +26,7 @@ const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
   region: string(),
-  salary: number()
+  salary: string()
     .typeError('Salary must be a number')
     .required('Salary is required'),
 });
@@ -72,7 +72,7 @@ type Props = Partial<{
     /**
      * Default value for the salary field
      */
-    salary?: number;
+    salary?: string;
   };
   /**
    * Callback function to handle the form submit, when the submit button is clicked, we emit the payload sent back to you
@@ -94,7 +94,12 @@ export function CostCalculator({
     includeBenefits: false,
     includeCostBreakdowns: false,
   },
-  defaultValues,
+  defaultValues = {
+    country: '',
+    currency: '',
+    region: '',
+    salary: '',
+  },
   onSubmit,
   onError,
   onSuccess,
@@ -109,10 +114,10 @@ export function CostCalculator({
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
-      country: '',
-      currency: '',
-      region: '',
-      salary: undefined,
+      country: defaultValues?.country,
+      currency: defaultValues?.currency,
+      region: defaultValues?.region,
+      salary: defaultValues?.salary,
     },
     mode: 'onBlur',
   });
@@ -158,16 +163,19 @@ export function CostCalculator({
   const handleSubmit = (values: FormValues) => {
     console.log({ contract_type: values.contract_duration_type });
     const regionSlug = values.region || selectedCountry?.regionSlug;
+    const currencySlug = currencies.find(
+      (currency) => currency.value === values.currency,
+    )?.slug;
 
     const payload = {
-      employer_currency_slug: values.currency as string,
+      employer_currency_slug: currencySlug as string,
       include_benefits: estimationParams.includeBenefits,
       include_cost_breakdowns: estimationParams.includeCostBreakdowns,
       employments: [
         {
           region_slug: regionSlug as string,
-          annual_gross_salary: values.salary,
-          annual_gross_salary_in_employer_currency: values.salary,
+          annual_gross_salary: parseFloat(values.salary),
+          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: estimationParams.title,

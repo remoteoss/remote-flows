@@ -74,8 +74,9 @@ export const useCompanyCurrencies = () => {
     enabled: !!client,
     select: (data) =>
       data.data?.data?.company_currencies.map((currency) => ({
-        value: currency.slug,
+        value: currency.code,
         label: currency.code,
+        slug: currency.slug,
       })),
   });
 };
