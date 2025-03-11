@@ -4,13 +4,13 @@ import type { InferType } from 'yup';
 import type {
   CostCalculatorEstimateResponse,
   EmploymentTermType,
-} from '../client';
+} from '../../client';
 import { useForm } from 'react-hook-form';
 import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
-import { Form } from '../components/ui/form';
+import { Form } from '../../components/ui/form';
 
-import { Button } from '../components/ui/button';
-import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
+import { Button } from '../../components/ui/button';
+import { JSONSchemaFormFields } from '../../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
@@ -19,7 +19,7 @@ import {
   useCalculatorEstimation,
   useCalculatorLoadRegionFieldsSchemaForm,
   useCompanyCurrencies,
-} from '@/src/flows/hooks';
+} from '@/src/flows/CostCalculator/hooks';
 
 const validationSchema = object({
   country: string().required('Country is required'),
