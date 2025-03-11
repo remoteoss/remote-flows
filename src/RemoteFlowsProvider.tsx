@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useRef } from 'react';
-import type { PropsWithChildren } from 'react';
 import { Client, createClient } from '@hey-api/client-fetch';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { PropsWithChildren } from 'react';
+import React, { createContext, useContext, useRef } from 'react';
 
-import { client } from './client/client.gen';
 import { BaseTokenResponse } from './client';
+import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
 
 const RemoteFlowContext = createContext<{ client: Client | null }>({
@@ -23,6 +23,7 @@ export function RemoteFlows({
   const remoteApiClient = useRef(
     createClient({
       ...client.getConfig(),
+      baseUrl: process.env.REMOTE_GATEWAY_URL,
       auth: async () => {
         function hasTokenExpired(expiresAt: number | undefined) {
           return !expiresAt || Date.now() + 60000 > expiresAt;
