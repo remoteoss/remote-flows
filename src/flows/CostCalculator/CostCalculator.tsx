@@ -58,20 +58,20 @@ type Props = Partial<{
   /**
    * Default values for the form fields.
    */
-  defaultValues: {
+  defaultValues: Partial<{
     /**
      * Default value for the country field.
      */
-    country?: string;
+    country: string;
     /**
      * Default value for the currency field.
      */
-    currency?: string;
+    currency: string;
     /**
      * Default value for the salary field.
      */
-    salary?: string;
-  };
+    salary: string;
+  }>;
   /**
    * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
