@@ -56,7 +56,6 @@ export function CostCalculator({ onSubmit }: Props) {
     mode: 'onBlur',
   });
   const selectedCountryForm = form.watch('country');
-  console.log({ region: form.watch('region') });
   const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
   const { data: currencies = [] } = useCompanyCurrencies();

@@ -23,7 +23,6 @@ export function RemoteFlows({
   const remoteApiClient = useRef(
     createClient({
       ...client.getConfig(),
-      baseUrl: 'http://localhost:5173/api',
       auth: async () => {
         function hasTokenExpired(expiresAt: number | undefined) {
           return !expiresAt || Date.now() + 60000 > expiresAt;
