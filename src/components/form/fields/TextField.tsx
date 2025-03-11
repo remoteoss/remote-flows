@@ -13,7 +13,7 @@ import { useFormContext } from 'react-hook-form';
 
 type TextFieldProps = React.ComponentProps<'input'> & {
   label: string;
-  description: string;
+  description?: string;
   name: string;
 };
 

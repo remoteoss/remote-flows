@@ -18,6 +18,7 @@
     "noEmit": true,
     "outDir": "dist",
     "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types"],
 
     "paths": {
       "@/*": ["./*"]
