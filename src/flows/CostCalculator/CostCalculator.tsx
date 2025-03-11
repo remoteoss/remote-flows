@@ -37,13 +37,13 @@ type FormValues = InferType<typeof validationSchema> & {
   age?: number;
 };
 
-type Props = Partial<{
+type CostCalculatorProps = Partial<{
   /**
    * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
    */
   estimationParams: Partial<{
     /**
-     * Title of the estimation. Default is 'My first estimation'.
+     * Title of the estimation. Default is 'Estimation'.
      */
     title: string;
     /**
@@ -91,7 +91,7 @@ type Props = Partial<{
 
 export function CostCalculator({
   estimationParams = {
-    title: 'My first estimation',
+    title: 'Estimation',
     includeBenefits: false,
     includeCostBreakdowns: false,
   },
@@ -103,7 +103,7 @@ export function CostCalculator({
   onSubmit,
   onError,
   onSuccess,
-}: Props) {
+}: CostCalculatorProps) {
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
