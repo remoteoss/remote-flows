@@ -1,28 +1,29 @@
 @import 'tailwindcss';
 
-@plugin 'tailwindcss-animate';
-
 :root {
   --background: oklch(1 0 0);
   --foreground: var(--primaryForeground, #4b5865);
-  --card: oklch(1 0 0);
+  --card: var(--primaryBackground, #ffffff);
   --card-foreground: var(--primaryForeground, #4b5865);
   --popover: var(--primaryBackground, #ffffff);
   --popover-foreground: var(--primaryForeground, #4b5865);
-  --primary: var(--primaryBackground, #0061ff);
-  --primary-foreground: var(--primaryForeground, #4b5865);
+  --primary: var(--primaryBackground, #ffffff);
+  --primary-foreground: var(--primaryForeground, #364452);
+  --badge: var(--primaryForeground, #364452);
+  --badge-foreground: var(--primaryBackground, #ffffff);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --accent: var(--accentBackground, #e3e9ef);
   --accent-foreground: var(--accentForeground, #0f1419);
-  --destructive: var(--dangerBackground, #d92020);
-  --destructive-foreground: var(--dangerForeground, #d92020);
-  --border: var(--borderInput, '#9aa6b2');
-  --input: var(--borderInput, '#9aa6b2');
+  --destructive: var(--danger, #d92020);
+  --destructive-foreground: var(--danger, #d92020);
+  --border: var(--borderInput, #9aa6b2);
+  --input: var(--borderInput, #9aa6b2);
   --ring: oklch(0.708 0 0);
   --radius: var(--borderRadius, 0.625rem);
   --focused: var(--borderRadius, #0061ff);
+  --fontBase: var(--fontSizeBase, 1rem);
 }
 
 @theme inline {
@@ -42,26 +43,24 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-base-color: var(--base);
   --color-ring: var(--ring);
   --color-focused: var(--focused);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-badge: var(--badge);
+  --color-badge-foreground: var(--badge-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 2px);
   --radius-xxl: calc(var(--radius) + 4px);
-  --text-xs: calc(var(--fontSizeBase) * 0.75);
-  --text-sm: calc(var(--fontSizeBase) * 0.875);
-  --text-base: var(--fontSizeBase, 1rem);
-  --text-xl: calc(var(--fontSizeBase) * 1.25);
-  --text-2xl: calc(var(--fontSizeBase) * 1.375);
+  --text-xs: calc(var(--fontBase) * 0.75);
+  --text-sm: calc(var(--fontBase) * 0.875);
+  --text-base: var(--fontBase, 1rem);
+  --text-ls: var(--fontBase, 1.125rem);
+  --text-xl: calc(var(--fontBase) * 1.25);
+  --text-2xl: calc(var(--fontBase) * 1.5);
 }
 
 @layer base {
