@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { number, object, string } from 'yup';
 import type { InferType } from 'yup';
 import type {
+  CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
   EmploymentTermType,
 } from '../../client';
@@ -35,10 +36,22 @@ type FormValues = InferType<typeof validationSchema> & {
 };
 
 type Props = {
-  onSubmit: (data: CostCalculatorEstimateResponse) => void;
+  title?: string;
+  includeBenefits?: boolean;
+  includeCostBreakdowns?: boolean;
+  onSubmit: (data: CostCalculatorEstimateParams) => void;
+  onSuccess: (data: CostCalculatorEstimateResponse) => void;
+  onError: (error: Error) => void;
 };
 
-export function CostCalculator({ onSubmit }: Props) {
+export function CostCalculator({
+  title = 'My first estimation',
+  includeBenefits = false,
+  includeCostBreakdowns = false,
+  onSubmit,
+  onError,
+  onSuccess,
+}: Props) {
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
@@ -103,8 +116,8 @@ export function CostCalculator({ onSubmit }: Props) {
 
     const payload = {
       employer_currency_slug: values.currency as string,
-      include_benefits: true,
-      include_cost_breakdowns: true,
+      include_benefits: includeBenefits,
+      include_cost_breakdowns: includeCostBreakdowns,
       employments: [
         {
           region_slug: regionSlug as string,
@@ -112,21 +125,23 @@ export function CostCalculator({ onSubmit }: Props) {
           annual_gross_salary_in_employer_currency: values.salary,
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
-          title: 'My first estimation',
+          title: title,
           regional_to_employer_exchange_rate: '1',
           age: (values.age as number) ?? undefined,
         },
       ],
     };
 
+    onSubmit(payload);
+
     mutation.mutate(payload, {
       onSuccess: (data) => {
         if (data?.data) {
-          onSubmit(data.data);
+          onSuccess(data.data);
         }
       },
       onError: (error) => {
-        console.error(error);
+        onError(error);
       },
     });
   };
