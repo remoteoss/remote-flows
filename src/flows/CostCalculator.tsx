@@ -1,38 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { object, string } from 'yup';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { number, object, string } from 'yup';
 import type { InferType } from 'yup';
-import { useClient } from '../RemoteFlowsProvider';
-import {
-  getIndexCompanyCurrency,
-  getIndexCountry,
-  getShowRegionField,
-  postCreateEstimation,
-} from '../client/sdk.gen';
 import type {
   CostCalculatorEstimateResponse,
   EmploymentTermType,
-  GetIndexCountryResponse,
-  MinimalRegion,
 } from '../client';
 import { useForm } from 'react-hook-form';
-import {
-  createHeadlessForm,
-  HeadlessFormOutput,
-} from '@remoteoss/json-schema-form';
+import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { Form } from '../components/ui/form';
 
 import { Button } from '../components/ui/button';
-import { Client } from '@hey-api/client-fetch';
 import { JSONSchemaFormFields } from '../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import {
+  useCalculatorCountries,
+  useCalculatorEstimation,
+  useCalculatorLoadRegionFieldsSchemaForm,
+  useCompanyCurrencies,
+} from '@/src/flows/hooks';
 
 const validationSchema = object({
   country: string().required('Country is required'),
   currency: string().required('Currency is required'),
   region: string(),
-  salary: string().required('Salary is required'),
+  salary: number()
+    .typeError('Salary must be a number')
+    .required('Salary is required'),
 });
 
 type FormValues = InferType<typeof validationSchema> & {
@@ -40,18 +35,16 @@ type FormValues = InferType<typeof validationSchema> & {
 };
 
 type Props = {
-  onSubmit: (data: CostCalculatorEstimateResponse | undefined) => void;
+  onSubmit: (data: CostCalculatorEstimateResponse) => void;
 };
 
 export function CostCalculator({ onSubmit }: Props) {
-  const { client } = useClient();
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
     validationSchema,
     handleJSONSchemaValidation,
   );
-  const [jsonForm, setJsonForm] = useState<any>();
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
@@ -62,128 +55,52 @@ export function CostCalculator({ onSubmit }: Props) {
     },
     mode: 'onBlur',
   });
-  const selectedCountry = form.watch('country');
-  const selectedRegion = form.watch('region');
-  const [countries, setCountries] = React.useState<
-    GetIndexCountryResponse['data']
-  >([]);
+  const selectedCountryForm = form.watch('country');
+  console.log({ region: form.watch('region') });
+  const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
-  const [regions, setRegions] = useState<MinimalRegion[]>([]);
+  const { data: currencies = [] } = useCompanyCurrencies();
+  const { data: countries = [] } = useCalculatorCountries();
+  const { data: jsonSchemaRegionFields } =
+    useCalculatorLoadRegionFieldsSchemaForm(form.watch('region') || regionSlug);
+  const mutation = useCalculatorEstimation();
 
-  const [currencies, setCurrencies] = React.useState<any>([]);
-
-  const optionsCountries = countries.map((country) => ({
-    value: country.code,
-    label: country.name,
-  }));
-
-  const optionsRegions = regions.map((region) => ({
-    value: region.slug,
-    label: region.name,
-  }));
-
-  const currenciesOptions = currencies.map(
-    (currency: { code: string; slug: string }) => ({
-      value: currency.slug,
-      label: currency.code,
-    }),
-  );
-
-  async function loadJsonForm(regionSlug: string) {
-    try {
-      setJsonForm(null);
-
-      const res = await getShowRegionField({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { slug: regionSlug },
-      });
-
-      const jsonSchemaForm = createHeadlessForm(res?.data?.data?.schema || {}, {
-        strictInputType: false,
-      });
-
-      handleJSONSchemaValidation.current = jsonSchemaForm.handleValidation;
-
-      setJsonForm(jsonSchemaForm);
-    } catch (e) {
-      console.error(e);
-      setJsonForm(null);
+  const selectedCountry = useMemo(() => {
+    if (!selectedCountryForm) {
+      return null;
     }
-  }
+
+    const country = countries?.find((c) => c.value === selectedCountryForm);
+
+    if (!country) {
+      return null;
+    }
+
+    return country;
+  }, [selectedCountryForm]);
+
+  const regions =
+    selectedCountry?.childRegions.map((region) => ({
+      value: region.slug,
+      label: region.name,
+    })) ?? [];
 
   useEffect(() => {
     if (selectedCountry) {
-      const country = countries.find((c) => c.code === selectedCountry);
-      if (country?.child_regions.length !== 0) {
-        setRegions(country ? country.child_regions : []);
-      }
-
       if (
-        country?.child_regions.length === 0 &&
-        country.has_additional_fields
+        selectedCountry?.childRegions.length === 0 &&
+        selectedCountry.hasAdditionalFields
       ) {
         // test this with italy
-        loadJsonForm(country.region_slug);
+        setRegionSlug(selectedCountry.regionSlug);
       }
     }
   }, [selectedCountry, countries]);
 
-  useEffect(() => {
-    if (selectedRegion) {
-      loadJsonForm(selectedRegion);
-    }
-  }, [selectedRegion]);
-
-  useEffect(() => {
-    if (client) {
-      getIndexCountry({
-        client: client,
-        headers: {
-          Authorization: ``,
-        },
-      })
-        .then((res) => {
-          if (res.data?.data) {
-            setCountries(res.data?.data);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, [client]);
-
-  useEffect(() => {
-    if (client) {
-      getIndexCompanyCurrency({
-        client: client,
-        headers: {
-          Authorization: ``,
-        },
-      })
-        .then((res) => {
-          if (res.data?.data) {
-            setCurrencies(res.data?.data.company_currencies);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, []);
-
-  const findSlugInCountry = (countryCode: string) => {
-    const country = countries.find((c) => c.code === countryCode);
-    return country?.region_slug;
-  };
-
   const handleSubmit = (values: FormValues) => {
     const regionSlug = values.region
       ? values.region
-      : findSlugInCountry(values.country);
+      : selectedCountry?.regionSlug;
 
     const payload = {
       employer_currency_slug: values.currency as string,
@@ -192,8 +109,8 @@ export function CostCalculator({ onSubmit }: Props) {
       employments: [
         {
           region_slug: regionSlug as string,
-          annual_gross_salary: parseFloat(values.salary),
-          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
+          annual_gross_salary: values.salary,
+          annual_gross_salary_in_employer_currency: values.salary,
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: 'My first estimation',
@@ -203,48 +120,35 @@ export function CostCalculator({ onSubmit }: Props) {
       ],
     };
 
-    postCreateEstimation({
-      client: client as Client,
-      headers: {
-        Authorization: ``,
+    mutation.mutate(payload, {
+      onSuccess: (data) => {
+        if (data?.data) {
+          onSubmit(data.data);
+        }
       },
-      body: payload,
-    })
-      .then((res) => {
-        onSubmit(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <SelectField
-            name="country"
-            label="Country"
-            options={optionsCountries}
-          />
+          <SelectField name="country" label="Country" options={countries} />
 
-          {optionsRegions.length > 0 && (
-            <SelectField
-              name="region"
-              label="Region"
-              options={optionsRegions}
-            />
+          {regions.length > 0 && (
+            <SelectField name="region" label="Region" options={regions} />
           )}
 
-          <SelectField
-            name="currency"
-            label="Currency"
-            options={currenciesOptions}
-          />
+          <SelectField name="currency" label="Currency" options={currencies} />
 
           <TextField name="salary" label="Salary" type="number" />
 
-          {jsonForm && <JSONSchemaFormFields fields={jsonForm.fields} />}
+          {jsonSchemaRegionFields && (
+            <JSONSchemaFormFields fields={jsonSchemaRegionFields.fields} />
+          )}
 
           <Button
             type="submit"
