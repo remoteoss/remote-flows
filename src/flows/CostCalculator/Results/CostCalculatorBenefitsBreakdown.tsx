@@ -1,15 +1,15 @@
+import { Info } from 'lucide-react';
 import React from 'react';
+
+import { Button } from '@/src/components/ui/button';
+import { Separator } from '@/src/components/ui/separator';
 import {
-  Tooltip as UITooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  Tooltip as UITooltip,
 } from '@/src/components/ui/tooltip';
-import { Info } from 'lucide-react';
-
 import { formatCurrency } from '@/src/lib/utils';
-import { Button } from '@/src/components/ui/button';
-import { Separator } from '@/src/components/ui/separator';
 
 type CostCalculatorBenefitsBreakdownProps = {
   benefitsTotal: number | undefined;

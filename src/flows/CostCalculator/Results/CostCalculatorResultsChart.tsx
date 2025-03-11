@@ -1,5 +1,6 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+
 import {
   Card,
   CardContent,
@@ -41,7 +42,9 @@ export default function CostCalculatorResultsChart({
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => formatCurrency(Number(value), currency)}
+                formatter={(value: 'monthly' | 'annual') =>
+                  formatCurrency(Number(value), currency)
+                }
                 contentStyle={{
                   borderRadius: '8px',
                   border: '1px solid #e2e8f0',

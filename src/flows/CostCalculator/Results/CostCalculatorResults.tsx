@@ -1,6 +1,8 @@
-import React, { lazy, useState } from 'react';
 import { Euro } from 'lucide-react';
+import React, { lazy, useState } from 'react';
 
+import { CostCalculatorEstimateResponse } from '@/src/client';
+import { Badge } from '@/src/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -8,13 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/src/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
-import { Badge } from '@/src/components/ui/badge';
 import { Separator } from '@/src/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
 import { cn, formatCurrency } from '@/src/lib/utils';
 import { CostCalculatorBenefitsBreakdown } from './CostCalculatorBenefitsBreakdown';
 import { CostCalculatorContributionsBreakdown } from './CostCalculatorContributionsBreakdown';
-import { CostCalculatorEstimateResponse } from '@/src/client';
 
 const CostCalculatorResultsChart = lazy(
   () => import('./CostCalculatorResultsChart'),
@@ -22,9 +22,14 @@ const CostCalculatorResultsChart = lazy(
 
 interface CostCalculatorProps {
   employmentData: CostCalculatorEstimateResponse['data'];
-  options?: {
+  options?: Partial<{
     showChart?: boolean;
-  };
+    chartColors: {
+      grossSalary: string;
+      contributions: string;
+      benefits: string;
+    };
+  }>;
 }
 
 export function CostCalculatorResults({
@@ -67,15 +72,23 @@ export function CostCalculatorResults({
       : costs.annual_contributions_breakdown;
 
   const chartData = [
-    { name: 'Gross Salary', value: grossSalary, color: '#3b82f6' },
-    { name: 'Contributions', value: contributionsTotal, color: '#f59e0b' },
+    {
+      name: 'Gross Salary',
+      value: grossSalary,
+      color: options?.chartColors?.grossSalary ?? '#3b82f6',
+    },
+    {
+      name: 'Contributions',
+      value: contributionsTotal,
+      color: options?.chartColors?.contributions ?? '#f59e0b',
+    },
   ];
 
   if (benefitsBreakdown) {
     chartData.push({
       name: 'Benefits',
       value: benefitsTotal ?? 0,
-      color: '#10b981',
+      color: options?.chartColors?.benefits ?? '#10b981',
     });
   }
 
