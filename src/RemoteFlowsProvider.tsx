@@ -1,10 +1,6 @@
 import { Client, createClient } from '@hey-api/client-fetch';
-<<<<<<< Updated upstream
-=======
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import React, { createContext, useContext, useRef } from 'react';
->>>>>>> Stashed changes
 
 import { BaseTokenResponse } from './client';
 import { client } from './client/client.gen';
