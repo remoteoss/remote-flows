@@ -1,26 +1,26 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { number, object, string } from 'yup';
+import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
+import React, { useMemo, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 import type { InferType } from 'yup';
+import { number, object, string } from 'yup';
 import type {
   CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
   EmploymentTermType,
 } from '../../client';
-import { useForm } from 'react-hook-form';
-import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { Form } from '../../components/ui/form';
 
-import { Button } from '../../components/ui/button';
-import { JSONSchemaFormFields } from '../../components/form/JSONSchemaForm';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import {
-  useCostCalculatorCountries,
-  useCostCalculatorEstimation,
   useCalculatorLoadRegionFieldsSchemaForm,
   useCompanyCurrencies,
+  useCostCalculatorCountries,
+  useCostCalculatorEstimation,
 } from '@/src/flows/CostCalculator/hooks';
+import { JSONSchemaFormFields } from '../../components/form/JSONSchemaForm';
+import { Button } from '../../components/ui/button';
 
 const validationSchema = object({
   country: string().required('Country is required'),
@@ -117,12 +117,12 @@ export function CostCalculator({
     mode: 'onBlur',
   });
   const selectCountryField = form.watch('country');
-  const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
   const { data: currencies = [] } = useCompanyCurrencies();
   const { data: countries = [] } = useCostCalculatorCountries();
   const { data: jsonSchemaRegionFields } =
-    useCalculatorLoadRegionFieldsSchemaForm(form.watch('region') || regionSlug);
+    useCalculatorLoadRegionFieldsSchemaForm(form.control);
+
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
@@ -144,16 +144,6 @@ export function CostCalculator({
       value: region.slug,
       label: region.name,
     })) ?? [];
-
-  useEffect(() => {
-    if (
-      selectedCountry &&
-      selectedCountry?.childRegions.length === 0 &&
-      selectedCountry.hasAdditionalFields
-    ) {
-      setRegionSlug(selectedCountry.regionSlug);
-    }
-  }, [selectedCountry, countries]);
 
   const handleSubmit = (values: FormValues) => {
     console.log({ contract_type: values.contract_duration_type });
