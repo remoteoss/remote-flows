@@ -38,49 +38,52 @@ type FormValues = InferType<typeof validationSchema> & {
 
 type Props = Partial<{
   /**
-   * Estimation params allows you customize the params send to /cost-calculator/estimation endpoint
-   * */
+   * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
+   */
   estimationParams: {
     /**
-     * Title of the estimation, default is 'My first estimation'
+     * Title of the estimation. Default is 'My first estimation'.
      */
     title?: string;
     /**
-     * Include benefits in the estimation, default is false
+     * Include benefits in the estimation. Default is false.
      */
     includeBenefits?: boolean;
     /**
-     * Include cost breakdowns in the estimation, default is false
+     * Include cost breakdowns in the estimation. Default is false.
      */
     includeCostBreakdowns?: boolean;
   };
   /**
-   * Default values for the form fields
+   * Default values for the form fields.
    */
   defaultValues: {
     /**
-     * Default value for the country field
+     * Default value for the country field.
      */
     country?: string;
     /**
-     * Default value for the currency field
+     * Default value for the currency field.
      */
     currency?: string;
     /**
-     * Default value for the salary field
+     * Default value for the salary field.
      */
     salary?: string;
   };
   /**
-   * Callback function to handle the form submit, when the submit button is clicked, we emit the payload sent back to you
+   * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
+   * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
   onSubmit: (data: CostCalculatorEstimateParams) => void;
   /**
-   * Callback function to handle the success when the estimation succeeds, we send you the CostCalculatorEstimateResponse
+   * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
+   * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
   onSuccess: (data: CostCalculatorEstimateResponse) => void;
   /**
-   * Callback function to handle the error when the estimation fails
+   * Callback function to handle the error when the estimation fails.
+   * @param error - The error object.
    */
   onError: (error: Error) => void;
 }>;
