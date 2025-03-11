@@ -66,10 +66,6 @@ type Props = Partial<{
      */
     currency?: string;
     /**
-     * Default value for the region field
-     */
-    region?: string;
-    /**
      * Default value for the salary field
      */
     salary?: string;
@@ -97,14 +93,12 @@ export function CostCalculator({
   defaultValues = {
     country: '',
     currency: '',
-    region: '',
     salary: '',
   },
   onSubmit,
   onError,
   onSuccess,
 }: Props) {
-  console.log({ defaultValues });
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
@@ -116,7 +110,7 @@ export function CostCalculator({
     defaultValues: {
       country: defaultValues?.country,
       currency: defaultValues?.currency,
-      region: defaultValues?.region,
+      region: '',
       salary: defaultValues?.salary,
     },
     mode: 'onBlur',

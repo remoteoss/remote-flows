@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { RadioGroup } from '@/src/components/ui/radio-group';
 import { SupportedTypes } from './types';
-import { TextField } from './TextField';
-import { SelectField } from './SelectField';
+import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 
 type FieldBase = {
   label: string;
@@ -26,14 +24,6 @@ type FieldSetProps = {
   legend: string;
   name: string;
   fields: Field[];
-};
-
-const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
-  text: TextField,
-  select: SelectField,
-  radio: RadioGroup,
-  number: (props) => <TextField {...props} type="text" />,
-  fieldset: FieldSetField,
 };
 
 export function FieldSetField({ legend, name, fields }: FieldSetProps) {
