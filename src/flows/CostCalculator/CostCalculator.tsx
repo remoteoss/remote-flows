@@ -41,20 +41,20 @@ type Props = Partial<{
   /**
    * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
    */
-  estimationParams: {
+  estimationParams: Partial<{
     /**
      * Title of the estimation. Default is 'My first estimation'.
      */
-    title?: string;
+    title: string;
     /**
      * Include benefits in the estimation. Default is false.
      */
-    includeBenefits?: boolean;
+    includeBenefits: boolean;
     /**
      * Include cost breakdowns in the estimation. Default is false.
      */
-    includeCostBreakdowns?: boolean;
-  };
+    includeCostBreakdowns: boolean;
+  }>;
   /**
    * Default values for the form fields.
    */
