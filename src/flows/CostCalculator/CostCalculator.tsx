@@ -36,22 +36,70 @@ type FormValues = InferType<typeof validationSchema> & {
 };
 
 type Props = {
-  title?: string;
-  includeBenefits?: boolean;
-  includeCostBreakdowns?: boolean;
-  onSubmit: (data: CostCalculatorEstimateParams) => void;
-  onSuccess: (data: CostCalculatorEstimateResponse) => void;
-  onError: (error: Error) => void;
+  /**
+   * Estimation params allows you customize the params send to /cost-calculator/estimation endpoint
+   * */
+  estimationParams: {
+    /**
+     * Title of the estimation, default is 'My first estimation'
+     */
+    title?: string;
+    /**
+     * Include benefits in the estimation, default is false
+     */
+    includeBenefits?: boolean;
+    /**
+     * Include cost breakdowns in the estimation, default is false
+     */
+    includeCostBreakdowns?: boolean;
+  };
+  /**
+   * Default values for the form fields
+   */
+  defaultValues?: {
+    /**
+     * Default value for the country field
+     */
+    country?: string;
+    /**
+     * Default value for the currency field
+     */
+    currency?: string;
+    /**
+     * Default value for the region field
+     */
+    region?: string;
+    /**
+     * Default value for the salary field
+     */
+    salary?: number;
+  };
+  /**
+   * Callback function to handle the form submit, when the submit button is clicked, we emit the payload sent back to you
+   */
+  onSubmit?: (data: CostCalculatorEstimateParams) => void;
+  /**
+   * Callback function to handle the success when the estimation succeeds, we send you the CostCalculatorEstimateResponse
+   */
+  onSuccess?: (data: CostCalculatorEstimateResponse) => void;
+  /**
+   * Callback function to handle the error when the estimation fails
+   */
+  onError?: (error: Error) => void;
 };
 
 export function CostCalculator({
-  title = 'My first estimation',
-  includeBenefits = false,
-  includeCostBreakdowns = false,
+  estimationParams = {
+    title: 'My first estimation',
+    includeBenefits: false,
+    includeCostBreakdowns: false,
+  },
+  defaultValues,
   onSubmit,
   onError,
   onSuccess,
 }: Props) {
+  console.log({ defaultValues });
   const handleJSONSchemaValidation =
     useRef<HeadlessFormOutput['handleValidation']>(null);
   const resolver = useValidationFormResolver(
@@ -112,8 +160,8 @@ export function CostCalculator({
 
     const payload = {
       employer_currency_slug: values.currency as string,
-      include_benefits: includeBenefits,
-      include_cost_breakdowns: includeCostBreakdowns,
+      include_benefits: estimationParams.includeBenefits,
+      include_cost_breakdowns: estimationParams.includeCostBreakdowns,
       employments: [
         {
           region_slug: regionSlug as string,
@@ -121,23 +169,23 @@ export function CostCalculator({
           annual_gross_salary_in_employer_currency: values.salary,
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
-          title: title,
+          title: estimationParams.title,
           regional_to_employer_exchange_rate: '1',
           age: (values.age as number) ?? undefined,
         },
       ],
     };
 
-    onSubmit(payload);
+    onSubmit?.(payload);
 
     costCalculatorEstimationMutation.mutate(payload, {
       onSuccess: (data) => {
         if (data?.data) {
-          onSuccess(data.data);
+          onSuccess?.(data.data);
         }
       },
       onError: (error) => {
-        onError(error);
+        onError?.(error);
       },
     });
   };
