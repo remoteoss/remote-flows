@@ -68,7 +68,7 @@ export function CostCalculator({
     },
     mode: 'onBlur',
   });
-  const selectedCountryForm = form.watch('country');
+  const selectCountryField = form.watch('country');
   const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
   const { data: currencies = [] } = useCompanyCurrencies();
@@ -78,18 +78,18 @@ export function CostCalculator({
   const mutation = useCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
-    if (!selectedCountryForm) {
+    if (!selectCountryField) {
       return null;
     }
 
-    const country = countries?.find((c) => c.value === selectedCountryForm);
+    const country = countries?.find((c) => c.value === selectCountryField);
 
     if (!country) {
       return null;
     }
 
     return country;
-  }, [selectedCountryForm]);
+  }, [selectCountryField]);
 
   const regions =
     selectedCountry?.childRegions.map((region) => ({
