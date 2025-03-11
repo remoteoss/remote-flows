@@ -17,7 +17,7 @@ import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import {
   useCostCalculatorCountries,
-  useCostCalcultatorEstimation,
+  useCostCalculatorEstimation,
   useCalculatorLoadRegionFieldsSchemaForm,
   useCompanyCurrencies,
 } from '@/src/flows/CostCalculator/hooks';
@@ -35,7 +35,7 @@ type FormValues = InferType<typeof validationSchema> & {
   [key: string]: any;
 };
 
-type Props = {
+type Props = Partial<{
   /**
    * Estimation params allows you customize the params send to /cost-calculator/estimation endpoint
    * */
@@ -56,7 +56,7 @@ type Props = {
   /**
    * Default values for the form fields
    */
-  defaultValues?: {
+  defaultValues: {
     /**
      * Default value for the country field
      */
@@ -77,16 +77,16 @@ type Props = {
   /**
    * Callback function to handle the form submit, when the submit button is clicked, we emit the payload sent back to you
    */
-  onSubmit?: (data: CostCalculatorEstimateParams) => void;
+  onSubmit: (data: CostCalculatorEstimateParams) => void;
   /**
    * Callback function to handle the success when the estimation succeeds, we send you the CostCalculatorEstimateResponse
    */
-  onSuccess?: (data: CostCalculatorEstimateResponse) => void;
+  onSuccess: (data: CostCalculatorEstimateResponse) => void;
   /**
    * Callback function to handle the error when the estimation fails
    */
-  onError?: (error: Error) => void;
-};
+  onError: (error: Error) => void;
+}>;
 
 export function CostCalculator({
   estimationParams = {
@@ -123,7 +123,7 @@ export function CostCalculator({
   const { data: countries = [] } = useCostCalculatorCountries();
   const { data: jsonSchemaRegionFields } =
     useCalculatorLoadRegionFieldsSchemaForm(form.watch('region') || regionSlug);
-  const costCalculatorEstimationMutation = useCostCalcultatorEstimation();
+  const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
     if (!selectCountryField) {
@@ -156,6 +156,7 @@ export function CostCalculator({
   }, [selectedCountry, countries]);
 
   const handleSubmit = (values: FormValues) => {
+    console.log({ contract_type: values.contract_duration_type });
     const regionSlug = values.region || selectedCountry?.regionSlug;
 
     const payload = {

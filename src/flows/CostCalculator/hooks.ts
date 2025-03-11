@@ -80,7 +80,7 @@ export const useCompanyCurrencies = () => {
   });
 };
 
-export const useCostCalcultatorEstimation = () => {
+export const useCostCalculatorEstimation = () => {
   const { client } = useClient();
 
   return useMutation({
