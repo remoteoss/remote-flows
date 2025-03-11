@@ -9,6 +9,7 @@ import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Control, useWatch } from 'react-hook-form';
 
 export const useCostCalculatorCountries = () => {
   const { client } = useClient();
@@ -36,9 +37,24 @@ export const useCostCalculatorCountries = () => {
 };
 
 export const useCalculatorLoadRegionFieldsSchemaForm = (
-  regionSlug: string | null,
+  control: Control<any>,
 ) => {
   const { client } = useClient();
+  const { data: countries = [] } = useCostCalculatorCountries();
+  const region = useWatch({ name: 'region', control });
+  const country = useWatch({ name: 'country', control });
+
+  const selectedCountry = countries?.find((c) => c.value === country);
+
+  let regionSlug = region;
+  if (
+    selectedCountry &&
+    selectedCountry.childRegions.length === 0 &&
+    selectedCountry.hasAdditionalFields
+  ) {
+    regionSlug = selectedCountry.regionSlug;
+  }
+
   return useQuery({
     queryKey: ['cost-calculator-region-fields', regionSlug],
     queryFn: () => {
