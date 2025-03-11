@@ -19,7 +19,7 @@ export default function CostCalculatorResultsChart({
   currency,
 }: VisualBreakDownProps) {
   return (
-    <Card>
+    <Card className="rounded-lg">
       <CardHeader className="pb-2">
         <CardTitle>Cost Distribution</CardTitle>
       </CardHeader>
@@ -46,9 +46,9 @@ export default function CostCalculatorResultsChart({
                   formatCurrency(Number(value), currency)
                 }
                 contentStyle={{
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
-                  fontSize: '0.75rem',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)',
+                  fontSize: 'var(--text-xs)',
                 }}
               />
             </PieChart>
