@@ -10,7 +10,7 @@ import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-export const useCalculatorCountries = () => {
+export const useCostCalculatorCountries = () => {
   const { client } = useClient();
 
   return useQuery({
@@ -80,7 +80,7 @@ export const useCompanyCurrencies = () => {
   });
 };
 
-export const useCalculatorEstimation = () => {
+export const useCostCalcultatorEstimation = () => {
   const { client } = useClient();
 
   return useMutation({

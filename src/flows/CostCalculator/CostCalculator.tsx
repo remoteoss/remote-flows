@@ -16,8 +16,8 @@ import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import {
-  useCalculatorCountries,
-  useCalculatorEstimation,
+  useCostCalculatorCountries,
+  useCostCalcultatorEstimation,
   useCalculatorLoadRegionFieldsSchemaForm,
   useCompanyCurrencies,
 } from '@/src/flows/CostCalculator/hooks';
@@ -72,10 +72,10 @@ export function CostCalculator({
   const [regionSlug, setRegionSlug] = useState<string | null>(null);
 
   const { data: currencies = [] } = useCompanyCurrencies();
-  const { data: countries = [] } = useCalculatorCountries();
+  const { data: countries = [] } = useCostCalculatorCountries();
   const { data: jsonSchemaRegionFields } =
     useCalculatorLoadRegionFieldsSchemaForm(form.watch('region') || regionSlug);
-  const mutation = useCalculatorEstimation();
+  const costCalculatorEstimationMutation = useCostCalcultatorEstimation();
 
   const selectedCountry = useMemo(() => {
     if (!selectCountryField) {
@@ -98,21 +98,17 @@ export function CostCalculator({
     })) ?? [];
 
   useEffect(() => {
-    if (selectedCountry) {
-      if (
-        selectedCountry?.childRegions.length === 0 &&
-        selectedCountry.hasAdditionalFields
-      ) {
-        // test this with italy
-        setRegionSlug(selectedCountry.regionSlug);
-      }
+    if (
+      selectedCountry &&
+      selectedCountry?.childRegions.length === 0 &&
+      selectedCountry.hasAdditionalFields
+    ) {
+      setRegionSlug(selectedCountry.regionSlug);
     }
   }, [selectedCountry, countries]);
 
   const handleSubmit = (values: FormValues) => {
-    const regionSlug = values.region
-      ? values.region
-      : selectedCountry?.regionSlug;
+    const regionSlug = values.region || selectedCountry?.regionSlug;
 
     const payload = {
       employer_currency_slug: values.currency as string,
@@ -134,7 +130,7 @@ export function CostCalculator({
 
     onSubmit(payload);
 
-    mutation.mutate(payload, {
+    costCalculatorEstimationMutation.mutate(payload, {
       onSuccess: (data) => {
         if (data?.data) {
           onSuccess(data.data);
