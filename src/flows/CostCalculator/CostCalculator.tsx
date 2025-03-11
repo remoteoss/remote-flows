@@ -190,7 +190,7 @@ export function CostCalculator({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
           <SelectField name="country" label="Country" options={countries} />
 
           {regions.length > 0 && (
@@ -207,7 +207,8 @@ export function CostCalculator({
 
           <Button
             type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            loading={costCalculatorEstimationMutation.isPending}
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white mt-6"
           >
             Save
           </Button>

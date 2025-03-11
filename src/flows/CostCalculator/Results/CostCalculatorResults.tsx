@@ -1,4 +1,3 @@
-import { Euro } from 'lucide-react';
 import React, { lazy, useState } from 'react';
 
 import { CostCalculatorEstimateResponse } from '@/src/client';
@@ -80,18 +79,25 @@ export function CostCalculatorResults({
       value: grossSalary,
       color: options?.chartColors?.grossSalary ?? '#3b82f6',
     },
-    {
-      name: 'Contributions',
-      value: contributionsTotal,
-      color: options?.chartColors?.contributions ?? '#f59e0b',
-    },
   ];
 
-  if (benefitsBreakdown) {
+  const showBenefits = benefitsBreakdown && benefitsBreakdown?.length !== 0;
+  const showContributions =
+    contributionsBreakdown && contributionsBreakdown?.length !== 0;
+
+  if (showBenefits) {
     chartData.push({
       name: 'Benefits',
       value: benefitsTotal ?? 0,
       color: options?.chartColors?.benefits ?? '#10b981',
+    });
+  }
+
+  if (showContributions) {
+    chartData.push({
+      name: 'Contributions',
+      value: contributionsTotal,
+      color: options?.chartColors?.contributions ?? '#f59e0b',
     });
   }
 
@@ -101,7 +107,6 @@ export function CostCalculatorResults({
         <div>
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <span className="flex items-center gap-1">
-              <Euro className="h-5 w-5 text-gray-600" />
               {options?.title ?? 'Cost Calculator'}
             </span>
             <Badge className="ml-2">{employment.country.name}</Badge>
@@ -143,9 +148,10 @@ export function CostCalculatorResults({
               <CostCalculatorGrossSalary
                 grossSalary={grossSalary}
                 currency={currency}
+                includeSeparator={Boolean(showBenefits || showContributions)}
               />
               {/* Benefits Section */}
-              {benefitsBreakdown ? (
+              {showBenefits ? (
                 <CostCalculatorBenefitsBreakdown
                   benefitsBreakdown={benefitsBreakdown}
                   benefitsTotal={benefitsTotal}
@@ -153,11 +159,13 @@ export function CostCalculatorResults({
                 />
               ) : null}
               {/* Contributions Section */}
-              <CostCalculatorContributionsBreakdown
-                contributionsBreakdown={contributionsBreakdown}
-                contributionsTotal={contributionsTotal}
-                currency={currency}
-              />
+              {showContributions && (
+                <CostCalculatorContributionsBreakdown
+                  contributionsBreakdown={contributionsBreakdown}
+                  contributionsTotal={contributionsTotal}
+                  currency={currency}
+                />
+              )}
               {/* Total */}
               <CostCalculatorTotalCost
                 totalCost={totalCost}

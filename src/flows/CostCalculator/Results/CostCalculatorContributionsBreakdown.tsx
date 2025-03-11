@@ -51,33 +51,35 @@ export function CostCalculatorContributionsBreakdown({
               >
                 <div className="flex items-start gap-2">
                   <span>{contribution.name}</span>
-                  <TooltipProvider>
-                    <UITooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-4 w-4 p-0"
-                        >
-                          <Info className="h-3 w-3 text-gray-400" />
-                          <span className="sr-only">Info</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="max-w-xs">{contribution.description}</p>
-                        {contribution.zendesk_article_url && (
-                          <a
-                            href={contribution.zendesk_article_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline block mt-1 text-xs"
+                  {contribution.description && (
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-4 w-4 p-0"
                           >
-                            Learn more
-                          </a>
-                        )}
-                      </TooltipContent>
-                    </UITooltip>
-                  </TooltipProvider>
+                            <Info className="h-3 w-3 text-gray-400" />
+                            <span className="sr-only">Info</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">{contribution.description}</p>
+                          {contribution.zendesk_article_url && (
+                            <a
+                              href={contribution.zendesk_article_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:underline block mt-1 text-xs"
+                            >
+                              Learn more
+                            </a>
+                          )}
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+                  )}
                 </div>
                 <span>{formatCurrency(contribution.amount, currency)}</span>
               </div>

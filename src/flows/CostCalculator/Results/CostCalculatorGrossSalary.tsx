@@ -6,11 +6,13 @@ import { formatCurrency } from '@/src/lib/utils';
 type CostCalculatorGrossSalaryProps = {
   grossSalary: number;
   currency: string;
+  includeSeparator: boolean;
 };
 
 export function CostCalculatorGrossSalary({
   grossSalary,
   currency,
+  includeSeparator,
 }: CostCalculatorGrossSalaryProps) {
   return (
     <div>
@@ -20,7 +22,7 @@ export function CostCalculatorGrossSalary({
           {formatCurrency(grossSalary, currency)}
         </span>
       </div>
-      <Separator />
+      {includeSeparator && <Separator />}
     </div>
   );
 }

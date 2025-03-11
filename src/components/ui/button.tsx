@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 
 import { cn } from '@/src/lib/utils';
 
@@ -39,10 +39,12 @@ function Button({
   variant,
   size,
   asChild = false,
+  loading = false,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    loading?: boolean;
   }) {
   const Comp = asChild ? Slot : 'button';
 
@@ -53,6 +55,7 @@ function Button({
         buttonVariants({ variant, size, className }),
         'Button__Wrapper',
       )}
+      disabled={loading}
       {...props}
     />
   );

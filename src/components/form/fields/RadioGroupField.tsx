@@ -41,7 +41,10 @@ export function RadioGroupField({
               className="flex flex-col space-y-1"
             >
               {options.map((option) => (
-                <FormItem className="flex items-center space-x-3 space-y-0 gap-0">
+                <FormItem
+                  key={option.value}
+                  className="flex items-center space-x-3 space-y-0 gap-0"
+                >
                   <FormControl>
                     <RadioGroupItem value={option.value} />
                   </FormControl>
