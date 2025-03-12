@@ -127,6 +127,9 @@ export function CostCalculator({
   const { data: jsonSchemaRegionFields } =
     useCalculatorLoadRegionFieldsSchemaForm(form.control);
 
+  handleJSONSchemaValidation.current =
+    jsonSchemaRegionFields?.handleValidation ?? null;
+
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   const selectedCountry = useMemo(() => {
