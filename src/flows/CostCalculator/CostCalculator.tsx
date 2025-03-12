@@ -22,6 +22,7 @@ import {
   useCostCalculatorCountries,
   useCostCalculatorEstimation,
 } from '@/src/flows/CostCalculator/hooks';
+import { json } from 'stream/consumers';
 
 const validationSchema = object({
   country: string().required('Country is required'),
@@ -126,6 +127,9 @@ export function CostCalculator({
   const { data: countries = [] } = useCostCalculatorCountries();
   const { data: jsonSchemaRegionFields } =
     useCalculatorLoadRegionFieldsSchemaForm(form.control);
+
+  handleJSONSchemaValidation.current =
+    jsonSchemaRegionFields?.handleValidation ?? null;
 
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
