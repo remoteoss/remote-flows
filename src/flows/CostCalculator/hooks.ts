@@ -12,7 +12,7 @@ import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { AnyObjectSchema, object, string } from 'yup';
+import { string } from 'yup';
 import { fields } from './fields';
 
 type CostCalculatorCountry = {
@@ -159,21 +159,6 @@ export const useCostCalculator = (): BaseFlow<CostCalculatorEstimateParams> => {
     setSelectedRegion(region);
   }
 
-  /**
-   * Build the validation schema for the form.
-   * @returns
-   */
-  function buildValidationSchema() {
-    const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-      (fieldsSchemaAcc, field) => {
-        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-        return fieldsSchemaAcc;
-      },
-      {},
-    );
-    return object(fieldsSchema);
-  }
-
   const regionField = fields.find((field) => field.name === 'region');
   if (regionField) {
     const regions =
@@ -211,7 +196,6 @@ export const useCostCalculator = (): BaseFlow<CostCalculatorEstimateParams> => {
       isLastStep: true,
     },
     fields: [...fields, ...(jsonSchemaRegionFields?.fields || [])] as Field[],
-    validationSchema: buildValidationSchema(),
     handleValidation: jsonSchemaRegionFields?.handleValidation,
     onSubmit,
   };

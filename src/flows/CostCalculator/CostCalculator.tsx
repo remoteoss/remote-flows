@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import type { InferType } from 'yup';
+import { object, type AnyObjectSchema, type InferType } from 'yup';
 
 import type {
   CostCalculatorEstimateParams,
@@ -13,6 +13,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import { Field } from '@/src/types/fields';
 
 type FormValues = InferType<any> & {
   contract_duration_type?: EmploymentTermType;
@@ -71,6 +72,21 @@ type CostCalculatorProps = Partial<{
   onError: (error: Error) => void;
 }>;
 
+/**
+ * Build the validation schema for the form.
+ * @returns
+ */
+function buildValidationSchema(fields: Field[]) {
+  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
+    (fieldsSchemaAcc, field) => {
+      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      return fieldsSchemaAcc;
+    },
+    {},
+  );
+  return object(fieldsSchema);
+}
+
 export function CostCalculator({
   estimationParams = {
     title: 'Estimation',
@@ -89,12 +105,11 @@ export function CostCalculator({
   const {
     onSubmit: submitCostCalculator,
     fields,
-    validationSchema,
     handleValidation,
   } = useCostCalculator();
 
   const resolver = useValidationFormResolver(
-    validationSchema,
+    buildValidationSchema(fields),
     handleValidation,
   );
   const form = useForm<FormValues>({
