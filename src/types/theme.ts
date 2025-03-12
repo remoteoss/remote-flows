@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { CSSProperties, PropsWithChildren } from 'react';
 
 export type ThemeProviderProps = PropsWithChildren<{
   theme?: Partial<{
@@ -7,10 +7,8 @@ export type ThemeProviderProps = PropsWithChildren<{
     borderRadius: string;
     font: ThemeFont;
   }>;
-  rules?: Rules;
+  rules?: Record<string, CSSProperties>;
 }>;
-
-export type Rules = {};
 
 export type ThemeColors = Partial<{
   focus: string;

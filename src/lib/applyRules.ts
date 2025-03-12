@@ -6,10 +6,7 @@ export function applyCssRules(rules: ThemeProviderProps['rules']) {
   const style = document.createElement('style');
 
   Object.keys(rules).forEach((key) => {
-    style.innerHTML = `${style.innerHTML} ${key} { ${Object.entries(
-      // @ts-expect-error
-      rules[key],
-    )
+    style.innerHTML = `${style.innerHTML} ${key} { ${Object.entries(rules[key])
       .map(([k, v]) => `${k}: ${v};`)
       .join(' ')} }`;
   });
