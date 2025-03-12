@@ -1,7 +1,7 @@
 import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { useCallback } from 'react';
 import { FieldValues, Resolver } from 'react-hook-form';
-import type { InferType, ValidationError, AnyObjectSchema } from 'yup';
+import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
 
 const useValidationYupResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
@@ -38,9 +38,7 @@ function iterateErrors(error: ValidationError) {
 
 export const useValidationFormResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
-  JSONSchemaValidation: React.MutableRefObject<
-    HeadlessFormOutput['handleValidation'] | null
-  >,
+  jsonSchemaValidation: HeadlessFormOutput['handleValidation'] | undefined,
 ): Resolver<InferType<T>> => {
   const yupValidation = useValidationYupResolver(validationSchema);
   return useCallback(
@@ -56,7 +54,7 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
         yupErrors = iterateErrors(error as ValidationError);
       }
 
-      const dynamicValues = await JSONSchemaValidation.current?.(data);
+      const dynamicValues = await jsonSchemaValidation?.(data);
       let jsonErrors = {};
       let hasJsonErrors = false;
 

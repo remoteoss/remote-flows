@@ -1,8 +1,6 @@
-import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
-import React, { useMemo, useRef } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { InferType } from 'yup';
-import { object, string } from 'yup';
 
 import type {
   CostCalculatorEstimateParams,
@@ -11,28 +9,12 @@ import type {
 } from '@/src/client';
 import { Form } from '@/src/components/ui/form';
 
-import { SelectField } from '@/src/components/form/fields/SelectField';
-import { TextField } from '@/src/components/form/fields/TextField';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
-import {
-  useCalculatorLoadRegionFieldsSchemaForm,
-  useCompanyCurrencies,
-  useCostCalculatorCountries,
-  useCostCalculatorEstimation,
-} from '@/src/flows/CostCalculator/hooks';
+import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 
-const validationSchema = object({
-  country: string().required('Country is required'),
-  currency: string().required('Currency is required'),
-  region: string(),
-  salary: string()
-    .typeError('Salary must be a number')
-    .required('Salary is required'),
-});
-
-type FormValues = InferType<typeof validationSchema> & {
+type FormValues = InferType<any> & {
   contract_duration_type?: EmploymentTermType;
   age?: number;
 };
@@ -104,11 +86,16 @@ export function CostCalculator({
   onError,
   onSuccess,
 }: CostCalculatorProps) {
-  const handleJSONSchemaValidation =
-    useRef<HeadlessFormOutput['handleValidation']>(null);
+  const {
+    onSubmit: submitCostCalculator,
+    fields,
+    validationSchema,
+    handleValidation,
+  } = useCostCalculator();
+
   const resolver = useValidationFormResolver(
     validationSchema,
-    handleJSONSchemaValidation,
+    handleValidation,
   );
   const form = useForm<FormValues>({
     resolver: resolver,
@@ -120,91 +107,43 @@ export function CostCalculator({
     },
     mode: 'onBlur',
   });
-  const selectCountryField = form.watch('country');
 
-  const { data: currencies = [] } = useCompanyCurrencies();
-  const { data: countries = [] } = useCostCalculatorCountries();
-  const { data: jsonSchemaRegionFields } =
-    useCalculatorLoadRegionFieldsSchemaForm(form.control);
-
-  const costCalculatorEstimationMutation = useCostCalculatorEstimation();
-
-  const selectedCountry = useMemo(() => {
-    if (!selectCountryField) {
-      return null;
-    }
-
-    const country = countries?.find((c) => c.value === selectCountryField);
-
-    if (!country) {
-      return null;
-    }
-
-    return country;
-  }, [selectCountryField, countries]);
-
-  const regions =
-    selectedCountry?.childRegions.map((region) => ({
-      value: region.slug,
-      label: region.name,
-    })) ?? [];
-
-  const handleSubmit = (values: FormValues) => {
-    const regionSlug = values.region || selectedCountry?.regionSlug;
-    const currencySlug = currencies.find(
-      (currency) => currency.value === values.currency,
-    )?.slug;
-
+  const handleSubmit = async (values: FormValues) => {
     const payload = {
-      employer_currency_slug: currencySlug as string,
+      employer_currency_slug: values.currency,
       include_benefits: estimationParams.includeBenefits,
       include_cost_breakdowns: estimationParams.includeCostBreakdowns,
       employments: [
         {
-          region_slug: regionSlug as string,
+          region_slug: values.region || values.country,
           annual_gross_salary: parseFloat(values.salary),
           annual_gross_salary_in_employer_currency: parseFloat(values.salary),
           employment_term:
             (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
           title: estimationParams.title,
           regional_to_employer_exchange_rate: '1',
-          age: (values.age as number) ?? undefined,
+          age: values.age ?? undefined,
         },
       ],
     };
 
-    onSubmit?.(payload);
+    await onSubmit?.(payload);
 
-    costCalculatorEstimationMutation.mutate(payload, {
-      onSuccess: (data) => {
-        if (data?.data) {
-          onSuccess?.(data.data);
-        }
-      },
-      onError: (error) => {
-        onError?.(error);
-      },
-    });
+    try {
+      const { data } = await submitCostCalculator(payload);
+      if (data) {
+        onSuccess?.(data);
+      }
+    } catch (error) {
+      onError?.(error as Error);
+    }
   };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <SelectField name="country" label="Country" options={countries} />
-
-          {regions.length > 0 && (
-            <SelectField name="region" label="Region" options={regions} />
-          )}
-
-          <SelectField name="currency" label="Currency" options={currencies} />
-
-          <TextField name="salary" label="Salary" type="number" />
-
-          {jsonSchemaRegionFields && (
-            <JSONSchemaFormFields fields={jsonSchemaRegionFields.fields} />
-          )}
-
+          <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
             className="w-full bg-gray-900 hover:bg-gray-800 text-white"
