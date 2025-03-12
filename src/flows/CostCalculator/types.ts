@@ -31,3 +31,14 @@ export type Field = {
   // Allow additional properties from x-jsf-presentation (e.g. meta from oneOf/anyOf)
   [key: string]: unknown;
 };
+
+export type BaseFlow<TFormParams extends {}> = {
+  stepState: {
+    current: number;
+    total: number;
+    isLastStep: boolean;
+  };
+  fields: Field[];
+  handleValidation?: (values: Record<string, unknown>) => any;
+  onSubmit: (values: TFormParams) => Promise<any>;
+};

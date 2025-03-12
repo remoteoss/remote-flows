@@ -1,4 +1,4 @@
-import { Field } from '@/src/types/fields';
+import { Field } from '@/src/flows/CostCalculator/types';
 import { string } from 'yup';
 
 export const fields: Field[] = [

@@ -5,9 +5,8 @@ import {
   getShowRegionField,
   postCreateEstimation,
 } from '@/src/client';
+import type { BaseFlow, Field } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
-import type { Field } from '@/src/types/fields';
-import { BaseFlow } from '@/src/types/hooks';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';

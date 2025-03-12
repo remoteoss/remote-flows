@@ -13,7 +13,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
-import { Field } from '@/src/types/fields';
+import type { Field } from '@/src/flows/CostCalculator/types';
 
 type FormValues = InferType<any> & {
   contract_duration_type?: EmploymentTermType;
