@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/select';
+import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
   FormDescription,
@@ -16,7 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../../ui/form';
-import { useFormContext } from 'react-hook-form';
 
 type SelectFieldProps = {
   label: string;
@@ -26,6 +26,7 @@ type SelectFieldProps = {
   options: Array<{ value: string; label: string }>;
   defaultValue?: string;
   className?: string;
+  onChange?: (value: string) => void;
 };
 
 export function SelectField({
@@ -34,6 +35,7 @@ export function SelectField({
   options,
   defaultValue,
   description,
+  onChange,
 }: SelectFieldProps) {
   const { control } = useFormContext();
 
@@ -47,7 +49,13 @@ export function SelectField({
           <FormLabel className="SelectField__Label">{label}</FormLabel>
           <FormControl>
             <div className="relative">
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={(value: string) => {
+                  field.onChange(value);
+                  onChange?.(value);
+                }}
+              >
                 <SelectTrigger
                   className="SelectField__Trigger"
                   aria-invalid={Boolean(fieldState.error)}

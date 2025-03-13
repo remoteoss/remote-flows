@@ -1,7 +1,6 @@
-import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { useCallback } from 'react';
 import { FieldValues, Resolver } from 'react-hook-form';
-import type { InferType, ValidationError, AnyObjectSchema } from 'yup';
+import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
 
 const useValidationYupResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
@@ -38,65 +37,28 @@ function iterateErrors(error: ValidationError) {
 
 export const useValidationFormResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
-  JSONSchemaValidation: React.MutableRefObject<
-    HeadlessFormOutput['handleValidation'] | null
-  >,
 ): Resolver<InferType<T>> => {
   const yupValidation = useValidationYupResolver(validationSchema);
   return useCallback(
     async (data: FieldValues) => {
-      let yupValues;
-      let yupErrors = {};
-      let hasYupErrors = false;
+      let values;
+      let errors = {};
 
       try {
-        yupValues = await yupValidation(data);
+        values = await yupValidation(data);
       } catch (error) {
-        hasYupErrors = true;
-        yupErrors = iterateErrors(error as ValidationError);
+        errors = iterateErrors(error as ValidationError);
       }
 
-      const dynamicValues = await JSONSchemaValidation.current?.(data);
-      let jsonErrors = {};
-      let hasJsonErrors = false;
-
-      if (
-        dynamicValues?.formErrors &&
-        Object.keys(dynamicValues.formErrors).length > 0
-      ) {
-        hasJsonErrors = true;
-        // If we have dynamic form errors, convert them to the expected format
-        if (dynamicValues.yupError) {
-          // If the dynamic validation returns a yupError object, use iterateErrors
-          jsonErrors = iterateErrors(dynamicValues.yupError);
-        } else {
-          // Otherwise, manually format the errors
-          jsonErrors = Object.entries(dynamicValues.formErrors).reduce(
-            (acc, [field, message]) => ({
-              ...acc,
-              [field]: {
-                type: 'validation',
-                message: message as string,
-              },
-            }),
-            {},
-          );
-        }
-      }
-
-      const combinedErrors = { ...yupErrors, ...jsonErrors };
-
-      // Return based on validation results
-      if (hasYupErrors || hasJsonErrors) {
+      if (Object.keys(errors).length > 0) {
         return {
           values: {},
-          errors: combinedErrors,
+          errors: errors,
         };
       }
 
-      // Both validations passed
       return {
-        values: yupValues,
+        values,
         errors: {},
       };
     },

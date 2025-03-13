@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
   FormDescription,
@@ -9,12 +10,12 @@ import {
   FormMessage,
 } from '../../ui/form';
 import { Input } from '../../ui/input';
-import { useFormContext } from 'react-hook-form';
 
 type TextFieldProps = React.ComponentProps<'input'> & {
   label: string;
   description?: string;
   name: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 type InputModeAttrsProps = Pick<
@@ -28,7 +29,13 @@ const inputModeAttrs: InputModeAttrsProps = {
   pattern: '^[0-9.]*$',
 };
 
-export function TextField({ name, description, label, type }: TextFieldProps) {
+export function TextField({
+  name,
+  description,
+  label,
+  type,
+  onChange,
+}: TextFieldProps) {
   const { control } = useFormContext();
   const isTypeNumber = type === 'number';
   const typeAttrs = isTypeNumber ? inputModeAttrs : { type };
@@ -41,7 +48,15 @@ export function TextField({ name, description, label, type }: TextFieldProps) {
           <FormItem className="TextField__Item">
             <FormLabel className="TextField__Label">{label}</FormLabel>
             <FormControl>
-              <Input {...field} {...typeAttrs} className="TextField__Input" />
+              <Input
+                {...field}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(event);
+                  onChange?.(event);
+                }}
+                {...typeAttrs}
+                className="TextField__Input"
+              />
             </FormControl>
             {description && (
               <FormDescription className="TextField__Description">
