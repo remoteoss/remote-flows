@@ -1,5 +1,6 @@
 import {
   CostCalculatorEstimateParams,
+  CostCalculatorEstimateResponse,
   getIndexCompanyCurrency,
   getIndexCountry,
   getShowRegionField,
@@ -143,98 +144,108 @@ function buildValidationSchema(fields: Field[]) {
 /**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator =
-  (): BaseHookReturn<CostCalculatorEstimateParams> => {
-    const [selectedRegion, setSelectedRegion] = useState<string>();
-    const [selectedCountry, setSelectedCountry] =
-      useState<CostCalculatorCountry>();
-    const { data: countries } = useCostCalculatorCountries();
-    const { data: currencies } = useCompanyCurrencies();
-    const { data: jsonSchemaRegionFields } = useRegionFields(
-      selectedRegion || selectedCountry?.value,
-    );
-    const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+export const useCostCalculator = (): BaseHookReturn<
+  CostCalculatorEstimateParams,
+  CostCalculatorEstimateResponse
+> => {
+  const [selectedRegion, setSelectedRegion] = useState<string>();
+  const [selectedCountry, setSelectedCountry] =
+    useState<CostCalculatorCountry>();
+  const { data: countries } = useCostCalculatorCountries();
+  const { data: currencies } = useCompanyCurrencies();
+  const { data: jsonSchemaRegionFields } = useRegionFields(
+    selectedRegion || selectedCountry?.value,
+  );
+  const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
-    /**
-     * Submit the estimation form with the given values.
-     * @param values
-     */
-    async function onSubmit(values: CostCalculatorEstimateParams) {
-      return costCalculatorEstimationMutation.mutateAsync(values);
+  /**
+   * Submit the estimation form with the given values.
+   * @param values
+   */
+  async function onSubmit(
+    values: CostCalculatorEstimateParams,
+  ): Promise<CostCalculatorEstimateResponse | null> {
+    const response = await costCalculatorEstimationMutation.mutateAsync(values);
+    if (response.data) {
+      return response.data;
+    }
+    return null;
+  }
+
+  /**
+   * If the selected country has no child regions and has additional fields,
+   * set the current region to the country's region slug and fetch the region fields.
+   * @param country
+   */
+  function onCountryChange(country: string) {
+    const selectedCountry = countries?.find(({ value }) => value === country);
+
+    if (
+      selectedCountry &&
+      selectedCountry.childRegions.length === 0 &&
+      selectedCountry.hasAdditionalFields
+    ) {
+      setSelectedRegion(selectedCountry.regionSlug);
+    } else {
+      setSelectedRegion(undefined);
     }
 
-    /**
-     * If the selected country has no child regions and has additional fields,
-     * set the current region to the country's region slug and fetch the region fields.
-     * @param country
-     */
-    function onCountryChange(country: string) {
-      const selectedCountry = countries?.find(({ value }) => value === country);
+    setSelectedCountry(selectedCountry);
+  }
 
-      if (
-        selectedCountry &&
-        selectedCountry.childRegions.length === 0 &&
-        selectedCountry.hasAdditionalFields
-      ) {
-        setSelectedRegion(selectedCountry.regionSlug);
-      } else {
-        setSelectedRegion(undefined);
-      }
+  /**
+   * Update the selected region and fetch the region fields.
+   * @param region
+   */
+  function onRegionChange(region: string) {
+    setSelectedRegion(region);
+  }
 
-      setSelectedCountry(selectedCountry);
+  const regionField = fields.find((field) => field.name === 'region');
+  if (regionField) {
+    const regions =
+      selectedCountry?.childRegions.map((region) => ({
+        value: region.slug,
+        label: region.name,
+      })) ?? [];
+    regionField.options = regions;
+    regionField.isVisible = regions.length > 0;
+    regionField.required = regions.length > 0;
+    regionField.onChange = onRegionChange;
+    regionField.schema =
+      regions.length > 0 ? string().required('Currency is required') : string();
+  }
+
+  if (currencies) {
+    const currencyField = fields.find((field) => field.name === 'currency');
+    if (currencyField) {
+      currencyField.options = currencies;
     }
+  }
 
-    /**
-     * Update the selected region and fetch the region fields.
-     * @param region
-     */
-    function onRegionChange(region: string) {
-      setSelectedRegion(region);
+  if (countries) {
+    const countryField = fields.find((field) => field.name === 'country');
+    if (countryField) {
+      countryField.options = countries;
+      countryField.onChange = onCountryChange;
     }
+  }
 
-    const regionField = fields.find((field) => field.name === 'region');
-    if (regionField) {
-      const regions =
-        selectedCountry?.childRegions.map((region) => ({
-          value: region.slug,
-          label: region.name,
-        })) ?? [];
-      regionField.options = regions;
-      regionField.isVisible = regions.length > 0;
-      regionField.required = regions.length > 0;
-      regionField.onChange = onRegionChange;
-      regionField.schema =
-        regions.length > 0
-          ? string().required('Currency is required')
-          : string();
-    }
+  const allFields = [
+    ...fields,
+    ...(jsonSchemaRegionFields?.fields || []),
+  ] as Field[];
+  const validationSchema = buildValidationSchema(allFields);
 
-    if (currencies) {
-      const currencyField = fields.find((field) => field.name === 'currency');
-      if (currencyField) {
-        currencyField.options = currencies;
-      }
-    }
-
-    if (countries) {
-      const countryField = fields.find((field) => field.name === 'country');
-      if (countryField) {
-        countryField.options = countries;
-        countryField.onChange = onCountryChange;
-      }
-    }
-
-    const validationSchema = buildValidationSchema(fields);
-
-    return {
-      stepState: {
-        current: 0,
-        total: 1,
-        isLastStep: true,
-      },
-      fields: [...fields, ...(jsonSchemaRegionFields?.fields || [])] as Field[],
-      validationSchema,
-      handleValidation: jsonSchemaRegionFields?.handleValidation,
-      onSubmit,
-    };
+  return {
+    stepState: {
+      current: 0,
+      total: 1,
+      isLastStep: true,
+    },
+    fields: allFields,
+    validationSchema,
+    handleValidation: jsonSchemaRegionFields?.handleValidation,
+    onSubmit,
   };
+};

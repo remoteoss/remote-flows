@@ -34,7 +34,7 @@ export type Field = {
   [key: string]: unknown;
 };
 
-export type BaseHookReturn<TFormParams extends object> = {
+export type BaseHookReturn<TFormParams extends object, TResponse> = {
   stepState: {
     current: number;
     total: number;
@@ -43,5 +43,5 @@ export type BaseHookReturn<TFormParams extends object> = {
   fields: Field[];
   validationSchema: AnyObjectSchema;
   handleValidation?: (values: Record<string, unknown>) => void;
-  onSubmit: (values: TFormParams) => Promise<void>;
+  onSubmit: (values: TFormParams) => Promise<TResponse | null>;
 };

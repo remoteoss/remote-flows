@@ -129,9 +129,9 @@ export function CostCalculator({
     await onSubmit?.(payload);
 
     try {
-      const { data } = await submitCostCalculator(payload);
-      if (data) {
-        onSuccess?.(data);
+      const estimation = await submitCostCalculator(payload);
+      if (estimation) {
+        onSuccess?.(estimation);
       }
     } catch (error) {
       onError?.(error as Error);
