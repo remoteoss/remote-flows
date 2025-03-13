@@ -47,8 +47,8 @@ function RemoteFlowContextWrapper({
           const { data } = await refetch();
           if (data) {
             session.current = {
-              accessToken: data.access_token,
-              expiresAt: Date.now() + parseInt(data.expires_in, 10) * 1000,
+              accessToken: data.accessToken,
+              expiresAt: Date.now() + data.expiresIn * 1000,
             };
           }
         }

@@ -10,6 +10,10 @@ function App() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
       .catch((error) => {
         console.error({ error });
         throw error;

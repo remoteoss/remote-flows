@@ -1,7 +1,7 @@
 // auth types
 type AuthResponse = {
-  access_token: string;
-  expires_in: string;
+  accessToken: string;
+  expiresIn: number;
 };
 
 export type RemoteFlowsSDKProps = {
