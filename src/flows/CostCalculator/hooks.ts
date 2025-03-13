@@ -33,7 +33,6 @@ const useCostCalculatorCountries = () => {
   return useQuery({
     queryKey: ['cost-calculator-countries'],
     queryFn: () => {
-      console.log('############## HOOK', getIndexCountry);
       return getIndexCountry({
         client: client as Client,
         headers: {
@@ -41,7 +40,6 @@ const useCostCalculatorCountries = () => {
         },
       });
     },
-    enabled: !!client,
     select: (data) =>
       data.data?.data.map((country) => ({
         value: country.region_slug,
@@ -70,7 +68,6 @@ const useCompanyCurrencies = () => {
         },
       });
     },
-    enabled: !!client,
     select: (data) =>
       data.data?.data?.company_currencies.map((currency) => ({
         value: currency.slug,

@@ -18,11 +18,10 @@
     "noEmit": true,
     "outDir": "dist",
     "esModuleInterop": true,
-    "typeRoots": ["./node_modules/@types"],
-    "types": ["vitest/jsdom", "vitest/globals"],
+    "types": ["vitest/globals"],
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "./setup.ts"]
 }
