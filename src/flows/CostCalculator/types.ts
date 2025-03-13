@@ -1,3 +1,5 @@
+import { AnyObjectSchema } from 'yup';
+
 export type Field = {
   name: string;
   label?: string;
@@ -32,13 +34,14 @@ export type Field = {
   [key: string]: unknown;
 };
 
-export type BaseFlow<TFormParams extends {}> = {
+export type BaseHookReturn<TFormParams extends {}> = {
   stepState: {
     current: number;
     total: number;
     isLastStep: boolean;
   };
   fields: Field[];
+  validationSchema: AnyObjectSchema;
   handleValidation?: (values: Record<string, unknown>) => any;
   onSubmit: (values: TFormParams) => Promise<any>;
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { object, type AnyObjectSchema } from 'yup';
 
 import type {
   CostCalculatorEstimateParams,
@@ -13,7 +12,6 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
-import type { Field } from '@/src/flows/CostCalculator/types';
 
 type FormValues = {
   currency: string;
@@ -64,33 +62,18 @@ type CostCalculatorProps = Partial<{
    * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
-  onSubmit: (data: CostCalculatorEstimateParams) => void;
+  onSubmit: (data: CostCalculatorEstimateParams) => Promise<void> | void;
   /**
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
-  onSuccess: (data: CostCalculatorEstimateResponse) => void;
+  onSuccess: (data: CostCalculatorEstimateResponse) => Promise<void> | void;
   /**
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
    */
   onError: (error: Error) => void;
 }>;
-
-/**
- * Build the validation schema for the form.
- * @returns
- */
-function buildValidationSchema(fields: Field[]) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
-}
 
 export function CostCalculator({
   estimationParams = {
@@ -107,9 +90,12 @@ export function CostCalculator({
   onError,
   onSuccess,
 }: CostCalculatorProps) {
-  const { onSubmit: submitCostCalculator, fields } = useCostCalculator();
+  const {
+    onSubmit: submitCostCalculator,
+    fields,
+    validationSchema,
+  } = useCostCalculator();
 
-  const validationSchema = buildValidationSchema(fields);
   const resolver = useValidationFormResolver(validationSchema);
   const form = useForm<FormValues>({
     resolver: resolver,

@@ -5,13 +5,13 @@ import {
   getShowRegionField,
   postCreateEstimation,
 } from '@/src/client';
-import type { BaseFlow, Field } from '@/src/flows/CostCalculator/types';
+import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { string } from 'yup';
+import { AnyObjectSchema, object, string } from 'yup';
 import { fields } from './fields';
 
 type CostCalculatorCountry = {
@@ -22,6 +22,10 @@ type CostCalculatorCountry = {
   regionSlug: string;
 };
 
+/**
+ * Hook to fetch the countries for the cost calculator.
+ * @returns
+ */
 const useCostCalculatorCountries = () => {
   const { client } = useClient();
 
@@ -47,6 +51,10 @@ const useCostCalculatorCountries = () => {
   });
 };
 
+/**
+ * Hook to fetch the company currencies.
+ * @returns
+ */
 const useCompanyCurrencies = () => {
   const { client } = useClient();
 
@@ -69,6 +77,10 @@ const useCompanyCurrencies = () => {
   });
 };
 
+/**
+ * Hook to create an estimation.
+ * @returns
+ */
 const useCostCalculatorEstimation = () => {
   const { client } = useClient();
 
@@ -85,6 +97,11 @@ const useCostCalculatorEstimation = () => {
   });
 };
 
+/**
+ * Hook to fetch the region fields.
+ * @param region
+ * @returns
+ */
 const useRegionFields = (region: string | undefined) => {
   const { client } = useClient();
 
@@ -108,94 +125,115 @@ const useRegionFields = (region: string | undefined) => {
 };
 
 /**
+ * Build the validation schema for the form.
+ * @returns
+ */
+function buildValidationSchema(fields: Field[]) {
+  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
+    (fieldsSchemaAcc, field) => {
+      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      return fieldsSchemaAcc;
+    },
+    {},
+  );
+  return object(fieldsSchema) as AnyObjectSchema;
+}
+
+/**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator = (): BaseFlow<CostCalculatorEstimateParams> => {
-  const [selectedRegion, setSelectedRegion] = useState<string>();
-  const [selectedCountry, setSelectedCountry] =
-    useState<CostCalculatorCountry>();
-  const { data: countries } = useCostCalculatorCountries();
-  const { data: currencies } = useCompanyCurrencies();
-  const { data: jsonSchemaRegionFields } = useRegionFields(
-    selectedRegion || selectedCountry?.value,
-  );
-  const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+export const useCostCalculator =
+  (): BaseHookReturn<CostCalculatorEstimateParams> => {
+    const [selectedRegion, setSelectedRegion] = useState<string>();
+    const [selectedCountry, setSelectedCountry] =
+      useState<CostCalculatorCountry>();
+    const { data: countries } = useCostCalculatorCountries();
+    const { data: currencies } = useCompanyCurrencies();
+    const { data: jsonSchemaRegionFields } = useRegionFields(
+      selectedRegion || selectedCountry?.value,
+    );
+    const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
-  /**
-   * Submit the estimation form with the given values.
-   * @param values
-   */
-  async function onSubmit(values: CostCalculatorEstimateParams) {
-    return costCalculatorEstimationMutation.mutateAsync(values);
-  }
-
-  /**
-   * If the selected country has no child regions and has additional fields,
-   * set the current region to the country's region slug and fetch the region fields.
-   * @param country
-   */
-  function onCountryChange(country: string) {
-    const selectedCountry = countries?.find(({ value }) => value === country);
-
-    if (
-      selectedCountry &&
-      selectedCountry.childRegions.length === 0 &&
-      selectedCountry.hasAdditionalFields
-    ) {
-      setSelectedRegion(selectedCountry.regionSlug);
-    } else {
-      setSelectedRegion(undefined);
+    /**
+     * Submit the estimation form with the given values.
+     * @param values
+     */
+    async function onSubmit(values: CostCalculatorEstimateParams) {
+      return costCalculatorEstimationMutation.mutateAsync(values);
     }
 
-    setSelectedCountry(selectedCountry);
-  }
+    /**
+     * If the selected country has no child regions and has additional fields,
+     * set the current region to the country's region slug and fetch the region fields.
+     * @param country
+     */
+    function onCountryChange(country: string) {
+      const selectedCountry = countries?.find(({ value }) => value === country);
 
-  /**
-   * Update the selected region and fetch the region fields.
-   * @param region
-   */
-  function onRegionChange(region: string) {
-    setSelectedRegion(region);
-  }
+      if (
+        selectedCountry &&
+        selectedCountry.childRegions.length === 0 &&
+        selectedCountry.hasAdditionalFields
+      ) {
+        setSelectedRegion(selectedCountry.regionSlug);
+      } else {
+        setSelectedRegion(undefined);
+      }
 
-  const regionField = fields.find((field) => field.name === 'region');
-  if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
-    regionField.options = regions;
-    regionField.isVisible = regions.length > 0;
-    regionField.required = regions.length > 0;
-    regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0 ? string().required('Currency is required') : string();
-  }
-
-  if (currencies) {
-    const currencyField = fields.find((field) => field.name === 'currency');
-    if (currencyField) {
-      currencyField.options = currencies;
+      setSelectedCountry(selectedCountry);
     }
-  }
 
-  if (countries) {
-    const countryField = fields.find((field) => field.name === 'country');
-    if (countryField) {
-      countryField.options = countries;
-      countryField.onChange = onCountryChange;
+    /**
+     * Update the selected region and fetch the region fields.
+     * @param region
+     */
+    function onRegionChange(region: string) {
+      setSelectedRegion(region);
     }
-  }
 
-  return {
-    stepState: {
-      current: 0,
-      total: 1,
-      isLastStep: true,
-    },
-    fields: [...fields, ...(jsonSchemaRegionFields?.fields || [])] as Field[],
-    handleValidation: jsonSchemaRegionFields?.handleValidation,
-    onSubmit,
+    const regionField = fields.find((field) => field.name === 'region');
+    if (regionField) {
+      const regions =
+        selectedCountry?.childRegions.map((region) => ({
+          value: region.slug,
+          label: region.name,
+        })) ?? [];
+      regionField.options = regions;
+      regionField.isVisible = regions.length > 0;
+      regionField.required = regions.length > 0;
+      regionField.onChange = onRegionChange;
+      regionField.schema =
+        regions.length > 0
+          ? string().required('Currency is required')
+          : string();
+    }
+
+    if (currencies) {
+      const currencyField = fields.find((field) => field.name === 'currency');
+      if (currencyField) {
+        currencyField.options = currencies;
+      }
+    }
+
+    if (countries) {
+      const countryField = fields.find((field) => field.name === 'country');
+      if (countryField) {
+        countryField.options = countries;
+        countryField.onChange = onCountryChange;
+      }
+    }
+
+    const validationSchema = buildValidationSchema(fields);
+
+    return {
+      stepState: {
+        current: 0,
+        total: 1,
+        isLastStep: true,
+      },
+      fields: [...fields, ...(jsonSchemaRegionFields?.fields || [])] as Field[],
+      validationSchema,
+      handleValidation: jsonSchemaRegionFields?.handleValidation,
+      onSubmit,
+    };
   };
-};
