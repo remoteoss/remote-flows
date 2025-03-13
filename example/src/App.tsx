@@ -15,8 +15,6 @@ function CostCalculatorForm() {
     null,
   );
 
-  console.log({ payload });
-
   const estimationParams = {
     title: 'Estimate for a new company',
     includeBenefits: true,
