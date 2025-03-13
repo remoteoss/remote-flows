@@ -3,6 +3,7 @@ import {
   getIndexCompanyCurrency,
   getIndexCountry,
   getShowRegionField,
+  MinimalRegion,
   postCreateEstimation,
 } from '@/src/client';
 import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
@@ -17,7 +18,7 @@ import { fields } from './fields';
 type CostCalculatorCountry = {
   value: string;
   label: string;
-  childRegions: any[];
+  childRegions: MinimalRegion[];
   hasAdditionalFields: boolean;
   regionSlug: string;
 };
