@@ -48,11 +48,11 @@ type CostCalculatorProps = Partial<{
     /**
      * Default value for the country field.
      */
-    country: string;
+    countryRegionSlug: string;
     /**
      * Default value for the currency field.
      */
-    currency: string;
+    currencySlug: string;
     /**
      * Default value for the salary field.
      */
@@ -82,8 +82,8 @@ export function CostCalculator({
     includeCostBreakdowns: false,
   },
   defaultValues = {
-    country: '',
-    currency: '',
+    countryRegionSlug: '',
+    currencySlug: '',
     salary: '',
   },
   onSubmit,
@@ -100,8 +100,8 @@ export function CostCalculator({
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
-      country: defaultValues?.country,
-      currency: defaultValues?.currency,
+      country: defaultValues?.countryRegionSlug,
+      currency: defaultValues?.currencySlug,
       region: '',
       salary: defaultValues?.salary,
     },
