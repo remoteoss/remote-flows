@@ -75,6 +75,20 @@ type CostCalculatorProps = Partial<{
   onError: (error: Error) => void;
 }>;
 
+function round(value: number): number {
+  return Number(value.toFixed(2));
+}
+
+function convertToValidCost(value: string) {
+  return parseFloat(value.replace(/,/g, ''));
+}
+
+function convertToCents(amount: string) {
+  const validAmount = convertToValidCost(amount);
+
+  return round(validAmount * 100);
+}
+
 export function CostCalculator({
   estimationParams = {
     title: 'Estimation',
@@ -116,8 +130,10 @@ export function CostCalculator({
       employments: [
         {
           region_slug: values.region || values.country,
-          annual_gross_salary: parseFloat(values.salary),
-          annual_gross_salary_in_employer_currency: parseFloat(values.salary),
+          annual_gross_salary: convertToCents(values.salary),
+          annual_gross_salary_in_employer_currency: convertToCents(
+            values.salary,
+          ),
           employment_term: values.contract_duration_type ?? 'fixed',
           title: estimationParams.title,
           regional_to_employer_exchange_rate: '1',
