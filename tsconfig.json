@@ -19,7 +19,7 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types"],
-
+    "types": ["vitest/jsdom", "vitest/globals"],
     "paths": {
       "@/*": ["./*"]
     }

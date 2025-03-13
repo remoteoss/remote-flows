@@ -30,10 +30,10 @@ type CostCalculatorCountry = {
  */
 const useCostCalculatorCountries = () => {
   const { client } = useClient();
-
   return useQuery({
     queryKey: ['cost-calculator-countries'],
     queryFn: () => {
+      console.log('############## HOOK', getIndexCountry);
       return getIndexCountry({
         client: client as Client,
         headers: {
@@ -189,7 +189,6 @@ export const useCostCalculator = (): BaseHookReturn<
     } else {
       setSelectedRegion(undefined);
     }
-
     setSelectedCountry(selectedCountry);
   }
 
