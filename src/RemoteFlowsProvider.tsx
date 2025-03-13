@@ -1,25 +1,40 @@
 import { Client, createClient } from '@hey-api/client-fetch';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import React, { createContext, useContext, useRef } from 'react';
 
-import { BaseTokenResponse } from './client';
 import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
+
+const queryClient = new QueryClient();
 
 const RemoteFlowContext = createContext<{ client: Client | null }>({
   client: null,
 });
 
-const queryClient = new QueryClient();
-
 export const useClient = () => useContext(RemoteFlowContext);
 
-export function RemoteFlows({
-  auth,
+type RemoteFlowContextWrapperProps = {
+  auth: RemoteFlowsSDKProps['auth'];
+  children: React.ReactNode;
+};
+
+function RemoteFlowContextWrapper({
   children,
-}: PropsWithChildren<RemoteFlowsSDKProps>) {
-  const session = useRef<BaseTokenResponse | null>(null);
+  auth,
+}: RemoteFlowContextWrapperProps) {
+  const session = useRef<{ accessToken: string; expiresAt: number } | null>(
+    null,
+  );
+  const { refetch } = useQuery({
+    queryKey: ['auth'],
+    queryFn: auth,
+    enabled: false,
+  });
   const remoteApiClient = useRef(
     createClient({
       ...client.getConfig(),
@@ -28,25 +43,35 @@ export function RemoteFlows({
         function hasTokenExpired(expiresAt: number | undefined) {
           return !expiresAt || Date.now() + 60000 > expiresAt;
         }
-
-        if (!session.current || hasTokenExpired(session.current.expires_in)) {
-          try {
-            session.current = await auth();
-          } catch {
-            console.error('Failed to fetch the access token');
-            return '';
+        if (!session.current || hasTokenExpired(session.current.expiresAt)) {
+          const { data } = await refetch();
+          if (data) {
+            session.current = {
+              accessToken: data.access_token,
+              expiresAt: Date.now() + parseInt(data.expires_in, 10) * 1000,
+            };
           }
         }
-        return session.current?.access_token;
+        return session.current?.accessToken;
       },
     }),
   );
+  return (
+    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+      {children}
+    </RemoteFlowContext.Provider>
+  );
+}
 
+export function RemoteFlows({
+  auth,
+  children,
+}: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+      <RemoteFlowContextWrapper auth={auth}>
         {children}
-      </RemoteFlowContext.Provider>
+      </RemoteFlowContextWrapper>
     </QueryClientProvider>
   );
 }

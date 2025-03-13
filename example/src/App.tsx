@@ -10,9 +10,6 @@ function App() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
-      .then((data) => {
-        return data.accessToken;
-      })
       .catch((error) => {
         console.error({ error });
         throw error;
@@ -23,14 +20,7 @@ function App() {
 
   return (
     <>
-      <RemoteFlows
-        auth={() =>
-          fetchToken().then((access_token) => ({
-            expires_in: 3600,
-            access_token,
-          }))
-        }
-      >
+      <RemoteFlows auth={() => fetchToken()}>
         <CostCalculator
           estimationParams={{
             title: 'Estimate for a new company',
