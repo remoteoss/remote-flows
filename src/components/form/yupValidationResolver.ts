@@ -41,26 +41,24 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
   const yupValidation = useValidationYupResolver(validationSchema);
   return useCallback(
     async (data: FieldValues) => {
-      let yupValues;
-      let yupErrors = {};
-      let hasYupErrors = false;
+      let values;
+      let errors = {};
 
       try {
-        yupValues = await yupValidation(data);
+        values = await yupValidation(data);
       } catch (error) {
-        hasYupErrors = true;
-        yupErrors = iterateErrors(error as ValidationError);
+        errors = iterateErrors(error as ValidationError);
       }
 
-      if (Object.keys(yupErrors).length > 0) {
+      if (Object.keys(errors).length > 0) {
         return {
           values: {},
-          errors: yupErrors,
+          errors: errors,
         };
       }
 
       return {
-        values: yupValues,
+        values,
         errors: {},
       };
     },
