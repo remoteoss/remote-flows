@@ -1,6 +1,6 @@
-import React, { createContext, useEffect, useMemo } from 'react';
-import { applyTheme } from '@/src/lib/applyTheme';
 import { applyCssRules } from '@/src/lib/applyRules';
+import { applyTheme } from '@/src/lib/applyTheme';
+import React, { createContext, useEffect, useMemo } from 'react';
 import { ThemeProviderProps } from './types/theme';
 
 const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({
@@ -16,7 +16,7 @@ export function ThemeProvider(props: ThemeProviderProps) {
     if (props.rules && Object.keys(props.rules).length > 0) {
       applyCssRules(props.rules);
     }
-  }, []);
+  }, [props.theme, props.rules]);
 
   const value = useMemo(() => {
     return { theme: props.theme, rules: props.rules };

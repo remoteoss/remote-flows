@@ -37,6 +37,7 @@ export const useCostCalculatorCountries = () => {
 };
 
 export const useCalculatorLoadRegionFieldsSchemaForm = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>,
 ) => {
   const { client } = useClient();
