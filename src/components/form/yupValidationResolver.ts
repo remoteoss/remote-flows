@@ -52,7 +52,7 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
         yupErrors = iterateErrors(error as ValidationError);
       }
 
-      if (yupErrors) {
+      if (Object.keys(yupErrors).length > 0) {
         return {
           values: {},
           errors: yupErrors,

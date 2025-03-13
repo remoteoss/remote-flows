@@ -19,7 +19,7 @@ type CostCalculatorCountry = {
   value: string;
   label: string;
   childRegions: MinimalRegion[];
-  hasAdditionalFields: boolean;
+  hasAdditionalFields: boolean | undefined;
   regionSlug: string;
 };
 
@@ -48,7 +48,7 @@ const useCostCalculatorCountries = () => {
         childRegions: country.child_regions,
         hasAdditionalFields: country.has_additional_fields,
         regionSlug: country.region_slug,
-      })) as CostCalculatorCountry[],
+      })),
   });
 };
 
