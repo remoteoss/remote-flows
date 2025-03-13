@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { InferType, object, type AnyObjectSchema } from 'yup';
+import { object, type AnyObjectSchema } from 'yup';
 
 import type {
   CostCalculatorEstimateParams,
@@ -15,10 +15,15 @@ import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import type { Field } from '@/src/flows/CostCalculator/types';
 
-type FormValues = InferType<any> & {
-  contract_duration_type?: EmploymentTermType;
-  age?: number;
-};
+type FormValues = {
+  currency: string;
+  country: string;
+  salary: string;
+} & Partial<{
+  region: string;
+  age: number;
+  contract_duration_type: EmploymentTermType;
+}>;
 
 type CostCalculatorProps = Partial<{
   /**
@@ -84,7 +89,7 @@ function buildValidationSchema(fields: Field[]) {
     },
     {},
   );
-  return object(fieldsSchema);
+  return object(fieldsSchema) as AnyObjectSchema;
 }
 
 export function CostCalculator({
@@ -127,8 +132,7 @@ export function CostCalculator({
           region_slug: values.region || values.country,
           annual_gross_salary: parseFloat(values.salary),
           annual_gross_salary_in_employer_currency: parseFloat(values.salary),
-          employment_term:
-            (values.contract_duration_type as EmploymentTermType) ?? 'fixed',
+          employment_term: values.contract_duration_type ?? 'fixed',
           title: estimationParams.title,
           regional_to_employer_exchange_rate: '1',
           age: values.age ?? undefined,
