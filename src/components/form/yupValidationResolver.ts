@@ -1,4 +1,3 @@
-import { HeadlessFormOutput } from '@remoteoss/json-schema-form';
 import { useCallback } from 'react';
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
@@ -38,7 +37,6 @@ function iterateErrors(error: ValidationError) {
 
 export const useValidationFormResolver = <T extends AnyObjectSchema>(
   validationSchema: T,
-  jsonSchemaValidation: HeadlessFormOutput['handleValidation'] | undefined,
 ): Resolver<InferType<T>> => {
   const yupValidation = useValidationYupResolver(validationSchema);
   return useCallback(
@@ -54,45 +52,13 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
         yupErrors = iterateErrors(error as ValidationError);
       }
 
-      const dynamicValues = await jsonSchemaValidation?.(data);
-      let jsonErrors = {};
-      let hasJsonErrors = false;
-
-      if (
-        dynamicValues?.formErrors &&
-        Object.keys(dynamicValues.formErrors).length > 0
-      ) {
-        hasJsonErrors = true;
-        // If we have dynamic form errors, convert them to the expected format
-        if (dynamicValues.yupError) {
-          // If the dynamic validation returns a yupError object, use iterateErrors
-          jsonErrors = iterateErrors(dynamicValues.yupError);
-        } else {
-          // Otherwise, manually format the errors
-          jsonErrors = Object.entries(dynamicValues.formErrors).reduce(
-            (acc, [field, message]) => ({
-              ...acc,
-              [field]: {
-                type: 'validation',
-                message: message as string,
-              },
-            }),
-            {},
-          );
-        }
-      }
-
-      const combinedErrors = { ...yupErrors, ...jsonErrors };
-
-      // Return based on validation results
-      if (hasYupErrors || hasJsonErrors) {
+      if (yupErrors) {
         return {
           values: {},
-          errors: combinedErrors,
+          errors: yupErrors,
         };
       }
 
-      // Both validations passed
       return {
         values: yupValues,
         errors: {},

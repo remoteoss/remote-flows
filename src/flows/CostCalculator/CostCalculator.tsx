@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { object, type AnyObjectSchema, type InferType } from 'yup';
+import { InferType, object, type AnyObjectSchema } from 'yup';
 
 import type {
   CostCalculatorEstimateParams,
@@ -102,16 +102,10 @@ export function CostCalculator({
   onError,
   onSuccess,
 }: CostCalculatorProps) {
-  const {
-    onSubmit: submitCostCalculator,
-    fields,
-    handleValidation,
-  } = useCostCalculator();
+  const { onSubmit: submitCostCalculator, fields } = useCostCalculator();
 
-  const resolver = useValidationFormResolver(
-    buildValidationSchema(fields),
-    handleValidation,
-  );
+  const validationSchema = buildValidationSchema(fields);
+  const resolver = useValidationFormResolver(validationSchema);
   const form = useForm<FormValues>({
     resolver: resolver,
     defaultValues: {
