@@ -32,7 +32,7 @@ const ENVIROMENTS = {
 function RemoteFlowContextWrapper({
   children,
   auth,
-  environment = 'staging',
+  environment,
 }: RemoteFlowContextWrapperProps) {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
@@ -43,7 +43,9 @@ function RemoteFlowContextWrapper({
     enabled: false,
   });
 
-  const baseUrl = ENVIROMENTS[environment as keyof typeof ENVIROMENTS];
+  const baseUrl =
+    process.env.REMOTE_GATEWAY_URL ||
+    ENVIROMENTS[environment as keyof typeof ENVIROMENTS];
 
   const remoteApiClient = useRef(
     createClient({

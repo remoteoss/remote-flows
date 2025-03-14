@@ -1,7 +1,7 @@
 import { Options } from 'tsup';
 
-/* const env = process.env.NODE_ENV;
- */
+const env = process.env.NODE_ENV;
+
 export const tsup: Options = {
   target: 'esnext',
   clean: true,
@@ -12,10 +12,10 @@ export const tsup: Options = {
   sourcemap: true,
   format: ['esm'],
   outDir: 'dist',
-  /* env: {
+  env: {
     REMOTE_GATEWAY_URL:
       env === 'production'
         ? 'https://gateway.remote.com/'
         : 'https://gateway.niceremote.com/',
-  }, */
+  },
 };
