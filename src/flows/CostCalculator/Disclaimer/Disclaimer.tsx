@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import {
   Drawer,
   DrawerClose,
@@ -9,17 +8,22 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/src/components/ui/drawer';
+import { ScrollArea } from '@/src/components/ui/scroll-area';
 import { X } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculatorDisclaimer } from '@/src/flows/CostCalculator/hooks';
 
-export const Disclaimer = () => {
+type DisclaimerProps = {
+  label?: string;
+};
+
+export const Disclaimer = ({ label = 'Disclaimer' }: DisclaimerProps) => {
   const { data: disclaimer } = useCostCalculatorDisclaimer();
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button variant="link" size="link">
-          Disclaimer
+          {label}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -42,10 +46,12 @@ export const Disclaimer = () => {
             </Button>
           </DrawerDescription>
         </DrawerHeader>
-        <div
-          className={clsx('p-4 cost-calculator-disclaimer-drawer-body')}
-          dangerouslySetInnerHTML={{ __html: disclaimer?.data.body ?? '' }}
-        ></div>
+        <ScrollArea className="px-4 pb-4 overflow-y-auto max-h-[calc(80vh-120px)] cost-calculator-disclaimer-drawer-scroll-area">
+          <div
+            className={'cost-calculator-disclaimer-drawer-body'}
+            dangerouslySetInnerHTML={{ __html: disclaimer?.data.body ?? '' }}
+          ></div>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );

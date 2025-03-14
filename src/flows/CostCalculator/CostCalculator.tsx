@@ -60,6 +60,11 @@ type CostCalculatorProps = Partial<{
      */
     salary: string;
   }>;
+  params: Partial<{
+    disclaimer: {
+      label: string;
+    };
+  }>;
   /**
    * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
@@ -88,6 +93,7 @@ export function CostCalculator({
     currencySlug: '',
     salary: '',
   },
+  params,
   onSubmit,
   onError,
   onSuccess,
@@ -144,7 +150,6 @@ export function CostCalculator({
 
   return (
     <>
-      <Disclaimer />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <JSONSchemaFormFields fields={fields} />
@@ -156,6 +161,9 @@ export function CostCalculator({
           </Button>
         </form>
       </Form>
+      <div className="cost-calculator-disclaimer-wrapper">
+        <Disclaimer label={params?.disclaimer?.label} />
+      </div>
     </>
   );
 }
