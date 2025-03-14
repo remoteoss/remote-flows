@@ -175,18 +175,18 @@ export const useCostCalculator = (): BaseHookReturn<
    * @param country
    */
   function onCountryChange(country: string) {
-    const selectedCountry = countries?.find(({ value }) => value === country);
+    const currentCountry = countries?.find(({ value }) => value === country);
 
     if (
-      selectedCountry &&
-      selectedCountry.childRegions.length === 0 &&
-      selectedCountry.hasAdditionalFields
+      currentCountry &&
+      currentCountry.childRegions.length === 0 &&
+      currentCountry.hasAdditionalFields
     ) {
-      setSelectedRegion(selectedCountry.regionSlug);
+      setSelectedRegion(currentCountry.regionSlug);
     } else {
       setSelectedRegion(undefined);
     }
-    setSelectedCountry(selectedCountry);
+    setSelectedCountry(currentCountry);
   }
 
   /**
