@@ -48,7 +48,7 @@ export const Disclaimer = ({ label = 'Disclaimer' }: DisclaimerProps) => {
         </DrawerHeader>
         <ScrollArea className="px-4 pb-4 overflow-y-auto max-h-[calc(80vh-120px)] cost-calculator-disclaimer-drawer-scroll-area">
           <div
-            className={'cost-calculator-disclaimer-drawer-body'}
+            className="cost-calculator-disclaimer-drawer-body"
             dangerouslySetInnerHTML={{ __html: disclaimer?.data.body ?? '' }}
           ></div>
         </ScrollArea>
