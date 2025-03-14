@@ -79,8 +79,8 @@ describe('CostCalculator', () => {
         employments: [
           {
             region_slug: 'POL',
-            annual_gross_salary: 50000,
-            annual_gross_salary_in_employer_currency: 50000,
+            annual_gross_salary: 5000000,
+            annual_gross_salary_in_employer_currency: 5000000,
             employment_term: 'fixed',
             title: 'Estimation',
             regional_to_employer_exchange_rate: '1',
