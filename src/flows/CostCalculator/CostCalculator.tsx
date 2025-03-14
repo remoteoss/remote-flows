@@ -13,6 +13,7 @@ import { useValidationFormResolver } from '@/src/components/form/yupValidationRe
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { convertToCents } from '@/src/lib/utils';
+import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
 
 type FormValues = {
   currency: string;
@@ -143,6 +144,7 @@ export function CostCalculator({
 
   return (
     <>
+      <Disclaimer />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <JSONSchemaFormFields fields={fields} />
