@@ -13,11 +13,7 @@ import { X } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculatorDisclaimer } from '@/src/flows/CostCalculator/hooks';
 
-type DisclaimerProps = {
-  disclaimerDrawerClass?: string;
-};
-
-export const Disclaimer = ({ disclaimerDrawerClass }: DisclaimerProps) => {
+export const Disclaimer = () => {
   const { data: disclaimer } = useCostCalculatorDisclaimer();
   return (
     <Drawer>
@@ -47,10 +43,7 @@ export const Disclaimer = ({ disclaimerDrawerClass }: DisclaimerProps) => {
           </DrawerDescription>
         </DrawerHeader>
         <div
-          className={clsx(
-            'p-4 cost-calculator-disclaimer-drawer-body',
-            disclaimerDrawerClass,
-          )}
+          className={clsx('p-4 cost-calculator-disclaimer-drawer-body')}
           dangerouslySetInnerHTML={{ __html: disclaimer?.data.body ?? '' }}
         ></div>
       </DrawerContent>
