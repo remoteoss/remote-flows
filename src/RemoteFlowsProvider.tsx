@@ -21,11 +21,18 @@ export const useClient = () => useContext(RemoteFlowContext);
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
+  environment?: RemoteFlowsSDKProps['environment'];
+};
+
+const ENVIROMENTS = {
+  staging: 'https://gateway.niceremote.com/',
+  production: 'https://gateway.remote.com/',
 };
 
 function RemoteFlowContextWrapper({
   children,
   auth,
+  environment = 'staging',
 }: RemoteFlowContextWrapperProps) {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
@@ -35,10 +42,13 @@ function RemoteFlowContextWrapper({
     queryFn: auth,
     enabled: false,
   });
+
+  const baseUrl = ENVIROMENTS[environment as keyof typeof ENVIROMENTS];
+
   const remoteApiClient = useRef(
     createClient({
       ...client.getConfig(),
-      baseUrl: process.env.REMOTE_GATEWAY_URL,
+      baseUrl,
       auth: async () => {
         function hasTokenExpired(expiresAt: number | undefined) {
           return !expiresAt || Date.now() + 60000 > expiresAt;
@@ -66,10 +76,11 @@ function RemoteFlowContextWrapper({
 export function RemoteFlows({
   auth,
   children,
+  environment = 'staging',
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContextWrapper auth={auth}>
+      <RemoteFlowContextWrapper environment={environment} auth={auth}>
         {children}
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
