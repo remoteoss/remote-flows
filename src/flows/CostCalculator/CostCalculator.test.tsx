@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { CostCalculator } from './CostCalculator';
@@ -10,11 +11,11 @@ const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-describe('CostCalculator', () => {
-  const mockOnSubmit = vi.fn();
-  const mockOnSuccess = vi.fn();
-  const mockOnError = vi.fn();
+const mockOnSubmit = vi.fn();
+const mockOnSuccess = vi.fn();
+const mockOnError = vi.fn();
 
+describe('CostCalculator', () => {
   const defaultProps = {
     onSubmit: mockOnSubmit,
     onSuccess: mockOnSuccess,
@@ -75,6 +76,45 @@ describe('CostCalculator', () => {
             region_slug: 'a23370e3-b280-468f-b54c-25dd79b5690b',
             annual_gross_salary: 50000,
             annual_gross_salary_in_employer_currency: 50000,
+            employment_term: 'fixed',
+            title: 'Estimation',
+            regional_to_employer_exchange_rate: '1',
+            age: undefined,
+          },
+        ],
+      });
+    });
+  });
+
+  test.only('submits the form with selected values', async () => {
+    const user = userEvent.setup();
+    render(<CostCalculator onSubmit={mockOnSubmit} />, { wrapper });
+
+    const [selectCountry, selectCurrency] = screen.getAllByRole('combobox');
+
+    await user.click(selectCountry);
+    const country = screen.getByRole('option', { name: /Poland/i });
+    await user.click(country);
+
+    await user.click(selectCurrency);
+    const currency = screen.getByRole('option', { name: /USD/i });
+    await user.click(currency);
+
+    const salary = screen.getByLabelText(/salary/i);
+    await user.type(salary, '60000');
+
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        employer_currency_slug: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        include_benefits: false,
+        include_cost_breakdowns: false,
+        employments: [
+          {
+            region_slug: 'a23370e3-b280-468f-b54c-25dd79b5690b',
+            annual_gross_salary: 60000,
+            annual_gross_salary_in_employer_currency: 60000,
             employment_term: 'fixed',
             title: 'Estimation',
             regional_to_employer_exchange_rate: '1',

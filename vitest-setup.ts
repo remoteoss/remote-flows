@@ -4,24 +4,25 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 
-// class MockPointerEvent extends Event {
-//   button: number;
-//   ctrlKey: boolean;
-//   pointerType: string;
+// Mock PointerEvent to enable testing interactions with the select component
+class MockPointerEvent extends Event {
+  button: number;
+  ctrlKey: boolean;
+  pointerType: string;
 
-//   constructor(type: string, props: PointerEventInit) {
-//     super(type, props);
-//     this.button = props.button || 0;
-//     this.ctrlKey = props.ctrlKey || false;
-//     this.pointerType = props.pointerType || 'mouse';
-//   }
-// }
+  constructor(type: string, props: PointerEventInit) {
+    super(type, props);
+    this.button = props.button || 0;
+    this.ctrlKey = props.ctrlKey || false;
+    this.pointerType = props.pointerType || 'mouse';
+  }
+}
 
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// window.PointerEvent = MockPointerEvent as any;
-// window.HTMLElement.prototype.scrollIntoView = vi.fn();
-// window.HTMLElement.prototype.releasePointerCapture = vi.fn();
-// window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+window.PointerEvent = MockPointerEvent as any;
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+window.HTMLElement.prototype.hasPointerCapture = vi.fn();
 
 const countries = {
   data: [
@@ -35,14 +36,7 @@ const countries = {
         slug: 'pln-33441af1-a601-4a22-8f52-1ec090f10b4a',
       },
       region_slug: 'a23370e3-b280-468f-b54c-25dd79b5690b',
-      child_regions: [
-        {
-          code: 'WAW',
-          name: 'Warsaw',
-          status: 'active',
-          slug: '67e8afa4-0ce1-4025-8500-baf58bb61a34',
-        },
-      ],
+      child_regions: [],
       has_additional_fields: false,
       availability: 'active',
       original_country_slug: 'poland-d3f6d510-2fdf-4b9d-8520-2b581a862411',
@@ -67,6 +61,19 @@ export const restHandlers = [
   }),
   http.get('*/v1/company-currencies', () => {
     return HttpResponse.json(currencies);
+  }),
+  http.get('*/v1/cost-calculator/regions/*/fields', () => {
+    return HttpResponse.json({
+      data: {
+        version: 7,
+        schema: {
+          additionalProperties: false,
+          properties: {},
+          required: [],
+          type: 'object',
+        },
+      },
+    });
   }),
   http.post('*/v1/cost-calculator/estimation', () => {
     return HttpResponse.json({
