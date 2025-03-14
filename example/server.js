@@ -40,7 +40,7 @@ const getToken = async (req, res) => {
 
 const startServer = async () => {
   const app = express();
-  const port = 3000;
+  const port = 3001;
 
   // Create Vite server in middleware mode
   const vite = await createViteServer({

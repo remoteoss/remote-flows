@@ -1,2 +1,3 @@
 export { CostCalculator } from './CostCalculator';
-export { useCostCalculator } from './hooks';
+export { CostCalculatorResults } from './Results/CostCalculatorResults';
+export { useCostCalculator, useCostCalculatorEstimationPdf } from './hooks';

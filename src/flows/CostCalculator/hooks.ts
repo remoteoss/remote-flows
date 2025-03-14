@@ -6,6 +6,7 @@ import {
   getShowRegionField,
   MinimalRegion,
   postCreateEstimation,
+  postCreateEstimationPdf,
 } from '@/src/client';
 import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
@@ -89,6 +90,27 @@ const useCostCalculatorEstimation = () => {
   return useMutation({
     mutationFn: (payload: CostCalculatorEstimateParams) => {
       return postCreateEstimation({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
+};
+
+/**
+ * Custom hook to create a PDF estimation.
+ *
+ * @returns
+ */
+export const useCostCalculatorEstimationPdf = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: (payload: CostCalculatorEstimateParams) => {
+      return postCreateEstimationPdf({
         client: client as Client,
         headers: {
           Authorization: ``,
