@@ -31,7 +31,6 @@ type CostCalculatorCountry = {
  */
 const useCostCalculatorCountries = () => {
   const { client } = useClient();
-
   return useQuery({
     queryKey: ['cost-calculator-countries'],
     queryFn: () => {
@@ -42,7 +41,6 @@ const useCostCalculatorCountries = () => {
         },
       });
     },
-    enabled: !!client,
     select: (data) =>
       data.data?.data.map((country) => ({
         value: country.region_slug,
@@ -71,7 +69,6 @@ const useCompanyCurrencies = () => {
         },
       });
     },
-    enabled: !!client,
     select: (data) =>
       data.data?.data?.company_currencies.map((currency) => ({
         value: currency.slug,
@@ -200,19 +197,18 @@ export const useCostCalculator = (): BaseHookReturn<
    * @param country
    */
   function onCountryChange(country: string) {
-    const selectedCountry = countries?.find(({ value }) => value === country);
+    const currentCountry = countries?.find(({ value }) => value === country);
 
     if (
-      selectedCountry &&
-      selectedCountry.childRegions.length === 0 &&
-      selectedCountry.hasAdditionalFields
+      currentCountry &&
+      currentCountry.childRegions.length === 0 &&
+      currentCountry.hasAdditionalFields
     ) {
-      setSelectedRegion(selectedCountry.regionSlug);
+      setSelectedRegion(currentCountry.regionSlug);
     } else {
       setSelectedRegion(undefined);
     }
-
-    setSelectedCountry(selectedCountry);
+    setSelectedCountry(currentCountry);
   }
 
   /**
