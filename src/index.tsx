@@ -1,6 +1,9 @@
 import './styles/global.css';
 
-export { CostCalculator } from '@/src/flows/CostCalculator';
+export {
+  CostCalculator,
+  CostCalculatorResults,
+} from '@/src/flows/CostCalculator';
 // eslint-disable-next-line react-refresh/only-export-components
 export { useExportAsPdf } from '@/src/flows/CostCalculator/hooks';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';

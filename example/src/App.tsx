@@ -3,6 +3,7 @@ import {
   CostCalculatorEstimateResponse,
   RemoteFlows,
   CostCalculator,
+  CostCalculatorResults,
   useExportAsPdf,
   CostCalculatorEstimateParams,
 } from '@remoteoss/remote-flows';
@@ -55,6 +56,9 @@ function CostCalculatorForm() {
           setEstimations(response);
         }}
       />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
