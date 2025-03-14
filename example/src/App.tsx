@@ -4,7 +4,7 @@ import {
   RemoteFlows,
   CostCalculator,
   CostCalculatorResults,
-  useExportAsPdf,
+  useCostCalculatorEstimationPdf,
   CostCalculatorEstimateParams,
 } from '@remoteoss/remote-flows';
 import './App.css';
@@ -22,22 +22,26 @@ function CostCalculatorForm() {
     includeCostBreakdowns: true,
   };
 
-  const exportPdf = useExportAsPdf();
+  const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdf(payload)
-        .then((response) => {
-          const a = document.createElement('a');
-          a.href = response;
-          a.download = 'estimation.pdf';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        })
-        .catch((error) => {
+      exportPdfMutation.mutate(payload, {
+        onSuccess: (response) => {
+          if (response?.data?.data?.content !== undefined) {
+            const a = document.createElement('a');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            a.href = response.data.data.content as any;
+            a.download = 'estimation.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        },
+        onError: (error) => {
           console.error({ error });
-        });
+        },
+      });
     }
   };
 

@@ -12,6 +12,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import { convertToCents } from '@/src/lib/utils';
 
 type FormValues = {
   currency: string;
@@ -74,20 +75,6 @@ type CostCalculatorProps = Partial<{
    */
   onError: (error: Error) => void;
 }>;
-
-function round(value: number): number {
-  return Number(value.toFixed(2));
-}
-
-function convertToValidCost(value: string) {
-  return parseFloat(value.replace(/,/g, ''));
-}
-
-function convertToCents(amount: string) {
-  const validAmount = convertToValidCost(amount);
-
-  return round(validAmount * 100);
-}
 
 export function CostCalculator({
   estimationParams = {

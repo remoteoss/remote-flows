@@ -5,7 +5,7 @@ export {
   CostCalculatorResults,
 } from '@/src/flows/CostCalculator';
 // eslint-disable-next-line react-refresh/only-export-components
-export { useExportAsPdf } from '@/src/flows/CostCalculator/hooks';
+export { useCostCalculatorEstimationPdf } from '@/src/flows/CostCalculator/hooks';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export { ThemeProvider } from '@/src/theme';
 // eslint-disable-next-line react-refresh/only-export-components

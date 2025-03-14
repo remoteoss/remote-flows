@@ -13,10 +13,9 @@ import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { AnyObjectSchema, object, string } from 'yup';
 import { fields } from './fields';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type CostCalculatorCountry = {
   value: string;
@@ -101,6 +100,11 @@ const useCostCalculatorEstimation = () => {
   });
 };
 
+/**
+ * Custom hook to create a PDF estimation.
+ *
+ * @returns
+ */
 export const useCostCalculatorEstimationPdf = () => {
   const { client } = useClient();
 
@@ -266,28 +270,4 @@ export const useCostCalculator = (): BaseHookReturn<
     handleValidation: jsonSchemaRegionFields?.handleValidation,
     onSubmit,
   };
-};
-
-export const useExportAsPdf = () => {
-  const exportAsPDFMutation = useCostCalculatorEstimationPdf();
-
-  const { mutate } = exportAsPDFMutation;
-
-  return useCallback(
-    (data: CostCalculatorEstimateParams) => {
-      return new Promise<string>((resolve, reject) => {
-        mutate(data, {
-          onSuccess: (data) => {
-            if (data.data?.data.content !== undefined) {
-              resolve(data.data?.data.content as $TSFixMe);
-            }
-          },
-          onError: (error) => {
-            reject(error);
-          },
-        });
-      });
-    },
-    [mutate],
-  );
 };
