@@ -17,23 +17,6 @@ const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
-server.use(
-  ...[
-    http.get('*/v1/cost-calculator/countries', () => {
-      return HttpResponse.json(countries);
-    }),
-    http.get('*/v1/company-currencies', () => {
-      return HttpResponse.json(currencies);
-    }),
-    http.get('*/v1/cost-calculator/regions/*/fields', () => {
-      return HttpResponse.json(regionFields);
-    }),
-    http.post('*/v1/cost-calculator/estimation', () => {
-      return HttpResponse.json(estimation);
-    }),
-  ],
-);
-
 describe('CostCalculator', () => {
   const defaultProps = {
     onSubmit: mockOnSubmit,
@@ -47,7 +30,22 @@ describe('CostCalculator', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    server.use(
+      ...[
+        http.get('*/v1/cost-calculator/countries', () => {
+          return HttpResponse.json(countries);
+        }),
+        http.get('*/v1/company-currencies', () => {
+          return HttpResponse.json(currencies);
+        }),
+        http.get('*/v1/cost-calculator/regions/*/fields', () => {
+          return HttpResponse.json(regionFields);
+        }),
+        http.post('*/v1/cost-calculator/estimation', () => {
+          return HttpResponse.json(estimation);
+        }),
+      ],
+    );
   });
 
   test('renders the form with default values', async () => {
