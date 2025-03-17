@@ -106,5 +106,13 @@ describe('CostCalculator', () => {
     });
   });
 
-  test('displays validation errors when form is submitted with empty fields', async () => {});
+  test('displays validation errors when form is submitted with empty fields', async () => {
+    render(<CostCalculator />, { wrapper });
+
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/salary is required/i)).toBeInTheDocument();
+    });
+  });
 });
