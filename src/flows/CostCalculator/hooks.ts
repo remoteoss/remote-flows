@@ -11,7 +11,7 @@ import {
 import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { AnyObjectSchema, object, string } from 'yup';
@@ -185,6 +185,13 @@ export const useCostCalculator = (): BaseHookReturn<
     values: CostCalculatorEstimateParams,
   ): Promise<CostCalculatorEstimateResponse | null> {
     const response = await costCalculatorEstimationMutation.mutateAsync(values);
+    if (
+      response.error &&
+      response.response.status >= 400 &&
+      response.response.status < 600
+    ) {
+      throw new Error((response.error as $TSFixMe).message);
+    }
     if (response.data) {
       return response.data;
     }

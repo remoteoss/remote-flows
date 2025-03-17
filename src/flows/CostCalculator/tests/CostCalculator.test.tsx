@@ -91,21 +91,20 @@ describe('CostCalculator', () => {
     });
   });
 
-  // test('calls onSuccess when estimation succeeds', async () => {
-  //   render(<CostCalculator {...defaultProps} />, { wrapper });
+  test('calls onError when estimation fails', async () => {
+    server.use(
+      http.post('*/v1/cost-calculator/estimation', () => {
+        return new HttpResponse('Not found', { status: 404 });
+      }),
+    );
+    render(<CostCalculator {...defaultProps} />, { wrapper });
 
-  //   fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
-  //   await waitFor(() => {
-  //     expect(mockOnSuccess).toHaveBeenCalledWith({
-  //       data: {
-  //         employments: [],
-  //       },
-  //     });
-  //   });
-  // });
-
-  test('calls onError when estimation fails', async () => {});
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalled();
+    });
+  });
 
   test('displays validation errors when form is submitted with empty fields', async () => {});
 });
