@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "openapi-ts": "openapi-ts",
     "prepack": "npm run build",
-    "test": "vitest"
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
   },
   "type": "module",
   "main": "dist/index.js",
