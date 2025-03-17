@@ -11,7 +11,7 @@ import {
 import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { AnyObjectSchema, object, string } from 'yup';
@@ -160,10 +160,16 @@ function buildValidationSchema(fields: Field[]) {
   return object(fieldsSchema) as AnyObjectSchema;
 }
 
+type UseCostCalculatorParams = {
+  defaultRegion?: string;
+};
+
 /**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator = (): BaseHookReturn<
+export const useCostCalculator = ({
+  defaultRegion,
+}: UseCostCalculatorParams = {}): BaseHookReturn<
   CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse
 > => {
@@ -172,9 +178,12 @@ export const useCostCalculator = (): BaseHookReturn<
     useState<CostCalculatorCountry>();
   const { data: countries } = useCostCalculatorCountries();
   const { data: currencies } = useCompanyCurrencies();
-  const { data: jsonSchemaRegionFields } = useRegionFields(
-    selectedRegion || selectedCountry?.value,
-  );
+
+  const jsonSchemaRegionSlug =
+    selectedRegion || selectedCountry?.value || defaultRegion;
+
+  const { data: jsonSchemaRegionFields } =
+    useRegionFields(jsonSchemaRegionSlug);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
@@ -185,6 +194,13 @@ export const useCostCalculator = (): BaseHookReturn<
     values: CostCalculatorEstimateParams,
   ): Promise<CostCalculatorEstimateResponse | null> {
     const response = await costCalculatorEstimationMutation.mutateAsync(values);
+    if (
+      response.error &&
+      response.response.status >= 400 &&
+      response.response.status < 600
+    ) {
+      throw new Error((response.error as $TSFixMe).message);
+    }
     if (response.data) {
       return response.data;
     }
@@ -253,6 +269,7 @@ export const useCostCalculator = (): BaseHookReturn<
     ...fields,
     ...(jsonSchemaRegionFields?.fields || []),
   ] as Field[];
+
   const validationSchema = buildValidationSchema(allFields);
 
   return {
