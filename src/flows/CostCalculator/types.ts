@@ -30,6 +30,7 @@ export type Field = {
   anyOf?: unknown[];
   options?: unknown[];
 
+  onChange?: (value: string) => void;
   // Allow additional properties from x-jsf-presentation (e.g. meta from oneOf/anyOf)
   [key: string]: unknown;
 };
