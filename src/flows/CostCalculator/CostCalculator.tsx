@@ -96,7 +96,7 @@ export function CostCalculator({
     fields,
     validationSchema,
   } = useCostCalculator({
-    countryRegionSlug: defaultValues.countryRegionSlug,
+    defaultRegion: defaultValues.countryRegionSlug,
   });
 
   const resolver = useValidationFormResolver(validationSchema);

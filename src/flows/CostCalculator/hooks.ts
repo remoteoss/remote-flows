@@ -161,14 +161,14 @@ function buildValidationSchema(fields: Field[]) {
 }
 
 type UseCostCalculatorParams = {
-  countryRegionSlug?: string;
+  defaultRegion?: string;
 };
 
 /**
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = ({
-  countryRegionSlug,
+  defaultRegion,
 }: UseCostCalculatorParams = {}): BaseHookReturn<
   CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse
@@ -180,7 +180,7 @@ export const useCostCalculator = ({
   const { data: currencies } = useCompanyCurrencies();
 
   const jsonSchemaRegionSlug =
-    selectedRegion || selectedCountry?.value || countryRegionSlug;
+    selectedRegion || selectedCountry?.value || defaultRegion;
 
   const { data: jsonSchemaRegionFields } =
     useRegionFields(jsonSchemaRegionSlug);
