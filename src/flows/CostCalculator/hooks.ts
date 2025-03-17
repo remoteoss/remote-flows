@@ -160,10 +160,16 @@ function buildValidationSchema(fields: Field[]) {
   return object(fieldsSchema) as AnyObjectSchema;
 }
 
+type UseCostCalculatorParams = {
+  countryRegionSlug?: string;
+};
+
 /**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator = (): BaseHookReturn<
+export const useCostCalculator = ({
+  countryRegionSlug,
+}: UseCostCalculatorParams = {}): BaseHookReturn<
   CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse
 > => {
@@ -172,9 +178,12 @@ export const useCostCalculator = (): BaseHookReturn<
     useState<CostCalculatorCountry>();
   const { data: countries } = useCostCalculatorCountries();
   const { data: currencies } = useCompanyCurrencies();
-  const { data: jsonSchemaRegionFields } = useRegionFields(
-    selectedRegion || selectedCountry?.value,
-  );
+
+  const jsonSchemaRegionSlug =
+    selectedRegion || selectedCountry?.value || countryRegionSlug;
+
+  const { data: jsonSchemaRegionFields } =
+    useRegionFields(jsonSchemaRegionSlug);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
@@ -260,6 +269,7 @@ export const useCostCalculator = (): BaseHookReturn<
     ...fields,
     ...(jsonSchemaRegionFields?.fields || []),
   ] as Field[];
+
   const validationSchema = buildValidationSchema(allFields);
 
   return {
