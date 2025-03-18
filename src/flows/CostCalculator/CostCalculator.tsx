@@ -164,7 +164,7 @@ export function CostCalculator({
           </Button>
         </form>
       </Form>
-      <div className="cost-calculator-disclaimer-wrapper">
+      <div className="RemoteFlows__CostCalculator__Disclaimer">
         <Disclaimer label={params?.disclaimer?.label} />
       </div>
     </>
