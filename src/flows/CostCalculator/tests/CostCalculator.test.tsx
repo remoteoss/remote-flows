@@ -5,7 +5,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { countries, currencies, estimation, regionFields } from './fixtures';
+import {
+  countries,
+  currencies,
+  estimation,
+  regionFields,
+  regionFieldsWithAgeProperty,
+} from './fixtures';
 
 const queryClient = new QueryClient();
 
@@ -114,5 +120,22 @@ describe('CostCalculator', () => {
     await waitFor(() => {
       expect(screen.getByText(/salary is required/i)).toBeInTheDocument();
     });
+  });
+
+  test("loads the form with dynamic fields from json schema based on the selected country's region", async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(<CostCalculator {...defaultProps} />, {
+      wrapper,
+    });
+
+    const inputElement = await screen.findByRole('textbox', {
+      name: /age/i,
+    });
+    expect(inputElement).toBeInTheDocument();
   });
 });
