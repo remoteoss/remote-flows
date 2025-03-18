@@ -12,8 +12,7 @@
     "openapi-ts": "openapi-ts",
     "prepack": "npm run build",
     "test": "vitest",
-    "prepublishOnly": "npm run ci",
-    "local-release": "changeset version && changeset publish"
+    "release": "changeset publish"
   },
   "type": "module",
   "main": "dist/index.js",
