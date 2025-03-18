@@ -11,6 +11,10 @@ This project provides a client SDK for interacting with the Remote API, by provi
 
 ## Installation
 
+```sh
+npm install @remoteoss/remote-flows
+```
+
 ## Running Locally
 
 ### Development Mode
@@ -51,6 +55,21 @@ npm unlink remote-flows
 
 And in the root directory of your package:
 npm unlink
+
+## Using the example folder
+
+Before running the example folder, create an .env file
+
+```sh
+cd example
+echo "CLIENT_ID=\nCLIENT_SECRET=\nREMOTE_GATEWAY=" >> .env
+```
+
+Complete the env file with your env variables and you should be able to run the next step
+
+```sh
+ npm run dev
+```
 
 ## Building the Project
 
