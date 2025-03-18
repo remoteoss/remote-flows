@@ -10,7 +10,7 @@ export const tsup: Options = {
     'src/index.tsx',
     'src/flows',
     '!src/**/*.test.{ts,tsx}',
-    '!src/**/fixtures.{ts,tsx}',
+    '!src/**/tests/*.{ts,tsx}',
   ],
   keepNames: true,
   minify: true,
