@@ -6,5 +6,5 @@ type AuthResponse = {
 
 export type RemoteFlowsSDKProps = {
   auth: () => Promise<AuthResponse>;
-  environment?: 'staging' | 'production';
+  isTestingMode?: boolean;
 };

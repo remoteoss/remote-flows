@@ -21,18 +21,18 @@ export const useClient = () => useContext(RemoteFlowContext);
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
-  environment?: RemoteFlowsSDKProps['environment'];
+  isTestingMode?: RemoteFlowsSDKProps['isTestingMode'];
 };
 
 const ENVIROMENTS = {
-  staging: 'https://gateway.niceremote.com/',
+  partners: 'https://gateway.partners.remote-sandbox.com',
   production: 'https://gateway.remote.com/',
 };
 
 function RemoteFlowContextWrapper({
   children,
   auth,
-  environment,
+  isTestingMode,
 }: RemoteFlowContextWrapperProps) {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
@@ -43,9 +43,9 @@ function RemoteFlowContextWrapper({
     enabled: false,
   });
 
-  const baseUrl =
-    process.env.REMOTE_GATEWAY_URL ||
-    ENVIROMENTS[environment as keyof typeof ENVIROMENTS];
+  const baseUrl = isTestingMode
+    ? ENVIROMENTS.partners
+    : process.env.REMOTE_GATEWAY_URL;
 
   const remoteApiClient = useRef(
     createClient({
@@ -78,11 +78,11 @@ function RemoteFlowContextWrapper({
 export function RemoteFlows({
   auth,
   children,
-  environment = 'staging',
+  isTestingMode = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContextWrapper environment={environment} auth={auth}>
+      <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
         {children}
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
