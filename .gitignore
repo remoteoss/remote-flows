@@ -13,4 +13,4 @@ dist
 .idea
 .DS_Store
 .env
-
+coverage

@@ -13,6 +13,7 @@ import { useValidationFormResolver } from '@/src/components/form/yupValidationRe
 import { Button } from '@/src/components/ui/button';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { convertToCents } from '@/src/lib/utils';
+import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
 
 type FormValues = {
   currency: string;
@@ -59,6 +60,11 @@ type CostCalculatorProps = Partial<{
      */
     salary: string;
   }>;
+  params: Partial<{
+    disclaimer: {
+      label: string;
+    };
+  }>;
   /**
    * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
@@ -87,6 +93,7 @@ export function CostCalculator({
     currencySlug: '',
     salary: '',
   },
+  params,
   onSubmit,
   onError,
   onSuccess,
@@ -154,6 +161,9 @@ export function CostCalculator({
           </Button>
         </form>
       </Form>
+      <div className="cost-calculator-disclaimer-wrapper">
+        <Disclaimer label={params?.disclaimer?.label} />
+      </div>
     </>
   );
 }
