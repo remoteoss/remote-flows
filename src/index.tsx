@@ -1,12 +1,14 @@
+/* eslint-disable react-refresh/only-export-components */
 import './styles/global.css';
 
 export {
   CostCalculator,
   CostCalculatorResults,
 } from '@/src/flows/CostCalculator';
-// eslint-disable-next-line react-refresh/only-export-components
-export { useCostCalculatorEstimationPdf } from '@/src/flows/CostCalculator/hooks';
+export {
+  useCostCalculatorEstimationPdf,
+  useCostCalculatorDisclaimer,
+} from '@/src/flows/CostCalculator/hooks';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export { ThemeProvider } from '@/src/theme';
-// eslint-disable-next-line react-refresh/only-export-components
 export * from './client/types.gen';
