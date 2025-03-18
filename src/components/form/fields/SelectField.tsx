@@ -45,8 +45,10 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="SelectField__Item">
-          <FormLabel className="SelectField__Label">{label}</FormLabel>
+        <FormItem className="RemoteFlows__SelectField__Item">
+          <FormLabel className="RemoteFlows__SelectField__Label">
+            {label}
+          </FormLabel>
           <FormControl>
             <div className="relative">
               <Select
@@ -57,20 +59,20 @@ export function SelectField({
                 }}
               >
                 <SelectTrigger
-                  className="SelectField__Trigger"
+                  className="RemoteFlows__SelectField__Trigger"
                   aria-invalid={Boolean(fieldState.error)}
                 >
                   <span className="absolute">
                     <SelectValue />
                   </span>
                 </SelectTrigger>
-                <SelectContent className="SelectField__Content">
-                  <SelectGroup className="SelectField__Group">
+                <SelectContent className="RemoteFlows__SelectField__Content">
+                  <SelectGroup className="RemoteFlows__SelectField__Group">
                     {options.map((option) => (
                       <SelectItem
                         key={option.value}
                         value={option.value}
-                        className="SelectField__SelectItem"
+                        className="RemoteFlows__SelectField__SelectItem"
                       >
                         {option.label}
                       </SelectItem>

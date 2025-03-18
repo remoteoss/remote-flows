@@ -142,18 +142,19 @@ export function CostCalculator({
   };
 
   return (
-    <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <JSONSchemaFormFields fields={fields} />
-          <Button
-            type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
-          >
-            Save
-          </Button>
-        </form>
-      </Form>
-    </>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="RemoteFlows__CostCalculatorForm space-y-4"
+      >
+        <JSONSchemaFormFields fields={fields} />
+        <Button
+          type="submit"
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+        >
+          Save
+        </Button>
+      </form>
+    </Form>
   );
 }

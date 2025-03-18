@@ -19,7 +19,7 @@ export default function CostCalculatorResultsChart({
   currency,
 }: VisualBreakDownProps) {
   return (
-    <Card className="rounded-lg">
+    <Card className="rounded-lg RemoteFlows__CostCalculatorResults_CostDistribution">
       <CardHeader className="pb-2">
         <CardTitle>Cost Distribution</CardTitle>
       </CardHeader>
