@@ -97,8 +97,8 @@ export function CostCalculatorResults({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between mb-6">
-        <div>
+      <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between mb-6 RemoteFlows__CostCalculatorResults">
+        <div className="RemoteFlows__CostCalculatorResults__Header">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <span className="flex items-center gap-1">
               <Euro className="h-5 w-5 text-gray-600" />
@@ -115,7 +115,7 @@ export function CostCalculatorResults({
         <Tabs
           value={view}
           onValueChange={(v) => setView(v as 'monthly' | 'annual')}
-          className="w-full md:w-auto"
+          className="w-full md:w-auto RemoteFlows__CostCalculatorResults__Tabs"
         >
           <TabsList className="grid w-full md:w-[200px] grid-cols-2">
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -128,6 +128,7 @@ export function CostCalculatorResults({
         className={cn(
           'grid grid-cols-1 gap-6',
           options?.showChart ? 'md:grid-cols-3' : '',
+          'RemoteFlows__CostCalculatorResults_CostBreakdown',
         )}
       >
         <Card className="md:col-span-2 rounded-lg">
