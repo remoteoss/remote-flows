@@ -8,6 +8,7 @@ export {
 export {
   useCostCalculatorEstimationPdf,
   useCostCalculatorDisclaimer,
+  useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export * from './client/types.gen';
