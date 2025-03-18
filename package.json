@@ -12,6 +12,8 @@
     "openapi-ts": "openapi-ts",
     "prepack": "npm run build",
     "test": "vitest",
+    "changeset:add": "changeset add",
+    "changeset:version": "changeset version",
     "release": "changeset publish"
   },
   "type": "module",
