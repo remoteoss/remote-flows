@@ -9,6 +9,7 @@ import React, { createContext, useContext, useRef } from 'react';
 
 import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
+import { ThemeProvider } from '@/src/theme';
 
 const queryClient = new QueryClient();
 
@@ -66,11 +67,15 @@ function RemoteFlowContextWrapper({
 export function RemoteFlows({
   auth,
   children,
+  theme,
+  rules,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
       <RemoteFlowContextWrapper auth={auth}>
-        {children}
+        <ThemeProvider theme={theme} rules={rules}>
+          {children}
+        </ThemeProvider>
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
   );
