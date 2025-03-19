@@ -40,33 +40,35 @@ export function TextField({
   const isTypeNumber = type === 'number';
   const typeAttrs = isTypeNumber ? inputModeAttrs : { type };
   return (
-    <div className="TextField__Wrapper">
-      <FormField
-        control={control}
-        name={name}
-        render={({ field, fieldState }) => (
-          <FormItem className="TextField__Item">
-            <FormLabel className="TextField__Label">{label}</FormLabel>
-            <FormControl>
-              <Input
-                {...field}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  field.onChange(event);
-                  onChange?.(event);
-                }}
-                {...typeAttrs}
-                className="TextField__Input"
-              />
-            </FormControl>
-            {description && (
-              <FormDescription className="TextField__Description">
-                {description}
-              </FormDescription>
-            )}
-            {fieldState.error && <FormMessage className="TextField__Error" />}
-          </FormItem>
-        )}
-      />
-    </div>
+    <FormField
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <FormItem className="RemoteFlows__TextField__Item">
+          <FormLabel className="RemoteFlows__TextField__Label">
+            {label}
+          </FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                field.onChange(event);
+                onChange?.(event);
+              }}
+              {...typeAttrs}
+              className="TextField__Input"
+            />
+          </FormControl>
+          {description && (
+            <FormDescription className="RemoteFlows__TextField__Description">
+              {description}
+            </FormDescription>
+          )}
+          {fieldState.error && (
+            <FormMessage className="RemoteFlows__TextField__Error" />
+          )}
+        </FormItem>
+      )}
+    />
   );
 }
