@@ -11,6 +11,7 @@ import { Form } from '@/src/components/ui/form';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
+import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { convertToCents } from '@/src/lib/utils';
 
@@ -59,6 +60,11 @@ type CostCalculatorProps = Partial<{
      */
     salary: string;
   }>;
+  params: Partial<{
+    disclaimer: {
+      label: string;
+    };
+  }>;
   /**
    * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
@@ -87,6 +93,7 @@ export function CostCalculator({
     currencySlug: '',
     salary: '',
   },
+  params,
   onSubmit,
   onError,
   onSuccess,
@@ -144,7 +151,10 @@ export function CostCalculator({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-4 RemoteFlows__CostCalculatorForm"
+        >
           <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
@@ -154,6 +164,9 @@ export function CostCalculator({
           </Button>
         </form>
       </Form>
+      <div className="RemoteFlows__CostCalculator__Disclaimer">
+        <Disclaimer label={params?.disclaimer?.label} />
+      </div>
     </>
   );
 }

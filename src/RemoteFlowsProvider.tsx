@@ -10,6 +10,7 @@ import React, { createContext, useContext, useRef } from 'react';
 import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
 import { ENVIROMENTS } from '@/src/environments';
+import { ThemeProvider } from '@/src/theme';
 
 const queryClient = new QueryClient();
 
@@ -75,11 +76,15 @@ export function RemoteFlows({
   auth,
   children,
   isTestingMode = false,
+  theme,
+  rules,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
       <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
-        {children}
+        <ThemeProvider theme={theme} rules={rules}>
+          {children}
+        </ThemeProvider>
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
   );
