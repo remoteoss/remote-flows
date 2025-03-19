@@ -8,14 +8,21 @@ import {
   postCreateEstimation,
   postCreateEstimationPdf,
 } from '@/src/client';
-import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
+import type {
+  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationOptions,
+  Field,
+} from '@/src/flows/CostCalculator/types';
+import type { Result } from '@/src/flows/types';
+
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { AnyObjectSchema, object, string } from 'yup';
+import { string, ValidationError } from 'yup';
 import { fields } from './fields';
+import { buildPayload, buildValidationSchema } from './utils';
 
 type CostCalculatorCountry = {
   value: string;
@@ -145,34 +152,25 @@ const useRegionFields = (region: string | undefined) => {
   });
 };
 
-/**
- * Build the validation schema for the form.
- * @returns
- */
-function buildValidationSchema(fields: Field[]) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
-}
+export const defaultEstimationOptions = {
+  title: 'Estimation',
+  includeBenefits: false,
+  includeCostBreakdowns: false,
+};
 
 type UseCostCalculatorParams = {
   defaultRegion?: string;
+  estimationOptions: CostCalculatorEstimationOptions;
 };
 
 /**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator = ({
-  defaultRegion,
-}: UseCostCalculatorParams = {}): BaseHookReturn<
-  CostCalculatorEstimateParams,
-  CostCalculatorEstimateResponse
-> => {
+export const useCostCalculator = (
+  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+    estimationOptions: defaultEstimationOptions,
+  },
+) => {
   const [selectedRegion, setSelectedRegion] = useState<string>();
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
@@ -191,20 +189,32 @@ export const useCostCalculator = ({
    * @param values
    */
   async function onSubmit(
-    values: CostCalculatorEstimateParams,
-  ): Promise<CostCalculatorEstimateResponse | null> {
-    const response = await costCalculatorEstimationMutation.mutateAsync(values);
-    if (
-      response.error &&
-      response.response.status >= 400 &&
-      response.response.status < 600
-    ) {
-      throw new Error((response.error as $TSFixMe).message);
+    values: CostCalculatorEstimationFormValues,
+  ): Promise<Result<CostCalculatorEstimateResponse, Error | ValidationError>> {
+    try {
+      await validationSchema.validate(values, { abortEarly: false });
+    } catch (err) {
+      return {
+        data: null,
+        error: err as ValidationError,
+      };
     }
-    if (response.data) {
-      return response.data;
+
+    try {
+      const response = await costCalculatorEstimationMutation.mutateAsync(
+        buildPayload(values, estimationOptions),
+      );
+
+      return {
+        data: response.data as CostCalculatorEstimateResponse,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error as Error,
+      };
     }
-    return null;
   }
 
   /**
@@ -283,4 +293,29 @@ export const useCostCalculator = ({
     handleValidation: jsonSchemaRegionFields?.handleValidation,
     onSubmit,
   };
+};
+
+/**
+ * Custom hook to fetch disclaimer information.
+ *
+ * This hooks returns the disclaimer html content.
+ *
+ * @returns {object} - The query object containing the disclaimer data.
+ */
+export const useCostCalculatorDisclaimer = () => {
+  const disclaimerData = {
+    data: {
+      id: 4668194326797,
+      title: 'Disclaimer information on Cost of Employment calculations',
+      body: '<h3 id="h_01HHJFVR5Q4F8A52F06EVG289R">Remote disclaimer</h3>\n<p>The estimate provides a transparent detailed breakdown for in-country statutory social contributions, statutory benefits, and other benefits that may be required. Estimates do not take into account additional costs that may be incurred for relocation, visa, right-to-work requirements, or other activities. </p>\n<p><strong>See also:</strong> <a href="https://support.remote.com/hc/en-us/articles/22329255813133">What other type of costs does the Cost Calculator not include?</a></p>\n<h3 id="h_01HHJFVYRAAGDKJ36EZS8W6P5N">EOR services</h3>\n<p>Our EOR services allow you to retain ownership of your employees\' IP and inventions. Compliance, taxes, and payroll are handled by our local teams for a seamless end-to-end experience.</p>\n<h3 id="h_01HHJFW4FQPGPK14FSM4XCY5MR">Pricing and payroll</h3>\n<p>When it comes to payroll, legal and operational complexities are reduced to a single invoice for all of your Remote employees across every country you hire in – no hidden costs and no long-term commitments needed. Just a simple pricing structure that includes a fixed hiring fee for each EOR employee.</p>\n<h3 id="01JMCR2YZ0GVTCXNPY88TADWQ1">Currency conversions</h3>\n<p>When the employee currency differs from the billing currency, we use market rates to convert. The rate figures on this quote are a rough estimate. When the employee currency differs from the billing currency, we use market rates to convert. The rate figures on this quote are a rough estimated.</p>\n<h3 id="h_01HHJFWD1TFB5DQ6B4WD5F1GY6">Employee off-boarding related costs</h3>\n<p>The estimate here does not include any costs related to off-boarding of employees. Whilst we do not charge any processing fees when you want to off-board an employee, any other costs such as severance pay, covering remaining vacation days and etc will be charged back to you.<br><strong>See also: </strong><a href="https://support.remote.com/hc/en-us/articles/22329371247885">Are the costs of employee off-boarding included in the Cost Calculator?</a></p>\n<p>Please note the ‘employee net income estimate’ section (if available for the country) is intended for informational purposes only and should not be used as a substitute for professional financial advice.</p>\n<p>Additionally, tax laws and rates can vary by location and are subject to change, which may not be immediately reflected in the calculator.</p>\n<p>For a detailed and accurate assessment of your take-home pay, please consult with a qualified tax professional or financial advisor.</p>\n<p><strong>See also</strong>: <a href="https://support.remote.com/hc/en-us/articles/25196498469773">How to use the ‘employee net income estimate’ section in the Cost Calculator?</a></p>\n<p><!-- notionvc: 04d0e276-e0d7-4793-93ee-d4ad14600217 --></p>\n<h3 id="h_01HHJFWTHJ58YAZ87M3E090H4J">Note</h3>\n<p>This estimate is for guidance only and may not constitute accurate financial advice. Information contained in this document is subject to changes in laws in different jurisdictions, which can change without notice. This document is the property of Remote, is confidential, cannot be reproduced without permission, and cannot be disclosed to any third parties.</p>\n<p><!-- notionvc: 09e777b4-c10c-438e-bb95-ce1f3fb86c9a --></p>',
+      html_url:
+        'https://support.remote.com/hc/en-us/articles/4668194326797-Disclaimer-information-on-Cost-of-Employment-calculations',
+    },
+  };
+  return useQuery({
+    queryKey: ['cost-calculator-disclaimer'],
+    queryFn: () => {
+      return Promise.resolve(disclaimerData);
+    },
+  });
 };

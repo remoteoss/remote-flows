@@ -32,7 +32,7 @@ export function RadioGroupField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => (
-        <FormItem className="space-y-3">
+        <FormItem className="space-y-3 RemoteFlows__RadioGroupField__Item">
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <RadioGroup
@@ -43,12 +43,15 @@ export function RadioGroupField({
               {options.map((option) => (
                 <FormItem
                   key={option.value}
-                  className="flex items-center space-x-3 space-y-0 gap-0"
+                  className="flex items-center space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item"
                 >
                   <FormControl>
-                    <RadioGroupItem value={option.value} />
+                    <RadioGroupItem
+                      value={option.value}
+                      className="RemoteFlows__RadioField__Input"
+                    />
                   </FormControl>
-                  <FormLabel className="font-normal mb-0">
+                  <FormLabel className="font-normal mb-0 RemoteFlows__RadioField__Label">
                     {option.label}
                   </FormLabel>
                 </FormItem>

@@ -79,20 +79,10 @@ describe('CostCalculator', () => {
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
-        employer_currency_slug: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        include_benefits: false,
-        include_cost_breakdowns: false,
-        employments: [
-          {
-            region_slug: 'POL',
-            annual_gross_salary: 5000000,
-            annual_gross_salary_in_employer_currency: 5000000,
-            employment_term: 'fixed',
-            title: 'Estimation',
-            regional_to_employer_exchange_rate: '1',
-            age: undefined,
-          },
-        ],
+        country: 'POL',
+        currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        region: '',
+        salary: '50000',
       });
     });
   });
