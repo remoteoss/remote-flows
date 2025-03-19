@@ -40,8 +40,18 @@ type CostCalculatorProps = Partial<{
      */
     salary: string;
   }>;
-  params: Partial<{
+  /**
+   * Options for the CostCalculator component.
+   */
+  options: Partial<{
+    /**
+     * Disclaimer options.
+     */
     disclaimer: {
+      /**
+       * Label for the disclaimer
+       * @default 'Disclaimer'
+       * */
       label: string;
     };
   }>;
@@ -69,7 +79,7 @@ export function CostCalculator({
     currencySlug: '',
     salary: '',
   },
-  params,
+  options,
   onSubmit,
   onError,
   onSuccess,
@@ -124,7 +134,7 @@ export function CostCalculator({
         </form>
       </Form>
       <div className="RemoteFlows__CostCalculator__Disclaimer">
-        <Disclaimer label={params?.disclaimer?.label} />
+        <Disclaimer label={options?.disclaimer?.label} />
       </div>
     </>
   );
