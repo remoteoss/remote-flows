@@ -24,7 +24,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Check for Changesets
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run changeset:version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish package
+        if: steps.changesets.outputs.hasChangesets == 'true'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
