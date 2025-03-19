@@ -1,5 +1,4 @@
 import {
-  buildCostCalculatorFormPayload,
   RemoteFlows,
   useCostCalculator,
   useValidationFormResolver,
@@ -7,7 +6,7 @@ import {
 import type {
   Field,
   SupportedTypes,
-  CostCalculatorFormValues,
+  CostCalculateEstimateFormValues,
 } from '@remoteoss/remote-flows';
 import { useForm } from 'react-hook-form';
 import './CostCalculatorHookVersion.css';
@@ -72,7 +71,6 @@ const InputNumber = (props) => {
 };
 
 const SelectField = (props) => {
-  console.log({ props });
   const { control } = useFormContext();
   return (
     <FormField
@@ -158,7 +156,7 @@ function CostCalculatorForm() {
   } = useCostCalculator();
 
   const resolver = useValidationFormResolver(validationSchema);
-  const form = useForm<CostCalculatorFormValues>({
+  const form = useForm<CostCalculateEstimateFormValues>({
     resolver: resolver,
     defaultValues: {
       country: '',
@@ -169,18 +167,10 @@ function CostCalculatorForm() {
     mode: 'onBlur',
   });
 
-  const handleSubmit = (values: CostCalculatorFormValues) => {
-    console.log({ values });
-
+  const handleSubmit = (values: CostCalculateEstimateFormValues) => {
     // build payload
 
-    const payload = buildCostCalculatorFormPayload(values, {
-      title: 'Estimate for a new company',
-      includeBenefits: true,
-      includeCostBreakdowns: true,
-    });
-
-    submitCostCalculator(payload);
+    submitCostCalculator(values);
   };
 
   return (

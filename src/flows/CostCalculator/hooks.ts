@@ -269,8 +269,6 @@ export const useCostCalculator = (
     setSelectedCountry(currentCountry);
   }
 
-  console.log({ currentCountry: selectedCountry });
-
   /**
    * Update the selected region and fetch the region fields.
    * @param region
