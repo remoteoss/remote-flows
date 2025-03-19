@@ -14,7 +14,7 @@
     "test": "vitest",
     "changeset:add": "changeset add",
     "changeset:version": "changeset version",
-    "release": "changeset publish"
+    "prepublishOnly": "npm run ci"
   },
   "type": "module",
   "main": "dist/index.js",
