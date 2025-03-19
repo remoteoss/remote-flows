@@ -50,6 +50,29 @@ export const regionFields = {
   },
 };
 
+export const regionFieldsWithAgeProperty = {
+  data: {
+    version: 7,
+    schema: {
+      additionalProperties: false,
+      properties: {
+        age: {
+          description: 'The age of the employee, eg. 30',
+          minimum: 0,
+          title: 'Age',
+          type: 'number',
+          'x-jsf-presentation': {
+            inputType: 'number',
+          },
+        },
+      },
+      required: ['age'],
+      type: 'object',
+      'x-jsf-order': ['age'],
+    },
+  },
+};
+
 export const estimation = {
   data: {
     employments: [],

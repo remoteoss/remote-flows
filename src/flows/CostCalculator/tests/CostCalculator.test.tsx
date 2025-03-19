@@ -5,7 +5,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { countries, currencies, estimation, regionFields } from './fixtures';
+import {
+  countries,
+  currencies,
+  estimation,
+  regionFields,
+  regionFieldsWithAgeProperty,
+} from './fixtures';
 
 const queryClient = new QueryClient();
 
@@ -81,21 +87,45 @@ describe('CostCalculator', () => {
     });
   });
 
-  // test('calls onSuccess when estimation succeeds', async () => {
-  //   render(<CostCalculator {...defaultProps} />, { wrapper });
+  test('calls onError when estimation fails', async () => {
+    server.use(
+      http.post('*/v1/cost-calculator/estimation', () => {
+        return new HttpResponse('Not found', { status: 404 });
+      }),
+    );
+    render(<CostCalculator {...defaultProps} />, { wrapper });
 
-  //   fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
-  //   await waitFor(() => {
-  //     expect(mockOnSuccess).toHaveBeenCalledWith({
-  //       data: {
-  //         employments: [],
-  //       },
-  //     });
-  //   });
-  // });
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalled();
+    });
+  });
 
-  test('calls onError when estimation fails', async () => {});
+  test('displays validation errors when form is submitted with empty fields', async () => {
+    render(<CostCalculator />, { wrapper });
 
-  test('displays validation errors when form is submitted with empty fields', async () => {});
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/salary is required/i)).toBeInTheDocument();
+    });
+  });
+
+  test("loads the form with dynamic fields from json schema based on the selected country's region", async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(<CostCalculator {...defaultProps} />, {
+      wrapper,
+    });
+
+    const inputElement = await screen.findByRole('textbox', {
+      name: /age/i,
+    });
+    expect(inputElement).toBeInTheDocument();
+  });
 });

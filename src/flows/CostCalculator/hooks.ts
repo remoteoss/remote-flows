@@ -17,7 +17,7 @@ import type { Result } from '@/src/flows/types';
 
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -158,20 +158,31 @@ export const defaultEstimationOptions = {
   includeCostBreakdowns: false,
 };
 
+type UseCostCalculatorParams = {
+  defaultRegion?: string;
+  estimationOptions: CostCalculatorEstimationOptions;
+};
+
 /**
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
+  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+    estimationOptions: defaultEstimationOptions,
+  },
 ) => {
-  const [selectedRegion, setSelectedRegion] = useState<string>();
+  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
+    defaultRegion,
+  );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
   const { data: countries } = useCostCalculatorCountries();
   const { data: currencies } = useCompanyCurrencies();
-  const { data: jsonSchemaRegionFields } = useRegionFields(
-    selectedRegion || selectedCountry?.value,
-  );
+
+  const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
+
+  const { data: jsonSchemaRegionFields } =
+    useRegionFields(jsonSchemaRegionSlug);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
@@ -195,9 +206,16 @@ export const useCostCalculator = (
         buildPayload(values, estimationOptions),
       );
 
+      if (response.data) {
+        return {
+          data: response.data,
+          error: null,
+        };
+      }
+
       return {
-        data: response.data as CostCalculatorEstimateResponse,
-        error: null,
+        data: null,
+        error: response.error as $TSFixMe,
       };
     } catch (error) {
       return {
@@ -269,6 +287,7 @@ export const useCostCalculator = (
     ...fields,
     ...(jsonSchemaRegionFields?.fields || []),
   ] as Field[];
+
   const validationSchema = buildValidationSchema(allFields);
 
   return {
