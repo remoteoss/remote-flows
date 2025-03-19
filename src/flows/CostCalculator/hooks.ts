@@ -17,7 +17,7 @@ import type { Result } from '@/src/flows/types';
 
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -204,6 +204,14 @@ export const useCostCalculator = (
       const response = await costCalculatorEstimationMutation.mutateAsync(
         buildPayload(values, estimationOptions),
       );
+
+      if (
+        response.error &&
+        response.response.status >= 400 &&
+        response.response.status < 600
+      ) {
+        throw new Error((response.error as $TSFixMe).message);
+      }
 
       return {
         data: response.data as CostCalculatorEstimateResponse,
