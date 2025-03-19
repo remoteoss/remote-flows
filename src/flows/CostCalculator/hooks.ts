@@ -8,14 +8,21 @@ import {
   postCreateEstimation,
   postCreateEstimationPdf,
 } from '@/src/client';
-import type { BaseHookReturn, Field } from '@/src/flows/CostCalculator/types';
+import type {
+  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationOptions,
+  Field,
+} from '@/src/flows/CostCalculator/types';
+import type { Result } from '@/src/flows/types';
+
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { AnyObjectSchema, object, string } from 'yup';
+import { string, ValidationError } from 'yup';
 import { fields } from './fields';
+import { buildPayload, buildValidationSchema } from './utils';
 
 type CostCalculatorCountry = {
   value: string;
@@ -145,28 +152,18 @@ const useRegionFields = (region: string | undefined) => {
   });
 };
 
-/**
- * Build the validation schema for the form.
- * @returns
- */
-function buildValidationSchema(fields: Field[]) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
-}
+export const defaultEstimationOptions = {
+  title: 'Estimation',
+  includeBenefits: false,
+  includeCostBreakdowns: false,
+};
 
 /**
  * Hook to use the cost calculator.
  */
-export const useCostCalculator = (): BaseHookReturn<
-  CostCalculatorEstimateParams,
-  CostCalculatorEstimateResponse
-> => {
+export const useCostCalculator = (
+  estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
+) => {
   const [selectedRegion, setSelectedRegion] = useState<string>();
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
@@ -182,13 +179,32 @@ export const useCostCalculator = (): BaseHookReturn<
    * @param values
    */
   async function onSubmit(
-    values: CostCalculatorEstimateParams,
-  ): Promise<CostCalculatorEstimateResponse | null> {
-    const response = await costCalculatorEstimationMutation.mutateAsync(values);
-    if (response.data) {
-      return response.data;
+    values: CostCalculatorEstimationFormValues,
+  ): Promise<Result<CostCalculatorEstimateResponse, Error | ValidationError>> {
+    try {
+      await validationSchema.validate(values, { abortEarly: false });
+    } catch (err) {
+      return {
+        data: null,
+        error: err as ValidationError,
+      };
     }
-    return null;
+
+    try {
+      const response = await costCalculatorEstimationMutation.mutateAsync(
+        buildPayload(values, estimationOptions),
+      );
+
+      return {
+        data: response.data as CostCalculatorEstimateResponse,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error as Error,
+      };
+    }
   }
 
   /**
