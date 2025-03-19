@@ -93,7 +93,9 @@ function App() {
     <RemoteFlows
       theme={{
         colors: {
-          focus: 'red',
+          primaryBackground: 'blue',
+          accentBackground: 'green',
+          accentForeground: 'red',
         },
       }}
       auth={() => fetchToken()}
