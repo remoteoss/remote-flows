@@ -25,15 +25,41 @@ jobs:
         run: npm install
 
       - name: Check for Changesets
-        id: changesets
+        id: check_changesets
         uses: changesets/action@v1
         with:
-          version: npm run changeset:version
+          version: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish package
-        if: steps.changesets.outputs.hasChangesets == 'true'
+      - name: Create Release Pull Request
+        if: steps.check_changesets.outputs.hasChangesets == 'true'
+        uses: changesets/action@v1
+        with:
+          commit: 'chore: version packages'
+          title: 'chore: release new version'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Publish to npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
