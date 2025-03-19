@@ -1,4 +1,5 @@
 import { Options } from 'tsup';
+import { ENVIROMENTS } from './src/environments';
 
 const env = process.env.NODE_ENV;
 
@@ -19,8 +20,6 @@ export const tsup: Options = {
   outDir: 'dist',
   env: {
     REMOTE_GATEWAY_URL:
-      env === 'production'
-        ? 'https://gateway.remote.com/'
-        : 'https://gateway.niceremote.com/',
+      env === 'production' ? ENVIROMENTS.production : ENVIROMENTS.staging,
   },
 };
