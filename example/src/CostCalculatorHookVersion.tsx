@@ -41,17 +41,19 @@ const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
     );
   },
   radio: ({ name, label, options, onChange }) => (
-    <div>
+    <div className="radio-group">
+      <label>{label}</label>
       {options.map((option) => (
-        <label key={option.value}>
+        <div key={option.value} className="radio-option">
           <input
             type="radio"
+            id={option.value}
             name={name}
             value={option.value}
             onChange={(e) => onChange(e.target.value)}
           />
-          {option.label}
-        </label>
+          <label htmlFor={option.value}>{option.label}</label>
+        </div>
       ))}
     </div>
   ),
