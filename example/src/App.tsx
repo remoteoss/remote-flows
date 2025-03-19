@@ -1,22 +1,24 @@
-import { useState } from 'react';
-import {
+import type {
   CostCalculatorEstimateResponse,
-  RemoteFlows,
+  CostCalculatorEstimationFormValues,
+} from '@remoteoss/remote-flows';
+import {
+  buildCostCalculatorEstimationPayload,
   CostCalculator,
   CostCalculatorResults,
+  RemoteFlows,
   useCostCalculatorEstimationPdf,
-  CostCalculatorEstimateParams,
 } from '@remoteoss/remote-flows';
+import { useState } from 'react';
 import './App.css';
 
 function CostCalculatorForm() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
-  const [payload, setPayload] = useState<CostCalculatorEstimateParams | null>(
-    null,
-  );
+  const [payload, setPayload] =
+    useState<CostCalculatorEstimationFormValues | null>(null);
 
-  const estimationParams = {
+  const estimationOptions = {
     title: 'Estimate for a new company',
     includeBenefits: true,
     includeCostBreakdowns: true,
@@ -26,7 +28,7 @@ function CostCalculatorForm() {
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(payload, {
+      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
             const a = document.createElement('a');
@@ -48,7 +50,7 @@ function CostCalculatorForm() {
   return (
     <>
       <CostCalculator
-        estimationParams={estimationParams}
+        estimationOptions={estimationOptions}
         defaultValues={{
           countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
           currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',

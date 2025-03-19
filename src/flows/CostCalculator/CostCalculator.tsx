@@ -12,8 +12,9 @@ import {
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
-import {
-  CostCalculatorEstimateFormValues,
+
+import type {
+  CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
 } from './types';
 
@@ -48,7 +49,7 @@ type CostCalculatorProps = Partial<{
    * Callback function that handles form submission. When form is submit, the form values are sent to the consumer app before behind submitted to Remote.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
-  onSubmit: (data: CostCalculatorEstimateFormValues) => Promise<void> | void;
+  onSubmit: (data: CostCalculatorEstimationFormValues) => Promise<void> | void;
   /**
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
@@ -80,7 +81,7 @@ export function CostCalculator({
   } = useCostCalculator(estimationOptions);
 
   const resolver = useValidationFormResolver(validationSchema);
-  const form = useForm<CostCalculatorEstimateFormValues>({
+  const form = useForm<CostCalculatorEstimationFormValues>({
     resolver: resolver,
     defaultValues: {
       country: defaultValues?.countryRegionSlug,
@@ -91,7 +92,7 @@ export function CostCalculator({
     mode: 'onBlur',
   });
 
-  const handleSubmit = async (values: CostCalculatorEstimateFormValues) => {
+  const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     await onSubmit?.(values);
 
     const estimation = await submitCostCalculator(values);

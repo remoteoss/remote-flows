@@ -1,6 +1,6 @@
 import type { EmploymentTermType } from '@/src/client';
 
-export type CostCalculatorEstimateFormValues = {
+export type CostCalculatorEstimationFormValues = {
   currency: string;
   country: string;
   salary: string;

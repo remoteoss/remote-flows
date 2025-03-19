@@ -9,19 +9,20 @@ import {
   postCreateEstimationPdf,
 } from '@/src/client';
 import type {
-  CostCalculatorEstimateFormValues,
+  CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   Field,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
-import { convertToCents } from '@/src/lib/utils';
+
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { AnyObjectSchema, object, string, ValidationError } from 'yup';
+import { string, ValidationError } from 'yup';
 import { fields } from './fields';
+import { buildPayload, buildValidationSchema } from './utils';
 
 type CostCalculatorCountry = {
   value: string;
@@ -151,49 +152,6 @@ const useRegionFields = (region: string | undefined) => {
   });
 };
 
-/**
- * Build the validation schema for the form.
- * @returns
- */
-function buildValidationSchema(fields: Field[]) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
-}
-
-/**
- * Build the payload for the cost calculator estimation.
- * @param values
- * @param estimationOptions
- * @returns
- */
-function buildPayload(
-  values: CostCalculatorEstimateFormValues,
-  estimationOptions: CostCalculatorEstimationOptions,
-): CostCalculatorEstimateParams {
-  return {
-    employer_currency_slug: values.currency,
-    include_benefits: estimationOptions.includeBenefits,
-    include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
-    employments: [
-      {
-        region_slug: values.region || values.country,
-        annual_gross_salary: convertToCents(values.salary),
-        annual_gross_salary_in_employer_currency: convertToCents(values.salary),
-        employment_term: values.contract_duration_type ?? 'fixed',
-        title: estimationOptions.title,
-        regional_to_employer_exchange_rate: '1',
-        age: values.age ?? undefined,
-      },
-    ],
-  };
-}
-
 export const defaultEstimationOptions = {
   title: 'Estimation',
   includeBenefits: false,
@@ -221,7 +179,7 @@ export const useCostCalculator = (
    * @param values
    */
   async function onSubmit(
-    values: CostCalculatorEstimateFormValues,
+    values: CostCalculatorEstimationFormValues,
   ): Promise<Result<CostCalculatorEstimateResponse, Error | ValidationError>> {
     try {
       await validationSchema.validate(values, { abortEarly: false });

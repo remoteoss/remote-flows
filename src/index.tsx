@@ -2,14 +2,14 @@
 import './styles/global.css';
 
 export {
+  buildCostCalculatorEstimationPayload,
   CostCalculator,
   CostCalculatorResults,
-} from '@/src/flows/CostCalculator';
-
-export {
   useCostCalculatorDisclaimer,
   useCostCalculatorEstimationPdf,
-} from '@/src/flows/CostCalculator/hooks';
+} from '@/src/flows/CostCalculator';
+
+export type * from '@/src/flows/CostCalculator/types';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
