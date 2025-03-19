@@ -171,14 +171,15 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
-  const [selectedRegion, setSelectedRegion] = useState<string>();
+  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
+    defaultRegion,
+  );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
   const { data: countries } = useCostCalculatorCountries();
   const { data: currencies } = useCompanyCurrencies();
 
-  const jsonSchemaRegionSlug =
-    selectedRegion || selectedCountry?.value || defaultRegion;
+  const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
   const { data: jsonSchemaRegionFields } =
     useRegionFields(jsonSchemaRegionSlug);
@@ -205,17 +206,16 @@ export const useCostCalculator = (
         buildPayload(values, estimationOptions),
       );
 
-      if (
-        response.error &&
-        response.response.status >= 400 &&
-        response.response.status < 600
-      ) {
-        throw new Error((response.error as $TSFixMe).message);
+      if (response.data) {
+        return {
+          data: response.data,
+          error: null,
+        };
       }
 
       return {
-        data: response.data as CostCalculatorEstimateResponse,
-        error: null,
+        data: null,
+        error: response.error as $TSFixMe,
       };
     } catch (error) {
       return {
