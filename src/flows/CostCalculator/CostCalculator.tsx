@@ -1,28 +1,28 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import type {
-  CostCalculatorEstimateParams,
-  CostCalculatorEstimateResponse,
-} from '@/src/client';
+import type { CostCalculatorEstimateResponse } from '@/src/client';
 import { Form } from '@/src/components/ui/form';
 
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
 import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
-import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import {
-  CostCalculatorFormValues,
-  EstimationParams,
+  defaultEstimationOptions,
+  useCostCalculator,
+} from '@/src/flows/CostCalculator/hooks';
+import {
+  CostCalculatorEstimationOptions,
+  CostCalculatorEstimateFormValues,
 } from '@/src/flows/CostCalculator/types';
-import { buildCostCalculatorFormPayload } from '@/src/flows/CostCalculator/factory';
 
 type CostCalculatorProps = Partial<{
   /**
    * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
    */
-  estimationParams: EstimationParams;
+
+  estimationOptions?: CostCalculatorEstimationOptions;
   /**
    * Default values for the form fields.
    */
@@ -46,10 +46,10 @@ type CostCalculatorProps = Partial<{
     };
   }>;
   /**
-   * Callback function to handle the form submission. When the submit button is clicked, the payload is sent back to you.
+   * Callback function that handles form submission. When form is submit, the form values are sent to the consumer app before behind submitted to Remote.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
-  onSubmit: (data: CostCalculatorEstimateParams) => Promise<void> | void;
+  onSubmit: (data: CostCalculatorEstimateFormValues) => Promise<void> | void;
   /**
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
@@ -63,11 +63,7 @@ type CostCalculatorProps = Partial<{
 }>;
 
 export function CostCalculator({
-  estimationParams = {
-    title: 'Estimation',
-    includeBenefits: false,
-    includeCostBreakdowns: false,
-  },
+  estimationOptions = defaultEstimationOptions,
   defaultValues = {
     countryRegionSlug: '',
     currencySlug: '',
@@ -82,10 +78,10 @@ export function CostCalculator({
     onSubmit: submitCostCalculator,
     fields,
     validationSchema,
-  } = useCostCalculator();
+  } = useCostCalculator(estimationOptions);
 
   const resolver = useValidationFormResolver(validationSchema);
-  const form = useForm<CostCalculatorFormValues>({
+  const form = useForm<CostCalculatorEstimateFormValues>({
     resolver: resolver,
     defaultValues: {
       country: defaultValues?.countryRegionSlug,
@@ -96,18 +92,15 @@ export function CostCalculator({
     mode: 'onBlur',
   });
 
-  const handleSubmit = async (values: CostCalculatorFormValues) => {
-    const payload = buildCostCalculatorFormPayload(values, estimationParams);
+  const handleSubmit = async (values: CostCalculatorEstimateFormValues) => {
+    await onSubmit?.(values);
 
-    await onSubmit?.(payload);
+    const estimation = await submitCostCalculator(values);
 
-    try {
-      const estimation = await submitCostCalculator(payload);
-      if (estimation) {
-        onSuccess?.(estimation);
-      }
-    } catch (error) {
-      onError?.(error as Error);
+    if (estimation.error) {
+      onError?.(estimation.error);
+    } else {
+      onSuccess?.(estimation.data);
     }
   };
 

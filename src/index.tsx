@@ -11,11 +11,16 @@ export type {
   CostCalculatorFormValues,
 } from '@/src/flows/CostCalculator';
 export type { SupportedTypes } from '@/src/components/form/fields/types';
+
 export {
-  useCostCalculatorEstimationPdf,
   useCostCalculatorDisclaimer,
   useCostCalculator,
+  useCostCalculatorEstimationPdf,
 } from '@/src/flows/CostCalculator/hooks';
+
+export { transformYupErrorsIntoObject } from '@/src/lib/utils';
+
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+
 export * from './client/types.gen';
