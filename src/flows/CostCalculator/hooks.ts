@@ -199,8 +199,6 @@ export const useCostCalculator = (): BaseHookReturn<
   function onCountryChange(country: string) {
     const currentCountry = countries?.find(({ value }) => value === country);
 
-    console.log({ country });
-
     if (
       currentCountry &&
       currentCountry.childRegions.length === 0 &&

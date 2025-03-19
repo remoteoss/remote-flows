@@ -2,6 +2,7 @@ import {
   buildCostCalculatorFormPayload,
   RemoteFlows,
   useCostCalculator,
+  useValidationFormResolver,
 } from '@remoteoss/remote-flows';
 import type {
   Field,
@@ -13,24 +14,22 @@ import './CostCalculatorHookVersion.css';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
-  text: ({ name, label, placeholder, onChange }) => (
+  text: ({ name, label, placeholder }) => (
     <input
       type="text"
       name={name}
       id={name}
       placeholder={placeholder}
       aria-label={label}
-      onChange={(e) => onChange(e.target.value)}
     />
   ),
-  number: ({ name, label, placeholder, onChange }) => (
+  number: ({ name, label, placeholder }) => (
     <input
       type="number"
       name={name}
       id={name}
       placeholder={placeholder}
       aria-label={label}
-      onChange={(e) => onChange(e.target.value)}
     />
   ),
   select: ({ name, label, options, onChange }) => {
@@ -39,7 +38,7 @@ const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
         name={name}
         id={name}
         aria-label={label}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange?.(e.target.value)}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -49,7 +48,7 @@ const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
       </select>
     );
   },
-  radio: ({ name, label, options, onChange }) => (
+  radio: ({ name, label, options }) => (
     <div className="radio-group">
       <label>{label}</label>
       {options.map((option) => (
@@ -59,7 +58,6 @@ const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
             id={option.value}
             name={name}
             value={option.value}
-            onChange={(e) => onChange(e.target.value)}
           />
           <label htmlFor={option.value}>{option.label}</label>
         </div>
@@ -132,7 +130,7 @@ function CostCalculatorForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={form.handleSubmit(handleSubmit)}>
       <JSONSchemaFormFields fields={fields} />
 
       <button type="submit">Submit</button>

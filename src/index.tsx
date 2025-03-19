@@ -17,4 +17,5 @@ export {
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
+export { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 export * from './client/types.gen';
