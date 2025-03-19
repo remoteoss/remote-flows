@@ -135,7 +135,6 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
 | `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
 | `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-| `rules`         | `CSSProperties`                                             | No       | Custom CSS rules                                                   |
 
 ### CostCalculator
 
@@ -224,20 +223,6 @@ Import the CSS file in your application:
 | `danger`            | Red color used for danger states. |
 
 ### CSS Overrides
-
-#### Using the rules prop:
-
-```tsx
-<RemoteFlows
-  rules={{
-    '.Select__Item': {
-      padding: '20px 4px',
-    },
-  }}
->
-  {/* Your components */}
-</RemoteFlows>
-```
 
 #### Using CSS variables:
 
