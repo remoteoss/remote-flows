@@ -78,7 +78,10 @@ export function CostCalculator({
     onSubmit: submitCostCalculator,
     fields,
     validationSchema,
-  } = useCostCalculator(estimationOptions);
+  } = useCostCalculator({
+    defaultRegion: defaultValues.countryRegionSlug,
+    estimationOptions,
+  });
 
   const resolver = useValidationFormResolver(validationSchema);
   const form = useForm<CostCalculatorEstimationFormValues>({
