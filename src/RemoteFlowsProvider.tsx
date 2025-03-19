@@ -9,6 +9,7 @@ import React, { createContext, useContext, useRef } from 'react';
 
 import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
+import { ENVIROMENTS } from '@/src/environments';
 
 const queryClient = new QueryClient();
 
@@ -22,11 +23,6 @@ type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
   isTestingMode?: RemoteFlowsSDKProps['isTestingMode'];
-};
-
-const ENVIROMENTS = {
-  partners: 'https://gateway.partners.remote-sandbox.com',
-  production: 'https://gateway.remote.com/',
 };
 
 function RemoteFlowContextWrapper({
