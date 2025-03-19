@@ -40,7 +40,7 @@ export function buildPayload(
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     employments: [
       {
-        region_slug: '',
+        region_slug: values.region || values.country,
         annual_gross_salary: convertToCents(values.salary),
         annual_gross_salary_in_employer_currency: convertToCents(values.salary),
         employment_term: values.contract_duration_type ?? 'fixed',
