@@ -212,15 +212,14 @@ Import the CSS file in your application:
 </RemoteFlows>
 ```
 
-| **Token**           | **Description**                   |
-| ------------------- | --------------------------------- |
-| `focus`             | Focus color.                      |
-| `borderInput`       | Border color for input fields.    |
-| `primaryBackground` | Primary background.               |
-| `primaryForeground` | Primary foreground.               |
-| `accentBackground`  | Accent background.                |
-| `accentForeground`  | Accent foreground.                |
-| `danger`            | Red color used for danger states. |
+| **Token**           | **Description**                                    |
+| ------------------- | -------------------------------------------------- |
+| `borderInput`       | Border color for input fields.                     |
+| `primaryBackground` | Background used for the popover options background |
+| `primaryForeground` | Color text for the input and options               |
+| `accentBackground`  | Accent background.                                 |
+| `accentForeground`  | Accent foreground.                                 |
+| `danger`            | Red color used for danger states.                  |
 
 ### CSS Overrides
 

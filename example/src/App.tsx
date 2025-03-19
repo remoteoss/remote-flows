@@ -90,7 +90,14 @@ function App() {
   };
 
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows
+      theme={{
+        colors: {
+          focus: 'red',
+        },
+      }}
+      auth={() => fetchToken()}
+    >
       <CostCalculatorForm />
     </RemoteFlows>
   );

@@ -10,7 +10,6 @@ export type ThemeProviderProps = PropsWithChildren<{
 }>;
 
 export type ThemeColors = Partial<{
-  focus: string;
   borderInput: string;
   primaryBackground: string;
   primaryForeground: string;
