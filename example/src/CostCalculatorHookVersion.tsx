@@ -1,5 +1,14 @@
-import { RemoteFlows, useCostCalculator } from '@remoteoss/remote-flows';
-import type { Field, SupportedTypes } from '@remoteoss/remote-flows';
+import {
+  buildCostCalculatorFormPayload,
+  RemoteFlows,
+  useCostCalculator,
+} from '@remoteoss/remote-flows';
+import type {
+  Field,
+  SupportedTypes,
+  CostCalculatorFormValues,
+} from '@remoteoss/remote-flows';
+import { useForm } from 'react-hook-form';
 import './CostCalculatorHookVersion.css';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,11 +105,30 @@ function CostCalculatorForm() {
     validationSchema,
   } = useCostCalculator();
 
-  const handleSubmit = (values) => {
+  const resolver = useValidationFormResolver(validationSchema);
+  const form = useForm<CostCalculatorFormValues>({
+    resolver: resolver,
+    defaultValues: {
+      country: '',
+      currency: '',
+      region: '',
+      salary: '',
+    },
+    mode: 'onBlur',
+  });
+
+  const handleSubmit = (values: CostCalculatorFormValues) => {
     console.log({ values });
+
     // build payload
 
-    submitCostCalculator(values);
+    const payload = buildCostCalculatorFormPayload(values, {
+      title: 'Estimate for a new company',
+      includeBenefits: true,
+      includeCostBreakdowns: true,
+    });
+
+    submitCostCalculator(payload);
   };
 
   return (

@@ -4,8 +4,12 @@ import './styles/global.css';
 export {
   CostCalculator,
   CostCalculatorResults,
+  buildCostCalculatorFormPayload,
 } from '@/src/flows/CostCalculator';
-export type { Field } from '@/src/flows/CostCalculator';
+export type {
+  Field,
+  CostCalculatorFormValues,
+} from '@/src/flows/CostCalculator';
 export type { SupportedTypes } from '@/src/components/form/fields/types';
 export {
   useCostCalculatorEstimationPdf,

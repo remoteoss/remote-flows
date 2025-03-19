@@ -1,3 +1,4 @@
+import { EmploymentTermType } from '@/src/client';
 import { AnyObjectSchema } from 'yup';
 
 export type Field = {
@@ -46,3 +47,28 @@ export type BaseHookReturn<TFormParams extends object, TResponse> = {
   handleValidation?: (values: Record<string, unknown>) => void;
   onSubmit: (values: TFormParams) => Promise<TResponse | null>;
 };
+
+export type CostCalculatorFormValues = {
+  currency: string;
+  country: string;
+  salary: string;
+} & Partial<{
+  region: string;
+  age: number;
+  contract_duration_type: EmploymentTermType;
+}>;
+
+export type EstimationParams = Partial<{
+  /**
+   * Title of the estimation. Default is 'Estimation'.
+   */
+  title: string;
+  /**
+   * Include benefits in the estimation. Default is false.
+   */
+  includeBenefits: boolean;
+  /**
+   * Include cost breakdowns in the estimation. Default is false.
+   */
+  includeCostBreakdowns: boolean;
+}>;
