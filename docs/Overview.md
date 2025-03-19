@@ -20,28 +20,154 @@ After installation, import the main CSS file in your application:
 
 ### Basic Setup
 
-Here's a simple example of how to set up the library:
+#### Cost calculator rendering
 
 ```tsx
-import { useState } from 'react';
+import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import './App.css';
+
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+function CostCalculatorForm() {
+  return (
+    <CostCalculator
+      estimationOptions={estimationOptions}
+      defaultValues={{
+        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+        salary: '50000',
+      }}
+      params={{
+        disclaimer: {
+          label: 'Remote Disclaimer',
+        },
+      }}
+      onSubmit={(payload) => console.log(payload)}
+      onError={(error) => console.error({ error })}
+      onSuccess={(response) => console.log({ response })}
+    />
+  );
+}
+
+export function BasicCostCalculator() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
+```
+
+#### Cost calculator + results component
+
+```tsx
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import {
-  CostCalculatorEstimateResponse,
-  RemoteFlows,
   CostCalculator,
   CostCalculatorResults,
-  useCostCalculatorEstimationPdf,
-  CostCalculatorEstimateParams,
+  RemoteFlows,
 } from '@remoteoss/remote-flows';
+import { useState } from 'react';
 import './App.css';
 
 function CostCalculatorForm() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
-  const [payload, setPayload] = useState<CostCalculatorEstimateParams | null>(
-    null,
-  );
 
-  const estimationParams = {
+  const estimationOptions = {
+    title: 'Estimate for a new company',
+    includeBenefits: true,
+    includeCostBreakdowns: true,
+  };
+
+  return (
+    <>
+      <CostCalculator
+        estimationOptions={estimationOptions}
+        defaultValues={{
+          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+          salary: '50000',
+        }}
+        params={{
+          disclaimer: {
+            label: 'Remote Disclaimer',
+          },
+        }}
+        onError={(error) => console.error({ error })}
+        onSuccess={(response) => {
+          setEstimations(response);
+        }}
+      />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
+    </>
+  );
+}
+
+export function CostCalculatoWithResults() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
+```
+
+#### Cost calculator with export to pdf
+
+```tsx
+import type {
+  CostCalculatorEstimateResponse,
+  CostCalculatorEstimationFormValues,
+} from '@remoteoss/remote-flows';
+import {
+  buildCostCalculatorEstimationPayload,
+  CostCalculator,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+} from '@remoteoss/remote-flows';
+import { useState } from 'react';
+import './App.css';
+
+function CostCalculatorForm() {
+  const [estimations, setEstimations] =
+    useState<CostCalculatorEstimateResponse | null>(null);
+  const [payload, setPayload] =
+    useState<CostCalculatorEstimationFormValues | null>(null);
+
+  const estimationOptions = {
     title: 'Estimate for a new company',
     includeBenefits: true,
     includeCostBreakdowns: true,
@@ -51,7 +177,7 @@ function CostCalculatorForm() {
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(payload, {
+      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
             const a = document.createElement('a');
@@ -73,9 +199,9 @@ function CostCalculatorForm() {
   return (
     <>
       <CostCalculator
-        estimationParams={estimationParams}
+        estimationOptions={estimationOptions}
         defaultValues={{
-          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
           currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
           salary: '50000',
         }}
@@ -90,34 +216,27 @@ function CostCalculatorForm() {
           setEstimations(response);
         }}
       />
-      {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
-      )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
 
-function App() {
-  const fetchToken = async () => {
-    try {
-      const res = await fetch('/api/token');
-      const data = await res.json();
-      return {
+export function CostCalculatorWithExportPdf() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
         accessToken: data.access_token,
         expiresIn: data.expires_in,
-      };
-    } catch (error) {
-      console.error('Authentication error:', error);
-      throw error;
-    }
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
   };
 
   return (
-    <RemoteFlows
-      auth={fetchToken}
-      isTestingProp={process.env.NODE_ENV === 'development'}
-    >
+    <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorForm />
     </RemoteFlows>
   );
