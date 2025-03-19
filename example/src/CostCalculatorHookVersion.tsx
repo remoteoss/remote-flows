@@ -11,43 +11,97 @@ import type {
 } from '@remoteoss/remote-flows';
 import { useForm } from 'react-hook-form';
 import './CostCalculatorHookVersion.css';
+import {
+  Controller,
+  ControllerProps,
+  FieldPath,
+  FieldValues,
+  FormProvider,
+  useFormContext,
+} from 'react-hook-form';
+import React from 'react';
+
+const Form = FormProvider;
+
+type FormFieldContextValue<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = {
+  name: TName;
+};
+
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue,
+);
+
+const FormField = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  ...props
+}: ControllerProps<TFieldValues, TName>) => {
+  return (
+    <FormFieldContext.Provider value={{ name: props.name }}>
+      <Controller {...props} />
+    </FormFieldContext.Provider>
+  );
+};
+
+const TextField = (props) => {
+  const { control } = useFormContext();
+  return (
+    <FormField
+      control={control}
+      name={props.name}
+      render={({ field }) => (
+        <input
+          {...field}
+          onChange={(event) => {
+            field.onChange(event);
+            props.onChange?.(event);
+          }}
+          {...props}
+        />
+      )}
+    />
+  );
+};
+
+const InputNumber = (props) => {
+  return <TextField {...props} type="number" />;
+};
+
+const SelectField = (props) => {
+  console.log({ props });
+  const { control } = useFormContext();
+  return (
+    <FormField
+      control={control}
+      name={props.name}
+      render={({ field }) => (
+        <select
+          {...field}
+          name={props.name}
+          id={props.name}
+          aria-label={props.label}
+          onChange={(e) => props.onChange?.(e.target.value)}
+        >
+          {props.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      )}
+    />
+  );
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
-  text: ({ name, label, placeholder }) => (
-    <input
-      type="text"
-      name={name}
-      id={name}
-      placeholder={placeholder}
-      aria-label={label}
-    />
-  ),
-  number: ({ name, label, placeholder }) => (
-    <input
-      type="number"
-      name={name}
-      id={name}
-      placeholder={placeholder}
-      aria-label={label}
-    />
-  ),
-  select: ({ name, label, options, onChange }) => {
-    return (
-      <select
-        name={name}
-        id={name}
-        aria-label={label}
-        onChange={(e) => onChange?.(e.target.value)}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    );
-  },
+  text: TextField,
+  number: InputNumber,
+  select: SelectField,
   radio: ({ name, label, options }) => (
     <div className="radio-group">
       <label>{label}</label>
@@ -130,11 +184,13 @@ function CostCalculatorForm() {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <JSONSchemaFormFields fields={fields} />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <JSONSchemaFormFields fields={fields} />
 
-      <button type="submit">Submit</button>
-    </form>
+        <button type="submit">Submit</button>
+      </form>
+    </Form>
   );
 }
 

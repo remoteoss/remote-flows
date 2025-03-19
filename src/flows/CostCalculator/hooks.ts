@@ -204,13 +204,10 @@ export const useCostCalculator = (): BaseHookReturn<
       currentCountry.childRegions.length === 0 &&
       currentCountry.hasAdditionalFields
     ) {
-      console.log('setting additional fields');
       setSelectedRegion(currentCountry.regionSlug);
     } else {
-      console.log('setting undefined');
       setSelectedRegion(undefined);
     }
-    console.log('setting currentCountry', currentCountry);
     setSelectedCountry(currentCountry);
   }
 
