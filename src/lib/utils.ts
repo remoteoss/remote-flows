@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { ValidationError } from 'yup';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,3 +44,37 @@ export function convertToCents(amount: string): number {
 
   return round(validAmount * 100);
 }
+
+type YupError = Pick<ValidationError, 'type' | 'errors'> & {
+  inner: Record<string, YupError>[];
+};
+
+/**
+ * Transforms a Yup ValidationError object into a more readable object. The format is as follows:
+ *  {
+ *    [fieldName]: {
+ *      type: string,
+ *      errors: string[],
+ *      inner: YupError[],
+ *    },
+ *  }
+ * @param errors
+ * @returns
+ */
+export const transformYupErrorsIntoObject = (errors: ValidationError) => {
+  const validationErrors: Record<string, YupError> = {};
+
+  errors.inner.forEach((error: ValidationError) => {
+    if (error.path !== undefined) {
+      validationErrors[error.path] = {
+        type: error.type,
+        errors: error.errors,
+        inner: error.inner.map((innerError) =>
+          transformYupErrorsIntoObject(innerError),
+        ),
+      };
+    }
+  });
+
+  return validationErrors;
+};
