@@ -18,12 +18,6 @@ export type ThemeColors = Partial<{
   accentBackground: string;
   accentForeground: string;
   danger: string;
-  /**
-   * Used for the background of select options popover
-   */
-  popoverPrimaryBackground: string;
-  popoverPrimaryForeground: string;
-  textBase: string;
 }>;
 
 export type CssThemeColors = {

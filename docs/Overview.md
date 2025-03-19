@@ -141,12 +141,14 @@ To avoid leaking secrets in your FE code such as CLIENT_CODE or CLIENT_SECRET, y
 
 All props are optional in this component but let's give you a quick overview of them
 
-- onSubmit gives you the payload sent to the Remote server
-- onSuccess gives you estimation response
-- onError gives you any errors that could have happened
-- defaultValues use it to set predefined values into the form
-- params?.disclaimer, lets use customize the disclaimer label
-- estimationParams lets use customize the estimation response, you can skip benefits, cost breakdowns if you don't need them
+| **Property**         | **Description**                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `onSubmit`           | Gives you the payload sent to the Remote server.                                                     |
+| `onSuccess`          | Gives you the estimation response.                                                                   |
+| `onError`            | Gives you any errors that could have happened.                                                       |
+| `defaultValues`      | Use it to set predefined values into the form.                                                       |
+| `params?.disclaimer` | Lets you customize the disclaimer label.                                                             |
+| `estimationParams`   | Lets you customize the estimation response; you can skip benefits and cost breakdowns if not needed. |
 
 `useCostCalculatorEstimationPdf` hook gives you a mutation that you can use to download a pdf with the estimation, usually we offer this with a button
 
@@ -168,19 +170,25 @@ If you want to override the theme, you can use `<RemoteFlows>` directly
 <RemoteFlows theme={{
   focus: 'red',
   borderInput: 'red',
-  primaryBackground: '#ffffff', // White background
-  primaryForeground: '#364452', // Dark gray foreground
-  accentBackground: '#e3e9ef', // Light gray background
-  accentForeground: '#0f1419', // Dark gray foreground
-  danger: '#d92020', // Red for danger
-  /**
-   * Used for the background of select options popover
-   */
-  popoverPrimaryBackground: '#ffffff', // White background
-  popoverPrimaryForeground: '#364452', // Dark gray foreground
-  textBase: '#000000', // Black text
+  primaryBackground: '#ffffff',
+  primaryForeground: '#364452',
+  accentBackground: '#e3e9ef',
+  accentForeground: '#0f1419',
+  danger: '#d92020',
 }}>
 ```
+
+These are the current available tokens
+
+| **Token**           | **Description**                   |
+| ------------------- | --------------------------------- |
+| `focus`             | Focus color.                      |
+| `borderInput`       | Border color for input fields.    |
+| `primaryBackground` | Primary background.               |
+| `primaryForeground` | Primary foreground.               |
+| `accentBackground`  | Accent background.                |
+| `accentForeground`  | Accent foreground.                |
+| `danger`            | Red color used for danger states. |
 
 if you want also to to some changes to any sdk css rule, you also can do it with js
 
