@@ -199,17 +199,24 @@ export const useCostCalculator = (): BaseHookReturn<
   function onCountryChange(country: string) {
     const currentCountry = countries?.find(({ value }) => value === country);
 
+    console.log({ country });
+
     if (
       currentCountry &&
       currentCountry.childRegions.length === 0 &&
       currentCountry.hasAdditionalFields
     ) {
+      console.log('setting additional fields');
       setSelectedRegion(currentCountry.regionSlug);
     } else {
+      console.log('setting undefined');
       setSelectedRegion(undefined);
     }
+    console.log('setting currentCountry', currentCountry);
     setSelectedCountry(currentCountry);
   }
+
+  console.log({ currentCountry: selectedCountry });
 
   /**
    * Update the selected region and fetch the region fields.

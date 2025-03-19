@@ -5,6 +5,8 @@ export {
   CostCalculator,
   CostCalculatorResults,
 } from '@/src/flows/CostCalculator';
+export type { Field } from '@/src/flows/CostCalculator';
+export type { SupportedTypes } from '@/src/components/form/fields/types';
 export {
   useCostCalculatorEstimationPdf,
   useCostCalculatorDisclaimer,
