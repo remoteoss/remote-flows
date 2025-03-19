@@ -9,6 +9,7 @@ import React, { createContext, useContext, useRef } from 'react';
 
 import { client } from './client/client.gen';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
+import { ENVIROMENTS } from '@/src/environments';
 import { ThemeProvider } from '@/src/theme';
 
 const queryClient = new QueryClient();
@@ -22,11 +23,13 @@ export const useClient = () => useContext(RemoteFlowContext);
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
+  isTestingMode?: RemoteFlowsSDKProps['isTestingMode'];
 };
 
 function RemoteFlowContextWrapper({
   children,
   auth,
+  isTestingMode,
 }: RemoteFlowContextWrapperProps) {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
@@ -36,10 +39,15 @@ function RemoteFlowContextWrapper({
     queryFn: auth,
     enabled: false,
   });
+
+  const baseUrl = isTestingMode
+    ? ENVIROMENTS.partners
+    : process.env.REMOTE_GATEWAY_URL;
+
   const remoteApiClient = useRef(
     createClient({
       ...client.getConfig(),
-      baseUrl: process.env.REMOTE_GATEWAY_URL,
+      baseUrl,
       auth: async () => {
         function hasTokenExpired(expiresAt: number | undefined) {
           return !expiresAt || Date.now() + 60000 > expiresAt;
@@ -67,12 +75,13 @@ function RemoteFlowContextWrapper({
 export function RemoteFlows({
   auth,
   children,
+  isTestingMode = false,
   theme,
   rules,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContextWrapper auth={auth}>
+      <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
         <ThemeProvider theme={theme} rules={rules}>
           {children}
         </ThemeProvider>

@@ -8,4 +8,5 @@ type AuthResponse = {
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   auth: () => Promise<AuthResponse>;
+  isTestingMode?: boolean;
 };
