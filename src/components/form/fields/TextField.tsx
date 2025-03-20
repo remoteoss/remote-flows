@@ -44,7 +44,7 @@ export function TextField({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="RemoteFlows__TextField__Item">
+        <FormItem className={`RemoteFlows__TextField__Item__${name}`}>
           <FormLabel className="RemoteFlows__TextField__Label">
             {label}
           </FormLabel>

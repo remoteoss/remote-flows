@@ -424,15 +424,27 @@ Import the CSS file in your application:
 | `borderRadius`             | The main border radius value (default: 0.625rem). This is the foundation for all other radius values. |
 | `font.fontSizeBase`        | The main font size value (default: 1rem). Controls the base text size of the component.               |
 
-### CSS Overrides
+### Custom CSS
 
-#### Using CSS variables:
+All components expose CSS classes with the prefix `RemoteFlows__` that you can target for custom styling. This approach gives you fine-grained control over specific elements without having to rebuild the components.
 
-You can override the CSS variables defined in `:root` in the library's `styles/global.css`
+For example, let's say you want to render the currency field next to the salary field. You can achieve this with the following CSS:
 
-#### Override CSS Classes:
+```css
+.RemoteFlows__CostCalculatorForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
 
-Use css or your css in js solution to override any classes from the SDK
+.RemoteFlows__SelectField__Item__country {
+  grid-column: span 2;
+}
+
+.RemoteFlows__CostCalculatorForm .RemoteFlows__Button {
+  grid-column: span 2;
+}
+```
 
 ## Advanced Usage
 

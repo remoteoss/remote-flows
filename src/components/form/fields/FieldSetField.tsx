@@ -1,4 +1,5 @@
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { cn } from '@/src/lib/utils';
 import * as React from 'react';
 import { SupportedTypes } from './types';
 
@@ -28,7 +29,12 @@ type FieldSetProps = {
 
 export function FieldSetField({ legend, name, fields }: FieldSetProps) {
   return (
-    <fieldset className="border-1 border-input p-4 rounded-xl RemoteFlows__FieldSetField">
+    <fieldset
+      className={cn(
+        'border-1 border-input p-4 rounded-xl',
+        `RemoteFlows__FieldSetField__${name}`,
+      )}
+    >
       <legend className="text-sm font-semibold px-2">{legend}</legend>
       <div className="grid gap-4">
         {fields.map((field) => {

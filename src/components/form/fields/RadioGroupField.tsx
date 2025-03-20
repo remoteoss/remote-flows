@@ -7,6 +7,7 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
+import { cn } from '@/src/lib/utils';
 import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -32,7 +33,12 @@ export function RadioGroupField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => (
-        <FormItem className="space-y-3 RemoteFlows__RadioGroupField__Item">
+        <FormItem
+          className={cn(
+            'space-y-3',
+            `RemoteFlows__RadioGroupField__Item__${name}`,
+          )}
+        >
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <RadioGroup
