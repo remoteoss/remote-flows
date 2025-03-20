@@ -1,13 +1,8 @@
-# Remote Flows
+# @remoteoss/remote-flows
 
 ## Overview
 
-This project provides a client SDK for interacting with the Remote API, by providing white label forms of several flows.
-
-## Prerequisites
-
-- Node.js
-- npm
+Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embbeded solution.
 
 ## Installation
 
@@ -15,79 +10,453 @@ This project provides a client SDK for interacting with the Remote API, by provi
 npm install @remoteoss/remote-flows
 ```
 
-## Running Locally
+## Getting Started
 
-### Development Mode
+After installation, import the main CSS file in your application:
 
-To run the project in development:
-
-```sh
-npm run dev
+```css
+@import '@remoteoss/remote-flows/index.css';
 ```
 
-**Using npm link to Test with a Test App**
+### Basic Setup
 
-To test this package with a test application using npm link, follow these steps:
+#### Cost calculator rendering
 
-1. In the root directory of the package, run:
+```tsx
+import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import './App.css';
 
-```sh
-npm link
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+function CostCalculatorForm() {
+  return (
+    <CostCalculator
+      estimationOptions={estimationOptions}
+      defaultValues={{
+        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+        salary: '50000',
+      }}
+      params={{
+        disclaimer: {
+          label: 'Remote Disclaimer',
+        },
+      }}
+      onSubmit={(payload) => console.log(payload)}
+      onError={(error) => console.error({ error })}
+      onSuccess={(response) => console.log({ response })}
+    />
+  );
+}
+
+export function BasicCostCalculator() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
 ```
 
-This will create a global symlink for your package.
+#### Cost Calculator + default values + custom disclaimer label
 
-2. In the root directory of your test application, run:
+```tsx
+import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import './App.css';
 
-```sh
-npm link remote-flows
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+function CostCalculatorForm() {
+  return (
+    <CostCalculator
+      defaultValues={{
+        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+        salary: '50000',
+      }}
+      params={{
+        disclaimer: {
+          label: 'Remote Disclaimer',
+        },
+      }}
+      estimationOptions={estimationOptions}
+      onSubmit={(payload) => console.log(payload)}
+      onError={(error) => console.error({ error })}
+      onSuccess={(response) => console.log({ response })}
+    />
+  );
+}
+
+export function BasicCostCalculatorWithDefaultValues() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
 ```
 
-This will create a symlink from the `node_modules` folder of your test application to the global symlink created in the previous step.
+#### Cost calculator + results component
 
-3. Now you can import and use the `remote-flows` package in your test application as if it were installed from npm.
+```tsx
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
+import {
+  CostCalculator,
+  CostCalculatorResults,
+  RemoteFlows,
+} from '@remoteoss/remote-flows';
+import { useState } from 'react';
+import './App.css';
 
-4. To unlink the package when you are done testing, run the following commands in your test application directory:
+function CostCalculatorForm() {
+  const [estimations, setEstimations] =
+    useState<CostCalculatorEstimateResponse | null>(null);
 
-```sh
-npm unlink remote-flows
+  const estimationOptions = {
+    title: 'Estimate for a new company',
+    includeBenefits: true,
+    includeCostBreakdowns: true,
+  };
+
+  return (
+    <>
+      <CostCalculator
+        estimationOptions={estimationOptions}
+        defaultValues={{
+          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+          salary: '50000',
+        }}
+        params={{
+          disclaimer: {
+            label: 'Remote Disclaimer',
+          },
+        }}
+        onError={(error) => console.error({ error })}
+        onSuccess={(response) => {
+          setEstimations(response);
+        }}
+      />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
+    </>
+  );
+}
+
+export function CostCalculatoWithResults() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
 ```
 
-And in the root directory of your package:
-npm unlink
+#### Cost calculator with export to pdf
 
-## Building the Project
+```tsx
+import type {
+  CostCalculatorEstimateResponse,
+  CostCalculatorEstimationFormValues,
+} from '@remoteoss/remote-flows';
+import {
+  buildCostCalculatorEstimationPayload,
+  CostCalculator,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+} from '@remoteoss/remote-flows';
+import { useState } from 'react';
+import './App.css';
 
-```sh
-npm run build
+function CostCalculatorForm() {
+  const [estimations, setEstimations] =
+    useState<CostCalculatorEstimateResponse | null>(null);
+  const [payload, setPayload] =
+    useState<CostCalculatorEstimationFormValues | null>(null);
+
+  const estimationOptions = {
+    title: 'Estimate for a new company',
+    includeBenefits: true,
+    includeCostBreakdowns: true,
+  };
+
+  const exportPdfMutation = useCostCalculatorEstimationPdf();
+
+  const handleExportPdf = () => {
+    if (payload) {
+      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
+        onSuccess: (response) => {
+          if (response?.data?.data?.content !== undefined) {
+            const a = document.createElement('a');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            a.href = response.data.data.content as any;
+            a.download = 'estimation.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        },
+        onError: (error) => {
+          console.error({ error });
+        },
+      });
+    }
+  };
+
+  return (
+    <>
+      <CostCalculator
+        estimationOptions={estimationOptions}
+        defaultValues={{
+          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+          salary: '50000',
+        }}
+        params={{
+          disclaimer: {
+            label: 'Remote Disclaimer',
+          },
+        }}
+        onSubmit={(payload) => setPayload(payload)}
+        onError={(error) => console.error({ error })}
+        onSuccess={(response) => {
+          setEstimations(response);
+        }}
+      />
+      {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
+    </>
+  );
+}
+
+export function CostCalculatorWithExportPdf() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorForm />
+    </RemoteFlows>
+  );
+}
 ```
 
-## Generating API Client
+## Components API
 
-To generate the API client from the [Remote OpenAPI](https://gateway.remote.com/v1/docs/openapi.json) specification:
+### RemoteFlows
 
-```sh
-npm run openapi-ts
+The `RemoteFlows` component serves as a provider for authentication and theming.
+
+| Prop            | Type                                                        | Required | Description                                                        |
+| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
+| `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
+| `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
+
+### CostCalculator
+
+The `CostCalculator` component renders a form for calculating employment costs.
+
+| Prop               | Type                                                 | Required | Description                                                 |
+| ------------------ | ---------------------------------------------------- | -------- | ----------------------------------------------------------- |
+| `estimationParams` | object                                               | No       | Customization for the estimation response (see table below) |
+| `defaultValues`    | object                                               | No       | Predefined form values (see table below)                    |
+| `params`           | `{ disclaimer?: { label?: string } }`                | No       | Additional configuration parameters                         |
+| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the payload sent to Remote server             |
+| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                |
+| `onError`          | `(error: Error) => void`                             | No       | Error handling callback                                     |
+
+#### estimationParams Properties
+
+| Property                | Type      | Description                                                  |
+| ----------------------- | --------- | ------------------------------------------------------------ |
+| `title`                 | `string`  | Custom title for the estimation report                       |
+| `includeBenefits`       | `boolean` | When true, includes benefits information in the response     |
+| `includeCostBreakdowns` | `boolean` | When true, includes detailed cost breakdowns in the response |
+
+#### defaultValues Properties
+
+| Property            | Type     | Description                 |
+| ------------------- | -------- | --------------------------- |
+| `countryRegionSlug` | `string` | Pre-selected country/region |
+| `currencySlug`      | `string` | Pre-selected currency       |
+| `salary`            | `string` | Pre-filled salary amount    |
+
+### CostCalculatorResults
+
+A component to display cost calculation results.
+
+| Prop             | Type                                 | Required | Description                    |
+| ---------------- | ------------------------------------ | -------- | ------------------------------ |
+| `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation data to display |
+
+## Authentication
+
+You need to implement a server endpoint to securely handle authentication with Remote. This prevents exposing client credentials in your frontend code.
+
+For a complete implementation, check our [example server implementation](https://github.com/remoteoss/remote-flows/blob/main/example/server.js).
+
+### API Gateway Endpoints
+
+- **Development/Testing**: `https://gateway.partners.remote-sandbox.com`
+- **Production**: `https://gateway.remote.com/`
+
+## Styling Options
+
+### Using Default Styles
+
+Import the CSS file in your application:
+
+```css
+@import '@remoteoss/remote-flows/index.css';
 ```
 
-**Note**: The contents of the client folder are auto-generated by the openapi-ts tool and should not be manually modified.
+### Theme Customization
 
-## How to publish a new version
-
-Run
-
-```sh
-npm run changeset:add
+```tsx
+<RemoteFlows
+  theme={{
+    spacing: '0.25rem',
+    borderRadius: '0px',
+    colors: {
+      primaryBackground: '#ffffff',
+      primaryForeground: '#364452',
+      accentBackground: '#e3e9ef',
+      accentForeground: '#0f1419',
+      danger: '#d92020',
+      borderInput: '#cccccc',
+    },
+  }}
+>
+  {/* Your components */}
+</RemoteFlows>
 ```
 
-This will initiate a new changeset, you select between patch | minor | major
+| **Token**                  | **Description**                                                                                       |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `colors.borderInput`       | Border color for input fields.                                                                        |
+| `colors.primaryBackground` | Background used for the popover options                                                               |
+| `colors.primaryForeground` | Color text for the input and options                                                                  |
+| `colors.accentBackground`  | Used in the option selected and hover.                                                                |
+| `colors.accentForeground`  | Color text for the select options                                                                     |
+| `colors.danger`            | Red color used for danger states.                                                                     |
+| `spacing`                  | Consistent scale for whitespace (margin, padding, gap).                                               |
+| `borderRadius`             | The main border radius value (default: 0.625rem). This is the foundation for all other radius values. |
+| `font.fontSizeBase`        | The main font size value (default: 1rem). Controls the base text size of the component.               |
 
-Once you do that and a changeset has been created, you run
+### CSS Overrides
 
-```sh
-npm run changeset:version
+#### Using CSS variables:
+
+You can override the CSS variables defined in `:root` in the library's `styles/global.css`
+
+#### Override CSS Classes:
+
+Use css or your css in js solution to override any classes from the SDK
+
+## Advanced Usage
+
+### Custom Implementation
+
+`remote-flows` provides opinionated components but your application might require more extensive customization than what theme tokens allow. For these cases, we expose several hooks that give you complete control over rendering while handling the complex business logic for you.
+
+Here's how to create a fully custom implementation using our hooks:
+
+```tsx
+function CustomCostCalculator() {
+  const {
+    onSubmit: submitCostCalculator,
+    fields, // fields is a list of field objects returned by json-schema-form. Read more at https://github.com/remoteoss/json-schema-form
+    validationSchema,
+  } = useCostCalculator();
+
+  // Build your custom form using the provided fields and validation schema
+
+  function handleSubmit(data) {
+    submitCostCalculator(data); // submitCostCalculator validates form fields before posting to Remote API
+  }
+
+  return (
+    <Form onSubmit={handleSubmit}>{/* Your custom form implementation */}</Form>
+  );
+}
 ```
 
-This will eliminate the changeset temporarily created and update the changelog
+```tsx
+function CustomCostCalculator() {
+  const {
+    onSubmit: submitCostCalculator,
+    fields, // fields is a list of field objects returned by json-schema-form. Read more at https://github.com/remoteoss/json-schema-form
+    validationSchema,
+  } = useCostCalculator();
 
-After this has been done, we have a release workflow in the CI, that will publish the package to NPM
+  // Build your custom form using the provided fields and validation schema
+
+  return (
+    <form onSubmit={handleSubmit((data) => submitCostCalculator(data))}>
+      {/* Your custom form implementation */}
+    </form>
+  );
+}
+```
+
+## Example
+
+For a complete implementation example, refer to our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
