@@ -45,7 +45,7 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="RemoteFlows__SelectField__Item">
+        <FormItem className={`RemoteFlows__SelectField__Item__${name}`}>
           <FormLabel className="RemoteFlows__SelectField__Label">
             {label}
           </FormLabel>
