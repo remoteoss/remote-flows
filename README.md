@@ -4,6 +4,29 @@
 
 Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embbeded solution.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+  - [Basic Setup](#basic-setup)
+    - [Simple Cost calculator](#simple-cost-calculator)
+    - [Cost Calculator with default values and a custom disclaimer label](#cost-calculator-with-default-values-and-a-custom-disclaimer-label)
+    - [Cost calculator with results](#cost-calculator-with-results)
+    - [Cost calculator with button that exports results to pdf](#cost-calculator-with-button-that-exports-results-to-pdf)
+- [Components API](#components-api)
+  - [RemoteFlows](#remoteflows)
+  - [CostCalculator](#costcalculator)
+  - [CostCalculatorResults](#costcalculatorresults)
+- [Authentication](#authentication)
+- [Styling Options](#styling-options)
+  - [Using Default Styles](#using-default-styles)
+  - [Theme Customization](#theme-customization)
+  - [CSS Overrides](#css-overrides)
+- [Advanced Usage](#advanced-usage)
+  - [Custom Implementation](#custom-implementation)
+- [Example](#example)
+
 ## Installation
 
 ```sh
@@ -20,7 +43,7 @@ After installation, import the main CSS file in your application:
 
 ### Basic Setup
 
-#### Cost calculator rendering
+#### Simple Cost calculator
 
 ```tsx
 import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
@@ -46,8 +69,6 @@ function CostCalculatorForm() {
           label: 'Remote Disclaimer',
         },
       }}
-      onSubmit={(payload) => console.log(payload)}
-      onError={(error) => console.error({ error })}
       onSuccess={(response) => console.log({ response })}
     />
   );
@@ -75,7 +96,7 @@ export function BasicCostCalculator() {
 }
 ```
 
-#### Cost Calculator + default values + custom disclaimer label
+#### Cost Calculator with default values and a custom disclaimer label
 
 ```tsx
 import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
@@ -101,8 +122,6 @@ function CostCalculatorForm() {
         },
       }}
       estimationOptions={estimationOptions}
-      onSubmit={(payload) => console.log(payload)}
-      onError={(error) => console.error({ error })}
       onSuccess={(response) => console.log({ response })}
     />
   );
@@ -130,7 +149,7 @@ export function BasicCostCalculatorWithDefaultValues() {
 }
 ```
 
-#### Cost calculator + results component
+#### Cost calculator with results
 
 ```tsx
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
@@ -166,7 +185,6 @@ function CostCalculatorForm() {
             label: 'Remote Disclaimer',
           },
         }}
-        onError={(error) => console.error({ error })}
         onSuccess={(response) => {
           setEstimations(response);
         }}
@@ -200,7 +218,7 @@ export function CostCalculatoWithResults() {
 }
 ```
 
-#### Cost calculator with export to pdf
+#### Cost calculator with button that exports results to pdf
 
 ```tsx
 import type {
@@ -266,7 +284,6 @@ function CostCalculatorForm() {
           },
         }}
         onSubmit={(payload) => setPayload(payload)}
-        onError={(error) => console.error({ error })}
         onSuccess={(response) => {
           setEstimations(response);
         }}
@@ -314,22 +331,22 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 
 The `CostCalculator` component renders a form for calculating employment costs.
 
-| Prop               | Type                                                 | Required | Description                                                 |
-| ------------------ | ---------------------------------------------------- | -------- | ----------------------------------------------------------- |
-| `estimationParams` | object                                               | No       | Customization for the estimation response (see table below) |
-| `defaultValues`    | object                                               | No       | Predefined form values (see table below)                    |
-| `params`           | `{ disclaimer?: { label?: string } }`                | No       | Additional configuration parameters                         |
-| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the payload sent to Remote server             |
-| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                |
-| `onError`          | `(error: Error) => void`                             | No       | Error handling callback                                     |
+| Prop               | Type                                                 | Required | Description                                                                                  |
+| ------------------ | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `estimationParams` | object                                               | No       | Customization for the estimation response (see table below)                                  |
+| `defaultValues`    | object                                               | No       | Predefined form values (see table below)                                                     |
+| `params`           | `{ disclaimer?: { label?: string } }`                | No       | Additional configuration parameters                                                          |
+| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
+| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                                                 |
+| `onError`          | `(error: Error) => void`                             | No       | Error handling callback                                                                      |
 
 #### estimationParams Properties
 
 | Property                | Type      | Description                                                  |
 | ----------------------- | --------- | ------------------------------------------------------------ |
 | `title`                 | `string`  | Custom title for the estimation report                       |
-| `includeBenefits`       | `boolean` | When true, includes benefits information in the response     |
-| `includeCostBreakdowns` | `boolean` | When true, includes detailed cost breakdowns in the response |
+| `includeBenefits`       | `boolean` | If `true`, includes benefits information in the response     |
+| `includeCostBreakdowns` | `boolean` | If `true`, includes detailed cost breakdowns in the response |
 
 #### defaultValues Properties
 
@@ -343,13 +360,19 @@ The `CostCalculator` component renders a form for calculating employment costs.
 
 A component to display cost calculation results.
 
-| Prop             | Type                                 | Required | Description                    |
-| ---------------- | ------------------------------------ | -------- | ------------------------------ |
-| `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation data to display |
+| Prop             | Type                                 | Required | Description                  |
+| ---------------- | ------------------------------------ | -------- | ---------------------------- |
+| `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation response data |
 
 ## Authentication
 
 You need to implement a server endpoint to securely handle authentication with Remote. This prevents exposing client credentials in your frontend code.
+
+Your server should:
+
+1. Store your client credentials securely
+2. Implement an endpoint that exchanges these credentials for an access token
+3. Return `access_token` and `expires_in` to the frontend application
 
 For a complete implementation, check our [example server implementation](https://github.com/remoteoss/remote-flows/blob/main/example/server.js).
 
