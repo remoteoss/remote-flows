@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
@@ -10,9 +10,13 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "openapi-ts": "openapi-ts",
-    "prepack": "npm run build",
     "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "changeset:add": "changeset add",
+    "changeset:version": "changeset version",
+    "prepare": "npm run build",
+    "prerelease": "npm run ci",
+    "release": "changeset publish"
   },
   "type": "module",
   "main": "dist/index.js",
@@ -76,6 +80,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.3",
+    "@changesets/cli": "^2.28.1",
     "@eslint/js": "^9.22.0",
     "@hey-api/openapi-ts": "^0.64.4",
     "@testing-library/jest-dom": "^6.6.3",
