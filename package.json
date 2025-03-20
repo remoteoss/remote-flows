@@ -10,13 +10,13 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "openapi-ts": "openapi-ts",
-    "prepare": "npm run build",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "changeset:add": "changeset add",
     "changeset:version": "changeset version",
+    "prepare": "npm run build",
     "prerelease": "npm run ci",
-    "release": "changeset publish",
-    "test:coverage": "vitest --coverage"
+    "release": "changeset publish"
   },
   "type": "module",
   "main": "dist/index.js",
