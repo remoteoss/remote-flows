@@ -77,14 +77,11 @@ export function RemoteFlows({
   children,
   isTestingMode = false,
   theme,
-  rules,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
       <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
-        <ThemeProvider theme={theme} rules={rules}>
-          {children}
-        </ThemeProvider>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
   );

@@ -1,4 +1,4 @@
-import { CSSProperties, PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 
 export type ThemeProviderProps = PropsWithChildren<{
   theme?: Partial<{
@@ -7,23 +7,15 @@ export type ThemeProviderProps = PropsWithChildren<{
     borderRadius: string;
     font: ThemeFont;
   }>;
-  rules?: Record<string, CSSProperties>;
 }>;
 
 export type ThemeColors = Partial<{
-  focus: string;
   borderInput: string;
   primaryBackground: string;
   primaryForeground: string;
   accentBackground: string;
   accentForeground: string;
   danger: string;
-  /**
-   * Used for the background of select options popover
-   */
-  popoverPrimaryBackground: string;
-  popoverPrimaryForeground: string;
-  textBase: string;
 }>;
 
 export type CssThemeColors = {

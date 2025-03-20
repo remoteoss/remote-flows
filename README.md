@@ -11,6 +11,10 @@ This project provides a client SDK for interacting with the Remote API, by provi
 
 ## Installation
 
+```sh
+npm install @remoteoss/remote-flows
+```
+
 ## Running Locally
 
 ### Development Mode
