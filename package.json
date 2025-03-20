@@ -46,8 +46,8 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
