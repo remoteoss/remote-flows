@@ -1,5 +1,8 @@
 @import '@remoteoss/remote-flows/index.css';
 
+.cost-calculator__container {
+  padding: 100px;
+}
 .cost-calculator-disclaimer-drawer-body {
   padding: 16px;
 
