@@ -15,7 +15,6 @@ import type {
   Field,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
-
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
@@ -177,7 +176,6 @@ export const useCostCalculator = (
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
 
@@ -199,42 +197,43 @@ export const useCostCalculator = (
   async function onSubmit(
     values: CostCalculatorEstimationFormValues,
   ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
-    setIsSubmitting(true);
-
     try {
       await validationSchema.validate(values, { abortEarly: false });
     } catch (err) {
-      setIsSubmitting(false);
       return {
         data: null,
         error: err as ValidationError,
       };
     }
 
-    try {
-      const response = await costCalculatorEstimationMutation.mutateAsync(
+    return new Promise((resolve, reject) => {
+      costCalculatorEstimationMutation.mutate(
         buildPayload(values, estimationOptions),
+        {
+          onSuccess: (response) => {
+            if (response.data) {
+              resolve({
+                data: response.data,
+                error: null,
+              });
+            } else {
+              resolve({
+                data: null,
+                error: new Error(
+                  'Something went wrong. Please try again later.',
+                ),
+              });
+            }
+          },
+          onError: (error) => {
+            reject({
+              data: null,
+              error: error as PostCreateEstimationError,
+            });
+          },
+        },
       );
-
-      if (response.data) {
-        return {
-          data: response.data,
-          error: null,
-        };
-      }
-
-      return {
-        data: null,
-        error: response.error as PostCreateEstimationError,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error as Error,
-      };
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }
 
   /**
@@ -311,7 +310,7 @@ export const useCostCalculator = (
     fields: allFields,
     validationSchema,
     handleValidation: jsonSchemaRegionFields?.handleValidation,
-    isSubmitting,
+    isSubmitting: costCalculatorEstimationMutation.isPending,
     isLoading:
       isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
     onSubmit,
