@@ -6,6 +6,7 @@ import {
   getShowRegionField,
   MinimalRegion,
   postCreateEstimation,
+  PostCreateEstimationError,
   postCreateEstimationPdf,
 } from '@/src/client';
 import type {
@@ -14,10 +15,9 @@ import type {
   Field,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
-
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -163,6 +163,8 @@ type UseCostCalculatorParams = {
   estimationOptions: CostCalculatorEstimationOptions;
 };
 
+export type EstimationError = PostCreateEstimationError | ValidationError;
+
 /**
  * Hook to use the cost calculator.
  */
@@ -176,12 +178,15 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
-  const { data: countries } = useCostCalculatorCountries();
-  const { data: currencies } = useCompanyCurrencies();
+
+  const { data: countries, isLoading: isLoadingCountries } =
+    useCostCalculatorCountries();
+  const { data: currencies, isLoading: isLoadingCurrencies } =
+    useCompanyCurrencies();
 
   const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
-  const { data: jsonSchemaRegionFields } =
+  const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
     useRegionFields(jsonSchemaRegionSlug);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
@@ -191,7 +196,7 @@ export const useCostCalculator = (
    */
   async function onSubmit(
     values: CostCalculatorEstimationFormValues,
-  ): Promise<Result<CostCalculatorEstimateResponse, Error | ValidationError>> {
+  ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
     try {
       await validationSchema.validate(values, { abortEarly: false });
     } catch (err) {
@@ -201,28 +206,34 @@ export const useCostCalculator = (
       };
     }
 
-    try {
-      const response = await costCalculatorEstimationMutation.mutateAsync(
+    return new Promise((resolve, reject) => {
+      costCalculatorEstimationMutation.mutate(
         buildPayload(values, estimationOptions),
+        {
+          onSuccess: (response) => {
+            if (response.data) {
+              resolve({
+                data: response.data,
+                error: null,
+              });
+            } else {
+              resolve({
+                data: null,
+                error: new Error(
+                  'Something went wrong. Please try again later.',
+                ),
+              });
+            }
+          },
+          onError: (error) => {
+            reject({
+              data: null,
+              error: error as PostCreateEstimationError,
+            });
+          },
+        },
       );
-
-      if (response.data) {
-        return {
-          data: response.data,
-          error: null,
-        };
-      }
-
-      return {
-        data: null,
-        error: response.error as $TSFixMe,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error as Error,
-      };
-    }
+    });
   }
 
   /**
@@ -299,6 +310,9 @@ export const useCostCalculator = (
     fields: allFields,
     validationSchema,
     handleValidation: jsonSchemaRegionFields?.handleValidation,
+    isSubmitting: costCalculatorEstimationMutation.isPending,
+    isLoading:
+      isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
     onSubmit,
   };
 };
