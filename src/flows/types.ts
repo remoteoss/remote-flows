@@ -5,7 +5,7 @@ type Success<T> = {
 
 type Failure<E> = {
   data: null;
-  error: E;
+  error: E | Error;
 };
 
 export type Result<T, E = Error> = Success<T> | Failure<E>;
