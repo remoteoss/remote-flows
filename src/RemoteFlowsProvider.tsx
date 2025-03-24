@@ -40,6 +40,10 @@ function RemoteFlowContextWrapper({
     enabled: false,
   });
 
+  /* const baseUrl = isTestingMode
+    ? 'http://localhost:4000/api/eor'
+    : process.env.REMOTE_GATEWAY_URL; */
+
   const baseUrl = isTestingMode
     ? ENVIROMENTS.partners
     : process.env.REMOTE_GATEWAY_URL;

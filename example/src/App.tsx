@@ -13,6 +13,9 @@ import { useState } from 'react';
 import './App.css';
 
 function CostCalculatorForm() {
+  const [includeBenefits, setIncludeBenefits] = useState<boolean>(true);
+  const [includePremiumBenefits, setIncludePremiumBenefits] =
+    useState<boolean>(true);
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
@@ -20,43 +23,58 @@ function CostCalculatorForm() {
 
   const estimationOptions = {
     title: 'Estimate for a new company',
-    includeBenefits: true,
+    includeBenefits: includeBenefits,
     includeCostBreakdowns: true,
+    includePremiumBenefits: includePremiumBenefits,
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
-        onSuccess: (response) => {
-          if (response?.data?.data?.content !== undefined) {
-            const a = document.createElement('a');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a.href = response.data.data.content as any;
-            a.download = 'estimation.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          }
+      exportPdfMutation.mutate(
+        buildCostCalculatorEstimationPayload(payload, estimationOptions),
+        {
+          onSuccess: (response) => {
+            if (response?.data?.data?.content !== undefined) {
+              const a = document.createElement('a');
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              a.href = response.data.data.content as any;
+              a.download = 'estimation.pdf';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }
+          },
+          onError: (error) => {
+            console.error({ error });
+          },
         },
-        onError: (error) => {
-          console.error({ error });
-        },
-      });
+      );
     }
   };
 
   return (
     <>
+      <input
+        type="checkbox"
+        checked={includeBenefits}
+        onChange={(event) => {
+          setIncludeBenefits(event.target.checked);
+        }}
+      />
+      <label>Include Benefits</label>
+      <input
+        type="checkbox"
+        checked={includePremiumBenefits}
+        onChange={(event) => {
+          setIncludePremiumBenefits(event.target.checked);
+        }}
+      />
+      <label>Include Premium Benefits</label>
       <CostCalculator
         estimationOptions={estimationOptions}
-        defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-          salary: '50000',
-        }}
-        params={{
+        options={{
           disclaimer: {
             label: 'Remote Disclaimer',
           },
@@ -90,16 +108,7 @@ function App() {
   };
 
   return (
-    <RemoteFlows
-      theme={{
-        colors: {
-          primaryBackground: 'blue',
-          accentBackground: 'green',
-          accentForeground: 'red',
-        },
-      }}
-      auth={() => fetchToken()}
-    >
+    <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorForm />
     </RemoteFlows>
   );

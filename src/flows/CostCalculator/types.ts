@@ -54,6 +54,12 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include benefits in the estimation. Default is false.
    */
   includeBenefits: boolean;
+
+  /**
+   * Include premium benefits in the estimation. Default is false.
+   */
+  includePremiumBenefits: boolean;
+
   /**
    * Include cost breakdowns in the estimation. Default is false.
    */

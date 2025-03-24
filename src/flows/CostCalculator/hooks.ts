@@ -36,15 +36,18 @@ type CostCalculatorCountry = {
  * Hook to fetch the countries for the cost calculator.
  * @returns
  */
-const useCostCalculatorCountries = () => {
+const useCostCalculatorCountries = ({ premiumBenefits }) => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['cost-calculator-countries'],
+    queryKey: ['cost-calculator-countries', premiumBenefits],
     queryFn: () => {
       return getIndexCountry({
         client: client as Client,
         headers: {
           Authorization: ``,
+        },
+        query: {
+          use_premium_benefits: premiumBenefits,
         },
       });
     },
@@ -130,11 +133,11 @@ export const useCostCalculatorEstimationPdf = () => {
  * @param region
  * @returns
  */
-const useRegionFields = (region: string | undefined) => {
+const useRegionFields = (region: string | undefined, { premiumBenefits }) => {
   const { client } = useClient();
 
   return useQuery({
-    queryKey: ['cost-calculator-region-fields', region],
+    queryKey: ['cost-calculator-region-fields', region, premiumBenefits],
     queryFn: () => {
       return getShowRegionField({
         client: client as Client,
@@ -142,6 +145,9 @@ const useRegionFields = (region: string | undefined) => {
           Authorization: ``,
         },
         path: { slug: region as string },
+        query: {
+          use_premium_benefits: premiumBenefits,
+        },
       });
     },
     enabled: !!region,
@@ -152,9 +158,10 @@ const useRegionFields = (region: string | undefined) => {
   });
 };
 
-export const defaultEstimationOptions = {
+export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimation',
   includeBenefits: false,
+  includePremiumBenefits: false,
   includeCostBreakdowns: false,
 };
 
@@ -176,13 +183,19 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
-  const { data: countries } = useCostCalculatorCountries();
+  const { data: countries } = useCostCalculatorCountries({
+    premiumBenefits: estimationOptions.includePremiumBenefits,
+  });
   const { data: currencies } = useCompanyCurrencies();
 
   const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
-  const { data: jsonSchemaRegionFields } =
-    useRegionFields(jsonSchemaRegionSlug);
+  const { data: jsonSchemaRegionFields } = useRegionFields(
+    jsonSchemaRegionSlug,
+    {
+      premiumBenefits: estimationOptions.includePremiumBenefits,
+    },
+  );
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
