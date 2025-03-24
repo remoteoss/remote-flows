@@ -8,6 +8,7 @@ export type CostCalculatorEstimationFormValues = {
   region: string;
   age: number;
   contract_duration_type: EmploymentTermType;
+  benefits: Record<string, string>;
 }>;
 
 export type Field = {
