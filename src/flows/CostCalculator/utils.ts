@@ -38,6 +38,7 @@ export function buildPayload(
     employer_currency_slug: values.currency,
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
+    include_premium_benefits: estimationOptions.includePremiumBenefits,
     employments: [
       {
         region_slug: values.region || values.country,

@@ -15,6 +15,7 @@ import './App.css';
 function CostCalculatorForm() {
   const [includeBenefits, setIncludeBenefits] = useState(true);
   const [includeCostBreakdowns, setIncludeCostBreakdowns] = useState(true);
+  const [includePremiumBenefits, setIncludePremiumBenefits] = useState(true);
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
@@ -24,6 +25,7 @@ function CostCalculatorForm() {
     title: 'Estimate for a new company',
     includeBenefits: includeBenefits,
     includeCostBreakdowns: includeCostBreakdowns,
+    includePremiumBenefits: includePremiumBenefits,
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
@@ -66,6 +68,12 @@ function CostCalculatorForm() {
         onChange={(evt) => setIncludeCostBreakdowns(evt.target.checked)}
       />
       <label>Include Cost Breakdown</label>
+      <input
+        type="checkbox"
+        checked={includePremiumBenefits}
+        onChange={(evt) => setIncludePremiumBenefits(evt.target.checked)}
+      />
+      <label>Include Premium Benefits</label>
       <CostCalculator
         estimationOptions={estimationOptions}
         options={{
