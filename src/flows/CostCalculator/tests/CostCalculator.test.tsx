@@ -152,7 +152,7 @@ describe('CostCalculator', () => {
     expect(screen.getByText('Life Insurance')).toBeInTheDocument();
   });
 
-  test.only('should load, fill and submit form with regional fields', async () => {
+  test('should load, fill and submit form with regional fields', async () => {
     const user = userEvent.setup();
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
