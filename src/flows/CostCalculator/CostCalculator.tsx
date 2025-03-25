@@ -106,7 +106,6 @@ export function CostCalculator({
   });
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
-    console.log({ values });
     await onSubmit?.(values);
 
     const estimation = await submitCostCalculator(values);

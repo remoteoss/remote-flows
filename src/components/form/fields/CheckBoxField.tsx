@@ -16,7 +16,6 @@ type CheckBoxFieldProps = {
   label: string;
   description?: string;
   defaultValue?: string;
-  options: Array<{ value: string; label: string }>;
 };
 
 export function CheckBoxField({
