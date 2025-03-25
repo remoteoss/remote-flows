@@ -49,7 +49,7 @@ export const fields: Field[] = [
     type: 'integer',
   },
   {
-    description: '',
+    description: 'here we go',
     inputType: 'checkbox',
     isVisible: true,
     label: 'Accept Terms',

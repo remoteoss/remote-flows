@@ -11,7 +11,7 @@ import { cn } from '@/src/lib/utils';
 import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
-type CheckboxFieldProps = {
+type CheckBoxFieldProps = {
   name: string;
   label: string;
   description?: string;
@@ -19,35 +19,41 @@ type CheckboxFieldProps = {
   options: Array<{ value: string; label: string }>;
 };
 
-export function CheckboxField({
+export function CheckBoxField({
   name,
   defaultValue,
   description,
   label,
-}: CheckboxFieldProps) {
+}: CheckBoxFieldProps) {
   const { control } = useFormContext();
   return (
     <FormField
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({ field, fieldState }) => (
-        <FormItem
-          className={cn(
-            'space-y-3',
-            `RemoteFlows__CheckboxField__Item__${name}`,
-          )}
-        >
-          <FormControl>
-            <div className="flex space-x-2">
-              <Checkbox id={name} {...field} />
-              <FormLabel>{label}</FormLabel>
-            </div>
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          {fieldState.error && <FormMessage />}
-        </FormItem>
-      )}
+      render={({ field, fieldState }) => {
+        return (
+          <FormItem
+            className={cn(
+              'space-y-3',
+              `RemoteFlows__CheckboxField__Item__${name}`,
+            )}
+          >
+            <FormControl>
+              <div className="flex space-x-2">
+                <Checkbox
+                  id={name}
+                  onCheckedChange={field.onChange}
+                  checked={field.value}
+                />
+                <FormLabel htmlFor={name}>{label}</FormLabel>
+              </div>
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            {fieldState.error && <FormMessage />}
+          </FormItem>
+        );
+      }}
     />
   );
 }
