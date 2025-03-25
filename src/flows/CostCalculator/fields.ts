@@ -1,5 +1,5 @@
 import { Field } from '@/src/flows/CostCalculator/types';
-import { string } from 'yup';
+import { boolean, string } from 'yup';
 
 export const fields: Field[] = [
   {
@@ -47,5 +47,15 @@ export const fields: Field[] = [
       .typeError('Salary must be a number')
       .required('Salary is required'),
     type: 'integer',
+  },
+  {
+    description: '',
+    inputType: 'checkbox',
+    isVisible: true,
+    label: 'Accept Terms',
+    name: 'terms',
+    required: true,
+    schema: boolean().oneOf([true], 'You must accept the terms and conditions'),
+    type: 'integer', // TODO: what type goes here?
   },
 ];

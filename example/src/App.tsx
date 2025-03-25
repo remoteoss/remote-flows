@@ -51,12 +51,7 @@ function CostCalculatorForm() {
     <>
       <CostCalculator
         estimationOptions={estimationOptions}
-        defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-          salary: '50000',
-        }}
-        params={{
+        options={{
           disclaimer: {
             label: 'Remote Disclaimer',
           },
@@ -90,16 +85,7 @@ function App() {
   };
 
   return (
-    <RemoteFlows
-      theme={{
-        colors: {
-          primaryBackground: 'blue',
-          accentBackground: 'green',
-          accentForeground: 'red',
-        },
-      }}
-      auth={() => fetchToken()}
-    >
+    <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorForm />
     </RemoteFlows>
   );
