@@ -56,7 +56,7 @@ export function TextField({
                 onChange?.(event);
               }}
               {...typeAttrs}
-              className="TextField__Input"
+              className="RemoteFlows__TextField__Input"
             />
           </FormControl>
           {description && (

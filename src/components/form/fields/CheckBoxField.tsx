@@ -32,15 +32,19 @@ export function CheckBoxField({
       defaultValue={defaultValue}
       render={({ field, fieldState }) => {
         return (
-          <FormItem className={cn(`RemoteFlows__CheckboxField__Item__${name}`)}>
+          <FormItem className={cn(`RemoteFlows__CheckBoxField__Item__${name}`)}>
             <FormControl>
               <div className="flex space-x-2">
                 <Checkbox
                   id={name}
                   onCheckedChange={field.onChange}
                   checked={field.value}
+                  className="RemoteFlows__CheckBox__Input"
                 />
-                <FormLabel htmlFor={name} className="mb-0">
+                <FormLabel
+                  htmlFor={name}
+                  className="RemoteFlows__CheckBox__Label mb-0"
+                >
                   {label}
                 </FormLabel>
               </div>
