@@ -25,6 +25,25 @@ export function buildValidationSchema(fields: Field[]) {
 }
 
 /**
+ * Format the benefits to the expected format by the API.
+ * @param benefits
+ * @returns
+ */
+function formatBenefits(benefits: Record<string, string>) {
+  const needle = 'benefit-';
+  return Object.keys(benefits).reduce<
+    Array<{ benefit_group_slug: string; benefit_tier_slug: string }>
+  >((acc, key) => {
+    const benefitGroupSlug = key.replace(needle, '');
+    const benefitEntry = {
+      benefit_group_slug: benefitGroupSlug,
+      benefit_tier_slug: benefits[key],
+    };
+    return [...acc, benefitEntry];
+  }, []);
+}
+
+/**
  * Build the payload for the cost calculator estimation.
  * @param values
  * @param estimationOptions
@@ -38,6 +57,7 @@ export function buildPayload(
     employer_currency_slug: values.currency,
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
+    include_premium_benefits: estimationOptions.includePremiumBenefits,
     employments: [
       {
         region_slug: values.region || values.country,
@@ -47,6 +67,9 @@ export function buildPayload(
         title: estimationOptions.title,
         regional_to_employer_exchange_rate: '1',
         age: values.age ?? undefined,
+        ...(values.benefits
+          ? { benefits: formatBenefits(values.benefits) }
+          : {}),
       },
     ],
   };

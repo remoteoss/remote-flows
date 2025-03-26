@@ -8,6 +8,7 @@ export type CostCalculatorEstimationFormValues = {
   region: string;
   age: number;
   contract_duration_type: EmploymentTermType;
+  benefits: Record<string, string>;
 }>;
 
 export type Field = {
@@ -58,4 +59,8 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include cost breakdowns in the estimation. Default is false.
    */
   includeCostBreakdowns: boolean;
+  /**
+   * Include premium benefits in the estimation. Default is false.
+   */
+  includePremiumBenefits: boolean;
 }>;

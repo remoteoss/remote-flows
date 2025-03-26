@@ -22,12 +22,18 @@ type FieldWithoutOptions = FieldBase & {
 type Field = FieldWithOptions | FieldWithoutOptions;
 
 type FieldSetProps = {
-  legend: string;
+  label: string;
   name: string;
+  description: string;
   fields: Field[];
 };
 
-export function FieldSetField({ legend, name, fields }: FieldSetProps) {
+export function FieldSetField({
+  label,
+  name,
+  fields,
+  description,
+}: FieldSetProps) {
   return (
     <fieldset
       className={cn(
@@ -35,7 +41,13 @@ export function FieldSetField({ legend, name, fields }: FieldSetProps) {
         `RemoteFlows__FieldSetField__${name}`,
       )}
     >
-      <legend className="text-sm font-semibold px-2">{legend}</legend>
+      <legend className="text-sm font-semibold px-2">{label}</legend>
+      {description ? (
+        <div
+          className="mb-5 RemoteFlows__FieldSetField__Description"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
+      ) : null}
       <div className="grid gap-4">
         {fields.map((field) => {
           const FieldComponent = fieldsMap[field.type];

@@ -51,6 +51,7 @@ export function TextField({
           <FormControl>
             <Input
               {...field}
+              value={field.value ?? ''}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 field.onChange(event);
                 onChange?.(event);
