@@ -69,6 +69,9 @@ import type {
   PostCreateCancellationData,
   PostCreateCancellationResponse,
   PostCreateCancellationError,
+  GetIndexEmploymentJobData,
+  GetIndexEmploymentJobResponse,
+  GetIndexEmploymentJobError,
   GetIndexRecurringIncentiveData,
   GetIndexRecurringIncentiveResponse,
   GetIndexRecurringIncentiveError,
@@ -96,6 +99,9 @@ import type {
   GetSchemaBenefitRenewalRequestData,
   GetSchemaBenefitRenewalRequestResponse,
   GetSchemaBenefitRenewalRequestError,
+  PostGenerateMagicLinkData,
+  PostGenerateMagicLinkResponse,
+  PostGenerateMagicLinkError,
   DeleteDeleteRecurringIncentiveData,
   DeleteDeleteRecurringIncentiveResponse,
   DeleteDeleteRecurringIncentiveError,
@@ -323,6 +329,12 @@ import type {
   PostUpdateBenefitRenewalRequestData,
   PostUpdateBenefitRenewalRequestResponse,
   PostUpdateBenefitRenewalRequestError,
+  GetIndexEmploymentCompanyStructureNodeData,
+  GetIndexEmploymentCompanyStructureNodeResponse,
+  GetIndexEmploymentCompanyStructureNodeError,
+  GetIndexEmploymentCustomFieldValueData,
+  GetIndexEmploymentCustomFieldValueResponse,
+  GetIndexEmploymentCustomFieldValueError,
   PutValidateResignationData,
   PutValidateResignationResponse,
   PutValidateResignationError,
@@ -1011,6 +1023,30 @@ export const postCreateCancellation = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Show employment job
+ * Shows an employment job details.
+ *
+ */
+export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexEmploymentJobData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexEmploymentJobResponse,
+    GetIndexEmploymentJobError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employments/{employment_id}/job',
+    ...options,
+  });
+};
+
+/**
  * List Recurring Incentive
  * List all Recurring Incentives of a company.
  *
@@ -1256,6 +1292,36 @@ export const getSchemaBenefitRenewalRequest = <
     ],
     url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
     ...options,
+  });
+};
+
+/**
+ * Magic links generator
+ * Generates a magic link for a passwordless authentication.
+ * To create a magic link for a company admin, you need to provide the `user_id` parameter.
+ * To create a magic link for an employee, you need to provide the `employment_id` parameter.
+ *
+ */
+export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
+  options: Options<PostGenerateMagicLinkData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostGenerateMagicLinkResponse,
+    PostGenerateMagicLinkError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/magic-link',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };
 
@@ -2532,6 +2598,11 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  *
  * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details and address_details.
  *
+ * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
+ * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
+ * We block updates to some employment data because employees need to agree to amendments in certain cases, such as when there are changes to their contract_details.
+ * Currently, these amendments can only be done through the Remote UI.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -2548,20 +2619,6 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
  *
- *
- * #### Automatically inviting an employee
- *
- * When you submit the `contract_details` and `pricing_plan_details`, Remote should have all the required data to automatically
- * send an invite to the employee. You can tell if an automatic invite has been sent by looking at the `employment_lifecycle_stage`
- * field value. If its value is `employee_self_enrollment`, it means the employee has received an email to join the Remote platform
- * at their `personal_email`.
- *
- * After an automatic invite is sent to an employee, **you will not be able to update employment data through the Remote API**.
- * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
- * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
- * We block updates to some employment data because employees need to agree to amendments in certain cases,
- * such as when there are changes to their contract_details.
- * Currently, these amendments can only be done through the Remote UI.
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
  *
@@ -2597,6 +2654,11 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details and address_details.
  *
+ * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
+ * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
+ * We block updates to some employment data because employees need to agree to amendments in certain cases, such as when there are changes to their contract_details.
+ * Currently, these amendments can only be done through the Remote UI.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -2613,20 +2675,6 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
  *
- *
- * #### Automatically inviting an employee
- *
- * When you submit the `contract_details` and `pricing_plan_details`, Remote should have all the required data to automatically
- * send an invite to the employee. You can tell if an automatic invite has been sent by looking at the `employment_lifecycle_stage`
- * field value. If its value is `employee_self_enrollment`, it means the employee has received an email to join the Remote platform
- * at their `personal_email`.
- *
- * After an automatic invite is sent to an employee, **you will not be able to update employment data through the Remote API**.
- * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
- * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
- * We block updates to some employment data because employees need to agree to amendments in certain cases,
- * such as when there are changes to their contract_details.
- * Currently, these amendments can only be done through the Remote UI.
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
  *
@@ -2655,7 +2703,7 @@ export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * List Payroll Calendar
+ * List Company Payroll Calendar
  * List all payroll calendars for the company within the requested cycle.
  */
 export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
@@ -3475,6 +3523,57 @@ export const postUpdateBenefitRenewalRequest = <
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+/**
+ * List company structure nodes
+ * Shows all the company structure nodes of an employment.
+ *
+ */
+export const getIndexEmploymentCompanyStructureNode = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentCompanyStructureNodeData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexEmploymentCompanyStructureNodeResponse,
+    GetIndexEmploymentCompanyStructureNodeError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employments/{employment_id}/company-structure-nodes',
+    ...options,
+  });
+};
+
+/**
+ * List custom field value for an employment
+ * Returns a list of custom field values for a given employment
+ */
+export const getIndexEmploymentCustomFieldValue = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentCustomFieldValueData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexEmploymentCustomFieldValueResponse,
+    GetIndexEmploymentCustomFieldValueError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employments/{employment_id}/custom-fields',
+    ...options,
   });
 };
 

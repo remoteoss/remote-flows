@@ -889,6 +889,11 @@ export type CreateTimeoffParams = {
   timezone: Timezone;
 };
 
+export type JobAssociation = {
+  id?: string;
+  label?: string;
+} | null;
+
 export type ListDataSyncEventsResponse = {
   data: {
     data_sync_events: Array<DataSyncEvent>;
@@ -1025,6 +1030,7 @@ export type CostCalculatorEstimateParams = {
   employments: Array<CostCalculatorEmploymentParam>;
   include_benefits?: boolean;
   include_cost_breakdowns?: boolean;
+  include_premium_benefits?: boolean;
 };
 
 /**
@@ -1343,6 +1349,24 @@ export type EmploymentDocument = {
  */
 export type ShortId = string;
 
+export type CompanyStructureNode = {
+  company_structure?: {
+    id?: string;
+    name?: string;
+  };
+  id: string;
+  parent?: {
+    /**
+     * Arbitrary attributes including cost_center
+     */
+    attributes?: {
+      [key: string]: unknown;
+    };
+    id?: string;
+    name?: string;
+  } | null;
+};
+
 /**
  * The field matches the `id` of a user in the
  * Remote Platform that has permission to approve time off
@@ -1416,7 +1440,9 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -1722,7 +1748,9 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -3121,6 +3149,26 @@ export type EmployeeStats = {
   number_of_employees_offered: number;
 };
 
+export type Job = {
+  career_track?: JobAssociation;
+  code?: string | null;
+  custom_field_values?: Array<{
+    definition?: {
+      id?: string;
+      title?: string;
+      type?: string;
+    };
+    value?: string | number | boolean;
+  }>;
+  description?: string | null;
+  id: string;
+  identifier: string;
+  job_family?: JobAssociation;
+  job_level?: JobAssociation;
+  job_sub_family?: JobAssociation;
+  label: string;
+};
+
 /**
  * Timesheet
  */
@@ -3233,6 +3281,27 @@ export type CreateApprovedTimeoffParams = CreateTimeoffParams & {
 export type TimeoffResponse = {
   data: {
     timeoff: Timeoff;
+  };
+};
+
+/**
+ * Response schema listing many custom_field_values
+ */
+export type ListEmploymentCustomFieldValuePaginatedResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    custom_field_values?: Array<ListEmploymentCustomFieldValueResponse>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
   };
 };
 
@@ -3841,7 +3910,9 @@ export type WebhookCallback = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -4156,6 +4227,10 @@ export type TimeoffBalanceResponse = {
   };
 };
 
+export type EmploymentJobResponse = {
+  data: Job;
+};
+
 /**
  * Set of invoice schedule attributes with failed validation.
  */
@@ -4201,6 +4276,12 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
   start_date: string;
 };
 
+export type CompanyStructureNodesResponse = {
+  data: {
+    company_structure_nodes: Array<CompanyStructureNode>;
+  };
+};
+
 /**
  * Work Authorization User
  */
@@ -4232,6 +4313,22 @@ export type ContractorInvoiceSchedulePeriodicity =
   | 'monthly'
   | 'semi_monthly'
   | 'weekly';
+
+/**
+ * ListEmploymentCustomFieldValueResponse
+ */
+export type ListEmploymentCustomFieldValueResponse = {
+  custom_field_id: string;
+  name: string;
+  type: string;
+  value:
+    | string
+    | number
+    | boolean
+    | number
+    | EmploymentCustomFieldValueJsonValue
+    | null;
+};
 
 /**
  *   All the params needed to create an expense.
@@ -4682,7 +4779,9 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -4984,7 +5083,13 @@ export type Timeoff = {
   id: string;
   notes?: string | null;
   start_date: string;
-  status: string;
+  status:
+    | 'requested'
+    | 'approved'
+    | 'cancelled'
+    | 'declined'
+    | 'taken'
+    | 'cancel_requested';
   timeoff_days: Array<TimeoffDay>;
   timeoff_type: TimeoffType;
   timezone: Timezone;
@@ -6381,6 +6486,46 @@ export type PostCreateCancellationResponses = {
 export type PostCreateCancellationResponse =
   PostCreateCancellationResponses[keyof PostCreateCancellationResponses];
 
+export type GetIndexEmploymentJobData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/job';
+};
+
+export type GetIndexEmploymentJobErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentJobError =
+  GetIndexEmploymentJobErrors[keyof GetIndexEmploymentJobErrors];
+
+export type GetIndexEmploymentJobResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentJobResponse;
+};
+
+export type GetIndexEmploymentJobResponse =
+  GetIndexEmploymentJobResponses[keyof GetIndexEmploymentJobResponses];
+
 export type GetIndexRecurringIncentiveData = {
   body?: never;
   headers: {
@@ -6861,6 +7006,45 @@ export type GetSchemaBenefitRenewalRequestResponses = {
 
 export type GetSchemaBenefitRenewalRequestResponse =
   GetSchemaBenefitRenewalRequestResponses[keyof GetSchemaBenefitRenewalRequestResponses];
+
+export type PostGenerateMagicLinkData = {
+  /**
+   * Magic links generator body
+   */
+  body: MagicLinkParams;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/magic-link';
+};
+
+export type PostGenerateMagicLinkErrors = {
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostGenerateMagicLinkError =
+  PostGenerateMagicLinkErrors[keyof PostGenerateMagicLinkErrors];
+
+export type PostGenerateMagicLinkResponses = {
+  /**
+   * Success
+   */
+  200: MagicLinkResponse;
+};
+
+export type PostGenerateMagicLinkResponse =
+  PostGenerateMagicLinkResponses[keyof PostGenerateMagicLinkResponses];
 
 export type DeleteDeleteRecurringIncentiveData = {
   body?: never;
@@ -10721,6 +10905,95 @@ export type PostUpdateBenefitRenewalRequestResponses = {
 export type PostUpdateBenefitRenewalRequestResponse =
   PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
 
+export type GetIndexEmploymentCompanyStructureNodeData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/company-structure-nodes';
+};
+
+export type GetIndexEmploymentCompanyStructureNodeErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentCompanyStructureNodeError =
+  GetIndexEmploymentCompanyStructureNodeErrors[keyof GetIndexEmploymentCompanyStructureNodeErrors];
+
+export type GetIndexEmploymentCompanyStructureNodeResponses = {
+  /**
+   * Success
+   */
+  200: CompanyStructureNodesResponse;
+};
+
+export type GetIndexEmploymentCompanyStructureNodeResponse =
+  GetIndexEmploymentCompanyStructureNodeResponses[keyof GetIndexEmploymentCompanyStructureNodeResponses];
+
+export type GetIndexEmploymentCustomFieldValueData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments/{employment_id}/custom-fields';
+};
+
+export type GetIndexEmploymentCustomFieldValueErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentCustomFieldValueError =
+  GetIndexEmploymentCustomFieldValueErrors[keyof GetIndexEmploymentCustomFieldValueErrors];
+
+export type GetIndexEmploymentCustomFieldValueResponses = {
+  /**
+   * Success
+   */
+  200: ListEmploymentCustomFieldValuePaginatedResponse;
+};
+
+export type GetIndexEmploymentCustomFieldValueResponse =
+  GetIndexEmploymentCustomFieldValueResponses[keyof GetIndexEmploymentCustomFieldValueResponses];
+
 export type PutValidateResignationData = {
   /**
    * ValidateResignation
@@ -11828,15 +12101,16 @@ export type GetIndexCompanyData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * External ID
+     */
+    external_id?: string;
+  };
   url: '/v1/companies';
 };
 
 export type GetIndexCompanyErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
   /**
    * Unauthorized
    */
@@ -11849,10 +12123,6 @@ export type GetIndexCompanyErrors = {
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
 };
 
 export type GetIndexCompanyError =
