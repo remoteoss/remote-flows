@@ -73,13 +73,6 @@ type CostCalculatorProps = Partial<{
   onError: (error: EstimationError) => void;
 }>;
 
-const commonFormFields: Array<keyof CostCalculatorEstimationFormValues> = [
-  'country',
-  'currency',
-  'region',
-  'salary',
-];
-
 export function CostCalculator({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
