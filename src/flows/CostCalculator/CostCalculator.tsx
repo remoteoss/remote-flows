@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { CostCalculatorEstimateResponse } from '@/src/client';
@@ -73,6 +73,13 @@ type CostCalculatorProps = Partial<{
   onError: (error: EstimationError) => void;
 }>;
 
+const commonFormFields: Array<keyof CostCalculatorEstimationFormValues> = [
+  'country',
+  'currency',
+  'region',
+  'salary',
+];
+
 export function CostCalculator({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
@@ -106,6 +113,20 @@ export function CostCalculator({
     },
     mode: 'onBlur',
   });
+
+  const { unregister, getValues } = form;
+  const formValues = getValues();
+
+  useEffect(() => {
+    const fieldNames = Object.keys(formValues) as Array<
+      keyof CostCalculatorEstimationFormValues
+    >;
+    fieldNames.forEach((fieldName) => {
+      if (!commonFormFields.includes(fieldName)) {
+        unregister(fieldName);
+      }
+    });
+  }, [formValues, unregister]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     await onSubmit?.(values);
