@@ -10,6 +10,7 @@ import { Button } from '@/src/components/ui/button';
 import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
 import {
   defaultEstimationOptions,
+  EstimationError,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
 
@@ -69,7 +70,7 @@ type CostCalculatorProps = Partial<{
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
    */
-  onError: (error: Error) => void;
+  onError: (error: EstimationError) => void;
 }>;
 
 export function CostCalculator({
@@ -88,6 +89,7 @@ export function CostCalculator({
     onSubmit: submitCostCalculator,
     fields,
     validationSchema,
+    isSubmitting,
   } = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
@@ -128,6 +130,7 @@ export function CostCalculator({
           <Button
             type="submit"
             className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            disabled={isSubmitting}
           >
             Get estimate
           </Button>
