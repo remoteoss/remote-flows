@@ -15,6 +15,7 @@ export type ThemeColors = Partial<{
   primaryForeground: string;
   accentBackground: string;
   accentForeground: string;
+  checkboxBackground: string;
   danger: string;
 }>;
 
