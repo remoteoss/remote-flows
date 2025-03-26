@@ -58,6 +58,6 @@ export const fields: Field[] = [
     schema: boolean()
       .oneOf([true], 'You must accept the terms and conditions')
       .required('You must accept the terms and conditions'),
-    type: 'integer', // TODO: what type goes here?
+    type: 'boolean',
   },
 ];
