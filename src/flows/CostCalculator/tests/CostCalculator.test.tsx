@@ -75,7 +75,7 @@ describe('CostCalculator', () => {
   test('submits the form with default values', async () => {
     render(<CostCalculator {...defaultProps} />, { wrapper });
 
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
@@ -95,7 +95,7 @@ describe('CostCalculator', () => {
     );
     render(<CostCalculator {...defaultProps} />, { wrapper });
 
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
       expect(mockOnError).toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe('CostCalculator', () => {
   test('displays validation errors when form is submitted with empty fields', async () => {
     render(<CostCalculator />, { wrapper });
 
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/salary is required/i)).toBeInTheDocument();
