@@ -129,7 +129,7 @@ export function CostCalculator({
             type="submit"
             className="w-full bg-gray-900 hover:bg-gray-800 text-white"
           >
-            Save
+            Get estimate
           </Button>
         </form>
       </Form>
