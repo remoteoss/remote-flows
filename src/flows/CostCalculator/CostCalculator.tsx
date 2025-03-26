@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { CostCalculatorEstimateResponse } from '@/src/client';
@@ -111,22 +111,9 @@ export function CostCalculator({
       region: '',
       salary: defaultValues?.salary,
     },
+    shouldUnregister: true,
     mode: 'onBlur',
   });
-
-  const { unregister, getValues } = form;
-  const formValues = getValues();
-
-  useEffect(() => {
-    const fieldNames = Object.keys(formValues) as Array<
-      keyof CostCalculatorEstimationFormValues
-    >;
-    fieldNames.forEach((fieldName) => {
-      if (!commonFormFields.includes(fieldName)) {
-        unregister(fieldName);
-      }
-    });
-  }, [formValues, unregister]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     await onSubmit?.(values);
