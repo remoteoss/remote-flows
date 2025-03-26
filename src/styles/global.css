@@ -55,6 +55,7 @@
   --color-badge-foreground: var(--badge-foreground);
   --color-link-button-primary: var(--link-button);
   --color-radio: var(--radio);
+  --color-checkbox: var(--checkbox-background);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
