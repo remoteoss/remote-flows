@@ -18,8 +18,8 @@ import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { fields } from './fields';
 import { buildPayload, buildValidationSchema } from './utils';
@@ -159,8 +159,18 @@ export const defaultEstimationOptions = {
 };
 
 type UseCostCalculatorParams = {
+  /**
+   * The default region slug to preselect a country and a region.
+   */
   defaultRegion?: string;
+  /**
+   * The estimation options.
+   */
   estimationOptions: CostCalculatorEstimationOptions;
+  /**
+   * Useful to reset the form fields
+   */
+  resetForm?: boolean;
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
@@ -169,10 +179,11 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+  { defaultRegion, estimationOptions, resetForm }: UseCostCalculatorParams = {
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
+  const queryClient = useQueryClient();
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -293,6 +304,13 @@ export const useCostCalculator = (
       countryField.onChange = onCountryChange;
     }
   }
+
+  useEffect(() => {
+    if (resetForm) {
+      setSelectedCountry(undefined);
+      setSelectedRegion(defaultRegion);
+    }
+  }, [resetForm, queryClient, defaultRegion]);
 
   const allFields = [
     ...fields,

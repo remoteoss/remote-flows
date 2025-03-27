@@ -384,6 +384,7 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 | ------------------- | --------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
 | `defaultRegion`     | `string`                          | No       | Pre-selected region slug                                                                       |
 | `estimationOptions` | `CostCalculatorEstimationOptions` | Yes      | Options for the cost estimation (same as `estimationParams` in the `CostCalculator` component) |
+| `resetForm`         | `boolean`                         | No       | Useful to reset the form fields                                                                |
 
 The `estimationOptions` object has the following properties:
 

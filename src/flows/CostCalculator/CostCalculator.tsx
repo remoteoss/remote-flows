@@ -85,6 +85,7 @@ export function CostCalculator({
   onError,
   onSuccess,
 }: CostCalculatorProps) {
+  const [resetForm, setResetForm] = React.useState(false);
   const {
     onSubmit: submitCostCalculator,
     fields,
@@ -93,6 +94,7 @@ export function CostCalculator({
   } = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
+    resetForm: resetForm,
   });
 
   const resolver = useValidationFormResolver(validationSchema);
@@ -120,6 +122,14 @@ export function CostCalculator({
     }
   };
 
+  const handleReset = () => {
+    setResetForm(true);
+    form.reset();
+    setTimeout(() => {
+      setResetForm(false);
+    }, 100);
+  };
+
   return (
     <>
       <Form {...form}>
@@ -138,7 +148,7 @@ export function CostCalculator({
           <Button
             className="RemoteFlows__CostCalculatorForm__ResetButton"
             type="reset"
-            onClick={() => form.reset()}
+            onClick={handleReset}
           >
             Reset
           </Button>
