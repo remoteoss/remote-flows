@@ -43,7 +43,7 @@ export function CheckBoxField({
                 />
                 <FormLabel
                   htmlFor={name}
-                  className="RemoteFlows__CheckBox__Label mb-0"
+                  className="mb-0 RemoteFlows__CheckBox__Label"
                 >
                   {label}
                 </FormLabel>
