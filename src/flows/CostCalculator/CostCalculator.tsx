@@ -104,6 +104,7 @@ export function CostCalculator({
       region: '',
       salary: defaultValues?.salary,
     },
+    shouldUnregister: true,
     mode: 'onBlur',
   });
 
