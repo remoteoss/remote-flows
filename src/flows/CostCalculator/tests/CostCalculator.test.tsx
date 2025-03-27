@@ -82,7 +82,6 @@ describe('CostCalculator', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        region: '',
         salary: '50000',
       });
     });
@@ -212,7 +211,6 @@ describe('CostCalculator', () => {
         },
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        region: '',
         salary: '50000',
       });
     });
