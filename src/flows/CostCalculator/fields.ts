@@ -48,16 +48,4 @@ export const fields: Field[] = [
       .required('Salary is required'),
     type: 'integer',
   },
-  {
-    description: '',
-    inputType: 'checkbox',
-    isVisible: true,
-    label: 'Accept Terms',
-    name: 'terms',
-    required: true,
-    schema: boolean()
-      .oneOf([true], 'You must accept the terms and conditions')
-      .required('You must accept the terms and conditions'),
-    type: 'boolean',
-  },
 ];

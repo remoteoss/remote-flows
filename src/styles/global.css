@@ -26,7 +26,7 @@
   --focused: var(--borderRadius, #0061ff);
   --fontBase: var(--fontSizeBase, 1rem);
   --link-button: var(--foreground, #4b5865);
-  --checkbox-background: var(--checkboxBackground, #0f1419);
+  --checkbox-background: var(--borderInput, #9aa6b2);
 }
 
 @theme inline {
