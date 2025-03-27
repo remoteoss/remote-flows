@@ -66,9 +66,7 @@ export function buildPayload(
         title: estimationOptions.title,
         regional_to_employer_exchange_rate: '1',
         age: values.age ?? undefined,
-        ...(values.benefits
-          ? { benefits: formatBenefits(values.benefits) }
-          : {}),
+        ...(values.benefits && { benefits: formatBenefits(values.benefits) }),
       },
     ],
   };
