@@ -130,10 +130,17 @@ export function CostCalculator({
           <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            className="RemoteFlows__CostCalculatorForm__SubmitButton"
             disabled={isSubmitting}
           >
             Get estimate
+          </Button>
+          <Button
+            className="RemoteFlows__CostCalculatorForm__ResetButton"
+            type="reset"
+            onClick={() => form.reset}
+          >
+            Reset
           </Button>
         </form>
       </Form>
