@@ -14,6 +14,7 @@ import {
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
 
+import { DatePicker } from '@/src/components/form/fields/DatePicker';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
@@ -127,6 +128,7 @@ export function CostCalculator({
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-4 RemoteFlows__CostCalculatorForm"
         >
+          <DatePicker />
           <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
