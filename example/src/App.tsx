@@ -51,6 +51,11 @@ function CostCalculatorForm() {
     <>
       <CostCalculator
         estimationOptions={estimationOptions}
+        options={{
+          disclaimer: {
+            label: 'Remote Disclaimer',
+          },
+        }}
         onSubmit={(payload) => setPayload(payload)}
         onError={(error) => console.error({ error })}
         onSuccess={(response) => {
