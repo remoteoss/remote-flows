@@ -5,6 +5,7 @@ export {
   buildCostCalculatorEstimationPayload,
   CostCalculator,
   CostCalculatorResults,
+  useCostCalculator,
   useCostCalculatorDisclaimer,
   useCostCalculatorEstimationPdf,
 } from '@/src/flows/CostCalculator';
