@@ -38,8 +38,12 @@ export function DatePickerField({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col">
-          <FormLabel>{label}</FormLabel>
+        <FormItem
+          className={`flex flex-col RemoteFlows__DatePickerField__Item__${name}`}
+        >
+          <FormLabel className="RemoteFlows__DatePickerField__Label">
+            {label}
+          </FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
@@ -61,9 +65,13 @@ export function DatePickerField({
                 </div>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent
+              className={`w-auto p-0 RemoteFlows__DatepickerField__PopoverContent`}
+              align="start"
+            >
               <Calendar
                 mode="single"
+                className="RemoteFlows__DatepickerField__Calendar"
                 selected={field.value}
                 onSelect={field.onChange}
                 components={{
