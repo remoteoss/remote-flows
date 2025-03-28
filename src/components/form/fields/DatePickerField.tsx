@@ -18,16 +18,28 @@ import {
   PopoverTrigger,
 } from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
+import { PopoverClose } from '@radix-ui/react-popover';
+import { format } from 'date-fns';
 
-export function DatePicker() {
+type DatePickerFieldProps = {
+  description?: string;
+  label: string;
+  name: string;
+};
+
+export function DatePickerField({
+  description,
+  label,
+  name,
+}: DatePickerFieldProps) {
   const { control } = useFormContext();
   return (
     <FormField
       control={control}
-      name="dob"
+      name={name}
       render={({ field }) => (
         <FormItem className="flex flex-col">
-          <FormLabel>Date of birth</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
@@ -39,7 +51,11 @@ export function DatePicker() {
                       !field.value && 'text-muted-foreground',
                     )}
                   >
-                    {field.value ? field.value : <span>Pick a date</span>}
+                    {field.value ? (
+                      <>{format(field.value, 'yyyy-MM-dd')}</>
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </div>
@@ -50,15 +66,18 @@ export function DatePicker() {
                 mode="single"
                 selected={field.value}
                 onSelect={field.onChange}
-                disabled={(date) =>
-                  date > new Date() || date < new Date('1900-01-01')
-                }
+                components={{
+                  DayContent: (props) => {
+                    return <PopoverClose>{props.date.getDate()}</PopoverClose>;
+                  },
+                }}
+                disabled={(date) => date < new Date('1900-01-01')}
               />
             </PopoverContent>
           </Popover>
-          <FormDescription>
-            Your date of birth is used to calculate your age.
-          </FormDescription>
+          {description ? (
+            <FormDescription>{description}</FormDescription>
+          ) : null}
           <FormMessage />
         </FormItem>
       )}
