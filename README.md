@@ -377,6 +377,7 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 | `isSubmitting`     | `boolean`                                                                                                          | Whether the form is currently submitting                                                                                 |
 | `isLoading`        | `boolean`                                                                                                          | Whether any required data is still loading                                                                               |
 | `onSubmit`         | `(values: CostCalculatorEstimationFormValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                       |
+| `resetForm`        | `Function`                                                                                                         | Function to reset the form fields                                                                                        |
 
 #### Parameters
 
@@ -384,7 +385,6 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 | ------------------- | --------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
 | `defaultRegion`     | `string`                          | No       | Pre-selected region slug                                                                       |
 | `estimationOptions` | `CostCalculatorEstimationOptions` | Yes      | Options for the cost estimation (same as `estimationParams` in the `CostCalculator` component) |
-| `resetForm`         | `boolean`                         | No       | Useful to reset the form fields                                                                |
 
 The `estimationOptions` object has the following properties:
 
