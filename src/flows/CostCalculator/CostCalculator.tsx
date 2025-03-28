@@ -85,16 +85,15 @@ export function CostCalculator({
   onError,
   onSuccess,
 }: CostCalculatorProps) {
-  const [resetForm, setResetForm] = React.useState(false);
   const {
     onSubmit: submitCostCalculator,
     fields,
     validationSchema,
     isSubmitting,
+    resetForm,
   } = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
-    resetForm: resetForm,
   });
 
   const resolver = useValidationFormResolver(validationSchema);
@@ -123,11 +122,8 @@ export function CostCalculator({
   };
 
   const handleReset = () => {
-    setResetForm(true);
     form.reset();
-    setTimeout(() => {
-      setResetForm(false);
-    }, 100);
+    resetForm();
   };
 
   return (
