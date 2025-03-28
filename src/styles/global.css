@@ -12,8 +12,6 @@
   --badge: var(--primaryForeground, #364452);
   --badge-foreground: var(--primaryBackground, #ffffff);
   --radio: var(--primaryForeground, #364452);
-  --secondary: var(--accentBackground, #e3e9ef);
-  --secondary-foreground: var(--accentForeground, #0f1419);
   --muted: oklch(0.97 0 0);
   --accent: var(--accentBackground, #e3e9ef);
   --accent-foreground: var(--accentForeground, #0f1419);
@@ -38,8 +36,6 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
