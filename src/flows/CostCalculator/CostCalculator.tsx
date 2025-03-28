@@ -143,6 +143,7 @@ export function CostCalculator({
           </Button>
           <Button
             className="RemoteFlows__CostCalculatorForm__ResetButton"
+            variant="secondary"
             type="reset"
             onClick={handleReset}
           >
