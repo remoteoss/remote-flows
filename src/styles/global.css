@@ -26,6 +26,7 @@
   --focused: var(--borderRadius, #0061ff);
   --fontBase: var(--fontSizeBase, 1rem);
   --link-button: var(--foreground, #4b5865);
+  --checkbox-background: var(--borderInput, #9aa6b2);
 }
 
 @theme inline {
@@ -54,6 +55,7 @@
   --color-badge-foreground: var(--badge-foreground);
   --color-link-button-primary: var(--link-button);
   --color-radio: var(--radio);
+  --color-checkbox: var(--checkbox-background);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
