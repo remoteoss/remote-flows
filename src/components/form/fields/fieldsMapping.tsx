@@ -1,3 +1,4 @@
+import { DatePickerField } from '@/src/components/form/fields/DatePickerField';
 import { FieldSetField } from '@/src/components/form/fields/FieldSetField';
 import { RadioGroupField } from '@/src/components/form/fields/RadioGroupField';
 import { SelectField } from '@/src/components/form/fields/SelectField';
@@ -12,4 +13,5 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   radio: RadioGroupField,
   number: (props) => <TextField {...props} type="text" />,
   fieldset: FieldSetField,
+  date: DatePickerField,
 };

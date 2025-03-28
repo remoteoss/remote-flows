@@ -3,4 +3,5 @@ export type SupportedTypes =
   | 'number'
   | 'select'
   | 'radio'
-  | 'fieldset';
+  | 'fieldset'
+  | 'date';
