@@ -28,8 +28,8 @@ export function DatePicker() {
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>Date of birth</FormLabel>
-          <Popover modal={true}>
-            <PopoverTrigger>
+          <Popover>
+            <PopoverTrigger asChild>
               <FormControl>
                 <div className="w-fit">
                   <Button
