@@ -377,7 +377,7 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 | `isSubmitting`     | `boolean`                                                                                                          | Whether the form is currently submitting                                                                                 |
 | `isLoading`        | `boolean`                                                                                                          | Whether any required data is still loading                                                                               |
 | `onSubmit`         | `(values: CostCalculatorEstimationFormValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                       |
-| `resetForm`        | `Function`                                                                                                         | Function to reset the form fields                                                                                        |
+| `resetForm`        | `Function`                                                                                                         | Function that clears country and region selection state                                                                  |
 
 #### Parameters
 
