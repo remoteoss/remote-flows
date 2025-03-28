@@ -4,4 +4,5 @@ export type SupportedTypes =
   | 'select'
   | 'radio'
   | 'fieldset'
+  | 'date'
   | 'checkbox';
