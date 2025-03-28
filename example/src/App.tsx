@@ -83,7 +83,17 @@ function App() {
 
   return (
     <div className="cost-calculator__container">
-      <RemoteFlows auth={() => fetchToken()}>
+      <RemoteFlows
+        theme={{
+          colors: {
+            primaryBackground: 'white',
+            primaryForeground: 'black',
+            accentBackground: 'black',
+            accentForeground: 'white',
+          },
+        }}
+        auth={() => fetchToken()}
+      >
         <CostCalculatorForm />
       </RemoteFlows>
     </div>
