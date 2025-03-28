@@ -159,7 +159,13 @@ export const defaultEstimationOptions = {
 };
 
 type UseCostCalculatorParams = {
+  /**
+   * The default region slug to preselect a country and a region.
+   */
   defaultRegion?: string;
+  /**
+   * The estimation options.
+   */
   estimationOptions: CostCalculatorEstimationOptions;
 };
 
@@ -294,6 +300,11 @@ export const useCostCalculator = (
     }
   }
 
+  const resetForm = () => {
+    setSelectedCountry(undefined);
+    setSelectedRegion(defaultRegion);
+  };
+
   const allFields = [
     ...fields,
     ...(jsonSchemaRegionFields?.fields || []),
@@ -314,6 +325,7 @@ export const useCostCalculator = (
     isLoading:
       isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
     onSubmit,
+    resetForm,
   };
 };
 

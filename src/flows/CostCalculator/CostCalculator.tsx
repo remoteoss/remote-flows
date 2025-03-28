@@ -90,6 +90,7 @@ export function CostCalculator({
     fields,
     validationSchema,
     isSubmitting,
+    resetForm,
   } = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
@@ -120,6 +121,11 @@ export function CostCalculator({
     }
   };
 
+  const handleReset = () => {
+    form.reset();
+    resetForm();
+  };
+
   return (
     <>
       <Form {...form}>
@@ -130,10 +136,17 @@ export function CostCalculator({
           <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            className="RemoteFlows__CostCalculatorForm__SubmitButton"
             disabled={isSubmitting}
           >
             Get estimate
+          </Button>
+          <Button
+            className="RemoteFlows__CostCalculatorForm__ResetButton"
+            type="reset"
+            onClick={handleReset}
+          >
+            Reset
           </Button>
         </form>
       </Form>

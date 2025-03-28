@@ -215,4 +215,45 @@ describe('CostCalculator', () => {
       });
     });
   });
+
+  test("should reset to the initial form values when the 'Reset' button is clicked", async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(<CostCalculator {...defaultProps} />, {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    // type age
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /age/i,
+      }),
+      '30',
+    );
+
+    // submit form
+    fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toHaveValue('');
+    });
+  });
 });
