@@ -27,7 +27,6 @@ export function TextAreaField({
   onChange,
   maxLength,
 }: TextAreaFieldProps) {
-  const valueMaxLength = maxLength ?? null;
   const { control } = useFormContext();
   return (
     <FormField
@@ -55,14 +54,16 @@ export function TextAreaField({
                 )}
               />
             </FormControl>
-            {description && (
+            {(description || maxLength) && (
               <div className="flex items-center justify-between">
-                <FormDescription className="RemoteFlows__TextArea__Description">
-                  {description}
-                </FormDescription>
-                {valueMaxLength && (
-                  <span className="text-sm RemoteFlows__TextArea__MaxLength">
-                    {valueLength}/{valueMaxLength}
+                {description && (
+                  <FormDescription className="RemoteFlows__TextArea__Description">
+                    {description}
+                  </FormDescription>
+                )}
+                {maxLength && (
+                  <span className="text-sm ml-auto RemoteFlows__TextArea__MaxLength">
+                    {valueLength}/{maxLength}
                   </span>
                 )}
               </div>
