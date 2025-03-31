@@ -48,4 +48,17 @@ export const fields: Field[] = [
       .required('Salary is required'),
     type: 'integer',
   },
+  {
+    description:
+      'Please be as specific as you can. Include details about the employee’s response, if applicable.',
+    inputType: 'textarea',
+    isVisible: true,
+    label: 'Description',
+    name: 'description',
+    options: [],
+    required: true,
+    schema: string().required('Description is required'),
+    type: 'string',
+    maxLength: 500,
+  },
 ];

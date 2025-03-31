@@ -5,4 +5,5 @@ export type SupportedTypes =
   | 'radio'
   | 'fieldset'
   | 'date'
-  | 'checkbox';
+  | 'checkbox'
+  | 'textarea';
