@@ -364,6 +364,36 @@ A component to display cost calculation results.
 | ---------------- | ------------------------------------ | -------- | ---------------------------- |
 | `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation response data |
 
+### useCostCalculator
+
+The `useCostCalculator` hook provides access to the underlying functionality of the cost calculator, allowing for custom implementations.
+
+| Property           | Type                                                                                                               | Description                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `stepState`        | `{ current: number; total: number; isLastStep: boolean }`                                                          | Information about the current step in multi-step forms                                                                   |
+| `fields`           | `Field[]`                                                                                                          | Array of form field definitions with metadata ([json-schema-form](https://github.com/remoteoss/json-schema-form) format) |
+| `validationSchema` | `yup.Schema`                                                                                                       | Yup validation schema for the form                                                                                       |
+| `handleValidation` | `Function`                                                                                                         | Function to handle custom field validation                                                                               |
+| `isSubmitting`     | `boolean`                                                                                                          | Whether the form is currently submitting                                                                                 |
+| `isLoading`        | `boolean`                                                                                                          | Whether any required data is still loading                                                                               |
+| `onSubmit`         | `(values: CostCalculatorEstimationFormValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                       |
+| `resetForm`        | `Function`                                                                                                         | Function that clears country and region selection state                                                                  |
+
+#### Parameters
+
+| Parameter           | Type                              | Required | Description                                                                                    |
+| ------------------- | --------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `defaultRegion`     | `string`                          | No       | Pre-selected region slug                                                                       |
+| `estimationOptions` | `CostCalculatorEstimationOptions` | Yes      | Options for the cost estimation (same as `estimationParams` in the `CostCalculator` component) |
+
+The `estimationOptions` object has the following properties:
+
+| Property                | Type      | Description                                                  |
+| ----------------------- | --------- | ------------------------------------------------------------ |
+| `title`                 | `string`  | Custom title for the estimation report                       |
+| `includeBenefits`       | `boolean` | If `true`, includes benefits information in the response     |
+| `includeCostBreakdowns` | `boolean` | If `true`, includes detailed cost breakdowns in the response |
+
 ## Authentication
 
 You need to implement a server endpoint to securely handle authentication with Remote. This prevents exposing client credentials in your frontend code.

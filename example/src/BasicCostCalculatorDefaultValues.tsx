@@ -15,7 +15,7 @@ function CostCalculatorForm() {
         currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
         salary: '50000',
       }}
-      params={{
+      options={{
         disclaimer: {
           label: 'Remote Disclaimer',
         },

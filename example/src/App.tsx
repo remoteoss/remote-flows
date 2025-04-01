@@ -88,7 +88,9 @@ function CostCalculatorForm() {
         }}
       />
       {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <div className="cost-calculator__results">
+          <CostCalculatorResults employmentData={estimations.data} />
+        </div>
       )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
@@ -110,9 +112,11 @@ function App() {
   };
 
   return (
-    <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
-    </RemoteFlows>
+    <div className="cost-calculator__container">
+      <RemoteFlows auth={() => fetchToken()}>
+        <CostCalculatorForm />
+      </RemoteFlows>
+    </div>
   );
 }
 

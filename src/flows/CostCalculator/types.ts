@@ -16,7 +16,7 @@ export type Field = {
   label?: string;
   description?: string;
   fields?: Field[];
-  type: 'string' | 'integer' | 'number' | 'object';
+  type: 'string' | 'integer' | 'number' | 'object' | 'boolean';
   inputType:
     | 'text'
     | 'textarea'

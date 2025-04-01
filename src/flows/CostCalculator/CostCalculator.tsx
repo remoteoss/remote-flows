@@ -10,6 +10,7 @@ import { Button } from '@/src/components/ui/button';
 import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
 import {
   defaultEstimationOptions,
+  EstimationError,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
 
@@ -69,7 +70,7 @@ type CostCalculatorProps = Partial<{
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
    */
-  onError: (error: Error) => void;
+  onError: (error: EstimationError) => void;
 }>;
 
 export function CostCalculator({
@@ -88,6 +89,8 @@ export function CostCalculator({
     onSubmit: submitCostCalculator,
     fields,
     validationSchema,
+    isSubmitting,
+    resetForm,
   } = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
@@ -102,6 +105,7 @@ export function CostCalculator({
       region: '',
       salary: defaultValues?.salary,
     },
+    shouldUnregister: true,
     mode: 'onBlur',
   });
 
@@ -117,6 +121,11 @@ export function CostCalculator({
     }
   };
 
+  const handleReset = () => {
+    form.reset();
+    resetForm();
+  };
+
   return (
     <>
       <Form {...form}>
@@ -127,9 +136,17 @@ export function CostCalculator({
           <JSONSchemaFormFields fields={fields} />
           <Button
             type="submit"
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            className="RemoteFlows__CostCalculatorForm__SubmitButton"
+            disabled={isSubmitting}
           >
             Get estimate
+          </Button>
+          <Button
+            className="RemoteFlows__CostCalculatorForm__ResetButton"
+            type="reset"
+            onClick={handleReset}
+          >
+            Reset
           </Button>
         </form>
       </Form>

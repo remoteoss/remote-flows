@@ -82,7 +82,6 @@ describe('CostCalculator', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        region: '',
         salary: '50000',
       });
     });
@@ -212,9 +211,49 @@ describe('CostCalculator', () => {
         },
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        region: '',
         salary: '50000',
       });
+    });
+  });
+
+  test("should reset to the initial form values when the 'Reset' button is clicked", async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(<CostCalculator {...defaultProps} />, {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    // type age
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /age/i,
+      }),
+      '30',
+    );
+
+    // submit form
+    fireEvent.click(screen.getByRole('button', { name: /reset/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toHaveValue('');
     });
   });
 });
