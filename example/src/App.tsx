@@ -56,24 +56,32 @@ function CostCalculatorForm() {
 
   return (
     <>
-      <input
-        type="checkbox"
-        checked={includeBenefits}
-        onChange={(evt) => setIncludeBenefits(evt.target.checked)}
-      />
-      <label>Include Benefits</label>
-      <input
-        type="checkbox"
-        checked={includeCostBreakdowns}
-        onChange={(evt) => setIncludeCostBreakdowns(evt.target.checked)}
-      />
-      <label>Include Cost Breakdown</label>
-      <input
-        type="checkbox"
-        checked={includePremiumBenefits}
-        onChange={(evt) => setIncludePremiumBenefits(evt.target.checked)}
-      />
-      <label>Include Premium Benefits</label>
+      <div className="grid gap-2 mb-2">
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includeBenefits}
+            onChange={(evt) => setIncludeBenefits(evt.target.checked)}
+          />
+          <label>Include Benefits</label>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includeCostBreakdowns}
+            onChange={(evt) => setIncludeCostBreakdowns(evt.target.checked)}
+          />
+          <label>Include Cost Breakdown</label>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includePremiumBenefits}
+            onChange={(evt) => setIncludePremiumBenefits(evt.target.checked)}
+          />
+          <label>Include Premium Benefits</label>
+        </div>
+      </div>
       <CostCalculator
         estimationOptions={estimationOptions}
         options={{
