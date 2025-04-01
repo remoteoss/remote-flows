@@ -17,7 +17,7 @@ import type {
 import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -51,7 +51,7 @@ const useCostCalculatorCountries = ({
           Authorization: ``,
         },
         query: {
-          include_premium_benefits: includePremiumBenefits as $TSFixMe,
+          include_premium_benefits: includePremiumBenefits,
         },
       });
     },
@@ -157,7 +157,7 @@ const useRegionFields = (
         },
         path: { slug: region as string },
         query: {
-          include_premium_benefits: includePremiumBenefits as $TSFixMe,
+          include_premium_benefits: includePremiumBenefits,
         },
       });
     },
