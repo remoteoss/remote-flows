@@ -2,4 +2,5 @@
 '@remoteoss/remote-flows': patch
 ---
 
-Add include_premium_benefits to the cost calculator flow
+- Add include_premium_benefits to the cost calculator flow
+- Export useCostCalculator hook to consumers
