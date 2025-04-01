@@ -8643,7 +8643,7 @@ export type GetIndexCountryData = {
     /**
      * If the premium benefits should be included in the response
      */
-    include_premium_benefits?: string;
+    include_premium_benefits?: boolean;
   };
   url: '/v1/cost-calculator/countries';
 };
@@ -9638,7 +9638,7 @@ export type GetShowRegionFieldData = {
     /**
      * If the premium benefits should be included in the response
      */
-    include_premium_benefits?: string;
+    include_premium_benefits?: boolean;
   };
   url: '/v1/cost-calculator/regions/{slug}/fields';
 };
