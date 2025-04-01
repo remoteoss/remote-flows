@@ -36,15 +36,22 @@ type CostCalculatorCountry = {
  * Hook to fetch the countries for the cost calculator.
  * @returns
  */
-const useCostCalculatorCountries = () => {
+const useCostCalculatorCountries = ({
+  includePremiumBenefits,
+}: {
+  includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
+}) => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['cost-calculator-countries'],
+    queryKey: ['cost-calculator-countries', includePremiumBenefits],
     queryFn: () => {
       return getIndexCountry({
         client: client as Client,
         headers: {
           Authorization: ``,
+        },
+        query: {
+          include_premium_benefits: includePremiumBenefits,
         },
       });
     },
@@ -130,11 +137,18 @@ export const useCostCalculatorEstimationPdf = () => {
  * @param region
  * @returns
  */
-const useRegionFields = (region: string | undefined) => {
+const useRegionFields = (
+  region: string | undefined,
+  {
+    includePremiumBenefits,
+  }: {
+    includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
+  },
+) => {
   const { client } = useClient();
 
   return useQuery({
-    queryKey: ['cost-calculator-region-fields', region],
+    queryKey: ['cost-calculator-region-fields', region, includePremiumBenefits],
     queryFn: () => {
       return getShowRegionField({
         client: client as Client,
@@ -142,6 +156,9 @@ const useRegionFields = (region: string | undefined) => {
           Authorization: ``,
         },
         path: { slug: region as string },
+        query: {
+          include_premium_benefits: includePremiumBenefits,
+        },
       });
     },
     enabled: !!region,
@@ -152,10 +169,11 @@ const useRegionFields = (region: string | undefined) => {
   });
 };
 
-export const defaultEstimationOptions = {
+export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimation',
   includeBenefits: false,
   includeCostBreakdowns: false,
+  includePremiumBenefits: false,
 };
 
 type UseCostCalculatorParams = {
@@ -184,16 +202,19 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
-
   const { data: countries, isLoading: isLoadingCountries } =
-    useCostCalculatorCountries();
+    useCostCalculatorCountries({
+      includePremiumBenefits: estimationOptions.includePremiumBenefits,
+    });
   const { data: currencies, isLoading: isLoadingCurrencies } =
     useCompanyCurrencies();
 
   const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
   const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
-    useRegionFields(jsonSchemaRegionSlug);
+    useRegionFields(jsonSchemaRegionSlug, {
+      includePremiumBenefits: estimationOptions.includePremiumBenefits,
+    });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**

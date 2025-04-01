@@ -650,6 +650,27 @@ export type EmploymentBasicResponse = {
   updated_at?: string;
 };
 
+/**
+ * Response schema listing many payroll_calendars
+ */
+export type PayrollCalendarsEorResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    payroll_calendars?: Array<PayrollCalendarEor>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
 export type BenefitRenewalRequestsBenefitRenewalRequest = {
   benefit_group: BenefitRenewalRequestsMinimalBenefitGroup;
   benefit_renewal_response: BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
@@ -889,6 +910,11 @@ export type CreateTimeoffParams = {
   timezone: Timezone;
 };
 
+export type JobAssociation = {
+  id?: string;
+  label?: string;
+} | null;
+
 export type ListDataSyncEventsResponse = {
   data: {
     data_sync_events: Array<DataSyncEvent>;
@@ -1025,6 +1051,7 @@ export type CostCalculatorEstimateParams = {
   employments: Array<CostCalculatorEmploymentParam>;
   include_benefits?: boolean;
   include_cost_breakdowns?: boolean;
+  include_premium_benefits?: boolean;
 };
 
 /**
@@ -1343,6 +1370,24 @@ export type EmploymentDocument = {
  */
 export type ShortId = string;
 
+export type CompanyStructureNode = {
+  company_structure?: {
+    id?: string;
+    name?: string;
+  };
+  id: string;
+  parent?: {
+    /**
+     * Arbitrary attributes including cost_center
+     */
+    attributes?: {
+      [key: string]: unknown;
+    };
+    id?: string;
+    name?: string;
+  } | null;
+};
+
 /**
  * The field matches the `id` of a user in the
  * Remote Platform that has permission to approve time off
@@ -1416,7 +1461,9 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -1461,6 +1508,7 @@ export type CreateWebhookCallbackParams = {
     | 'sso_configuration.updated'
     | 'timeoff.approved'
     | 'timeoff.canceled'
+    | 'timeoff.cancellation_requested'
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
@@ -1624,6 +1672,13 @@ export type BenefitRenewalRequestsMinimalBenefitGroup = {
   name: string;
 };
 
+export type PayrollCalendarEor = {
+  country: Country;
+  cycle_frequency: CycleFrequency;
+  cycles: Array<Cycle>;
+  id: string;
+};
+
 /**
  * Selected option value. For single select data.
  */
@@ -1722,7 +1777,9 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -1767,6 +1824,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'sso_configuration.updated'
     | 'timeoff.approved'
     | 'timeoff.canceled'
+    | 'timeoff.cancellation_requested'
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
@@ -3121,6 +3179,26 @@ export type EmployeeStats = {
   number_of_employees_offered: number;
 };
 
+export type Job = {
+  career_track?: JobAssociation;
+  code?: string | null;
+  custom_field_values?: Array<{
+    definition?: {
+      id?: string;
+      title?: string;
+      type?: string;
+    };
+    value?: string | number | boolean;
+  }>;
+  description?: string | null;
+  id: string;
+  identifier: string;
+  job_family?: JobAssociation;
+  job_level?: JobAssociation;
+  job_sub_family?: JobAssociation;
+  label: string;
+};
+
 /**
  * Timesheet
  */
@@ -3233,6 +3311,27 @@ export type CreateApprovedTimeoffParams = CreateTimeoffParams & {
 export type TimeoffResponse = {
   data: {
     timeoff: Timeoff;
+  };
+};
+
+/**
+ * Response schema listing many custom_field_values
+ */
+export type ListEmploymentCustomFieldValuePaginatedResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    custom_field_values?: Array<ListEmploymentCustomFieldValueResponse>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
   };
 };
 
@@ -3447,6 +3546,12 @@ export type CreateEmploymentCustomFieldResponse = {
   data: {
     custom_field: EmploymentCustomField;
   };
+};
+
+export type LeavePolicy = {
+  leave_policy_variant_slug: string;
+  leave_type: TimeoffType;
+  name: string;
 };
 
 export type FullParams = {
@@ -3841,7 +3946,9 @@ export type WebhookCallback = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -3886,6 +3993,7 @@ export type WebhookCallback = {
     | 'sso_configuration.updated'
     | 'timeoff.approved'
     | 'timeoff.canceled'
+    | 'timeoff.cancellation_requested'
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
@@ -4156,6 +4264,10 @@ export type TimeoffBalanceResponse = {
   };
 };
 
+export type EmploymentJobResponse = {
+  data: Job;
+};
+
 /**
  * Set of invoice schedule attributes with failed validation.
  */
@@ -4201,6 +4313,12 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
   start_date: string;
 };
 
+export type CompanyStructureNodesResponse = {
+  data: {
+    company_structure_nodes: Array<CompanyStructureNode>;
+  };
+};
+
 /**
  * Work Authorization User
  */
@@ -4232,6 +4350,22 @@ export type ContractorInvoiceSchedulePeriodicity =
   | 'monthly'
   | 'semi_monthly'
   | 'weekly';
+
+/**
+ * ListEmploymentCustomFieldValueResponse
+ */
+export type ListEmploymentCustomFieldValueResponse = {
+  custom_field_id: string;
+  name: string;
+  type: string;
+  value:
+    | string
+    | number
+    | boolean
+    | number
+    | EmploymentCustomFieldValueJsonValue
+    | null;
+};
 
 /**
  *   All the params needed to create an expense.
@@ -4682,7 +4816,9 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
     | 'employment_contract.active_contract_updated'
+    | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
+    | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.proof_of_payment_accepted'
@@ -4727,6 +4863,7 @@ export type UpdateWebhookCallbackParams = {
     | 'sso_configuration.updated'
     | 'timeoff.approved'
     | 'timeoff.canceled'
+    | 'timeoff.cancellation_requested'
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
@@ -4976,15 +5113,23 @@ export type RequestError = {
 export type Timeoff = {
   approved_at?: string | null;
   approver_id?: NullableApproverId;
+  automatic?: boolean;
   cancel_reason?: string | null;
   cancelled_at?: NullableDateTime;
   document?: File;
   employment_id: string;
   end_date: string;
   id: string;
+  leave_policy: LeavePolicy;
   notes?: string | null;
   start_date: string;
-  status: string;
+  status:
+    | 'requested'
+    | 'approved'
+    | 'cancelled'
+    | 'declined'
+    | 'taken'
+    | 'cancel_requested';
   timeoff_days: Array<TimeoffDay>;
   timeoff_type: TimeoffType;
   timezone: Timezone;
@@ -6381,6 +6526,98 @@ export type PostCreateCancellationResponses = {
 export type PostCreateCancellationResponse =
   PostCreateCancellationResponses[keyof PostCreateCancellationResponses];
 
+export type GetIndexEmploymentJobData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/job';
+};
+
+export type GetIndexEmploymentJobErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentJobError =
+  GetIndexEmploymentJobErrors[keyof GetIndexEmploymentJobErrors];
+
+export type GetIndexEmploymentJobResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentJobResponse;
+};
+
+export type GetIndexEmploymentJobResponse =
+  GetIndexEmploymentJobResponses[keyof GetIndexEmploymentJobResponses];
+
+export type GetIndexEorPayrollCalendarData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter payroll calendars by country code
+     */
+    country_code?: string;
+    /**
+     * Filter payroll calendars by year
+     */
+    year?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/payroll-calendars';
+};
+
+export type GetIndexEorPayrollCalendarErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEorPayrollCalendarError =
+  GetIndexEorPayrollCalendarErrors[keyof GetIndexEorPayrollCalendarErrors];
+
+export type GetIndexEorPayrollCalendarResponses = {
+  /**
+   * Success
+   */
+  200: PayrollCalendarsEorResponse;
+};
+
+export type GetIndexEorPayrollCalendarResponse =
+  GetIndexEorPayrollCalendarResponses[keyof GetIndexEorPayrollCalendarResponses];
+
 export type GetIndexRecurringIncentiveData = {
   body?: never;
   headers: {
@@ -6861,6 +7098,45 @@ export type GetSchemaBenefitRenewalRequestResponses = {
 
 export type GetSchemaBenefitRenewalRequestResponse =
   GetSchemaBenefitRenewalRequestResponses[keyof GetSchemaBenefitRenewalRequestResponses];
+
+export type PostGenerateMagicLinkData = {
+  /**
+   * Magic links generator body
+   */
+  body: MagicLinkParams;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/v1/magic-link';
+};
+
+export type PostGenerateMagicLinkErrors = {
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostGenerateMagicLinkError =
+  PostGenerateMagicLinkErrors[keyof PostGenerateMagicLinkErrors];
+
+export type PostGenerateMagicLinkResponses = {
+  /**
+   * Success
+   */
+  200: MagicLinkResponse;
+};
+
+export type PostGenerateMagicLinkResponse =
+  PostGenerateMagicLinkResponses[keyof PostGenerateMagicLinkResponses];
 
 export type DeleteDeleteRecurringIncentiveData = {
   body?: never;
@@ -8363,7 +8639,12 @@ export type GetIndexCountryData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * If the premium benefits should be included in the response
+     */
+    include_premium_benefits?: boolean;
+  };
   url: '/v1/cost-calculator/countries';
 };
 
@@ -8959,6 +9240,53 @@ export type PostCreateCompanyDepartmentResponses = {
 export type PostCreateCompanyDepartmentResponse =
   PostCreateCompanyDepartmentResponses[keyof PostCreateCompanyDepartmentResponses];
 
+export type PostDeclineCancellationRequestData = {
+  /**
+   * Timeoff
+   */
+  body: DeclineTimeoffParams;
+  path: {
+    /**
+     * Time Off ID
+     */
+    timeoff_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{timeoff_id}/cancel-request/decline';
+};
+
+export type PostDeclineCancellationRequestErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostDeclineCancellationRequestError =
+  PostDeclineCancellationRequestErrors[keyof PostDeclineCancellationRequestErrors];
+
+export type PostDeclineCancellationRequestResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostDeclineCancellationRequestResponse =
+  PostDeclineCancellationRequestResponses[keyof PostDeclineCancellationRequestResponses];
+
 export type GetShowSchemaData = {
   body?: never;
   path: {
@@ -9306,7 +9634,12 @@ export type GetShowRegionFieldData = {
      */
     slug: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * If the premium benefits should be included in the response
+     */
+    include_premium_benefits?: boolean;
+  };
   url: '/v1/cost-calculator/regions/{slug}/fields';
 };
 
@@ -10721,6 +11054,95 @@ export type PostUpdateBenefitRenewalRequestResponses = {
 export type PostUpdateBenefitRenewalRequestResponse =
   PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
 
+export type GetIndexEmploymentCompanyStructureNodeData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/company-structure-nodes';
+};
+
+export type GetIndexEmploymentCompanyStructureNodeErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentCompanyStructureNodeError =
+  GetIndexEmploymentCompanyStructureNodeErrors[keyof GetIndexEmploymentCompanyStructureNodeErrors];
+
+export type GetIndexEmploymentCompanyStructureNodeResponses = {
+  /**
+   * Success
+   */
+  200: CompanyStructureNodesResponse;
+};
+
+export type GetIndexEmploymentCompanyStructureNodeResponse =
+  GetIndexEmploymentCompanyStructureNodeResponses[keyof GetIndexEmploymentCompanyStructureNodeResponses];
+
+export type GetIndexEmploymentCustomFieldValueData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments/{employment_id}/custom-fields';
+};
+
+export type GetIndexEmploymentCustomFieldValueErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentCustomFieldValueError =
+  GetIndexEmploymentCustomFieldValueErrors[keyof GetIndexEmploymentCustomFieldValueErrors];
+
+export type GetIndexEmploymentCustomFieldValueResponses = {
+  /**
+   * Success
+   */
+  200: ListEmploymentCustomFieldValuePaginatedResponse;
+};
+
+export type GetIndexEmploymentCustomFieldValueResponse =
+  GetIndexEmploymentCustomFieldValueResponses[keyof GetIndexEmploymentCustomFieldValueResponses];
+
 export type PutValidateResignationData = {
   /**
    * ValidateResignation
@@ -11828,15 +12250,16 @@ export type GetIndexCompanyData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * External ID
+     */
+    external_id?: string;
+  };
   url: '/v1/companies';
 };
 
 export type GetIndexCompanyErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
   /**
    * Unauthorized
    */
@@ -11849,10 +12272,6 @@ export type GetIndexCompanyErrors = {
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
 };
 
 export type GetIndexCompanyError =
@@ -12280,6 +12699,46 @@ export type GetGetBreakdownBillingDocumentResponses = {
 
 export type GetGetBreakdownBillingDocumentResponse =
   GetGetBreakdownBillingDocumentResponses[keyof GetGetBreakdownBillingDocumentResponses];
+
+export type PostApproveCancellationRequestData = {
+  body?: never;
+  path: {
+    /**
+     * Time Off ID
+     */
+    timeoff_id: string;
+  };
+  query?: never;
+  url: '/v1/timeoff/{timeoff_id}/cancel-request/approve';
+};
+
+export type PostApproveCancellationRequestErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostApproveCancellationRequestError =
+  PostApproveCancellationRequestErrors[keyof PostApproveCancellationRequestErrors];
+
+export type PostApproveCancellationRequestResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostApproveCancellationRequestResponse =
+  PostApproveCancellationRequestResponses[keyof PostApproveCancellationRequestResponses];
 
 export type PostVerifyIdentityVerificationData = {
   body?: never;
