@@ -17,7 +17,7 @@ import type {
 import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -51,7 +51,7 @@ const useCostCalculatorCountries = ({
           Authorization: ``,
         },
         query: {
-          include_premium_benefits: includePremiumBenefits,
+          include_premium_benefits: includePremiumBenefits as $TSFixMe,
         },
       });
     },
@@ -157,7 +157,7 @@ const useRegionFields = (
         },
         path: { slug: region as string },
         query: {
-          include_premium_benefits: includePremiumBenefits,
+          include_premium_benefits: includePremiumBenefits as $TSFixMe,
         },
       });
     },
@@ -202,19 +202,19 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
-  const { data: countries } = useCostCalculatorCountries({
-    includePremiumBenefits: estimationOptions.includePremiumBenefits,
-  });
-  const { data: currencies } = useCompanyCurrencies();
+  const { data: countries, isLoading: isLoadingCountries } =
+    useCostCalculatorCountries({
+      includePremiumBenefits: estimationOptions.includePremiumBenefits,
+    });
+  const { data: currencies, isLoading: isLoadingCurrencies } =
+    useCompanyCurrencies();
 
   const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
-  const { data: jsonSchemaRegionFields } = useRegionFields(
-    jsonSchemaRegionSlug,
-    {
+  const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
+    useRegionFields(jsonSchemaRegionSlug, {
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
-    },
-  );
+    });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**

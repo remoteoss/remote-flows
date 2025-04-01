@@ -72,6 +72,9 @@ import type {
   GetIndexEmploymentJobData,
   GetIndexEmploymentJobResponse,
   GetIndexEmploymentJobError,
+  GetIndexEorPayrollCalendarData,
+  GetIndexEorPayrollCalendarResponse,
+  GetIndexEorPayrollCalendarError,
   GetIndexRecurringIncentiveData,
   GetIndexRecurringIncentiveResponse,
   GetIndexRecurringIncentiveError,
@@ -227,6 +230,9 @@ import type {
   PostCreateCompanyDepartmentData,
   PostCreateCompanyDepartmentResponse,
   PostCreateCompanyDepartmentError,
+  PostDeclineCancellationRequestData,
+  PostDeclineCancellationRequestResponse,
+  PostDeclineCancellationRequestError,
   GetShowSchemaData,
   GetShowSchemaResponse,
   GetShowSchemaError,
@@ -419,6 +425,9 @@ import type {
   GetGetBreakdownBillingDocumentData,
   GetGetBreakdownBillingDocumentResponse,
   GetGetBreakdownBillingDocumentError,
+  PostApproveCancellationRequestData,
+  PostApproveCancellationRequestResponse,
+  PostApproveCancellationRequestError,
   PostVerifyIdentityVerificationData,
   PostVerifyIdentityVerificationResponse,
   PostVerifyIdentityVerificationError,
@@ -1042,6 +1051,31 @@ export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/employments/{employment_id}/job',
+    ...options,
+  });
+};
+
+/**
+ * List EOR Payroll Calendar
+ * List all active payroll calendars for EOR.
+ */
+export const getIndexEorPayrollCalendar = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexEorPayrollCalendarData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexEorPayrollCalendarResponse,
+    GetIndexEorPayrollCalendarError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/payroll-calendars',
     ...options,
   });
 };
@@ -2496,6 +2530,36 @@ export const postCreateCompanyDepartment = <
       },
     ],
     url: '/v1/company-departments',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Decline a time off cancellation request
+ * Decline a time off cancellation request.
+ *
+ */
+export const postDeclineCancellationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostDeclineCancellationRequestData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostDeclineCancellationRequestResponse,
+    PostDeclineCancellationRequestError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4341,6 +4405,33 @@ export const getGetBreakdownBillingDocument = <
       },
     ],
     url: '/v1/billing-documents/{billing_document_id}/breakdown',
+    ...options,
+  });
+};
+
+/**
+ * Approve a time off cancellation request
+ * Approve a time off cancellation request.
+ * In order to approve a time off cancellation request, the timeoff status must be `cancel_requested`.
+ *
+ */
+export const postApproveCancellationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostApproveCancellationRequestData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostApproveCancellationRequestResponse,
+    PostApproveCancellationRequestError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
     ...options,
   });
 };
