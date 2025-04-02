@@ -19,8 +19,9 @@ function CostCalculatorForm() {
 }
 
 export function BasicCostCalculator() {
+  const refreshToken = import.meta.env.REFRESH_TOKEN;
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,

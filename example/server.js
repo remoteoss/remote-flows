@@ -6,9 +6,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const getToken = async (req, res) => {
+  const { refresh_token } = req.query;
   const { CLIENT_ID, CLIENT_SECRET, REMOTE_GATEWAY } = process.env;
 
-  if (!CLIENT_ID || !CLIENT_SECRET || !REMOTE_GATEWAY) {
+  if (!CLIENT_ID || !CLIENT_SECRET || !REMOTE_GATEWAY || !refresh_token) {
     return res
       .status(400)
       .json({ error: 'Missing clientId or clientSecret or RemoteGateway' });
@@ -19,10 +20,12 @@ const getToken = async (req, res) => {
   ).toString('base64');
 
   try {
+    // to get a refresh token, you need to create a company first
     const response = await axios.post(
       `${REMOTE_GATEWAY}/auth/oauth2/token`,
       new URLSearchParams({
-        grant_type: 'client_credentials',
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token,
       }),
       {
         headers: {

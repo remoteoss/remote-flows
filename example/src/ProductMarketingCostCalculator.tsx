@@ -13,6 +13,9 @@ import { useState } from 'react';
 import './App.css';
 
 function CostCalculatorForm() {
+  const [includeBenefits, setIncludeBenefits] = useState(true);
+  const [includeCostBreakdowns, setIncludeCostBreakdowns] = useState(true);
+  const [includePremiumBenefits, setIncludePremiumBenefits] = useState(true);
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
@@ -20,9 +23,9 @@ function CostCalculatorForm() {
 
   const estimationOptions = {
     title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-    includePremiumBenefits: true,
+    includeBenefits: includeBenefits,
+    includeCostBreakdowns: includeCostBreakdowns,
+    includePremiumBenefits: includePremiumBenefits,
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
@@ -53,6 +56,32 @@ function CostCalculatorForm() {
 
   return (
     <>
+      <div className="grid gap-2 mb-2">
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includeBenefits}
+            onChange={(evt) => setIncludeBenefits(evt.target.checked)}
+          />
+          <label>Include Benefits</label>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includeCostBreakdowns}
+            onChange={(evt) => setIncludeCostBreakdowns(evt.target.checked)}
+          />
+          <label>Include Cost Breakdown</label>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={includePremiumBenefits}
+            onChange={(evt) => setIncludePremiumBenefits(evt.target.checked)}
+          />
+          <label>Include Premium Benefits</label>
+        </div>
+      </div>
       <CostCalculator
         estimationOptions={estimationOptions}
         options={{
@@ -76,8 +105,9 @@ function CostCalculatorForm() {
   );
 }
 
-function CostCalculatorWithPremiumBenefits() {
+function ProductMarketingCostCalculator() {
   const refreshToken = import.meta.env.REFRESH_TOKEN;
+
   const fetchToken = () => {
     return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
@@ -100,4 +130,4 @@ function CostCalculatorWithPremiumBenefits() {
   );
 }
 
-export default CostCalculatorWithPremiumBenefits;
+export default ProductMarketingCostCalculator;
