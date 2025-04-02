@@ -6,10 +6,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const getToken = async (req, res) => {
-  const { refresh_token } = req.query;
-  const { CLIENT_ID, CLIENT_SECRET, REMOTE_GATEWAY } = process.env;
+  const { CLIENT_ID, CLIENT_SECRET, REMOTE_GATEWAY, REFRESH_TOKEN } =
+    process.env;
 
-  if (!CLIENT_ID || !CLIENT_SECRET || !REMOTE_GATEWAY || !refresh_token) {
+  if (!CLIENT_ID || !CLIENT_SECRET || !REMOTE_GATEWAY || !REFRESH_TOKEN) {
     return res
       .status(400)
       .json({ error: 'Missing clientId or clientSecret or RemoteGateway' });
@@ -25,7 +25,7 @@ const getToken = async (req, res) => {
       `${REMOTE_GATEWAY}/auth/oauth2/token`,
       new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: refresh_token,
+        refresh_token: REFRESH_TOKEN,
       }),
       {
         headers: {

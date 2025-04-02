@@ -77,9 +77,8 @@ function CostCalculatorForm() {
 }
 
 function CostCalculatorWithPremiumBenefits() {
-  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
   const fetchToken = () => {
-    return fetch(`/api/token?refresh_token=${refreshToken}`)
+    return fetch('/api/token')
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
