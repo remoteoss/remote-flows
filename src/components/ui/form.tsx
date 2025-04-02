@@ -1,6 +1,6 @@
-import * as React from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import * as React from 'react';
 import {
   Controller,
   ControllerProps,
@@ -11,8 +11,8 @@ import {
   useFormState,
 } from 'react-hook-form';
 
-import { cn } from '@/src/lib/utils';
 import { Label } from '@/src/components/ui/label';
+import { cn } from '@/src/lib/utils';
 
 const Form = FormProvider;
 
@@ -137,7 +137,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="form-description"
       id={formDescriptionId}
-      className={cn('text-base-color text-sm', className)}
+      className={cn('text-base-color text-xs', className)}
       {...props}
     />
   );
@@ -164,12 +164,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };

@@ -2,7 +2,8 @@
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Fields } from '@remoteoss/json-schema-form';
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Statement, StatementProps } from './Statement';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
@@ -49,7 +50,12 @@ export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
 
         const FieldComponent = fieldsMap[field.inputType as SupportedTypes];
         return FieldComponent ? (
-          <FieldComponent key={field.name} {...field} />
+          <Fragment key={field.name as string}>
+            <FieldComponent {...field} />
+            {field.statement ? (
+              <Statement {...(field.statement as StatementProps)} />
+            ) : null}
+          </Fragment>
         ) : (
           <p className="error">
             Field type {field.inputType as string} not supported
