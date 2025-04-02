@@ -75,8 +75,10 @@ function CostCalculatorForm() {
 }
 
 export function BasicCostCalculator() {
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
@@ -128,8 +130,10 @@ function CostCalculatorForm() {
 }
 
 export function BasicCostCalculatorWithDefaultValues() {
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
@@ -140,7 +144,6 @@ export function BasicCostCalculatorWithDefaultValues() {
         throw error;
       });
   };
-
   return (
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorForm />
@@ -197,8 +200,10 @@ function CostCalculatorForm() {
 }
 
 export function CostCalculatoWithResults() {
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
@@ -294,8 +299,10 @@ function CostCalculatorForm() {
 }
 
 export function CostCalculatorWithExportPdf() {
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
@@ -397,8 +404,10 @@ function CostCalculatorForm() {
 }
 
 function CostCalculatorWithPremiumBenefits() {
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
   const fetchToken = () => {
-    return fetch('/api/token')
+    return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
       .then((data) => ({
         accessToken: data.access_token,
