@@ -11,7 +11,7 @@ import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
@@ -44,9 +44,11 @@ const useEmployment = ({ employmentId }: UseEmployment) => {
 const useContractAmendmentSchema = ({
   countryCode,
   employment,
+  formValues,
 }: {
   countryCode: string;
   employment: any;
+  formValues: any;
 }) => {
   const { client } = useClient();
 
@@ -65,6 +67,14 @@ const useContractAmendmentSchema = ({
       });
     },
     enabled: Boolean(employment),
+    select: ({ data }) => {
+      if (!data?.data) {
+        return null;
+      }
+      return createHeadlessForm(data?.data, {
+        initialValues: formValues || buildInitialValues(employment),
+      });
+    },
   });
 };
 
@@ -87,8 +97,8 @@ export const useContractAmendment = ({
   employmentId,
   countryCode,
 }: ContractAmendmentParams) => {
-  const [formFields, setFormFields] = useState<any>([]);
-  const { data: employment } = useEmployment({
+  const [formValues, setFormValues] = useState<any>();
+  const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
     employmentId,
   });
 
@@ -98,21 +108,11 @@ export const useContractAmendment = ({
   } = useContractAmendmentSchema({
     employment,
     countryCode,
+    formValues,
   });
 
   const createContractAmendment = useCreateContractAmendment();
   const { mutateAsync } = mutationToPromise(createContractAmendment);
-
-  useEffect(() => {
-    if (jsonSchemaContractAmendmentData) {
-      console.log('#########################');
-      const { fields } = createHeadlessForm(
-        jsonSchemaContractAmendmentData.data?.data || {},
-        buildInitialValues(employment),
-      );
-      setFormFields(fields);
-    }
-  }, [jsonSchemaContractAmendmentData]);
 
   async function onSubmit(values: CreateContractAmendmentParams) {
     // const validation =
@@ -133,21 +133,14 @@ export const useContractAmendment = ({
       total: 1,
       isLastStep: true,
     },
-    fields: formFields,
-    isLoading: isLoadingContractAmendments,
+    fields: jsonSchemaContractAmendmentData?.fields || [],
+    isLoading: isLoadingEmployment || isLoadingContractAmendments,
     isSubmitting: createContractAmendment.isPending,
     initialValues: buildInitialValues(employment),
     // handleValidation: jsonSchemaResult?.handleValidation,
     checkFieldUpdates: function (values: any) {
-      if (jsonSchemaContractAmendmentData) {
-        console.log('UPDATE', values);
-        const { fields } = createHeadlessForm(
-          jsonSchemaContractAmendmentData.data?.data || {},
-          { initialValues: values },
-        );
-
-        setFormFields(fields);
-      }
+      console.log('checkFieldUpdates', values);
+      setFormValues(values);
     },
     onSubmit,
   };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Fields } from '@remoteoss/json-schema-form';

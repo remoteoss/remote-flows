@@ -2,7 +2,7 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Button } from '@/src/components/ui/button';
 import { Form } from '@/src/components/ui/form';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useContractAmendment } from './hooks';
 import { ContractAmendmentParams } from './types';
@@ -13,33 +13,27 @@ type ContractAmendmentProps = ContractAmendmentParams & {
   onSuccess?: (data: any) => void;
 };
 
-const validationResolver = (handleValidation: any) => async (data: any) => {
-  return {
-    values: {},
-    errors: {
-      work_schedule: {
-        type: 'validation',
-        message: 'shit',
-      },
-    },
-  };
-};
+// const validationResolver = (handleValidation: any) => async (data: any) => {
+//   return {
+//     values: {},
+//     errors: {
+//       work_schedule: {
+//         type: 'validation',
+//         message: 'shit',
+//       },
+//     },
+//   };
+// };
 
-export function ContractAmendmentFlow({
-  employmentId,
-  countryCode,
-}: ContractAmendmentProps) {
-  const {
-    fields,
-    initialValues,
-    isSubmitting,
-    isLoading,
-    checkFieldUpdates,
-    onSubmit: submitContractAmendment,
-  } = useContractAmendment({ employmentId, countryCode });
-
+function ContractAmendmentForm({
+  initialValues,
+  fields,
+  checkFieldUpdates,
+}: any) {
+  const firstRender = useRef(true);
   const resolver = function (values: any) {
-    checkFieldUpdates(values);
+    // checkFieldUpdates(values);
+    console.log(values);
     return {
       values: {},
       errors: {},
@@ -48,36 +42,34 @@ export function ContractAmendmentFlow({
 
   const form = useForm({
     resolver,
-    defaultValues: useMemo(() => {
-      return initialValues;
-    }, [initialValues]),
+    defaultValues: initialValues,
     shouldUnregister: true,
     mode: 'onChange',
   });
 
-  // useEffect(() => {
-  //   const subscription = form.watch((value) => {
-  //     // console.log(form.formState.isDirty);
-  //     // if (form.formState.isDirty) {
-  //     checkFieldUpdates(value);
-  //     // }
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [checkFieldUpdates]);
+  const { watch } = form;
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (firstRender.current) {
+        console.log(' FIRT RENDER ');
+        firstRender.current = false;
+        return;
+      }
+      //
+      checkFieldUpdates(value);
+    });
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   console.log('fields', fields);
 
-  useEffect(() => {
-    form.reset(initialValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
-
   const handleSubmit = async (values: any) => {
-    const contractAmendmentResult = await submitContractAmendment(values);
-    console.log(contractAmendmentResult);
-
+    console.log('values', values);
+    // const contractAmendmentResult = await submitContractAmendment(values);
+    // console.log(contractAmendmentResult);
     // await onSubmit?.(values);
-
     // if (estimation.error) {
     //   onError?.(estimation.error);
     // } else {
@@ -95,11 +87,31 @@ export function ContractAmendmentFlow({
         <Button
           type="submit"
           className="RemoteFlows__CostCalculatorForm__SubmitButton"
-          disabled={isSubmitting}
+          // disabled={isSubmitting}
         >
           Create
         </Button>
       </form>
     </Form>
+  );
+}
+
+export function ContractAmendmentFlow({
+  employmentId,
+  countryCode,
+}: ContractAmendmentProps) {
+  const { fields, initialValues, isLoading, checkFieldUpdates } =
+    useContractAmendment({ employmentId, countryCode });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <ContractAmendmentForm
+      fields={fields}
+      initialValues={initialValues}
+      checkFieldUpdates={checkFieldUpdates}
+    />
   );
 }

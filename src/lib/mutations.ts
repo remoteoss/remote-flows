@@ -13,7 +13,7 @@ export interface SuccessResponse<D> {
   error: null;
 }
 
-interface ErrorResponse<E> {
+export interface ErrorResponse<E> {
   data: null;
   error: E;
 }
