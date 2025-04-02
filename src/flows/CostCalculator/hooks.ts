@@ -41,8 +41,8 @@ const useCostCalculatorCountries = ({
 }: {
   includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
 }) => {
-  const { client } = useClient();
-  return useQuery({
+  const { client, proxyClient, useProxy } = useClient();
+  const querySPA = useQuery({
     queryKey: ['cost-calculator-countries', includePremiumBenefits],
     queryFn: () => {
       return getIndexCountry({
@@ -63,7 +63,34 @@ const useCostCalculatorCountries = ({
         hasAdditionalFields: country.has_additional_fields,
         regionSlug: country.region_slug,
       })),
+    enabled: !useProxy,
   });
+
+  const queryProxy = useQuery({
+    queryKey: ['cost-calculator-countries', includePremiumBenefits],
+    queryFn: () => {
+      return getIndexCountry({
+        client: proxyClient as Client,
+        headers: {
+          Authorization: ``,
+        },
+        query: {
+          include_premium_benefits: includePremiumBenefits,
+        },
+      });
+    },
+    select: (data) =>
+      data.data?.data.map((country) => ({
+        value: country.region_slug,
+        label: country.name,
+        childRegions: country.child_regions,
+        hasAdditionalFields: country.has_additional_fields,
+        regionSlug: country.region_slug,
+      })),
+    enabled: useProxy,
+  });
+
+  return useProxy ? queryProxy : querySPA;
 };
 
 /**
@@ -71,9 +98,9 @@ const useCostCalculatorCountries = ({
  * @returns
  */
 const useCompanyCurrencies = () => {
-  const { client } = useClient();
+  const { client, useProxy, proxyClient } = useClient();
 
-  return useQuery({
+  const companyCurrenciesSPA = useQuery({
     queryKey: ['company-currencies'],
     queryFn: () => {
       return getIndexCompanyCurrency({
@@ -88,7 +115,27 @@ const useCompanyCurrencies = () => {
         value: currency.slug,
         label: currency.code,
       })),
+    enabled: !useProxy,
   });
+
+  const companyCurrenciesProxy = useQuery({
+    queryKey: ['company-currencies'],
+    queryFn: () => {
+      return getIndexCompanyCurrency({
+        client: proxyClient as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+    },
+    select: (data) =>
+      data.data?.data?.company_currencies.map((currency) => ({
+        value: currency.slug,
+        label: currency.code,
+      })),
+    enabled: useProxy,
+  });
+  return useProxy ? companyCurrenciesProxy : companyCurrenciesSPA;
 };
 
 /**

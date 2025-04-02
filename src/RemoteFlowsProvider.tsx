@@ -29,6 +29,7 @@ type RemoteFlowContextWrapperProps = {
 function RemoteFlowContextWrapper({
   children,
   auth,
+  useProxy = false,
   isTestingMode,
 }: RemoteFlowContextWrapperProps) {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
@@ -65,8 +66,22 @@ function RemoteFlowContextWrapper({
       },
     }),
   );
+
+  const proxyClient = useRef(
+    createClient({
+      ...client.getConfig(),
+      baseUrl: 'http://localhost:3001',
+    }),
+  );
+
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+    <RemoteFlowContext.Provider
+      value={{
+        client: remoteApiClient.current,
+        proxyClient: useProxy ? proxyClient.current : null,
+        useProxy,
+      }}
+    >
       {children}
     </RemoteFlowContext.Provider>
   );
@@ -75,12 +90,17 @@ function RemoteFlowContextWrapper({
 export function RemoteFlows({
   auth,
   children,
+  useProxy = false,
   isTestingMode = false,
   theme,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
+      <RemoteFlowContextWrapper
+        useProxy={useProxy}
+        isTestingMode={isTestingMode}
+        auth={auth}
+      >
         <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </RemoteFlowContextWrapper>
     </QueryClientProvider>
