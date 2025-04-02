@@ -140,6 +140,7 @@ export function BasicCostCalculatorWithDefaultValues() {
         throw error;
       });
   };
+
   return (
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorForm />
