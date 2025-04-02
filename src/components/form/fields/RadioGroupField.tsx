@@ -16,7 +16,8 @@ type RadioGroupFieldProps = {
   label: string;
   description?: string;
   defaultValue?: string;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: string; label: string; description?: string }>;
+  onChange?: (value: string) => void;
 };
 
 export function RadioGroupField({
@@ -25,6 +26,7 @@ export function RadioGroupField({
   description,
   label,
   options,
+  onChange,
 }: RadioGroupFieldProps) {
   const { control } = useFormContext();
   return (
@@ -42,25 +44,38 @@ export function RadioGroupField({
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <RadioGroup
-              onValueChange={field.onChange}
+              // onValueChange={field.onChange}
+              onValueChange={(value: string) => {
+                field.onChange(value);
+                onChange?.(value);
+              }}
               defaultValue={field.value}
-              className="flex flex-col space-y-1"
+              className="flex flex-col space-y-3"
             >
               {options.map((option) => (
-                <FormItem
-                  key={option.value}
-                  className="flex items-center space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item"
-                >
-                  <FormControl>
-                    <RadioGroupItem
-                      value={option.value}
-                      className="RemoteFlows__RadioField__Input"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal mb-0 RemoteFlows__RadioField__Label">
-                    {option.label}
-                  </FormLabel>
-                </FormItem>
+                <>
+                  <FormItem
+                    key={option.value}
+                    className="flex items-start space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item"
+                  >
+                    <FormControl>
+                      <RadioGroupItem
+                        value={option.value}
+                        className="RemoteFlows__RadioField__Input"
+                      />
+                    </FormControl>
+                    <div>
+                      <FormLabel className="font-normal mb-0 RemoteFlows__RadioField__Label">
+                        {option.label}
+                      </FormLabel>
+                      {option.description && (
+                        <FormDescription className="mt-2">
+                          {option.description}
+                        </FormDescription>
+                      )}
+                    </div>
+                  </FormItem>
+                </>
               ))}
             </RadioGroup>
           </FormControl>

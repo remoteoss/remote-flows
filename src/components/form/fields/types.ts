@@ -6,4 +6,5 @@ export type SupportedTypes =
   | 'fieldset'
   | 'date'
   | 'checkbox'
-  | 'textarea';
+  | 'textarea'
+  | 'money';
