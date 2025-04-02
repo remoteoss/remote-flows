@@ -62,7 +62,7 @@ function CostCalculatorForm() {
 }
 
 export function CostCalculatorWithExportPdf() {
-  const refreshToken = import.meta.env.REFRESH_TOKEN;
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
   const fetchToken = () => {
     return fetch(`/api/token?refresh_token=${refreshToken}`)
       .then((res) => res.json())
