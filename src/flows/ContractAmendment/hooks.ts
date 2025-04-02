@@ -6,6 +6,7 @@ import {
   postCreateContractAmendment,
 } from '@/src/client';
 
+import { parseJSFToValidateFormik } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
@@ -44,15 +45,14 @@ const useEmployment = ({ employmentId }: UseEmployment) => {
 const useContractAmendmentSchema = ({
   countryCode,
   employment,
-  formValues,
 }: {
   countryCode: string;
   employment: any;
-  formValues: any;
 }) => {
   const { client } = useClient();
+  const [headlessForm, setHeadlessForm] = useState<any>(null);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['contract-amendment-schema'],
     queryFn: () => {
       return getShowContractAmendmentSchema({
@@ -68,14 +68,17 @@ const useContractAmendmentSchema = ({
     },
     enabled: Boolean(employment),
     select: ({ data }) => {
-      if (!data?.data) {
-        return null;
+      if (!headlessForm && data?.data) {
+        const headlessForm = createHeadlessForm(data?.data, {
+          initialValues: buildInitialValues(employment),
+        });
+        setHeadlessForm(headlessForm);
       }
-      return createHeadlessForm(data?.data, {
-        initialValues: formValues || buildInitialValues(employment),
-      });
+      return data;
     },
   });
+
+  return { ...query, form: headlessForm };
 };
 
 const useCreateContractAmendment = () => {
@@ -97,18 +100,17 @@ export const useContractAmendment = ({
   employmentId,
   countryCode,
 }: ContractAmendmentParams) => {
-  const [formValues, setFormValues] = useState<any>();
+  const [, setRender] = useState(false);
   const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
     employmentId,
   });
 
   const {
-    data: jsonSchemaContractAmendmentData,
+    form: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
   } = useContractAmendmentSchema({
     employment,
     countryCode,
-    formValues,
   });
 
   const createContractAmendment = useCreateContractAmendment();
@@ -133,14 +135,24 @@ export const useContractAmendment = ({
       total: 1,
       isLastStep: true,
     },
-    fields: jsonSchemaContractAmendmentData?.fields || [],
+    fields: contractAmendmentHeadlessForm?.fields || [],
     isLoading: isLoadingEmployment || isLoadingContractAmendments,
     isSubmitting: createContractAmendment.isPending,
     initialValues: buildInitialValues(employment),
     // handleValidation: jsonSchemaResult?.handleValidation,
     checkFieldUpdates: function (values: any) {
-      console.log('checkFieldUpdates', values);
-      setFormValues(values);
+      if (contractAmendmentHeadlessForm) {
+        const parsedValues = parseJSFToValidateFormik(
+          values,
+          contractAmendmentHeadlessForm?.fields,
+          {
+            isPartialValidation: false,
+          },
+        );
+        // handleValidation mutates the form fields, so we need to force a re-render to get the updated values, like conditional fields
+        contractAmendmentHeadlessForm?.handleValidation(parsedValues);
+        setRender((prev) => !prev);
+      }
     },
     onSubmit,
   };

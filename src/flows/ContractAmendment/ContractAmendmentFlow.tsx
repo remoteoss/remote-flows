@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { parseSubmitValues } from '@/src/components/form/utils';
 import { Button } from '@/src/components/ui/button';
 import { Form } from '@/src/components/ui/form';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useContractAmendment } from './hooks';
 import { ContractAmendmentParams } from './types';
@@ -19,7 +20,7 @@ type ContractAmendmentProps = ContractAmendmentParams & {
 //     errors: {
 //       work_schedule: {
 //         type: 'validation',
-//         message: 'shit',
+//         message: '',
 //       },
 //     },
 //   };
@@ -30,10 +31,8 @@ function ContractAmendmentForm({
   fields,
   checkFieldUpdates,
 }: any) {
-  const firstRender = useRef(true);
   const resolver = function (values: any) {
     // checkFieldUpdates(values);
-    console.log(values);
     return {
       values: {},
       errors: {},
@@ -41,32 +40,24 @@ function ContractAmendmentForm({
   };
 
   const form = useForm({
-    resolver,
+    // resolver,
     defaultValues: initialValues,
     shouldUnregister: true,
     mode: 'onChange',
   });
 
-  const { watch } = form;
-
   useEffect(() => {
-    const subscription = watch((value) => {
-      if (firstRender.current) {
-        console.log(' FIRT RENDER ');
-        firstRender.current = false;
-        return;
+    const subscription = form.watch((values) => {
+      if (form.formState.isDirty) {
+        checkFieldUpdates(values);
       }
-      //
-      checkFieldUpdates(value);
     });
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log('fields', fields);
-
   const handleSubmit = async (values: any) => {
-    console.log('values', values);
+    console.log('FORM', values, parseSubmitValues(values, fields));
     // const contractAmendmentResult = await submitContractAmendment(values);
     // console.log(contractAmendmentResult);
     // await onSubmit?.(values);
