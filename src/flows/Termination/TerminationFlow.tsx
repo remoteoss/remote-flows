@@ -1,7 +1,7 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
-
+import { fields } from './fields';
 function TerminationFlowProvider({
   render,
 }: PropsWithChildren<{
@@ -45,6 +45,14 @@ function TerminationFlowProvider({
       value={{
         form,
         formId: formId,
+        termination: {
+          fields: fields,
+          checkFieldUpdates: (values: any) => {
+            console.log('checkFieldUpdates', values);
+            // contractAmendment.checkFieldUpdates(values);
+          },
+          onSubmit: () => console.log('onSubmit'),
+        },
       }}
     >
       {render()}

@@ -2,16 +2,15 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
-import { useContractAmendmentContext } from './context';
-import { ContractAmendmentParams } from './types';
+import { useTerminationContext } from './context';
 
-type ContractAmendmentFormProps = ContractAmendmentParams & {
+type ContractAmendmentFormProps = {
   onSubmit?: (values: any) => Promise<void>;
   onError?: (error: any) => void;
   onSuccess?: (data: any) => void;
 };
 
-export function ContractAmendmentForm({
+export function TerminationForm({
   onSubmit,
   onError,
   onSuccess,
@@ -19,12 +18,12 @@ export function ContractAmendmentForm({
   const {
     form,
     formId,
-    contractAmendment: {
+    termination: {
       checkFieldUpdates,
       fields,
       onSubmit: submitContractAmendment,
     },
-  } = useContractAmendmentContext();
+  } = useTerminationContext();
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
@@ -52,7 +51,7 @@ export function ContractAmendmentForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__ContractAmendmentForm"
+        className="space-y-4 RemoteFlows__TerminationForm"
       >
         <JSONSchemaFormFields fields={fields} />
       </form>

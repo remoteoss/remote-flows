@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -8,7 +9,20 @@ type TerminationFormValues = {
 export const TerminationContext = createContext<{
   form: UseFormReturn<TerminationFormValues> | null;
   formId: string | undefined;
-}>({ form: null, formId: undefined });
+  termination: {
+    fields: any[];
+    checkFieldUpdates: (values: any) => void;
+    onSubmit: (values: any) => Promise<void>;
+  };
+}>({
+  form: null,
+  formId: undefined,
+  termination: {
+    fields: [],
+    checkFieldUpdates: () => {},
+    onSubmit: async () => {},
+  },
+});
 
 export const useTerminationContext = () => {
   const context = useContext(TerminationContext);
@@ -21,5 +35,6 @@ export const useTerminationContext = () => {
   return {
     form: context.form,
     formId: context.formId,
+    termination: context.termination,
   } as const;
 };

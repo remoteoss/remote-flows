@@ -1,4 +1,8 @@
-import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  TerminationFlow,
+  RemoteFlows,
+  TerminationForm,
+} from '@remoteoss/remote-flows';
 
 export const Termination = () => {
   const fetchToken = () => {
@@ -15,7 +19,11 @@ export const Termination = () => {
   };
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <TerminationFlow />
+      <TerminationFlow
+        render={() => {
+          return <TerminationForm />;
+        }}
+      />
     </RemoteFlows>
   );
 };
