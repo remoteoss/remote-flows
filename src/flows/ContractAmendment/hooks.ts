@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateContractAmendmentParams,
+  EmploymentShowResponse,
   getShowContractAmendmentSchema,
   getShowEmployment,
   postCreateContractAmendment,
@@ -17,12 +18,12 @@ import { ContractAmendmentParams } from './types';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
-function buildInitialValues(employment: any) {
+function buildInitialValues(employment?: EmploymentShowResponse) {
   return {
     effective_date: '',
-    job_title: employment?.data?.data.employment?.job_title,
+    job_title: employment?.data?.employment?.job_title,
     additional_comments: '',
-    ...employment?.data?.data.employment?.contract_details,
+    ...(employment?.data?.employment?.contract_details || {}),
   };
 }
 
@@ -39,20 +40,21 @@ const useEmployment = ({ employmentId }: UseEmployment) => {
         path: { employment_id: employmentId },
       });
     },
+    select: ({ data }) => data,
   });
 };
 
 const useContractAmendmentSchema = ({
   countryCode,
   employment,
+  formValues,
 }: {
   countryCode: string;
-  employment: any;
+  employment: EmploymentShowResponse | undefined;
+  formValues: any;
 }) => {
   const { client } = useClient();
-  const [headlessForm, setHeadlessForm] = useState<any>(null);
-
-  const query = useQuery({
+  return useQuery({
     queryKey: ['contract-amendment-schema'],
     queryFn: () => {
       return getShowContractAmendmentSchema({
@@ -61,24 +63,17 @@ const useContractAmendmentSchema = ({
           Authorization: ``,
         },
         query: {
-          employment_id: employment?.data?.data.employment?.id,
+          employment_id: employment?.data?.employment?.id as string,
           country_code: countryCode,
         },
       });
     },
     enabled: Boolean(employment),
-    select: ({ data }) => {
-      if (!headlessForm && data?.data) {
-        const headlessForm = createHeadlessForm(data?.data, {
-          initialValues: buildInitialValues(employment),
-        });
-        setHeadlessForm(headlessForm);
-      }
-      return data;
-    },
+    select: ({ data }) =>
+      createHeadlessForm(data?.data || {}, {
+        initialValues: formValues || buildInitialValues(employment),
+      }),
   });
-
-  return { ...query, form: headlessForm };
 };
 
 const useCreateContractAmendment = () => {
@@ -100,17 +95,18 @@ export const useContractAmendment = ({
   employmentId,
   countryCode,
 }: ContractAmendmentParams) => {
-  const [, setRender] = useState(false);
+  const [formValues, setFormValues] = useState<any>();
   const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
     employmentId,
   });
 
   const {
-    form: contractAmendmentHeadlessForm,
+    data: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
   } = useContractAmendmentSchema({
     employment,
     countryCode,
+    formValues,
   });
 
   const createContractAmendment = useCreateContractAmendment();
@@ -149,9 +145,7 @@ export const useContractAmendment = ({
             isPartialValidation: false,
           },
         );
-        // handleValidation mutates the form fields, so we need to force a re-render to get the updated values, like conditional fields
-        contractAmendmentHeadlessForm?.handleValidation(parsedValues);
-        setRender((prev) => !prev);
+        setFormValues(parsedValues);
       }
     },
     onSubmit,
