@@ -48,4 +48,16 @@ export const fields: Field[] = [
       .required('Salary is required'),
     type: 'integer',
   },
+  {
+    description:
+      'Please upload any supporting documents regarding the termination reason.',
+    inputType: 'file',
+    isVisible: true,
+    label: 'Termination reason documents',
+    name: 'termination_reason_documents',
+    options: [],
+    required: true,
+    schema: string().required('file is required'),
+    type: 'string',
+  },
 ];

@@ -1,6 +1,7 @@
 import React from 'react';
 import { DatePickerField } from '@/src/components/form/fields/DatePickerField';
 import { FieldSetField } from '@/src/components/form/fields/FieldSetField';
+import { FileUploadField } from '@/src/components/form/fields/FileUploadField';
 import { RadioGroupField } from '@/src/components/form/fields/RadioGroupField';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextField } from '@/src/components/form/fields/TextField';
@@ -15,6 +16,7 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   select: SelectField,
   radio: RadioGroupField,
   number: (props) => <TextField {...props} type="text" />,
+  file: FileUploadField,
   fieldset: FieldSetField,
   date: DatePickerField,
   textarea: TextAreaField,
