@@ -12,9 +12,8 @@ import {
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
-  Field,
 } from '@/src/flows/CostCalculator/types';
-import type { Result } from '@/src/flows/types';
+import type { Field, Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';

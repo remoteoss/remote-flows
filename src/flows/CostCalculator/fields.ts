@@ -1,5 +1,5 @@
-import { Field } from '@/src/flows/CostCalculator/types';
 import { string } from 'yup';
+import { Field } from '../types';
 
 export const fields: Field[] = [
   {

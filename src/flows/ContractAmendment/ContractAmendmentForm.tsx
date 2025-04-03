@@ -3,9 +3,8 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useContractAmendmentContext } from './context';
-import { ContractAmendmentParams } from './types';
 
-type ContractAmendmentFormProps = ContractAmendmentParams & {
+type ContractAmendmentFormProps = {
   onSubmit?: (values: any) => Promise<void>;
   onError?: (error: any) => void;
   onSuccess?: (data: any) => void;

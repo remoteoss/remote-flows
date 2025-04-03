@@ -1,54 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
 import { useContractAmendment } from './hooks';
 
-interface ValidationField {
-  message: string;
-  type: string;
-}
-
 function ContractAmendmentProvider({
   render,
-  contractAmendment,
+  contractAmendmentBag,
 }: PropsWithChildren<{
-  contractAmendment: ReturnType<typeof useContractAmendment>;
+  contractAmendmentBag: ReturnType<typeof useContractAmendment>;
   render: ({
-    contractAmendment,
+    contractAmendmentBag,
   }: {
-    contractAmendment: ReturnType<typeof useContractAmendment>;
+    contractAmendmentBag: ReturnType<typeof useContractAmendment>;
   }) => React.ReactNode;
 }>) {
-  const resolver = function (values: any) {
-    const { formErrors } = contractAmendment.handleValidation(values);
-
-    if (Object.keys(formErrors).length > 0) {
-      const errors = Object.entries(formErrors).reduce<
-        Record<string, ValidationField>
-      >((result, [key, value]) => {
-        result[key] = {
-          message: String(value),
-          type: 'validation',
-        };
-        return result;
-      }, {});
-      return {
-        values: {},
-        errors,
-      };
-    }
-
-    return {
-      values,
-      errors: {},
-    };
-  };
-
   const formId = useId();
+  const resolver = useValidationFormResolver(
+    contractAmendmentBag.validationSchema,
+  );
   const form = useForm({
     resolver,
-    defaultValues: contractAmendment.initialValues,
+    defaultValues: contractAmendmentBag.initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });
@@ -58,31 +31,41 @@ function ContractAmendmentProvider({
       value={{
         form,
         formId: formId,
-        contractAmendment,
+        contractAmendmentBag,
       }}
     >
-      {render({ contractAmendment })}
+      {render({ contractAmendmentBag })}
     </ContractAmendmentContext.Provider>
   );
 }
+
+type ContractAmendmentFlowProps = {
+  employmentId: string;
+  countryCode: string;
+  render: ({
+    contractAmendmentBag,
+  }: {
+    contractAmendmentBag: ReturnType<typeof useContractAmendment>;
+  }) => React.ReactNode;
+};
 
 export function ContractAmendmentFlow({
   employmentId,
   countryCode,
   render,
-}: any) {
-  const contractAmendment = useContractAmendment({
+}: ContractAmendmentFlowProps) {
+  const contractAmendmentBag = useContractAmendment({
     employmentId,
     countryCode,
   });
 
-  if (contractAmendment.isLoading) {
-    return <>{render({ contractAmendment })}</>;
+  if (contractAmendmentBag.isLoading) {
+    return <>{render({ contractAmendmentBag })}</>;
   }
 
   return (
     <ContractAmendmentProvider
-      contractAmendment={contractAmendment}
+      contractAmendmentBag={contractAmendmentBag}
       render={render}
     />
   );

@@ -16,6 +16,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
 
+import { buildValidationSchema } from '../utils';
+
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
 function buildInitialValues(employment?: EmploymentShowResponse) {
@@ -135,6 +137,10 @@ export const useContractAmendment = ({
     isLoading: isLoadingEmployment || isLoadingContractAmendments,
     isSubmitting: createContractAmendment.isPending,
     initialValues: buildInitialValues(employment),
+    validationSchema: buildValidationSchema(
+      // @ts-expect-error error
+      contractAmendmentHeadlessForm?.fields || [],
+    ),
     handleValidation: (values: any) => {
       if (contractAmendmentHeadlessForm) {
         const parsedValues = parseJSFToValidateFormik(

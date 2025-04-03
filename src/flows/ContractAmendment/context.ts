@@ -11,12 +11,12 @@ type ContractAmendmentFormValues = {
 export const ContractAmendmentContext = createContext<{
   form: UseFormReturn<ContractAmendmentFormValues> | null;
   formId: string | undefined;
-  contractAmendment: ReturnType<typeof useContractAmendment> | null;
-}>({ form: null, formId: undefined, contractAmendment: null });
+  contractAmendmentBag: ReturnType<typeof useContractAmendment> | null;
+}>({ form: null, formId: undefined, contractAmendmentBag: null });
 
 export const useContractAmendmentContext = () => {
   const context = useContext(ContractAmendmentContext);
-  if (!context.form || !context.contractAmendment) {
+  if (!context.form || !context.contractAmendmentBag) {
     throw new Error(
       'useContractAmendmentContext must be used within a ContractAmendmentProvider',
     );
@@ -25,6 +25,6 @@ export const useContractAmendmentContext = () => {
   return {
     form: context.form,
     formId: context.formId,
-    contractAmendment: context.contractAmendment,
+    contractAmendment: context.contractAmendmentBag,
   } as const;
 };
