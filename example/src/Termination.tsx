@@ -21,16 +21,18 @@ export const Termination = () => {
   };
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <TerminationFlow
-        render={() => {
-          return (
-            <>
-              <TerminationForm />
-              <TerminationSubmit>Send termination</TerminationSubmit>
-            </>
-          );
-        }}
-      />
+      <div className="cost-calculator__container">
+        <TerminationFlow
+          render={() => {
+            return (
+              <>
+                <TerminationForm />
+                <TerminationSubmit>Send termination</TerminationSubmit>
+              </>
+            );
+          }}
+        />
+      </div>
     </RemoteFlows>
   );
 };

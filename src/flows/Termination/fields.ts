@@ -9,7 +9,16 @@ export const fields: Field[] = [
     isVisible: true,
     label: 'Is this request confidential?',
     name: 'is_confidential',
-    options: [],
+    options: [
+      {
+        label: 'Yes',
+        value: 'yes',
+      },
+      {
+        label: 'No',
+        value: 'no',
+      },
+    ],
     required: true,
     schema: string().required('Request is required'),
     type: 'string',
