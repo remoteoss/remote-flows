@@ -16,6 +16,7 @@ type FileUploadFieldProps = {
   label: string;
   description?: string;
   name: string;
+  multiple?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -23,6 +24,7 @@ export function FileUploadField({
   name,
   description,
   label,
+  multiple,
   onChange,
 }: FileUploadFieldProps) {
   const { control } = useFormContext();
@@ -50,6 +52,7 @@ export function FileUploadField({
                   field.onChange(event);
                   onChange?.(event);
                 }}
+                multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
               />
             </FormControl>

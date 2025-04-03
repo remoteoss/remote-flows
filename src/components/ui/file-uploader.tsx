@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Upload } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
@@ -8,10 +6,15 @@ import { cn } from '@/src/lib/utils';
 type FileUploaderProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
+  multiple?: boolean;
 };
 
-export function FileUploader({ onChange, className }: FileUploaderProps) {
-  const [file, setFile] = useState<File | null>(null);
+export function FileUploader({
+  onChange,
+  className,
+  multiple,
+}: FileUploaderProps) {
+  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -19,9 +22,12 @@ export function FileUploader({ onChange, className }: FileUploaderProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
-    setFile(selectedFile);
-    onChange(e);
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+
+      setFiles(newFiles);
+      onChange(e);
+    }
   };
 
   return (
@@ -32,22 +38,30 @@ export function FileUploader({ onChange, className }: FileUploaderProps) {
         onChange={handleChange}
         className="hidden"
         aria-label="File upload"
+        multiple={multiple}
       />
       <Button onClick={handleClick} className="gap-2">
         <Upload className="h-4 w-4" />
         Choose File
       </Button>
-      {!file && (
+      {files.length === 0 && (
         <div className="text-sm">
-          No file selected. Click the button to choose a file.
+          {!multiple ? (
+            <span className="font-medium">No file selected.</span>
+          ) : (
+            <span className="font-medium">
+              No files selected. You can select multiple files
+            </span>
+          )}
         </div>
       )}
-      {file && (
-        <div className="text-sm">
-          Selected file: <span className="font-medium">{file.name}</span> (
-          {Math.round(file.size / 1024)} KB)
-        </div>
-      )}
+      {files.length > 0 &&
+        files.map((file, index) => (
+          <div key={index} className="text-sm">
+            Selected file: <span className="font-medium">{file.name}</span> (
+            {Math.round(file.size / 1024)} KB)
+          </div>
+        ))}
     </div>
   );
 }

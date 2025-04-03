@@ -59,5 +59,6 @@ export const fields: Field[] = [
     required: true,
     schema: string().required('file is required'),
     type: 'string',
+    multiple: true,
   },
 ];
