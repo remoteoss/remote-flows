@@ -20,8 +20,9 @@ import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
+import { buildValidationSchema } from '../utils';
 import { fields } from './fields';
-import { buildPayload, buildValidationSchema } from './utils';
+import { buildPayload } from './utils';
 
 type CostCalculatorCountry = {
   value: string;

@@ -17,7 +17,8 @@ function ContractAmendmentProvider({
 }>) {
   const formId = useId();
   const resolver = useValidationFormResolver(
-    contractAmendmentBag.validationSchema,
+    // @ts-expect-error no matching type
+    contractAmendmentBag.handleValidation,
   );
   const form = useForm({
     resolver,

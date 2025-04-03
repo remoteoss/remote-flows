@@ -65,3 +65,25 @@ export const useValidationFormResolver = <T extends AnyObjectSchema>(
     [validationSchema],
   );
 };
+
+export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
+  handleValidation: (data: FieldValues) => {
+    formErrors: Record<string, string>;
+    yupError: ValidationError;
+  },
+): Resolver<InferType<T>> => {
+  return useCallback(async (data: FieldValues) => {
+    const { yupError, formErrors } = handleValidation(data);
+    if (Object.keys(formErrors).length > 0) {
+      return {
+        values: {},
+        errors: iterateErrors(yupError as ValidationError),
+      };
+    }
+    return {
+      values: data,
+      errors: {},
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+};

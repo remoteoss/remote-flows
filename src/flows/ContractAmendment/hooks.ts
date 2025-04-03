@@ -7,7 +7,7 @@ import {
   postCreateContractAmendment,
 } from '@/src/client';
 
-import { parseJSFToValidateFormik } from '@/src/components/form/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
@@ -143,7 +143,7 @@ export const useContractAmendment = ({
     ),
     handleValidation: (values: any) => {
       if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidateFormik(
+        const parsedValues = parseJSFToValidate(
           values,
           contractAmendmentHeadlessForm?.fields,
           {
@@ -156,7 +156,7 @@ export const useContractAmendment = ({
     },
     checkFieldUpdates: (values: any) => {
       if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidateFormik(
+        const parsedValues = parseJSFToValidate(
           values,
           contractAmendmentHeadlessForm?.fields,
           {

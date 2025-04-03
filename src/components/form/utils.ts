@@ -521,7 +521,7 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
-export function parseJSFToValidateFormik(
+export function parseJSFToValidate(
   formValues: Record<string, any>,
   fields: any[],
   config: { isPartialValidation: boolean },
