@@ -135,8 +135,20 @@ export const useContractAmendment = ({
     isLoading: isLoadingEmployment || isLoadingContractAmendments,
     isSubmitting: createContractAmendment.isPending,
     initialValues: buildInitialValues(employment),
-    // handleValidation: jsonSchemaResult?.handleValidation,
-    checkFieldUpdates: function (values: any) {
+    handleValidation: (values: any) => {
+      if (contractAmendmentHeadlessForm) {
+        const parsedValues = parseJSFToValidateFormik(
+          values,
+          contractAmendmentHeadlessForm?.fields,
+          {
+            isPartialValidation: false,
+          },
+        );
+        return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
+      }
+      return null;
+    },
+    checkFieldUpdates: (values: any) => {
       if (contractAmendmentHeadlessForm) {
         const parsedValues = parseJSFToValidateFormik(
           values,

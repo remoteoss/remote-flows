@@ -2,7 +2,8 @@
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Fields } from '@remoteoss/json-schema-form';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Statement, StatementProps } from './Statement';
 
 type JSONSchemaFormFieldsProps = {
@@ -19,6 +20,31 @@ function checkFieldHasForcedValue(field: any) {
   );
 }
 
+function ForcedValueField({ field }: { field: Fields[number] }) {
+  const { setValue } = useFormContext();
+
+  useEffect(() => {
+    setValue(field.name as string, field.const);
+  }, []);
+
+  return (
+    <div>
+      <p
+        className="mb-5 RemoteFlows__Statement"
+        // @ts-expect-error error
+        dangerouslySetInnerHTML={{ __html: field.statement?.title }}
+      />
+      <p
+        className="RemoteFlows__Statement"
+        dangerouslySetInnerHTML={{
+          // @ts-expect-error error
+          __html: field.statement?.description || field.description,
+        }}
+      />
+    </div>
+  );
+}
+
 export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
   if (!fields || fields.length === 0) return null;
 
@@ -30,22 +56,7 @@ export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
         }
 
         if (checkFieldHasForcedValue(field)) {
-          return (
-            <div>
-              <p
-                className="mb-5 RemoteFlows__Statement"
-                // @ts-expect-error error
-                dangerouslySetInnerHTML={{ __html: field.statement?.title }}
-              />
-              <p
-                className="RemoteFlows__Statement"
-                dangerouslySetInnerHTML={{
-                  // @ts-expect-error error
-                  __html: field.statement?.description || field.description,
-                }}
-              />
-            </div>
-          );
+          return <ForcedValueField key={field.name as string} field={field} />;
         }
 
         const FieldComponent = fieldsMap[field.inputType as SupportedTypes];

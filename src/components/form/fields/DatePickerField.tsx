@@ -51,6 +51,7 @@ export function DatePickerField({
               <FormControl>
                 <div>
                   <Button
+                    type="button"
                     variant={'outline'}
                     className={cn(
                       'w-full pl-3 text-left font-normal',
@@ -70,11 +71,11 @@ export function DatePickerField({
               <Calendar
                 mode="single"
                 className="RemoteFlows__DatepickerField__Calendar"
-                selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) =>
-                  field.onChange(date ? format(date, 'yyyy-MM-dd') : null)
-                }
-                defaultMonth={minDate ? new Date(minDate) : undefined}
+                // selected={field.value ? new Date(field.value) : undefined}
+                // onSelect={(date) =>
+                //   field.onChange(date ? format(date, 'yyyy-MM-dd') : null)
+                // }
+                // defaultMonth={minDate ? new Date(minDate) : undefined}
                 components={{
                   DayContent: (props) => {
                     return <PopoverClose>{props.date.getDate()}</PopoverClose>;

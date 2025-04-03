@@ -1,108 +1,89 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { parseSubmitValues } from '@/src/components/form/utils';
-import { Button } from '@/src/components/ui/button';
-import { Form } from '@/src/components/ui/form';
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
+import { ContractAmendmentContext } from './context';
 import { useContractAmendment } from './hooks';
-import { ContractAmendmentParams } from './types';
 
-type ContractAmendmentProps = ContractAmendmentParams & {
-  onSubmit?: (values: any) => Promise<void>;
-  onError?: (error: any) => void;
-  onSuccess?: (data: any) => void;
-};
+interface ValidationField {
+  message: string;
+  type: string;
+}
 
-// const validationResolver = (handleValidation: any) => async (data: any) => {
-//   return {
-//     values: {},
-//     errors: {
-//       work_schedule: {
-//         type: 'validation',
-//         message: '',
-//       },
-//     },
-//   };
-// };
-
-function ContractAmendmentForm({
-  initialValues,
-  fields,
-  checkFieldUpdates,
-}: any) {
+function ContractAmendmentProvider({
+  render,
+  contractAmendment,
+}: PropsWithChildren<{
+  contractAmendment: ReturnType<typeof useContractAmendment>;
+  render: ({
+    contractAmendment,
+  }: {
+    contractAmendment: ReturnType<typeof useContractAmendment>;
+  }) => React.ReactNode;
+}>) {
   const resolver = function (values: any) {
-    // checkFieldUpdates(values);
+    const { formErrors } = contractAmendment.handleValidation(values);
+
+    if (Object.keys(formErrors).length > 0) {
+      const errors = Object.entries(formErrors).reduce<
+        Record<string, ValidationField>
+      >((result, [key, value]) => {
+        result[key] = {
+          message: String(value),
+          type: 'validation',
+        };
+        return result;
+      }, {});
+      return {
+        values: {},
+        errors,
+      };
+    }
+
     return {
-      values: {},
+      values,
       errors: {},
     };
   };
 
+  const formId = useId();
   const form = useForm({
-    // resolver,
-    defaultValues: initialValues,
+    resolver,
+    defaultValues: contractAmendment.initialValues,
     shouldUnregister: true,
-    mode: 'onChange',
+    mode: 'onBlur',
   });
 
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      if (form.formState.isDirty) {
-        checkFieldUpdates(values);
-      }
-    });
-    return () => subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSubmit = async (values: any) => {
-    console.log('FORM', values, parseSubmitValues(values, fields));
-    // const contractAmendmentResult = await submitContractAmendment(values);
-    // console.log(contractAmendmentResult);
-    // await onSubmit?.(values);
-    // if (estimation.error) {
-    //   onError?.(estimation.error);
-    // } else {
-    //   onSuccess?.(estimation.data);
-    // }
-  };
-
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__CostCalculatorForm"
-      >
-        <JSONSchemaFormFields fields={fields} />
-        <Button
-          type="submit"
-          className="RemoteFlows__CostCalculatorForm__SubmitButton"
-          // disabled={isSubmitting}
-        >
-          Create
-        </Button>
-      </form>
-    </Form>
+    <ContractAmendmentContext.Provider
+      value={{
+        form,
+        formId: formId,
+        contractAmendment,
+      }}
+    >
+      {render({ contractAmendment })}
+    </ContractAmendmentContext.Provider>
   );
 }
 
 export function ContractAmendmentFlow({
   employmentId,
   countryCode,
-}: ContractAmendmentProps) {
-  const { fields, initialValues, isLoading, checkFieldUpdates } =
-    useContractAmendment({ employmentId, countryCode });
+  render,
+}: any) {
+  const contractAmendment = useContractAmendment({
+    employmentId,
+    countryCode,
+  });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (contractAmendment.isLoading) {
+    return <>{render({ contractAmendment })}</>;
   }
 
   return (
-    <ContractAmendmentForm
-      fields={fields}
-      initialValues={initialValues}
-      checkFieldUpdates={checkFieldUpdates}
+    <ContractAmendmentProvider
+      contractAmendment={contractAmendment}
+      render={render}
     />
   );
 }
