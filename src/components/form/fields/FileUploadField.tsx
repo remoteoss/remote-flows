@@ -36,6 +36,13 @@ export function FileUploadField({
             <FormLabel className="RemoteFlows__FileUpload__Label">
               {label}
             </FormLabel>
+            {description && (
+              <div className="flex items-center justify-between">
+                <FormDescription className="RemoteFlows__FileUpload__Description">
+                  {description}
+                </FormDescription>
+              </div>
+            )}
             <FormControl>
               <FileUploader
                 {...field}
@@ -46,13 +53,6 @@ export function FileUploadField({
                 className={cn('RemoteFlows__FileUpload__Input')}
               />
             </FormControl>
-            {description && (
-              <div className="flex items-center justify-between">
-                <FormDescription className="RemoteFlows__FileUpload__Description">
-                  {description}
-                </FormDescription>
-              </div>
-            )}
             {fieldState.error && (
               <FormMessage className="RemoteFlows__FileUpload__Error" />
             )}
