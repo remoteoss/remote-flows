@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/src/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
 type FileUploaderProps = {
@@ -30,6 +30,10 @@ export function FileUploader({
     }
   };
 
+  const onRemoveFile = (file: File) => {
+    setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+  };
+
   return (
     <div className={cn('flex flex-col items-start gap-4', className)}>
       <input
@@ -57,9 +61,12 @@ export function FileUploader({
       )}
       {files.length > 0 &&
         files.map((file, index) => (
-          <div key={index} className="text-sm">
+          <div key={index} className="text-sm flex items-center gap-2">
             Selected file: <span className="font-medium">{file.name}</span> (
             {Math.round(file.size / 1024)} KB)
+            <Button variant="ghost" onClick={() => onRemoveFile(file)}>
+              <X />
+            </Button>
           </div>
         ))}
     </div>
