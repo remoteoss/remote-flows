@@ -33,7 +33,6 @@ const useTerminationSchema = ({ formValues }: { formValues: any }) => {
       const form = createHeadlessForm(data?.schema || {}, {
         initialValues: formValues || {}, // formValues || buildInitialValues(employment),
       });
-      console.log('form', { form, formValues });
       return form;
     },
   });
@@ -75,7 +74,6 @@ export const useTermination = () => {
       // TBD
     },
     checkFieldUpdates: (values: any) => {
-      console.log({ values, terminationHeadlessForm });
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidateFormik(
           values,
@@ -84,7 +82,6 @@ export const useTermination = () => {
             isPartialValidation: false,
           },
         );
-        console.log('parsedValues', parsedValues);
         setFormValues(parsedValues);
       }
     },

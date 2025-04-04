@@ -18,12 +18,19 @@ export const jsonSchema = {
               customer_informed_employee_date: {
                 type: 'string',
               },
+              customer_informed_employee_description: {
+                type: 'string',
+              },
             },
-            required: ['customer_informed_employee_date'], // Make the field required when condition is met
+            required: [
+              'customer_informed_employee_date',
+              'customer_informed_employee_description',
+            ], // Make the field required when condition is met
           },
           else: {
             properties: {
-              customer_informed_employee_date: false, // Hide the field when condition is not met
+              customer_informed_employee_date: false,
+              customer_informed_employee_description: false, // Hide the field when condition is not met
             },
           },
         },
@@ -73,14 +80,22 @@ export const jsonSchema = {
           },
         },
         customer_informed_employee_date: {
-          description:
-            'Please note that fixed-term contracts are limited to 18 months.',
+          description: '',
           format: 'date',
           maxLength: 255,
           title: 'When the employee was told about the termination',
           type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'date',
+          },
+        },
+        customer_informed_employee_description: {
+          description: 'Bonus type, payment frequency, and more.',
+          maxLength: 1000,
+          title: 'How did you share this information?',
+          type: ['string', 'null'],
+          'x-jsf-presentation': {
+            inputType: 'textarea',
           },
         },
         employer_confirmed_email: {
@@ -103,6 +118,7 @@ export const jsonSchema = {
         'is_confidential',
         'customer_informed_employee',
         'customer_informed_employee_date',
+        'customer_informed_employee_description',
         'employer_confirmed_email',
       ],
     },
