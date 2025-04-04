@@ -90,7 +90,7 @@ export const jsonSchema = {
           },
         },
         customer_informed_employee_description: {
-          description: 'Bonus type, payment frequency, and more.',
+          description: '',
           maxLength: 1000,
           title: 'How did you share this information?',
           type: ['string', 'null'],
@@ -107,11 +107,68 @@ export const jsonSchema = {
             inputType: 'text', // TODO: email type is not supported
           },
         },
+        termination_reason: {
+          title: 'Termination reason',
+          description:
+            'Make sure you choose an accurate termination reason to avoid unfair or unlawful dismissal claims.',
+          type: 'string',
+          oneOf: [
+            {
+              const: 'termination_by_customer_reason_gross_misconduct',
+              title: 'Misconduct',
+            },
+            {
+              const: 'termination_by_customer_reason_performance',
+              title: 'Performance',
+            },
+            {
+              const: 'termination_by_customer_reason_workforce_reduction',
+              title: 'Workforce Reduction',
+            },
+            { const: 'termination_by_customer_reason_values', title: 'Values' },
+            {
+              const: 'termination_by_customer_reason_compliance_issue',
+              title: 'Compliance issue',
+            },
+            {
+              const:
+                'termination_by_customer_reason_incapacity_to_perform_inherent_duties',
+              title: 'Incapacity To perform inherent duties',
+            },
+            {
+              const: 'termination_by_customer_reason_mutual_agreement',
+              title: 'Mutual agreement',
+            },
+            {
+              const: 'termination_by_customer_reason_job_abandonment',
+              title: 'Job abandonment',
+            },
+            {
+              const:
+                'termination_by_customer_reason_dissatisfaction_with_remote_service',
+              title: 'Dissatisfaction with remote service',
+            },
+            {
+              const:
+                'termination_by_customer_reason_end_of_fixed_term_contract',
+              title: 'End of fixed-term contract',
+            },
+            {
+              const: 'termination_by_customer_reason_background_check',
+              title: 'Failed background check',
+            },
+            { const: 'termination_by_customer_reason_other', title: 'Other' },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'select',
+          },
+        },
       },
       required: [
         'is_confidential',
         'customer_informed_employee',
         'employer_confirmed_email',
+        'termination_reason',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -120,6 +177,7 @@ export const jsonSchema = {
         'customer_informed_employee_date',
         'customer_informed_employee_description',
         'employer_confirmed_email',
+        'termination_reason',
       ],
     },
   },
