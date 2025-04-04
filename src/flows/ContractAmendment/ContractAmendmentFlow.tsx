@@ -1,4 +1,4 @@
-import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
@@ -16,7 +16,7 @@ function ContractAmendmentProvider({
   }) => React.ReactNode;
 }>) {
   const formId = useId();
-  const resolver = useValidationFormResolver(
+  const resolver = useJsonSchemasValidationFormResolver(
     // @ts-expect-error no matching type
     contractAmendmentBag.handleValidation,
   );
