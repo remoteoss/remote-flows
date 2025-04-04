@@ -6,7 +6,10 @@ import {
   postCreateContractAmendment,
 } from '@/src/client';
 
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  convertFromCents,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
@@ -22,10 +25,15 @@ type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
 function buildInitialValues(employment?: EmploymentShowResponse) {
   return {
+    ...employment?.data?.employment?.contract_details,
     effective_date: '',
+    reason_for_change: '',
     job_title: employment?.data?.employment?.job_title,
     additional_comments: '',
-    ...(employment?.data?.employment?.contract_details || {}),
+    annual_gross_salary: convertFromCents(
+      employment?.data?.employment?.contract_details
+        ?.annual_gross_salary as string,
+    ),
   };
 }
 
@@ -128,7 +136,14 @@ export const useContractAmendment = ({
   const createContractAmendment = useCreateContractAmendment();
   const { mutateAsync } = mutationToPromise(createContractAmendment);
 
-  async function onSubmit(values: CreateContractAmendmentParams) {
+  async function onSubmit(values: FieldValues) {
+    if (
+      !employment?.data?.employment?.id ||
+      !employment?.data?.employment.active_contract_id
+    ) {
+      throw new Error('Employment id or active contract id is missing');
+    }
+
     // const validation =
     //   jsonSchemaContractAmendmentFields?.handleValidation(values);
     // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
@@ -138,7 +153,13 @@ export const useContractAmendment = ({
     //   };
     // }
 
-    return mutateAsync(values);
+    return mutateAsync({
+      employment_id: employment?.data.employment?.id,
+      amendment_contract_id: employment?.data.employment?.active_contract_id,
+      contract_amendment: {
+        ...values,
+      },
+    });
   }
 
   return {

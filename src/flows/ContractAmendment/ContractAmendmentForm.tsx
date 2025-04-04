@@ -2,6 +2,7 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 
 type ContractAmendmentFormProps = {
@@ -35,7 +36,7 @@ export function ContractAmendmentForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FieldValues) => {
     const contractAmendmentResult = await submitContractAmendment(values);
 
     await onSubmit?.(values);
