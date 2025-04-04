@@ -1,11 +1,14 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
-import { fields } from './fields';
+import { useTermination } from '@/src/flows/Termination/hooks';
+
 function TerminationFlowProvider({
   render,
+  termination,
 }: PropsWithChildren<{
   render: () => React.ReactNode;
+  termination: ReturnType<typeof useTermination>;
 }>) {
   const resolver = function (values: any) {
     //const { formErrors } = contractAmendment.handleValidation(values);
@@ -45,14 +48,7 @@ function TerminationFlowProvider({
       value={{
         form,
         formId: formId,
-        termination: {
-          fields: fields,
-          checkFieldUpdates: (values: any) => {
-            console.log('checkFieldUpdates', values);
-            // contractAmendment.checkFieldUpdates(values);
-          },
-          onSubmit: () => console.log('onSubmit'),
-        },
+        termination,
       }}
     >
       {render()}
@@ -65,5 +61,6 @@ export const TerminationFlow = ({
 }: {
   render: () => React.ReactNode;
 }) => {
-  return <TerminationFlowProvider render={render} />;
+  const termination = useTermination();
+  return <TerminationFlowProvider termination={termination} render={render} />;
 };
