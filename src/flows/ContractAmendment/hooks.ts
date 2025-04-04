@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateContractAmendmentParams,
   EmploymentShowResponse,
@@ -11,11 +10,12 @@ import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
 
+import { FieldValues } from 'react-hook-form';
 import { buildValidationSchema } from '../utils';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
@@ -46,15 +46,19 @@ const useEmployment = ({ employmentId }: UseEmployment) => {
   });
 };
 
+type ContractAmendmentSchemaParams = {
+  countryCode: string;
+  employment: EmploymentShowResponse | undefined;
+  fieldValues: FieldValues | undefined;
+  options?: ContractAmendmentParams['options'];
+};
+
 const useContractAmendmentSchema = ({
   countryCode,
   employment,
-  formValues,
-}: {
-  countryCode: string;
-  employment: EmploymentShowResponse | undefined;
-  formValues: any;
-}) => {
+  fieldValues,
+  options,
+}: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
   return useQuery({
     queryKey: ['contract-amendment-schema'],
@@ -71,10 +75,18 @@ const useContractAmendmentSchema = ({
       });
     },
     enabled: Boolean(employment),
-    select: ({ data }) =>
-      createHeadlessForm(data?.data || {}, {
-        initialValues: formValues || buildInitialValues(employment),
-      }),
+    select: ({ data }) => {
+      let jsfSchema = data?.data || {};
+
+      if (options && options.jsfModified) {
+        const { schema } = modify(jsfSchema, options.jsfModified);
+        jsfSchema = schema;
+      }
+
+      return createHeadlessForm(jsfSchema, {
+        initialValues: fieldValues || buildInitialValues(employment),
+      });
+    },
   });
 };
 
@@ -96,8 +108,9 @@ const useCreateContractAmendment = () => {
 export const useContractAmendment = ({
   employmentId,
   countryCode,
+  options,
 }: ContractAmendmentParams) => {
-  const [formValues, setFormValues] = useState<any>();
+  const [fieldValues, setFieldValues] = useState<FieldValues>();
   const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
     employmentId,
   });
@@ -108,7 +121,8 @@ export const useContractAmendment = ({
   } = useContractAmendmentSchema({
     employment,
     countryCode,
-    formValues,
+    fieldValues,
+    options,
   });
 
   const createContractAmendment = useCreateContractAmendment();
@@ -141,7 +155,7 @@ export const useContractAmendment = ({
       // @ts-expect-error error
       contractAmendmentHeadlessForm?.fields || [],
     ),
-    handleValidation: (values: any) => {
+    handleValidation: (values: FieldValues) => {
       if (contractAmendmentHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
@@ -154,7 +168,7 @@ export const useContractAmendment = ({
       }
       return null;
     },
-    checkFieldUpdates: (values: any) => {
+    checkFieldUpdates: (values: FieldValues) => {
       if (contractAmendmentHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
@@ -163,7 +177,7 @@ export const useContractAmendment = ({
             isPartialValidation: false,
           },
         );
-        setFormValues(parsedValues);
+        setFieldValues(parsedValues);
       }
     },
     onSubmit,

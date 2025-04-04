@@ -3,6 +3,7 @@ import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
 import { useContractAmendment } from './hooks';
+import { ContractAmendmentParams } from './types';
 
 function ContractAmendmentProvider({
   render,
@@ -40,9 +41,7 @@ function ContractAmendmentProvider({
   );
 }
 
-type ContractAmendmentFlowProps = {
-  employmentId: string;
-  countryCode: string;
+type ContractAmendmentFlowProps = ContractAmendmentParams & {
   render: ({
     contractAmendmentBag,
   }: {
@@ -53,11 +52,13 @@ type ContractAmendmentFlowProps = {
 export function ContractAmendmentFlow({
   employmentId,
   countryCode,
+  options,
   render,
 }: ContractAmendmentFlowProps) {
   const contractAmendmentBag = useContractAmendment({
     employmentId,
     countryCode,
+    options,
   });
 
   if (contractAmendmentBag.isLoading) {
