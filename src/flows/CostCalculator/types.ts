@@ -26,7 +26,8 @@ export type Field = {
     | 'radio'
     | 'checkbox'
     | 'date'
-    | 'hidden';
+    | 'hidden'
+    | 'file';
   required: boolean;
   jsonType?: string;
   isVisible: boolean;
