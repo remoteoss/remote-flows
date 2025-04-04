@@ -10,6 +10,8 @@ export {
   useCostCalculatorEstimationPdf,
 } from '@/src/flows/CostCalculator';
 
+export * from '@/src/flows/ContractAmendment';
+
 export type * from '@/src/flows/CostCalculator/types';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';

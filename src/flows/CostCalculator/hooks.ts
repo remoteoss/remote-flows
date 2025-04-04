@@ -12,17 +12,17 @@ import {
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
-  Field,
 } from '@/src/flows/CostCalculator/types';
-import type { Result } from '@/src/flows/types';
+import type { Field, Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
+import { buildValidationSchema } from '../utils';
 import { fields } from './fields';
-import { buildPayload, buildValidationSchema } from './utils';
+import { buildPayload } from './utils';
 
 type CostCalculatorCountry = {
   value: string;
