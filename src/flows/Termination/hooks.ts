@@ -5,6 +5,8 @@ import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { jsonSchema } from './jsonSchema';
+import { parseJSFToValidateFormik } from '@/src/components/form/utils';
+import { useState } from 'react';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -21,26 +23,27 @@ const useCreateTermination = () => {
   });
 };
 
-const useTerminationSchema = () => {
+const useTerminationSchema = ({ formValues }: { formValues: any }) => {
   return useQuery({
-    queryKey: ['contract-amendment-schema'],
+    queryKey: ['termination-schema'],
     queryFn: () => {
       return jsonSchema;
     },
     select: ({ data }) => {
-      console.log('data', data);
-      return createHeadlessForm(data?.schema || {}, {
-        initialValues: {}, // formValues || buildInitialValues(employment),
+      const form = createHeadlessForm(data?.schema || {}, {
+        initialValues: formValues || {}, // formValues || buildInitialValues(employment),
       });
+      console.log('form', { form, formValues });
+      return form;
     },
   });
 };
 
 export const useTermination = () => {
-  const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
-    useTerminationSchema();
+  const [formValues, setFormValues] = useState<any>();
 
-  console.log('terminationHeadlessForm', terminationHeadlessForm);
+  const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
+    useTerminationSchema({ formValues });
 
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
@@ -72,7 +75,18 @@ export const useTermination = () => {
       // TBD
     },
     checkFieldUpdates: (values: any) => {
-      // TDB
+      console.log({ values, terminationHeadlessForm });
+      if (terminationHeadlessForm) {
+        const parsedValues = parseJSFToValidateFormik(
+          values,
+          terminationHeadlessForm?.fields,
+          {
+            isPartialValidation: false,
+          },
+        );
+        console.log('parsedValues', parsedValues);
+        setFormValues(parsedValues);
+      }
     },
     onSubmit,
   };

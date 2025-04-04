@@ -51,7 +51,7 @@ function TerminationFlowProvider({
         termination,
       }}
     >
-      {render()}
+      {render({ termination })}
     </TerminationContext.Provider>
   );
 }
@@ -62,5 +62,9 @@ export const TerminationFlow = ({
   render: () => React.ReactNode;
 }) => {
   const termination = useTermination();
+  if (termination.isLoading) {
+    return <>{render({ termination })}</>;
+  }
+
   return <TerminationFlowProvider termination={termination} render={render} />;
 };
