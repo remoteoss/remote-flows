@@ -3,7 +3,7 @@ export type ContractAmendmentParams = {
   employmentId: string;
   countryCode: string;
   options?: {
-    jsfModified?: {
+    jsfModify?: {
       [K in 'fields' | 'allFields' | 'create' | 'pick' | 'orderRoot']?: any;
     };
   };

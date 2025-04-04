@@ -86,8 +86,8 @@ const useContractAmendmentSchema = ({
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
 
-      if (options && options.jsfModified) {
-        const { schema } = modify(jsfSchema, options.jsfModified);
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
 
