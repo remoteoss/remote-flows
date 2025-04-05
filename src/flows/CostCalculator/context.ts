@@ -1,3 +1,4 @@
+import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { createContext, useContext } from 'react';
@@ -12,9 +13,11 @@ export const CostCalculatorContext = createContext<{
     currencySlug: string;
     salary: string;
   }>;
+  costCalculatorBag?: ReturnType<typeof useCostCalculator>;
 }>({
   form: null,
   formId: undefined,
+  costCalculatorBag: undefined,
   estimationOptions: undefined,
   defaultValues: undefined,
 });
@@ -30,5 +33,8 @@ export const useCostCalculatorContext = () => {
   return {
     form: context.form,
     formId: context.formId,
+    costCalculatorBag: context.costCalculatorBag,
+    estimationOptions: context.estimationOptions,
+    defaultValues: context.defaultValues,
   } as const;
 };

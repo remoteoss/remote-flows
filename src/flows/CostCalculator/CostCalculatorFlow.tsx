@@ -1,20 +1,25 @@
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
+import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 
 function CostCalculatorFlowProvider({
   estimationOptions,
+  costCalculatorBag,
   defaultValues,
   render,
 }: PropsWithChildren<{
   estimationOptions: CostCalculatorEstimationOptions;
+  costCalculatorBag: ReturnType<typeof useCostCalculator>;
   defaultValues: Partial<{
     countryRegionSlug: string;
     currencySlug: string;
     salary: string;
   }>;
-  render: () => React.ReactNode;
+  render: (
+    costCalculatorBag: ReturnType<typeof useCostCalculator>,
+  ) => React.ReactNode;
 }>) {
   const formId = useId();
 
@@ -30,11 +35,12 @@ function CostCalculatorFlowProvider({
       value={{
         form,
         formId: formId,
+        costCalculatorBag,
         estimationOptions,
         defaultValues,
       }}
     >
-      {render()}
+      {render(costCalculatorBag)}
     </CostCalculatorContext.Provider>
   );
 }
@@ -61,16 +67,32 @@ type CostCalculatorFlowProps = {
      */
     salary: string;
   }>;
-  render: () => React.ReactNode;
+  render: (
+    costCalculatorBag: ReturnType<typeof useCostCalculator>,
+  ) => React.ReactNode;
 };
 
 export const CostCalculatorFlow = ({
   estimationOptions,
-  defaultValues,
+  defaultValues = {
+    countryRegionSlug: '',
+    currencySlug: '',
+    salary: '',
+  },
   render,
 }: CostCalculatorFlowProps) => {
+  const costCalculatorBag = useCostCalculator({
+    defaultRegion: defaultValues.countryRegionSlug,
+    estimationOptions,
+  });
+
+  if (costCalculatorBag.isLoading) {
+    return render(costCalculatorBag);
+  }
+
   return (
     <CostCalculatorFlowProvider
+      costCalculatorBag={costCalculatorBag}
       estimationOptions={estimationOptions}
       defaultValues={defaultValues}
       render={render}

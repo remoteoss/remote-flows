@@ -1,4 +1,8 @@
-import { CostCalculatorFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  RemoteFlows,
+} from '@remoteoss/remote-flows';
 import './App.css';
 
 const estimationOptions = {
@@ -31,7 +35,7 @@ export function BasicCostCalculatorFlow() {
         render={(props) => {
           return (
             <div>
-              <h1>Cost Calculator Flow</h1>
+              <CostCalculatorForm />
             </div>
           );
         }}
