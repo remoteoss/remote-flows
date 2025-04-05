@@ -3,7 +3,7 @@ export { CostCalculatorFlow } from './CostCalculatorFlow';
 export { CostCalculatorForm } from './CostCalculatorForm';
 export { CostCalculatorSubmitButton } from './CostCalculatorSubmitButton';
 export { CostCalculatorResetButton } from './CostCalculatorResetButton';
-//export { CostCalculatorDisclaimer } from './CostCalculatorDisclaimer';
+export { Disclaimer as CostCalculatorDisclaimer } from './Disclaimer/Disclaimer';
 export {
   useCostCalculator,
   useCostCalculatorDisclaimer,

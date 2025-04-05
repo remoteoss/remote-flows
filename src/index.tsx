@@ -8,6 +8,7 @@ export {
   CostCalculatorForm,
   CostCalculatorResetButton,
   CostCalculatorSubmitButton,
+  CostCalculatorDisclaimer,
   CostCalculatorResults,
   useCostCalculator,
   useCostCalculatorDisclaimer,
