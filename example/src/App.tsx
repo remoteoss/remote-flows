@@ -1,10 +1,10 @@
-import { CostCalculatorFlowWithExportPdf } from './CostCalculatorFlowWithExportPdf';
+import { CostCalculatorFlowWithResults } from './CostCalculatorFlowWithResults';
 import './App.css';
 
 function App() {
   return (
     <>
-      <CostCalculatorFlowWithExportPdf />
+      <CostCalculatorFlowWithResults />
     </>
   );
 }
