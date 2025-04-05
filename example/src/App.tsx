@@ -1,12 +1,10 @@
-import { BasicCostCalculatorFlowWithDefaultValues } from './BasicCostCalculatorFlowWithDefaultValues';
-import { BasicCostCalculatorWithDefaultValues } from './BasicCostCalculatorDefaultValues';
+import { CostCalculatorFlowWithExportPdf } from './CostCalculatorFlowWithExportPdf';
 import './App.css';
 
 function App() {
   return (
     <>
-      <BasicCostCalculatorFlowWithDefaultValues />
-      <BasicCostCalculatorWithDefaultValues />
+      <CostCalculatorFlowWithExportPdf />
     </>
   );
 }

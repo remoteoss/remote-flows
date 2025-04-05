@@ -4,7 +4,7 @@ import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import { EstimationError } from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 type CostCalculatorFormProps = Partial<{
   /**
