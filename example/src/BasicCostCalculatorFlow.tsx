@@ -44,11 +44,11 @@ export function BasicCostCalculatorFlow() {
                 Get estimate
               </CostCalculatorSubmitButton>
               <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
-              <CostCalculatorDisclaimer label="Disclaimer" />
             </div>
           );
         }}
       />
+      <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
 }

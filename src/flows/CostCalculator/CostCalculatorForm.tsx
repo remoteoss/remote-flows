@@ -16,7 +16,7 @@ type CostCalculatorFormProps = Partial<{
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
-  onSuccess: (data: CostCalculatorEstimateResponse) => Promise<void> | void;
+  onSuccess: (data?: CostCalculatorEstimateResponse) => Promise<void> | void;
   /**
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
@@ -30,16 +30,6 @@ export function CostCalculatorForm({
   onSuccess,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
-
-  useEffect(() => {
-    const subscription = form?.watch((values) => {
-      /*  if (form.formState.isDirty) {
-        costCalculatorBag.checkFieldUpdates(values);
-      } */
-    });
-    return () => subscription?.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     const costCalculatorResults = await costCalculatorBag?.onSubmit(values);

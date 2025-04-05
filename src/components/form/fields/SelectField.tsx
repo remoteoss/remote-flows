@@ -38,54 +38,55 @@ export function SelectField({
   onChange,
 }: SelectFieldProps) {
   const { control } = useFormContext();
-
   return (
     <FormField
       defaultValue={defaultValue}
       control={control}
       name={name}
-      render={({ field, fieldState }) => (
-        <FormItem className={`RemoteFlows__SelectField__Item__${name}`}>
-          <FormLabel className="RemoteFlows__SelectField__Label">
-            {label}
-          </FormLabel>
-          <FormControl>
-            <div className="relative">
-              <Select
-                value={field.value}
-                onValueChange={(value: string) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                }}
-              >
-                <SelectTrigger
-                  className="RemoteFlows__SelectField__Trigger"
-                  aria-invalid={Boolean(fieldState.error)}
+      render={({ field, fieldState }) => {
+        return (
+          <FormItem className={`RemoteFlows__SelectField__Item__${name}`}>
+            <FormLabel className="RemoteFlows__SelectField__Label">
+              {label}
+            </FormLabel>
+            <FormControl>
+              <div className="relative">
+                <Select
+                  value={field.value || ''}
+                  onValueChange={(value: string) => {
+                    field.onChange(value);
+                    onChange?.(value);
+                  }}
                 >
-                  <span className="absolute">
-                    <SelectValue />
-                  </span>
-                </SelectTrigger>
-                <SelectContent className="RemoteFlows__SelectField__Content">
-                  <SelectGroup className="RemoteFlows__SelectField__Group">
-                    {options.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        value={option.value}
-                        className="RemoteFlows__SelectField__SelectItem"
-                      >
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          {fieldState.error && <FormMessage />}
-        </FormItem>
-      )}
+                  <SelectTrigger
+                    className="RemoteFlows__SelectField__Trigger"
+                    aria-invalid={Boolean(fieldState.error)}
+                  >
+                    <span className="absolute">
+                      <SelectValue />
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="RemoteFlows__SelectField__Content">
+                    <SelectGroup className="RemoteFlows__SelectField__Group">
+                      {options.map((option) => (
+                        <SelectItem
+                          key={option.value}
+                          value={option.value}
+                          className="RemoteFlows__SelectField__SelectItem"
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            {fieldState.error && <FormMessage />}
+          </FormItem>
+        );
+      }}
     />
   );
 }
