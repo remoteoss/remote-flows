@@ -2,6 +2,7 @@ import {
   CostCalculatorFlow,
   CostCalculatorForm,
   CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
   RemoteFlows,
 } from '@remoteoss/remote-flows';
 import './App.css';
@@ -41,6 +42,7 @@ export function BasicCostCalculatorFlow() {
               <CostCalculatorSubmitButton>
                 Get estimate
               </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
             </div>
           );
         }}
