@@ -1,5 +1,15 @@
-import React from 'react';
+import { Button } from '@/src/components/ui/button';
+import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { useCostCalculatorContext } from './context';
 
-export const CostCalculatorSubmitButton = () => {
-  return <h1>Cost Calculator Submit Button</h1>;
-};
+export function CostCalculatorSubmitButton(
+  props: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>,
+) {
+  const { formId } = useCostCalculatorContext();
+
+  return (
+    <Button {...props} form={formId}>
+      {props.children}
+    </Button>
+  );
+}

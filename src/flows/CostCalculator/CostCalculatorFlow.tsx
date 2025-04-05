@@ -1,3 +1,4 @@
+import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
@@ -22,10 +23,13 @@ function CostCalculatorFlowProvider({
   ) => React.ReactNode;
 }>) {
   const formId = useId();
+  const resolver = useValidationFormResolver(
+    costCalculatorBag.validationSchema,
+  );
 
   const form = useForm({
-    //resolver,
-    defaultValues, // Set default values for the form
+    resolver,
+    defaultValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });

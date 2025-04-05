@@ -1,30 +1,54 @@
+import { CostCalculatorEstimateResponse } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
+import { EstimationError } from '@/src/flows/CostCalculator/hooks';
+import { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
 import React, { useEffect } from 'react';
-import { FieldValues } from 'react-hook-form';
 
-export function CostCalculatorForm() {
+type CostCalculatorFormProps = Partial<{
+  /**
+   * Callback function that handles form submission. When form is submit, the form values are sent to the consumer app before behind submitted to Remote.
+   * @param data - The payload sent to the /cost-calculator/estimation endpoint.
+   */
+  onSubmit: (data: CostCalculatorEstimationFormValues) => Promise<void> | void;
+  /**
+   * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
+   * @param data - The response data from the /cost-calculator/estimation endpoint.
+   */
+  onSuccess: (data: CostCalculatorEstimateResponse) => Promise<void> | void;
+  /**
+   * Callback function to handle the error when the estimation fails.
+   * @param error - The error object.
+   */
+  onError: (error: EstimationError) => void;
+}>;
+
+export function CostCalculatorForm({
+  onSubmit,
+  onError,
+  onSuccess,
+}: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      if (form.formState.isDirty) {
+      /*  if (form.formState.isDirty) {
         costCalculatorBag.checkFieldUpdates(values);
-      }
+      } */
     });
     return () => subscription?.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: FieldValues) => {
+  const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     const costCalculatorResults = await costCalculatorBag?.onSubmit(values);
 
     await onSubmit?.(values);
-    if (costCalculatorResults.error) {
+    if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
     } else {
-      onSuccess?.(costCalculatorResults.data);
+      onSuccess?.(costCalculatorResults?.data);
     }
   };
 

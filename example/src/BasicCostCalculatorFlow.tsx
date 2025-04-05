@@ -1,6 +1,7 @@
 import {
   CostCalculatorFlow,
   CostCalculatorForm,
+  CostCalculatorSubmitButton,
   RemoteFlows,
 } from '@remoteoss/remote-flows';
 import './App.css';
@@ -29,13 +30,17 @@ export function BasicCostCalculatorFlow() {
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        onSubmit={(payload) => console.log(payload)}
-        onError={(error) => console.error({ error })}
-        onSuccess={(response) => console.log({ response })}
-        render={(props) => {
+        render={() => {
           return (
             <div>
-              <CostCalculatorForm />
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
             </div>
           );
         }}
