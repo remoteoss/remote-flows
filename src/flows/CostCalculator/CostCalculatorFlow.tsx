@@ -29,7 +29,12 @@ function CostCalculatorFlowProvider({
 
   const form = useForm({
     resolver,
-    defaultValues,
+    defaultValues: {
+      country: defaultValues?.countryRegionSlug,
+      currency: defaultValues?.currencySlug,
+      region: '',
+      salary: defaultValues?.salary,
+    },
     shouldUnregister: true,
     mode: 'onBlur',
   });
@@ -40,8 +45,6 @@ function CostCalculatorFlowProvider({
         form,
         formId: formId,
         costCalculatorBag,
-        estimationOptions,
-        defaultValues,
       }}
     >
       {render(costCalculatorBag)}
