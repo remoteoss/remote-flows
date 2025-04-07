@@ -459,18 +459,18 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
 | `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
 
-### CostCalculator
+### CostCalculatorFlow
 
-The `CostCalculator` component renders a form for calculating employment costs.
+The `CostCalculatorFlow` component lets you render different components like `CostCalculatorForm`, `CostCalculatorSubmitButton`, `CostCalculatorResetButton`
 
-| Prop               | Type                                                 | Required | Description                                                                                  |
-| ------------------ | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `estimationParams` | object                                               | No       | Customization for the estimation response (see table below)                                  |
-| `defaultValues`    | object                                               | No       | Predefined form values (see table below)                                                     |
-| `params`           | `{ disclaimer?: { label?: string } }`                | No       | Additional configuration parameters                                                          |
-| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
-| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                                                 |
-| `onError`          | `(error: Error) => void`                             | No       | Error handling callback                                                                      |
+| Prop               | Type                                                         | Required | Description                                                                                  |
+| ------------------ | ------------------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------- |
+| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                                  |
+| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                     |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook                    |
+| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`            | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
+| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void`         | No       | Callback with the successful estimation data                                                 |
+| `onError`          | `(error: Error) => void`                                     | No       | Error handling callback                                                                      |
 
 #### estimationParams Properties
 
@@ -487,6 +487,32 @@ The `CostCalculator` component renders a form for calculating employment costs.
 | `countryRegionSlug` | `string` | Pre-selected country/region |
 | `currencySlug`      | `string` | Pre-selected currency       |
 | `salary`            | `string` | Pre-filled salary amount    |
+
+### CostCalculatorForm
+
+It renders the form and the fields of the cost calculator
+
+| Prop        | Type                                                 | Required | Description                                                                                  |
+| ----------- | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `onSubmit`  | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
+| `onSuccess` | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                                                 |
+| `onError`   | `(error: Error) => void`                             | No       | Error handling callback                                                                      |
+
+### CostCalculatorSubmitButton
+
+It renders the submit button of the form, it supports all props from the element `<button>`, needs to be rendered inside the render prop from CostCalculatorFlow
+
+### CostCalculatorResetButton
+
+It renders the reset button of the form, it supports all props from the element `<button>`, needs to be rendered inside the render prop from CostCalculatorFlow
+
+### CostCalculatorDisclaimer
+
+It renders a disclaimer link that can be rendered anywhere
+
+| Prop    | Type        | Required | Description |
+| ------- | ----------- | -------- | ----------- |
+| `label` | `ReactNode` | No       | link label  |
 
 ### CostCalculatorResults
 
