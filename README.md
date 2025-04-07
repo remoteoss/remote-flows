@@ -140,8 +140,8 @@ export function BasicCostCalculatorWithDefaultValues() {
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{
-          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe', // it's the region slug from the v1/cost-calculator/countries, changes in each env
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba', // it's a currency slug from v1/company-currencies, changes in each env
+          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe', // it's the region slug from the v1/cost-calculator/countries, different in each env
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba', // it's a currency slug from v1/company-currencies, different in each env
           salary: '50000',
         }}
         render={(props) => {
@@ -233,7 +233,7 @@ export function CostCalculatoWithResults() {
 #### Cost calculator with button that exports results to pdf
 
 ```tsx
-iimport {
+import {
   CostCalculatorFlow,
   CostCalculatorForm,
   CostCalculatorSubmitButton,
@@ -246,8 +246,8 @@ import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import { useState } from 'react';
+import './App.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -463,14 +463,11 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 
 The `CostCalculatorFlow` component lets you render different components like `CostCalculatorForm`, `CostCalculatorSubmitButton`, `CostCalculatorResetButton`
 
-| Prop               | Type                                                         | Required | Description                                                                                  |
-| ------------------ | ------------------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------- |
-| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                                  |
-| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                     |
-| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook                    |
-| `onSubmit`         | `(payload: CostCalculatorEstimateParams) => void`            | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
-| `onSuccess`        | `(response: CostCalculatorEstimateResponse) => void`         | No       | Callback with the successful estimation data                                                 |
-| `onError`          | `(error: Error) => void`                                     | No       | Error handling callback                                                                      |
+| Prop               | Type                                                         | Required | Description                                                               |
+| ------------------ | ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------- |
+| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)               |
+| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                  |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook |
 
 #### estimationParams Properties
 
@@ -500,19 +497,19 @@ It renders the form and the fields of the cost calculator
 
 ### CostCalculatorSubmitButton
 
-It renders the submit button of the form, it supports all props from the element `<button>`, needs to be rendered inside the render prop from CostCalculatorFlow
+It renders the submit button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the CostCalculatorFlow component to ensure proper functionality
 
 ### CostCalculatorResetButton
 
-It renders the reset button of the form, it supports all props from the element `<button>`, needs to be rendered inside the render prop from CostCalculatorFlow
+It renders the reset button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the CostCalculatorFlow component to ensure proper functionality
 
 ### CostCalculatorDisclaimer
 
-It renders a disclaimer link that can be rendered anywhere
+It renders a disclaimer link that can be placed anywhere in your application.
 
-| Prop    | Type        | Required | Description |
-| ------- | ----------- | -------- | ----------- |
-| `label` | `ReactNode` | No       | link label  |
+| Prop    | Type        | Required | Description    |
+| ------- | ----------- | -------- | -------------- |
+| `label` | `ReactNode` | No       | the link label |
 
 ### CostCalculatorResults
 
