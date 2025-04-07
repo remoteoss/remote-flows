@@ -1,4 +1,3 @@
-export { CostCalculator } from './CostCalculator';
 export { CostCalculatorFlow } from './CostCalculatorFlow';
 export { CostCalculatorForm } from './CostCalculatorForm';
 export { CostCalculatorSubmitButton } from './CostCalculatorSubmitButton';

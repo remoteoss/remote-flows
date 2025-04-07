@@ -3,7 +3,6 @@ import './styles/global.css';
 
 export {
   buildCostCalculatorEstimationPayload,
-  CostCalculator,
   CostCalculatorFlow,
   CostCalculatorForm,
   CostCalculatorResetButton,
