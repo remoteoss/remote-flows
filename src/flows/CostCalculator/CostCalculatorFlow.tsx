@@ -75,6 +75,11 @@ export type CostCalculatorFlowProps = {
      */
     salary: string;
   }>;
+  options?: {
+    jsfModify?: {
+      [K in 'fields' | 'allFields' | 'create' | 'pick' | 'orderRoot']?: any;
+    };
+  };
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
   ) => React.ReactNode;
@@ -87,11 +92,13 @@ export const CostCalculatorFlow = ({
     currencySlug: '',
     salary: '',
   },
+  options,
   render,
 }: CostCalculatorFlowProps) => {
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
+    options,
   });
 
   if (costCalculatorBag.isLoading) {

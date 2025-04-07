@@ -17,11 +17,11 @@ import type {
 import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
-import { fields } from './fields';
+import { staticFields } from './fields';
 import { buildPayload, buildValidationSchema } from './utils';
 
 type CostCalculatorCountry = {
@@ -141,8 +141,10 @@ const useRegionFields = (
   region: string | undefined,
   {
     includePremiumBenefits,
+    options,
   }: {
     includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
+    options: any;
   },
 ) => {
   const { client } = useClient();
@@ -162,10 +164,15 @@ const useRegionFields = (
       });
     },
     enabled: !!region,
-    select: ({ data }) =>
-      createHeadlessForm(data?.data?.schema || {}, {
-        strictInputType: false,
-      }),
+    select: ({ data }) => {
+      let jsfSchema = data?.data || {};
+
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema.schema, options.jsfModify);
+        jsfSchema = schema;
+      }
+      return createHeadlessForm(jsfSchema);
+    },
   });
 };
 
@@ -185,6 +192,7 @@ type UseCostCalculatorParams = {
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
+  options?: any;
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
@@ -193,10 +201,27 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+  { defaultRegion, estimationOptions, options }: UseCostCalculatorParams = {
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
+  const { schema } = modify(
+    {
+      properties: staticFields.reduce((acc, field) => {
+        return {
+          ...acc,
+          [field.name]: field,
+        };
+      }, {}),
+    },
+    options.jsfModify || {},
+  );
+  const fields = Object.values<Record<string, unknown>>(schema.properties);
+
+  fields[0].schema = string().required('Country is required');
+
+  // console.log(fields)
+
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -214,6 +239,7 @@ export const useCostCalculator = (
   const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
     useRegionFields(jsonSchemaRegionSlug, {
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
+      options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
@@ -331,6 +357,7 @@ export const useCostCalculator = (
     ...(jsonSchemaRegionFields?.fields || []),
   ] as Field[];
 
+  // console.log('FIELDS', JSON.stringify(fields));
   const validationSchema = buildValidationSchema(allFields);
 
   return {

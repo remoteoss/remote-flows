@@ -1,7 +1,6 @@
 import { Field } from '@/src/flows/CostCalculator/types';
-import { string } from 'yup';
 
-export const fields: Field[] = [
+export const staticFields: Field[] = [
   {
     description: '',
     inputType: 'select',
@@ -10,7 +9,7 @@ export const fields: Field[] = [
     name: 'country',
     options: [],
     required: true,
-    schema: string().required('Country is required'),
+
     type: 'string',
   },
   {
@@ -21,7 +20,7 @@ export const fields: Field[] = [
     name: 'region',
     options: [],
     required: false,
-    schema: string(),
+
     type: 'string',
   },
   {
@@ -32,7 +31,7 @@ export const fields: Field[] = [
     name: 'currency',
     options: [],
     required: true,
-    schema: string().required('Currency is required'),
+
     type: 'string',
   },
   {
@@ -43,9 +42,7 @@ export const fields: Field[] = [
     name: 'salary',
     options: [],
     required: true,
-    schema: string()
-      .typeError('Salary must be a number')
-      .required('Salary is required'),
+
     type: 'integer',
   },
 ];
