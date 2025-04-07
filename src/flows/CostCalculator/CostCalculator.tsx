@@ -7,7 +7,7 @@ import { Form } from '@/src/components/ui/form';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Button } from '@/src/components/ui/button';
-import { Disclaimer } from '@/src/flows/CostCalculator/Disclaimer';
+import { CostCalculatorDisclaimer } from '@/src/flows/CostCalculator/CostCalculatorDisclaimer';
 import {
   defaultEstimationOptions,
   EstimationError,
@@ -151,7 +151,7 @@ export function CostCalculator({
         </form>
       </Form>
       <div className="RemoteFlows__CostCalculator__Disclaimer">
-        <Disclaimer label={options?.disclaimer?.label} />
+        <CostCalculatorDisclaimer label={options?.disclaimer?.label} />
       </div>
     </>
   );
