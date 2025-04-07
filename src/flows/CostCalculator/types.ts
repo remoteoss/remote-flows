@@ -26,7 +26,8 @@ export type Field = {
     | 'radio'
     | 'checkbox'
     | 'date'
-    | 'hidden';
+    | 'hidden'
+    | 'file';
   required: boolean;
   jsonType?: string;
   isVisible: boolean;
@@ -59,4 +60,8 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include cost breakdowns in the estimation. Default is false.
    */
   includeCostBreakdowns: boolean;
+  /**
+   * Include premium benefits in the estimation. Default is false.
+   */
+  includePremiumBenefits: boolean;
 }>;

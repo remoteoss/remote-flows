@@ -7,4 +7,5 @@ export type SupportedTypes =
   | 'date'
   | 'checkbox'
   | 'textarea'
-  | 'money';
+  | 'money'
+  | 'file';
