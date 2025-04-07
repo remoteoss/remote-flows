@@ -63,7 +63,7 @@ export function SelectField({
                     aria-invalid={Boolean(fieldState.error)}
                   >
                     <span className="absolute">
-                      <SelectValue />
+                      <SelectValue placeholder={label} />
                     </span>
                   </SelectTrigger>
                   <SelectContent className="RemoteFlows__SelectField__Content">
