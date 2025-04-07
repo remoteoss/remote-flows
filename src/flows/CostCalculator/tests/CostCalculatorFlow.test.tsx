@@ -1,4 +1,5 @@
 import { CostCalculatorFlow } from '@/src/flows/CostCalculator/CostCalculatorFlow';
+import type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator/CostCalculatorFlow';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -35,10 +36,14 @@ const defaultProps = {
   },
 };
 
-function renderComponent() {
+function renderComponent(
+  props: Omit<CostCalculatorFlowProps, 'render'> = {
+    defaultValues: defaultProps.defaultValues,
+  },
+) {
   return render(
     <CostCalculatorFlow
-      {...defaultProps}
+      {...props}
       render={(props) => {
         if (props.isLoading) {
           return <div data-testid="loading">Loading...</div>;
@@ -104,7 +109,6 @@ describe('CostCalculatorFlow', () => {
 
   test('should submit the form with default values', async () => {
     renderComponent();
-
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
@@ -159,8 +163,7 @@ describe('CostCalculatorFlow', () => {
   });
 
   test('should display validation errors when form is submitted with empty fields', async () => {
-    renderComponent();
-
+    renderComponent({ defaultValues: {} });
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });

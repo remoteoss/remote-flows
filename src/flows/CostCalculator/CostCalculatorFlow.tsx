@@ -53,7 +53,7 @@ function CostCalculatorFlowProvider({
   );
 }
 
-type CostCalculatorFlowProps = {
+export type CostCalculatorFlowProps = {
   /**
    * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
    */
