@@ -4,10 +4,13 @@ Welcome to the CostCalculator flow docs
 
 # Table of Contents
 
+# Table of Contents
+
 - [Cost Calculator Docs](#cost-calculator-docs)
   - [Getting Started](#getting-started)
   - [Basic Setup](#basic-setup)
     - [Simple Cost Calculator](#simple-cost-calculator)
+    - [Simple Cost Calculator with Custom Labels](#simple-cost-calculator-with-custom-labels)
     - [Cost Calculator with Default Values and a Custom Disclaimer Label](#cost-calculator-with-default-values-and-a-custom-disclaimer-label)
     - [Cost Calculator with Results](#cost-calculator-with-results)
     - [Cost Calculator with Button that Exports Results to PDF](#cost-calculator-with-button-that-exports-results-to-pdf)
@@ -71,6 +74,82 @@ export function BasicCostCalculator() {
   return (
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
+    </RemoteFlows>
+  );
+}
+```
+
+### Simple Cost Calculator with custom labels
+
+```tsx
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+} from '@remoteoss/remote-flows';
+import './App.css';
+
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+export function BasicCostCalculatorWithLabels() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorFlow
+        form={{
+          fields: {
+            country: {
+              label: 'Select your country',
+            },
+            region: {
+              label: 'Select your region',
+            },
+            currency: {
+              label: 'Select your currency',
+            },
+            salary: {
+              label: 'Enter your salary',
+            },
+          },
+        }}
         estimationOptions={estimationOptions}
         render={(props) => {
           if (props.isLoading) {

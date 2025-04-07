@@ -64,3 +64,20 @@ export type CostCalculatorEstimationOptions = Partial<{
    */
   includePremiumBenefits: boolean;
 }>;
+
+export type CostCalculatorFormOptions = Partial<{
+  fields: {
+    country: {
+      label: string;
+    };
+    region: {
+      label: string;
+    };
+    currency: {
+      label: string;
+    };
+    salary: {
+      label: string;
+    };
+  };
+}>;

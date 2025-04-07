@@ -310,4 +310,31 @@ describe('CostCalculatorFlow', () => {
       ).toHaveValue('');
     });
   });
+
+  test('should show the customize labels in the form', async () => {
+    renderComponent({
+      form: {
+        fields: {
+          country: {
+            label: 'Select your country',
+          },
+          currency: {
+            label: 'Select your currency',
+          },
+          region: {
+            label: 'Select your region',
+          },
+          salary: {
+            label: 'Enter your salary',
+          },
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Enter your salary/i)).toBeInTheDocument();
+  });
 });

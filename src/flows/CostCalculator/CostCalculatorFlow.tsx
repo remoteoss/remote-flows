@@ -4,7 +4,10 @@ import {
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
-import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
+import {
+  CostCalculatorEstimationOptions,
+  CostCalculatorFormOptions,
+} from '@/src/flows/CostCalculator/types';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -78,6 +81,11 @@ export type CostCalculatorFlowProps = {
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
   ) => React.ReactNode;
+
+  /**
+   * Allows to customize part of the form fields. Right now, labels
+   */
+  form?: CostCalculatorFormOptions;
 };
 
 export const CostCalculatorFlow = ({
@@ -87,11 +95,13 @@ export const CostCalculatorFlow = ({
     currencySlug: '',
     salary: '',
   },
+  form,
   render,
 }: CostCalculatorFlowProps) => {
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
+    form,
   });
 
   if (costCalculatorBag.isLoading) {

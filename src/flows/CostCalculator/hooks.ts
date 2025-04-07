@@ -12,6 +12,7 @@ import {
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
+  CostCalculatorFormOptions,
   Field,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
@@ -19,9 +20,9 @@ import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
-import { fields } from './fields';
+import { generateFields } from './fields';
 import { buildPayload, buildValidationSchema } from './utils';
 
 type CostCalculatorCountry = {
@@ -185,6 +186,10 @@ type UseCostCalculatorParams = {
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
+  /**
+   * Allows to customize part of the form fields. Right now, labels
+   */
+  form?: CostCalculatorFormOptions;
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
@@ -193,7 +198,7 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+  { defaultRegion, estimationOptions, form }: UseCostCalculatorParams = {
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
@@ -216,6 +221,8 @@ export const useCostCalculator = (
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+
+  const fields = useMemo(() => generateFields(form?.fields), [form?.fields]);
 
   /**
    * Submit the estimation form with the given values.
@@ -312,7 +319,6 @@ export const useCostCalculator = (
       currencyField.options = currencies;
     }
   }
-
   if (countries) {
     const countryField = fields.find((field) => field.name === 'country');
     if (countryField) {

@@ -42,6 +42,7 @@ describe('useCostCalculator', () => {
     const regionField = result.current.fields.find(
       (field) => field.name === 'region',
     );
+
     await waitFor(() => {
       expect(countryField?.onChange).toBeDefined();
     });
