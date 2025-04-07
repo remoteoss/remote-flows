@@ -6,12 +6,10 @@ import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 
 function CostCalculatorFlowProvider({
-  estimationOptions,
   costCalculatorBag,
   defaultValues,
   render,
 }: PropsWithChildren<{
-  estimationOptions: CostCalculatorEstimationOptions;
   costCalculatorBag: ReturnType<typeof useCostCalculator>;
   defaultValues: Partial<{
     countryRegionSlug: string;
@@ -100,7 +98,6 @@ export const CostCalculatorFlow = ({
   return (
     <CostCalculatorFlowProvider
       costCalculatorBag={costCalculatorBag}
-      estimationOptions={estimationOptions}
       defaultValues={defaultValues}
       render={render}
     />
