@@ -4,8 +4,8 @@
 
 ### Patch Changes
 
-- b6dd1fe: - Add `CostCalculatorFlow` and related components to build the CostCalculator in a more flexible way
-  - Assign label as placeholders
+- 48544df: Add `CostCalculatorFlow` and related components to build the CostCalculator in a more flexible way
+- 8af7ae7: Assign label as placeholders
 
 ## 0.0.3
 
