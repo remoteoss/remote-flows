@@ -197,8 +197,8 @@ describe('CostCalculatorFlow', () => {
     });
 
     expect(screen.getByText('Benefits')).toBeInTheDocument();
-    expect(screen.getByText('Health Insurance')).toBeInTheDocument();
-    expect(screen.getByText('Life Insurance')).toBeInTheDocument();
+    expect(screen.getByLabelText('Health Insurance')).toBeInTheDocument();
+    expect(screen.getByLabelText('Life Insurance')).toBeInTheDocument();
   });
 
   test('should load, fill and submit form with regional fields', async () => {
