@@ -46,7 +46,13 @@ After installation, import the main CSS file in your application:
 #### Simple Cost calculator
 
 ```tsx
-import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+} from '@remoteoss/remote-flows';
 import './App.css';
 
 const estimationOptions = {
@@ -54,25 +60,6 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
 };
-
-function CostCalculatorForm() {
-  return (
-    <CostCalculator
-      estimationOptions={estimationOptions}
-      defaultValues={{
-        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
-        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-        salary: '50000',
-      }}
-      params={{
-        disclaimer: {
-          label: 'Remote Disclaimer',
-        },
-      }}
-      onSuccess={(response) => console.log({ response })}
-    />
-  );
-}
 
 export function BasicCostCalculator() {
   const fetchToken = () => {
@@ -90,7 +77,27 @@ export function BasicCostCalculator() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
     </RemoteFlows>
   );
 }
@@ -99,7 +106,13 @@ export function BasicCostCalculator() {
 #### Cost Calculator with default values and a custom disclaimer label
 
 ```tsx
-import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+} from '@remoteoss/remote-flows';
 import './App.css';
 
 const estimationOptions = {
@@ -107,25 +120,6 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
 };
-
-function CostCalculatorForm() {
-  return (
-    <CostCalculator
-      defaultValues={{
-        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
-        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-        salary: '50000',
-      }}
-      params={{
-        disclaimer: {
-          label: 'Remote Disclaimer',
-        },
-      }}
-      estimationOptions={estimationOptions}
-      onSuccess={(response) => console.log({ response })}
-    />
-  );
-}
 
 export function BasicCostCalculatorWithDefaultValues() {
   const fetchToken = () => {
@@ -143,7 +137,32 @@ export function BasicCostCalculatorWithDefaultValues() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        defaultValues={{
+          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe', // it's the region slug from the v1/cost-calculator/countries, changes in each env
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba', // it's a currency slug from v1/company-currencies, changes in each env
+          salary: '50000',
+        }}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
     </RemoteFlows>
   );
 }
@@ -152,51 +171,21 @@ export function BasicCostCalculatorWithDefaultValues() {
 #### Cost calculator with results
 
 ```tsx
-import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import {
-  CostCalculator,
-  CostCalculatorResults,
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
   RemoteFlows,
+  CostCalculatorResults,
 } from '@remoteoss/remote-flows';
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import './App.css';
 
-function CostCalculatorForm() {
+export function CostCalculatoWithResults() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
-
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-  };
-
-  return (
-    <>
-      <CostCalculator
-        estimationOptions={estimationOptions}
-        defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-          salary: '50000',
-        }}
-        params={{
-          disclaimer: {
-            label: 'Remote Disclaimer',
-          },
-        }}
-        onSuccess={(response) => {
-          setEstimations(response);
-        }}
-      />
-      {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
-      )}
-    </>
-  );
-}
-
-export function CostCalculatoWithResults() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -212,7 +201,30 @@ export function CostCalculatoWithResults() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => setEstimations(response)}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
     </RemoteFlows>
   );
 }
@@ -221,30 +233,33 @@ export function CostCalculatoWithResults() {
 #### Cost calculator with button that exports results to pdf
 
 ```tsx
+iimport {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+  buildCostCalculatorEstimationPayload,
+} from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
 } from '@remoteoss/remote-flows';
-import {
-  buildCostCalculatorEstimationPayload,
-  CostCalculator,
-  RemoteFlows,
-  useCostCalculatorEstimationPdf,
-} from '@remoteoss/remote-flows';
-import { useState } from 'react';
 import './App.css';
+import { useState } from 'react';
 
-function CostCalculatorForm() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
     useState<CostCalculatorEstimationFormValues | null>(null);
-
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-  };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
@@ -268,24 +283,30 @@ function CostCalculatorForm() {
       });
     }
   };
-
   return (
     <>
-      <CostCalculator
+      <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-          salary: '50000',
-        }}
-        params={{
-          disclaimer: {
-            label: 'Remote Disclaimer',
-          },
-        }}
-        onSubmit={(payload) => setPayload(payload)}
-        onSuccess={(response) => {
-          setEstimations(response);
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => setPayload(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
         }}
       />
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
@@ -293,7 +314,7 @@ function CostCalculatorForm() {
   );
 }
 
-export function CostCalculatorWithExportPdf() {
+export function CostCalculatorFlowWithExportPdf() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -309,7 +330,7 @@ export function CostCalculatorWithExportPdf() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFormDemo />
     </RemoteFlows>
   );
 }
@@ -318,85 +339,93 @@ export function CostCalculatorWithExportPdf() {
 #### Cost Calculator with premium benefits
 
 ```tsx
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+  buildCostCalculatorEstimationPayload,
+  CostCalculatorResults,
+} from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
 } from '@remoteoss/remote-flows';
-import {
-  buildCostCalculatorEstimationPayload,
-  CostCalculator,
-  CostCalculatorResults,
-  RemoteFlows,
-  useCostCalculatorEstimationPdf,
-} from '@remoteoss/remote-flows';
-import { useState } from 'react';
 import './App.css';
+import { useState } from 'react';
 
-function CostCalculatorForm() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+  includePremiumBenefits: true,
+};
+
+function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
     useState<CostCalculatorEstimationFormValues | null>(null);
 
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-    includePremiumBenefits: true,
-  };
-
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(
-        buildCostCalculatorEstimationPayload(payload, estimationOptions),
-        {
-          onSuccess: (response) => {
-            if (response?.data?.data?.content !== undefined) {
-              const a = document.createElement('a');
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              a.href = response.data.data.content as any;
-              a.download = 'estimation.pdf';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            }
-          },
-          onError: (error) => {
-            console.error({ error });
-          },
+      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
+        onSuccess: (response) => {
+          if (response?.data?.data?.content !== undefined) {
+            const a = document.createElement('a');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            a.href = response.data.data.content as any;
+            a.download = 'estimation.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
         },
-      );
+        onError: (error) => {
+          console.error({ error });
+        },
+      });
     }
   };
-
   return (
     <>
-      <CostCalculator
+      <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        options={{
-          disclaimer: {
-            label: 'Remote Disclaimer',
-          },
-        }}
-        onSubmit={(payload) => setPayload(payload)}
-        onError={(error) => console.error({ error })}
-        onSuccess={(response) => {
-          setEstimations(response);
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => setPayload(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
         }}
       />
       {estimations && (
-        <div className="cost-calculator__results">
-          <CostCalculatorResults employmentData={estimations.data} />
-        </div>
+        <CostCalculatorResults employmentData={estimations.data} />
       )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
 
-function CostCalculatorWithPremiumBenefits() {
+export function CostCalculatorFlowWithPremiumBenefits() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -411,11 +440,9 @@ function CostCalculatorWithPremiumBenefits() {
   };
 
   return (
-    <div className="cost-calculator__container">
-      <RemoteFlows auth={() => fetchToken()}>
-        <CostCalculatorForm />
-      </RemoteFlows>
-    </div>
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorFormDemo />
+    </RemoteFlows>
   );
 }
 ```

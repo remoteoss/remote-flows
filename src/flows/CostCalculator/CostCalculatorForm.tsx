@@ -16,7 +16,7 @@ type CostCalculatorFormProps = Partial<{
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
-  onSuccess: (data?: CostCalculatorEstimateResponse) => Promise<void> | void;
+  onSuccess: (data: CostCalculatorEstimateResponse) => Promise<void> | void;
   /**
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
@@ -38,7 +38,9 @@ export function CostCalculatorForm({
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
     } else {
-      onSuccess?.(costCalculatorResults?.data);
+      if (costCalculatorResults?.data) {
+        onSuccess?.(costCalculatorResults?.data);
+      }
     }
   };
 

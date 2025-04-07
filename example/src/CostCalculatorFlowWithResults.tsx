@@ -4,9 +4,9 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
   RemoteFlows,
-  CostCalculatorEstimateResponse,
   CostCalculatorResults,
 } from '@remoteoss/remote-flows';
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
 

@@ -6,9 +6,11 @@ import {
   RemoteFlows,
   useCostCalculatorEstimationPdf,
   buildCostCalculatorEstimationPayload,
+  CostCalculatorResults,
+} from '@remoteoss/remote-flows';
+import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
-  CostCalculatorResults,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
