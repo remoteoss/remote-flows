@@ -1,6 +1,9 @@
 import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
-import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import {
+  defaultEstimationOptions,
+  useCostCalculator,
+} from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
@@ -54,7 +57,7 @@ type CostCalculatorFlowProps = {
   /**
    * Estimation params allows you to customize the parameters sent to the /cost-calculator/estimation endpoint.
    */
-  estimationOptions: CostCalculatorEstimationOptions;
+  estimationOptions?: CostCalculatorEstimationOptions;
   /**
    * Default values for the form fields.
    */
@@ -78,7 +81,7 @@ type CostCalculatorFlowProps = {
 };
 
 export const CostCalculatorFlow = ({
-  estimationOptions,
+  estimationOptions = defaultEstimationOptions,
   defaultValues = {
     countryRegionSlug: '',
     currencySlug: '',
