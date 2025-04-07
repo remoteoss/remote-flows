@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.0.4
+
+### Patch Changes
+
+- 48544df: Add `CostCalculatorFlow` and related components to build the CostCalculator in a more flexible way
+- 8af7ae7: Assign label as placeholders
+
 ## 0.0.3
 
 ### Patch Changes
