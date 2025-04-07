@@ -11,7 +11,7 @@ export {
   CostCalculatorDisclaimer,
   CostCalculatorResults,
   useCostCalculator,
-  useCostCalculatorDisclaimer,
+  disclaimerData,
   useCostCalculatorEstimationPdf,
 } from '@/src/flows/CostCalculator';
 
