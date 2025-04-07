@@ -61,7 +61,7 @@ export type CostCalculatorFlowProps = {
   /**
    * Default values for the form fields.
    */
-  defaultValues: Partial<{
+  defaultValues?: Partial<{
     /**
      * Default value for the country field.
      */
