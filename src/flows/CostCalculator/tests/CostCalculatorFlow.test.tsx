@@ -175,7 +175,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test.only('should load the form with regional fields based on the selected country', async () => {
+  test('should load the form with regional fields based on the selected country', async () => {
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
         return HttpResponse.json(regionFieldsWithAgeProperty);
