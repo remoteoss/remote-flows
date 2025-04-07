@@ -12,6 +12,7 @@ export const tsup: Options = {
     'src/flows',
     '!src/**/*.test.{ts,tsx}',
     '!src/**/tests/*.{ts,tsx}',
+    '!src/**/*.md',
   ],
   keepNames: true,
   minify: true,

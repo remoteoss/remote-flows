@@ -1,27 +1,30 @@
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+  buildCostCalculatorEstimationPayload,
+} from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
 } from '@remoteoss/remote-flows';
-import {
-  buildCostCalculatorEstimationPayload,
-  CostCalculator,
-  RemoteFlows,
-  useCostCalculatorEstimationPdf,
-} from '@remoteoss/remote-flows';
-import { useState } from 'react';
 import './App.css';
+import { useState } from 'react';
 
-function CostCalculatorForm() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
     useState<CostCalculatorEstimationFormValues | null>(null);
-
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-  };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
@@ -45,15 +48,30 @@ function CostCalculatorForm() {
       });
     }
   };
-
   return (
     <>
-      <CostCalculator
+      <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        onSubmit={(payload) => setPayload(payload)}
-        onError={(error) => console.error({ error })}
-        onSuccess={(response) => {
-          setEstimations(response);
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => setPayload(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
         }}
       />
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
@@ -77,7 +95,7 @@ export function CostCalculatorWithExportPdf() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFormDemo />
     </RemoteFlows>
   );
 }

@@ -1,39 +1,24 @@
-import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import {
-  CostCalculator,
-  CostCalculatorResults,
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
   RemoteFlows,
+  CostCalculatorResults,
 } from '@remoteoss/remote-flows';
-import { useState } from 'react';
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import './App.css';
+import { useState } from 'react';
 
-function CostCalculatorForm() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+export function CostCalculatorWithResults() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
-
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-  };
-
-  return (
-    <>
-      <CostCalculator
-        estimationOptions={estimationOptions}
-        onError={(error) => console.error({ error })}
-        onSuccess={(response) => {
-          setEstimations(response);
-        }}
-      />
-      {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
-      )}
-    </>
-  );
-}
-
-export function CostCalculatoWithResults() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -49,7 +34,30 @@ export function CostCalculatoWithResults() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => setEstimations(response)}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
     </RemoteFlows>
   );
 }

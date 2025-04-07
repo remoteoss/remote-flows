@@ -1,4 +1,5 @@
-import { CostCalculator } from '@/src/flows/CostCalculator/CostCalculator';
+import { CostCalculatorFlow } from '@/src/flows/CostCalculator/CostCalculatorFlow';
+import type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator/CostCalculatorFlow';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -13,6 +14,9 @@ import {
   regionFields,
   regionFieldsWithAgeProperty,
 } from './fixtures';
+import { CostCalculatorSubmitButton } from '@/src/flows/CostCalculator/CostCalculatorSubmitButton';
+import { CostCalculatorResetButton } from '@/src/flows/CostCalculator/CostCalculatorResetButton';
+import { CostCalculatorForm } from '@/src/flows/CostCalculator/CostCalculatorForm';
 
 const queryClient = new QueryClient();
 
@@ -24,18 +28,46 @@ const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
-describe('CostCalculator', () => {
-  const defaultProps = {
-    onSubmit: mockOnSubmit,
-    onSuccess: mockOnSuccess,
-    onError: mockOnError,
-    defaultValues: {
-      countryRegionSlug: 'POL',
-      currencySlug: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-      salary: '50000',
-    },
-  };
+const defaultProps = {
+  defaultValues: {
+    countryRegionSlug: 'POL',
+    currencySlug: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+    salary: '50000',
+  },
+};
 
+function renderComponent(
+  props: Omit<CostCalculatorFlowProps, 'render'> = {
+    defaultValues: defaultProps.defaultValues,
+  },
+) {
+  return render(
+    <CostCalculatorFlow
+      {...props}
+      render={(props) => {
+        if (props.isLoading) {
+          return <div data-testid="loading">Loading...</div>;
+        }
+        return (
+          <div>
+            <CostCalculatorForm
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
+            />
+            <CostCalculatorSubmitButton>
+              Get estimate
+            </CostCalculatorSubmitButton>
+            <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+          </div>
+        );
+      }}
+    />,
+    { wrapper },
+  );
+}
+
+describe('CostCalculatorFlow', () => {
   beforeEach(() => {
     server.use(
       ...[
@@ -56,8 +88,10 @@ describe('CostCalculator', () => {
   });
 
   test('should render the form with default values', async () => {
-    render(<CostCalculator {...defaultProps} />, {
-      wrapper,
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
     const comboboxes = screen.getAllByRole('combobox');
@@ -74,7 +108,10 @@ describe('CostCalculator', () => {
   });
 
   test('should submit the form with default values', async () => {
-    render(<CostCalculator {...defaultProps} />, { wrapper });
+    renderComponent();
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
@@ -93,7 +130,11 @@ describe('CostCalculator', () => {
         return HttpResponse.json({ data: {} });
       }),
     );
-    render(<CostCalculator {...defaultProps} />, { wrapper });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
@@ -108,7 +149,11 @@ describe('CostCalculator', () => {
         return new HttpResponse('Not found', { status: 422 });
       }),
     );
-    render(<CostCalculator {...defaultProps} />, { wrapper });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
@@ -118,7 +163,10 @@ describe('CostCalculator', () => {
   });
 
   test('should display validation errors when form is submitted with empty fields', async () => {
-    render(<CostCalculator />, { wrapper });
+    renderComponent({ defaultValues: {} });
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
@@ -134,8 +182,10 @@ describe('CostCalculator', () => {
       }),
     );
 
-    render(<CostCalculator {...defaultProps} />, {
-      wrapper,
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -159,8 +209,10 @@ describe('CostCalculator', () => {
       }),
     );
 
-    render(<CostCalculator {...defaultProps} />, {
-      wrapper,
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -225,8 +277,10 @@ describe('CostCalculator', () => {
       }),
     );
 
-    render(<CostCalculator {...defaultProps} />, {
-      wrapper,
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
     await waitFor(() => {

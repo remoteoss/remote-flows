@@ -1,4 +1,11 @@
-import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  CostCalculatorDisclaimer,
+} from '@remoteoss/remote-flows';
 import './App.css';
 
 const estimationOptions = {
@@ -6,27 +13,6 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
 };
-
-function CostCalculatorForm() {
-  return (
-    <CostCalculator
-      defaultValues={{
-        countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
-        currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-        salary: '50000',
-      }}
-      options={{
-        disclaimer: {
-          label: 'Remote Disclaimer',
-        },
-      }}
-      estimationOptions={estimationOptions}
-      onSubmit={(payload) => console.log(payload)}
-      onError={(error) => console.error({ error })}
-      onSuccess={(response) => console.log({ response })}
-    />
-  );
-}
 
 export function BasicCostCalculatorWithDefaultValues() {
   const fetchToken = () => {
@@ -44,7 +30,33 @@ export function BasicCostCalculatorWithDefaultValues() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        defaultValues={{
+          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+          salary: '50000',
+        }}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
+      <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
 }

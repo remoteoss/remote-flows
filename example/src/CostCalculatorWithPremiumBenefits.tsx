@@ -1,82 +1,90 @@
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  useCostCalculatorEstimationPdf,
+  buildCostCalculatorEstimationPayload,
+  CostCalculatorResults,
+} from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationFormValues,
 } from '@remoteoss/remote-flows';
-import {
-  buildCostCalculatorEstimationPayload,
-  CostCalculator,
-  CostCalculatorResults,
-  RemoteFlows,
-  useCostCalculatorEstimationPdf,
-} from '@remoteoss/remote-flows';
-import { useState } from 'react';
 import './App.css';
+import { useState } from 'react';
 
-function CostCalculatorForm() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+  includePremiumBenefits: true,
+};
+
+function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
     useState<CostCalculatorEstimationFormValues | null>(null);
 
-  const estimationOptions = {
-    title: 'Estimate for a new company',
-    includeBenefits: true,
-    includeCostBreakdowns: true,
-    includePremiumBenefits: true,
-  };
-
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(
-        buildCostCalculatorEstimationPayload(payload, estimationOptions),
-        {
-          onSuccess: (response) => {
-            if (response?.data?.data?.content !== undefined) {
-              const a = document.createElement('a');
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              a.href = response.data.data.content as any;
-              a.download = 'estimation.pdf';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            }
-          },
-          onError: (error) => {
-            console.error({ error });
-          },
+      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
+        onSuccess: (response) => {
+          if (response?.data?.data?.content !== undefined) {
+            const a = document.createElement('a');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            a.href = response.data.data.content as any;
+            a.download = 'estimation.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
         },
-      );
+        onError: (error) => {
+          console.error({ error });
+        },
+      });
     }
   };
-
   return (
     <>
-      <CostCalculator
+      <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        options={{
-          disclaimer: {
-            label: 'Remote Disclaimer',
-          },
-        }}
-        onSubmit={(payload) => setPayload(payload)}
-        onError={(error) => console.error({ error })}
-        onSuccess={(response) => {
-          setEstimations(response);
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => setPayload(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
         }}
       />
       {estimations && (
-        <div className="cost-calculator__results">
-          <CostCalculatorResults employmentData={estimations.data} />
-        </div>
+        <CostCalculatorResults employmentData={estimations.data} />
       )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
 
-function CostCalculatorWithPremiumBenefits() {
+export function CostCalculatorWithPremiumBenefits() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -91,12 +99,8 @@ function CostCalculatorWithPremiumBenefits() {
   };
 
   return (
-    <div className="cost-calculator__container">
-      <RemoteFlows auth={() => fetchToken()}>
-        <CostCalculatorForm />
-      </RemoteFlows>
-    </div>
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorFormDemo />
+    </RemoteFlows>
   );
 }
-
-export default CostCalculatorWithPremiumBenefits;

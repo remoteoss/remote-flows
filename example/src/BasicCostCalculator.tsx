@@ -1,4 +1,11 @@
-import { CostCalculator, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  CostCalculatorDisclaimer,
+} from '@remoteoss/remote-flows';
 import './App.css';
 
 const estimationOptions = {
@@ -6,17 +13,6 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
 };
-
-function CostCalculatorForm() {
-  return (
-    <CostCalculator
-      estimationOptions={estimationOptions}
-      onSubmit={(payload) => console.log(payload)}
-      onError={(error) => console.error({ error })}
-      onSuccess={(response) => console.log({ response })}
-    />
-  );
-}
 
 export function BasicCostCalculator() {
   const fetchToken = () => {
@@ -34,7 +30,28 @@ export function BasicCostCalculator() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <CostCalculatorForm />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+      />
+      <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
 }
