@@ -546,6 +546,12 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 
 #### options.jsfModify properties
 
+We rely on json schemas and the json-schema-form library to generate the static fields of the form `country`, `region`, `currency`, `salary`.
+
+We have other fields in this form like `age` that comes from the region fields endpoint
+
+The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
+
 ### CostCalculatorForm
 
 It renders the form and the fields of the cost calculator

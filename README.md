@@ -35,7 +35,7 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | Prop            | Type                                                        | Required | Description                                                        |
 | --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
 | `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
-| `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
+| `isTestingMode` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
 | `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
 
 ## Docs
