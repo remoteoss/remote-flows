@@ -2,20 +2,29 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
+import { ContractAmendmentForm } from './ContractAmendmentForm';
+import { ContractAmendmentSubmit } from './ContractAmendmentSubmit';
 import { useContractAmendment } from './hooks';
 import { ContractAmendmentParams } from './types';
+
+type TUseContractAmendment = ReturnType<typeof useContractAmendment>;
+type RenderProps = {
+  contractAmendmentBag: TUseContractAmendment;
+  components: {
+    ContractAmendmentForm: typeof ContractAmendmentForm;
+    ContractAmendmentSubmit: typeof ContractAmendmentSubmit;
+  };
+};
+
+type ContractAmendmentProviderProps = PropsWithChildren<{
+  contractAmendmentBag: TUseContractAmendment;
+  render: ({ contractAmendmentBag }: RenderProps) => React.ReactNode;
+}>;
 
 function ContractAmendmentProvider({
   render,
   contractAmendmentBag,
-}: PropsWithChildren<{
-  contractAmendmentBag: ReturnType<typeof useContractAmendment>;
-  render: ({
-    contractAmendmentBag,
-  }: {
-    contractAmendmentBag: ReturnType<typeof useContractAmendment>;
-  }) => React.ReactNode;
-}>) {
+}: ContractAmendmentProviderProps) {
   const formId = useId();
   const resolver = useJsonSchemasValidationFormResolver(
     // @ts-expect-error no matching type
@@ -36,7 +45,10 @@ function ContractAmendmentProvider({
         contractAmendmentBag,
       }}
     >
-      {render({ contractAmendmentBag })}
+      {render({
+        contractAmendmentBag,
+        components: { ContractAmendmentForm, ContractAmendmentSubmit },
+      })}
     </ContractAmendmentContext.Provider>
   );
 }
@@ -44,9 +56,8 @@ function ContractAmendmentProvider({
 type ContractAmendmentFlowProps = ContractAmendmentParams & {
   render: ({
     contractAmendmentBag,
-  }: {
-    contractAmendmentBag: ReturnType<typeof useContractAmendment>;
-  }) => React.ReactNode;
+    components,
+  }: RenderProps) => React.ReactNode;
 };
 
 export function ContractAmendmentFlow({
@@ -62,7 +73,14 @@ export function ContractAmendmentFlow({
   });
 
   if (contractAmendmentBag.isLoading) {
-    return <>{render({ contractAmendmentBag })}</>;
+    return (
+      <>
+        {render({
+          contractAmendmentBag,
+          components: { ContractAmendmentForm, ContractAmendmentSubmit },
+        })}
+      </>
+    );
   }
 
   return (
