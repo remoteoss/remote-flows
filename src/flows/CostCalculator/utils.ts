@@ -1,10 +1,27 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 import { convertToCents } from '@/src/lib/utils';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
 } from './types';
+
+/**
+ * Build the validation schema for the form.
+ * @returns
+ */
+export function buildValidationSchema(fields: $TSFixMe[]) {
+  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
+    (fieldsSchemaAcc, field) => {
+      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      return fieldsSchemaAcc;
+    },
+    {},
+  );
+  return object(fieldsSchema) as AnyObjectSchema;
+}
 
 /**
  * Format the benefits to the expected format by the API.

@@ -1,10 +1,10 @@
-import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
 import './App.css';
+import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
 
 function App() {
   return (
     <>
-      <CostCalculatorWithPremiumBenefits />
+      <BasicCostCalculatorLabels />
     </>
   );
 }
