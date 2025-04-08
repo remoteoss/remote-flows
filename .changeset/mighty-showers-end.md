@@ -2,4 +2,4 @@
 '@remoteoss/remote-flows': patch
 ---
 
-Add options.jsfModify to modify the cost calculator form labels
+Support options.jsfModify to allow customization of cost calculator form labels and other schema properties
