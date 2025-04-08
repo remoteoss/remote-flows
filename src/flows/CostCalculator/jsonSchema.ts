@@ -39,6 +39,9 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             inputType: 'text',
           },
+          'x-jsf-errorMessage': {
+            required: 'Salary is required',
+          },
         },
       },
       required: ['country', 'currency', 'salary'],
