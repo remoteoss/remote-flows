@@ -7,7 +7,9 @@ import {
   CostCalculatorResults,
 } from '@remoteoss/remote-flows';
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
+import Flag from 'react-flagpack';
 import './App.css';
+import 'react-flagpack/dist/style.css';
 import { useState } from 'react';
 
 const estimationOptions = {
@@ -55,6 +57,14 @@ export function CostCalculatorWithResults() {
           );
         }}
       />
+      {estimations && (
+        <div className="mt-4 mb-2 flex gap-2">
+          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
+          <label className="text-md font-bold">
+            {estimations.data.employments?.[0].country.name}
+          </label>
+        </div>
+      )}
       {estimations && (
         <CostCalculatorResults employmentData={estimations.data} />
       )}
