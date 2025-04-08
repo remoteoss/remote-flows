@@ -1,4 +1,4 @@
-# Cost Calculator Docs
+# Cost Calculator Docs
 
 Welcome to the CostCalculator flow docs
 
@@ -9,6 +9,7 @@ Welcome to the CostCalculator flow docs
   - [Basic Setup](#basic-setup)
     - [Simple Cost Calculator](#simple-cost-calculator)
     - [Cost Calculator with Default Values and a Custom Disclaimer Label](#cost-calculator-with-default-values-and-a-custom-disclaimer-label)
+    - [Cost Calculator with Simple Labels](#cost-calculator-with-simple-labels)
     - [Cost Calculator with Results](#cost-calculator-with-results)
     - [Cost Calculator with Button that Exports Results to PDF](#cost-calculator-with-button-that-exports-results-to-pdf)
     - [Cost Calculator with Premium Benefits](#cost-calculator-with-premium-benefits)
@@ -156,6 +157,80 @@ export function BasicCostCalculatorWithDefaultValues() {
           );
         }}
       />
+    </RemoteFlows>
+  );
+}
+```
+
+#### Cost calculator with simple labels
+
+```tsx
+import {
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  CostCalculatorResetButton,
+  RemoteFlows,
+  CostCalculatorDisclaimer,
+} from '@remoteoss/remote-flows';
+import './App.css';
+
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+export function BasicCostCalculatorLabels() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={(payload) => console.log(payload)}
+                onError={(error) => console.error({ error })}
+                onSuccess={(response) => console.log({ response })}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            </div>
+          );
+        }}
+        options={{
+          jsfModify: {
+            fields: {
+              country: {
+                title: 'Select your country',
+              },
+              age: {
+                title: 'Enter your age',
+              },
+            },
+          },
+        }}
+      />
+      <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
 }
@@ -442,25 +517,16 @@ export function CostCalculatorFlowWithPremiumBenefits() {
 
 ## Components API
 
-### RemoteFlows
-
-The `RemoteFlows` component serves as a provider for authentication and theming.
-
-| Prop            | Type                                                        | Required | Description                                                        |
-| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
-| `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
-| `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-
 ### CostCalculatorFlow
 
 The `CostCalculatorFlow` component lets you render different components like `CostCalculatorForm`, `CostCalculatorSubmitButton`, `CostCalculatorResetButton`
 
-| Prop               | Type                                                         | Required | Description                                                               |
-| ------------------ | ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------- |
-| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)               |
-| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                  |
-| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook |
+| Prop               | Type                                                         | Required | Description                                                                             |
+| ------------------ | ------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------- |
+| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                             |
+| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook               |
+| `options`          | `{jsfModify: JSFModify}`                                     | No       | JSFModify options lets you modify properties from the form, such as changing the labels |
 
 #### estimationParams Properties
 
@@ -477,6 +543,10 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 | `countryRegionSlug` | `string` | Pre-selected country/region |
 | `currencySlug`      | `string` | Pre-selected currency       |
 | `salary`            | `string` | Pre-filled salary amount    |
+
+#### options.jsfModify properties
+
+The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
 
 ### CostCalculatorForm
 

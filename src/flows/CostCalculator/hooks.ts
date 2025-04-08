@@ -12,17 +12,17 @@ import {
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
-  Field,
+  JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
-import { fields } from './fields';
 import { buildPayload, buildValidationSchema } from './utils';
+import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 
 type CostCalculatorCountry = {
   value: string;
@@ -141,8 +141,12 @@ const useRegionFields = (
   region: string | undefined,
   {
     includePremiumBenefits,
+    options,
   }: {
     includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
+    options?: {
+      jsfModify?: JSFModify;
+    };
   },
 ) => {
   const { client } = useClient();
@@ -162,10 +166,14 @@ const useRegionFields = (
       });
     },
     enabled: !!region,
-    select: ({ data }) =>
-      createHeadlessForm(data?.data?.schema || {}, {
-        strictInputType: false,
-      }),
+    select: ({ data }) => {
+      let jsfSchema = data?.data?.schema || {};
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
+      return createHeadlessForm(jsfSchema);
+    },
   });
 };
 
@@ -185,6 +193,9 @@ type UseCostCalculatorParams = {
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
+  options?: {
+    jsfModify?: JSFModify;
+  };
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
@@ -193,10 +204,17 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  { defaultRegion, estimationOptions }: UseCostCalculatorParams = {
+  { defaultRegion, estimationOptions, options }: UseCostCalculatorParams = {
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
+  const { schema: jsonSchemaModified } = modify(
+    jsonSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const fieldsJSONSchema = createHeadlessForm(jsonSchemaModified);
+
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -214,6 +232,7 @@ export const useCostCalculator = (
   const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
     useRegionFields(jsonSchemaRegionSlug, {
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
+      options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
@@ -291,7 +310,10 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
-  const regionField = fields.find((field) => field.name === 'region');
+  const regionField = fieldsJSONSchema.fields.find(
+    (field) => field.name === 'region',
+  );
+
   if (regionField) {
     const regions =
       selectedCountry?.childRegions.map((region) => ({
@@ -303,18 +325,22 @@ export const useCostCalculator = (
     regionField.required = regions.length > 0;
     regionField.onChange = onRegionChange;
     regionField.schema =
-      regions.length > 0 ? string().required('Currency is required') : string();
+      regions.length > 0 ? string().required('Region is required') : string();
   }
 
   if (currencies) {
-    const currencyField = fields.find((field) => field.name === 'currency');
+    const currencyField = fieldsJSONSchema.fields.find(
+      (field) => field.name === 'currency',
+    );
     if (currencyField) {
       currencyField.options = currencies;
     }
   }
 
   if (countries) {
-    const countryField = fields.find((field) => field.name === 'country');
+    const countryField = fieldsJSONSchema.fields.find(
+      (field) => field.name === 'country',
+    );
     if (countryField) {
       countryField.options = countries;
       countryField.onChange = onCountryChange;
@@ -327,9 +353,9 @@ export const useCostCalculator = (
   };
 
   const allFields = [
-    ...fields,
+    ...fieldsJSONSchema.fields,
     ...(jsonSchemaRegionFields?.fields || []),
-  ] as Field[];
+  ];
 
   const validationSchema = buildValidationSchema(allFields);
 

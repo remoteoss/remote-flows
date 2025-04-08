@@ -14,7 +14,7 @@ const estimationOptions = {
   includeCostBreakdowns: true,
 };
 
-export function BasicCostCalculatorWithDefaultValues() {
+export function BasicCostCalculatorLabels() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -32,11 +32,6 @@ export function BasicCostCalculatorWithDefaultValues() {
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
-          salary: '50000',
-        }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;
@@ -54,6 +49,18 @@ export function BasicCostCalculatorWithDefaultValues() {
               <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
             </div>
           );
+        }}
+        options={{
+          jsfModify: {
+            fields: {
+              country: {
+                title: 'Select your country',
+              },
+              age: {
+                title: 'Enter your age',
+              },
+            },
+          },
         }}
       />
       <CostCalculatorDisclaimer label="Disclaimer" />

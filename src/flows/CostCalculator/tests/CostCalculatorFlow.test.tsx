@@ -310,4 +310,43 @@ describe('CostCalculatorFlow', () => {
       ).toHaveValue('');
     });
   });
+
+  test('should change the form fields labels from the consumer API', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    renderComponent({
+      options: {
+        jsfModify: {
+          fields: {
+            age: {
+              title: 'Enter your age',
+            },
+            salary: {
+              title: 'Enter your salary',
+            },
+          },
+        },
+      },
+      defaultValues: defaultProps.defaultValues,
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    await screen.findByText(/Enter your age/i);
+    await screen.findByText(/Enter your salary/i);
+  });
 });
