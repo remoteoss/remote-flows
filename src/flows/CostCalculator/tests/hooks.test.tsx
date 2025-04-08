@@ -66,4 +66,37 @@ describe('useCostCalculator', () => {
     expect(regionField?.isVisible).toBe(true);
     expect(regionField?.required).toBe(true);
   });
+
+  test('should not throw an error when we send correct data to handleValidation', async () => {
+    const { result } = renderHook(() => useCostCalculator(), { wrapper });
+    const validValues = {
+      country: 'PRT',
+      currency: 'USD',
+      salary: '500000',
+    };
+
+    await expect(
+      result.current.handleValidation(validValues),
+    ).resolves.not.toThrow();
+
+    await expect(result.current.handleValidation(validValues)).resolves.toEqual(
+      validValues,
+    );
+  });
+
+  test('should throw an error when we send incorrect data to handleValidation', async () => {
+    const { result } = renderHook(() => useCostCalculator(), { wrapper });
+    const invalidValues = {
+      country: 'PRT',
+      currency: 'USD',
+      salary: '',
+    };
+
+    try {
+      await result.current.handleValidation(invalidValues);
+    } catch (error: $TSFixMe) {
+      expect(error).toBeDefined();
+      expect(error.message).toBe('Salary is required'); // Replace with the actual error message
+    }
+  });
 });
