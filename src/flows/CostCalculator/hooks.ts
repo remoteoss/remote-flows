@@ -223,26 +223,6 @@ export const useCostCalculator = (
   );
 
   const fieldsJSONSchema = createHeadlessForm(jsonSchemaModified);
-  /*  const { schema } = modify(
-    {
-      properties: staticFields.reduce((acc, field) => {
-        return {
-          ...acc,
-          [field.name]: {
-            ...field,
-            title: field.label,
-            label: field.label,
-          },
-        };
-      }, {}),
-    },
-    options.jsfModify || {},
-  );
-  const fields = Object.values<Record<string, unknown>>(schema.properties);
-
-  fields[0].schema = string().required('Country is required'); */
-
-  // console.log(fields)
 
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
@@ -367,11 +347,14 @@ export const useCostCalculator = (
   }
 
   if (countries) {
+    console.log({ countries });
     const countryField = fieldsJSONSchema.fields.find(
       (field) => field.name === 'country',
     );
+    console.log({ countryField });
     if (countryField) {
       countryField.options = countries;
+      console.log('setting onCountryChange');
       countryField.onChange = onCountryChange;
     }
   }
