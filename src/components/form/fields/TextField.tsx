@@ -58,6 +58,7 @@ export function TextField({
               }}
               {...typeAttrs}
               className="RemoteFlows__TextField__Input"
+              placeholder={label}
             />
           </FormControl>
           {description && (

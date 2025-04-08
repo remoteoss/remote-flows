@@ -11,6 +11,42 @@ export type CostCalculatorEstimationFormValues = {
   benefits: Record<string, string>;
 }>;
 
+export type Field = {
+  name: string;
+  label?: string;
+  description?: string;
+  fields?: Field[];
+  type: 'string' | 'integer' | 'number' | 'object' | 'boolean';
+  inputType:
+    | 'text'
+    | 'textarea'
+    | 'number'
+    | 'select'
+    | 'money'
+    | 'radio'
+    | 'checkbox'
+    | 'date'
+    | 'hidden'
+    | 'file';
+  required: boolean;
+  jsonType?: string;
+  isVisible: boolean;
+  accept?: string;
+  errorMessage?: Record<string, string>;
+  computedAttributes?: Record<string, unknown>;
+  minDate?: string;
+  maxDate?: string;
+  maxLength?: number;
+  maxFileSize?: number;
+  format?: string;
+  anyOf?: unknown[];
+  options?: unknown[];
+
+  onChange?: (value: string) => void;
+  // Allow additional properties from x-jsf-presentation (e.g. meta from oneOf/anyOf)
+  [key: string]: unknown;
+};
+
 export type CostCalculatorEstimationOptions = Partial<{
   /**
    * Title of the estimation. Default is 'Estimation'.
@@ -24,4 +60,8 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include cost breakdowns in the estimation. Default is false.
    */
   includeCostBreakdowns: boolean;
+  /**
+   * Include premium benefits in the estimation. Default is false.
+   */
+  includePremiumBenefits: boolean;
 }>;

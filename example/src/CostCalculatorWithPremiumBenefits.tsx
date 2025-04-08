@@ -6,6 +6,7 @@ import {
   RemoteFlows,
   useCostCalculatorEstimationPdf,
   buildCostCalculatorEstimationPayload,
+  CostCalculatorResults,
 } from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
@@ -18,6 +19,7 @@ const estimationOptions = {
   title: 'Estimate for a new company',
   includeBenefits: true,
   includeCostBreakdowns: true,
+  includePremiumBenefits: true,
 };
 
 function CostCalculatorFormDemo() {
@@ -74,12 +76,15 @@ function CostCalculatorFormDemo() {
           );
         }}
       />
+      {estimations && (
+        <CostCalculatorResults employmentData={estimations.data} />
+      )}
       {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
 
-export function CostCalculatorWithExportPdf() {
+export function CostCalculatorWithPremiumBenefits() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())

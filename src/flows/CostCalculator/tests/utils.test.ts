@@ -17,6 +17,7 @@ describe('buildPayload', () => {
       employer_currency_slug: 'USD',
       include_benefits: defaultEstimationOptions.includeBenefits,
       include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
+      include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
       employments: [
         {
           region_slug: 'US',
