@@ -357,13 +357,10 @@ export const useCostCalculator = (
     ...(jsonSchemaRegionFields?.fields || []),
   ];
 
-  console.log();
-
   const validationSchema = buildValidationSchema(allFields);
 
-  const handleValidation = (values: any) => {
-    fieldsJSONSchema.handleValidation(values);
-    jsonSchemaRegionFields?.handleValidation(values);
+  const handleValidation = (values: CostCalculatorEstimationFormValues) => {
+    return validationSchema.validate(values, { abortEarly: false });
   };
 
   return {
