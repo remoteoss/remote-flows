@@ -1,10 +1,10 @@
 import './App.css';
-import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
+import { CustomCostCalculator } from './CustomCostCalculator';
 
 function App() {
   return (
     <>
-      <BasicCostCalculatorLabels />
+      <CustomCostCalculator />
     </>
   );
 }

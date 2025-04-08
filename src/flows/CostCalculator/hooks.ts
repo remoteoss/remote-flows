@@ -357,7 +357,14 @@ export const useCostCalculator = (
     ...(jsonSchemaRegionFields?.fields || []),
   ];
 
+  console.log();
+
   const validationSchema = buildValidationSchema(allFields);
+
+  const handleValidation = (values: any) => {
+    fieldsJSONSchema.handleValidation(values);
+    jsonSchemaRegionFields?.handleValidation(values);
+  };
 
   return {
     stepState: {
@@ -367,7 +374,7 @@ export const useCostCalculator = (
     },
     fields: allFields,
     validationSchema,
-    handleValidation: jsonSchemaRegionFields?.handleValidation,
+    handleValidation: handleValidation,
     isSubmitting: costCalculatorEstimationMutation.isPending,
     isLoading:
       isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
