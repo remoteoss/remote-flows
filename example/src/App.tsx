@@ -1,10 +1,10 @@
-import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
+import { ContractAmendmentDemo } from './ContractAmendment';
 import './App.css';
 
 function App() {
   return (
     <>
-      <CostCalculatorWithPremiumBenefits />
+      <ContractAmendmentDemo />
     </>
   );
 }
