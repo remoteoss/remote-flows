@@ -6,6 +6,7 @@ import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { countries, currencies, estimation, regionFields } from './fixtures';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 const queryClient = new QueryClient();
 
@@ -43,7 +44,7 @@ describe('useCostCalculator', () => {
       expect(countryField?.onChange).toBeDefined();
     });
 
-    const countryField = result.current.fields.find(
+    const countryField: $TSFixMe = result.current.fields.find(
       (field) => field.name === 'country',
     );
 
@@ -52,7 +53,7 @@ describe('useCostCalculator', () => {
     });
 
     await waitFor(() => {
-      const regionField = result.current.fields.find(
+      const regionField: $TSFixMe = result.current.fields.find(
         (field) => field.name === 'region',
       );
       expect(regionField?.options?.length).toBeGreaterThan(0);
