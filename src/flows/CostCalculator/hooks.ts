@@ -12,7 +12,6 @@ import {
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
-  Field,
   JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
@@ -369,7 +368,7 @@ export const useCostCalculator = (
   const allFields = [
     ...fieldsJSONSchema.fields,
     ...(jsonSchemaRegionFields?.fields || []),
-  ] as Field[];
+  ];
 
   const validationSchema = buildValidationSchema(allFields);
 
