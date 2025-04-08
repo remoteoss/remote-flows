@@ -58,12 +58,15 @@ export function CostCalculatorWithResults() {
         }}
       />
       {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <div className="mt-4 mb-2 flex gap-2">
+          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
+          <label className="text-md font-bold">
+            {estimations.data.employments?.[0].country.name}
+          </label>
+        </div>
       )}
       {estimations && (
-        <div className="mt-2">
-          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
-        </div>
+        <CostCalculatorResults employmentData={estimations.data} />
       )}
     </RemoteFlows>
   );
