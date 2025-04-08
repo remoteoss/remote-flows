@@ -517,25 +517,16 @@ export function CostCalculatorFlowWithPremiumBenefits() {
 
 ## Components API
 
-### RemoteFlows
-
-The `RemoteFlows` component serves as a provider for authentication and theming.
-
-| Prop            | Type                                                        | Required | Description                                                        |
-| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
-| `isTestingProp` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
-| `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-
 ### CostCalculatorFlow
 
 The `CostCalculatorFlow` component lets you render different components like `CostCalculatorForm`, `CostCalculatorSubmitButton`, `CostCalculatorResetButton`
 
-| Prop               | Type                                                         | Required | Description                                                               |
-| ------------------ | ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------- |
-| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)               |
-| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                  |
-| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook |
+| Prop               | Type                                                         | Required | Description                                                                             |
+| ------------------ | ------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------- |
+| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                             |
+| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook               |
+| `options`          | `{jsfModify: JSFModify}`                                     | No       | JSFModify options lets you modify properties from the form, such as changing the labels |
 
 #### estimationParams Properties
 
@@ -552,6 +543,8 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 | `countryRegionSlug` | `string` | Pre-selected country/region |
 | `currencySlug`      | `string` | Pre-selected currency       |
 | `salary`            | `string` | Pre-filled salary amount    |
+
+#### options.jsfModify properties
 
 ### CostCalculatorForm
 

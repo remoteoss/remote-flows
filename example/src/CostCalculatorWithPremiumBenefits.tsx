@@ -54,18 +54,6 @@ function CostCalculatorFormDemo() {
     <>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        options={{
-          jsfModify: {
-            fields: {
-              country: {
-                label: 'Bla bla',
-              },
-              age: {
-                title: 'Bla bla',
-              },
-            },
-          },
-        }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

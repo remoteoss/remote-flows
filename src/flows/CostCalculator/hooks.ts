@@ -167,25 +167,12 @@ const useRegionFields = (
     },
     enabled: !!region,
     select: ({ data }) => {
-      const jsfSchema = data?.data || {};
-
-      if (
-        options &&
-        options.jsfModify &&
-        jsfSchema.schema &&
-        Object.keys(jsfSchema.schema.properties).length > 0
-      ) {
-        const { schema } = modify(jsfSchema.schema, options.jsfModify);
-        return createHeadlessForm(schema);
+      let jsfSchema = data?.data?.schema || {};
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
       }
-      if (
-        jsfSchema.schema &&
-        Object.keys(jsfSchema.schema.properties).length > 0
-      ) {
-        return createHeadlessForm(jsfSchema.schema);
-      }
-
-      return null;
+      return createHeadlessForm(jsfSchema);
     },
   });
 };
