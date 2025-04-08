@@ -305,7 +305,7 @@ export const fieldTypesTransformations: Record<string, any> = {
   },
 };
 
-function parseFormValuesToAPI(
+export function parseFormValuesToAPI(
   formValues: Record<string, any> = {},
   fields: any[],
 ) {
