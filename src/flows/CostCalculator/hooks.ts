@@ -165,7 +165,7 @@ const useRegionFields = (
     },
     enabled: !!region,
     select: ({ data }) => {
-      let jsfSchema = data?.data || {};
+      const jsfSchema = data?.data || {};
 
       if (
         options &&
@@ -174,7 +174,7 @@ const useRegionFields = (
         Object.keys(jsfSchema.schema.properties).length > 0
       ) {
         const { schema } = modify(jsfSchema.schema, options.jsfModify);
-        jsfSchema = schema;
+        return createHeadlessForm(schema);
       }
       if (
         jsfSchema.schema &&
@@ -243,6 +243,7 @@ export const useCostCalculator = (
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
       options,
     });
+  console.log('jsonSchemaRegionFields', jsonSchemaRegionFields);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
@@ -347,14 +348,11 @@ export const useCostCalculator = (
   }
 
   if (countries) {
-    console.log({ countries });
     const countryField = fieldsJSONSchema.fields.find(
       (field) => field.name === 'country',
     );
-    console.log({ countryField });
     if (countryField) {
       countryField.options = countries;
-      console.log('setting onCountryChange');
       countryField.onChange = onCountryChange;
     }
   }

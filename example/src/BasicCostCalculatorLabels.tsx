@@ -56,6 +56,9 @@ export function BasicCostCalculatorLabels() {
               country: {
                 title: 'Select your country',
               },
+              age: {
+                title: 'Enter your age',
+              },
             },
           },
         }}
