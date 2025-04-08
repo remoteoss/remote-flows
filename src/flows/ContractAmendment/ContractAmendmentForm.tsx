@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { parseFormValuesToAPI } from '@/src/components/form/utils';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -37,7 +38,9 @@ export function ContractAmendmentForm({
   }, []);
 
   const handleSubmit = async (values: FieldValues) => {
-    const contractAmendmentResult = await submitContractAmendment(values);
+    const contractAmendmentResult = await submitContractAmendment(
+      parseFormValuesToAPI(values, fields),
+    );
 
     await onSubmit?.(values);
     if (contractAmendmentResult.error) {
