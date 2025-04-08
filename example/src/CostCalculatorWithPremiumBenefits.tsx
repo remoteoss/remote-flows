@@ -4,7 +4,11 @@ import type {
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
-  ContractAmendmentFlow,
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorResetButton,
+  CostCalculatorResults,
+  CostCalculatorSubmitButton,
   RemoteFlows,
   useCostCalculatorEstimationPdf,
 } from '@remoteoss/remote-flows';
@@ -48,33 +52,7 @@ function CostCalculatorFormDemo() {
   };
   return (
     <>
-      <ContractAmendmentFlow
-        countryCode="PRT"
-        employmentId="87b7f5c9-6b9a-4bcb-b23d-b359a47b6a33"
-        // options={{
-        //   jsfModify: {
-        //     fields: {
-        //       reason_for_change: () => ({
-        //         title: `Why are you changing the contract?`,
-        //       }),
-        //     },
-        //   },
-        // }}
-        render={({ contractAmendmentBag, components }: any) => {
-          if (contractAmendmentBag.isLoading) {
-            return <div>Loading employment...</div>;
-          }
-
-          const { ContractAmendmentForm, ContractAmendmentSubmit } = components;
-          return (
-            <>
-              <ContractAmendmentForm />
-              <ContractAmendmentSubmit>Amend</ContractAmendmentSubmit>
-            </>
-          );
-        }}
-      />
-      {/* <CostCalculatorFlow
+      <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {
           if (props.isLoading) {
@@ -101,7 +79,7 @@ function CostCalculatorFormDemo() {
       {estimations && (
         <CostCalculatorResults employmentData={estimations.data} />
       )}
-      {estimations && <button onClick={handleExportPdf}>Export as PDF</button>} */}
+      {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
@@ -121,33 +99,8 @@ export function CostCalculatorWithPremiumBenefits() {
   };
 
   return (
-    <RemoteFlows
-      components={{
-        date: ({ field, metadata }) => {
-          console.log(field);
-          return null;
-        },
-        text: ({ field, metadata }) => {
-          return (
-            <div
-              className="text-sm"
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
-            >
-              <label htmlFor={field.name}>{metadata.label}</label>
-              <input
-                id={field.name}
-                {...field}
-                style={{ border: '1px solid pink' }}
-              />
-            </div>
-          );
-        },
-      }}
-      auth={() => fetchToken()}
-    >
-      <div style={{ padding: '120px' }}>
-        <CostCalculatorFormDemo />
-      </div>
+    <RemoteFlows auth={() => fetchToken()}>
+      <CostCalculatorFormDemo />
     </RemoteFlows>
   );
 }
