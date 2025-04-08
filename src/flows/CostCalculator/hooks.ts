@@ -19,10 +19,10 @@ import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { string, ValidationError } from 'yup';
-import { staticFields } from './fields';
 import { buildPayload, buildValidationSchema } from './utils';
+import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 
 type CostCalculatorCountry = {
   value: string;
@@ -205,12 +205,22 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
-  const { schema } = modify(
+  const { schema: jsonSchemaModified } = modify(
+    jsonSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const fieldsJSONSchema = createHeadlessForm(jsonSchemaModified);
+  /*  const { schema } = modify(
     {
       properties: staticFields.reduce((acc, field) => {
         return {
           ...acc,
-          [field.name]: field,
+          [field.name]: {
+            ...field,
+            title: field.label,
+            label: field.label,
+          },
         };
       }, {}),
     },
@@ -218,7 +228,7 @@ export const useCostCalculator = (
   );
   const fields = Object.values<Record<string, unknown>>(schema.properties);
 
-  fields[0].schema = string().required('Country is required');
+  fields[0].schema = string().required('Country is required'); */
 
   // console.log(fields)
 
@@ -317,30 +327,43 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
-  const regionField = fields.find((field) => field.name === 'region');
-  if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
-    regionField.options = regions;
-    regionField.isVisible = regions.length > 0;
-    regionField.required = regions.length > 0;
-    regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0 ? string().required('Currency is required') : string();
-  }
+  const regionField = fieldsJSONSchema.fields.find(
+    (field) => field.name === 'region',
+  );
+
+  useEffect(() => {
+    console.log('regionField', regionField);
+    console.log('selectedCountry', selectedCountry);
+    if (regionField && selectedCountry) {
+      console.log({ regionField, selectedCountry });
+      const regions =
+        selectedCountry?.childRegions.map((region) => ({
+          value: region.slug,
+          label: region.name,
+        })) ?? [];
+      regionField.options = regions;
+      regionField.isVisible = regions.length > 0;
+      regionField.required = regions.length > 0;
+      regionField.onChange = onRegionChange;
+      regionField.schema =
+        regions.length > 0 ? string().required('Region is required') : string();
+    }
+  }, [selectedCountry, regionField]);
 
   if (currencies) {
-    const currencyField = fields.find((field) => field.name === 'currency');
+    const currencyField = fieldsJSONSchema.fields.find(
+      (field) => field.name === 'currency',
+    );
     if (currencyField) {
       currencyField.options = currencies;
     }
   }
 
   if (countries) {
-    const countryField = fields.find((field) => field.name === 'country');
+    const countryField = fieldsJSONSchema.fields.find(
+      (field) => field.name === 'country',
+    );
+    console.log('countryField', countryField);
     if (countryField) {
       countryField.options = countries;
       countryField.onChange = onCountryChange;
@@ -353,11 +376,10 @@ export const useCostCalculator = (
   };
 
   const allFields = [
-    ...fields,
+    ...fieldsJSONSchema.fields,
     ...(jsonSchemaRegionFields?.fields || []),
   ] as Field[];
 
-  // console.log('FIELDS', JSON.stringify(fields));
   const validationSchema = buildValidationSchema(allFields);
 
   return {

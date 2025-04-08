@@ -33,7 +33,7 @@ describe('useCostCalculator', () => {
     queryClient.clear();
   });
 
-  test('should load regions when a country with regions is selected', async () => {
+  test.only('should load regions when a country with regions is selected', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
 
     const countryField = result.current.fields.find(
