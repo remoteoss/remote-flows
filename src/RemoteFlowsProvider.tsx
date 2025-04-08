@@ -87,7 +87,7 @@ export const useFormFields = () => {
   };
 };
 
-function FormFieldsProvider({
+export function FormFieldsProvider({
   children,
   components,
 }: PropsWithChildren<{
