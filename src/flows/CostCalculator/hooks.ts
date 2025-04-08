@@ -243,7 +243,6 @@ export const useCostCalculator = (
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
       options,
     });
-  console.log('jsonSchemaRegionFields', jsonSchemaRegionFields);
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
 
   /**
