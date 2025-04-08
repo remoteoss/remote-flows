@@ -4,7 +4,10 @@ import {
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
-import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
+import {
+  CostCalculatorEstimationOptions,
+  JSFModify,
+} from '@/src/flows/CostCalculator/types';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -76,9 +79,7 @@ export type CostCalculatorFlowProps = {
     salary: string;
   }>;
   options?: {
-    jsfModify?: {
-      [K in 'fields' | 'allFields' | 'create' | 'pick' | 'orderRoot']?: any;
-    };
+    jsfModify?: JSFModify;
   };
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,

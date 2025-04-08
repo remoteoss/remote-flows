@@ -13,6 +13,7 @@ import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   Field,
+  JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
 import { useClient } from '@/src/RemoteFlowsProvider';
@@ -144,7 +145,9 @@ const useRegionFields = (
     options,
   }: {
     includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-    options: any;
+    options?: {
+      jsfModify?: JSFModify;
+    };
   },
 ) => {
   const { client } = useClient();
@@ -204,7 +207,9 @@ type UseCostCalculatorParams = {
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
-  options?: any;
+  options?: {
+    jsfModify?: JSFModify;
+  };
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
