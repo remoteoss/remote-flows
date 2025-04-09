@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/src/components/ui/select';
 import { useFormFields } from '@/src/context';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -19,13 +20,9 @@ import {
   FormMessage,
 } from '../../ui/form';
 
-type SelectFieldProps = {
-  label: string;
-  name: string;
+type SelectFieldProps = JSFField & {
   placeholder?: string;
-  description?: string;
   options: Array<{ value: string; label: string }>;
-  defaultValue?: string;
   className?: string;
   onChange?: (value: React.ChangeEvent<HTMLInputElement> | string) => void;
 };

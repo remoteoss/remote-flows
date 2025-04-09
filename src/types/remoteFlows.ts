@@ -1,15 +1,31 @@
 import { ThemeProviderProps } from '@/src/types/theme';
-import { Fields } from '@remoteoss/json-schema-form';
 import {
   ControllerFieldState,
   ControllerRenderProps,
   FieldValues,
 } from 'react-hook-form';
+import { AnySchema } from 'yup';
 import { SupportedTypes } from '../components/form/fields/types';
 
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
+};
+
+export type JSFField = {
+  computedAttributes: Record<string, unknown>;
+  defaultValue: string | number;
+  description: string;
+  errorMessage: Record<string, string>;
+  inputType: SupportedTypes;
+  isVisible: boolean;
+  jsonType: string;
+  label: string;
+  name: string;
+  required: boolean;
+  schema: AnySchema;
+  scopedJsonSchema: Record<string, unknown>;
+  type: string;
 };
 
 export type Components = {
@@ -30,7 +46,7 @@ export type Components = {
      * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
      * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
      */
-    fieldData: Fields[number];
+    fieldData: JSFField;
   }>;
 };
 

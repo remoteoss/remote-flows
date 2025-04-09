@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -12,13 +13,10 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 
-export type TextFieldProps = React.ComponentProps<'input'> & {
-  label: string;
-  description?: string;
-  name: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  [key: string]: unknown;
-};
+export type TextFieldProps = React.ComponentProps<'input'> &
+  JSFField & {
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  };
 
 export function TextField({
   name,

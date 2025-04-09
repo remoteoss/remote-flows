@@ -35,6 +35,17 @@ type CostCalculatorCountry = {
   regionSlug: string;
 };
 
+type JSFValidationError = {
+  formErrors: Record<
+    string,
+    {
+      type: string;
+      message: string;
+    }
+  >;
+  yupError: ValidationError;
+};
+
 /**
  * Hook to fetch the countries for the cost calculator.
  * @returns
@@ -366,24 +377,14 @@ export const useCostCalculator = (
 
   const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
 
-  const handleValidation = async (
-    values: CostCalculatorEstimationFormValues,
-  ) => {
-    let errors: {
-      formErrors: Record<
-        string,
-        {
-          type: string;
-          message: string;
-        }
-      >;
-      yupError: ValidationError;
-    } | null = null;
+  async function handleValidation(values: CostCalculatorEstimationFormValues) {
+    let errors: JSFValidationError | null = null;
 
     const parsedValues = parseJSFToValidate(values, allFields, {
       isPartialValidation: false,
     });
 
+    // 1. validate static fields first using Yup validate function
     try {
       await validationSchema.validate(parsedValues, {
         abortEarly: false,
@@ -396,18 +397,20 @@ export const useCostCalculator = (
       const iterateResult = iterateErrors(error as ValidationError);
 
       errors = {
+        // convert the errors to a format that can be used in the form
         formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => {
-            return { ...acc, [key]: value.message };
-          },
+          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
           {},
         ),
         yupError: error as ValidationError,
       };
     }
 
+    // 2. validate json schema fields using the handleValidation (from json-schema-form)
     const handleValidationResult =
       jsonSchemaRegionFields?.handleValidation(parsedValues);
+
+    // 3. combine the errors from both validations
     const combinedInnerErrors = [
       ...(errors?.yupError.inner || []),
       ...(handleValidationResult?.yupError?.inner || []),
@@ -424,7 +427,7 @@ export const useCostCalculator = (
       },
       yupError: new ValidationError(combinedInnerErrors, combinedValues),
     };
-  };
+  }
 
   return {
     stepState: {
