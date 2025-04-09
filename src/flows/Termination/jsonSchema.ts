@@ -374,6 +374,16 @@ export const jsonSchema = {
             accept: '.pdf',
           },
         },
+        acknowledge_termination_procedure: {
+          description: '',
+          title:
+            'I, {{username}} have read and agree to the procedures as defined in the termination form.',
+          type: 'boolean',
+          'x-jsf-presentation': {
+            direction: 'column',
+            inputType: 'checkbox',
+          },
+        },
       },
       required: [
         'is_confidential',
@@ -385,6 +395,7 @@ export const jsonSchema = {
         'will_challenge_termination',
         'proposed_termination_date',
         'agrees_to_pto_amount',
+        'acknowledge_termination_procedure',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -404,6 +415,7 @@ export const jsonSchema = {
         'agrees_to_pto_amount',
         'agrees_to_pto_amount_notes',
         'timesheet_file',
+        'acknowledge_termination_procedure',
       ],
     },
   },
