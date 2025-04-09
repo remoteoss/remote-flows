@@ -299,6 +299,16 @@ export const jsonSchema = {
             inputType: 'textarea',
           },
         },
+        proposed_termination_date: {
+          description: '',
+          format: 'date',
+          maxLength: 255,
+          title: 'Proposed termination date',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'date',
+          },
+        },
       },
       required: [
         'is_confidential',
@@ -308,6 +318,7 @@ export const jsonSchema = {
         'termination_reason_description',
         'risk_assessment_reasons',
         'will_challenge_termination',
+        'proposed_termination_date',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -323,6 +334,7 @@ export const jsonSchema = {
         'risk_assessment_reasons',
         'will_challenge_termination',
         'will_challenge_termination_description',
+        'proposed_termination_date',
       ],
     },
   },
