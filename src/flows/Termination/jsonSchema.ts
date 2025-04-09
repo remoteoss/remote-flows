@@ -34,6 +34,29 @@ export const jsonSchema = {
             },
           },
         },
+        {
+          if: {
+            properties: {
+              will_challenge_termination: {
+                const: 'yes', // Ensure this matches the value in the form data
+              },
+            },
+            required: ['will_challenge_termination'], // Ensure this field is required
+          },
+          then: {
+            properties: {
+              will_challenge_termination_description: {
+                type: 'string',
+              },
+            },
+            required: ['will_challenge_termination_description'], // Make the field required when condition is met
+          },
+          else: {
+            properties: {
+              will_challenge_termination_description: false,
+            },
+          },
+        },
       ],
       properties: {
         is_confidential: {
@@ -244,6 +267,38 @@ export const jsonSchema = {
             inputType: 'checkbox',
           },
         },
+        will_challenge_termination: {
+          description: '',
+          oneOf: [
+            {
+              const: 'yes',
+              description: '',
+              title: 'Yes',
+            },
+            {
+              const: 'no',
+              description: '',
+              title: 'No',
+            },
+          ],
+          title:
+            'Do you consider it is likely that the employee will challenge their termination?',
+          type: 'string',
+          'x-jsf-presentation': {
+            direction: 'column',
+            inputType: 'radio',
+          },
+        },
+        will_challenge_termination_description: {
+          description: '',
+          maxLength: 1000,
+          title:
+            'Please explain how the employee will challenge their termination',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'textarea',
+          },
+        },
       },
       required: [
         'is_confidential',
@@ -252,6 +307,7 @@ export const jsonSchema = {
         'termination_reason',
         'termination_reason_description',
         'risk_assessment_reasons',
+        'will_challenge_termination',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -265,6 +321,8 @@ export const jsonSchema = {
         'additional_comments',
         'termination_reason_files',
         'risk_assessment_reasons',
+        'will_challenge_termination',
+        'will_challenge_termination_description',
       ],
     },
   },
