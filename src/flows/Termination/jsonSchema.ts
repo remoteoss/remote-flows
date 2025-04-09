@@ -30,7 +30,7 @@ export const jsonSchema = {
           else: {
             properties: {
               customer_informed_employee_date: false,
-              customer_informed_employee_description: false, // Hide the field when condition is not met
+              customer_informed_employee_description: false,
             },
           },
         },
@@ -38,10 +38,10 @@ export const jsonSchema = {
           if: {
             properties: {
               will_challenge_termination: {
-                const: 'yes', // Ensure this matches the value in the form data
+                const: 'yes',
               },
             },
-            required: ['will_challenge_termination'], // Ensure this field is required
+            required: ['will_challenge_termination'],
           },
           then: {
             properties: {
@@ -49,11 +49,35 @@ export const jsonSchema = {
                 type: 'string',
               },
             },
-            required: ['will_challenge_termination_description'], // Make the field required when condition is met
+            required: ['will_challenge_termination_description'],
           },
           else: {
             properties: {
               will_challenge_termination_description: false,
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
+              agrees_to_pto_amount: {
+                const: 'no',
+              },
+            },
+            required: ['agrees_to_pto_amount'],
+          },
+          then: {
+            properties: {
+              agrees_to_pto_amount_notes: {
+                type: 'string',
+              },
+            },
+            required: ['agrees_to_pto_amount_notes'],
+          },
+          else: {
+            properties: {
+              agrees_to_pto_amount_notes: false,
+              timesheet_file: false,
             },
           },
         },
@@ -294,7 +318,7 @@ export const jsonSchema = {
           maxLength: 1000,
           title:
             'Please explain how the employee will challenge their termination',
-          type: 'string',
+          type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'textarea',
           },
@@ -309,6 +333,47 @@ export const jsonSchema = {
             inputType: 'date',
           },
         },
+        agrees_to_pto_amount: {
+          description: '',
+          oneOf: [
+            {
+              const: 'yes',
+              description: '',
+              title: 'Yes',
+            },
+            {
+              const: 'no',
+              description: '',
+              title: 'No',
+            },
+          ],
+          title: 'Are these paid time off records correct?',
+          type: 'string',
+          'x-jsf-presentation': {
+            direction: 'column',
+            inputType: 'radio',
+          },
+        },
+        agrees_to_pto_amount_notes: {
+          description:
+            'Please provide details regarding any additional days taken, including specific dates, or any other inaccuracy in the time off data.',
+          maxLength: 1000,
+          title: 'Provide time off details',
+          type: ['string', 'null'],
+          'x-jsf-presentation': {
+            inputType: 'textarea',
+          },
+        },
+        timesheet_file: {
+          description:
+            'Upload a timesheet exported from your HR software. This way we can compare and confirm the total number of Paid time off.',
+          title: 'Timesheet document',
+          type: ['string', 'null'],
+          'x-jsf-presentation': {
+            inputType: 'file',
+            accept: '.pdf',
+          },
+        },
       },
       required: [
         'is_confidential',
@@ -319,6 +384,7 @@ export const jsonSchema = {
         'risk_assessment_reasons',
         'will_challenge_termination',
         'proposed_termination_date',
+        'agrees_to_pto_amount',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -335,6 +401,9 @@ export const jsonSchema = {
         'will_challenge_termination',
         'will_challenge_termination_description',
         'proposed_termination_date',
+        'agrees_to_pto_amount',
+        'agrees_to_pto_amount_notes',
+        'timesheet_file',
       ],
     },
   },
