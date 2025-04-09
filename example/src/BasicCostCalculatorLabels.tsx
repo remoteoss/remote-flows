@@ -4,13 +4,9 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
   RemoteFlows,
-  CostCalculatorResults,
+  CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
-import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
-import Flag from 'react-flagpack';
 import './App.css';
-import 'react-flagpack/dist/style.css';
-import { useState } from 'react';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -18,9 +14,7 @@ const estimationOptions = {
   includeCostBreakdowns: true,
 };
 
-export function CostCalculatorWithResults() {
-  const [estimations, setEstimations] =
-    useState<CostCalculatorEstimateResponse | null>(null);
+export function BasicCostCalculatorLabels() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -47,7 +41,7 @@ export function CostCalculatorWithResults() {
               <CostCalculatorForm
                 onSubmit={(payload) => console.log(payload)}
                 onError={(error) => console.error({ error })}
-                onSuccess={(response) => setEstimations(response)}
+                onSuccess={(response) => console.log({ response })}
               />
               <CostCalculatorSubmitButton>
                 Get estimate
@@ -56,18 +50,20 @@ export function CostCalculatorWithResults() {
             </div>
           );
         }}
+        options={{
+          jsfModify: {
+            fields: {
+              country: {
+                title: 'Select your country',
+              },
+              age: {
+                title: 'Enter your age',
+              },
+            },
+          },
+        }}
       />
-      {estimations && (
-        <div className="mt-4 mb-2 flex gap-2">
-          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
-          <label className="text-md font-bold">
-            {estimations.data.employments?.[0].country.name}
-          </label>
-        </div>
-      )}
-      {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
-      )}
+      <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
 }

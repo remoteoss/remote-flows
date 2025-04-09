@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 0.0.6
+
+### Patch Changes
+
+- bdc696c: Fix handleValidation and add example about rendering flags
+
+## 0.0.5
+
+### Patch Changes
+
+- aeac164: Support options.jsfModify to allow customization of cost calculator form labels and other schema properties
+
 ## 0.0.4
 
 ### Patch Changes

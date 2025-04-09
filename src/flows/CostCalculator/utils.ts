@@ -6,14 +6,14 @@ import { defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
-  Field,
 } from './types';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 /**
  * Build the validation schema for the form.
  * @returns
  */
-export function buildValidationSchema(fields: Field[]) {
+export function buildValidationSchema(fields: $TSFixMe[]) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
       fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;

@@ -7,14 +7,16 @@
     "dev": "nodemon ./server.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "react-flagpack"
   },
   "dependencies": {
     "@remoteoss/remote-flows": "file:../",
     "axios": "^1.8.3",
     "express": "^4.21.2",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-flagpack": "^2.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
