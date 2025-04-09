@@ -1,5 +1,9 @@
-import { CostCalculatorFlow } from '@/src/flows/CostCalculator/CostCalculatorFlow';
 import type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator/CostCalculatorFlow';
+import { CostCalculatorFlow } from '@/src/flows/CostCalculator/CostCalculatorFlow';
+import { CostCalculatorForm } from '@/src/flows/CostCalculator/CostCalculatorForm';
+import { CostCalculatorResetButton } from '@/src/flows/CostCalculator/CostCalculatorResetButton';
+import { CostCalculatorSubmitButton } from '@/src/flows/CostCalculator/CostCalculatorSubmitButton';
+import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -14,14 +18,13 @@ import {
   regionFields,
   regionFieldsWithAgeProperty,
 } from './fixtures';
-import { CostCalculatorSubmitButton } from '@/src/flows/CostCalculator/CostCalculatorSubmitButton';
-import { CostCalculatorResetButton } from '@/src/flows/CostCalculator/CostCalculatorResetButton';
-import { CostCalculatorForm } from '@/src/flows/CostCalculator/CostCalculatorForm';
 
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
+  </QueryClientProvider>
 );
 
 const mockOnSubmit = vi.fn();

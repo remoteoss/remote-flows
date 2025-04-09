@@ -7,10 +7,10 @@ import {
 import type { PropsWithChildren } from 'react';
 import React, { createContext, useContext, useRef } from 'react';
 
-import { client } from './client/client.gen';
-import { RemoteFlowsSDKProps } from './types/remoteFlows';
 import { ENVIROMENTS } from '@/src/environments';
 import { ThemeProvider } from '@/src/theme';
+import { client } from './client/client.gen';
+import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 
 const queryClient = new QueryClient();
 
@@ -72,17 +72,50 @@ function RemoteFlowContextWrapper({
   );
 }
 
+const FormFieldsContext = createContext<{ components: Components } | null>(
+  null,
+);
+
+export const useFormFields = () => {
+  const context = useContext(FormFieldsContext);
+  if (!context?.components) {
+    throw new Error('useFormFields must be used within a FormFieldsProvider');
+  }
+
+  return {
+    components: context.components,
+  };
+};
+
+export function FormFieldsProvider({
+  children,
+  components,
+}: PropsWithChildren<{
+  components?: Components;
+}>) {
+  return (
+    <FormFieldsContext.Provider
+      value={components ? { components } : { components: {} }}
+    >
+      {children}
+    </FormFieldsContext.Provider>
+  );
+}
+
 export function RemoteFlows({
   auth,
   children,
+  components,
   isTestingMode = false,
   theme,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
-      </RemoteFlowContextWrapper>
+      <FormFieldsProvider components={components}>
+        <RemoteFlowContextWrapper isTestingMode={isTestingMode} auth={auth}>
+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        </RemoteFlowContextWrapper>
+      </FormFieldsProvider>
     </QueryClientProvider>
   );
 }

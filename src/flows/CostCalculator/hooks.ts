@@ -9,6 +9,7 @@ import {
   PostCreateEstimationError,
   postCreateEstimationPdf,
 } from '@/src/client';
+import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
@@ -22,7 +23,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
-import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 
 type CostCalculatorCountry = {
   value: string;

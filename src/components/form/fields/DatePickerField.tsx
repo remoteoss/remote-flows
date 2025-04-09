@@ -25,12 +25,14 @@ type DatePickerFieldProps = {
   description?: string;
   label: string;
   name: string;
+  minDate?: string;
 };
 
 export function DatePickerField({
   description,
   label,
   name,
+  minDate,
 }: DatePickerFieldProps) {
   const { control } = useFormContext();
   return (
@@ -49,17 +51,14 @@ export function DatePickerField({
               <FormControl>
                 <div>
                   <Button
+                    type="button"
                     variant={'outline'}
                     className={cn(
                       'w-full pl-3 text-left font-normal',
                       !field.value && 'text-muted-foreground',
                     )}
                   >
-                    {field.value ? (
-                      <>{format(field.value, 'yyyy-MM-dd')}</>
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
+                    {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
                 </div>
@@ -72,14 +71,19 @@ export function DatePickerField({
               <Calendar
                 mode="single"
                 className="RemoteFlows__DatepickerField__Calendar"
-                selected={field.value}
-                onSelect={field.onChange}
+                selected={field.value ? new Date(field.value) : undefined}
+                onSelect={(date) =>
+                  field.onChange(date ? format(date, 'yyyy-MM-dd') : null)
+                }
+                defaultMonth={minDate ? new Date(minDate) : undefined}
                 components={{
                   DayContent: (props) => {
                     return <PopoverClose>{props.date.getDate()}</PopoverClose>;
                   },
                 }}
-                disabled={(date) => date < new Date('1900-01-01')}
+                {...(minDate && {
+                  disabled: (date: Date) => date < new Date(minDate),
+                })}
               />
             </PopoverContent>
           </Popover>

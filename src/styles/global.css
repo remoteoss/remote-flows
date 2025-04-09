@@ -19,6 +19,8 @@
   --accent-foreground: var(--accentForeground, #0f1419);
   --destructive: var(--danger, #d92020);
   --destructive-foreground: var(--danger, #d92020);
+  --warning: var(--warningBackground, #fffcf5);
+  --warning-border: var(--warningBorder, #fec24b);
   --border: var(--borderInput, #9aa6b2);
   --input: var(--borderInput, #9aa6b2);
   --ring: oklch(0.708 0 0);
@@ -46,6 +48,8 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+  --color-warning-border: var(--warning-border);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-base-color: var(--base);
