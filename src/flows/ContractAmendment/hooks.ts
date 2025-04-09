@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateContractAmendmentParams,
   EmploymentShowResponse,
@@ -7,23 +6,34 @@ import {
   postCreateContractAmendment,
 } from '@/src/client';
 
-import { parseJSFToValidateFormik } from '@/src/components/form/utils';
+import {
+  convertFromCents,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
+
+import { FieldValues } from 'react-hook-form';
+import { buildValidationSchema } from '../utils';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
 function buildInitialValues(employment?: EmploymentShowResponse) {
   return {
+    ...employment?.data?.employment?.contract_details,
     effective_date: '',
+    reason_for_change: '',
     job_title: employment?.data?.employment?.job_title,
     additional_comments: '',
-    ...(employment?.data?.employment?.contract_details || {}),
+    annual_gross_salary: convertFromCents(
+      employment?.data?.employment?.contract_details
+        ?.annual_gross_salary as string,
+    ),
   };
 }
 
@@ -44,15 +54,19 @@ const useEmployment = ({ employmentId }: UseEmployment) => {
   });
 };
 
+type ContractAmendmentSchemaParams = {
+  countryCode: string;
+  employment: EmploymentShowResponse | undefined;
+  fieldValues: FieldValues | undefined;
+  options?: ContractAmendmentParams['options'];
+};
+
 const useContractAmendmentSchema = ({
   countryCode,
   employment,
-  formValues,
-}: {
-  countryCode: string;
-  employment: EmploymentShowResponse | undefined;
-  formValues: any;
-}) => {
+  fieldValues,
+  options,
+}: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
   return useQuery({
     queryKey: ['contract-amendment-schema'],
@@ -69,10 +83,18 @@ const useContractAmendmentSchema = ({
       });
     },
     enabled: Boolean(employment),
-    select: ({ data }) =>
-      createHeadlessForm(data?.data || {}, {
-        initialValues: formValues || buildInitialValues(employment),
-      }),
+    select: ({ data }) => {
+      let jsfSchema = data?.data || {};
+
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
+
+      return createHeadlessForm(jsfSchema, {
+        initialValues: fieldValues || buildInitialValues(employment),
+      });
+    },
   });
 };
 
@@ -94,8 +116,9 @@ const useCreateContractAmendment = () => {
 export const useContractAmendment = ({
   employmentId,
   countryCode,
+  options,
 }: ContractAmendmentParams) => {
-  const [formValues, setFormValues] = useState<any>();
+  const [fieldValues, setFieldValues] = useState<FieldValues>();
   const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
     employmentId,
   });
@@ -106,13 +129,21 @@ export const useContractAmendment = ({
   } = useContractAmendmentSchema({
     employment,
     countryCode,
-    formValues,
+    fieldValues,
+    options,
   });
 
   const createContractAmendment = useCreateContractAmendment();
   const { mutateAsync } = mutationToPromise(createContractAmendment);
 
-  async function onSubmit(values: CreateContractAmendmentParams) {
+  async function onSubmit(values: FieldValues) {
+    if (
+      !employment?.data?.employment?.id ||
+      !employment?.data?.employment.active_contract_id
+    ) {
+      throw new Error('Employment id or active contract id is missing');
+    }
+
     // const validation =
     //   jsonSchemaContractAmendmentFields?.handleValidation(values);
     // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
@@ -122,7 +153,13 @@ export const useContractAmendment = ({
     //   };
     // }
 
-    return mutateAsync(values);
+    return mutateAsync({
+      employment_id: employment?.data.employment?.id,
+      amendment_contract_id: employment?.data.employment?.active_contract_id,
+      contract_amendment: {
+        ...values,
+      },
+    });
   }
 
   return {
@@ -135,9 +172,13 @@ export const useContractAmendment = ({
     isLoading: isLoadingEmployment || isLoadingContractAmendments,
     isSubmitting: createContractAmendment.isPending,
     initialValues: buildInitialValues(employment),
-    handleValidation: (values: any) => {
+    validationSchema: buildValidationSchema(
+      // @ts-expect-error error
+      contractAmendmentHeadlessForm?.fields || [],
+    ),
+    handleValidation: (values: FieldValues) => {
       if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidateFormik(
+        const parsedValues = parseJSFToValidate(
           values,
           contractAmendmentHeadlessForm?.fields,
           {
@@ -148,16 +189,16 @@ export const useContractAmendment = ({
       }
       return null;
     },
-    checkFieldUpdates: (values: any) => {
+    checkFieldUpdates: (values: FieldValues) => {
       if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidateFormik(
+        const parsedValues = parseJSFToValidate(
           values,
           contractAmendmentHeadlessForm?.fields,
           {
             isPartialValidation: false,
           },
         );
-        setFormValues(parsedValues);
+        setFieldValues(parsedValues);
       }
     },
     onSubmit,

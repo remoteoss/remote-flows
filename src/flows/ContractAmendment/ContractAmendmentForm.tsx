@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { parseFormValuesToAPI } from '@/src/components/form/utils';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
-import { ContractAmendmentParams } from './types';
 
-type ContractAmendmentFormProps = ContractAmendmentParams & {
+type ContractAmendmentFormProps = {
   onSubmit?: (values: any) => Promise<void>;
   onError?: (error: any) => void;
   onSuccess?: (data: any) => void;
@@ -36,8 +37,10 @@ export function ContractAmendmentForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: any) => {
-    const contractAmendmentResult = await submitContractAmendment(values);
+  const handleSubmit = async (values: FieldValues) => {
+    const contractAmendmentResult = await submitContractAmendment(
+      parseFormValuesToAPI(values, fields),
+    );
 
     await onSubmit?.(values);
     if (contractAmendmentResult.error) {

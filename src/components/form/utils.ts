@@ -71,7 +71,8 @@ function convertToCents(amount?: number | string | string[] | null | boolean) {
 
   return round(validAmount * 100);
 }
-function convertFromCents(amount?: number | string | null) {
+
+export function convertFromCents(amount?: number | string | null) {
   if (amount == null || Number.isNaN(amount)) return null;
 
   let normalizedValue: number;
@@ -181,7 +182,7 @@ function extractFieldsetFieldsValues(
   }, {});
 }
 
-const fieldTypesTransformations: Record<string, any> = {
+export const fieldTypesTransformations: Record<string, any> = {
   [supportedTypes.COUNTRIES]: {
     /**
      *
@@ -304,7 +305,7 @@ const fieldTypesTransformations: Record<string, any> = {
   },
 };
 
-function parseFormValuesToAPI(
+export function parseFormValuesToAPI(
   formValues: Record<string, any> = {},
   fields: any[],
 ) {
@@ -521,7 +522,7 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
-export function parseJSFToValidateFormik(
+export function parseJSFToValidate(
   formValues: Record<string, any>,
   fields: any[],
   config: { isPartialValidation: boolean },

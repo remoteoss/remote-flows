@@ -1,54 +1,38 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
+import { ContractAmendmentForm } from './ContractAmendmentForm';
+import { ContractAmendmentSubmit } from './ContractAmendmentSubmit';
 import { useContractAmendment } from './hooks';
+import { ContractAmendmentParams } from './types';
 
-interface ValidationField {
-  message: string;
-  type: string;
-}
+type TUseContractAmendment = ReturnType<typeof useContractAmendment>;
+type RenderProps = {
+  contractAmendmentBag: TUseContractAmendment;
+  components: {
+    ContractAmendmentForm: typeof ContractAmendmentForm;
+    ContractAmendmentSubmit: typeof ContractAmendmentSubmit;
+  };
+};
+
+type ContractAmendmentProviderProps = PropsWithChildren<{
+  contractAmendmentBag: TUseContractAmendment;
+  render: ({ contractAmendmentBag }: RenderProps) => React.ReactNode;
+}>;
 
 function ContractAmendmentProvider({
   render,
-  contractAmendment,
-}: PropsWithChildren<{
-  contractAmendment: ReturnType<typeof useContractAmendment>;
-  render: ({
-    contractAmendment,
-  }: {
-    contractAmendment: ReturnType<typeof useContractAmendment>;
-  }) => React.ReactNode;
-}>) {
-  const resolver = function (values: any) {
-    const { formErrors } = contractAmendment.handleValidation(values);
-
-    if (Object.keys(formErrors).length > 0) {
-      const errors = Object.entries(formErrors).reduce<
-        Record<string, ValidationField>
-      >((result, [key, value]) => {
-        result[key] = {
-          message: String(value),
-          type: 'validation',
-        };
-        return result;
-      }, {});
-      return {
-        values: {},
-        errors,
-      };
-    }
-
-    return {
-      values,
-      errors: {},
-    };
-  };
-
+  contractAmendmentBag,
+}: ContractAmendmentProviderProps) {
   const formId = useId();
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    contractAmendmentBag.handleValidation,
+  );
   const form = useForm({
     resolver,
-    defaultValues: contractAmendment.initialValues,
+    defaultValues: contractAmendmentBag.initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });
@@ -58,31 +42,50 @@ function ContractAmendmentProvider({
       value={{
         form,
         formId: formId,
-        contractAmendment,
+        contractAmendmentBag,
       }}
     >
-      {render({ contractAmendment })}
+      {render({
+        contractAmendmentBag,
+        components: { ContractAmendmentForm, ContractAmendmentSubmit },
+      })}
     </ContractAmendmentContext.Provider>
   );
 }
 
+type ContractAmendmentFlowProps = ContractAmendmentParams & {
+  render: ({
+    contractAmendmentBag,
+    components,
+  }: RenderProps) => React.ReactNode;
+};
+
 export function ContractAmendmentFlow({
   employmentId,
   countryCode,
+  options,
   render,
-}: any) {
-  const contractAmendment = useContractAmendment({
+}: ContractAmendmentFlowProps) {
+  const contractAmendmentBag = useContractAmendment({
     employmentId,
     countryCode,
+    options,
   });
 
-  if (contractAmendment.isLoading) {
-    return <>{render({ contractAmendment })}</>;
+  if (contractAmendmentBag.isLoading) {
+    return (
+      <>
+        {render({
+          contractAmendmentBag,
+          components: { ContractAmendmentForm, ContractAmendmentSubmit },
+        })}
+      </>
+    );
   }
 
   return (
     <ContractAmendmentProvider
-      contractAmendment={contractAmendment}
+      contractAmendmentBag={contractAmendmentBag}
       render={render}
     />
   );
