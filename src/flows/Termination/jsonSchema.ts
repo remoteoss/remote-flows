@@ -163,12 +163,42 @@ export const jsonSchema = {
             inputType: 'select',
           },
         },
+        termination_reason_description: {
+          description: '',
+          maxLength: 1000,
+          title: 'Termination reason details',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'textarea',
+          },
+        },
+        additional_comments: {
+          description: '',
+          maxLength: 1000,
+          title: 'Additional details regarding this termination process.',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'textarea',
+          },
+        },
+        termination_reason_files: {
+          description:
+            'Please upload any supporting documents regarding the termination reason.',
+          title: 'Termination reason files',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'file',
+            accept: '.pdf',
+            multiple: true,
+          },
+        },
       },
       required: [
         'is_confidential',
         'customer_informed_employee',
         'employer_confirmed_email',
         'termination_reason',
+        'termination_reason_description',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -178,6 +208,9 @@ export const jsonSchema = {
         'customer_informed_employee_description',
         'employer_confirmed_email',
         'termination_reason',
+        'termination_reason_description',
+        'additional_comments',
+        'termination_reason_files',
       ],
     },
   },
