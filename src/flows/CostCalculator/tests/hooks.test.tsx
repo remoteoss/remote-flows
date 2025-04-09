@@ -1,12 +1,12 @@
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { server } from '@/src/tests/server';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { countries, currencies, estimation, regionFields } from './fixtures';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 const queryClient = new QueryClient();
 
@@ -67,7 +67,7 @@ describe('useCostCalculator', () => {
     expect(regionField?.required).toBe(true);
   });
 
-  test('should not throw an error when we send correct data to handleValidation', async () => {
+  test('should not return errors when valid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const validValues = {
       country: 'PRT',
@@ -76,15 +76,11 @@ describe('useCostCalculator', () => {
     };
 
     await expect(
-      result.current.handleValidation(validValues),
-    ).resolves.not.toThrow();
-
-    await expect(result.current.handleValidation(validValues)).resolves.toEqual(
-      validValues,
-    );
+      result.current.handleValidation(validValues).formErrors,
+    ).toEqual({});
   });
 
-  test('should throw an error when we send incorrect data to handleValidation', async () => {
+  test('should return an error when invalid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const invalidValues = {
       country: 'PRT',
@@ -92,11 +88,10 @@ describe('useCostCalculator', () => {
       salary: '',
     };
 
-    try {
-      await result.current.handleValidation(invalidValues);
-    } catch (error: $TSFixMe) {
-      expect(error).toBeDefined();
-      expect(error.message).toBe('Salary is required'); // Replace with the actual error message
-    }
+    await expect(
+      result.current.handleValidation(invalidValues).formErrors,
+    ).toEqual({
+      salary: 'Salary is required',
+    });
   });
 });

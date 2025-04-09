@@ -368,12 +368,12 @@ export const useCostCalculator = (
     const result = fieldsJSONSchema.handleValidation(parsedValues);
     const result2 = jsonSchemaRegionFields?.handleValidation(parsedValues);
     const combinedInnerErrors = [
-      ...(result.yupError?.inner || []),
-      ...(result2?.yupError.inner || []),
+      ...(result?.yupError?.inner || []),
+      ...(result2?.yupError?.inner || []),
     ];
     const combinedValues = {
-      ...result.yupError?.value,
-      ...(result2?.yupError.value || {}),
+      ...result?.yupError?.value,
+      ...(result2?.yupError?.value || {}),
     };
 
     return {
