@@ -27,7 +27,7 @@ type SelectFieldProps = {
   options: Array<{ value: string; label: string }>;
   defaultValue?: string;
   className?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: React.ChangeEvent<HTMLInputElement> | string) => void;
 };
 
 export function SelectField({
@@ -61,7 +61,13 @@ export function SelectField({
           };
           return (
             <CustomSelectField
-              field={field}
+              field={{
+                ...field,
+                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(value);
+                  onChange?.(value);
+                },
+              }}
               fieldState={fieldState}
               fieldData={customSelectFieldProps}
             />

@@ -18,6 +18,7 @@ import type {
 import type { Result } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
+import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { useClient } from '@/src/context';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
@@ -327,7 +328,11 @@ export const useCostCalculator = (
     regionField.required = regions.length > 0;
     regionField.onChange = onRegionChange;
     regionField.schema =
-      regions.length > 0 ? string().required('Region is required') : string();
+      regions.length > 0
+        ? string()
+            .transform((value) => (typeof value === 'string' ? value : ''))
+            .required('Region is required')
+        : string();
   }
 
   if (currencies) {
@@ -359,27 +364,63 @@ export const useCostCalculator = (
     ...(jsonSchemaRegionFields?.fields || []),
   ];
 
-  const validationSchema = buildValidationSchema(allFields);
+  const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
 
-  const handleValidation = (values: CostCalculatorEstimationFormValues) => {
+  const handleValidation = async (
+    values: CostCalculatorEstimationFormValues,
+  ) => {
+    let errors: {
+      formErrors: Record<
+        string,
+        {
+          type: string;
+          message: string;
+        }
+      >;
+      yupError: ValidationError;
+    } | null = null;
+
     const parsedValues = parseJSFToValidate(values, allFields, {
       isPartialValidation: false,
     });
-    const result = fieldsJSONSchema.handleValidation(parsedValues);
-    const result2 = jsonSchemaRegionFields?.handleValidation(parsedValues);
+
+    try {
+      await validationSchema.validate(parsedValues, {
+        abortEarly: false,
+      });
+      errors = {
+        formErrors: {},
+        yupError: new ValidationError([], values),
+      };
+    } catch (error) {
+      const iterateResult = iterateErrors(error as ValidationError);
+
+      errors = {
+        formErrors: Object.entries(iterateResult).reduce(
+          (acc, [key, value]) => {
+            return { ...acc, [key]: value.message };
+          },
+          {},
+        ),
+        yupError: error as ValidationError,
+      };
+    }
+
+    const handleValidationResult =
+      jsonSchemaRegionFields?.handleValidation(parsedValues);
     const combinedInnerErrors = [
-      ...(result?.yupError?.inner || []),
-      ...(result2?.yupError?.inner || []),
+      ...(errors?.yupError.inner || []),
+      ...(handleValidationResult?.yupError?.inner || []),
     ];
     const combinedValues = {
-      ...result?.yupError?.value,
-      ...(result2?.yupError?.value || {}),
+      ...(errors?.yupError?.value || {}),
+      ...(handleValidationResult?.yupError?.value || {}),
     };
 
     return {
       formErrors: {
-        ...(result?.formErrors || {}),
-        ...(result2?.formErrors || {}),
+        ...(errors?.formErrors || {}),
+        ...(handleValidationResult?.formErrors || {}),
       },
       yupError: new ValidationError(combinedInnerErrors, combinedValues),
     };

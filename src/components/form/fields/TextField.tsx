@@ -48,7 +48,13 @@ export function TextField({
           };
           return (
             <CustomTextField
-              field={field}
+              field={{
+                ...field,
+                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(value);
+                  onChange?.(value);
+                },
+              }}
               fieldState={fieldState}
               fieldData={customTextFieldProps}
             />
@@ -66,6 +72,7 @@ export function TextField({
                 // {...rest}
                 value={field.value ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  console.log('EVENT', event);
                   field.onChange(event);
                   onChange?.(event);
                 }}

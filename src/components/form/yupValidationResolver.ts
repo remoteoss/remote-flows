@@ -1,7 +1,7 @@
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
 
-function iterateErrors(error: ValidationError) {
+export function iterateErrors(error: ValidationError) {
   const errors = (error as ValidationError).inner.reduce(
     (
       allErrors: Record<string, { type: string; message: string }>,
@@ -27,8 +27,8 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
     yupError: ValidationError;
   },
 ): Resolver<InferType<T>> => {
-  return (data: FieldValues) => {
-    const { yupError, formErrors } = handleValidation(data);
+  return async (data: FieldValues) => {
+    const { yupError, formErrors } = await handleValidation(data);
 
     if (Object.keys(formErrors || {}).length > 0) {
       return {

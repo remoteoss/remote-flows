@@ -76,8 +76,10 @@ describe('useCostCalculator', () => {
     };
 
     await expect(
-      result.current.handleValidation(validValues).formErrors,
-    ).toEqual({});
+      result.current.handleValidation(validValues),
+    ).resolves.toMatchObject({
+      formErrors: {},
+    });
   });
 
   test('should return an error when invalid data is passed to handleValidation', async () => {
@@ -89,9 +91,11 @@ describe('useCostCalculator', () => {
     };
 
     await expect(
-      result.current.handleValidation(invalidValues).formErrors,
-    ).toEqual({
-      salary: 'Salary is required',
+      result.current.handleValidation(invalidValues),
+    ).resolves.toMatchObject({
+      formErrors: {
+        salary: 'Salary is required',
+      },
     });
   });
 });

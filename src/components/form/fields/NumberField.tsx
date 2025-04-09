@@ -19,7 +19,13 @@ export function NumberField(props: TextFieldProps) {
             components.number as React.ComponentType<any>;
           return (
             <CustomNumberField
-              field={field}
+              field={{
+                ...field,
+                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(value);
+                  props.onChange?.(value);
+                },
+              }}
               fieldState={fieldState}
               fieldData={props}
             />
