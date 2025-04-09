@@ -192,6 +192,58 @@ export const jsonSchema = {
             multiple: true,
           },
         },
+        risk_assessment_reasons: {
+          description:
+            'Please upload any supporting documents regarding the termination reason.',
+          title: 'This employee is...',
+          type: 'array',
+          items: {
+            anyOf: [
+              {
+                const: 'sick_leave',
+                title: 'Currently on or recently returned from sick leave',
+              },
+              {
+                const: 'family_leave',
+                title:
+                  'Currently on or recently returned from maternity, paternity, or other family leave',
+              },
+              {
+                const: 'pregnant_or_breastfeeding',
+                title: 'Pregnant or breastfeeding',
+              },
+              {
+                const: 'requested_medical_or_family_leave',
+                title: 'Requested medical or family leave',
+              },
+              {
+                const: 'disabled_or_health_condition',
+                title: 'Disabled or has a health condition',
+              },
+              {
+                const: 'member_of_union_or_works_council',
+                title: 'A member of a union or works council',
+              },
+              {
+                const: 'caring_responsibilities',
+                title: 'Caring responsibilities',
+              },
+              {
+                const: 'reported_concerns_with_workplace',
+                title:
+                  'Reported any wrongdoing; raised any allegations of discrimination, harassment, retaliation, etc.; or asserted their employment rights or raised complaints about their working conditions',
+              },
+              {
+                const: 'none_of_these',
+                title:
+                  'To the best of my knowledge, I am not aware of any of these',
+              },
+            ],
+          },
+          'x-jsf-presentation': {
+            inputType: 'checkbox',
+          },
+        },
       },
       required: [
         'is_confidential',
@@ -199,6 +251,7 @@ export const jsonSchema = {
         'employer_confirmed_email',
         'termination_reason',
         'termination_reason_description',
+        'risk_assessment_reasons',
       ],
       type: 'object',
       'x-jsf-order': [
@@ -211,6 +264,7 @@ export const jsonSchema = {
         'termination_reason_description',
         'additional_comments',
         'termination_reason_files',
+        'risk_assessment_reasons',
       ],
     },
   },

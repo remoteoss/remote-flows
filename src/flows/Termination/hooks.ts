@@ -5,7 +5,7 @@ import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { jsonSchema } from './jsonSchema';
-import { parseJSFToValidateFormik } from '@/src/components/form/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useState } from 'react';
 
 const useCreateTermination = () => {
@@ -75,7 +75,7 @@ export const useTermination = () => {
     },
     checkFieldUpdates: (values: any) => {
       if (terminationHeadlessForm) {
-        const parsedValues = parseJSFToValidateFormik(
+        const parsedValues = parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
           {
