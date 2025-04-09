@@ -16,7 +16,9 @@ import type {
   JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
-import { useClient } from '@/src/RemoteFlowsProvider';
+
+import { parseJSFToValidate } from '@/src/components/form/utils';
+import { useClient } from '@/src/context';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -360,7 +362,27 @@ export const useCostCalculator = (
   const validationSchema = buildValidationSchema(allFields);
 
   const handleValidation = (values: CostCalculatorEstimationFormValues) => {
-    return validationSchema.validate(values, { abortEarly: false });
+    const parsedValues = parseJSFToValidate(values, allFields, {
+      isPartialValidation: false,
+    });
+    const result = fieldsJSONSchema.handleValidation(parsedValues);
+    const result2 = jsonSchemaRegionFields?.handleValidation(parsedValues);
+    const combinedInnerErrors = [
+      ...(result.yupError?.inner || []),
+      ...(result2?.yupError.inner || []),
+    ];
+    const combinedValues = {
+      ...result.yupError?.value,
+      ...(result2?.yupError.value || {}),
+    };
+
+    return {
+      formErrors: {
+        ...(result?.formErrors || {}),
+        ...(result2?.formErrors || {}),
+      },
+      yupError: new ValidationError(combinedInnerErrors, combinedValues),
+    };
   };
 
   return {

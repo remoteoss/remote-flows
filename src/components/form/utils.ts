@@ -50,7 +50,9 @@ function convertToValidCost(value: string) {
   return parseFloat(value.replace(/,/g, ''));
 }
 
-function convertToCents(amount?: number | string | string[] | null | boolean) {
+export function convertToCents(
+  amount?: number | string | string[] | null | boolean,
+) {
   if (
     amount == null ||
     amount === '' ||

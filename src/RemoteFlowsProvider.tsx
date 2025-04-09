@@ -1,24 +1,19 @@
-import { Client, createClient } from '@hey-api/client-fetch';
+import { createClient } from '@hey-api/client-fetch';
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { createContext, useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import { ENVIROMENTS } from '@/src/environments';
 import { ThemeProvider } from '@/src/theme';
 import { client } from './client/client.gen';
+import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 
 const queryClient = new QueryClient();
-
-const RemoteFlowContext = createContext<{ client: Client | null }>({
-  client: null,
-});
-
-export const useClient = () => useContext(RemoteFlowContext);
 
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
@@ -71,21 +66,6 @@ function RemoteFlowContextWrapper({
     </RemoteFlowContext.Provider>
   );
 }
-
-const FormFieldsContext = createContext<{ components: Components } | null>(
-  null,
-);
-
-export const useFormFields = () => {
-  const context = useContext(FormFieldsContext);
-  if (!context?.components) {
-    throw new Error('useFormFields must be used within a FormFieldsProvider');
-  }
-
-  return {
-    components: context.components,
-  };
-};
 
 export function FormFieldsProvider({
   children,

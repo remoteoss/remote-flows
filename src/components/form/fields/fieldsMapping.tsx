@@ -2,6 +2,7 @@ import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
 import { DatePickerField } from '@/src/components/form/fields/DatePickerField';
 import { FieldSetField } from '@/src/components/form/fields/FieldSetField';
 import { FileUploadField } from '@/src/components/form/fields/FileUploadField';
+import { NumberField } from '@/src/components/form/fields/NumberField';
 import { RadioGroupField } from '@/src/components/form/fields/RadioGroupField';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextAreaField } from '@/src/components/form/fields/TextAreaField';
@@ -13,10 +14,10 @@ import React from 'react';
 export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   checkbox: CheckBoxField,
   text: TextField,
-  money: TextField,
+  money: NumberField,
   select: SelectField,
   radio: RadioGroupField,
-  number: (props) => <TextField {...props} type="text" />,
+  number: NumberField,
   file: FileUploadField,
   fieldset: FieldSetField,
   date: DatePickerField,
