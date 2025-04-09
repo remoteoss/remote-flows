@@ -2,6 +2,7 @@ import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTermination } from '@/src/flows/Termination/hooks';
+import { JSFModify } from '@/src/flows/CostCalculator/types';
 
 function TerminationFlowProvider({
   render,
@@ -58,10 +59,14 @@ function TerminationFlowProvider({
 
 export const TerminationFlow = ({
   render,
+  options,
 }: {
   render: () => React.ReactNode;
+  options?: {
+    jsfModify?: JSFModify;
+  };
 }) => {
-  const termination = useTermination();
+  const termination = useTermination({ options });
   if (termination.isLoading) {
     return <>{render({ termination })}</>;
   }

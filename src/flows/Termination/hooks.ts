@@ -2,11 +2,12 @@ import { CreateOffboardingParams, postCreateOffboarding } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { jsonSchema } from './jsonSchema';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useState } from 'react';
+import { JSFModify } from '@/src/flows/CostCalculator/types';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -23,14 +24,21 @@ const useCreateTermination = () => {
   });
 };
 
-const useTerminationSchema = ({ formValues }: { formValues: any }) => {
+const useTerminationSchema = ({
+  formValues,
+  jsfModify,
+}: {
+  formValues: any;
+  jsfModify?: JSFModify;
+}) => {
   return useQuery({
-    queryKey: ['termination-schema'],
+    queryKey: ['rmt-flows-termination-schema'],
     queryFn: () => {
       return jsonSchema;
     },
     select: ({ data }) => {
-      const form = createHeadlessForm(data?.schema || {}, {
+      const { schema } = modify(data.schema, jsfModify || {});
+      const form = createHeadlessForm(schema || {}, {
         initialValues: formValues || {}, // formValues || buildInitialValues(employment),
       });
       return form;
@@ -38,11 +46,17 @@ const useTerminationSchema = ({ formValues }: { formValues: any }) => {
   });
 };
 
-export const useTermination = () => {
+type TerminationHookProps = {
+  options?: {
+    jsfModify?: JSFModify;
+  };
+};
+
+export const useTermination = ({ options }: TerminationHookProps) => {
   const [formValues, setFormValues] = useState<any>();
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
-    useTerminationSchema({ formValues });
+    useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
 
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
