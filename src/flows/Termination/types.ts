@@ -17,5 +17,5 @@ export type TerminationFormValues = {
   termination_reason_files: TerminationDetailsParams['termination_reason_files'];
   timesheet_file: TerminationDetailsParams['timesheet_file'];
   will_challenge_termination: boolean;
-  will_challenge_termination_description: string | null;
+  will_challenge_termination_description: string | undefined;
 };
