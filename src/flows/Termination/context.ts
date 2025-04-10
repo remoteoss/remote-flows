@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { useTermination } from '@/src/flows/Termination/hooks';
 import { createContext, useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -9,19 +9,11 @@ type TerminationFormValues = {
 export const TerminationContext = createContext<{
   form: UseFormReturn<TerminationFormValues> | null;
   formId: string | undefined;
-  termination: {
-    fields: any[];
-    checkFieldUpdates: (values: any) => void;
-    onSubmit: (values: any) => Promise<void>;
-  };
+  terminationBag: ReturnType<typeof useTermination> | null;
 }>({
   form: null,
   formId: undefined,
-  termination: {
-    fields: [],
-    checkFieldUpdates: () => {},
-    onSubmit: async () => {},
-  },
+  terminationBag: null,
 });
 
 export const useTerminationContext = () => {
@@ -35,6 +27,6 @@ export const useTerminationContext = () => {
   return {
     form: context.form,
     formId: context.formId,
-    termination: context.termination,
+    terminationBag: context.terminationBag,
   } as const;
 };

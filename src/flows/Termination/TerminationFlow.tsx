@@ -3,43 +3,28 @@ import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 
 function TerminationFlowProvider({
   render,
-  termination,
+  terminationBag,
 }: PropsWithChildren<{
-  render: () => React.ReactNode;
-  termination: ReturnType<typeof useTermination>;
+  render: ({
+    terminationBag,
+  }: {
+    terminationBag: ReturnType<typeof useTermination>;
+  }) => React.ReactNode;
+  terminationBag: ReturnType<typeof useTermination>;
 }>) {
-  const resolver = function (values: any) {
-    //const { formErrors } = contractAmendment.handleValidation(values);
-    /*  if (Object.keys(formErrors).length > 0) {
-      const errors = Object.entries(formErrors).reduce<
-        Record<string, ValidationField>
-      >((result, [key, value]) => {
-        result[key] = {
-          message: String(value),
-          type: 'validation',
-        };
-        return result;
-      }, {});
-      return {
-        values: {},
-        errors,
-      };
-    }
-
-    return {
-      values,
-      errors: {},
-    }; */
-  };
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    terminationBag.handleValidation,
+  );
 
   const formId = useId();
   const form = useForm({
-    /* resolver, */
-    /*  defaultValues: contractAmendment.initialValues, */
-    defaultValues: {},
+    resolver,
+    defaultValues: terminationBag.initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });
@@ -49,27 +34,32 @@ function TerminationFlowProvider({
       value={{
         form,
         formId: formId,
-        termination,
+        terminationBag,
       }}
     >
-      {render({ termination })}
+      {render({ terminationBag })}
     </TerminationContext.Provider>
   );
 }
 
-export const TerminationFlow = ({
-  render,
-  options,
-}: {
-  render: () => React.ReactNode;
+type TerminationFlowProps = {
+  render: ({
+    terminationBag,
+  }: {
+    terminationBag: ReturnType<typeof useTermination>;
+  }) => React.ReactNode;
   options?: {
     jsfModify?: JSFModify;
   };
-}) => {
-  const termination = useTermination({ options });
-  if (termination.isLoading) {
-    return <>{render({ termination })}</>;
+};
+
+export const TerminationFlow = ({ render, options }: TerminationFlowProps) => {
+  const terminationBag = useTermination({ options });
+  if (terminationBag.isLoading) {
+    return <>{render({ terminationBag })}</>;
   }
 
-  return <TerminationFlowProvider termination={termination} render={render} />;
+  return (
+    <TerminationFlowProvider terminationBag={terminationBag} render={render} />
+  );
 };

@@ -85,7 +85,18 @@ export const useTermination = ({ options }: TerminationHookProps) => {
     isSubmitting: createTermination.isPending,
     initialValues: {},
     handleValidation: (values: any) => {
-      // TBD
+      console.log('handleValidation', values);
+      if (terminationHeadlessForm) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          terminationHeadlessForm?.fields,
+          {
+            isPartialValidation: false,
+          },
+        );
+        return terminationHeadlessForm?.handleValidation(parsedValues);
+      }
+      return null;
     },
     checkFieldUpdates: (values: any) => {
       if (terminationHeadlessForm) {
