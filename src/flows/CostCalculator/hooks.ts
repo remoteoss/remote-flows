@@ -16,7 +16,10 @@ import type {
   JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
-import { useClient } from '@/src/RemoteFlowsProvider';
+
+import { parseJSFToValidate } from '@/src/components/form/utils';
+import { iterateErrors } from '@/src/components/form/yupValidationResolver';
+import { useClient } from '@/src/context';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -30,6 +33,17 @@ type CostCalculatorCountry = {
   childRegions: MinimalRegion[];
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
+};
+
+type JSFValidationError = {
+  formErrors: Record<
+    string,
+    {
+      type: string;
+      message: string;
+    }
+  >;
+  yupError: ValidationError;
 };
 
 /**
@@ -325,7 +339,11 @@ export const useCostCalculator = (
     regionField.required = regions.length > 0;
     regionField.onChange = onRegionChange;
     regionField.schema =
-      regions.length > 0 ? string().required('Region is required') : string();
+      regions.length > 0
+        ? string()
+            .transform((value) => (typeof value === 'string' ? value : ''))
+            .required('Region is required')
+        : string();
   }
 
   if (currencies) {
@@ -357,11 +375,59 @@ export const useCostCalculator = (
     ...(jsonSchemaRegionFields?.fields || []),
   ];
 
-  const validationSchema = buildValidationSchema(allFields);
+  const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
 
-  const handleValidation = (values: CostCalculatorEstimationFormValues) => {
-    return validationSchema.validate(values, { abortEarly: false });
-  };
+  async function handleValidation(values: CostCalculatorEstimationFormValues) {
+    let errors: JSFValidationError | null = null;
+
+    const parsedValues = parseJSFToValidate(values, allFields, {
+      isPartialValidation: false,
+    });
+
+    // 1. validate static fields first using Yup validate function
+    try {
+      await validationSchema.validate(parsedValues, {
+        abortEarly: false,
+      });
+      errors = {
+        formErrors: {},
+        yupError: new ValidationError([], values),
+      };
+    } catch (error) {
+      const iterateResult = iterateErrors(error as ValidationError);
+
+      errors = {
+        // convert the errors to a format that can be used in the form
+        formErrors: Object.entries(iterateResult).reduce(
+          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
+          {},
+        ),
+        yupError: error as ValidationError,
+      };
+    }
+
+    // 2. validate json schema fields using the handleValidation (from json-schema-form)
+    const handleValidationResult =
+      jsonSchemaRegionFields?.handleValidation(parsedValues);
+
+    // 3. combine the errors from both validations
+    const combinedInnerErrors = [
+      ...(errors?.yupError.inner || []),
+      ...(handleValidationResult?.yupError?.inner || []),
+    ];
+    const combinedValues = {
+      ...(errors?.yupError?.value || {}),
+      ...(handleValidationResult?.yupError?.value || {}),
+    };
+
+    return {
+      formErrors: {
+        ...(errors?.formErrors || {}),
+        ...(handleValidationResult?.formErrors || {}),
+      },
+      yupError: new ValidationError(combinedInnerErrors, combinedValues),
+    };
+  }
 
   return {
     stepState: {

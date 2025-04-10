@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/src/components/ui/select';
+import { useFormFields } from '@/src/context';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -18,15 +20,11 @@ import {
   FormMessage,
 } from '../../ui/form';
 
-type SelectFieldProps = {
-  label: string;
-  name: string;
+type SelectFieldProps = JSFField & {
   placeholder?: string;
-  description?: string;
   options: Array<{ value: string; label: string }>;
-  defaultValue?: string;
   className?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: React.ChangeEvent<HTMLInputElement> | string) => void;
 };
 
 export function SelectField({
@@ -36,14 +34,43 @@ export function SelectField({
   defaultValue,
   description,
   onChange,
+  ...rest
 }: SelectFieldProps) {
   const { control } = useFormContext();
+  const { components } = useFormFields();
+
   return (
     <FormField
       defaultValue={defaultValue}
       control={control}
       name={name}
       render={({ field, fieldState }) => {
+        if (components?.select) {
+          const CustomSelectField = components?.select;
+          const customSelectFieldProps = {
+            label,
+            name,
+            options,
+            defaultValue,
+            description,
+            onChange,
+            ...rest,
+          };
+          return (
+            <CustomSelectField
+              field={{
+                ...field,
+                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(value);
+                  onChange?.(value);
+                },
+              }}
+              fieldState={fieldState}
+              fieldData={customSelectFieldProps}
+            />
+          );
+        }
+
         return (
           <FormItem className={`RemoteFlows__SelectField__Item__${name}`}>
             <FormLabel className="RemoteFlows__SelectField__Label">

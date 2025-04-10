@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.1.0
+
+### Minor Changes
+
+- 9e8e5a1: Support for custom field components
+
 ## 0.0.6
 
 ### Patch Changes

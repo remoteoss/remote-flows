@@ -1,4 +1,4 @@
-import { useValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
   defaultEstimationOptions,
@@ -27,8 +27,9 @@ function CostCalculatorFlowProvider({
   ) => React.ReactNode;
 }>) {
   const formId = useId();
-  const resolver = useValidationFormResolver(
-    costCalculatorBag.validationSchema,
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    costCalculatorBag.handleValidation,
   );
 
   const form = useForm({

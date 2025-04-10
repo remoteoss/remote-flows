@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { useFormFields } from '@/src/RemoteFlowsProvider';
+import { useFormFields } from '@/src/context';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -12,24 +13,10 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 
-type TextFieldProps = React.ComponentProps<'input'> & {
-  label: string;
-  description?: string;
-  name: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  [key: string]: unknown;
-};
-
-type InputModeAttrsProps = Pick<
-  React.ComponentProps<'input'>,
-  'type' | 'inputMode' | 'pattern'
->;
-
-const inputModeAttrs: InputModeAttrsProps = {
-  type: 'text',
-  inputMode: 'decimal',
-  pattern: '^[0-9.]*$',
-};
+export type TextFieldProps = React.ComponentProps<'input'> &
+  JSFField & {
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  };
 
 export function TextField({
   name,
@@ -41,8 +28,6 @@ export function TextField({
 }: TextFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-  const isTypeNumber = type === 'number';
-  const typeAttrs = isTypeNumber ? inputModeAttrs : { type };
 
   return (
     <FormField
@@ -60,7 +45,17 @@ export function TextField({
             ...rest,
           };
           return (
-            <CustomTextField field={field} metadata={customTextFieldProps} />
+            <CustomTextField
+              field={{
+                ...field,
+                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(value);
+                  onChange?.(value);
+                },
+              }}
+              fieldState={fieldState}
+              fieldData={customTextFieldProps}
+            />
           );
         }
 
@@ -72,12 +67,13 @@ export function TextField({
             <FormControl>
               <Input
                 {...field}
+                // {...rest}
                 value={field.value ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  console.log('EVENT', event);
                   field.onChange(event);
                   onChange?.(event);
                 }}
-                {...typeAttrs}
                 className="RemoteFlows__TextField__Input"
                 placeholder={label}
               />

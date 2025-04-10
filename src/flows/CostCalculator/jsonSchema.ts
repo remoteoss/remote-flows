@@ -33,11 +33,10 @@ export const jsonSchema = {
         },
         salary: {
           description: '',
-          maxLength: 255,
           title: 'Salary',
-          type: 'string',
+          type: 'integer',
           'x-jsf-presentation': {
-            inputType: 'text',
+            inputType: 'money',
           },
           'x-jsf-errorMessage': {
             required: 'Salary is required',
