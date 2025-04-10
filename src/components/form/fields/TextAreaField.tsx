@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import { useFormFields } from '@/src/context';
+import { cn } from '@/src/lib/utils';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -10,14 +13,10 @@ import {
   FormMessage,
 } from '../../ui/form';
 import { Textarea } from '../../ui/textarea';
-import { cn } from '@/src/lib/utils';
 
-type TextAreaFieldProps = {
-  label: string;
-  description?: string;
-  name: string;
-  maxLength?: number;
+export type TextAreaFieldProps = JSFField & {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  maxLength?: number;
 };
 
 export function TextAreaField({
@@ -26,13 +25,39 @@ export function TextAreaField({
   label,
   onChange,
   maxLength,
+  ...rest
 }: TextAreaFieldProps) {
+  const { components } = useFormFields();
   const { control } = useFormContext();
   return (
     <FormField
       control={control}
       name={name}
       render={({ field, fieldState }) => {
+        if (components?.textarea) {
+          const CustomTextAreaField = components?.textarea;
+          const customTextAreaFieldProps = {
+            name,
+            description,
+            label,
+            maxLength,
+            ...rest,
+          };
+          return (
+            <CustomTextAreaField
+              field={{
+                ...field,
+                onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  field.onChange(event);
+                  onChange?.(event);
+                },
+              }}
+              fieldState={fieldState}
+              fieldData={customTextAreaFieldProps}
+            />
+          );
+        }
+
         const valueLength = field.value?.length ?? 0;
         return (
           <FormItem className={`RemoteFlows__TextArea__Item__${name}`}>

@@ -1,6 +1,10 @@
 import * as React from 'react';
 
+import { useFormFields } from '@/src/context';
+import { cn } from '@/src/lib/utils';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
+import { FileUploader } from '../../ui/file-uploader';
 import {
   FormControl,
   FormDescription,
@@ -9,15 +13,10 @@ import {
   FormLabel,
   FormMessage,
 } from '../../ui/form';
-import { FileUploader } from '../../ui/file-uploader';
-import { cn } from '@/src/lib/utils';
 
-type FileUploadFieldProps = {
-  label: string;
-  description?: string;
-  name: string;
-  multiple?: boolean;
+export type FileUploadFieldProps = JSFField & {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  multiple?: boolean;
 };
 
 export function FileUploadField({
@@ -26,13 +25,38 @@ export function FileUploadField({
   label,
   multiple,
   onChange,
+  ...rest
 }: FileUploadFieldProps) {
+  const { components } = useFormFields();
   const { control } = useFormContext();
   return (
     <FormField
       control={control}
       name={name}
       render={({ field, fieldState }) => {
+        if (components?.file) {
+          const CustomFileUploadField = components?.file;
+          const customFileUploadFieldProps = {
+            name,
+            description,
+            label,
+            multiple,
+            ...rest,
+          };
+          return (
+            <CustomFileUploadField
+              field={{
+                ...field,
+                onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(event);
+                  onChange?.(event);
+                },
+              }}
+              fieldState={fieldState}
+              fieldData={customFileUploadFieldProps}
+            />
+          );
+        }
         return (
           <FormItem className={`RemoteFlows__FileUpload__Item__${name}`}>
             <FormLabel className="RemoteFlows__FileUpload__Label">
