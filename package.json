@@ -1,12 +1,12 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css",
     "check-format": "prettier --check .",
-    "dev": "NODE_ENV=development tsup --watch=\"src/**/*.t*\"",
+    "dev": "NODE_ENV=development tsup --watch",
     "lint": "eslint .",
     "format": "prettier --write .",
     "openapi-ts": "openapi-ts",

@@ -37,58 +37,6 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
 | `isTestingMode` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
 | `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-| `components`    | `Components`                                                | No       | Custom field components for form rendering                         |
-
-### Custom Field Components
-
-The `components` prop allows you to override the default form field components with your own implementations. Each component receives three props:
-
-- `field`: React Hook Form's field props for registration and state management
-- `fieldState`: Field state including errors and touched status
-- `fieldData`: Metadata from JSON schema with field configuration
-
-> **Important**: All custom components are wrapped with React Hook Form's `Controller` component. You must bind the `field` props to your HTML elements to ensure proper form state management and validation.
-
-Here's an example of custom field components implementation:
-
-```tsx
-<RemoteFlows
-  components={{
-    number: ({ field, fieldState, fieldData }) => (
-      <div>
-        <label>{fieldData.label}</label>
-        <input {...field} />
-        {fieldState.error && (
-          <span className="text-red-500">{fieldState.error.message}</span>
-        )}
-      </div>
-    ),
-    select: ({ field, fieldState, fieldData }) => (
-      <>
-        <select {...field} onChange={(ev) => field.onChange(ev.target.value)}>
-          {fieldData?.options?.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {fieldState.error && (
-          <span className="text-red-500">{fieldState.error.message}</span>
-        )}
-      </>
-    ),
-  }}
-  auth={fetchToken}
->
-  {/* Your form components */}
-</RemoteFlows>
-```
-
-Supported field types:
-
-- `text`: Text input fields
-- `number`: Numeric input fields
-- `select`: Dropdown selection fields
 
 ## Docs
 
