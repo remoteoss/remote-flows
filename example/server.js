@@ -1,7 +1,7 @@
-import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import express from 'express';
+import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
@@ -22,7 +22,8 @@ const getToken = async (req, res) => {
     const response = await axios.post(
       `${REMOTE_GATEWAY}/auth/oauth2/token`,
       new URLSearchParams({
-        grant_type: 'client_credentials',
+        grant_type: 'refresh_token',
+        refresh_token: 'fa022e08-12af-41dc-859f-e01cd3e7cdee',
       }),
       {
         headers: {
