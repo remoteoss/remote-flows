@@ -38,7 +38,7 @@ export const jsonSchema = {
           if: {
             properties: {
               will_challenge_termination: {
-                const: 'yes',
+                const: true,
               },
             },
             required: ['will_challenge_termination'],
@@ -83,23 +83,23 @@ export const jsonSchema = {
         },
       ],
       properties: {
-        is_confidential: {
+        confidential: {
           description:
             'Confidential requests are visible only to you. Non-confidential requests are visible to all admins in your company.',
           oneOf: [
             {
-              const: 'yes',
+              const: true,
               description: '',
               title: 'Yes',
             },
             {
-              const: 'no',
+              const: false,
               description: '',
               title: 'No',
             },
           ],
           title: 'Is this request confidential?',
-          type: 'string',
+          type: 'boolean',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
@@ -210,7 +210,7 @@ export const jsonSchema = {
             inputType: 'select',
           },
         },
-        termination_reason_description: {
+        reason_description: {
           description: '',
           maxLength: 1000,
           title: 'Termination reason details',
@@ -295,19 +295,19 @@ export const jsonSchema = {
           description: '',
           oneOf: [
             {
-              const: 'yes',
+              const: true,
               description: '',
               title: 'Yes',
             },
             {
-              const: 'no',
+              const: false,
               description: '',
               title: 'No',
             },
           ],
           title:
             'Do you consider it is likely that the employee will challenge their termination?',
-          type: 'string',
+          type: 'boolean',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
@@ -386,11 +386,11 @@ export const jsonSchema = {
         },
       },
       required: [
-        'is_confidential',
+        'confidential',
         'customer_informed_employee',
         'employer_confirmed_email',
         'termination_reason',
-        'termination_reason_description',
+        'reason_description',
         'risk_assessment_reasons',
         'will_challenge_termination',
         'proposed_termination_date',
@@ -405,7 +405,7 @@ export const jsonSchema = {
         'customer_informed_employee_description',
         'employer_confirmed_email',
         'termination_reason',
-        'termination_reason_description',
+        'reason_description',
         'additional_comments',
         'termination_reason_files',
         'risk_assessment_reasons',

@@ -3,9 +3,10 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useTerminationContext } from './context';
+import { TerminationFormValues } from '@/src/flows/Termination/types';
 
 type TerminationFormProps = {
-  onSubmit?: (values: any) => Promise<void>;
+  onSubmit?: (values: TerminationFormValues) => Promise<void>;
   onError?: (error: any) => void;
   onSuccess?: (data: any) => void;
 };
@@ -21,14 +22,16 @@ export function TerminationForm({
     const subscription = form?.watch((values) => {
       if (Object.keys(form.formState.dirtyFields).length > 0) {
         // TODO: for some reason isDirty doesn't work the first time we touch the form
-        terminationBag?.checkFieldUpdates(values);
+        terminationBag?.checkFieldUpdates(
+          values as Partial<TerminationFormValues>,
+        );
       }
     });
     return () => subscription?.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: TerminationFormValues) => {
     const terminationResult = await terminationBag?.onSubmit(values);
 
     await onSubmit?.(values);

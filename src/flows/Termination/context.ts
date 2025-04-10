@@ -1,10 +1,7 @@
 import type { useTermination } from '@/src/flows/Termination/hooks';
+import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { createContext, useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-
-type TerminationFormValues = {
-  is_confidential: string;
-};
 
 export const TerminationContext = createContext<{
   form: UseFormReturn<TerminationFormValues> | null;

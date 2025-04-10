@@ -8,6 +8,7 @@ import { jsonSchema } from './jsonSchema';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useState } from 'react';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { TerminationFormValues } from '@/src/flows/Termination/types';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -28,7 +29,7 @@ const useTerminationSchema = ({
   formValues,
   jsfModify,
 }: {
-  formValues: any;
+  formValues?: TerminationFormValues;
   jsfModify?: JSFModify;
 }) => {
   return useQuery({
@@ -47,13 +48,19 @@ const useTerminationSchema = ({
 };
 
 type TerminationHookProps = {
+  employmentId: string;
   options?: {
     jsfModify?: JSFModify;
   };
 };
 
-export const useTermination = ({ options }: TerminationHookProps) => {
-  const [formValues, setFormValues] = useState<any>();
+export const useTermination = ({
+  employmentId,
+  options,
+}: TerminationHookProps) => {
+  const [formValues, setFormValues] = useState<
+    TerminationFormValues | undefined
+  >(undefined);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
@@ -61,7 +68,7 @@ export const useTermination = ({ options }: TerminationHookProps) => {
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
-  async function onSubmit(values: any) {
+  async function onSubmit(values: TerminationFormValues) {
     // const validation =
     //   jsonSchemaContractAmendmentFields?.handleValidation(values);
     // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
@@ -71,7 +78,17 @@ export const useTermination = ({ options }: TerminationHookProps) => {
     //   };
     // }
 
-    return mutateAsync(values);
+    if (!employmentId) {
+      throw new Error('Employment id is missing');
+    }
+
+    const terminationPayload: CreateOffboardingParams = {
+      employment_id: employmentId,
+      termination_details: values,
+      type: 'termination',
+    };
+
+    return mutateAsync(terminationPayload);
   }
 
   return {
@@ -84,8 +101,7 @@ export const useTermination = ({ options }: TerminationHookProps) => {
     isLoading: isLoadingTermination,
     isSubmitting: createTermination.isPending,
     initialValues: {},
-    handleValidation: (values: any) => {
-      console.log('handleValidation', values);
+    handleValidation: (values: TerminationFormValues) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
@@ -98,7 +114,7 @@ export const useTermination = ({ options }: TerminationHookProps) => {
       }
       return null;
     },
-    checkFieldUpdates: (values: any) => {
+    checkFieldUpdates: (values: Partial<TerminationFormValues>) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
@@ -107,7 +123,8 @@ export const useTermination = ({ options }: TerminationHookProps) => {
             isPartialValidation: false,
           },
         );
-        setFormValues(parsedValues);
+        console.log({ parsedValues });
+        setFormValues(parsedValues as TerminationFormValues);
       }
     },
     onSubmit,
