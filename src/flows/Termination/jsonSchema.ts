@@ -243,8 +243,21 @@ export const jsonSchema = {
           description:
             'Please upload any supporting documents regarding the termination reason.',
           title: 'This employee is...',
-          type: 'array',
-          items: {
+          type: 'string',
+          oneOf: [
+            {
+              const: 'sick_leave',
+              description: '',
+              title: 'Sick leave',
+            },
+            {
+              const: 'family_leave',
+              description: '',
+              title:
+                'Currently on or recently returned from maternity, paternity, or other family leave',
+            },
+          ],
+          /*  items: {
             anyOf: [
               {
                 const: 'sick_leave',
@@ -286,9 +299,10 @@ export const jsonSchema = {
                   'To the best of my knowledge, I am not aware of any of these',
               },
             ],
-          },
+          }, */
           'x-jsf-presentation': {
-            inputType: 'checkbox',
+            inputType: 'radio',
+            direction: 'column',
           },
         },
         will_challenge_termination: {

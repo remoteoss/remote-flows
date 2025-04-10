@@ -23,6 +23,7 @@ export const Termination = () => {
     <RemoteFlows auth={() => fetchToken()}>
       <div className="cost-calculator__container">
         <TerminationFlow
+          employmentId="b769be07-9a34-418a-b9a1-b8236cb31344"
           render={({ terminationBag }) => {
             if (terminationBag.isLoading) {
               return <div>Loading...</div>;

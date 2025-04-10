@@ -1,6 +1,5 @@
 import { CreateOffboardingParams, postCreateOffboarding } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { useClient } from '@/src/RemoteFlowsProvider';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -9,6 +8,7 @@ import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useState } from 'react';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
+import { useClient } from '@/src/context';
 
 const useCreateTermination = () => {
   const { client } = useClient();

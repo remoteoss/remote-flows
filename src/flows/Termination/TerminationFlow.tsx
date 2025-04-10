@@ -43,6 +43,7 @@ function TerminationFlowProvider({
 }
 
 type TerminationFlowProps = {
+  employmentId: string;
   render: ({
     terminationBag,
   }: {
@@ -53,8 +54,12 @@ type TerminationFlowProps = {
   };
 };
 
-export const TerminationFlow = ({ render, options }: TerminationFlowProps) => {
-  const terminationBag = useTermination({ options });
+export const TerminationFlow = ({
+  employmentId,
+  render,
+  options,
+}: TerminationFlowProps) => {
+  const terminationBag = useTermination({ employmentId, options });
   if (terminationBag.isLoading) {
     return <>{render({ terminationBag })}</>;
   }
