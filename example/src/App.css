@@ -1,10 +1,5 @@
 @import '@remoteoss/remote-flows/index.css';
 
-.RemoteFlows__CostCalculatorForm {
-  display: flex;
-  flex-direction: column;
-}
-
 .cost-calculator__container {
   padding: 100px;
 }
