@@ -35,6 +35,7 @@ export function CostCalculatorForm({
     const costCalculatorResults = await costCalculatorBag?.onSubmit(values);
 
     await onSubmit?.(values);
+
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
     } else {

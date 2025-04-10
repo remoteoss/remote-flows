@@ -257,7 +257,7 @@ describe('CostCalculatorFlow', () => {
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
-        age: 30,
+        age: '30',
         benefits: {
           'benefit-53c5fc69-f299-47e7-9004-86def3f0e845':
             '8a32160f-62cb-4fd7-b90a-47b92e8bb734',

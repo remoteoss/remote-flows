@@ -11,13 +11,14 @@ import {
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { useClient } from '@/src/RemoteFlowsProvider';
+
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
 
+import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { buildValidationSchema } from '../utils';
 
