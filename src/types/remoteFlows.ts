@@ -14,7 +14,6 @@ type AuthResponse = {
 
 export type JSFField = {
   computedAttributes: Record<string, unknown>;
-  defaultValue: string | number;
   description: string;
   errorMessage: Record<string, string>;
   inputType: SupportedTypes;
@@ -26,6 +25,8 @@ export type JSFField = {
   schema: AnySchema;
   scopedJsonSchema: Record<string, unknown>;
   type: string;
+  options?: Array<{ value: string; label: string }>;
+  defaultValue?: string | number;
 };
 
 export type Components = {
