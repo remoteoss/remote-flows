@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.1.1
+
+### Patch Changes
+
+- 9e54e4f: fix reset onClick on the cost calculator flow
+
 ## 0.1.0
 
 ### Minor Changes
