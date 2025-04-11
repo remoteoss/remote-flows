@@ -3,11 +3,11 @@ import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useCostCalculatorContext } from './context';
 import { cn } from '@/src/lib/utils';
 
-export function CostCalculatorResetButton(
-  props: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>,
-) {
+export function CostCalculatorResetButton({
+  onClick,
+  ...props
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
-
   return (
     <Button
       type="reset"
@@ -19,7 +19,7 @@ export function CostCalculatorResetButton(
       onClick={(evt) => {
         costCalculatorBag?.resetForm();
         form.reset();
-        props.onClick?.(evt);
+        onClick?.(evt);
       }}
       {...props}
     >
