@@ -1,10 +1,10 @@
 import './App.css';
-import { CostCalculatorWithResults } from './CostCalculatorWithResults';
+import { BasicCostCalculator } from './BasicCostCalculator';
 
 function App() {
   return (
     <>
-      <CostCalculatorWithResults />
+      <BasicCostCalculator />
     </>
   );
 }
