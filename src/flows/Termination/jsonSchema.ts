@@ -8,7 +8,7 @@ export const jsonSchema = {
           if: {
             properties: {
               customer_informed_employee: {
-                const: 'yes', // Ensure this matches the value in the form data
+                const: true, // Ensure this matches the value in the form data
               },
             },
             required: ['customer_informed_employee'], // Ensure this field is required
@@ -109,18 +109,18 @@ export const jsonSchema = {
           description: '',
           oneOf: [
             {
-              const: 'yes',
+              const: true,
               description: '',
               title: 'Yes',
             },
             {
-              const: 'no',
+              const: false,
               description: '',
               title: 'No',
             },
           ],
           title: 'Have you informed the employee of the termination?',
-          type: 'string',
+          type: 'boolean',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',

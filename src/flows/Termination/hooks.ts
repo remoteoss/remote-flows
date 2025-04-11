@@ -110,6 +110,7 @@ export const useTermination = ({
         parsedValues,
         'acknowledge_termination_procedure',
         'agrees_to_pto_amount',
+        'agrees_to_pto_amount_notes',
         'customer_informed_employee',
         'customer_informed_employee_date',
         'customer_informed_employee_description',
@@ -161,7 +162,6 @@ export const useTermination = ({
             isPartialValidation: false,
           },
         );
-        console.log({ parsedValues });
         setFormValues(parsedValues as TerminationFormValues);
       }
     },
