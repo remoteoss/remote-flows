@@ -28,6 +28,11 @@ export function BasicCostCalculator() {
       });
   };
 
+  const onReset = () => {
+    console.log('Reset button clicked');
+    // Add your reset logic here
+  };
+
   return (
     <RemoteFlows auth={() => fetchToken()}>
       <CostCalculatorFlow
@@ -46,7 +51,9 @@ export function BasicCostCalculator() {
               <CostCalculatorSubmitButton>
                 Get estimate
               </CostCalculatorSubmitButton>
-              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+              <CostCalculatorResetButton onClick={onReset}>
+                Reset
+              </CostCalculatorResetButton>
             </div>
           );
         }}

@@ -30,6 +30,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
+const onResetHandler = vi.fn();
 
 const defaultProps = {
   defaultValues: {
@@ -43,6 +44,7 @@ function renderComponent(
   props: Omit<CostCalculatorFlowProps, 'render'> = {
     defaultValues: defaultProps.defaultValues,
   },
+  onReset: typeof onResetHandler = onResetHandler,
 ) {
   return render(
     <CostCalculatorFlow
@@ -61,7 +63,9 @@ function renderComponent(
             <CostCalculatorSubmitButton>
               Get estimate
             </CostCalculatorSubmitButton>
-            <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+            <CostCalculatorResetButton onClick={onReset}>
+              Reset
+            </CostCalculatorResetButton>
           </div>
         );
       }}
