@@ -128,6 +128,8 @@ export const useTermination = ({
 
       return mutateAsync(terminationPayload);
     }
+
+    return;
   }
 
   return {
