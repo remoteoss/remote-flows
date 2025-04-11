@@ -4,12 +4,13 @@ import { useCostCalculatorContext } from './context';
 import { cn } from '@/src/lib/utils';
 
 export function CostCalculatorResetButton({
-  onClick,
+  children,
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
   return (
     <Button
+      {...props}
       type="reset"
       className={cn(
         'RemoteFlows__CostCalculatorForm__ResetButton',
@@ -19,11 +20,10 @@ export function CostCalculatorResetButton({
       onClick={(evt) => {
         costCalculatorBag?.resetForm();
         form.reset();
-        onClick?.(evt);
+        props.onClick?.(evt);
       }}
-      {...props}
     >
-      {props.children}
+      {children}
     </Button>
   );
 }
