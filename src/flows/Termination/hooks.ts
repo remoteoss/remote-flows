@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
+import omit from 'lodash/omit';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -82,13 +83,50 @@ export const useTermination = ({
       throw new Error('Employment id is missing');
     }
 
-    const terminationPayload: CreateOffboardingParams = {
-      employment_id: employmentId,
-      termination_details: values,
-      type: 'termination',
-    };
+    if (terminationHeadlessForm) {
+      const parsedValues = parseJSFToValidate(
+        values,
+        terminationHeadlessForm.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
 
-    return mutateAsync(terminationPayload);
+      const {
+        customer_informed_employee: customerInformedEmployee,
+        risk_assessment_reasons: riskAssessmentReasons,
+      } = parsedValues;
+
+      const employeeAwareness = customerInformedEmployee
+        ? {
+            employee_awareness: {
+              date: parsedValues.customer_informed_employee_date,
+              note: parsedValues.customer_informed_employee_description,
+            },
+          }
+        : undefined;
+
+      const normalizedValues = omit(
+        parsedValues,
+        'acknowledge_termination_procedure',
+        'agrees_to_pto_amount',
+        'customer_informed_employee',
+        'customer_informed_employee_date',
+        'customer_informed_employee_description',
+      );
+
+      const terminationPayload: CreateOffboardingParams = {
+        employment_id: employmentId,
+        termination_details: {
+          ...normalizedValues,
+          ...{ risk_assessment_reasons: [riskAssessmentReasons] },
+          ...employeeAwareness,
+        } as TerminationFormValues,
+        type: 'termination',
+      };
+
+      return mutateAsync(terminationPayload);
+    }
   }
 
   return {

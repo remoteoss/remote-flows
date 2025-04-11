@@ -145,7 +145,7 @@ export const jsonSchema = {
             inputType: 'textarea',
           },
         },
-        employer_confirmed_email: {
+        personal_email: {
           description: '',
           maxLength: 255,
           title: 'Employee’s personal email',
@@ -161,50 +161,47 @@ export const jsonSchema = {
           type: 'string',
           oneOf: [
             {
-              const: 'termination_by_customer_reason_gross_misconduct',
-              title: 'Misconduct',
+              const: 'gross_misconduct',
+              title: 'Gross misconduct',
             },
             {
-              const: 'termination_by_customer_reason_performance',
+              const: 'performance',
               title: 'Performance',
             },
             {
-              const: 'termination_by_customer_reason_workforce_reduction',
+              const: 'workforce_reduction',
               title: 'Workforce Reduction',
             },
-            { const: 'termination_by_customer_reason_values', title: 'Values' },
+            { const: 'values', title: 'Values' },
             {
-              const: 'termination_by_customer_reason_compliance_issue',
+              const: 'compliance_issue',
               title: 'Compliance issue',
             },
             {
-              const:
-                'termination_by_customer_reason_incapacity_to_perform_inherent_duties',
+              const: 'incapacity_to_perform_inherent_duties',
               title: 'Incapacity To perform inherent duties',
             },
             {
-              const: 'termination_by_customer_reason_mutual_agreement',
+              const: 'mutual_agreement',
               title: 'Mutual agreement',
             },
             {
-              const: 'termination_by_customer_reason_job_abandonment',
+              const: 'cancellation_before_start_date',
+              title: 'Decision to cancel hiring before the employee starts',
+            },
+            {
+              const: 'job_abandonment',
               title: 'Job abandonment',
             },
             {
-              const:
-                'termination_by_customer_reason_dissatisfaction_with_remote_service',
-              title: 'Dissatisfaction with remote service',
+              const: 'dissatisfaction_with_remote_service',
+              title: 'Dissatisfaction with EOR service',
             },
             {
-              const:
-                'termination_by_customer_reason_end_of_fixed_term_contract',
+              const: 'end_of_fixed_term_contract_compliance_issue',
               title: 'End of fixed-term contract',
             },
-            {
-              const: 'termination_by_customer_reason_background_check',
-              title: 'Failed background check',
-            },
-            { const: 'termination_by_customer_reason_other', title: 'Other' },
+            { const: 'other', title: 'Other' },
           ],
           'x-jsf-presentation': {
             inputType: 'select',
@@ -402,7 +399,7 @@ export const jsonSchema = {
       required: [
         'confidential',
         'customer_informed_employee',
-        'employer_confirmed_email',
+        'personal_email',
         'termination_reason',
         'reason_description',
         'risk_assessment_reasons',
@@ -417,7 +414,7 @@ export const jsonSchema = {
         'customer_informed_employee',
         'customer_informed_employee_date',
         'customer_informed_employee_description',
-        'employer_confirmed_email',
+        'personal_email',
         'termination_reason',
         'reason_description',
         'additional_comments',

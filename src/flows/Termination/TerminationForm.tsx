@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
+import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
 
 type TerminationFormProps = {
   onSubmit?: (values: TerminationFormValues) => Promise<void>;
-  onError?: (error: any) => void;
-  onSuccess?: (data: any) => void;
+  onError?: (error: PostCreateOffboardingError) => void;
+  onSuccess?: (data: OffboardingResponse) => void;
 };
 
 export function TerminationForm({
