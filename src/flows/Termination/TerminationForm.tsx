@@ -38,7 +38,9 @@ export function TerminationForm({
     if (terminationResult?.error) {
       onError?.(terminationResult.error);
     } else {
-      onSuccess?.(terminationResult?.data);
+      if (terminationResult?.data) {
+        onSuccess?.(terminationResult.data as OffboardingResponse);
+      }
     }
   };
 
