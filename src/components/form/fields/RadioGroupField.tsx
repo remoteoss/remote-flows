@@ -44,12 +44,11 @@ export function RadioGroupField({
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <RadioGroup
-              // onValueChange={field.onChange}
               onValueChange={(value: string) => {
                 field.onChange(value);
                 onChange?.(value);
               }}
-              defaultValue={field.value}
+              value={field.value}
               className="flex flex-col space-y-3"
             >
               {options.map((option) => (

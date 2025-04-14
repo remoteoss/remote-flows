@@ -79,21 +79,6 @@ export function ContractAmendmentFlow({
     options,
   });
 
-  if (contractAmendmentBag.isLoading) {
-    return (
-      <>
-        {render({
-          contractAmendmentBag,
-          components: {
-            Form: ContractAmendmentForm,
-            SubmitButton: ContractAmendmentSubmit,
-            ConfirmationForm: ContractAmendmentConfirmationForm,
-          },
-        })}
-      </>
-    );
-  }
-
   return (
     <ContractAmendmentProvider
       contractAmendmentBag={contractAmendmentBag}
