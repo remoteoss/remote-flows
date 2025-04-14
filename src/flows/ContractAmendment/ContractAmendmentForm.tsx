@@ -1,15 +1,36 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  ContractAmendmentAutomatableResponse,
+  PostAutomatableContractAmendmentError,
+} from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { parseFormValuesToAPI } from '@/src/components/form/utils';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 
 type ContractAmendmentFormProps = {
-  onSubmit?: (values: any) => Promise<void>;
-  onError?: (error: any) => void;
-  onSuccess?: (data: any) => void;
+  /**
+   * Callback function to be called when the contract amendment form is submitted.
+   * This function is called before the contract amendment is submitted.
+   * It can be used to perform any additional validation or processing before
+   * the contract amendment is submitted.
+   * @param values
+   * @returns
+   */
+  onSubmit?: (values: FieldValues) => Promise<void>;
+  /**
+   * Callback function to be called when the contract amendment fails.
+   * @param error
+   * @returns
+   */
+  onError?: (error: PostAutomatableContractAmendmentError) => void;
+  /**
+   * Callback function to be called when the contract amendment is successfully submitted.
+   * This function is called after the contract amendment is submitted.
+   * @param data
+   * @returns
+   */
+  onSuccess?: (data: ContractAmendmentAutomatableResponse) => void;
 };
 
 export function ContractAmendmentForm({
@@ -38,15 +59,41 @@ export function ContractAmendmentForm({
   }, []);
 
   const handleSubmit = async (values: FieldValues) => {
-    const contractAmendmentResult = await submitContractAmendment(
-      parseFormValuesToAPI(values, fields),
+    const { dirtyFields } = form.formState;
+    // Check if there are any dirty fields
+    if (Object.keys(dirtyFields).length === 0) {
+      return onError?.({
+        message: 'no_changes_detected',
+      });
+    }
+    // Check if there are any dirty fields that are not static
+    const staticFields = [
+      'effective_date',
+      'reason_for_change',
+      'reason_for_change_description',
+      'additional_comments',
+      'additional_comments_toggle',
+    ];
+    const hasContractDetailsChanges = Object.keys(dirtyFields).some(
+      (field) => !staticFields.includes(field),
     );
 
+    if (!hasContractDetailsChanges) {
+      return onError?.({
+        message: 'no_changes_detected_contract_details',
+      });
+    }
+
     await onSubmit?.(values);
+
+    const contractAmendmentResult = await submitContractAmendment(values);
+
     if (contractAmendmentResult.error) {
       onError?.(contractAmendmentResult.error);
     } else {
-      onSuccess?.(contractAmendmentResult.data);
+      onSuccess?.(
+        contractAmendmentResult.data as ContractAmendmentAutomatableResponse,
+      );
     }
   };
 
@@ -55,7 +102,7 @@ export function ContractAmendmentForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__CostCalculatorForm"
+        className="space-y-4 RemoteFlows__ContractAmendmentForm"
       >
         <JSONSchemaFormFields fields={fields} />
       </form>

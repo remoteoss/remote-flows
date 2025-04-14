@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Fields } from '@remoteoss/json-schema-form';
 import get from 'lodash/get';
 
 const textInputTypes = {
@@ -288,6 +289,14 @@ export const fieldTypesTransformations: Record<string, any> = {
       return value;
     },
   },
+  [supportedTypes.CHECKBOX]: {
+    transformValueToAPI: () => (value: string) => {
+      if (value === undefined) {
+        return false;
+      }
+      return value;
+    },
+  },
   [supportedTypes.SELECT]: {
     /**
      * Used for react-select, where the value is transformed
@@ -526,7 +535,7 @@ export function parseSubmitValues(
 
 export function parseJSFToValidate(
   formValues: Record<string, any>,
-  fields: any[],
+  fields: Fields,
   config: { isPartialValidation: boolean },
 ) {
   const valuesParsed = parseSubmitValues(formValues, fields, {
