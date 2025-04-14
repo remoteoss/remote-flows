@@ -11,7 +11,19 @@ import { ContractAmendmentParams } from './types';
 type TUseContractAmendment = ReturnType<typeof useContractAmendment>;
 
 export type RenderProps = {
+  /**
+   * The contract amendment bag returned by the useContractAmendment hook.
+   * This bag contains all the methods and properties needed to handle the contract amendment flow.
+   * @see {@link useContractAmendment}
+   */
   contractAmendmentBag: TUseContractAmendment;
+  /**
+   * The components used in the contract amendment flow.
+   * This includes the form, submit button, and confirmation form.
+   * @see {@link ContractAmendmentForm}
+   * @see {@link ContractAmendmentSubmit}
+   * @see {@link ContractAmendmentConfirmationForm}
+   */
   components: {
     Form: typeof ContractAmendmentForm;
     SubmitButton: typeof ContractAmendmentSubmit;
