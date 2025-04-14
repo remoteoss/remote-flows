@@ -60,12 +60,7 @@ export function ContractAmendmentForm({
 
   const handleSubmit = async (values: FieldValues) => {
     const { dirtyFields } = form.formState;
-    // Check if there are any dirty fields
-    if (Object.keys(dirtyFields).length === 0) {
-      return onError?.({
-        message: 'no_changes_detected',
-      });
-    }
+
     // Check if there are any dirty fields that are not static
     const staticFields = [
       'effective_date',
@@ -101,6 +96,7 @@ export function ContractAmendmentForm({
     <Form {...form}>
       <form
         id={formId}
+        data-testid="contract-amendment-form"
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__ContractAmendmentForm"
       >
