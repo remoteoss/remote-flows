@@ -2,23 +2,38 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
+import { ContractAmendmentConfirmationForm } from './ContractAmendmentConfirmationForm';
 import { ContractAmendmentForm } from './ContractAmendmentForm';
 import { ContractAmendmentSubmit } from './ContractAmendmentSubmit';
 import { useContractAmendment } from './hooks';
 import { ContractAmendmentParams } from './types';
 
 type TUseContractAmendment = ReturnType<typeof useContractAmendment>;
-type RenderProps = {
+
+export type RenderProps = {
+  /**
+   * The contract amendment bag returned by the useContractAmendment hook.
+   * This bag contains all the methods and properties needed to handle the contract amendment flow.
+   * @see {@link useContractAmendment}
+   */
   contractAmendmentBag: TUseContractAmendment;
+  /**
+   * The components used in the contract amendment flow.
+   * This includes the form, submit button, and confirmation form.
+   * @see {@link ContractAmendmentForm}
+   * @see {@link ContractAmendmentSubmit}
+   * @see {@link ContractAmendmentConfirmationForm}
+   */
   components: {
-    ContractAmendmentForm: typeof ContractAmendmentForm;
-    ContractAmendmentSubmit: typeof ContractAmendmentSubmit;
+    Form: typeof ContractAmendmentForm;
+    SubmitButton: typeof ContractAmendmentSubmit;
+    ConfirmationForm: typeof ContractAmendmentConfirmationForm;
   };
 };
 
 type ContractAmendmentProviderProps = PropsWithChildren<{
   contractAmendmentBag: TUseContractAmendment;
-  render: ({ contractAmendmentBag }: RenderProps) => React.ReactNode;
+  render: (props: RenderProps) => React.ReactNode;
 }>;
 
 function ContractAmendmentProvider({
@@ -47,7 +62,11 @@ function ContractAmendmentProvider({
     >
       {render({
         contractAmendmentBag,
-        components: { ContractAmendmentForm, ContractAmendmentSubmit },
+        components: {
+          Form: ContractAmendmentForm,
+          SubmitButton: ContractAmendmentSubmit,
+          ConfirmationForm: ContractAmendmentConfirmationForm,
+        },
       })}
     </ContractAmendmentContext.Provider>
   );
@@ -71,17 +90,6 @@ export function ContractAmendmentFlow({
     countryCode,
     options,
   });
-
-  if (contractAmendmentBag.isLoading) {
-    return (
-      <>
-        {render({
-          contractAmendmentBag,
-          components: { ContractAmendmentForm, ContractAmendmentSubmit },
-        })}
-      </>
-    );
-  }
 
   return (
     <ContractAmendmentProvider

@@ -6,6 +6,7 @@ import {
 } from 'react-hook-form';
 import { AnySchema } from 'yup';
 import { SupportedTypes } from '../components/form/fields/types';
+import { StatementProps } from '../components/form/Statement';
 
 type AuthResponse = {
   accessToken: string;
@@ -52,6 +53,8 @@ export type Components = {
      */
     fieldData: JSFField;
   }>;
+} & {
+  statement?: React.ComponentType<{ data: StatementProps }>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

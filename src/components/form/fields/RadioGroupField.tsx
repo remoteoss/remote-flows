@@ -74,7 +74,7 @@ export function RadioGroupField({
                   field.onChange(value);
                   onChange?.(value);
                 }}
-                defaultValue={field.value}
+                value={field.value}
                 className="flex flex-col space-y-3"
               >
                 {options?.map((option) => (

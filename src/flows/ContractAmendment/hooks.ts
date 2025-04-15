@@ -3,13 +3,11 @@ import {
   EmploymentShowResponse,
   getShowContractAmendmentSchema,
   getShowEmployment,
+  postAutomatableContractAmendment,
   postCreateContractAmendment,
 } from '@/src/client';
 
-import {
-  convertFromCents,
-  parseJSFToValidate,
-} from '@/src/components/form/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 
 import { Client } from '@hey-api/client-fetch';
@@ -20,28 +18,15 @@ import { ContractAmendmentParams } from './types';
 
 import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
-import { buildValidationSchema } from '../utils';
+import { buildInitialValues, STEPS } from './utils';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
-function buildInitialValues(employment?: EmploymentShowResponse) {
-  return {
-    ...employment?.data?.employment?.contract_details,
-    effective_date: '',
-    reason_for_change: '',
-    job_title: employment?.data?.employment?.job_title,
-    additional_comments: '',
-    annual_gross_salary: convertFromCents(
-      employment?.data?.employment?.contract_details
-        ?.annual_gross_salary as string,
-    ),
-  };
-}
-
-const useEmployment = ({ employmentId }: UseEmployment) => {
+const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
   const { client } = useClient();
   return useQuery({
     queryKey: ['employment'],
+    retry: false,
     queryFn: () => {
       return getShowEmployment({
         client: client as Client,
@@ -62,7 +47,7 @@ type ContractAmendmentSchemaParams = {
   options?: ContractAmendmentParams['options'];
 };
 
-const useContractAmendmentSchema = ({
+const useContractAmendmentSchemaQuery = ({
   countryCode,
   employment,
   fieldValues,
@@ -71,8 +56,9 @@ const useContractAmendmentSchema = ({
   const { client } = useClient();
   return useQuery({
     queryKey: ['contract-amendment-schema'],
-    queryFn: () => {
-      return getShowContractAmendmentSchema({
+    retry: false,
+    queryFn: async () => {
+      const response = await getShowContractAmendmentSchema({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -82,6 +68,13 @@ const useContractAmendmentSchema = ({
           country_code: countryCode,
         },
       });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch contract amendment schema');
+      }
+
+      return response;
     },
     enabled: Boolean(employment),
     select: ({ data }) => {
@@ -91,19 +84,34 @@ const useContractAmendmentSchema = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-
+      const copyFieldValues = { ...fieldValues };
       return createHeadlessForm(jsfSchema, {
-        initialValues: fieldValues || buildInitialValues(employment),
+        initialValues: copyFieldValues || buildInitialValues(employment),
       });
     },
   });
 };
 
-const useCreateContractAmendment = () => {
+const useCreateContractAmendmentMutation = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: CreateContractAmendmentParams) => {
       return postCreateContractAmendment({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
+};
+
+const useAutomatableContractAmendmentMutation = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: CreateContractAmendmentParams) => {
+      return postAutomatableContractAmendment({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -119,64 +127,130 @@ export const useContractAmendment = ({
   countryCode,
   options,
 }: ContractAmendmentParams) => {
-  const [fieldValues, setFieldValues] = useState<FieldValues>();
-  const { data: employment, isLoading: isLoadingEmployment } = useEmployment({
+  const [stepState, setStepState] = useState<{
+    currentStep: typeof STEPS.AMENDMENT_FORM;
+    totalSteps: number;
+  }>({
+    currentStep: STEPS.AMENDMENT_FORM,
+    totalSteps: Object.keys(STEPS).length,
+  });
+  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    isError: isErrorEmployment,
+    error: errorEmployment,
+  } = useEmploymentQuery({
     employmentId,
   });
-
   const {
     data: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
-  } = useContractAmendmentSchema({
+    isError: isErrorContractAmendmentSchema,
+    error: errorContractAmendmentSchema,
+  } = useContractAmendmentSchemaQuery({
     employment,
     countryCode,
     fieldValues,
     options,
   });
 
-  const createContractAmendment = useCreateContractAmendment();
-  const { mutateAsync } = mutationToPromise(createContractAmendment);
+  const initialValues = buildInitialValues(
+    employment,
+    contractAmendmentHeadlessForm?.fields,
+  );
+
+  const createContractAmendmentMutation = useCreateContractAmendmentMutation();
+  const automatableContractAmendmentMutation =
+    useAutomatableContractAmendmentMutation();
 
   async function onSubmit(values: FieldValues) {
-    if (
-      !employment?.data?.employment?.id ||
-      !employment?.data?.employment.active_contract_id
-    ) {
-      throw new Error('Employment id or active contract id is missing');
-    }
-
-    // const validation =
-    //   jsonSchemaContractAmendmentFields?.handleValidation(values);
-    // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
-    //   return {
-    //     data: null,
-    //     error: validation.formErrors,
-    //   };
-    // }
-
-    return mutateAsync({
-      employment_id: employment?.data.employment?.id,
-      amendment_contract_id: employment?.data.employment?.active_contract_id,
-      contract_amendment: {
-        ...values,
+    const parsedValues = parseJSFToValidate(
+      values,
+      contractAmendmentHeadlessForm?.fields || [],
+      {
+        isPartialValidation: false,
       },
-    });
+    );
+
+    const payload = {
+      employment_id: employment?.data.employment?.id as string,
+      amendment_contract_id: employment?.data.employment
+        ?.active_contract_id as string,
+      contract_amendment: {
+        ...parsedValues,
+      },
+    };
+
+    switch (stepState.currentStep.name) {
+      case STEPS.AMENDMENT_FORM.name: {
+        const { mutateAsync } = mutationToPromise(
+          automatableContractAmendmentMutation,
+        );
+
+        const automatableContractAmendment = await mutateAsync(payload);
+
+        setStepState((previousState) => ({
+          ...previousState,
+          currentStep: STEPS.CONFIRMATION_FORM,
+        }));
+
+        return automatableContractAmendment;
+      }
+      case STEPS.CONFIRMATION_FORM.name: {
+        const { mutateAsync } = mutationToPromise(
+          createContractAmendmentMutation,
+        );
+
+        return mutateAsync(payload);
+      }
+
+      default:
+        throw new Error('Invalid step state');
+    }
   }
 
   return {
-    stepState: {
-      current: 0,
-      total: 1,
-      isLastStep: true,
-    },
+    /**
+     * Current step state containing the current step and total number of steps
+     */
+    stepState,
+    /**
+     * Array of form fields from the contract amendment schema
+     */
     fields: contractAmendmentHeadlessForm?.fields || [],
+    /**
+     * Loading state indicating if either employment or contract amendment data is being fetched
+     */
     isLoading: isLoadingEmployment || isLoadingContractAmendments,
-    isSubmitting: createContractAmendment.isPending,
-    initialValues: buildInitialValues(employment),
-    validationSchema: buildValidationSchema(
-      // @ts-expect-error error
-      contractAmendmentHeadlessForm?.fields || [],
-    ),
+    /**
+     * Error state indicating if there was an error fetching either employment or contract amendment data
+     */
+    isError: isErrorEmployment || isErrorContractAmendmentSchema,
+    /**
+     * Error object containing details about any errors that occurred during data fetching
+     */
+    error: errorEmployment || errorContractAmendmentSchema,
+    /**
+     * Loading state indicating if a contract amendment mutation is in progress
+     */
+    isSubmitting:
+      automatableContractAmendmentMutation.isPending ||
+      createContractAmendmentMutation.isPending,
+    /**
+     * Initial form values built from employment data and contract amendment fields
+     */
+    initialValues,
+    /**
+     * Current form field values
+     */
+    values: fieldValues,
+    /**
+     * Function to validate form values against the contract amendment schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
     handleValidation: (values: FieldValues) => {
       if (contractAmendmentHeadlessForm) {
         const parsedValues = parseJSFToValidate(
@@ -187,15 +261,18 @@ export const useContractAmendment = ({
       }
       return null;
     },
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
     checkFieldUpdates: (values: FieldValues) => {
-      if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidate(
-          values,
-          contractAmendmentHeadlessForm?.fields,
-        );
-        setFieldValues(parsedValues);
-      }
+      setFieldValues(values);
     },
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
     onSubmit,
   };
 };
