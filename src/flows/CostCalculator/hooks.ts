@@ -380,9 +380,7 @@ export const useCostCalculator = (
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;
 
-    const parsedValues = parseJSFToValidate(values, allFields, {
-      isPartialValidation: false,
-    });
+    const parsedValues = parseJSFToValidate(values, allFields);
 
     // 1. validate static fields first using Yup validate function
     try {

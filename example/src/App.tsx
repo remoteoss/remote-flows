@@ -1,12 +1,7 @@
-import './App.css';
-import { BasicCostCalculator } from './BasicCostCalculator';
+import { Termination } from './Termination';
 
 function App() {
-  return (
-    <>
-      <BasicCostCalculator />
-    </>
-  );
+  return <Termination />;
 }
 
 export default App;

@@ -55,7 +55,7 @@ export function ContractAmendmentForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__CostCalculatorForm"
+        className="space-y-4 RemoteFlows__ContractAmendmentForm"
       >
         <JSONSchemaFormFields fields={fields} />
       </form>
