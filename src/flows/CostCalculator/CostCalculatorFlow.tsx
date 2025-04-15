@@ -103,10 +103,6 @@ export const CostCalculatorFlow = ({
     options,
   });
 
-  if (costCalculatorBag.isLoading) {
-    return render(costCalculatorBag);
-  }
-
   return (
     <CostCalculatorFlowProvider
       costCalculatorBag={costCalculatorBag}
