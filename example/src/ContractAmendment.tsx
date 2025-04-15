@@ -61,7 +61,7 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
   }
 }
 
-export function BasicCostCalculator() {
+export function ContractAmendment() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())

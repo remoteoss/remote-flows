@@ -61,16 +61,17 @@ export function ContractAmendmentForm({
   const handleSubmit = async (values: FieldValues) => {
     const { dirtyFields } = form.formState;
 
-    // Check if there are any dirty fields that are not static
-    const staticFields = [
+    // Check if there are any dirty fields that are common among all contract amendments
+    const commonFields = [
       'effective_date',
       'reason_for_change',
       'reason_for_change_description',
       'additional_comments',
       'additional_comments_toggle',
     ];
+
     const hasContractDetailsChanges = Object.keys(dirtyFields).some(
-      (field) => !staticFields.includes(field),
+      (field) => !commonFields.includes(field),
     );
 
     if (!hasContractDetailsChanges) {
