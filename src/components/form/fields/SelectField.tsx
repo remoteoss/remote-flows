@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 import {
@@ -24,7 +25,7 @@ type SelectFieldProps = JSFField & {
   placeholder?: string;
   options: Array<{ value: string; label: string }>;
   className?: string;
-  onChange?: (value: React.ChangeEvent<HTMLInputElement> | string) => void;
+  onChange?: (value: any) => void;
 };
 
 export function SelectField({
@@ -60,7 +61,7 @@ export function SelectField({
             <CustomSelectField
               field={{
                 ...field,
-                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   onChange?.(value);
                 },

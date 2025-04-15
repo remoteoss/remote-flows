@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FormControl,
   FormDescription,
@@ -14,7 +15,7 @@ import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 type RadioGroupFieldProps = JSFField & {
-  onChange?: (value: string) => void;
+  onChange?: (value: any) => void;
 };
 
 export function RadioGroupField({
@@ -48,7 +49,7 @@ export function RadioGroupField({
             <CustomRadioGroupField
               field={{
                 ...field,
-                onChange: (value: string) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   onChange?.(value);
                 },

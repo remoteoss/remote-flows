@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -15,13 +16,12 @@ export function NumberField(props: TextFieldProps) {
         name={props.name}
         render={({ field, fieldState }) => {
           const CustomNumberField =
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             components.number as React.ComponentType<any>;
           return (
             <CustomNumberField
               field={{
                 ...field,
-                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   props.onChange?.(value);
                 },

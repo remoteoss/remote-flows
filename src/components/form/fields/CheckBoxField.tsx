@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox } from '@/src/components/ui/checkbox';
 import {
   FormControl,
@@ -15,9 +16,7 @@ import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export type CheckBoxFieldProps = JSFField & {
-  onChange?: (
-    value: CheckedState | React.ChangeEvent<HTMLInputElement>,
-  ) => void;
+  onChange?: (value: any) => void;
 };
 
 export function CheckBoxField({
@@ -49,7 +48,7 @@ export function CheckBoxField({
             <CustomCheckboxField
               field={{
                 ...field,
-                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   onChange?.(value);
                 },

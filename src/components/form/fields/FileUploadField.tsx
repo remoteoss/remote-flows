@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
@@ -15,7 +16,7 @@ import {
 } from '../../ui/form';
 
 export type FileUploadFieldProps = JSFField & {
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (value: any) => void;
   multiple?: boolean;
 };
 
@@ -47,9 +48,9 @@ export function FileUploadField({
             <CustomFileUploadField
               field={{
                 ...field,
-                onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
-                  field.onChange(event);
-                  onChange?.(event);
+                onChange: (value: any) => {
+                  field.onChange(value);
+                  onChange?.(value);
                 },
               }}
               fieldState={fieldState}

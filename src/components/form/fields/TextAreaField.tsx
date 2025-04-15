@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
@@ -47,9 +48,9 @@ export function TextAreaField({
             <CustomTextAreaField
               field={{
                 ...field,
-                onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  field.onChange(event);
-                  onChange?.(event);
+                onChange: (value: any) => {
+                  field.onChange(value);
+                  onChange?.(value);
                 },
               }}
               fieldState={fieldState}

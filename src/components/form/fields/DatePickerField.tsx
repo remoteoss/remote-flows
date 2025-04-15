@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -24,9 +25,7 @@ import { PopoverClose } from '@radix-ui/react-popover';
 import { format } from 'date-fns';
 
 export type DatePickerFieldProps = JSFField & {
-  onChange?: (
-    value: Date | string | React.ChangeEvent<HTMLElement> | undefined,
-  ) => void;
+  onChange?: (value: any) => void;
 };
 
 export function DatePickerField({
@@ -58,7 +57,7 @@ export function DatePickerField({
             <CustomDatePickerField
               field={{
                 ...field,
-                onChange: (value: React.ChangeEvent<HTMLElement>) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   onChange?.(value);
                 },
