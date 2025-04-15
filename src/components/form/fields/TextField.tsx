@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
@@ -15,7 +16,7 @@ import { Input } from '../../ui/input';
 
 export type TextFieldProps = React.ComponentProps<'input'> &
   JSFField & {
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (value: any) => void;
   };
 
 export function TextField({
@@ -48,7 +49,7 @@ export function TextField({
             <CustomTextField
               field={{
                 ...field,
-                onChange: (value: React.ChangeEvent<HTMLInputElement>) => {
+                onChange: (value: any) => {
                   field.onChange(value);
                   onChange?.(value);
                 },
@@ -67,7 +68,6 @@ export function TextField({
             <FormControl>
               <Input
                 {...field}
-                // {...rest}
                 value={field.value ?? ''}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   field.onChange(event);
