@@ -87,9 +87,6 @@ export const useTermination = ({
       const parsedValues = parseJSFToValidate(
         values,
         terminationHeadlessForm.fields,
-        {
-          isPartialValidation: false,
-        },
       );
 
       const {
@@ -147,9 +144,6 @@ export const useTermination = ({
         const parsedValues = parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
-          {
-            isPartialValidation: false,
-          },
         );
         return terminationHeadlessForm?.handleValidation(parsedValues);
       }
@@ -160,9 +154,6 @@ export const useTermination = ({
         const parsedValues = parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
-          {
-            isPartialValidation: false,
-          },
         );
         setFormValues(parsedValues as TerminationFormValues);
       }

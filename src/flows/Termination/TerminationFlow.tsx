@@ -60,9 +60,6 @@ export const TerminationFlow = ({
   options,
 }: TerminationFlowProps) => {
   const terminationBag = useTermination({ employmentId, options });
-  if (terminationBag.isLoading) {
-    return <>{render({ terminationBag })}</>;
-  }
 
   return (
     <TerminationFlowProvider terminationBag={terminationBag} render={render} />
