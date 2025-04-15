@@ -535,7 +535,7 @@ export function parseSubmitValues(
 
 export function parseJSFToValidate(
   formValues: Record<string, any>,
-  fields: Fields[],
+  fields: Fields,
   config: { isPartialValidation: boolean } = {
     isPartialValidation: false,
   },
