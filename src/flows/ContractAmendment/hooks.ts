@@ -256,9 +256,6 @@ export const useContractAmendment = ({
         const parsedValues = parseJSFToValidate(
           values,
           contractAmendmentHeadlessForm?.fields,
-          {
-            isPartialValidation: false,
-          },
         );
         return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
       }

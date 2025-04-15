@@ -535,8 +535,10 @@ export function parseSubmitValues(
 
 export function parseJSFToValidate(
   formValues: Record<string, any>,
-  fields: Fields,
-  config: { isPartialValidation: boolean },
+  fields: Fields[],
+  config: { isPartialValidation: boolean } = {
+    isPartialValidation: false,
+  },
 ) {
   const valuesParsed = parseSubmitValues(formValues, fields, {
     /* We cannot exclude invisible fields (excludeValuesInvisible) because
