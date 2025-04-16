@@ -2,6 +2,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 import React, { PropsWithChildren, useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
+import { ContractAmendmentBack } from './ContractAmendmentBack';
 import { ContractAmendmentConfirmationForm } from './ContractAmendmentConfirmationForm';
 import { ContractAmendmentForm } from './ContractAmendmentForm';
 import { ContractAmendmentSubmit } from './ContractAmendmentSubmit';
@@ -28,6 +29,7 @@ export type RenderProps = {
     Form: typeof ContractAmendmentForm;
     SubmitButton: typeof ContractAmendmentSubmit;
     ConfirmationForm: typeof ContractAmendmentConfirmationForm;
+    BackButton: typeof ContractAmendmentBack;
   };
 };
 
@@ -66,6 +68,7 @@ function ContractAmendmentProvider({
           Form: ContractAmendmentForm,
           SubmitButton: ContractAmendmentSubmit,
           ConfirmationForm: ContractAmendmentConfirmationForm,
+          BackButton: ContractAmendmentBack,
         },
       })}
     </ContractAmendmentContext.Provider>
