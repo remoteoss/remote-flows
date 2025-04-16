@@ -103,7 +103,6 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
-            transformToBool: true,
           },
         },
         customer_informed_employee: {
@@ -125,7 +124,6 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
-            transformToBool: false,
           },
         },
         customer_informed_employee_date: {
@@ -324,7 +322,6 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
-            transformToBool: true,
           },
         },
         will_challenge_termination_description: {
@@ -366,7 +363,6 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
-            transformToBool: true,
           },
         },
         agrees_to_pto_amount_notes: {

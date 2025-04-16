@@ -66,8 +66,6 @@ export const useTermination = ({
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
 
-  console.log({ terminationHeadlessForm: terminationHeadlessForm?.fields });
-
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
@@ -95,10 +93,30 @@ export const useTermination = ({
             },
           }
         : undefined;
-
-      const normalizedValues = omit(
-        parsedValues,
+      // I want to iterate parsedValues, check if field name is contained in radioFieldKeys
+      // if it is if the value is yes, set the value to true
+      // if it is no, set the value to false
+      const radioFieldKeys = [
+        'agrees_to_pto_amount',
+        'confidential',
         'customer_informed_employee',
+        'will_challenge_termination',
+      ];
+      const parsedRadioValues = Object.entries(parsedValues).reduce(
+        (acc, [key, value]) => {
+          if (radioFieldKeys.includes(key)) {
+            acc[key] = value === 'yes' ? true : false;
+          } else {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as TerminationFormValues,
+      );
+
+      console.log({ parsedRadioValues });
+      const normalizedValues = omit(
+        parsedRadioValues,
         'customer_informed_employee_date',
         'customer_informed_employee_description',
       );

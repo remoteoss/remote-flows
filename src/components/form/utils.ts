@@ -283,8 +283,6 @@ export const fieldTypesTransformations: Record<string, any> = {
   },
   [supportedTypes.RADIO]: {
     transformValueToAPI: (field: any) => (value: string) => {
-      console.log('radio value', value);
-      console.log('radio field', { field });
       if (field.transformToBool) {
         return value === 'yes';
       }
