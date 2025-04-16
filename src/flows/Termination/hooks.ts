@@ -66,6 +66,8 @@ export const useTermination = ({
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
 
+  console.log({ terminationHeadlessForm: terminationHeadlessForm?.fields });
+
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 

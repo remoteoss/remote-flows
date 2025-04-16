@@ -8,7 +8,7 @@ export const jsonSchema = {
           if: {
             properties: {
               customer_informed_employee: {
-                const: true, // Ensure this matches the value in the form data
+                const: 'yes', // Ensure this matches the value in the form data
               },
             },
             required: ['customer_informed_employee'], // Ensure this field is required
@@ -38,7 +38,7 @@ export const jsonSchema = {
           if: {
             properties: {
               will_challenge_termination: {
-                const: true,
+                const: 'yes',
               },
             },
             required: ['will_challenge_termination'],
@@ -88,42 +88,44 @@ export const jsonSchema = {
             'Confidential requests are visible only to you. Non-confidential requests are visible to all admins in your company.',
           oneOf: [
             {
-              const: true,
+              const: 'yes',
               description: '',
               title: 'Yes',
             },
             {
-              const: false,
+              const: 'no',
               description: '',
               title: 'No',
             },
           ],
           title: 'Is this request confidential?',
-          type: 'boolean',
+          type: 'string',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
+            transformToBool: true,
           },
         },
         customer_informed_employee: {
           description: '',
           oneOf: [
             {
-              const: true,
+              const: 'yes',
               description: '',
               title: 'Yes',
             },
             {
-              const: false,
+              const: 'no',
               description: '',
               title: 'No',
             },
           ],
           title: 'Have you informed the employee of the termination?',
-          type: 'boolean',
+          type: 'string',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
+            transformToBool: false,
           },
         },
         customer_informed_employee_date: {
@@ -306,22 +308,23 @@ export const jsonSchema = {
           description: '',
           oneOf: [
             {
-              const: true,
+              const: 'yes',
               description: '',
               title: 'Yes',
             },
             {
-              const: false,
+              const: 'no',
               description: '',
               title: 'No',
             },
           ],
           title:
             'Do you consider it is likely that the employee will challenge their termination?',
-          type: 'boolean',
+          type: 'string',
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
+            transformToBool: true,
           },
         },
         will_challenge_termination_description: {
@@ -363,6 +366,7 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
+            transformToBool: true,
           },
         },
         agrees_to_pto_amount_notes: {
