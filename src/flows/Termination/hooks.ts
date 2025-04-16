@@ -70,15 +70,6 @@ export const useTermination = ({
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {
-    // const validation =
-    //   jsonSchemaContractAmendmentFields?.handleValidation(values);
-    // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
-    //   return {
-    //     data: null,
-    //     error: validation.formErrors,
-    //   };
-    // }
-
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
@@ -105,9 +96,6 @@ export const useTermination = ({
 
       const normalizedValues = omit(
         parsedValues,
-        'acknowledge_termination_procedure',
-        'agrees_to_pto_amount',
-        'agrees_to_pto_amount_notes',
         'customer_informed_employee',
         'customer_informed_employee_date',
         'customer_informed_employee_description',
