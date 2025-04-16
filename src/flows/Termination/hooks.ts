@@ -93,15 +93,14 @@ export const useTermination = ({
             },
           }
         : undefined;
-      // I want to iterate parsedValues, check if field name is contained in radioFieldKeys
-      // if it is if the value is yes, set the value to true
-      // if it is no, set the value to false
+
       const radioFieldKeys = [
         'agrees_to_pto_amount',
         'confidential',
         'customer_informed_employee',
         'will_challenge_termination',
       ];
+
       const parsedRadioValues = Object.entries(parsedValues).reduce(
         (acc, [key, value]) => {
           if (radioFieldKeys.includes(key)) {
@@ -111,10 +110,10 @@ export const useTermination = ({
           }
           return acc;
         },
-        {} as TerminationFormValues,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {} as any,
       );
 
-      console.log({ parsedRadioValues });
       const normalizedValues = omit(
         parsedRadioValues,
         'customer_informed_employee_date',
