@@ -49,6 +49,9 @@ type TerminationFlowProps = {
   }: {
     terminationBag: ReturnType<typeof useTermination>;
   }) => React.ReactNode;
+  user: {
+    name: string;
+  };
   options?: {
     jsfModify?: JSFModify;
   };
@@ -56,10 +59,11 @@ type TerminationFlowProps = {
 
 export const TerminationFlow = ({
   employmentId,
+  user,
   render,
   options,
 }: TerminationFlowProps) => {
-  const terminationBag = useTermination({ employmentId, options });
+  const terminationBag = useTermination({ employmentId, user, options });
 
   return (
     <TerminationFlowProvider terminationBag={terminationBag} render={render} />
