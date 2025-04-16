@@ -130,9 +130,11 @@ export const useContractAmendment = ({
   const [stepState, setStepState] = useState<{
     currentStep: typeof STEPS.AMENDMENT_FORM;
     totalSteps: number;
+    values: FieldValues | null;
   }>({
     currentStep: STEPS.AMENDMENT_FORM,
     totalSteps: Object.keys(STEPS).length,
+    values: null,
   });
   const [fieldValues, setFieldValues] = useState<FieldValues>({});
 
@@ -226,6 +228,7 @@ export const useContractAmendment = ({
     setStepState((previousState) => ({
       ...previousState,
       currentStep: STEPS.AMENDMENT_FORM,
+      values: fieldValues,
     }));
   }
 

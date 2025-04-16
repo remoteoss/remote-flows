@@ -7,15 +7,13 @@ export function ContractAmendmentBack({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
   const {
-    contractAmendment: { back, values },
-    form,
+    contractAmendment: { back },
   } = useContractAmendmentContext();
 
   return (
     <Button
       {...props}
       onClick={() => {
-        form.reset(values);
         back();
       }}
     >

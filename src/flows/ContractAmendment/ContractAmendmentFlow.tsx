@@ -1,5 +1,5 @@
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import React, { PropsWithChildren, useId } from 'react';
+import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
 import { ContractAmendmentBack } from './ContractAmendmentBack';
@@ -33,15 +33,25 @@ export type RenderProps = {
   };
 };
 
-type ContractAmendmentProviderProps = PropsWithChildren<{
-  contractAmendmentBag: TUseContractAmendment;
-  render: (props: RenderProps) => React.ReactNode;
-}>;
+type ContractAmendmentFlowProps = ContractAmendmentParams & {
+  render: ({
+    contractAmendmentBag,
+    components,
+  }: RenderProps) => React.ReactNode;
+};
 
-function ContractAmendmentProvider({
+export function ContractAmendmentFlow({
+  employmentId,
+  countryCode,
+  options,
   render,
-  contractAmendmentBag,
-}: ContractAmendmentProviderProps) {
+}: ContractAmendmentFlowProps) {
+  const contractAmendmentBag = useContractAmendment({
+    employmentId,
+    countryCode,
+    options,
+  });
+
   const formId = useId();
   const resolver = useJsonSchemasValidationFormResolver(
     // @ts-expect-error no matching type
@@ -49,7 +59,13 @@ function ContractAmendmentProvider({
   );
   const form = useForm({
     resolver,
-    defaultValues: contractAmendmentBag.initialValues,
+    defaultValues:
+      // stepState.values is used as defaultValues for the form when the form is
+      // rendered when clicking on the back button after the user has submitted the form
+      // and the confirmation form is displayed.
+      // This is because the form is unmounted when the user submits the form.
+      contractAmendmentBag.stepState.values ||
+      contractAmendmentBag.initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });
@@ -72,32 +88,5 @@ function ContractAmendmentProvider({
         },
       })}
     </ContractAmendmentContext.Provider>
-  );
-}
-
-type ContractAmendmentFlowProps = ContractAmendmentParams & {
-  render: ({
-    contractAmendmentBag,
-    components,
-  }: RenderProps) => React.ReactNode;
-};
-
-export function ContractAmendmentFlow({
-  employmentId,
-  countryCode,
-  options,
-  render,
-}: ContractAmendmentFlowProps) {
-  const contractAmendmentBag = useContractAmendment({
-    employmentId,
-    countryCode,
-    options,
-  });
-
-  return (
-    <ContractAmendmentProvider
-      contractAmendmentBag={contractAmendmentBag}
-      render={render}
-    />
   );
 }

@@ -33,6 +33,16 @@ type ContractAmendmentFormProps = {
   onSuccess?: (data: ContractAmendmentAutomatableResponse) => void;
 };
 
+const commonFields = [
+  'effective_date',
+  'reason_for_change',
+  'reason_for_change_description',
+  'additional_comments',
+  'additional_comments_toggle',
+] as const;
+
+type CommonFields = (typeof commonFields)[number];
+
 export function ContractAmendmentForm({
   onSubmit,
   onError,
@@ -44,13 +54,17 @@ export function ContractAmendmentForm({
     contractAmendment: {
       checkFieldUpdates,
       fields,
+      initialValues,
       onSubmit: submitContractAmendment,
     },
   } = useContractAmendmentContext();
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      if (form.formState.isDirty) {
+      const isFormDirty =
+        Object.keys(form.formState.dirtyFields).length > 0 ||
+        form.formState.isDirty;
+      if (isFormDirty) {
         checkFieldUpdates(values);
       }
     });
@@ -59,20 +73,17 @@ export function ContractAmendmentForm({
   }, []);
 
   const handleSubmit = async (values: FieldValues) => {
-    const { dirtyFields } = form.formState;
-
-    // Check if there are any dirty fields that are common among all contract amendments
-    const commonFields = [
-      'effective_date',
-      'reason_for_change',
-      'reason_for_change_description',
-      'additional_comments',
-      'additional_comments_toggle',
-    ];
-
-    const hasContractDetailsChanges = Object.keys(dirtyFields).some(
-      (field) => !commonFields.includes(field),
-    );
+    let hasContractDetailsChanges = false;
+    for (const [key, value] of Object.entries(values)) {
+      if (
+        !commonFields.includes(key as CommonFields) &&
+        // @ts-expect-error error
+        initialValues[key] !== value
+      ) {
+        hasContractDetailsChanges = true;
+        break;
+      }
+    }
 
     if (!hasContractDetailsChanges) {
       return onError?.({

@@ -44,6 +44,7 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
           <ConfirmationForm />
           <div>
             {Object.entries(contractAmendmentBag.values).map(([key, value]) => {
+              // @ts-expect-error error
               const initialValue = contractAmendmentBag.initialValues[key];
               if (initialValue !== value) {
                 const label = contractAmendmentBag.fields.find(
@@ -65,11 +66,11 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
                           {initialValue}
                         </span>
                         <span>&rarr;</span>
-                        <span>{value}</span>
+                        <span>{value as string}</span>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', gap: 20 }}>
-                        <span>{value}</span>
+                        <span>{value as string}</span>
                       </div>
                     )}
                   </div>
