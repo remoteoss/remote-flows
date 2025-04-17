@@ -29,12 +29,8 @@ const useCreateTermination = () => {
 const useTerminationSchema = ({
   formValues,
   jsfModify,
-  user,
 }: {
   formValues?: TerminationFormValues;
-  user: {
-    name: string;
-  };
   jsfModify?: JSFModify;
 }) => {
   return useQuery({
@@ -43,20 +39,9 @@ const useTerminationSchema = ({
       return jsonSchema;
     },
     select: ({ data }) => {
-      const modifyUserSchema: JSFModify = {
-        fields: {
-          acknowledge_termination_procedure: {
-            title: `I, ${user.name} have read and agree to the procedures as defined in the termination form.`,
-          },
-        },
-      };
-      const modifyData = {
-        ...modifyUserSchema,
-        ...jsfModify,
-      };
-      const { schema } = modify(data.schema, modifyData || {});
+      const { schema } = modify(data.schema, jsfModify || {});
       const form = createHeadlessForm(schema || {}, {
-        initialValues: formValues || {}, // formValues || buildInitialValues(employment),
+        initialValues: formValues || {},
       });
       return form;
     },
@@ -65,9 +50,6 @@ const useTerminationSchema = ({
 
 type TerminationHookProps = {
   employmentId: string;
-  user: {
-    name: string;
-  };
   options?: {
     jsfModify?: JSFModify;
   };
@@ -75,7 +57,6 @@ type TerminationHookProps = {
 
 export const useTermination = ({
   employmentId,
-  user,
   options,
 }: TerminationHookProps) => {
   const [formValues, setFormValues] = useState<
@@ -83,7 +64,7 @@ export const useTermination = ({
   >(undefined);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
-    useTerminationSchema({ formValues, user, jsfModify: options?.jsfModify });
+    useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
 
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
