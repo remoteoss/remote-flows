@@ -28,6 +28,8 @@ function TerminationFlowProvider({
     shouldUnregister: true,
     mode: 'onBlur',
   });
+  const formState = form.getValues();
+  console.log({ formState });
 
   return (
     <TerminationContext.Provider
