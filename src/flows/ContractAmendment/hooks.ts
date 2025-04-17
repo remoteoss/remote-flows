@@ -130,9 +130,11 @@ export const useContractAmendment = ({
   const [stepState, setStepState] = useState<{
     currentStep: typeof STEPS.AMENDMENT_FORM;
     totalSteps: number;
+    values: FieldValues | null;
   }>({
     currentStep: STEPS.AMENDMENT_FORM,
     totalSteps: Object.keys(STEPS).length,
+    values: null,
   });
   const [fieldValues, setFieldValues] = useState<FieldValues>({});
 
@@ -211,6 +213,25 @@ export const useContractAmendment = ({
     }
   }
 
+  function handleValidation(values: FieldValues) {
+    if (contractAmendmentHeadlessForm) {
+      const parsedValues = parseJSFToValidate(
+        values,
+        contractAmendmentHeadlessForm?.fields,
+      );
+      return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
+    }
+    return null;
+  }
+
+  function back() {
+    setStepState((previousState) => ({
+      ...previousState,
+      currentStep: STEPS.AMENDMENT_FORM,
+      values: fieldValues,
+    }));
+  }
+
   return {
     /**
      * Current step state containing the current step and total number of steps
@@ -251,28 +272,22 @@ export const useContractAmendment = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
-      if (contractAmendmentHeadlessForm) {
-        const parsedValues = parseJSFToValidate(
-          values,
-          contractAmendmentHeadlessForm?.fields,
-        );
-        return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
-      }
-      return null;
-    },
+    handleValidation,
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: (values: FieldValues) => {
-      setFieldValues(values);
-    },
+    checkFieldUpdates: setFieldValues,
     /**
      * Function to handle form submission
      * @param values - Form values to submit
      * @returns Promise resolving to the mutation result
      */
     onSubmit,
+    /**
+     * Function to handle going back to the previous step
+     * @returns {void}
+     */
+    back,
   };
 };

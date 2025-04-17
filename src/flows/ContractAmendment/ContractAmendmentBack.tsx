@@ -2,14 +2,21 @@ import { Button } from '@/src/components/ui/button';
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useContractAmendmentContext } from './context';
 
-export function ContractAmendmentSubmit({
+export function ContractAmendmentBack({
   children,
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
-  const { formId } = useContractAmendmentContext();
+  const {
+    contractAmendment: { back },
+  } = useContractAmendmentContext();
 
   return (
-    <Button {...props} form={formId}>
+    <Button
+      {...props}
+      onClick={() => {
+        back();
+      }}
+    >
       {children}
     </Button>
   );

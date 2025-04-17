@@ -8,13 +8,12 @@ import { useState } from 'react';
 import './App.css';
 
 function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
-  const { Form, SubmitButton, ConfirmationForm } = components;
+  const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
   const [automatable, setAutomatable] = useState<
     ContractAmendmentAutomatableResponse | undefined
   >();
 
   function handleSuccess(data: ContractAmendmentAutomatableResponse) {
-    console.log('Success:', data);
     setAutomatable(data);
   }
 
@@ -25,37 +24,64 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
   switch (contractAmendmentBag.stepState.currentStep.name) {
     case 'form':
       return (
-        <>
+        <div className="amendment_form">
           <Form onSuccess={handleSuccess} />
           <SubmitButton
+            className="amendment_form__buttons__submit"
             disabled={contractAmendmentBag.isSubmitting}
-            style={{
-              backgroundColor: 'black',
-              color: 'white',
-              marginTop: 20,
-            }}
           >
             Go to preview and confirm changes
           </SubmitButton>
-        </>
+        </div>
       );
     case 'confirmation_form':
       return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="confirmation_form">
           <ConfirmationForm />
+          <div>
+            {Object.entries(contractAmendmentBag.values).map(([key, value]) => {
+              // @ts-expect-error error
+              const initialValue = contractAmendmentBag.initialValues[key];
+              if (initialValue !== value) {
+                const label = contractAmendmentBag.fields.find(
+                  (field) => field.name === key,
+                )?.label as string;
+                return (
+                  <div className="confirmation_form__item" key={key}>
+                    <p>{label}:</p>
+                    {initialValue ? (
+                      <div className="confirmation_form__item__value">
+                        <span className="confirmation_form__item__value__initial">
+                          {initialValue}
+                        </span>
+                        <span>&rarr;</span>
+                        <span>{value as string}</span>
+                      </div>
+                    ) : (
+                      <div className="confirmation_form__item__value">
+                        <span>{value as string}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
           {automatable?.data?.automatable ? (
             <div>{automatable?.data?.message}</div>
           ) : null}
-          <SubmitButton
-            disabled={contractAmendmentBag.isSubmitting}
-            style={{
-              backgroundColor: 'black',
-              color: 'white',
-              marginTop: 20,
-            }}
-          >
-            Submit amendment request
-          </SubmitButton>
+          <div className="confirmation_form__buttons">
+            <SubmitButton
+              disabled={contractAmendmentBag.isSubmitting}
+              className="confirmation_form__buttons__submit"
+            >
+              Submit amendment request
+            </SubmitButton>
+            <BackButton className="confirmation_form__buttons__back">
+              Back
+            </BackButton>
+          </div>
         </div>
       );
   }
@@ -77,11 +103,13 @@ export function ContractAmendment() {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <ContractAmendmentFlow
-        countryCode="PRT"
-        employmentId="2ef4068b-11c7-4942-bb3c-70606c83688e"
-        render={AmendmentFlow}
-      />
+      <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
+        <ContractAmendmentFlow
+          countryCode="PRT"
+          employmentId="b98b7127-d90f-4f5b-b02d-457d65707d35"
+          render={AmendmentFlow}
+        />
+      </div>
     </RemoteFlows>
   );
 }

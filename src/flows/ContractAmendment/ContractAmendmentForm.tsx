@@ -3,9 +3,10 @@ import {
   PostAutomatableContractAmendmentError,
 } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 
 type ContractAmendmentFormProps = {
@@ -33,24 +34,56 @@ type ContractAmendmentFormProps = {
   onSuccess?: (data: ContractAmendmentAutomatableResponse) => void;
 };
 
+const commonFields = [
+  'effective_date',
+  'reason_for_change',
+  'reason_for_change_description',
+  'additional_comments',
+  'additional_comments_toggle',
+] as const;
+
+type CommonFields = (typeof commonFields)[number];
+
 export function ContractAmendmentForm({
   onSubmit,
   onError,
   onSuccess,
 }: ContractAmendmentFormProps) {
   const {
-    form,
     formId,
     contractAmendment: {
       checkFieldUpdates,
       fields,
       onSubmit: submitContractAmendment,
+      stepState,
+      initialValues,
+      handleValidation,
     },
   } = useContractAmendmentContext();
 
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    handleValidation,
+  );
+
+  const form = useForm({
+    resolver,
+    defaultValues:
+      // stepState.values is used as defaultValues for the form when the form is
+      // rendered when clicking on the back button after the user has submitted the form
+      // and the confirmation form is displayed.
+      // This is because the form is unmounted when the user submits the form.
+      stepState.values || initialValues,
+    shouldUnregister: true,
+    mode: 'onBlur',
+  });
+
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      if (form.formState.isDirty) {
+      const isFormDirty =
+        Object.keys(form.formState.dirtyFields).length > 0 ||
+        form.formState.isDirty;
+      if (isFormDirty) {
         checkFieldUpdates(values);
       }
     });
@@ -59,20 +92,17 @@ export function ContractAmendmentForm({
   }, []);
 
   const handleSubmit = async (values: FieldValues) => {
-    const { dirtyFields } = form.formState;
-
-    // Check if there are any dirty fields that are common among all contract amendments
-    const commonFields = [
-      'effective_date',
-      'reason_for_change',
-      'reason_for_change_description',
-      'additional_comments',
-      'additional_comments_toggle',
-    ];
-
-    const hasContractDetailsChanges = Object.keys(dirtyFields).some(
-      (field) => !commonFields.includes(field),
-    );
+    let hasContractDetailsChanges = false;
+    for (const [key, value] of Object.entries(values)) {
+      if (
+        !commonFields.includes(key as CommonFields) &&
+        // @ts-expect-error error
+        initialValues[key] !== value
+      ) {
+        hasContractDetailsChanges = true;
+        break;
+      }
+    }
 
     if (!hasContractDetailsChanges) {
       return onError?.({

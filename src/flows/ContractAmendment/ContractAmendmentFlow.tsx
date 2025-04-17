@@ -1,7 +1,6 @@
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import React, { PropsWithChildren, useId } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useId } from 'react';
 import { ContractAmendmentContext } from './context';
+import { ContractAmendmentBack } from './ContractAmendmentBack';
 import { ContractAmendmentConfirmationForm } from './ContractAmendmentConfirmationForm';
 import { ContractAmendmentForm } from './ContractAmendmentForm';
 import { ContractAmendmentSubmit } from './ContractAmendmentSubmit';
@@ -28,49 +27,9 @@ export type RenderProps = {
     Form: typeof ContractAmendmentForm;
     SubmitButton: typeof ContractAmendmentSubmit;
     ConfirmationForm: typeof ContractAmendmentConfirmationForm;
+    BackButton: typeof ContractAmendmentBack;
   };
 };
-
-type ContractAmendmentProviderProps = PropsWithChildren<{
-  contractAmendmentBag: TUseContractAmendment;
-  render: (props: RenderProps) => React.ReactNode;
-}>;
-
-function ContractAmendmentProvider({
-  render,
-  contractAmendmentBag,
-}: ContractAmendmentProviderProps) {
-  const formId = useId();
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    contractAmendmentBag.handleValidation,
-  );
-  const form = useForm({
-    resolver,
-    defaultValues: contractAmendmentBag.initialValues,
-    shouldUnregister: true,
-    mode: 'onBlur',
-  });
-
-  return (
-    <ContractAmendmentContext.Provider
-      value={{
-        form,
-        formId: formId,
-        contractAmendmentBag,
-      }}
-    >
-      {render({
-        contractAmendmentBag,
-        components: {
-          Form: ContractAmendmentForm,
-          SubmitButton: ContractAmendmentSubmit,
-          ConfirmationForm: ContractAmendmentConfirmationForm,
-        },
-      })}
-    </ContractAmendmentContext.Provider>
-  );
-}
 
 type ContractAmendmentFlowProps = ContractAmendmentParams & {
   render: ({
@@ -90,11 +49,24 @@ export function ContractAmendmentFlow({
     countryCode,
     options,
   });
+  const formId = useId();
 
   return (
-    <ContractAmendmentProvider
-      contractAmendmentBag={contractAmendmentBag}
-      render={render}
-    />
+    <ContractAmendmentContext.Provider
+      value={{
+        formId: formId,
+        contractAmendmentBag,
+      }}
+    >
+      {render({
+        contractAmendmentBag,
+        components: {
+          Form: ContractAmendmentForm,
+          SubmitButton: ContractAmendmentSubmit,
+          ConfirmationForm: ContractAmendmentConfirmationForm,
+          BackButton: ContractAmendmentBack,
+        },
+      })}
+    </ContractAmendmentContext.Provider>
   );
 }

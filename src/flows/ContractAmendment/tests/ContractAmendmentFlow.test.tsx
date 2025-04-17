@@ -22,17 +22,42 @@ const mockSuccess = vi.fn();
 const mockOnSubmit = vi.fn();
 
 describe('ContractAmendmentFlow', () => {
-  const mockRender = vi.fn(({ components }: RenderProps) => (
-    <div>
-      <components.Form
-        onError={mockError}
-        onSuccess={mockSuccess}
-        onSubmit={mockOnSubmit}
-      />
-      <components.SubmitButton>Submit</components.SubmitButton>
-      {/* <components.ConfirmationForm /> */}
-    </div>
-  ));
+  const mockRender = vi.fn(
+    ({ contractAmendmentBag, components }: RenderProps) => {
+      const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
+      if (contractAmendmentBag.isLoading) {
+        return null;
+      }
+
+      switch (contractAmendmentBag.stepState.currentStep.name) {
+        case 'form':
+          return (
+            <div data-testid="form">
+              <Form
+                onError={mockError}
+                onSuccess={mockSuccess}
+                onSubmit={mockOnSubmit}
+              />
+              <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
+                Submit
+              </SubmitButton>
+            </div>
+          );
+        case 'confirmation_form':
+          return (
+            <div data-testid="confirmation-form">
+              <ConfirmationForm />
+              <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
+                Confirm
+              </SubmitButton>
+              <BackButton>Back</BackButton>
+            </div>
+          );
+        default:
+          return null;
+      }
+    },
+  );
 
   const defaultProps = {
     employmentId: '2ef4068b-11c7-4942-bb3c-70606c83688e',
@@ -52,7 +77,7 @@ describe('ContractAmendmentFlow', () => {
         return HttpResponse.json(contractAmendementSchema);
       }),
       http.post('*/v1/contract-amendments/automatable', () => {
-        return HttpResponse.json({ automatable: true });
+        return HttpResponse.json({ data: { automatable: true, message: '' } });
       }),
     );
   });
@@ -60,37 +85,6 @@ describe('ContractAmendmentFlow', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
-
-  // it('renders the flow with all components', async () => {
-  //   render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
-
-  //   await waitFor(() => {
-  //     expect(
-  //       screen.getByRole('button', { name: /submit/i }),
-  //     ).toBeInTheDocument();
-  //   });
-  //   await waitFor(() => {
-  //     expect(screen.getByLabelText('Reason for change')).toBeInTheDocument();
-  //   });
-  //   expect(screen.getByText('Effective date of change')).toBeInTheDocument();
-  // });
-
-  // it('passes the correct contractAmendmentBag to render prop', async () => {
-  //   render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
-
-  //   await waitFor(() => {
-  //     expect(mockRender).toHaveBeenCalled();
-  //     const renderProps = mockRender.mock.calls[0][0];
-
-  //     expect(renderProps.contractAmendmentBag).toHaveProperty('initialValues');
-  //     expect(renderProps.contractAmendmentBag).toHaveProperty(
-  //       'handleValidation',
-  //     );
-  //     expect(renderProps.components).toHaveProperty('Form');
-  //     expect(renderProps.components).toHaveProperty('SubmitButton');
-  //     expect(renderProps.components).toHaveProperty('ConfirmationForm');
-  //   });
-  // });
 
   it('submits the form when contract details are changed', async () => {
     const user = userEvent.setup();
@@ -100,7 +94,9 @@ describe('ContractAmendmentFlow', () => {
     await waitFor(() => {
       expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
     });
-    await user.type(screen.getByLabelText('Annual gross salary'), '360000');
+    const salaryInput = screen.getByLabelText('Annual gross salary');
+    await user.clear(salaryInput);
+    await user.type(salaryInput, '360000');
 
     // change effective date
     const datePickerButton = screen.getByTestId('date-picker-button');
@@ -138,7 +134,7 @@ describe('ContractAmendmentFlow', () => {
     });
   });
 
-  it('shows error when only static fields are changed', async () => {
+  it('shows error when only non contract details fields are changed', async () => {
     const user = userEvent.setup();
     render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
 
@@ -183,5 +179,47 @@ describe('ContractAmendmentFlow', () => {
     await waitFor(() => {
       expect(screen.getByText(/error/i)).toBeInTheDocument();
     });
+  });
+
+  it('should navigate back to the form after opening confirmation step', async () => {
+    const user = userEvent.setup();
+    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+
+    await waitFor(() => {
+      expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
+    });
+    await user.type(screen.getByLabelText('Annual gross salary'), '360000');
+
+    // change effective date
+    const datePickerButton = screen.getByTestId('date-picker-button');
+    await user.click(datePickerButton);
+    waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    const calendar = screen.getByRole('dialog');
+    expect(calendar).toBeInTheDocument();
+    const dateButton = screen.getByRole('button', { name: /15/i });
+    await user.click(dateButton);
+    waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    // submit contract amendment
+    const submitButton = screen.getByRole('button', {
+      name: /submit/i,
+    });
+    submitButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalled();
+    });
+
+    // assert confirmation form is displayed
+    expect(screen.getByTestId('confirmation-form')).toBeInTheDocument();
+    const backButton = screen.getByRole('button', { name: /back/i });
+    await user.click(backButton);
+
+    // assert that the form is displayed again after pressing back
+    expect(screen.getByTestId('form')).toBeInTheDocument();
   });
 });
