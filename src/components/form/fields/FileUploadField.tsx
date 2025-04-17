@@ -46,6 +46,7 @@ export function FileUploadField({
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     field: ControllerRenderProps<FieldValues, string>,
+    isMultiple: boolean = false,
   ) => {
     const files = event.target.files ? Array.from(event.target.files) : [];
 
@@ -58,9 +59,14 @@ export function FileUploadField({
         };
       }),
     );
+    if (isMultiple) {
+      field.onChange(fileObjects);
+      onChange?.(fileObjects);
+      return;
+    }
 
-    field.onChange(fileObjects);
-    onChange?.(fileObjects);
+    field.onChange(fileObjects[0]);
+    onChange?.(fileObjects[0]);
   };
   return (
     <FormField
@@ -99,7 +105,7 @@ export function FileUploadField({
               <FileUploader
                 {...field}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  handleFileChange(event, field)
+                  handleFileChange(event, field, multiple)
                 }
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
