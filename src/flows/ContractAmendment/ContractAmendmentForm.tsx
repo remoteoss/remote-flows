@@ -65,7 +65,7 @@ export function ContractAmendmentForm({
     // @ts-expect-error no matching type
     handleValidation,
   );
-  console.log(stepState.values);
+
   const form = useForm({
     resolver,
     defaultValues:
