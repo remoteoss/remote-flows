@@ -10,6 +10,7 @@ import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
 import omit from 'lodash/omit';
+import { parseFormRadioValues } from '@/src/flows/utils';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -101,17 +102,9 @@ export const useTermination = ({
         'will_challenge_termination',
       ];
 
-      const parsedRadioValues = Object.entries(parsedValues).reduce(
-        (acc, [key, value]) => {
-          if (radioFieldKeys.includes(key)) {
-            acc[key] = value === 'yes' ? true : false;
-          } else {
-            acc[key] = value;
-          }
-          return acc;
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {} as any,
+      const parsedRadioValues = parseFormRadioValues(
+        parsedValues,
+        radioFieldKeys,
       );
 
       const normalizedValues = omit(
