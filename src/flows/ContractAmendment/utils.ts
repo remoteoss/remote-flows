@@ -1,18 +1,13 @@
 import { EmploymentShowResponse } from '@/src/client';
 import { convertFromCents } from '@/src/components/form/utils';
 import { Fields } from '@remoteoss/json-schema-form';
+import { Step } from '../useStepState';
 
-type StepKeys = 'AMENDMENT_FORM' | 'CONFIRMATION_FORM';
-type StepName = 'form' | 'confirmation_form' | 'completed';
-
-export type Step = {
-  index: number;
-  name: StepName;
-};
+type StepKeys = 'form' | 'confirmation_form';
 
 export const STEPS: Record<StepKeys, Step> = {
-  AMENDMENT_FORM: { index: 0, name: 'form' },
-  CONFIRMATION_FORM: { index: 1, name: 'confirmation_form' },
+  form: { index: 0, name: 'form' },
+  confirmation_form: { index: 1, name: 'confirmation_form' },
 } as const;
 
 export function buildInitialValues(
