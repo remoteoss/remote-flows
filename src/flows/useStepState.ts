@@ -73,10 +73,36 @@ export const useStepState = <T extends string>(steps: Record<T, Step>) => {
   }
 
   return {
+    /**
+     * Moves to the next step in the step state.
+     * It updates the current step and resets the field values for the next step.
+     * The field values for the current step are stored in the step state.
+     * @returns {void}
+     */
     nextStep,
+    /**
+     * Moves to the previous step in the step state.
+     * It updates the current step and resets the field values for the previous step.
+     * The field values for the current step are stored in the step state.
+     * @returns {void}
+     */
     previousStep,
+    /**
+     * The current step state containing the current step, total number of steps and
+     * the form values for each step.
+     * @returns {StepState<T>} The current step state.
+     */
     stepState,
+    /**
+     * The field values for the current step.
+     * @returns {FieldValues} The field values for the current step.
+     */
     fieldValues,
+    /**
+     * Sets the field values for the current step.
+     * @param values The field values to set.
+     * @returns {void}
+     */
     setFieldValues,
   };
 };
