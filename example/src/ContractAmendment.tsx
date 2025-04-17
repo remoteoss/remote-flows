@@ -39,7 +39,9 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
         <div className="confirmation_form">
           <ConfirmationForm />
           <div>
-            {Object.entries(contractAmendmentBag.values).map(([key, value]) => {
+            {Object.entries(
+              contractAmendmentBag.stepState.values?.form || {},
+            ).map(([key, value]) => {
               // @ts-expect-error error
               const initialValue = contractAmendmentBag.initialValues[key];
               if (initialValue !== value) {

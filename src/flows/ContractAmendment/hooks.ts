@@ -13,11 +13,11 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { ContractAmendmentParams } from './types';
 
 import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
+import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
@@ -127,16 +127,8 @@ export const useContractAmendment = ({
   countryCode,
   options,
 }: ContractAmendmentParams) => {
-  const [stepState, setStepState] = useState<{
-    currentStep: typeof STEPS.AMENDMENT_FORM;
-    totalSteps: number;
-    values: FieldValues | null;
-  }>({
-    currentStep: STEPS.AMENDMENT_FORM,
-    totalSteps: Object.keys(STEPS).length,
-    values: null,
-  });
-  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+  const { fieldValues, setFieldValues, stepState, nextStep, previousStep } =
+    useStepState<keyof typeof STEPS>(STEPS);
 
   const {
     data: employment,
@@ -186,21 +178,18 @@ export const useContractAmendment = ({
     };
 
     switch (stepState.currentStep.name) {
-      case STEPS.AMENDMENT_FORM.name: {
+      case STEPS.form.name: {
         const { mutateAsync } = mutationToPromise(
           automatableContractAmendmentMutation,
         );
 
         const automatableContractAmendment = await mutateAsync(payload);
 
-        setStepState((previousState) => ({
-          ...previousState,
-          currentStep: STEPS.CONFIRMATION_FORM,
-        }));
+        nextStep();
 
         return automatableContractAmendment;
       }
-      case STEPS.CONFIRMATION_FORM.name: {
+      case STEPS.confirmation_form.name: {
         const { mutateAsync } = mutationToPromise(
           createContractAmendmentMutation,
         );
@@ -225,11 +214,7 @@ export const useContractAmendment = ({
   }
 
   function back() {
-    setStepState((previousState) => ({
-      ...previousState,
-      currentStep: STEPS.AMENDMENT_FORM,
-      values: fieldValues,
-    }));
+    previousStep();
   }
 
   return {
