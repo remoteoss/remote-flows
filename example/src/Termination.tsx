@@ -24,7 +24,6 @@ export const Termination = () => {
       <div className="cost-calculator__container">
         <TerminationFlow
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
-          user={{ name: 'ze' }}
           render={({ terminationBag }) => {
             if (terminationBag.isLoading) {
               return <div>Loading...</div>;
