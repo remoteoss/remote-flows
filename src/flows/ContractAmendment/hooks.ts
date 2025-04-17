@@ -85,9 +85,13 @@ const useContractAmendmentSchemaQuery = ({
         jsfSchema = schema;
       }
       const copyFieldValues = { ...fieldValues };
-      return createHeadlessForm(jsfSchema, {
-        initialValues: copyFieldValues || buildInitialValues(employment),
+      const hasFieldValues = Object.keys(copyFieldValues).length > 0;
+      const result = createHeadlessForm(jsfSchema, {
+        initialValues: hasFieldValues
+          ? copyFieldValues
+          : buildInitialValues(employment),
       });
+      return result;
     },
   });
 };
