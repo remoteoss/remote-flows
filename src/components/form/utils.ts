@@ -423,17 +423,9 @@ export function parseFormValuesToAPI(
             fieldTypesTransformations[field.type]?.transformValueToAPI;
           // logErrorOnMissingComplimentaryParams(field);
           if (fieldTransformValueToAPI) {
-            console.log('assigning', {
-              field: field.name,
-              fieldTransformValueToAPI: fieldTransformValueToAPI(field),
-            });
             acc[field.name] = fieldTransformValueToAPI(field)(formValue);
             break;
           }
-          console.log('assigning', {
-            field: field.name,
-            formValue: formValue,
-          });
           acc[field.name] = formValue;
           break;
         }
@@ -548,22 +540,15 @@ export function parseSubmitValues(
   const visibleFormValues = config?.keepInvisibleValues
     ? formValues
     : excludeValuesInvisible(formValues, fields);
-  console.log({
-    visibleFormValues,
-  });
   const convertedFormValues = parseFormValuesToAPI(visibleFormValues, fields);
-  console.log({ convertedFormValues });
   const formValuesWithTrimmedStrings = trimStringValues(convertedFormValues);
-  console.log({ formValuesWithTrimmedStrings });
   const formValuesWithUndefined = convertEmptyStringsToNull(
     formValuesWithTrimmedStrings,
   );
-  console.log({ formValuesWithUndefined });
   const valuesWithReadOnly = prefillReadOnlyFields(
     formValuesWithUndefined,
     fields,
   );
-  console.log({ valuesWithReadOnly });
   return valuesWithReadOnly;
 }
 

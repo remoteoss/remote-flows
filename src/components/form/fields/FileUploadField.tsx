@@ -64,7 +64,6 @@ export function FileUploadField({
       onChange?.(fileObjects);
       return;
     }
-
     field.onChange(fileObjects[0]);
     onChange?.(fileObjects[0]);
   };
@@ -86,10 +85,9 @@ export function FileUploadField({
             <CustomFileUploadField
               field={{
                 ...field,
-                onChange: (value: any) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                },
+                value: null,
+                onChange: (value: any) =>
+                  handleFileChange(value, field, multiple),
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
