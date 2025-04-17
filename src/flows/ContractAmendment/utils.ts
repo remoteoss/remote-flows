@@ -2,18 +2,18 @@ import { EmploymentShowResponse } from '@/src/client';
 import { convertFromCents } from '@/src/components/form/utils';
 import { Fields } from '@remoteoss/json-schema-form';
 
-type Step<T extends string = string> = {
+type StepKeys = 'AMENDMENT_FORM' | 'CONFIRMATION_FORM';
+type StepName = 'form' | 'confirmation_form' | 'completed';
+
+export type Step = {
   index: number;
-  name: T;
+  name: StepName;
 };
 
-export const STEPS: Record<
-  string,
-  Step<'form' | 'confirmation_form' | 'completed'>
-> = {
-  AMENDMENT_FORM: { index: 1, name: 'form' },
-  CONFIRMATION_FORM: { index: 2, name: 'confirmation_form' },
-};
+export const STEPS: Record<StepKeys, Step> = {
+  AMENDMENT_FORM: { index: 0, name: 'form' },
+  CONFIRMATION_FORM: { index: 1, name: 'confirmation_form' },
+} as const;
 
 export function buildInitialValues(
   employment: EmploymentShowResponse | undefined,

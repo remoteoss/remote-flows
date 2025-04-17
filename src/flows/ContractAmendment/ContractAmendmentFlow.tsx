@@ -1,6 +1,4 @@
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import React, { useId } from 'react';
-import { useForm } from 'react-hook-form';
 import { ContractAmendmentContext } from './context';
 import { ContractAmendmentBack } from './ContractAmendmentBack';
 import { ContractAmendmentConfirmationForm } from './ContractAmendmentConfirmationForm';
@@ -51,29 +49,11 @@ export function ContractAmendmentFlow({
     countryCode,
     options,
   });
-
   const formId = useId();
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    contractAmendmentBag.handleValidation,
-  );
-  const form = useForm({
-    resolver,
-    defaultValues:
-      // stepState.values is used as defaultValues for the form when the form is
-      // rendered when clicking on the back button after the user has submitted the form
-      // and the confirmation form is displayed.
-      // This is because the form is unmounted when the user submits the form.
-      contractAmendmentBag.stepState.values ||
-      contractAmendmentBag.initialValues,
-    shouldUnregister: true,
-    mode: 'onBlur',
-  });
 
   return (
     <ContractAmendmentContext.Provider
       value={{
-        form,
         formId: formId,
         contractAmendmentBag,
       }}

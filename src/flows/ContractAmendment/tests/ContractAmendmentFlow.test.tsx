@@ -94,7 +94,9 @@ describe('ContractAmendmentFlow', () => {
     await waitFor(() => {
       expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
     });
-    await user.type(screen.getByLabelText('Annual gross salary'), '360000');
+    const salaryInput = screen.getByLabelText('Annual gross salary');
+    await user.clear(salaryInput);
+    await user.type(salaryInput, '360000');
 
     // change effective date
     const datePickerButton = screen.getByTestId('date-picker-button');

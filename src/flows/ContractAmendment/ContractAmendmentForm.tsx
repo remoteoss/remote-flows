@@ -3,9 +3,10 @@ import {
   PostAutomatableContractAmendmentError,
 } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 
 type ContractAmendmentFormProps = {
@@ -49,15 +50,33 @@ export function ContractAmendmentForm({
   onSuccess,
 }: ContractAmendmentFormProps) {
   const {
-    form,
     formId,
     contractAmendment: {
       checkFieldUpdates,
       fields,
-      initialValues,
       onSubmit: submitContractAmendment,
+      stepState,
+      initialValues,
+      handleValidation,
     },
   } = useContractAmendmentContext();
+
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    handleValidation,
+  );
+  console.log(stepState.values);
+  const form = useForm({
+    resolver,
+    defaultValues:
+      // stepState.values is used as defaultValues for the form when the form is
+      // rendered when clicking on the back button after the user has submitted the form
+      // and the confirmation form is displayed.
+      // This is because the form is unmounted when the user submits the form.
+      stepState.values || initialValues,
+    shouldUnregister: true,
+    mode: 'onBlur',
+  });
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
