@@ -67,7 +67,7 @@ export function TerminationForm({
     if (field.name === 'acknowledge_termination_procedure') {
       return {
         ...field,
-        label: field.label.replace('{{username}}', username),
+        label: (field.label as string).replace('{{username}}', username),
       };
     }
     return field;
