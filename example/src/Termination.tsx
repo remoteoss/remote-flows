@@ -32,6 +32,7 @@ export const Termination = () => {
             return (
               <>
                 <TerminationForm
+                  username="ze"
                   onSubmit={(payload) => console.log('payload', payload)}
                   onError={(error) => console.log('error', error)}
                   onSuccess={(data) => console.log('data', data)}

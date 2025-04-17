@@ -42,7 +42,7 @@ const useTerminationSchema = ({
     select: ({ data }) => {
       const { schema } = modify(data.schema, jsfModify || {});
       const form = createHeadlessForm(schema || {}, {
-        initialValues: formValues || {}, // formValues || buildInitialValues(employment),
+        initialValues: formValues || {},
       });
       return form;
     },
