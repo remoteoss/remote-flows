@@ -4,19 +4,35 @@ import React, { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
+import { useForm } from 'react-hook-form';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 
 type TerminationFormProps = {
+  username: string;
   onSubmit?: (values: TerminationFormValues) => Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
 
 export function TerminationForm({
+  username,
   onSubmit,
   onError,
   onSuccess,
 }: TerminationFormProps) {
-  const { form, formId, terminationBag } = useTerminationContext();
+  const { formId, terminationBag } = useTerminationContext();
+
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    terminationBag.handleValidation,
+  );
+
+  const form = useForm({
+    resolver,
+    defaultValues: terminationBag?.initialValues,
+    shouldUnregister: true,
+    mode: 'onBlur',
+  });
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
@@ -45,6 +61,18 @@ export function TerminationForm({
     }
   };
 
+  const fields = terminationBag?.fields ? terminationBag.fields : [];
+
+  const updatedFields = fields.map((field) => {
+    if (field.name === 'acknowledge_termination_procedure') {
+      return {
+        ...field,
+        label: field.label.replace('{{username}}', username),
+      };
+    }
+    return field;
+  });
+
   return (
     <Form {...form}>
       <form
@@ -52,9 +80,7 @@ export function TerminationForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__TerminationForm"
       >
-        <JSONSchemaFormFields
-          fields={terminationBag?.fields ? terminationBag.fields : []}
-        />
+        <JSONSchemaFormFields fields={updatedFields} />
       </form>
     </Form>
   );
