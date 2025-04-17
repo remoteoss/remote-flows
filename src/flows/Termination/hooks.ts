@@ -10,6 +10,7 @@ import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
 import omit from 'lodash/omit';
+import { parseFormRadioValues } from '@/src/flows/utils';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -70,15 +71,6 @@ export const useTermination = ({
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {
-    // const validation =
-    //   jsonSchemaContractAmendmentFields?.handleValidation(values);
-    // if (validation?.formErrors && Object.keys(validation?.formErrors)) {
-    //   return {
-    //     data: null,
-    //     error: validation.formErrors,
-    //   };
-    // }
-
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
@@ -103,12 +95,20 @@ export const useTermination = ({
           }
         : undefined;
 
-      const normalizedValues = omit(
-        parsedValues,
-        'acknowledge_termination_procedure',
+      const radioFieldKeys = [
         'agrees_to_pto_amount',
-        'agrees_to_pto_amount_notes',
+        'confidential',
         'customer_informed_employee',
+        'will_challenge_termination',
+      ];
+
+      const parsedRadioValues = parseFormRadioValues(
+        parsedValues,
+        radioFieldKeys,
+      );
+
+      const normalizedValues = omit(
+        parsedRadioValues,
         'customer_informed_employee_date',
         'customer_informed_employee_description',
       );
