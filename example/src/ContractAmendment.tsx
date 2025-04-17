@@ -24,23 +24,19 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
   switch (contractAmendmentBag.stepState.currentStep.name) {
     case 'form':
       return (
-        <>
+        <div className="amendment_form">
           <Form onSuccess={handleSuccess} />
           <SubmitButton
+            className="amendment_form__buttons__submit"
             disabled={contractAmendmentBag.isSubmitting}
-            style={{
-              backgroundColor: 'black',
-              color: 'white',
-              marginTop: 20,
-            }}
           >
             Go to preview and confirm changes
           </SubmitButton>
-        </>
+        </div>
       );
     case 'confirmation_form':
       return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="confirmation_form">
           <ConfirmationForm />
           <div>
             {Object.entries(contractAmendmentBag.values).map(([key, value]) => {
@@ -51,25 +47,18 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
                   (field) => field.name === key,
                 )?.label as string;
                 return (
-                  <div
-                    key={key}
-                    style={{
-                      paddingBottom: 10,
-                      marginTop: 10,
-                      borderBottom: '1px solid #F0F0F0',
-                    }}
-                  >
+                  <div className="confirmation_form__item" key={key}>
                     <p>{label}:</p>
                     {initialValue ? (
-                      <div style={{ display: 'flex', gap: 20 }}>
-                        <span style={{ textDecoration: 'line-through' }}>
+                      <div className="confirmation_form__item__value">
+                        <span className="confirmation_form__item__value__initial">
                           {initialValue}
                         </span>
                         <span>&rarr;</span>
                         <span>{value as string}</span>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', gap: 20 }}>
+                      <div className="confirmation_form__item__value">
                         <span>{value as string}</span>
                       </div>
                     )}
@@ -82,21 +71,14 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
           {automatable?.data?.automatable ? (
             <div>{automatable?.data?.message}</div>
           ) : null}
-          <div style={{ display: 'flex', gap: 20, marginTop: 20 }}>
+          <div className="confirmation_form__buttons">
             <SubmitButton
               disabled={contractAmendmentBag.isSubmitting}
-              style={{
-                backgroundColor: 'black',
-                color: 'white',
-              }}
+              className="confirmation_form__buttons__submit"
             >
               Submit amendment request
             </SubmitButton>
-            <BackButton
-              style={{
-                border: '1px solid black',
-              }}
-            >
+            <BackButton className="confirmation_form__buttons__back">
               Back
             </BackButton>
           </div>
@@ -124,7 +106,7 @@ export function ContractAmendment() {
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode="PRT"
-          employmentId="2ef4068b-11c7-4942-bb3c-70606c83688e"
+          employmentId="b98b7127-d90f-4f5b-b02d-457d65707d35"
           render={AmendmentFlow}
         />
       </div>
