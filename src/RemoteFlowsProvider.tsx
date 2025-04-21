@@ -3,9 +3,9 @@ import type { PropsWithChildren } from 'react';
 import React from 'react';
 
 import { ThemeProvider } from '@/src/theme';
-import { useAuth } from './auth';
 import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
+import { useAuth } from './useAuth';
 
 const queryClient = new QueryClient();
 
