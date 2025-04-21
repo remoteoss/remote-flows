@@ -4,11 +4,7 @@ import * as React from 'react';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { JSFField } from '@/src/types/remoteFlows';
-import {
-  ControllerRenderProps,
-  FieldValues,
-  useFormContext,
-} from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { FileUploader } from '../../ui/file-uploader';
 import {
   FormControl,
@@ -43,10 +39,8 @@ export function FileUploadField({
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-  const handleFileChange = async (
+  const convertFilesToBase64 = async (
     event: React.ChangeEvent<HTMLInputElement>,
-    field: ControllerRenderProps<FieldValues, string>,
-    isMultiple: boolean = false,
   ) => {
     const files = event.target.files ? Array.from(event.target.files) : [];
 
@@ -59,14 +53,12 @@ export function FileUploadField({
         };
       }),
     );
-    if (isMultiple) {
-      field.onChange(fileObjects);
-      onChange?.(fileObjects);
-      return;
+    if (multiple) {
+      return fileObjects;
     }
-    field.onChange(fileObjects[0]);
-    onChange?.(fileObjects[0]);
+    return fileObjects[0];
   };
+
   return (
     <FormField
       control={control}
@@ -86,8 +78,11 @@ export function FileUploadField({
               field={{
                 ...field,
                 value: null,
-                onChange: (value: any) =>
-                  handleFileChange(value, field, multiple),
+                onChange: async (value: any) => {
+                  const files = await convertFilesToBase64(value);
+                  field.onChange(files);
+                  onChange?.(files);
+                },
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
@@ -101,10 +96,13 @@ export function FileUploadField({
             </FormLabel>
             <FormControl>
               <FileUploader
-                {...field}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  handleFileChange(event, field, multiple)
-                }
+                onChange={async (
+                  event: React.ChangeEvent<HTMLInputElement>,
+                ) => {
+                  const files = await convertFilesToBase64(event);
+                  field.onChange(files);
+                  onChange?.(files);
+                }}
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
               />

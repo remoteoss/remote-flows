@@ -65,7 +65,7 @@ describe('FileUploadField Component', () => {
     const fileInput = screen.getByLabelText('File upload');
     fireEvent.change(fileInput, { target: { files: [file] } });
     await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledTimes(1);
+      expect(mockOnChange).toHaveBeenCalledOnce();
     });
   });
 
@@ -135,7 +135,7 @@ describe('FileUploadField Component', () => {
     fireEvent.change(customFileInput, { target: { files: [file] } });
 
     await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledTimes(1);
+      expect(mockOnChange).toHaveBeenCalledOnce();
     });
   });
 });
