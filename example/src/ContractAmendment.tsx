@@ -12,6 +12,7 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
   const [automatable, setAutomatable] = useState<
     ContractAmendmentAutomatableResponse | undefined
   >();
+  const [error, setError] = useState<string | null>(null);
 
   function handleSuccess(data: ContractAmendmentAutomatableResponse) {
     setAutomatable(data);
@@ -25,7 +26,29 @@ function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
     case 'form':
       return (
         <div className="amendment_form">
-          <Form onSuccess={handleSuccess} />
+          <Form
+            onSuccess={handleSuccess}
+            onError={(err) => {
+              if (
+                'message' in err &&
+                err.message === 'no_changes_detected_contract_details'
+              ) {
+                setError(err.message);
+              }
+            }}
+          />
+          {error && (
+            <div className="amendment_form__error">
+              <p className="amendment_form__error__title">
+                Contract detail change required
+              </p>
+              <p>
+                You haven't changed any contract detail value yet. Please change
+                at least one value in order to be able to proceed with the
+                request.
+              </p>
+            </div>
+          )}
           <SubmitButton
             className="amendment_form__buttons__submit"
             disabled={contractAmendmentBag.isSubmitting}
