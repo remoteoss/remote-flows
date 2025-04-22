@@ -24,7 +24,11 @@ type ContractAmendmentFormProps = {
    * @param error
    * @returns
    */
-  onError?: (error: PostAutomatableContractAmendmentError) => void;
+  onError?: (
+    error:
+      | PostAutomatableContractAmendmentError
+      | { message: 'no_changes_detected_contract_details' },
+  ) => void;
   /**
    * Callback function to be called when the contract amendment is successfully submitted.
    * This function is called after the contract amendment is submitted.
