@@ -86,14 +86,15 @@ export const useTermination = ({
         risk_assessment_reasons: riskAssessmentReasons,
       } = parsedValues;
 
-      const employeeAwareness = customerInformedEmployee
-        ? {
-            employee_awareness: {
-              date: parsedValues.customer_informed_employee_date,
-              note: parsedValues.customer_informed_employee_description,
-            },
-          }
-        : undefined;
+      const employeeAwareness =
+        customerInformedEmployee === 'yes'
+          ? {
+              employee_awareness: {
+                date: parsedValues.customer_informed_employee_date,
+                note: parsedValues.customer_informed_employee_description,
+              },
+            }
+          : undefined;
 
       const radioFieldKeys = [
         'agrees_to_pto_amount',
