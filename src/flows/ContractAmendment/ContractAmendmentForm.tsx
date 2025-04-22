@@ -77,7 +77,7 @@ export function ContractAmendmentForm({
       // rendered when clicking on the back button after the user has submitted the form
       // and the confirmation form is displayed.
       // This is because the form is unmounted when the user submits the form.
-      stepState.values || initialValues,
+      stepState.values?.form || initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
   });
