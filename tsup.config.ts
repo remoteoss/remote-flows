@@ -20,6 +20,7 @@ export const tsup: Options = {
   format: ['esm'],
   outDir: 'dist',
   env: {
+    VERSION: process.env.npm_package_version || '',
     REMOTE_GATEWAY_URL:
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
