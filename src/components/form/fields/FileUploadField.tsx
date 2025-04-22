@@ -24,6 +24,23 @@ const toBase64 = (file: File): Promise<string> => {
   });
 };
 
+const convertFilesToBase64 = async (
+  event: React.ChangeEvent<HTMLInputElement>,
+) => {
+  const files = event.target.files ? Array.from(event.target.files) : [];
+
+  const base64Files = await Promise.all(
+    files.map(async (file) => {
+      const base64 = await toBase64(file);
+      return {
+        name: file.name,
+        content: base64.split(',')[1],
+      };
+    }),
+  );
+  return base64Files;
+};
+
 export type FileUploadFieldProps = JSFField & {
   onChange?: (value: any) => void;
   multiple?: boolean;
@@ -39,25 +56,6 @@ export function FileUploadField({
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-  const convertFilesToBase64 = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files ? Array.from(event.target.files) : [];
-
-    const fileObjects = await Promise.all(
-      files.map(async (file) => {
-        const base64 = await toBase64(file);
-        return {
-          name: file.name,
-          content: base64.split(',')[1],
-        };
-      }),
-    );
-    if (multiple) {
-      return fileObjects;
-    }
-    return fileObjects[0];
-  };
 
   return (
     <FormField
@@ -80,8 +78,13 @@ export function FileUploadField({
                 value: null,
                 onChange: async (value: any) => {
                   const files = await convertFilesToBase64(value);
-                  field.onChange(files);
-                  onChange?.(files);
+                  if (multiple) {
+                    field.onChange(files);
+                    onChange?.(files);
+                  } else {
+                    field.onChange([files[0]]);
+                    onChange?.([files[0]]);
+                  }
                 },
               }}
               fieldState={fieldState}
@@ -100,8 +103,13 @@ export function FileUploadField({
                   event: React.ChangeEvent<HTMLInputElement>,
                 ) => {
                   const files = await convertFilesToBase64(event);
-                  field.onChange(files);
-                  onChange?.(files);
+                  if (multiple) {
+                    field.onChange(files);
+                    onChange?.(files);
+                  } else {
+                    field.onChange([files[0]]);
+                    onChange?.([files[0]]);
+                  }
                 }}
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
