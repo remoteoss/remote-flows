@@ -127,7 +127,7 @@ describe('useAuth', () => {
       token = await authFn();
     });
 
-    expect(mockAuth).toHaveBeenCalledTimes(1);
+    expect(mockAuth).toHaveBeenCalledOnce();
     expect(token).toBe('test-token');
   });
 
@@ -171,7 +171,7 @@ describe('useAuth', () => {
       token = await authFn();
     });
 
-    expect(mockAuth).toHaveBeenCalledTimes(1);
+    expect(mockAuth).toHaveBeenCalledOnce();
     expect(token).toBe('test-token');
   });
 
