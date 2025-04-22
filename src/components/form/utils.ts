@@ -92,9 +92,22 @@ export function convertFromCents(amount?: number | string | null) {
 const trimStringValues = (values: Record<string, any>) =>
   Object.entries(values || {}).reduce<Record<string, any>>(
     (result, [key, value]) => {
-      if (typeof value === 'object') {
-        result[key] = trimStringValues(value || {});
-      } else result[key] = typeof value === 'string' ? value.trim() : value;
+      if (Array.isArray(value)) {
+        // If the value is an array, recursively process each element
+        result[key] = value.map((item) =>
+          typeof item === 'object' && item !== null
+            ? trimStringValues(item)
+            : typeof item === 'string'
+              ? item.trim()
+              : item,
+        );
+      } else if (typeof value === 'object' && value !== null) {
+        // If the value is an object, recursively process it
+        result[key] = trimStringValues(value);
+      } else {
+        // Otherwise, trim the string or keep the value as is
+        result[key] = typeof value === 'string' ? value.trim() : value;
+      }
       return result;
     },
     {},
@@ -104,13 +117,20 @@ function convertEmptyStringsToNull(values: Record<string, any>) {
   const result: Record<string, any> = {};
 
   Object.entries(values).forEach(([key, value]) => {
-    if (typeof value === 'object') {
-      result[key] = convertEmptyStringsToNull(value);
-    } else if (Array.isArray(value)) {
-      result[key] = value.map((val) =>
-        typeof val === 'object' ? convertEmptyStringsToNull(val) : val,
+    if (Array.isArray(value)) {
+      // If the value is an array, recursively process each element
+      result[key] = value.map((item) =>
+        typeof item === 'object' && item !== null
+          ? convertEmptyStringsToNull(item)
+          : item === ''
+            ? null
+            : item,
       );
+    } else if (typeof value === 'object' && value !== null) {
+      // If the value is an object, recursively process it
+      result[key] = convertEmptyStringsToNull(value);
     } else {
+      // Otherwise, convert empty strings to null or keep the value as is
       result[key] = value === '' ? null : value;
     }
   });
@@ -406,7 +426,6 @@ export function parseFormValuesToAPI(
             acc[field.name] = fieldTransformValueToAPI(field)(formValue);
             break;
           }
-
           acc[field.name] = formValue;
           break;
         }

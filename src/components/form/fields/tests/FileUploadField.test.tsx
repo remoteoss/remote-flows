@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -58,14 +58,15 @@ describe('FileUploadField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
-  it('handles file upload change correctly', () => {
+  it('handles file upload change correctly', async () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     const file = new File(['test'], 'test.txt', { type: 'text/plain' });
     const fileInput = screen.getByLabelText('File upload');
     fireEvent.change(fileInput, { target: { files: [file] } });
-
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledOnce();
+    });
   });
 
   it('renders custom file upload component when provided', () => {
@@ -87,7 +88,7 @@ describe('FileUploadField Component', () => {
     expect(screen.getByTestId('custom-file-upload-field')).toBeInTheDocument();
   });
 
-  it('passes field props to custom component correctly', () => {
+  it('passes field props to custom component correctly', async () => {
     const CustomFileUploadField = vi
       .fn()
       .mockImplementation(() => (
@@ -108,7 +109,7 @@ describe('FileUploadField Component', () => {
     expect(call.fieldState).toBeDefined();
   });
 
-  it('handles onChange in custom file upload component', () => {
+  it('handles onChange in custom file upload component', async () => {
     const CustomFileUploadField = vi.fn().mockImplementation(({ field }) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         field.onChange(e);
@@ -133,6 +134,8 @@ describe('FileUploadField Component', () => {
     const file = new File(['test'], 'test.txt', { type: 'text/plain' });
     fireEvent.change(customFileInput, { target: { files: [file] } });
 
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledOnce();
+    });
   });
 });
