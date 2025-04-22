@@ -52,10 +52,6 @@ describe('useContractAmendment', () => {
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isError).toBe(false);
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-
     waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
