@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { Mock } from 'vitest';
+import { client } from '../client/client.gen';
 import { useAuth } from '../useAuth';
 
 type AuthResponse = {
@@ -238,5 +239,32 @@ describe('useAuth', () => {
 
     expect(mockAuth).toHaveBeenCalledTimes(2);
     expect(token).toBe('new-token');
+  });
+
+  it('should merge existing client headers with new headers', () => {
+    process.env.VERSION = '1.0.0';
+    const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
+
+    // Mock the client object
+    vi.mocked(client).getConfig = vi.fn().mockReturnValue({
+      headers: {
+        'Existing-Header': 'value',
+      },
+    });
+
+    renderHook(
+      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
+      { wrapper },
+    );
+
+    expect(createClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: {
+          'Existing-Header': 'value',
+          'X-Client-Name': 'remote-flows-sdk',
+          'X-Client-Version': '1.0.0',
+        },
+      }),
+    );
   });
 });

@@ -29,9 +29,17 @@ export const useAuth = ({
     ? ENVIRONMENTS.partners
     : process.env.REMOTE_GATEWAY_URL;
 
+  const clientConfig = client.getConfig();
+  const npmPackageVersion = process.env.VERSION;
+
   return useRef(
     createClient({
-      ...client.getConfig(),
+      ...clientConfig,
+      headers: {
+        ...clientConfig.headers,
+        'X-Client-Name': 'remote-flows-sdk',
+        'X-Client-Version': npmPackageVersion,
+      },
       baseUrl,
       auth: async () => {
         function hasTokenExpired(expiresAt: number | undefined) {
