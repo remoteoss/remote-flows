@@ -1,6 +1,7 @@
 export type SupportedTypes =
   | 'text'
   | 'number'
+  | 'email'
   | 'select'
   | 'radio'
   | 'fieldset'
