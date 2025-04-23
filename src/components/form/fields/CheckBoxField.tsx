@@ -67,6 +67,8 @@ export function CheckBoxField({
             description,
             label,
             defaultValue,
+            multiple,
+            options,
             ...rest,
           };
           return (
