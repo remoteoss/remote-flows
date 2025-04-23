@@ -238,24 +238,10 @@ export const jsonSchema = {
           },
         },
         risk_assessment_reasons: {
-          description:
-            'Please upload any supporting documents regarding the termination reason.',
+          description: '',
           title: 'This employee is...',
-          type: 'string',
-          oneOf: [
-            {
-              const: 'sick_leave',
-              description: '',
-              title: 'Sick leave',
-            },
-            {
-              const: 'family_leave',
-              description: '',
-              title:
-                'Currently on or recently returned from maternity, paternity, or other family leave',
-            },
-          ],
-          /*  items: {
+          type: 'array',
+          items: {
             anyOf: [
               {
                 const: 'sick_leave',
@@ -297,9 +283,9 @@ export const jsonSchema = {
                   'To the best of my knowledge, I am not aware of any of these',
               },
             ],
-          }, */
+          },
           'x-jsf-presentation': {
-            inputType: 'radio',
+            inputType: 'checkbox',
             direction: 'column',
           },
         },

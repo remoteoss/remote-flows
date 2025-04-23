@@ -81,10 +81,8 @@ export const useTermination = ({
         terminationHeadlessForm.fields,
       );
 
-      const {
-        customer_informed_employee: customerInformedEmployee,
-        risk_assessment_reasons: riskAssessmentReasons,
-      } = parsedValues;
+      const { customer_informed_employee: customerInformedEmployee } =
+        parsedValues;
 
       const employeeAwareness =
         customerInformedEmployee === 'yes'
@@ -118,7 +116,6 @@ export const useTermination = ({
         employment_id: employmentId,
         termination_details: {
           ...normalizedValues,
-          ...{ risk_assessment_reasons: [riskAssessmentReasons] },
           ...employeeAwareness,
         } as TerminationFormValues,
         type: 'termination',
