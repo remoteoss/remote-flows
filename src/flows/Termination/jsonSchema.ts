@@ -149,9 +149,10 @@ export const jsonSchema = {
           description: '',
           maxLength: 255,
           title: 'Employee’s personal email',
+          format: 'email',
           type: 'string',
           'x-jsf-presentation': {
-            inputType: 'text', // TODO: email type is not supported
+            inputType: 'email',
           },
         },
         termination_reason: {

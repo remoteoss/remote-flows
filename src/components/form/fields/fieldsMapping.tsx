@@ -7,6 +7,7 @@ import { RadioGroupField } from '@/src/components/form/fields/RadioGroupField';
 import { SelectField } from '@/src/components/form/fields/SelectField';
 import { TextAreaField } from '@/src/components/form/fields/TextAreaField';
 import { TextField } from '@/src/components/form/fields/TextField';
+import { EmailField } from '@/src/components/form/fields/EmailField';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import React from 'react';
 
@@ -14,6 +15,7 @@ import React from 'react';
 export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   checkbox: CheckBoxField,
   text: TextField,
+  email: EmailField,
   money: NumberField,
   select: SelectField,
   radio: RadioGroupField,
