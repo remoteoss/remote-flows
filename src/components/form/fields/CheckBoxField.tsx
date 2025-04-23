@@ -75,14 +75,15 @@ export function CheckBoxField({
             <CustomCheckboxField
               field={{
                 ...field,
-                onChange: (value: any, optionValue: any) => {
+                onChange: (evt: any) => {
                   if (multiple) {
-                    handleCheckboxChange(optionValue, value, field);
-                    onChange?.(value, optionValue);
+                    const { checked, value } = evt.target;
+                    handleCheckboxChange(value, checked, field);
+                    onChange?.(checked);
                     return;
                   }
-                  field.onChange(value);
-                  onChange?.(value);
+                  field.onChange(evt);
+                  onChange?.(evt);
                 },
               }}
               fieldState={fieldState}
