@@ -129,4 +129,43 @@ describe('CheckBoxField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it("should render multiple checkboxes when 'multiple' prop is true and 'options' are defined", () => {
+    const options = [
+      { label: 'Option 1', value: 'option1' },
+      { label: 'Option 2', value: 'option2' },
+    ];
+
+    const props = {
+      ...defaultProps,
+      multiple: true,
+      options,
+    };
+
+    renderWithFormContext(props);
+
+    expect(screen.getByLabelText('Option 1')).toBeInTheDocument();
+    expect(screen.getByLabelText('Option 2')).toBeInTheDocument();
+  });
+
+  it('should call handleCheckboxChange when checkbox is clicked', () => {
+    const options = [
+      { label: 'Option 1', value: 'option1' },
+      { label: 'Option 2', value: 'option2' },
+    ];
+
+    const props = {
+      ...defaultProps,
+      multiple: true,
+      options,
+      onChange: mockOnChange,
+    };
+
+    renderWithFormContext(props);
+
+    const checkbox = screen.getByLabelText('Option 1');
+    fireEvent.click(checkbox);
+
+    expect(mockOnChange).toHaveBeenCalledWith(true, 'option1');
+  });
 });

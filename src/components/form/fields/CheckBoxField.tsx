@@ -20,7 +20,7 @@ import {
 } from 'react-hook-form';
 
 export type CheckBoxFieldProps = JSFField & {
-  onChange?: (value: any) => void;
+  onChange?: (checked: any, optionId?: string) => void;
 };
 
 export function CheckBoxField({
@@ -78,6 +78,7 @@ export function CheckBoxField({
                 onChange: (value: any, optionValue: any) => {
                   if (multiple) {
                     handleCheckboxChange(optionValue, value, field);
+                    onChange?.(value, optionValue);
                     return;
                   }
                   field.onChange(value);
@@ -104,6 +105,7 @@ export function CheckBoxField({
                             checked === true,
                             field,
                           );
+                          onChange?.(checked, option.value);
                         }}
                         checked={field.value?.includes(option.value)}
                         className="RemoteFlows__CheckBox__Input"
