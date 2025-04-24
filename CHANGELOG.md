@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.1.2
+
+### Patch Changes
+
+- fa6ec03: - Support proxying request
+  - Contract Amendments (WIP)
+  - Offboarding (WIP)
+
 ## 0.1.1
 
 ### Patch Changes
