@@ -24,7 +24,7 @@ export const Termination = () => {
               return <div>Loading...</div>;
             }
 
-            const { Form, SubmitButton } = components;
+            const { Form, SubmitButton, Back, Next } = components;
 
             return (
               <>
@@ -35,6 +35,8 @@ export const Termination = () => {
                   onSuccess={(data) => console.log('data', data)}
                 />
                 <SubmitButton>Send termination</SubmitButton>
+                <Back>back</Back>
+                <Next>next</Next>
               </>
             );
           }}

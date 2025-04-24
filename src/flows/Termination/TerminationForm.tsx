@@ -73,8 +73,6 @@ export function TerminationForm({
     return field;
   });
 
-  console.log({ terminationBag });
-
   const fieldsByStep: Record<string, Record<string, unknown>[]> = {
     employee_communication: updatedFields.filter((field) =>
       [
@@ -85,10 +83,24 @@ export function TerminationForm({
         'personal_email',
       ].includes(field.name as string),
     ),
+    termination_details: updatedFields.filter((field) =>
+      [
+        'termination_reason',
+        'reason_description',
+        'additional_comments',
+        'termination_reason_files',
+        'risk_assessment_reasons',
+        'will_challenge_termination',
+        'will_challenge_termination_description',
+        'proposed_termination_date',
+      ].includes(field.name as string),
+    ),
   };
 
   const currentStep = terminationBag?.stepState.currentStep.name;
   const currentFields = fieldsByStep[currentStep] || updatedFields;
+
+  console.log({ currentStep });
 
   return (
     <Form {...form}>

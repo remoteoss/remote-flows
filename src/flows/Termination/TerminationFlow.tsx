@@ -1,9 +1,11 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
-import React, { PropsWithChildren, useId } from 'react';
+import React, { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
+import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
+import { TerminationNext } from '@/src/flows/Termination/TerminationNext';
 
 type RenderProps = {
   /**
@@ -21,16 +23,25 @@ type RenderProps = {
   components: {
     Form: typeof TerminationForm;
     SubmitButton: typeof TerminationSubmit;
+    Back: typeof TerminationBack;
+    Next: typeof TerminationNext;
   };
 };
 
-function TerminationFlowProvider({
+type TerminationFlowProps = {
+  employmentId: string;
+  render: ({ terminationBag, components }: RenderProps) => React.ReactNode;
+  options?: {
+    jsfModify?: JSFModify;
+  };
+};
+
+export const TerminationFlow = ({
+  employmentId,
   render,
-  terminationBag,
-}: PropsWithChildren<{
-  render: ({ terminationBag }: RenderProps) => React.ReactNode;
-  terminationBag: ReturnType<typeof useTermination>;
-}>) {
+  options,
+}: TerminationFlowProps) => {
+  const terminationBag = useTermination({ employmentId, options });
   const formId = useId();
 
   return (
@@ -45,32 +56,10 @@ function TerminationFlowProvider({
         components: {
           Form: TerminationForm,
           SubmitButton: TerminationSubmit,
+          Back: TerminationBack,
+          Next: TerminationNext,
         },
       })}
     </TerminationContext.Provider>
-  );
-}
-
-type TerminationFlowProps = {
-  employmentId: string;
-  render: ({
-    terminationBag,
-  }: {
-    terminationBag: ReturnType<typeof useTermination>;
-  }) => React.ReactNode;
-  options?: {
-    jsfModify?: JSFModify;
-  };
-};
-
-export const TerminationFlow = ({
-  employmentId,
-  render,
-  options,
-}: TerminationFlowProps) => {
-  const terminationBag = useTermination({ employmentId, options });
-
-  return (
-    <TerminationFlowProvider terminationBag={terminationBag} render={render} />
   );
 };

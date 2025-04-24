@@ -36,7 +36,6 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step>(steps);
     const nextStep = stepValues.find((step) => step.index === index + 1);
-
     if (nextStep) {
       setStepState((previousState) => ({
         ...previousState,

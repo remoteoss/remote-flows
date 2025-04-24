@@ -61,10 +61,8 @@ export const useTermination = ({
   employmentId,
   options,
 }: TerminationHookProps) => {
-  const { fieldValues, setFieldValues, stepState, previousStep } = useStepState<
-    keyof typeof STEPS,
-    TerminationFormValues
-  >(STEPS);
+  const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
+    useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
@@ -200,5 +198,10 @@ export const useTermination = ({
      * @returns {void}
      */
     back,
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    nextStep,
   };
 };
