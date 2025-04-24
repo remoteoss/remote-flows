@@ -6,6 +6,7 @@ import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { StepTerminationKeys } from '@/src/flows/Termination/utils';
 
 type TerminationFormProps = {
   username: string;
@@ -73,7 +74,7 @@ export function TerminationForm({
     return field;
   });
 
-  const fieldsByStep: Record<string, Record<string, unknown>[]> = {
+  const fieldsByStep: Record<StepTerminationKeys, Record<string, unknown>[]> = {
     employee_communication: updatedFields.filter((field) =>
       [
         'confidential',
@@ -95,12 +96,21 @@ export function TerminationForm({
         'proposed_termination_date',
       ].includes(field.name as string),
     ),
+    paid_time_off: updatedFields.filter((field) =>
+      [
+        'agrees_to_pto_amount',
+        'agrees_to_pto_amount_notes',
+        'timesheet_file',
+      ].includes(field.name as string),
+    ),
+    additional_information: updatedFields.filter((field) =>
+      ['acknowledge_termination_procedure'].includes(field.name as string),
+    ),
   };
 
-  const currentStep = terminationBag?.stepState.currentStep.name;
+  const currentStep: StepTerminationKeys = terminationBag?.stepState.currentStep
+    .name as StepTerminationKeys;
   const currentFields = fieldsByStep[currentStep] || updatedFields;
-
-  console.log({ currentStep });
 
   return (
     <Form {...form}>
