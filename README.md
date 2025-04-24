@@ -38,6 +38,7 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | `isTestingMode` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
 | `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
 | `components`    | `Components`                                                | No       | Custom field components for form rendering                         |
+| `proxy`         | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers          |
 
 ### Custom Field Components
 

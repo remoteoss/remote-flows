@@ -267,4 +267,86 @@ describe('useAuth', () => {
       }),
     );
   });
+
+  it('should use proxy URL when provided and valid', () => {
+    const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
+    const proxyUrl = 'https://proxy.example.com';
+
+    renderHook(
+      () =>
+        useAuth({
+          auth: mockAuth,
+          options: { isTestingMode: true, proxy: { url: proxyUrl } },
+        }),
+      { wrapper },
+    );
+
+    expect(createClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseUrl: proxyUrl,
+      }),
+    );
+  });
+
+  it('should use default baseUrl when proxy URL is invalid', () => {
+    const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
+    const invalidProxyUrl = 'not-a-valid-url';
+
+    renderHook(
+      () =>
+        useAuth({
+          auth: mockAuth,
+          options: { isTestingMode: true, proxy: { url: invalidProxyUrl } },
+        }),
+      { wrapper },
+    );
+
+    expect(createClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseUrl: 'https://test-partners.com',
+      }),
+    );
+  });
+
+  it('should merge proxy headers with existing headers', () => {
+    process.env.VERSION = '1.0.0';
+    const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
+    const proxyUrl = 'https://proxy.example.com';
+    const proxyHeaders = {
+      'Proxy-Header': 'proxy-value',
+      'Custom-Header': 'custom-value',
+    };
+
+    // Mock the client object
+    vi.mocked(client).getConfig = vi.fn().mockReturnValue({
+      headers: {
+        'Existing-Header': 'value',
+      },
+    });
+
+    renderHook(
+      () =>
+        useAuth({
+          auth: mockAuth,
+          options: {
+            isTestingMode: true,
+            proxy: { url: proxyUrl, headers: proxyHeaders },
+          },
+        }),
+      { wrapper },
+    );
+
+    expect(createClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: {
+          'Existing-Header': 'value',
+          'Proxy-Header': 'proxy-value',
+          'Custom-Header': 'custom-value',
+          'X-Client-Name': 'remote-flows-sdk',
+          'X-Client-Version': '1.0.0',
+        },
+        baseUrl: proxyUrl,
+      }),
+    );
+  });
 });
