@@ -31,10 +31,10 @@ export const jsonSchema = {
           if: {
             properties: {
               customer_informed_employee: {
-                const: 'yes', // Ensure this matches the value in the form data
+                const: 'yes',
               },
             },
-            required: ['customer_informed_employee'], // Ensure this field is required
+            required: ['customer_informed_employee'],
           },
           then: {
             properties: {
@@ -48,7 +48,7 @@ export const jsonSchema = {
             required: [
               'customer_informed_employee_date',
               'customer_informed_employee_description',
-            ], // Make the field required when condition is met
+            ],
           },
           else: {
             properties: {
@@ -128,7 +128,7 @@ export const jsonSchema = {
             inputType: 'radio',
             statement: {
               title:
-                'Please do not inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there.',
+                "Please do not inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we'll take it from there.",
               inputType: 'statement',
               severity: 'warning',
             },
@@ -177,17 +177,11 @@ export const jsonSchema = {
         personal_email: {
           description: '',
           maxLength: 255,
-          title: 'Employee’s personal email',
+          title: "Employee's personal email",
           format: 'email',
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'email',
-            statement: {
-              title:
-                'Please make sure to add the employee personal email so we can get in contact with the employee after the termination process takes effect.',
-              inputType: 'statement',
-              severity: 'warning',
-            },
           },
         },
         termination_reason: {
@@ -208,7 +202,10 @@ export const jsonSchema = {
               const: 'workforce_reduction',
               title: 'Workforce Reduction',
             },
-            { const: 'values', title: 'Values' },
+            {
+              const: 'values',
+              title: 'Values',
+            },
             {
               const: 'compliance_issue',
               title: 'Compliance issue',
@@ -237,7 +234,10 @@ export const jsonSchema = {
               const: 'end_of_fixed_term_contract_compliance_issue',
               title: 'End of fixed-term contract',
             },
-            { const: 'other', title: 'Other' },
+            {
+              const: 'other',
+              title: 'Other',
+            },
           ],
           'x-jsf-presentation': {
             inputType: 'select',
