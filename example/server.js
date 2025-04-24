@@ -1,7 +1,7 @@
-import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import express from 'express';
+import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
@@ -53,7 +53,30 @@ const startServer = async () => {
   // API route example
   app.get('/api/token', getToken);
 
-  app.use(vite.middlewares); // Use Vite as middleware
+  // Proxy middleware for all other API requests
+  app.use('/v1', async (req, res) => {
+    try {
+      const targetUrl = `${process.env.REMOTE_GATEWAY}${req.originalUrl}`;
+      const response = await axios({
+        method: req.method,
+        url: targetUrl,
+        data: req.method !== 'GET' ? req.body : undefined,
+        params: req.query,
+        headers: {
+          ...req.headers,
+          host: new URL(process.env.REMOTE_GATEWAY).host,
+        },
+      });
+      res.status(response.status).json(response.data);
+    } catch (error) {
+      console.error('Proxy error:', error.message);
+      res.status(error.response?.status || 500).json({
+        error: error.response?.data || 'Proxy request failed',
+      });
+    }
+  });
+
+  app.use(vite.middlewares);
 
   // Serve index.html (SSR or SPA fallback)
   app.use('*', async (req, res, next) => {
