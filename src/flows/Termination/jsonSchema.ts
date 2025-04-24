@@ -7,6 +7,29 @@ export const jsonSchema = {
         {
           if: {
             properties: {
+              personal_email: {
+                pattern: '^[a-zA-Z0-9 .]+$',
+              },
+            },
+          },
+          then: {
+            properties: {
+              personal_email: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title:
+                      'Please make sure to add the employee personal email so we can get in contact with the employee after the termination process takes effect.',
+                    inputType: 'statement',
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
               customer_informed_employee: {
                 const: 'yes', // Ensure this matches the value in the form data
               },
