@@ -103,6 +103,12 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'radio',
+            statement: {
+              title:
+                'Please do not inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there.',
+              inputType: 'statement',
+              severity: 'warning',
+            },
           },
         },
         customer_informed_employee: {
@@ -153,6 +159,12 @@ export const jsonSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'email',
+            statement: {
+              title:
+                'Please make sure to add the employee personal email so we can get in contact with the employee after the termination process takes effect.',
+              inputType: 'statement',
+              severity: 'warning',
+            },
           },
         },
         termination_reason: {
