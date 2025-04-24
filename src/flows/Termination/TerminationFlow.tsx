@@ -5,7 +5,6 @@ import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
-import { TerminationNext } from '@/src/flows/Termination/TerminationNext';
 
 type RenderProps = {
   /**
@@ -24,7 +23,6 @@ type RenderProps = {
     Form: typeof TerminationForm;
     SubmitButton: typeof TerminationSubmit;
     Back: typeof TerminationBack;
-    Next: typeof TerminationNext;
   };
 };
 
@@ -57,7 +55,6 @@ export const TerminationFlow = ({
           Form: TerminationForm,
           SubmitButton: TerminationSubmit,
           Back: TerminationBack,
-          Next: TerminationNext,
         },
       })}
     </TerminationContext.Provider>

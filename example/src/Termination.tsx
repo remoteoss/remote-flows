@@ -24,7 +24,9 @@ export const Termination = () => {
               return <div>Loading...</div>;
             }
 
-            const { Form, SubmitButton, Back, Next } = components;
+            const { Form, SubmitButton, Back } = components;
+
+            const currentStepIndex = terminationBag.stepState.currentStep.index;
 
             return (
               <>
@@ -34,9 +36,14 @@ export const Termination = () => {
                   onError={(error) => console.log('error', error)}
                   onSuccess={(data) => console.log('data', data)}
                 />
-                <SubmitButton>Send termination</SubmitButton>
-                <Back>back</Back>
-                <Next>next</Next>
+                {currentStepIndex > 0 && <Back>Back</Back>}
+                {currentStepIndex < terminationBag.stepState.totalSteps - 1 && (
+                  <SubmitButton>
+                    {currentStepIndex < terminationBag.stepState.totalSteps - 1
+                      ? 'Next Step'
+                      : 'Send termination'}
+                  </SubmitButton>
+                )}
               </>
             );
           }}
