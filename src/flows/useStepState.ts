@@ -16,14 +16,16 @@ type StepState<T extends string> = {
     | null;
 };
 
-export const useStepState = <T extends string>(steps: Record<T, Step>) => {
+export const useStepState = <T extends string, Fields = FieldValues>(
+  steps: Record<T, Step>,
+) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
   if (stepKeys.length === 0) {
     throw new Error('No steps provided to useStepState');
   }
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+  const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const [stepState, setStepState] = useState<StepState<T>>({
     currentStep: steps[stepKeys[0]],
     totalSteps: stepKeys.length,
@@ -47,7 +49,7 @@ export const useStepState = <T extends string>(steps: Record<T, Step>) => {
           },
         } as { [key in T]: FieldValues },
       }));
-      setFieldValues({}); // Reset field values for the next step
+      setFieldValues({} as Fields); // Reset field values for the next step
     }
   }
 
@@ -68,7 +70,7 @@ export const useStepState = <T extends string>(steps: Record<T, Step>) => {
           },
         } as { [key in T]: FieldValues },
       }));
-      setFieldValues({}); // Reset field values for the previous step
+      setFieldValues({} as Fields); // Reset field values for the previous step
     }
   }
 

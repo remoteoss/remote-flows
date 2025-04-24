@@ -5,12 +5,13 @@ import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { jsonSchema } from './jsonSchema';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { useState } from 'react';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
 import omit from 'lodash/omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
+import { useStepState } from '@/src/flows/useStepState';
+import { STEPS } from '@/src/flows/Termination/utils';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -60,12 +61,16 @@ export const useTermination = ({
   employmentId,
   options,
 }: TerminationHookProps) => {
-  const [formValues, setFormValues] = useState<
-    TerminationFormValues | undefined
-  >(undefined);
+  const { fieldValues, setFieldValues, stepState, previousStep } = useStepState<
+    keyof typeof STEPS,
+    TerminationFormValues
+  >(STEPS);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
-    useTerminationSchema({ formValues, jsfModify: options?.jsfModify });
+    useTerminationSchema({
+      formValues: fieldValues,
+      jsfModify: options?.jsfModify,
+    });
 
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
@@ -127,16 +132,36 @@ export const useTermination = ({
     return;
   }
 
+  function back() {
+    previousStep();
+  }
+
   return {
-    stepState: {
-      current: 0,
-      total: 1,
-      isLastStep: true,
-    },
+    /**
+     * Current step state containing the current step and total number of steps
+     */
+    stepState,
+    /**
+     * Array of form fields from the termination schema
+     */
     fields: terminationHeadlessForm?.fields || [],
+    /**
+     * Loading state indicating if the termination schema is being fetched
+     */
     isLoading: isLoadingTermination,
+    /**
+     * Loading state indicating if the termination mutation is in progress
+     */
     isSubmitting: createTermination.isPending,
-    initialValues: {},
+    /**
+     * Current form field values
+     */
+    values: fieldValues,
+    /**
+     * Function to validate form values against the contract amendment schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
     handleValidation: (values: TerminationFormValues) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
@@ -147,15 +172,29 @@ export const useTermination = ({
       }
       return null;
     },
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
     checkFieldUpdates: (values: Partial<TerminationFormValues>) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
         );
-        setFormValues(parsedValues as TerminationFormValues);
+        setFieldValues(parsedValues as TerminationFormValues);
       }
     },
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
     onSubmit,
+    /**
+     * Function to handle going back to the previous step
+     * @returns {void}
+     */
+    back,
   };
 };
