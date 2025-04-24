@@ -72,4 +72,16 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * If true, the SDK will use the testing environment for all API calls.
    */
   isTestingMode?: boolean;
+  proxy?: {
+    /**
+     * URL of the proxy server to use for API calls.
+     */
+    url: string;
+    /**
+     * Headers to include in the API requests.
+     */
+    headers?: {
+      [key: string]: string;
+    };
+  };
 };

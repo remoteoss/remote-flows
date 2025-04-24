@@ -9,6 +9,7 @@ import './App.css';
 
 function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
   const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
+
   const [automatable, setAutomatable] = useState<
     ContractAmendmentAutomatableResponse | undefined
   >();
@@ -127,7 +128,10 @@ export function ContractAmendment() {
   };
 
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows
+      auth={() => fetchToken()}
+      proxy={{ url: 'http://localhost:3001/' }}
+    >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode="PRT"
