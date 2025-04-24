@@ -6,7 +6,6 @@ import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import { StepTerminationKeys } from '@/src/flows/Termination/utils';
 
 type TerminationFormProps = {
   username: string;
@@ -29,7 +28,7 @@ export function TerminationForm({
   );
 
   const form = useForm({
-    resolver,
+    //resolver,
     defaultValues: terminationBag?.initialValues,
     shouldUnregister: true,
     mode: 'onBlur',
@@ -51,7 +50,7 @@ export function TerminationForm({
   const handleSubmit = async (values: TerminationFormValues) => {
     await onSubmit?.(values);
 
-    const terminationResult = await terminationBag?.onSubmit(values);
+    const terminationResult = await terminationBag?.onSubmit();
 
     if (terminationResult?.error) {
       onError?.(terminationResult.error);
@@ -74,44 +73,6 @@ export function TerminationForm({
     return field;
   });
 
-  const fieldsByStep: Record<StepTerminationKeys, Record<string, unknown>[]> = {
-    employee_communication: updatedFields.filter((field) =>
-      [
-        'confidential',
-        'customer_informed_employee',
-        'customer_informed_employee_date',
-        'customer_informed_employee_description',
-        'personal_email',
-      ].includes(field.name as string),
-    ),
-    termination_details: updatedFields.filter((field) =>
-      [
-        'termination_reason',
-        'reason_description',
-        'additional_comments',
-        'termination_reason_files',
-        'risk_assessment_reasons',
-        'will_challenge_termination',
-        'will_challenge_termination_description',
-        'proposed_termination_date',
-      ].includes(field.name as string),
-    ),
-    paid_time_off: updatedFields.filter((field) =>
-      [
-        'agrees_to_pto_amount',
-        'agrees_to_pto_amount_notes',
-        'timesheet_file',
-      ].includes(field.name as string),
-    ),
-    additional_information: updatedFields.filter((field) =>
-      ['acknowledge_termination_procedure'].includes(field.name as string),
-    ),
-  };
-
-  const currentStep: StepTerminationKeys = terminationBag?.stepState.currentStep
-    .name as StepTerminationKeys;
-  const currentFields = fieldsByStep[currentStep] || updatedFields;
-
   return (
     <Form {...form}>
       <form
@@ -119,7 +80,7 @@ export function TerminationForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__TerminationForm"
       >
-        <JSONSchemaFormFields fields={currentFields} />
+        <JSONSchemaFormFields fields={updatedFields} />
       </form>
     </Form>
   );

@@ -11,7 +11,8 @@ import { useClient } from '@/src/context';
 import omit from 'lodash/omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Termination/utils';
+import { STEPS, StepTerminationKeys } from '@/src/flows/Termination/utils';
+import pickBy from 'lodash/pickby';
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -73,15 +74,28 @@ export const useTermination = ({
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
-  async function onSubmit(values: TerminationFormValues) {
+  async function onSubmit() {
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
 
+    if (stepState.currentStep.index < stepState.totalSteps - 1) {
+      nextStep();
+      return;
+    }
+
+    const allFormValues = {
+      ...pickBy(stepState.values?.employee_communication),
+      ...pickBy(stepState.values?.termination_details),
+      ...pickBy(stepState.values?.paid_time_off),
+      ...pickBy(fieldValues),
+    };
+
     if (terminationHeadlessForm) {
       const parsedValues = parseJSFToValidate(
-        values,
+        allFormValues,
         terminationHeadlessForm.fields,
+        { isPartialValidation: true }, // TODO: for some reason with false, the conditional fields are skipped???
       );
 
       const { customer_informed_employee: customerInformedEmployee } =
@@ -134,6 +148,49 @@ export const useTermination = ({
     previousStep();
   }
 
+  const currentStep: StepTerminationKeys = stepState.currentStep
+    .name as StepTerminationKeys;
+
+  const fieldsByStep: Record<
+    StepTerminationKeys,
+    Record<string, unknown>[] | undefined
+  > = {
+    employee_communication: terminationHeadlessForm?.fields.filter((field) =>
+      [
+        'confidential',
+        'customer_informed_employee',
+        'customer_informed_employee_date',
+        'customer_informed_employee_description',
+        'personal_email',
+      ].includes(field.name as string),
+    ),
+    termination_details: terminationHeadlessForm?.fields.filter((field) =>
+      [
+        'termination_reason',
+        'reason_description',
+        'additional_comments',
+        'termination_reason_files',
+        'risk_assessment_reasons',
+        'will_challenge_termination',
+        'will_challenge_termination_description',
+        'proposed_termination_date',
+      ].includes(field.name as string),
+    ),
+    paid_time_off: terminationHeadlessForm?.fields.filter((field) =>
+      [
+        'agrees_to_pto_amount',
+        'agrees_to_pto_amount_notes',
+        'timesheet_file',
+      ].includes(field.name as string),
+    ),
+    additional_information: terminationHeadlessForm?.fields.filter((field) =>
+      ['acknowledge_termination_procedure'].includes(field.name as string),
+    ),
+  };
+
+  const currentFields =
+    fieldsByStep[currentStep] || terminationHeadlessForm?.fields;
+
   return {
     /**
      * Current step state containing the current step and total number of steps
@@ -142,7 +199,7 @@ export const useTermination = ({
     /**
      * Array of form fields from the termination schema
      */
-    fields: terminationHeadlessForm?.fields || [],
+    fields: currentFields || [],
     /**
      * Loading state indicating if the termination schema is being fetched
      */
@@ -168,7 +225,7 @@ export const useTermination = ({
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
-          terminationHeadlessForm?.fields,
+          terminationHeadlessForm.fields,
         );
         return terminationHeadlessForm?.handleValidation(parsedValues);
       }
@@ -183,6 +240,7 @@ export const useTermination = ({
         const parsedValues = parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
+          { isPartialValidation: true }, // TODO: for some reason with false, the conditional fields are skipped???
         );
         setFieldValues(parsedValues as TerminationFormValues);
       }

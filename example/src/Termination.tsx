@@ -37,7 +37,8 @@ export const Termination = () => {
                   onSuccess={(data) => console.log('data', data)}
                 />
                 {currentStepIndex > 0 && <Back>Back</Back>}
-                {currentStepIndex < terminationBag.stepState.totalSteps - 1 && (
+                {currentStepIndex <=
+                  terminationBag.stepState.totalSteps - 1 && (
                   <SubmitButton>
                     {currentStepIndex < terminationBag.stepState.totalSteps - 1
                       ? 'Next Step'
