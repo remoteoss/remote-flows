@@ -73,6 +73,23 @@ export function TerminationForm({
     return field;
   });
 
+  console.log({ terminationBag });
+
+  const fieldsByStep: Record<string, Record<string, unknown>[]> = {
+    employee_communication: updatedFields.filter((field) =>
+      [
+        'confidential',
+        'customer_informed_employee',
+        'customer_informed_employee_date',
+        'customer_informed_employee_description',
+        'personal_email',
+      ].includes(field.name as string),
+    ),
+  };
+
+  const currentStep = terminationBag?.stepState.currentStep.name;
+  const currentFields = fieldsByStep[currentStep] || updatedFields;
+
   return (
     <Form {...form}>
       <form
@@ -80,7 +97,7 @@ export function TerminationForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__TerminationForm"
       >
-        <JSONSchemaFormFields fields={updatedFields} />
+        <JSONSchemaFormFields fields={currentFields} />
       </form>
     </Form>
   );

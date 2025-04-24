@@ -154,6 +154,10 @@ export const useTermination = ({
      */
     isSubmitting: createTermination.isPending,
     /**
+     * Initial form values
+     */
+    initialValues: {},
+    /**
      * Current form field values
      */
     values: fieldValues,
