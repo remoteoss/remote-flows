@@ -182,12 +182,6 @@ export const jsonSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'email',
-            statement: {
-              title:
-                'Please make sure to add the employee personal email so we can get in contact with the employee after the termination process takes effect.',
-              inputType: 'statement',
-              severity: 'warning',
-            },
           },
         },
         termination_reason: {
