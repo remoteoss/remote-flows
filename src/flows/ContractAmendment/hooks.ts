@@ -2,7 +2,6 @@ import {
   CreateContractAmendmentParams,
   EmploymentShowResponse,
   getShowContractAmendmentSchema,
-  getShowEmployment,
   postAutomatableContractAmendment,
   postCreateContractAmendment,
 } from '@/src/client';
@@ -19,26 +18,7 @@ import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
-
-type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
-
-const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['employment'],
-    retry: false,
-    queryFn: () => {
-      return getShowEmployment({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { employment_id: employmentId },
-      });
-    },
-    select: ({ data }) => data,
-  });
-};
+import { useEmploymentQuery } from '@/src/data/hooks';
 
 type ContractAmendmentSchemaParams = {
   countryCode: string;

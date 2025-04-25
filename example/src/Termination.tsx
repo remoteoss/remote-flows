@@ -1,9 +1,4 @@
-import {
-  TerminationFlow,
-  RemoteFlows,
-  TerminationForm,
-  TerminationSubmit,
-} from '@remoteoss/remote-flows';
+import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
 import './App.css';
 
 export const Termination = () => {
@@ -24,20 +19,23 @@ export const Termination = () => {
       <div className="cost-calculator__container">
         <TerminationFlow
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
-          render={({ terminationBag }) => {
+          render={({ terminationBag, components }) => {
             if (terminationBag.isLoading) {
               return <div>Loading...</div>;
             }
 
+            const { Form, SubmitButton, TimeOff } = components;
+
             return (
               <>
-                <TerminationForm
+                <TimeOff onOpenModal={() => console.log('open modal')} />
+                <Form
                   username="ze"
                   onSubmit={(payload) => console.log('payload', payload)}
                   onError={(error) => console.log('error', error)}
                   onSuccess={(data) => console.log('data', data)}
                 />
-                <TerminationSubmit>Send termination</TerminationSubmit>
+                <SubmitButton>Send termination</SubmitButton>
               </>
             );
           }}

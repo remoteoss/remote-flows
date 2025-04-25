@@ -128,15 +128,39 @@ export const useTermination = ({
   }
 
   return {
+    /**
+     * Employment id passed useful to be used between components
+     */
+    employmentId,
+    /**
+     * Current step state containing the current step and total number of steps
+     */
     stepState: {
       current: 0,
       total: 1,
       isLastStep: true,
     },
+    /**
+     * Array of form fields from the contract amendment schema
+     */
     fields: terminationHeadlessForm?.fields || [],
+    /**
+     * Loading state indicating if the termination schema is being fetched
+     */
     isLoading: isLoadingTermination,
+    /**
+     * Loading state indicating if a contract amendment mutation is in progress
+     */
     isSubmitting: createTermination.isPending,
+    /**
+     * Initial form values
+     */
     initialValues: {},
+    /**
+     * Function to validate form values against the contract amendment schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
     handleValidation: (values: TerminationFormValues) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
@@ -147,6 +171,10 @@ export const useTermination = ({
       }
       return null;
     },
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
     checkFieldUpdates: (values: Partial<TerminationFormValues>) => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
@@ -156,6 +184,11 @@ export const useTermination = ({
         setFormValues(parsedValues as TerminationFormValues);
       }
     },
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
     onSubmit,
   };
 };
