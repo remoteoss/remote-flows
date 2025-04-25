@@ -6,19 +6,18 @@ import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { TimeOff } from '@/src/flows/Termination/TimeOff';
 
+export type RenderProps = {
+  terminationBag: ReturnType<typeof useTermination>;
+  components: {
+    Form: typeof TerminationForm;
+    SubmitButton: typeof TerminationSubmit;
+    TimeOff: typeof TimeOff;
+  };
+};
+
 type TerminationFlowProps = {
   employmentId: string;
-  render: ({
-    terminationBag,
-    components,
-  }: {
-    terminationBag: ReturnType<typeof useTermination>;
-    components: {
-      Form: typeof TerminationForm;
-      SubmitButton: typeof TerminationSubmit;
-      TimeOff: typeof TimeOff;
-    };
-  }) => React.ReactNode;
+  render: ({ terminationBag, components }: RenderProps) => React.ReactNode;
   options?: {
     jsfModify?: JSFModify;
   };
