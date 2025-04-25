@@ -28,7 +28,13 @@ export const Termination = () => {
 
             return (
               <>
-                <TimeOff onOpenModal={() => console.log('open modal')} />
+                <TimeOff>
+                  {({ username }) => (
+                    <>
+                      <a href="#">See {username}'s timeoff breakdown</a>
+                    </>
+                  )}
+                </TimeOff>
                 <Form
                   username="ze"
                   onSubmit={(payload) => console.log('payload', payload)}

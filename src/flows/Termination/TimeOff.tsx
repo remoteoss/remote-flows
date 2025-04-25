@@ -2,11 +2,12 @@ import { useEmploymentQuery, useTimeOffQuery } from '@/src/data/hooks';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import React from 'react';
 
+// how to type children I am using it as a renderProp that has username
+
 export const TimeOff = ({
   children,
 }: {
-  onOpenModal: () => void;
-  children?: React.ReactNode;
+  children?: (props: { username: string }) => React.ReactNode;
 }) => {
   const { terminationBag } = useTerminationContext();
   const employment = useEmploymentQuery({
@@ -30,7 +31,7 @@ export const TimeOff = ({
       <p className="RemoteFlows__TimeOff__Title">
         We have recorded {days} {daysLiteral} of paid time off for {username}
       </p>
-      {children}
+      {children?.({ username })}
     </div>
   );
 };
