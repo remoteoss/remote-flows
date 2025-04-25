@@ -2,8 +2,6 @@ import { useEmploymentQuery, useTimeOffQuery } from '@/src/data/hooks';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import React from 'react';
 
-// how to type children I am using it as a renderProp that has username
-
 export const TimeOff = ({
   children,
 }: {
