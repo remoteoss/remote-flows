@@ -156,6 +156,15 @@ export const useTermination = ({
     previousStep();
   }
 
+  const initialValues =
+    stepState.values && stepState.currentStep.name in stepState.values
+      ? stepState.values[
+          stepState.currentStep.name as keyof typeof stepState.values
+        ]
+      : null;
+
+  console.log({ stepState });
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -180,7 +189,7 @@ export const useTermination = ({
     /**
      * Initial form values
      */
-    initialValues: {},
+    initialValues: initialValues,
     /**
      * Function to validate form values against the contract amendment schema
      * @param values - Form values to validate
@@ -206,6 +215,7 @@ export const useTermination = ({
           values,
           terminationHeadlessForm?.fields,
         );
+        console.log('saving parsed values', parsedValues);
         setFieldValues(parsedValues as TerminationFormValues);
       }
     },

@@ -29,8 +29,8 @@ export function TerminationForm({
 
   const form = useForm({
     resolver,
-    defaultValues: terminationBag?.initialValues,
-    shouldUnregister: true,
+    defaultValues: terminationBag?.initialValues || {},
+    shouldUnregister: false,
     mode: 'onBlur',
   });
 
@@ -46,6 +46,18 @@ export function TerminationForm({
     return () => subscription?.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (terminationBag?.initialValues) {
+      form.reset(terminationBag.initialValues);
+      terminationBag?.checkFieldUpdates(
+        terminationBag.initialValues as Partial<TerminationFormValues>,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [terminationBag?.initialValues, form]);
+
+  console.log('form values', form.getValues());
 
   const handleSubmit = async (values: TerminationFormValues) => {
     await onSubmit?.(values);
