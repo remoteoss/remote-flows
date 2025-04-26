@@ -180,14 +180,13 @@ export const useTermination = ({
   function back() {
     previousStep();
   }
-  const stepsInitialValues =
-    stepState.values && stepState.currentStep.name in stepState.values
-      ? stepState.values[
-          stepState.currentStep.name as keyof typeof stepState.values
-        ]
-      : {};
 
-  const initialValues = buildInitialValues(stepsInitialValues);
+  const initialValues = buildInitialValues({
+    ...stepState.values?.employee_communication,
+    ...stepState.values?.termination_details,
+    ...stepState.values?.paid_time_off,
+    ...stepState.values?.additional_information,
+  });
 
   return {
     /**
