@@ -48,7 +48,7 @@ export function TerminationForm({
   }, []);
 
   useEffect(() => {
-    if (terminationBag?.initialValues) {
+    if (Object.keys(terminationBag?.initialValues).length > 0) {
       form.reset(terminationBag.initialValues);
       terminationBag?.checkFieldUpdates(
         terminationBag.initialValues as Partial<TerminationFormValues>,
