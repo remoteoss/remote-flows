@@ -29,7 +29,6 @@ export function RadioGroupField({
 }: RadioGroupFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-
   return (
     <FormField
       control={control}
