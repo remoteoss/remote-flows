@@ -29,7 +29,7 @@ export function TerminationForm({
 
   const form = useForm({
     resolver,
-    defaultValues: terminationBag?.initialValues || {},
+    defaultValues: terminationBag?.initialValues,
     shouldUnregister: false,
     mode: 'onBlur',
   });
@@ -56,8 +56,6 @@ export function TerminationForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terminationBag?.initialValues, form]);
-
-  console.log('form values', form.getValues());
 
   const handleSubmit = async (values: TerminationFormValues) => {
     await onSubmit?.(values);

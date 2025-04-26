@@ -161,9 +161,7 @@ export const useTermination = ({
       ? stepState.values[
           stepState.currentStep.name as keyof typeof stepState.values
         ]
-      : null;
-
-  console.log({ stepState });
+      : {};
 
   return {
     /**
@@ -215,7 +213,6 @@ export const useTermination = ({
           values,
           terminationHeadlessForm?.fields,
         );
-        console.log('saving parsed values', parsedValues);
         setFieldValues(parsedValues as TerminationFormValues);
       }
     },
