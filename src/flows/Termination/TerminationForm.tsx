@@ -12,7 +12,7 @@ type TerminationFormProps = {
   username: string;
   onSubmit?: ({
     status,
-    values,
+    payload,
   }: {
     status: string;
     payload: TerminationFormValues;
