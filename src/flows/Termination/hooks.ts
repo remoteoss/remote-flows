@@ -1,4 +1,8 @@
-import { CreateOffboardingParams, postCreateOffboarding } from '@/src/client';
+import {
+  CreateOffboardingParams,
+  postCreateOffboarding,
+  TerminationDetailsParams,
+} from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
@@ -13,8 +17,35 @@ import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
-import pickBy from 'lodash/pickBy';
 import { jsonSchema } from '@/src/flows/Termination/jsonSchema';
+
+function buildInitialValues(
+  stepsInitialValues: Partial<TerminationFormValues>,
+): TerminationFormValues {
+  const initialValues: TerminationFormValues = {
+    confidential: '',
+    customer_informed_employee: '',
+    customer_informed_employee_date: '',
+    customer_informed_employee_description: '',
+    personal_email: '',
+
+    termination_reason: undefined,
+    reason_description: '',
+    termination_reason_files: [],
+    will_challenge_termination: '',
+    will_challenge_termination_description: null,
+    agrees_to_pto_amount: '',
+    agrees_to_pto_amount_notes: null,
+    acknowledge_termination_procedure: false,
+    additional_comments: '',
+    proposed_termination_date: '',
+    risk_assessment_reasons: [],
+    timesheet_file: undefined,
+    ...stepsInitialValues,
+  };
+
+  return initialValues;
+}
 
 const useCreateTermination = () => {
   const { client } = useClient();
@@ -79,7 +110,7 @@ export const useTermination = ({
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
-  async function onSubmit() {
+  async function onSubmit(values: TerminationFormValues) {
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
@@ -89,20 +120,13 @@ export const useTermination = ({
       return;
     }
 
-    const allFormValues = {
-      ...pickBy(stepState.values?.employee_communication),
-      ...pickBy(stepState.values?.termination_details),
-      ...pickBy(stepState.values?.paid_time_off),
-      ...pickBy(fieldValues),
-    };
-
     if (terminationHeadlessForm) {
       // this is a hack because I need to validate all form values with the entire schema
       const entireTerminationSchema = createHeadlessForm(
         jsonSchema.data.schema,
       );
       const parsedValues = parseJSFToValidate(
-        allFormValues,
+        values,
         entireTerminationSchema.fields,
       );
 
@@ -137,12 +161,14 @@ export const useTermination = ({
         'customer_informed_employee_description',
       );
 
+      const terminationDetails: TerminationDetailsParams = {
+        ...normalizedValues,
+        ...employeeAwareness,
+      } as TerminationDetailsParams;
+
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
-        termination_details: {
-          ...normalizedValues,
-          ...employeeAwareness,
-        } as TerminationFormValues,
+        termination_details: terminationDetails,
         type: 'termination',
       };
 
@@ -155,13 +181,14 @@ export const useTermination = ({
   function back() {
     previousStep();
   }
-
-  const initialValues =
+  const stepsInitialValues =
     stepState.values && stepState.currentStep.name in stepState.values
       ? stepState.values[
           stepState.currentStep.name as keyof typeof stepState.values
         ]
       : {};
+
+  const initialValues = buildInitialValues(stepsInitialValues);
 
   return {
     /**
