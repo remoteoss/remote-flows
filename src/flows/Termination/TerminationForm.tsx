@@ -10,7 +10,13 @@ import isEqual from 'lodash/isEqual';
 
 type TerminationFormProps = {
   username: string;
-  onSubmit?: (values: TerminationFormValues) => Promise<void>;
+  onSubmit?: ({
+    status,
+    values,
+  }: {
+    status: string;
+    payload: TerminationFormValues;
+  }) => Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
@@ -67,7 +73,15 @@ export function TerminationForm({
   }, [terminationBag?.initialValues, form]);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(values);
+    const step = terminationBag?.stepState.currentStep.name;
+    const lastStep =
+      terminationBag?.stepState.currentStep.index ===
+      terminationBag?.stepState.totalSteps - 1;
+
+    await onSubmit?.({
+      status: lastStep ? 'lastStep' : `step-${step}`,
+      payload: values,
+    });
 
     const terminationResult = await terminationBag?.onSubmit(values);
 
