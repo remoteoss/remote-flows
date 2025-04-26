@@ -28,7 +28,6 @@ function buildInitialValues(
     customer_informed_employee_date: '',
     customer_informed_employee_description: '',
     personal_email: '',
-
     termination_reason: undefined,
     reason_description: '',
     termination_reason_files: [],
