@@ -50,7 +50,7 @@ export function TerminationForm({
   const handleSubmit = async (values: TerminationFormValues) => {
     await onSubmit?.(values);
 
-    const terminationResult = await terminationBag?.onSubmit(values);
+    const terminationResult = await terminationBag?.onSubmit();
 
     if (terminationResult?.error) {
       onError?.(terminationResult.error);
