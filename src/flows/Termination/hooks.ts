@@ -106,6 +106,8 @@ export const useTermination = ({
       step: stepState.currentStep.name,
     });
 
+  const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
+
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
@@ -121,9 +123,6 @@ export const useTermination = ({
 
     if (terminationHeadlessForm) {
       // this is a hack because I need to validate all form values with the entire schema
-      const entireTerminationSchema = createHeadlessForm(
-        jsonSchema.data.schema,
-      );
       const parsedValues = parseJSFToValidate(
         values,
         entireTerminationSchema.fields,
@@ -236,7 +235,7 @@ export const useTermination = ({
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
-          terminationHeadlessForm?.fields,
+          entireTerminationSchema?.fields,
         );
         setFieldValues(parsedValues as TerminationFormValues);
       }

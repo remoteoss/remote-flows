@@ -47,9 +47,10 @@ export function TerminationForm({
     const subscription = form?.watch((values) => {
       if (Object.keys(form.formState.dirtyFields).length > 0) {
         // TODO: for some reason isDirty doesn't work the first time we touch the form
-        terminationBag?.checkFieldUpdates(
-          values as Partial<TerminationFormValues>,
-        );
+        terminationBag?.checkFieldUpdates({
+          ...terminationBag.initialValues,
+          ...values,
+        });
       }
     });
     return () => subscription?.unsubscribe();
@@ -64,12 +65,8 @@ export function TerminationForm({
       if (!isEqual(previousInitialValues, terminationBag.initialValues)) {
         form.reset(terminationBag.initialValues); // Reset the form if initialValues have changed
         previousInitialValuesRef.current = terminationBag.initialValues; // Update the ref with the new initialValues
-        terminationBag?.checkFieldUpdates(
-          terminationBag.initialValues as Partial<TerminationFormValues>,
-        );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terminationBag?.initialValues, form]);
 
   const handleSubmit = async (values: TerminationFormValues) => {
