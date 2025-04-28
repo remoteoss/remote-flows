@@ -212,6 +212,34 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
+  // this test needs to be before the multi step, something strange is happening when executed in parallel with the next one
+  it('should fill the first step and go back to the previous step', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+
+    await screen.findByText(/Step: Employee Communication/i);
+
+    await fillStep1();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Termination Details/i);
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+
+    backButton.click();
+
+    await screen.findByText(/Step: Employee Communication/i);
+
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(employeePersonalEmail).toHaveValue('ze@remote.com');
+  });
+
   it('should submit the termination flow', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
