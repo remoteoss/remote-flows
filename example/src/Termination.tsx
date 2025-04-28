@@ -28,17 +28,25 @@ export const Termination = () => {
 
             return (
               <>
-                <TimeOff>
-                  {({ employment }) => {
-                    const username = employment?.basic_information
-                      ?.name as string;
+                <TimeOff
+                  render={({ timeoff, employment }) => {
+                    const username = employment.data?.data.employment
+                      ?.basic_information?.name as string;
+                    const days = timeoff?.data?.data?.total_count || 0;
+
+                    // if days is 0 or > 1 'days' else 'day
+                    const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
                     return (
                       <>
+                        <p>
+                          We have recorded {days} {daysLiteral} of paid time off
+                          for {username}
+                        </p>
                         <a href="#">See {username}'s timeoff breakdown</a>
                       </>
                     );
                   }}
-                </TimeOff>
+                />
                 <Form
                   username="ze"
                   onSubmit={(payload) => console.log('payload', payload)}

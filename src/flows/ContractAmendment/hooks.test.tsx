@@ -4,7 +4,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import React from 'react';
 import { useContractAmendment } from './hooks';
-import { contractAmendementSchema, employment } from './tests/fixtures';
+import { contractAmendementSchema } from './tests/fixtures';
+import { employment } from '@/src/common/fixtures';
 
 const queryClient = new QueryClient({
   defaultOptions: {

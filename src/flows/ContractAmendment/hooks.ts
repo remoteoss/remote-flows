@@ -18,7 +18,7 @@ import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
-import { useEmploymentQuery } from '@/src/data/hooks';
+import { useEmploymentQuery } from '@/src/common/hooks';
 
 type ContractAmendmentSchemaParams = {
   countryCode: string;
