@@ -58,7 +58,7 @@ export function TerminationForm({
       terminationBag?.stepState.totalSteps - 1;
 
     await onSubmit?.({
-      status: lastStep ? 'lastStep' : `step-${step}`,
+      status: lastStep ? 'last-step' : `step-${step}`,
       payload: values,
     });
 
