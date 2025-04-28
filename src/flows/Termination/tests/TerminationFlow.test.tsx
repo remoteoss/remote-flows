@@ -11,6 +11,24 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+const originalWarn = console.warn;
+const originalError = console.error;
+
+// Suppress specific warnings
+console.warn = (...args) => {
+  if (args[0].includes('React does not recognize the')) {
+    return; // Ignore React warnings about invalid props
+  }
+  originalWarn(...args);
+};
+
+console.error = (...args) => {
+  if (args[0].includes('Warning:')) {
+    return; // Ignore general warnings
+  }
+  originalError(...args);
+};
+
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
@@ -39,7 +57,10 @@ describe('TerminationFlow', () => {
         <h1>Step: {steps[currentStepIndex]}</h1>
         <Form
           username="ze"
-          onSubmit={mockOnSubmit}
+          onSubmit={(data) => {
+            console.log('data', data);
+            mockOnSubmit(data);
+          }}
           onError={(error) => console.log('error', error)}
           onSuccess={(data) => console.log('data', data)}
         />
@@ -250,7 +271,7 @@ describe('TerminationFlow', () => {
           proposed_termination_date: '',
           reason_description: '',
           risk_assessment_reasons: [],
-          termination_reason: '',
+          termination_reason: undefined,
           termination_reason_files: [],
           timesheet_file: undefined,
           will_challenge_termination: '',

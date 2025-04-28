@@ -62,7 +62,10 @@ export function TerminationForm({
       const previousInitialValues = previousInitialValuesRef.current;
 
       // Compare current initialValues with the previous ones
-      if (!isEqual(previousInitialValues, terminationBag.initialValues)) {
+      if (
+        previousInitialValues !== null &&
+        !isEqual(previousInitialValues, terminationBag.initialValues)
+      ) {
         form.reset(terminationBag.initialValues); // Reset the form if initialValues have changed
         previousInitialValuesRef.current = terminationBag.initialValues; // Update the ref with the new initialValues
       }
