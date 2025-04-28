@@ -29,11 +29,15 @@ export const Termination = () => {
             return (
               <>
                 <TimeOff>
-                  {({ username }) => (
-                    <>
-                      <a href="#">See {username}'s timeoff breakdown</a>
-                    </>
-                  )}
+                  {({ employment }) => {
+                    const username = employment?.basic_information
+                      ?.name as string;
+                    return (
+                      <>
+                        <a href="#">See {username}'s timeoff breakdown</a>
+                      </>
+                    );
+                  }}
                 </TimeOff>
                 <Form
                   username="ze"

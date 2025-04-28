@@ -1,3 +1,4 @@
+import { EmploymentShowResponse } from '@/src/client';
 import { useEmploymentQuery, useTimeOffQuery } from '@/src/data/hooks';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import React from 'react';
@@ -5,10 +6,12 @@ import React from 'react';
 export const TimeOff = ({
   children,
 }: {
-  children?: (props: { username: string }) => React.ReactNode;
+  children?: (props: {
+    employment: EmploymentShowResponse['data']['employment'];
+  }) => React.ReactNode;
 }) => {
   const { terminationBag } = useTerminationContext();
-  const employment = useEmploymentQuery({
+  const { data: employment } = useEmploymentQuery({
     employmentId: terminationBag.employmentId,
   });
 
@@ -17,8 +20,9 @@ export const TimeOff = ({
     status: 'taken',
   });
 
-  const username: string = employment.data?.data.employment?.basic_information
+  const username: string = employment?.data?.employment?.basic_information
     ?.name as string;
+  const employmentData = employment?.data?.employment;
   const days = timeoffQuery.data?.data?.total_count || 0;
 
   // if days is 0 or > 1 'days' else 'day
@@ -29,7 +33,7 @@ export const TimeOff = ({
       <p className="RemoteFlows__TimeOff__Title">
         We have recorded {days} {daysLiteral} of paid time off for {username}
       </p>
-      {children?.({ username })}
+      {children?.({ employment: employmentData })}
     </div>
   );
 };
