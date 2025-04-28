@@ -95,6 +95,7 @@ export function CheckBoxField({
           <FormItem className={cn(`RemoteFlows__CheckBoxField__Item__${name}`)}>
             <FormControl>
               <>
+                <FormLabel>{label}</FormLabel>
                 {options && multiple ? (
                   options.map((option) => (
                     <div key={option.value} className="flex space-x-2">
