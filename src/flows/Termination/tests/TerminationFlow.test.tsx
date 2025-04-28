@@ -238,7 +238,6 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
-  // for some reason this tests fails when executed after all the other tests, it's like some share state or something similar
   it('should submit the second step of the form and go to the next step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
@@ -354,6 +353,19 @@ describe('TerminationFlow', () => {
         will_challenge_termination_description: null,
       },
     });
+
+    await screen.findByText(/Step: Additional Information/i);
+
+    // fillStep4();
+    // submitButton = screen.getByText(/Send termination/i);
+    // expect(submitButton).toBeInTheDocument();
+    // submitButton.click();
+    // await for submission onSubmit
+    // mock msw endpoint
+
+    // reorder test file
+    // move utilities
+    // consider testing later the back button
   });
 
   it('should click next step without filling the form and show error', async () => {
