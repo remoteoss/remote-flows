@@ -114,6 +114,18 @@ describe('TerminationFlow', () => {
     await user.click(checkbox);
   }
 
+  function getYearMonthDate(date: Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = date.getDay();
+
+    return {
+      year,
+      month,
+      day,
+    };
+  }
+
   async function fillStep1(
     values: Partial<{
       employeePersonalEmail: string;
@@ -152,11 +164,13 @@ describe('TerminationFlow', () => {
       terminationReasonDetails: string;
       terminationReason: string;
       riskAssessmentReason: string;
+      proposedTerminationDate: string;
     }> = {
       willChangeTermination: 'No',
       terminationReasonDetails: 'whatever text',
       terminationReason: 'Gross misconduct',
       riskAssessmentReason: 'Currently on or recently returned from sick leave',
+      proposedTerminationDate: '15',
     },
   ) {
     const user = userEvent.setup();
@@ -183,6 +197,22 @@ describe('TerminationFlow', () => {
 
     if (values?.riskAssessmentReason) {
       await fillCheckbox(values?.riskAssessmentReason);
+    }
+    if (values?.proposedTerminationDate) {
+      const datePickerButton = screen.getByTestId('date-picker-button');
+      await user.click(datePickerButton);
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+      const calendar = screen.getByRole('dialog');
+      expect(calendar).toBeInTheDocument();
+      const dateButton = screen.getByRole('button', {
+        name: new RegExp(values.proposedTerminationDate, 'i'),
+      });
+      await user.click(dateButton);
+      waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
     }
   }
 
@@ -276,7 +306,10 @@ describe('TerminationFlow', () => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(2);
     });
 
-    /*  const secondCallArgs = mockOnSubmit.mock.calls[1][0];
+    const secondCallArgs = mockOnSubmit.mock.calls[1][0];
+
+    const currentDate = getYearMonthDate(new Date());
+    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
 
     expect(secondCallArgs).toEqual({
       status: 'step-termination_details',
@@ -290,16 +323,16 @@ describe('TerminationFlow', () => {
         customer_informed_employee_date: '',
         customer_informed_employee_description: '',
         personal_email: 'ze@remote.com',
-        proposed_termination_date: '',
-        reason_description: 'gross_misconduct',
+        proposed_termination_date: dynamicDate,
+        reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
-        termination_reason: undefined,
+        termination_reason: 'gross_misconduct',
         termination_reason_files: [],
         timesheet_file: undefined,
         will_challenge_termination: 'no',
         will_challenge_termination_description: null,
       },
-    }); */
+    });
 
     await screen.findByText(/Step: Paid Time Off/i);
   });
