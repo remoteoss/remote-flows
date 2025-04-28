@@ -29,6 +29,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
+const mockOnError = vi.fn();
 
 describe('TerminationFlow', () => {
   const mockRender = vi.fn(({ terminationBag, components }: RenderProps) => {
@@ -49,11 +50,8 @@ describe('TerminationFlow', () => {
         <Form
           username="ze"
           onSubmit={mockOnSubmit}
-          onError={(error) => console.log('error', error)}
-          onSuccess={(data) => {
-            console.log('success', data);
-            mockOnSuccess(data);
-          }}
+          onSuccess={mockOnSuccess}
+          onError={mockOnError}
         />
         {currentStepIndex > 0 && <Back>Back</Back>}
         {currentStepIndex <= terminationBag.stepState.totalSteps - 1 && (
@@ -214,7 +212,7 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
-  it('should submit the second step of the form and go to the next step', async () => {
+  it('should submit the termination flow', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
@@ -392,6 +390,69 @@ describe('TerminationFlow', () => {
         will_challenge_termination: false,
       },
       type: 'termination',
+    });
+  });
+
+  it("should trigger the 'onError' callback when the request fails", async () => {
+    server.use(
+      http.post('*/v1/offboardings', async () => {
+        return HttpResponse.json(
+          {
+            error: 'Something went wrong',
+          },
+          { status: 500 },
+        );
+      }),
+    );
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    await screen.findByText(/Step: Employee Communication/i);
+    await fillStep1();
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    await screen.findByText(/Step: Termination Details/i);
+
+    await fillStep2();
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+    });
+
+    await screen.findByText(/Step: Paid Time Off/i);
+
+    await fillStep3();
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+    });
+
+    await screen.findByText(/Step: Additional Information/i);
+
+    await fillStep4();
+
+    const submitButton = screen.getByText(/Send termination/i);
+    expect(submitButton).toBeInTheDocument();
+    submitButton.click();
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
+    });
+
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
     });
   });
 
