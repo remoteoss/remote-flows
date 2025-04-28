@@ -7,7 +7,8 @@ import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractAmendmentFlow, RenderProps } from '../ContractAmendmentFlow';
-import { contractAmendementSchema, employment } from './fixtures';
+import { contractAmendementSchema } from './fixtures';
+import { employment } from '@/src/common/fixtures';
 
 const queryClient = new QueryClient();
 

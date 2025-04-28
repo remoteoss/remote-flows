@@ -16,25 +16,6 @@ type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
  * @param {Object} params - The parameters for the query.
  * @param {string} params.employmentId - The ID of the employment to fetch details for.
  * @returns {UseQueryResult<any, unknown>} - The result of the query, including the employment details.
- *
- * @example
- * const { data, isLoading, error } = useEmploymentQuery({
- *   employmentId: '12345',
- * });
- *
- * if (isLoading) {
- *   return <div>Loading...</div>;
- * }
- *
- * if (error) {
- *   return <div>Error loading employment details</div>;
- * }
- *
- * return (
- *   <div>
- *     <h1>{data.full_name}</h1>
- *   </div>
- * );
  */
 export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
   const { client } = useClient();
@@ -62,27 +43,6 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
  * @param {TimeoffStatus} [params.status] - The status of the time off requests to filter by (e.g., 'approved', 'pending').
  * @returns {UseQueryResult<any, unknown>} - The result of the query, including the time off data.
  *
- * @example
- * const { data, isLoading, error } = useTimeOffQuery({
- *   employmentId: '12345',
- *   status: 'approved',
- * });
- *
- * if (isLoading) {
- *   return <div>Loading...</div>;
- * }
- *
- * if (error) {
- *   return <div>Error loading time off data</div>;
- * }
- *
- * return (
- *   <div>
- *     {data.map((timeOff) => (
- *       <div key={timeOff.id}>{timeOff.reason}</div>
- *     ))}
- *   </div>
- * );
  */
 export const useTimeOffQuery = ({
   employmentId,

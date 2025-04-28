@@ -1,17 +1,19 @@
-import { EmploymentShowResponse } from '@/src/client';
-import { useEmploymentQuery, useTimeOffQuery } from '@/src/data/hooks';
+import { EmploymentShowResponse, ListTimeoffResponse } from '@/src/client';
+import { useEmploymentQuery, useTimeOffQuery } from '@/src/common/hooks';
 import { useTerminationContext } from '@/src/flows/Termination/context';
+import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
 
 export const TimeOff = ({
-  children,
+  render,
 }: {
-  children?: (props: {
-    employment: EmploymentShowResponse['data']['employment'];
+  render?: (props: {
+    employment: UseQueryResult<EmploymentShowResponse | undefined, Error>;
+    timeoff: UseQueryResult<ListTimeoffResponse | undefined, Error>;
   }) => React.ReactNode;
 }) => {
   const { terminationBag } = useTerminationContext();
-  const { data: employment } = useEmploymentQuery({
+  const employmentQuery = useEmploymentQuery({
     employmentId: terminationBag.employmentId,
   });
 
@@ -20,20 +22,5 @@ export const TimeOff = ({
     status: 'taken',
   });
 
-  const username: string = employment?.data?.employment?.basic_information
-    ?.name as string;
-  const employmentData = employment?.data?.employment;
-  const days = timeoffQuery.data?.data?.total_count || 0;
-
-  // if days is 0 or > 1 'days' else 'day
-  const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
-
-  return (
-    <div className="RemoteFlows__TimeOff">
-      <p className="RemoteFlows__TimeOff__Title">
-        We have recorded {days} {daysLiteral} of paid time off for {username}
-      </p>
-      {children?.({ employment: employmentData })}
-    </div>
-  );
+  return render?.({ employment: employmentQuery, timeoff: timeoffQuery });
 };
