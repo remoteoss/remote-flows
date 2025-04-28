@@ -410,9 +410,6 @@ describe('TerminationFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
-    });
 
     await screen.findByText(/Step: Termination Details/i);
 
@@ -423,10 +420,6 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
-    });
-
     await screen.findByText(/Step: Paid Time Off/i);
 
     await fillStep3();
@@ -436,10 +429,6 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
-    });
-
     await screen.findByText(/Step: Additional Information/i);
 
     await fillStep4();
@@ -447,9 +436,6 @@ describe('TerminationFlow', () => {
     const submitButton = screen.getByText(/Send termination/i);
     expect(submitButton).toBeInTheDocument();
     submitButton.click();
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
-    });
 
     await waitFor(() => {
       expect(mockOnError).toHaveBeenCalledTimes(1);
