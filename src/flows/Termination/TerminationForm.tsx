@@ -1,12 +1,11 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import isEqual from 'lodash/isEqual';
 
 type TerminationFormProps = {
   username: string;
@@ -34,8 +33,6 @@ export function TerminationForm({
     terminationBag.handleValidation,
   );
 
-  const previousInitialValuesRef = useRef<TerminationFormValues | null>(null);
-
   const form = useForm({
     resolver,
     defaultValues: terminationBag?.initialValues,
@@ -53,18 +50,6 @@ export function TerminationForm({
     return () => subscription?.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (terminationBag?.initialValues) {
-      const previousInitialValues = previousInitialValuesRef.current;
-
-      // Compare current initialValues with the previous ones
-      if (!isEqual(previousInitialValues, terminationBag.initialValues)) {
-        form.reset(terminationBag.initialValues); // Reset the form if initialValues have changed
-        previousInitialValuesRef.current = terminationBag.initialValues; // Update the ref with the new initialValues
-      }
-    }
-  }, [terminationBag?.initialValues, form]);
 
   const handleSubmit = async (values: TerminationFormValues) => {
     const step = terminationBag?.stepState.currentStep.name;
