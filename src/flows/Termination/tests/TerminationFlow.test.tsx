@@ -225,6 +225,63 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
+  // for some reason this tests fails when executed after all the other tests, it's like some share state or something similar
+  it('should submit the second step of the form and go to the next step', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+
+    await screen.findByText(/Step: Employee Communication/i);
+
+    await fillStep1();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Termination Details/i);
+
+    await fillStep2();
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+    });
+
+    const secondCallArgs = mockOnSubmit.mock.calls[1][0];
+
+    const currentDate = getYearMonthDate(new Date());
+    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
+
+    expect(secondCallArgs).toEqual({
+      status: 'step-termination_details',
+      payload: {
+        acknowledge_termination_procedure: false,
+        additional_comments: '',
+        agrees_to_pto_amount: '',
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'no',
+        customer_informed_employee_date: '',
+        customer_informed_employee_description: '',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: dynamicDate,
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+    });
+
+    await screen.findByText(/Step: Paid Time Off/i);
+  });
+
   it('should fill the first step of the form and go to the next step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
@@ -282,61 +339,5 @@ describe('TerminationFlow', () => {
     const errors = await screen.findAllByText(/Required field/i);
 
     expect(errors.length).toBeGreaterThan(0);
-  });
-
-  it.only('should submit the second step of the form and go to the next step', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
-
-    await screen.findByText(/Step: Employee Communication/i);
-
-    await fillStep1();
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Termination Details/i);
-
-    await fillStep2();
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
-    });
-
-    const secondCallArgs = mockOnSubmit.mock.calls[1][0];
-
-    const currentDate = getYearMonthDate(new Date());
-    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
-
-    expect(secondCallArgs).toEqual({
-      status: 'step-termination_details',
-      payload: {
-        acknowledge_termination_procedure: false,
-        additional_comments: '',
-        agrees_to_pto_amount: '',
-        agrees_to_pto_amount_notes: null,
-        confidential: 'no',
-        customer_informed_employee: 'no',
-        customer_informed_employee_date: '',
-        customer_informed_employee_description: '',
-        personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
-        reason_description: 'whatever text',
-        risk_assessment_reasons: ['sick_leave'],
-        termination_reason: 'gross_misconduct',
-        termination_reason_files: [],
-        timesheet_file: undefined,
-        will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
-      },
-    });
-
-    await screen.findByText(/Step: Paid Time Off/i);
   });
 });
