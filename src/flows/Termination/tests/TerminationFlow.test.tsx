@@ -219,6 +219,19 @@ describe('TerminationFlow', () => {
     }
   }
 
+  async function fillStep3(
+    values: Partial<{ agreePTO: string }> = {
+      agreePTO: 'Yes',
+    },
+  ) {
+    if (values?.agreePTO) {
+      await fillRadio(
+        'Are these paid time off records correct?',
+        values?.agreePTO,
+      );
+    }
+  }
+
   it('should render first step of the form', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
@@ -237,6 +250,31 @@ describe('TerminationFlow', () => {
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        status: 'step-employee_communication',
+        payload: {
+          acknowledge_termination_procedure: false,
+          additional_comments: '',
+          agrees_to_pto_amount: '',
+          agrees_to_pto_amount_notes: null,
+          confidential: 'no',
+          customer_informed_employee: 'no',
+          customer_informed_employee_date: '',
+          customer_informed_employee_description: '',
+          personal_email: 'ze@remote.com',
+          proposed_termination_date: '',
+          reason_description: '',
+          risk_assessment_reasons: [],
+          termination_reason: undefined,
+          termination_reason_files: [],
+          timesheet_file: undefined,
+          will_challenge_termination: '',
+          will_challenge_termination_description: null,
+        },
+      });
+    });
 
     await screen.findByText(/Step: Termination Details/i);
 
@@ -280,46 +318,42 @@ describe('TerminationFlow', () => {
     });
 
     await screen.findByText(/Step: Paid Time Off/i);
-  });
 
-  it('should fill the first step of the form and go to the next step', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    await fillStep3();
 
-    await screen.findByText(/Step: Employee Communication/i);
-
-    await fillStep1();
-
-    const nextButton = screen.getByText(/Next Step/i);
+    nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        status: 'step-employee_communication',
-        payload: {
-          acknowledge_termination_procedure: false,
-          additional_comments: '',
-          agrees_to_pto_amount: '',
-          agrees_to_pto_amount_notes: null,
-          confidential: 'no',
-          customer_informed_employee: 'no',
-          customer_informed_employee_date: '',
-          customer_informed_employee_description: '',
-          personal_email: 'ze@remote.com',
-          proposed_termination_date: '',
-          reason_description: '',
-          risk_assessment_reasons: [],
-          termination_reason: undefined,
-          termination_reason_files: [],
-          timesheet_file: undefined,
-          will_challenge_termination: '',
-          will_challenge_termination_description: null,
-        },
-      });
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
     });
 
-    await screen.findByText(/Step: Termination Details/i);
+    const thirdCallArgs = mockOnSubmit.mock.calls[2][0];
+
+    expect(thirdCallArgs).toEqual({
+      status: 'step-paid_time_off',
+      payload: {
+        acknowledge_termination_procedure: false,
+        additional_comments: '',
+        agrees_to_pto_amount: 'yes',
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'no',
+        customer_informed_employee_date: '',
+        customer_informed_employee_description: '',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: dynamicDate,
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+    });
   });
 
   it('should click next step without filling the form and show error', async () => {
