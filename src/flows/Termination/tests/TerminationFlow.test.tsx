@@ -11,24 +11,6 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const originalWarn = console.warn;
-const originalError = console.error;
-
-// Suppress specific warnings
-console.warn = (...args) => {
-  if (args[0].includes('React does not recognize the')) {
-    return; // Ignore React warnings about invalid props
-  }
-  originalWarn(...args);
-};
-
-console.error = (...args) => {
-  if (args[0].includes('Warning:')) {
-    return; // Ignore general warnings
-  }
-  originalError(...args);
-};
-
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
