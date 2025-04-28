@@ -26,7 +26,12 @@ describe('TimeOff', () => {
     const { TimeOff } = components;
     return (
       <TimeOff>
-        {({ username }) => <div>Check {username} timeoff breakdown</div>}
+        {({ employment }) => (
+          <div>
+            Check {employment?.basic_information?.name as string} timeoff
+            breakdown
+          </div>
+        )}
       </TimeOff>
     );
   });
