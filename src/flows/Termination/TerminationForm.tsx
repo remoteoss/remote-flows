@@ -47,10 +47,7 @@ export function TerminationForm({
     const subscription = form?.watch((values) => {
       if (Object.keys(form.formState.dirtyFields).length > 0) {
         // TODO: for some reason isDirty doesn't work the first time we touch the form
-        terminationBag?.checkFieldUpdates({
-          ...terminationBag.initialValues,
-          ...values,
-        });
+        terminationBag?.checkFieldUpdates(values);
       }
     });
     return () => subscription?.unsubscribe();
