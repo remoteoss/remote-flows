@@ -18,7 +18,7 @@ export * from '@/src/flows/ContractAmendment';
 export * from '@/src/flows/Termination';
 
 export type * from '@/src/flows/CostCalculator/types';
-export * from '@/src/data/hooks';
+export * from '@/src/common/hooks';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { employment } from '@/src/flows/ContractAmendment/tests/fixtures'; // TODO: Move this to a shared folder????
+import { employment } from '@/src/common/fixtures';
 import { server } from '@/src/tests/server';
 import {
   RenderProps,
@@ -25,14 +25,25 @@ describe('TimeOff', () => {
   const mockRender = vi.fn(({ components }: RenderProps) => {
     const { TimeOff } = components;
     return (
-      <TimeOff>
-        {({ employment }) => (
-          <div>
-            Check {employment?.basic_information?.name as string} timeoff
-            breakdown
-          </div>
-        )}
-      </TimeOff>
+      <TimeOff
+        render={({ timeoff, employment }) => {
+          const username = employment.data?.data.employment?.basic_information
+            ?.name as string;
+          const days = timeoff?.data?.data?.total_count || 0;
+
+          // if days is 0 or > 1 'days' else 'day
+          const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
+          return (
+            <>
+              <p>
+                We have recorded {days} {daysLiteral} of paid time off for{' '}
+                {username}
+              </p>
+              <a href="#">Check {username}'s timeoff breakdown</a>
+            </>
+          );
+        }}
+      />
     );
   });
   const defaultProps = {
@@ -95,6 +106,6 @@ describe('TimeOff', () => {
 
     const employeeName = employment.data.employment.basic_information.name;
 
-    await screen.findByText(`Check ${employeeName} timeoff breakdown`);
+    await screen.findByText(`Check ${employeeName}'s timeoff breakdown`);
   });
 });
