@@ -144,9 +144,12 @@ function FormDescription({
       data-slot="form-description"
       id={formDescriptionId}
       className={cn('text-base-color text-xs', className)}
+      {...(typeof children === 'string'
+        ? { dangerouslySetInnerHTML: { __html: children } }
+        : {})} // Only add dangerouslySetInnerHTML when children is a string
       {...props}
     >
-      {typeof children === 'function' ? children() : children}
+      {typeof children === 'function' ? children() : null}
     </p>
   );
 }
