@@ -96,6 +96,7 @@ Supported field types:
 Visit the different different docs for each flow
 
 - [Cost Calculator Flow](./src/flows/CostCalculator/README.md)
+- [Termination Flow](./src/flows/Termination/README.md)
 
 ## Authentication
 

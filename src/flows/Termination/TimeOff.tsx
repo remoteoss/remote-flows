@@ -7,7 +7,7 @@ import React from 'react';
 export const TimeOff = ({
   render,
 }: {
-  render?: (props: {
+  render: (props: {
     employment: UseQueryResult<EmploymentShowResponse | undefined, Error>;
     timeoff: UseQueryResult<ListTimeoffResponse | undefined, Error>;
   }) => React.ReactNode;
@@ -22,5 +22,5 @@ export const TimeOff = ({
     status: 'taken',
   });
 
-  return render?.({ employment: employmentQuery, timeoff: timeoffQuery });
+  return render({ employment: employmentQuery, timeoff: timeoffQuery });
 };

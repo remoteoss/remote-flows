@@ -525,7 +525,7 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 | ------------------ | ------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------- |
 | `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                             |
 | `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                |
-| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | No       | render prop function with the params passed by the useCostCalculator hook               |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | Yes      | render prop function with the params passed by the useCostCalculator hook               |
 | `options`          | `{jsfModify: JSFModify}`                                     | No       | JSFModify options lets you modify properties from the form, such as changing the labels |
 
 #### estimationParams Properties
