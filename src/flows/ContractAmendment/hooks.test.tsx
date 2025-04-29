@@ -210,7 +210,7 @@ describe('useContractAmendment', () => {
     expect(result.current.values).toEqual(newValues);
   });
 
-  it.only('should use previous form values when navigating back to form', async () => {
+  it('should use previous form values when navigating back to form', async () => {
     const { result } = renderHook(
       () =>
         useContractAmendment({
