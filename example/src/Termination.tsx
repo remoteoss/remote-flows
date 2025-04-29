@@ -1,6 +1,21 @@
 import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
 import './App.css';
 
+function PersonalEmailDescription({ onClick }: { onClick: () => void }) {
+  return (
+    <p>
+      <strong>Personal email</strong> is used to send the termination letter to
+      the employee. It is not mandatory, but it is recommended to add it.
+      <br />
+      <br />
+      <strong>Note:</strong> If you do not have a personal email, you can use
+      the company email. The employee will receive the termination letter in
+      their company email.
+      <a onClick={onClick}>more here</a>
+    </p>
+  );
+}
+
 export const Termination = () => {
   const fetchToken = () => {
     return fetch('/api/token')
@@ -19,6 +34,19 @@ export const Termination = () => {
       <div className="cost-calculator__container">
         <TerminationFlow
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
+          options={{
+            jsfModify: {
+              fields: {
+                personal_email: {
+                  description: () => (
+                    <PersonalEmailDescription
+                      onClick={() => console.log('click anchor')}
+                    />
+                  ),
+                },
+              },
+            },
+          }}
           render={({ terminationBag, components }) => {
             if (terminationBag.isLoading) {
               return <div>Loading...</div>;
