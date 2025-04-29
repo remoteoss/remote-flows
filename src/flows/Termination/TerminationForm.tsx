@@ -9,7 +9,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 
 type TerminationFormProps = {
   username: string;
-  onSubmit?: (values: TerminationFormValues) => Promise<void>;
+  onSubmit?: (payload: TerminationFormValues) => Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
@@ -30,7 +30,7 @@ export function TerminationForm({
   const form = useForm({
     resolver,
     defaultValues: terminationBag?.initialValues,
-    shouldUnregister: true,
+    shouldUnregister: false,
     mode: 'onBlur',
   });
 
@@ -38,9 +38,7 @@ export function TerminationForm({
     const subscription = form?.watch((values) => {
       if (Object.keys(form.formState.dirtyFields).length > 0) {
         // TODO: for some reason isDirty doesn't work the first time we touch the form
-        terminationBag?.checkFieldUpdates(
-          values as Partial<TerminationFormValues>,
-        );
+        terminationBag?.checkFieldUpdates(values);
       }
     });
     return () => subscription?.unsubscribe();
@@ -48,7 +46,13 @@ export function TerminationForm({
   }, []);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(values);
+    const lastStep =
+      terminationBag?.stepState.currentStep.index ===
+      terminationBag?.stepState.totalSteps - 1;
+
+    if (lastStep) {
+      await onSubmit?.(values);
+    }
 
     const terminationResult = await terminationBag?.onSubmit(values);
 

@@ -5,17 +5,19 @@ export type TerminationFormValues = {
   additional_comments: string;
   agrees_to_pto_amount: string;
   agrees_to_pto_amount_notes: string | null;
-  confidential: boolean;
+  confidential: string;
   customer_informed_employee: string;
   customer_informed_employee_date: string | null;
   customer_informed_employee_description: string | null;
-  employer_confirmed_email: string;
+  personal_email: string;
   proposed_termination_date: string;
   reason_description: string;
   risk_assessment_reasons: TerminationDetailsParams['risk_assessment_reasons'];
-  termination_reason: TerminationDetailsParams['termination_reason'];
+  termination_reason:
+    | TerminationDetailsParams['termination_reason']
+    | undefined;
   termination_reason_files: TerminationDetailsParams['termination_reason_files'];
   timesheet_file: TerminationDetailsParams['timesheet_file'];
-  will_challenge_termination: boolean;
-  will_challenge_termination_description: string | undefined;
+  will_challenge_termination: string;
+  will_challenge_termination_description: string | null;
 };
