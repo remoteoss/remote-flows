@@ -14,11 +14,11 @@ import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
+import { useEmploymentQuery } from '@/src/common/hooks';
 import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
-import { useEmploymentQuery } from '@/src/common/hooks';
 
 type ContractAmendmentSchemaParams = {
   countryCode: string;
@@ -66,6 +66,7 @@ const useContractAmendmentSchemaQuery = ({
       }
       const copyFieldValues = { ...fieldValues };
       const hasFieldValues = Object.keys(copyFieldValues).length > 0;
+
       const result = createHeadlessForm(jsfSchema, {
         initialValues: hasFieldValues
           ? copyFieldValues
@@ -122,6 +123,10 @@ export const useContractAmendment = ({
   } = useEmploymentQuery({
     employmentId,
   });
+
+  const navigatingBackToForm =
+    Object.keys(fieldValues).length === 0 &&
+    Object.keys(stepState.values?.form || {}).length > 0;
   const {
     data: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
@@ -130,7 +135,10 @@ export const useContractAmendment = ({
   } = useContractAmendmentSchemaQuery({
     employment,
     countryCode,
-    fieldValues,
+    // In case the user is navigating back to the form step, we need to
+    // pass the previous field values, so that the schema can be
+    // generated with the correct values.
+    fieldValues: navigatingBackToForm ? stepState.values?.form : fieldValues,
     options,
   });
 
