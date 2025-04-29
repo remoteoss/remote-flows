@@ -1,40 +1,23 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
-import React, { PropsWithChildren, useId } from 'react';
+import React, { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
+import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
+import { TimeOff } from '@/src/flows/Termination/TimeOff';
 
-function TerminationFlowProvider({
-  render,
-  terminationBag,
-}: PropsWithChildren<{
-  render: ({
-    terminationBag,
-  }: {
-    terminationBag: ReturnType<typeof useTermination>;
-  }) => React.ReactNode;
+export type RenderProps = {
   terminationBag: ReturnType<typeof useTermination>;
-}>) {
-  const formId = useId();
-
-  return (
-    <TerminationContext.Provider
-      value={{
-        formId: formId,
-        terminationBag,
-      }}
-    >
-      {render({ terminationBag })}
-    </TerminationContext.Provider>
-  );
-}
+  components: {
+    Form: typeof TerminationForm;
+    SubmitButton: typeof TerminationSubmit;
+    TimeOff: typeof TimeOff;
+  };
+};
 
 type TerminationFlowProps = {
   employmentId: string;
-  render: ({
-    terminationBag,
-  }: {
-    terminationBag: ReturnType<typeof useTermination>;
-  }) => React.ReactNode;
+  render: ({ terminationBag, components }: RenderProps) => React.ReactNode;
   options?: {
     jsfModify?: JSFModify;
   };
@@ -45,9 +28,24 @@ export const TerminationFlow = ({
   render,
   options,
 }: TerminationFlowProps) => {
+  const formId = useId();
   const terminationBag = useTermination({ employmentId, options });
 
   return (
-    <TerminationFlowProvider terminationBag={terminationBag} render={render} />
+    <TerminationContext.Provider
+      value={{
+        formId: formId,
+        terminationBag,
+      }}
+    >
+      {render({
+        terminationBag,
+        components: {
+          Form: TerminationForm,
+          SubmitButton: TerminationSubmit,
+          TimeOff: TimeOff,
+        },
+      })}
+    </TerminationContext.Provider>
   );
 };
