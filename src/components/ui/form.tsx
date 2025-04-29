@@ -130,7 +130,13 @@ const FormControl = React.forwardRef<
 
 FormControl.displayName = 'FormControl';
 
-function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
+function FormDescription({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<'p'> & {
+  children?: React.ReactNode | (() => React.ReactNode);
+}) {
   const { formDescriptionId } = useFormField();
 
   return (
@@ -139,7 +145,9 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
       id={formDescriptionId}
       className={cn('text-base-color text-xs', className)}
       {...props}
-    />
+    >
+      {typeof children === 'function' ? children() : children}
+    </p>
   );
 }
 
