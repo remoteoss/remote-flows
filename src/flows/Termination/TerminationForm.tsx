@@ -9,13 +9,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 
 type TerminationFormProps = {
   username: string;
-  onSubmit?: ({
-    status,
-    payload,
-  }: {
-    status: string;
-    payload: TerminationFormValues;
-  }) => Promise<void>;
+  onSubmit?: (payload: TerminationFormValues) => Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
@@ -52,15 +46,13 @@ export function TerminationForm({
   }, []);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    const step = terminationBag?.stepState.currentStep.name;
     const lastStep =
       terminationBag?.stepState.currentStep.index ===
       terminationBag?.stepState.totalSteps - 1;
 
-    await onSubmit?.({
-      status: lastStep ? 'last-step' : `step-${step}`,
-      payload: values,
-    });
+    if (lastStep) {
+      await onSubmit?.(values);
+    }
 
     const terminationResult = await terminationBag?.onSubmit(values);
 

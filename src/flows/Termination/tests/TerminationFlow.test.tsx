@@ -18,6 +18,7 @@ import {
 } from '@/src/common/testHelpers';
 import { http, HttpResponse } from 'msw';
 import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
+import { getYearMonthDate } from '@/src/common/dates';
 
 const queryClient = new QueryClient();
 
@@ -90,19 +91,7 @@ describe('TerminationFlow', () => {
     vi.clearAllMocks();
   });
 
-  function getYearMonthDate(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = date.getDay();
-
-    return {
-      year,
-      month,
-      day,
-    };
-  }
-
-  async function fillStep1(
+  async function fillEmployeeCommunication(
     values: Partial<{
       employeePersonalEmail: string;
       isRequestConfidential: string;
@@ -134,7 +123,7 @@ describe('TerminationFlow', () => {
     }
   }
 
-  async function fillStep2(
+  async function fillTerminationDetails(
     values: Partial<{
       willChangeTermination: string;
       terminationReasonDetails: string;
@@ -179,7 +168,7 @@ describe('TerminationFlow', () => {
     }
   }
 
-  async function fillStep3(
+  async function fillPTO(
     values: Partial<{ agreePTO: string }> = {
       agreePTO: 'Yes',
     },
@@ -192,7 +181,7 @@ describe('TerminationFlow', () => {
     }
   }
 
-  async function fillStep4(
+  async function fillAdditionalDetails(
     values: Partial<{
       ackowledgeTermination: boolean;
     }> = {
@@ -218,7 +207,7 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Employee Communication/i);
 
-    await fillStep1();
+    await fillEmployeeCommunication();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -245,150 +234,63 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Employee Communication/i);
 
-    await fillStep1();
+    await fillEmployeeCommunication();
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        status: 'step-employee_communication',
-        payload: {
-          acknowledge_termination_procedure: false,
-          additional_comments: '',
-          agrees_to_pto_amount: '',
-          agrees_to_pto_amount_notes: null,
-          confidential: 'no',
-          customer_informed_employee: 'no',
-          customer_informed_employee_date: '',
-          customer_informed_employee_description: '',
-          personal_email: 'ze@remote.com',
-          proposed_termination_date: '',
-          reason_description: '',
-          risk_assessment_reasons: [],
-          termination_reason: undefined,
-          termination_reason_files: [],
-          timesheet_file: undefined,
-          will_challenge_termination: '',
-          will_challenge_termination_description: null,
-        },
-      });
-    });
-
     await screen.findByText(/Step: Termination Details/i);
 
-    await fillStep2();
+    await fillTerminationDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
-    });
-
-    const secondCallArgs = mockOnSubmit.mock.calls[1][0];
 
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
 
-    expect(secondCallArgs).toEqual({
-      status: 'step-termination_details',
-      payload: {
-        acknowledge_termination_procedure: false,
-        additional_comments: '',
-        agrees_to_pto_amount: '',
-        agrees_to_pto_amount_notes: null,
-        confidential: 'no',
-        customer_informed_employee: 'no',
-        customer_informed_employee_date: '',
-        customer_informed_employee_description: '',
-        personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
-        reason_description: 'whatever text',
-        risk_assessment_reasons: ['sick_leave'],
-        termination_reason: 'gross_misconduct',
-        termination_reason_files: [],
-        timesheet_file: undefined,
-        will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
-      },
-    });
-
     await screen.findByText(/Step: Paid Time Off/i);
 
-    await fillStep3();
+    await fillPTO();
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
-    });
-
-    const thirdCallArgs = mockOnSubmit.mock.calls[2][0];
-
-    expect(thirdCallArgs).toEqual({
-      status: 'step-paid_time_off',
-      payload: {
-        acknowledge_termination_procedure: false,
-        additional_comments: '',
-        agrees_to_pto_amount: 'yes',
-        agrees_to_pto_amount_notes: null,
-        confidential: 'no',
-        customer_informed_employee: 'no',
-        customer_informed_employee_date: '',
-        customer_informed_employee_description: '',
-        personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
-        reason_description: 'whatever text',
-        risk_assessment_reasons: ['sick_leave'],
-        termination_reason: 'gross_misconduct',
-        termination_reason_files: [],
-        timesheet_file: undefined,
-        will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
-      },
-    });
-
     await screen.findByText(/Step: Additional Information/i);
 
-    await fillStep4();
+    await fillAdditionalDetails();
 
     const submitButton = screen.getByText(/Send termination/i);
     expect(submitButton).toBeInTheDocument();
     submitButton.click();
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
-    const fourthCallArgs = mockOnSubmit.mock.calls[3][0];
 
-    expect(fourthCallArgs).toEqual({
-      status: 'last-step',
-      payload: {
-        acknowledge_termination_procedure: true,
-        additional_comments: '',
-        agrees_to_pto_amount: 'yes',
-        agrees_to_pto_amount_notes: null,
-        confidential: 'no',
-        customer_informed_employee: 'no',
-        customer_informed_employee_date: '',
-        customer_informed_employee_description: '',
-        personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
-        reason_description: 'whatever text',
-        risk_assessment_reasons: ['sick_leave'],
-        termination_reason: 'gross_misconduct',
-        termination_reason_files: [],
-        timesheet_file: undefined,
-        will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
-      },
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      acknowledge_termination_procedure: true,
+      additional_comments: '',
+      agrees_to_pto_amount: 'yes',
+      agrees_to_pto_amount_notes: null,
+      confidential: 'no',
+      customer_informed_employee: 'no',
+      customer_informed_employee_date: '',
+      customer_informed_employee_description: '',
+      personal_email: 'ze@remote.com',
+      proposed_termination_date: dynamicDate,
+      reason_description: 'whatever text',
+      risk_assessment_reasons: ['sick_leave'],
+      termination_reason: 'gross_misconduct',
+      termination_reason_files: [],
+      timesheet_file: undefined,
+      will_challenge_termination: 'no',
+      will_challenge_termination_description: null,
     });
 
     await waitFor(() => {
@@ -434,14 +336,14 @@ describe('TerminationFlow', () => {
     );
     render(<TerminationFlow {...defaultProps} />, { wrapper });
     await screen.findByText(/Step: Employee Communication/i);
-    await fillStep1();
+    await fillEmployeeCommunication();
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await screen.findByText(/Step: Termination Details/i);
 
-    await fillStep2();
+    await fillTerminationDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -450,7 +352,7 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Paid Time Off/i);
 
-    await fillStep3();
+    await fillPTO();
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -459,7 +361,7 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Additional Information/i);
 
-    await fillStep4();
+    await fillAdditionalDetails();
 
     const submitButton = screen.getByText(/Send termination/i);
     expect(submitButton).toBeInTheDocument();
@@ -478,7 +380,7 @@ describe('TerminationFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
-    fillStep1({
+    fillEmployeeCommunication({
       employeePersonalEmail: 'ze@remote.com',
     });
 
