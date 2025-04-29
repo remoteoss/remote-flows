@@ -77,7 +77,7 @@ export function SelectField({
             <FormLabel className="RemoteFlows__SelectField__Label">
               {label}
             </FormLabel>
-            <FormControl aria-label={label}>
+            <FormControl>
               <div className="relative">
                 <Select
                   value={field.value || ''}
@@ -89,6 +89,7 @@ export function SelectField({
                   <SelectTrigger
                     className="RemoteFlows__SelectField__Trigger"
                     aria-invalid={Boolean(fieldState.error)}
+                    aria-label={label}
                   >
                     <span className="absolute">
                       <SelectValue placeholder={label} />

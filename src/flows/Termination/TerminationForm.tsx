@@ -49,6 +49,7 @@ export function TerminationForm({
     const lastStep =
       terminationBag?.stepState.currentStep.index ===
       terminationBag?.stepState.totalSteps - 1;
+
     if (lastStep) {
       await onSubmit?.(values);
     }
