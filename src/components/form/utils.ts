@@ -310,9 +310,13 @@ export const fieldTypesTransformations: Record<string, any> = {
     },
   },
   [supportedTypes.CHECKBOX]: {
-    transformValueToAPI: () => (value: string) => {
+    transformValueToAPI: (field: any) => (value: string | boolean) => {
       if (value === undefined) {
         return false;
+      }
+
+      if (field.const && value === true) {
+        return field.const;
       }
       return value;
     },
