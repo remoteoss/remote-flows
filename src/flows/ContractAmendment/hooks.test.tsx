@@ -1,3 +1,4 @@
+import { employment } from '@/src/common/fixtures';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -5,7 +6,6 @@ import { http, HttpResponse } from 'msw';
 import React from 'react';
 import { useContractAmendment } from './hooks';
 import { contractAmendementSchema } from './tests/fixtures';
-import { employment } from '@/src/common/fixtures';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -208,5 +208,57 @@ describe('useContractAmendment', () => {
     });
 
     expect(result.current.values).toEqual(newValues);
+  });
+
+  it.only('should use previous form values when navigating back to form', async () => {
+    const { result } = renderHook(
+      () =>
+        useContractAmendment({
+          employmentId: 'test-id',
+          countryCode: 'PRT',
+        }),
+      { wrapper },
+    );
+
+    // Wait for initial data to load
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await waitFor(() => {
+      expect(result.current.fields.length).toBeGreaterThan(0);
+    });
+
+    const formValues = {
+      annual_gross_salary: 40000000,
+      effective_date: '2025-05-01',
+      job_title: 'Senior Engineer',
+      role_description:
+        'A detailed role description with more than 100 characters to meet the minimum requirement for the role description field.',
+      experience_level:
+        'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
+      contract_duration_type: 'indefinite',
+      work_schedule: 'full_time',
+      work_hours_per_week: 40,
+    };
+
+    act(() => {
+      result.current.checkFieldUpdates(formValues);
+    });
+
+    // submit to move to confirmation step
+    await act(async () => {
+      await result.current.onSubmit(formValues);
+    });
+
+    // Go back to form
+    act(() => {
+      result.current.back();
+    });
+
+    // Wait for the state to update and verify that the form values are restored
+    await waitFor(() => {
+      expect(result.current.stepState.values?.form).toEqual(formValues);
+    });
   });
 });
