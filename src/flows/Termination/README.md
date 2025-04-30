@@ -16,24 +16,31 @@ After installation, import the main CSS file in your application:
 
 ```tsx
 import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import { TerminationDialog } from './TerminationDialog'; // bring your own dialog to hook into the form
+import { useState } from 'react';
 import './App.css';
 
-function PersonalEmailDescription({ onClick }: { onClick: () => void }) {
-  return (
-    <p>
-      <strong>Personal email</strong> is used to send the termination letter to
-      the employee. It is not mandatory, but it is recommended to add it.
-      <br />
-      <br />
-      <strong>Note:</strong> If you do not have a personal email, you can use
-      the company email. The employee will receive the termination letter in
-      their company email.
-      <a onClick={onClick}>more here</a>
-    </p>
-  );
-}
+const TerminationReasonDetailsDescription = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => (
+  <>
+    Make sure you choose an accurate termination reason to avoid unfair or
+    unlawful dismissal claims.{' '}
+    <a onClick={onClick}>Learn more termination details</a>
+  </>
+);
+
+const STEPS = [
+  'Employee Communication',
+  'Termination Details',
+  'Paid Time Off',
+  'Additional Information',
+];
 
 export const Termination = () => {
+  const [open, setOpen] = useState(false);
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -48,17 +55,22 @@ export const Termination = () => {
   };
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <div className="termination__container">
+      <div className="termination_container">
         <TerminationFlow
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
           options={{
             jsfModify: {
+              // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
               fields: {
-                personal_email: {
+                confidential: {
+                  'x-jsf-presentation': {
+                    statement: null, // this removes potential fixed statements that come from the confidential field
+                  },
+                },
+                termination_reason: {
                   description: () => (
-                    // this lets you modify description from the fields and inject any React component in case you want to open modals
-                    <PersonalEmailDescription
-                      onClick={() => console.log('click anchor')}
+                    <TerminationReasonDetailsDescription
+                      onClick={() => setOpen(true)}
                     />
                   ),
                 },
@@ -70,31 +82,83 @@ export const Termination = () => {
               return <div>Loading...</div>;
             }
 
-            const { Form, SubmitButton, Back } = components;
+            const { Form, SubmitButton, Back, TimeOff } = components;
 
             const currentStepIndex = terminationBag.stepState.currentStep.index;
 
+            const stepTitle = STEPS[currentStepIndex];
+
             return (
               <>
-                <Form
-                  username="ze"
-                  onSubmit={(payload) => console.log('payload', payload)}
-                  onError={(error) => console.log('error', error)}
-                  onSuccess={(data) => console.log('data', data)}
-                />
-                {currentStepIndex > 0 && <Back>Back</Back>}
-                {currentStepIndex <=
-                  terminationBag.stepState.totalSteps - 1 && (
-                  <SubmitButton>
-                    {currentStepIndex < terminationBag.stepState.totalSteps - 1
-                      ? 'Next Step'
-                      : 'Send termination'}
-                  </SubmitButton>
+                <div className="steps-navigation">
+                  <ul>
+                    {STEPS.map((step, index) => (
+                      <li
+                        key={index}
+                        className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
+                      >
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {currentStepIndex === 0 && (
+                  <div className="alert">
+                    <p>
+                      Please do not inform the employee of their termination
+                      until we review your request for legal risks. When we
+                      approve your request, you can inform the employee and
+                      we'll take it from there.
+                    </p>
+                  </div>
                 )}
+                <div className="card" style={{ marginBottom: '20px' }}>
+                  <h1 className="heading">{stepTitle}</h1>
+                  {terminationBag.stepState.currentStep.name ===
+                    'paid_time_off' && (
+                    <TimeOff
+                      render={({ employment, timeoff }) => {
+                        const username = employment?.data?.employment
+                          ?.basic_information?.name as string;
+                        const days = timeoff?.data?.total_count || 0;
+
+                        // if days is 0 or > 1 'days' else 'day
+                        const daysLiteral =
+                          days > 1 || days === 0 ? 'days' : 'day';
+                        return (
+                          <>
+                            <p>
+                              We have recorded {days} {daysLiteral} of paid time
+                              off for {username}
+                            </p>
+                            <a href="#">See {username}'s timeoff breakdown</a>
+                          </>
+                        );
+                      }}
+                    />
+                  )}
+                  <Form
+                    username="ze"
+                    onSubmit={(payload) => console.log('payload', payload)}
+                    onError={(error) => console.log('error', error)}
+                    onSuccess={(data) => console.log('data', data)}
+                  />
+                  {currentStepIndex > 0 && <Back>Back</Back>}
+                  {currentStepIndex <=
+                    terminationBag.stepState.totalSteps - 1 && (
+                    <SubmitButton>
+                      {currentStepIndex <
+                      terminationBag.stepState.totalSteps - 1
+                        ? 'Next Step'
+                        : 'Send termination'}
+                    </SubmitButton>
+                  )}
+                </div>
               </>
             );
           }}
         />
+        <TerminationDialog open={open} setOpen={setOpen} />
       </div>
     </RemoteFlows>
   );
