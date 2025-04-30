@@ -11,7 +11,7 @@ function PersonalEmailDescription({ onClick }: { onClick: () => void }) {
       <strong>Note:</strong> If you do not have a personal email, you can use
       the company email. The employee will receive the termination letter in
       their company email.
-      <a href="#" target="_blank">
+      <a onClick={onClick} href="https://www.google.com">
         more here
       </a>
     </p>
