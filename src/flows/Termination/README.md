@@ -197,7 +197,7 @@ It renders the submit button for the form and supports all standard `<button>` e
 
 ### BackButton
 
-It renders the back button for the form supports all standard `<button>` element props. This component must be used within the render prop of the TerminationFlow component to ensure proper functionality
+It renders the back button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the TerminationFlow component to ensure proper functionality
 
 ### Timeoff
 
