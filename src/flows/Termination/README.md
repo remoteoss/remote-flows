@@ -162,10 +162,10 @@ Component that retrieves the employment and the timeoff of the employee. It uses
 
 #### Timeoff render prop Properties
 
-| Property     | Type                                                        | Description                                                     |
-| ------------ | ----------------------------------------------------------- | --------------------------------------------------------------- |
-| `timeoff`    | `UseQueryResult<ListTimeoffResponse \| undefined, Error>`   | returns a useQuery result with the properties of the timeoff    |
-| `employment` | `UseQueryResult<EmploymentShowResponse\| undefined, Error>` | returns a useQuery result with the properties of the employment |
+| Property     | Type                                 | Description                                                     |
+| ------------ | ------------------------------------ | --------------------------------------------------------------- |
+| `timeoff`    | `ListTimeoffResponse \| undefined`   | returns a useQuery result with the properties of the timeoff    |
+| `employment` | `EmploymentShowResponse\| undefined` | returns a useQuery result with the properties of the employment |
 
 #### options.jsfModify properties
 
