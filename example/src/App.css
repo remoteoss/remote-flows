@@ -109,3 +109,139 @@
   background-color: black;
   color: white;
 }
+
+.alert {
+  background-color: #fff3cd; /* Light yellow background for warning */
+  color: #856404; /* Dark yellow-brown text for contrast */
+  border: 1px solid #ffeeba; /* Border matching the background */
+  border-radius: 4px; /* Slightly rounded corners */
+  padding: 16px; /* Add some padding inside the alert */
+  margin-bottom: 20px; /* Add spacing below the alert */
+}
+
+.alert > p {
+  margin: 0; /* Remove default paragraph margin */
+  font-size: 14px; /* Set a readable font size */
+  line-height: 1.5; /* Improve readability with line height */
+}
+
+.steps-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0;
+  list-style: none;
+  background: #fafbfa; /* Very light gray background */
+  border-radius: 14px; /* Rounded corners */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); /* Subtle shadow */
+}
+
+.steps-navigation ul {
+  display: flex;
+  gap: 32px; /* More space between steps */
+  padding: 0;
+  margin: 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #444; /* Dark gray for inactive steps */
+  background: transparent;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.step-item .step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #bbb; /* Gray border for inactive */
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 16px;
+  margin-right: 10px;
+  color: #444;
+  background: #fff;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.step-item.active {
+  color: #22356f; /* Strong green for active text */
+  background: #eaf3fa; /* Very light green background */
+  font-weight: bold;
+}
+
+.step-item.active .step-number {
+  border-color: #22356f; /* Green border for active */
+  color: #22356f; /* Green number */
+}
+
+.step-item:not(.active):hover {
+  background: #f5f6f5; /* Slight hover effect */
+}
+
+.step-item:not(.active) .step-number {
+  border-color: #bbb;
+  color: #444;
+}
+
+.heading {
+  font-family: 'Georgia', serif;
+  font-size: 2rem; /* Adjust size as needed */
+  color: #22356f; /* Strong green, matching the step color */
+  font-weight: bold;
+  margin: 24px 0 16px 0; /* Adjust spacing as needed */
+  letter-spacing: 0.01em;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px 0 rgba(44, 62, 80, 0.06);
+  padding: 40px 32px 32px 32px;
+  margin: 24px 0;
+  border: 1.5px solid #f2f3f1; /* Very light gray border */
+}
+
+a {
+  color: #007bff; /* Default link color (blue) */
+  text-decoration: none; /* Remove underline by default */
+  font-weight: 500; /* Slightly bold for better visibility */
+  transition:
+    color 0.3s ease,
+    text-decoration 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect */
+a:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline; /* Add underline on hover */
+}
+
+/* Focus effect */
+a:focus {
+  outline: 2px solid #80bdff; /* Add a focus outline for accessibility */
+  outline-offset: 2px; /* Space between the outline and the element */
+}
+
+/* Visited link */
+a:visited {
+  color: #6c757d; /* Gray color for visited links */
+}
+
+/* Active link */
+a:active {
+  color: #004085; /* Even darker blue for active state */
+  text-decoration: underline; /* Keep underline for active state */
+}

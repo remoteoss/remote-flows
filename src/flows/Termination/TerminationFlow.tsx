@@ -8,7 +8,20 @@ import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
 
 export type RenderProps = {
+  /**
+   * The termination bag returned by the useTermination hook.
+   * This bag contains all the methods and properties needed to handle the termination flow.
+   * @see {@link useTermination}
+   */
   terminationBag: ReturnType<typeof useTermination>;
+  /**
+   * The components used in the contract amendment flow.
+   * This includes the form, submit button, and confirmation form.
+   * @see {@link TerminationForm}
+   * @see {@link TerminationSubmit}
+   * @see {@link TimeOff}
+   * @see {@link TerminationBack}
+   */
   components: {
     Form: typeof TerminationForm;
     SubmitButton: typeof TerminationSubmit;

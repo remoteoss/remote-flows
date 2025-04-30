@@ -66,6 +66,7 @@ export function RadioGroupField({
               'space-y-3',
               `RemoteFlows__RadioGroupField__Item__${name}`,
             )}
+            data-field={name}
           >
             <FormLabel>{label}</FormLabel>
             <FormControl>
@@ -82,6 +83,7 @@ export function RadioGroupField({
                   <>
                     <FormItem
                       key={option.value}
+                      data-field={name}
                       className="flex items-start space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item"
                     >
                       <FormControl>

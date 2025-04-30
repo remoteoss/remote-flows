@@ -69,6 +69,7 @@ export function DatePickerField({
         }
         return (
           <FormItem
+            data-field={name}
             className={`flex flex-col RemoteFlows__DatePickerField__Item__${name}`}
           >
             <FormLabel className="RemoteFlows__DatePickerField__Label">

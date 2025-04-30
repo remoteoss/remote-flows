@@ -61,7 +61,10 @@ export function TextField({
         }
 
         return (
-          <FormItem className={`RemoteFlows__TextField__Item__${name}`}>
+          <FormItem
+            data-field={name}
+            className={`RemoteFlows__TextField__Item__${name}`}
+          >
             <FormLabel className="RemoteFlows__TextField__Label">
               {label}
             </FormLabel>

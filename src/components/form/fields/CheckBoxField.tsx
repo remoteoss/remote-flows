@@ -92,7 +92,10 @@ export function CheckBoxField({
           );
         }
         return (
-          <FormItem className={cn(`RemoteFlows__CheckBoxField__Item__${name}`)}>
+          <FormItem
+            data-field={name}
+            className={cn(`RemoteFlows__CheckBoxField__Item__${name}`)}
+          >
             <FormControl>
               <>
                 {options && multiple ? <FormLabel>{label}</FormLabel> : null}
