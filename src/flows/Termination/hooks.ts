@@ -17,7 +17,7 @@ import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
-import { jsonSchema } from '@/src/flows/Termination/jsonSchema';
+import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -99,9 +99,13 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
+  const formValues = stepState.values
+    ? stepState.values[stepState.currentStep.name as keyof typeof STEPS]
+    : fieldValues;
+
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
-      formValues: fieldValues,
+      formValues: formValues,
       jsfModify: options?.jsfModify,
       step: stepState.currentStep.name,
     });
@@ -235,7 +239,8 @@ export const useTermination = ({
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
-          entireTerminationSchema?.fields,
+          terminationHeadlessForm?.fields,
+          { isPartialValidation: true },
         );
         setFieldValues(parsedValues as TerminationFormValues);
       }
