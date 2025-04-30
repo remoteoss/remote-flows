@@ -1,4 +1,4 @@
-import { employment } from '@/src/common/fixtures';
+import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';

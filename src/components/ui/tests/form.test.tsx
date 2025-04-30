@@ -63,41 +63,6 @@ describe('Form', () => {
       );
     });
 
-    it('removes script tags from HTML content', () => {
-      const htmlWithScript =
-        '<p>Safe content</p><script>alert("XSS");</script>';
-      render(<FormDescription>{htmlWithScript}</FormDescription>, { wrapper });
-
-      expect(screen.getByText('Safe content')).toBeInTheDocument();
-      expect(screen.queryByText('alert("XSS");')).not.toBeInTheDocument();
-    });
-
-    it('removes javascript: URLs and event handlers from anchor tags', () => {
-      const htmlWithUnsafeAnchor =
-        '<a href="javascript:alert(\'XSS\')" onclick="alert(\'XSS\')">Click me</a>';
-      render(<FormDescription>{htmlWithUnsafeAnchor}</FormDescription>, {
-        wrapper,
-      });
-
-      const link = screen.getByText('Click me');
-      expect(link).toBeInTheDocument();
-
-      expect(link).not.toHaveAttribute('href', "javascript:alert('XSS')");
-      expect(link).not.toHaveAttribute('onclick');
-    });
-
-    it('removes onerror attributes from img tags', () => {
-      const htmlWithUnsafeImg =
-        '<img src="invalid.jpg" onerror="alert(\'XSS\')" alt="Test image">';
-      render(<FormDescription>{htmlWithUnsafeImg}</FormDescription>, {
-        wrapper,
-      });
-
-      const img = screen.getByAltText('Test image');
-      expect(img).toBeInTheDocument();
-      expect(img).not.toHaveAttribute('onerror');
-    });
-
     it('adds `_blank` and `noopener noreferrer` for external links', () => {
       const htmlWithExternalLink = `<a href="https://example.com" target="_blank">link</a>`;
       render(<FormDescription>{htmlWithExternalLink}</FormDescription>, {

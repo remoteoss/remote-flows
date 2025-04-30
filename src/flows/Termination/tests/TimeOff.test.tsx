@@ -4,7 +4,7 @@ import React from 'react';
 import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { employment } from '@/src/common/fixtures';
+import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
 import {
   RenderProps,
