@@ -61,7 +61,10 @@ export function TextAreaField({
 
         const valueLength = field.value?.length ?? 0;
         return (
-          <FormItem className={`RemoteFlows__TextArea__Item__${name}`}>
+          <FormItem
+            data-field={name}
+            className={`RemoteFlows__TextArea__Item__${name}`}
+          >
             <FormLabel className="RemoteFlows__TextArea__Label">
               {label}
             </FormLabel>

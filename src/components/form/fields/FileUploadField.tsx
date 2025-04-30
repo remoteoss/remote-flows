@@ -93,7 +93,10 @@ export function FileUploadField({
           );
         }
         return (
-          <FormItem className={`RemoteFlows__FileUpload__Item__${name}`}>
+          <FormItem
+            data-field={name}
+            className={`RemoteFlows__FileUpload__Item__${name}`}
+          >
             <FormLabel className="RemoteFlows__FileUpload__Label">
               {label}
             </FormLabel>

@@ -101,9 +101,9 @@ export const Termination = () => {
                     'paid_time_off' && (
                     <TimeOff
                       render={({ employment, timeoff }) => {
-                        const username = employment.data?.data.employment
+                        const username = employment?.data?.employment
                           ?.basic_information?.name as string;
-                        const days = timeoff?.data?.data?.total_count || 0;
+                        const days = timeoff?.data?.total_count || 0;
 
                         // if days is 0 or > 1 'days' else 'day
                         const daysLiteral =

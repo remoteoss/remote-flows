@@ -73,7 +73,10 @@ export function SelectField({
         }
 
         return (
-          <FormItem className={`RemoteFlows__SelectField__Item__${name}`}>
+          <FormItem
+            data-field={name}
+            className={`RemoteFlows__SelectField__Item__${name}`}
+          >
             <FormLabel className="RemoteFlows__SelectField__Label">
               {label}
             </FormLabel>
