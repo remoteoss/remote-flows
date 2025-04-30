@@ -1,20 +1,12 @@
 import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
 import './App.css';
 
-function PersonalEmailDescription({ onClick }: { onClick: () => void }) {
-  return (
-    <p>
-      <strong>Personal email</strong> is used to send the termination letter to
-      the employee. It is not mandatory, but it is recommended to add it.
-      <br />
-      <br />
-      <strong>Note:</strong> If you do not have a personal email, you can use
-      the company email. The employee will receive the termination letter in
-      their company email.
-      <a onClick={onClick}>more here</a>
-    </p>
-  );
-}
+const STEPS = [
+  'Employee Communication',
+  'Termination Details',
+  'Paid Time Off',
+  'Additional Information',
+];
 
 export const Termination = () => {
   const fetchToken = () => {
@@ -37,12 +29,10 @@ export const Termination = () => {
           options={{
             jsfModify: {
               fields: {
-                personal_email: {
-                  description: () => (
-                    <PersonalEmailDescription
-                      onClick={() => console.log('click anchor')}
-                    />
-                  ),
+                confidential: {
+                  'x-jsf-presentation': {
+                    statement: null, // this removes potential fixed statements that come from the confidential field
+                  },
                 },
               },
             },
@@ -56,23 +46,49 @@ export const Termination = () => {
 
             const currentStepIndex = terminationBag.stepState.currentStep.index;
 
+            const stepTitle = STEPS[currentStepIndex];
+
             return (
               <>
-                <Form
-                  username="ze"
-                  onSubmit={(payload) => console.log('payload', payload)}
-                  onError={(error) => console.log('error', error)}
-                  onSuccess={(data) => console.log('data', data)}
-                />
-                {currentStepIndex > 0 && <Back>Back</Back>}
-                {currentStepIndex <=
-                  terminationBag.stepState.totalSteps - 1 && (
-                  <SubmitButton>
-                    {currentStepIndex < terminationBag.stepState.totalSteps - 1
-                      ? 'Next Step'
-                      : 'Send termination'}
-                  </SubmitButton>
-                )}
+                <div className="steps-navigation">
+                  <ul>
+                    {STEPS.map((step, index) => (
+                      <li
+                        key={index}
+                        className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
+                      >
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="alert">
+                  <p>
+                    Please do not inform the employee of their termination until
+                    we review your request for legal risks. When we approve your
+                    request, you can inform the employee and we'll take it from
+                    there.
+                  </p>
+                </div>
+                <div className="card" style={{ marginBottom: '20px' }}>
+                  <h1 className="heading-green">{stepTitle}</h1>
+                  <Form
+                    username="ze"
+                    onSubmit={(payload) => console.log('payload', payload)}
+                    onError={(error) => console.log('error', error)}
+                    onSuccess={(data) => console.log('data', data)}
+                  />
+                  {currentStepIndex > 0 && <Back>Back</Back>}
+                  {currentStepIndex <=
+                    terminationBag.stepState.totalSteps - 1 && (
+                    <SubmitButton>
+                      {currentStepIndex <
+                      terminationBag.stepState.totalSteps - 1
+                        ? 'Next Step'
+                        : 'Send termination'}
+                    </SubmitButton>
+                  )}
+                </div>
               </>
             );
           }}
