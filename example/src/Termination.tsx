@@ -73,7 +73,7 @@ export const Termination = () => {
                   </div>
                 )}
                 <div className="card" style={{ marginBottom: '20px' }}>
-                  <h1 className="heading-green">{stepTitle}</h1>
+                  <h1 className="heading">{stepTitle}</h1>
                   <Form
                     username="ze"
                     onSubmit={(payload) => console.log('payload', payload)}
