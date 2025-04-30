@@ -62,14 +62,16 @@ export const Termination = () => {
                     ))}
                   </ul>
                 </div>
-                <div className="alert">
-                  <p>
-                    Please do not inform the employee of their termination until
-                    we review your request for legal risks. When we approve your
-                    request, you can inform the employee and we'll take it from
-                    there.
-                  </p>
-                </div>
+                {currentStepIndex === 0 && (
+                  <div className="alert">
+                    <p>
+                      Please do not inform the employee of their termination
+                      until we review your request for legal risks. When we
+                      approve your request, you can inform the employee and
+                      we'll take it from there.
+                    </p>
+                  </div>
+                )}
                 <div className="card" style={{ marginBottom: '20px' }}>
                   <h1 className="heading-green">{stepTitle}</h1>
                   <Form

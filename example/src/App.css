@@ -177,14 +177,14 @@
 }
 
 .step-item.active {
-  color: #228833; /* Strong green for active text */
-  background: #eaf7ef; /* Very light green background */
+  color: #22356f; /* Strong green for active text */
+  background: #eaf3fa; /* Very light green background */
   font-weight: bold;
 }
 
 .step-item.active .step-number {
-  border-color: #228833; /* Green border for active */
-  color: #228833; /* Green number */
+  border-color: #22356f; /* Green border for active */
+  color: #22356f; /* Green number */
 }
 
 .step-item:not(.active):hover {
@@ -199,7 +199,7 @@
 .heading-green {
   font-family: 'Georgia', serif;
   font-size: 2rem; /* Adjust size as needed */
-  color: #228833; /* Strong green, matching the step color */
+  color: #22356f; /* Strong green, matching the step color */
   font-weight: bold;
   margin: 24px 0 16px 0; /* Adjust spacing as needed */
   letter-spacing: 0.01em;
