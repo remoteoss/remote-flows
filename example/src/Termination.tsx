@@ -1,4 +1,6 @@
 import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import { TerminationDialog } from './TerminationDialog';
+import { useState } from 'react';
 import './App.css';
 
 const TerminationReasonDetailsDescription = ({
@@ -21,6 +23,7 @@ const STEPS = [
 ];
 
 export const Termination = () => {
+  const [open, setOpen] = useState(false);
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -49,7 +52,9 @@ export const Termination = () => {
                 },
                 termination_reason: {
                   description: () => (
-                    <TerminationReasonDetailsDescription onClick={() => {}} />
+                    <TerminationReasonDetailsDescription
+                      onClick={() => setOpen(true)}
+                    />
                   ),
                 },
               },
@@ -136,6 +141,7 @@ export const Termination = () => {
             );
           }}
         />
+        <TerminationDialog open={open} setOpen={setOpen} />
       </div>
     </RemoteFlows>
   );
