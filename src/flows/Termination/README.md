@@ -61,6 +61,7 @@ export const Termination = () => {
           options={{
             jsfModify: {
               // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
+              // you can also inspect the form-item elements, we added a data-field property, with that value you can use it in the fields object to modify the schema
               fields: {
                 confidential: {
                   'x-jsf-presentation': {
