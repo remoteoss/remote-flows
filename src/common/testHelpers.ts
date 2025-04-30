@@ -3,6 +3,12 @@ import { screen, waitFor, within } from '@testing-library/react';
 
 export async function fillRadio(radioName: string, radioValue: string) {
   const user = userEvent.setup();
+  await waitFor(() => {
+    const radioGroup = screen.getByRole('radiogroup', {
+      name: new RegExp(radioName, 'i'),
+    });
+    expect(radioGroup).toBeInTheDocument();
+  });
   const radioGroup = screen.getByRole('radiogroup', {
     name: new RegExp(radioName, 'i'),
   });

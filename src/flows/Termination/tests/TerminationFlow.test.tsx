@@ -249,7 +249,7 @@ describe('TerminationFlow', () => {
   });
 
   // this test needs to be before the multi step, something strange is happening when executed in parallel with the next one
-  it.skip('should fill the first step and go back to the previous step', async () => {
+  it('should fill the first step and go back to the previous step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
