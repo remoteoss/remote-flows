@@ -8,7 +8,7 @@ import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractAmendmentFlow, RenderProps } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
-import { employment } from '@/src/common/fixtures';
+import { employment } from '@/src/tests/fixtures';
 
 const queryClient = new QueryClient();
 

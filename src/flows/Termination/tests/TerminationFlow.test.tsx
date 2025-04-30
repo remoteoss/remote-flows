@@ -15,7 +15,7 @@ import {
   fillRadio,
   fillSelect,
   selectDayInCalendar,
-} from '@/src/common/testHelpers';
+} from '@/src/tests/testHelpers';
 import { http, HttpResponse } from 'msw';
 import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
