@@ -206,9 +206,9 @@ Component that retrieves the employment and the timeoff of the employee. It uses
 ```tsx
 <TimeOff
   render={({ timeoff, employment }) => {
-    const username = employment.data?.data.employment?.basic_information
+    const username = employment?.data.employment?.basic_information
       ?.name as string;
-    const days = timeoff?.data?.data?.total_count || 0;
+    const days = timeoff?.data?.total_count || 0;
 
     // if days is 0 or > 1 'days' else 'day
     const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
