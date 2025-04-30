@@ -60,7 +60,7 @@ export const Termination = () => {
               return <div>Loading...</div>;
             }
 
-            const { Form, SubmitButton, Back } = components;
+            const { Form, SubmitButton, Back, TimeOff } = components;
 
             const currentStepIndex = terminationBag.stepState.currentStep.index;
 
@@ -92,6 +92,29 @@ export const Termination = () => {
                 )}
                 <div className="card" style={{ marginBottom: '20px' }}>
                   <h1 className="heading">{stepTitle}</h1>
+                  {terminationBag.stepState.currentStep.name ===
+                    'paid_time_off' && (
+                    <TimeOff
+                      render={({ employment, timeoff }) => {
+                        const username = employment.data?.data.employment
+                          ?.basic_information?.name as string;
+                        const days = timeoff?.data?.data?.total_count || 0;
+
+                        // if days is 0 or > 1 'days' else 'day
+                        const daysLiteral =
+                          days > 1 || days === 0 ? 'days' : 'day';
+                        return (
+                          <>
+                            <p>
+                              We have recorded {days} {daysLiteral} of paid time
+                              off for {username}
+                            </p>
+                            <a href="#">See {username}'s timeoff breakdown</a>
+                          </>
+                        );
+                      }}
+                    />
+                  )}
                   <Form
                     username="ze"
                     onSubmit={(payload) => console.log('payload', payload)}
