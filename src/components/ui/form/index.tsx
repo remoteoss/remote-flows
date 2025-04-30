@@ -13,6 +13,7 @@ import {
 
 import { Label } from '@/src/components/ui/label';
 import { cn } from '@/src/lib/utils';
+import { FormDescription } from '@/src/components/ui/form/description';
 
 const Form = FormProvider;
 
@@ -129,30 +130,6 @@ const FormControl = React.forwardRef<
 });
 
 FormControl.displayName = 'FormControl';
-
-function FormDescription({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<'p'> & {
-  children?: React.ReactNode | (() => React.ReactNode);
-}) {
-  const { formDescriptionId } = useFormField();
-
-  return (
-    <p
-      data-slot="form-description"
-      id={formDescriptionId}
-      className={cn('text-base-color text-xs', className)}
-      {...(typeof children === 'string'
-        ? { dangerouslySetInnerHTML: { __html: children } }
-        : {})} // Only add dangerouslySetInnerHTML when children is a string
-      {...props}
-    >
-      {typeof children === 'function' ? children() : null}
-    </p>
-  );
-}
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   const { error, formMessageId } = useFormField();
