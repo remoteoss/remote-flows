@@ -92,103 +92,150 @@ describe('TerminationFlow', () => {
   });
 
   async function fillEmployeeCommunication(
-    values: Partial<{
+    values?: Partial<{
       employeePersonalEmail: string;
       isRequestConfidential: string;
       isEmployeeInformed: string;
-    }> = {
+      howDidYouShareTheInformation: string;
+      whenWasEmployeeInformed: string;
+    }>,
+  ) {
+    const defaultValues = {
       employeePersonalEmail: 'ze@remote.com',
       isRequestConfidential: 'No',
       isEmployeeInformed: 'No',
-    },
-  ) {
+      howDidYouShareTheInformation: 'Whatever text',
+      whenWasEmployeeInformed: '15',
+    };
+
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
+
     const user = userEvent.setup();
-    if (values?.isRequestConfidential) {
+    if (newValues?.isRequestConfidential) {
       await fillRadio(
         'Is this request confidential?',
-        values?.isRequestConfidential,
+        newValues?.isRequestConfidential,
       );
     }
-    if (values?.isEmployeeInformed) {
+    if (newValues?.isEmployeeInformed) {
       await fillRadio(
         'Have you informed the employee of the termination?',
-        values?.isEmployeeInformed,
+        newValues?.isEmployeeInformed,
       );
     }
-    if (values?.employeePersonalEmail) {
+
+    if (
+      newValues?.isEmployeeInformed === 'Yes' &&
+      newValues?.whenWasEmployeeInformed
+    ) {
+      await selectDayInCalendar(newValues?.whenWasEmployeeInformed);
+    }
+
+    if (
+      newValues?.isEmployeeInformed === 'Yes' &&
+      newValues?.howDidYouShareTheInformation
+    ) {
+      const howDidYouShareTheInformation = screen.getByLabelText(
+        /How did you share this information?/i,
+      );
+      await user.type(
+        howDidYouShareTheInformation,
+        newValues?.howDidYouShareTheInformation,
+      );
+    }
+
+    if (newValues?.employeePersonalEmail) {
       const employeePersonalEmail = screen.getByLabelText(
         /Employee's personal email/i,
       );
-      await user.type(employeePersonalEmail, values?.employeePersonalEmail);
+      await user.type(employeePersonalEmail, newValues?.employeePersonalEmail);
     }
   }
 
   async function fillTerminationDetails(
-    values: Partial<{
+    values?: Partial<{
       willChangeTermination: string;
       terminationReasonDetails: string;
       terminationReason: string;
       riskAssessmentReason: string;
       proposedTerminationDate: string;
-    }> = {
+    }>,
+  ) {
+    const defaultValues = {
       willChangeTermination: 'No',
       terminationReasonDetails: 'whatever text',
       terminationReason: 'Gross misconduct',
       riskAssessmentReason: 'Currently on or recently returned from sick leave',
       proposedTerminationDate: '15',
-    },
-  ) {
+    };
+
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
     const user = userEvent.setup();
-    if (values?.willChangeTermination) {
+    if (newValues?.willChangeTermination) {
       await fillRadio(
         'Do you consider it is likely that the employee will challenge their termination?',
-        values?.willChangeTermination,
+        newValues?.willChangeTermination,
       );
     }
 
-    if (values?.terminationReasonDetails) {
+    if (newValues?.terminationReasonDetails) {
       const terminationReasonDetails = screen.getByLabelText(
         /Termination reason details/i,
       );
       await user.type(
         terminationReasonDetails,
-        values?.terminationReasonDetails,
+        newValues?.terminationReasonDetails,
       );
     }
 
-    if (values?.terminationReason) {
-      await fillSelect('Termination reason', values?.terminationReason);
+    if (newValues?.terminationReason) {
+      await fillSelect('Termination reason', newValues?.terminationReason);
     }
 
-    if (values?.riskAssessmentReason) {
-      await fillCheckbox(values?.riskAssessmentReason);
+    if (newValues?.riskAssessmentReason) {
+      await fillCheckbox(newValues?.riskAssessmentReason);
     }
-    if (values?.proposedTerminationDate) {
-      await selectDayInCalendar(values?.proposedTerminationDate);
+    if (newValues?.proposedTerminationDate) {
+      await selectDayInCalendar(newValues?.proposedTerminationDate);
     }
   }
 
-  async function fillPTO(
-    values: Partial<{ agreePTO: string }> = {
+  async function fillPTO(values?: Partial<{ agreePTO: string }>) {
+    const defaultValues = {
       agreePTO: 'Yes',
-    },
-  ) {
-    if (values?.agreePTO) {
+    };
+
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
+    if (newValues?.agreePTO) {
       await fillRadio(
         'Are these paid time off records correct?',
-        values?.agreePTO,
+        newValues?.agreePTO,
       );
     }
   }
 
   async function fillAdditionalDetails(
-    values: Partial<{
+    values?: Partial<{
       ackowledgeTermination: boolean;
-    }> = {
-      ackowledgeTermination: true,
-    },
+    }>,
   ) {
-    if (values?.ackowledgeTermination) {
+    const defaultValues = {
+      ackowledgeTermination: true,
+    };
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
+    if (newValues?.ackowledgeTermination) {
       await fillCheckbox(
         'I, ze have read and agree to the procedures as defined in the termination form.',
       );
@@ -207,7 +254,9 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Employee Communication/i);
 
-    await fillEmployeeCommunication();
+    await fillEmployeeCommunication({
+      isEmployeeInformed: 'Yes',
+    });
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -227,6 +276,12 @@ describe('TerminationFlow', () => {
       /Employee's personal email/i,
     );
     expect(employeePersonalEmail).toHaveValue('ze@remote.com');
+
+    const howDidYouShareTheInformation = screen.getByLabelText(
+      /How did you share this information?/i,
+    );
+
+    expect(howDidYouShareTheInformation).toHaveValue('Whatever text');
   });
 
   it('should submit the termination flow', async () => {

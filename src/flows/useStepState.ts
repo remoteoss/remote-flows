@@ -6,12 +6,12 @@ export type Step = {
   name: string;
 };
 
-type StepState<T extends string> = {
+type StepState<T extends string, Fields = FieldValues> = {
   currentStep: Step;
   totalSteps: number;
   values:
     | {
-        [key in T]: FieldValues;
+        [key in T]: Fields;
       }
     | null;
 };
@@ -26,7 +26,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
-  const [stepState, setStepState] = useState<StepState<T>>({
+  const [stepState, setStepState] = useState<StepState<T, Fields>>({
     currentStep: steps[stepKeys[0]],
     totalSteps: stepKeys.length,
     values: null,
@@ -47,7 +47,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
             ...previousState.values?.[previousState.currentStep.name as T],
             ...fieldValues,
           },
-        } as { [key in T]: FieldValues },
+        } as { [key in T]: Fields },
       }));
       setFieldValues({} as Fields); // Reset field values for the next step
     }
@@ -68,7 +68,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
             ...previousState.values?.[previousState.currentStep.name as T],
             ...fieldValues,
           },
-        } as { [key in T]: FieldValues },
+        } as { [key in T]: Fields },
       }));
       setFieldValues({} as Fields); // Reset field values for the previous step
     }
