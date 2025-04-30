@@ -2,4 +2,4 @@
 '@remoteoss/remote-flows': minor
 ---
 
-Add TerminationFlow and subcomponents
+Add TerminationFlow and inner components. Includes documentation and examples.
