@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.2.0
+
+### Minor Changes
+
+- 55a43cc: Add TerminationFlow and inner components. Includes documentation and examples.
+
 ## 0.1.2
 
 ### Patch Changes
