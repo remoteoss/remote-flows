@@ -1,6 +1,18 @@
 import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
 import './App.css';
 
+const TerminationReasonDetailsDescription = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => (
+  <>
+    Make sure you choose an accurate termination reason to avoid unfair or
+    unlawful dismissal claims.{' '}
+    <a onClick={onClick}>Learn more termination details</a>
+  </>
+);
+
 const STEPS = [
   'Employee Communication',
   'Termination Details',
@@ -28,11 +40,17 @@ export const Termination = () => {
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
           options={{
             jsfModify: {
+              // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
               fields: {
                 confidential: {
                   'x-jsf-presentation': {
                     statement: null, // this removes potential fixed statements that come from the confidential field
                   },
+                },
+                termination_reason: {
+                  description: () => (
+                    <TerminationReasonDetailsDescription onClick={() => {}} />
+                  ),
                 },
               },
             },

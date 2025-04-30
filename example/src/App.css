@@ -213,3 +213,35 @@
   margin: 24px 0;
   border: 1.5px solid #f2f3f1; /* Very light gray border */
 }
+
+a {
+  color: #007bff; /* Default link color (blue) */
+  text-decoration: none; /* Remove underline by default */
+  font-weight: 500; /* Slightly bold for better visibility */
+  transition:
+    color 0.3s ease,
+    text-decoration 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect */
+a:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline; /* Add underline on hover */
+}
+
+/* Focus effect */
+a:focus {
+  outline: 2px solid #80bdff; /* Add a focus outline for accessibility */
+  outline-offset: 2px; /* Space between the outline and the element */
+}
+
+/* Visited link */
+a:visited {
+  color: #6c757d; /* Gray color for visited links */
+}
+
+/* Active link */
+a:active {
+  color: #004085; /* Even darker blue for active state */
+  text-decoration: underline; /* Keep underline for active state */
+}
