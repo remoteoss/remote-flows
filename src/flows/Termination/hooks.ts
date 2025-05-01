@@ -7,6 +7,8 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import omitBy from 'lodash/omitBy';
+import isNull from 'lodash/isNull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
@@ -133,6 +135,7 @@ export const useTermination = ({
       const parsedValues = parseJSFToValidate(
         values,
         entireTerminationSchema.fields,
+        { isPartialValidation: true },
       );
 
       const { customer_informed_employee: customerInformedEmployee } =
@@ -166,10 +169,13 @@ export const useTermination = ({
         'customer_informed_employee_description',
       );
 
-      const terminationDetails: TerminationDetailsParams = {
-        ...normalizedValues,
-        ...employeeAwareness,
-      } as TerminationDetailsParams;
+      const terminationDetails: TerminationDetailsParams = omitBy(
+        {
+          ...normalizedValues,
+          ...employeeAwareness,
+        },
+        isNull,
+      ) as unknown as TerminationDetailsParams;
 
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
