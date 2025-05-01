@@ -248,6 +248,22 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
+  it('should render the conditional fields of the radio after only touching the radio field', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    await screen.findByText(/Step: Employee Communication/i);
+
+    await fillRadio(
+      'Have you informed the employee of the termination?',
+      'Yes',
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/How did you share this information?/i),
+      ).toBeInTheDocument();
+    });
+  });
+
   it('should render will_challenge_termination details field immediately after selecting will_challenge_termination', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
     await screen.findByText(/Step: Employee Communication/i);
