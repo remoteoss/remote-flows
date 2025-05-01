@@ -99,9 +99,12 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const formValues = stepState.values
-    ? stepState.values[stepState.currentStep.name as keyof typeof STEPS]
-    : fieldValues;
+  const formValues =
+    stepState.values &&
+    stepState.values[stepState.currentStep.name as keyof typeof STEPS] !==
+      undefined
+      ? stepState.values[stepState.currentStep.name as keyof typeof STEPS]
+      : fieldValues;
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
@@ -236,10 +239,10 @@ export const useTermination = ({
      * @param values - New form values to set
      */
     checkFieldUpdates: (values: Partial<TerminationFormValues>) => {
-      if (terminationHeadlessForm) {
+      if (entireTerminationSchema) {
         const parsedValues = parseJSFToValidate(
           values,
-          terminationHeadlessForm?.fields,
+          entireTerminationSchema?.fields,
           { isPartialValidation: true },
         );
         setFieldValues(parsedValues as TerminationFormValues);

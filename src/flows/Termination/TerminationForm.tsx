@@ -36,8 +36,12 @@ export function TerminationForm({
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      if (Object.keys(form.formState.dirtyFields).length > 0) {
-        // TODO: for some reason isDirty doesn't work the first time we touch the form
+      const isAnyFieldDirty = Object.keys(values).some(
+        (key) =>
+          values[key as keyof TerminationFormValues] !==
+          terminationBag?.initialValues?.[key as keyof TerminationFormValues],
+      );
+      if (isAnyFieldDirty) {
         terminationBag?.checkFieldUpdates(values);
       }
     });

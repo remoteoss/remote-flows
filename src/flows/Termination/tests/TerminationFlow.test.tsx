@@ -248,6 +248,29 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Employee Communication/i);
   });
 
+  it('should render will_challenge_termination details field immediately after selecting will_challenge_termination', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    await screen.findByText(/Step: Employee Communication/i);
+    await fillEmployeeCommunication();
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+    await screen.findByText(/Step: Termination Details/i);
+
+    await fillRadio(
+      'Do you consider it is likely that the employee will challenge their termination?',
+      'Yes',
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(
+          /Please explain how the employee will challenge their termination/i,
+        ),
+      ).toBeInTheDocument();
+    });
+  });
+
   // this test needs to be before the multi step, something strange is happening when executed in parallel with the next one
   it('should fill the first step and go back to the previous step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper });
