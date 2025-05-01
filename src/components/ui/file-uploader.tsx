@@ -17,7 +17,8 @@ export function FileUploader({
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     inputRef.current?.click();
   };
 
@@ -44,7 +45,7 @@ export function FileUploader({
         aria-label="File upload"
         multiple={multiple}
       />
-      <Button onClick={handleClick} className="gap-2">
+      <Button type="button" onClick={handleClick} className="gap-2">
         <Upload className="h-4 w-4" />
         Choose File
       </Button>

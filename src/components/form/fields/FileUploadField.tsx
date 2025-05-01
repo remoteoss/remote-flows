@@ -106,13 +106,8 @@ export function FileUploadField({
                   event: React.ChangeEvent<HTMLInputElement>,
                 ) => {
                   const files = await convertFilesToBase64(event);
-                  if (multiple) {
-                    field.onChange(files);
-                    onChange?.(files);
-                  } else {
-                    field.onChange([files[0]]);
-                    onChange?.([files[0]]);
-                  }
+                  field.onChange(multiple ? files : [files[0]]); // Update the field value
+                  onChange?.(multiple ? files : [files[0]]);
                 }}
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
