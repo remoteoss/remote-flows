@@ -101,12 +101,14 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const formValues =
-    stepState.values &&
-    stepState.values[stepState.currentStep.name as keyof typeof STEPS] !==
-      undefined
-      ? stepState.values[stepState.currentStep.name as keyof typeof STEPS]
-      : fieldValues;
+  // not sure about this
+  const formValues = {
+    ...stepState.values?.employee_communication,
+    ...stepState.values?.termination_details,
+    ...stepState.values?.paid_time_off,
+    ...stepState.values?.additional_information,
+    ...fieldValues,
+  };
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
