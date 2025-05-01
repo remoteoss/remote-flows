@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.2.2
+
+### Patch Changes
+
+- 668577e: Fix formValues state for the termination form as conditional fields weren't working correctly
+
 ## 0.2.1
 
 ### Patch Changes
