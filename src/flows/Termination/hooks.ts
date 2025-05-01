@@ -101,12 +101,8 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  // not sure about this
   const formValues = {
-    ...stepState.values?.employee_communication,
-    ...stepState.values?.termination_details,
-    ...stepState.values?.paid_time_off,
-    ...stepState.values?.additional_information,
+    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
     ...fieldValues,
   };
 
