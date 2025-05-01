@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.2.1
+
+### Patch Changes
+
+- 0c60bdb: - Fixes file upload component preventing the submission of the form
+  - Fixes conditional fields not appearing after selecting radio fields
+  - Fixes payload submission
+
 ## 0.2.0
 
 ### Minor Changes
