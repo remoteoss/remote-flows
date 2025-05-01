@@ -403,9 +403,7 @@ describe('TerminationFlow', () => {
       employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
       termination_details: {
         acknowledge_termination_procedure: true,
-        additional_comments: null,
         agrees_to_pto_amount: true,
-        agrees_to_pto_amount_notes: null,
         confidential: false,
         customer_informed_employee: true,
         employee_awareness: {
@@ -419,7 +417,6 @@ describe('TerminationFlow', () => {
         termination_reason: 'gross_misconduct',
         termination_reason_files: [],
         will_challenge_termination: false,
-        will_challenge_termination_description: null,
       },
       type: 'termination',
     });
