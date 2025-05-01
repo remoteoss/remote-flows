@@ -133,6 +133,7 @@ export const useTermination = ({
       const parsedValues = parseJSFToValidate(
         values,
         entireTerminationSchema.fields,
+        { isPartialValidation: true },
       );
 
       const { customer_informed_employee: customerInformedEmployee } =
