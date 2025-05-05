@@ -191,6 +191,10 @@ export const useTermination = ({
     previousStep();
   }
 
+  function next() {
+    nextStep();
+  }
+
   const initialValues = buildInitialValues({
     ...stepState.values?.employee_communication,
     ...stepState.values?.termination_details,
@@ -264,5 +268,11 @@ export const useTermination = ({
      * @returns {void}
      */
     back,
+
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    next,
   };
 };

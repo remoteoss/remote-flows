@@ -7,7 +7,7 @@ import { http, HttpResponse } from 'msw';
 import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
 import {
-  RenderProps,
+  TerminationRenderProps,
   TerminationFlow,
 } from '@/src/flows/Termination/TerminationFlow';
 import { render, screen } from '@testing-library/react';
@@ -22,7 +22,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
 );
 
 describe('TimeOff', () => {
-  const mockRender = vi.fn(({ components }: RenderProps) => {
+  const mockRender = vi.fn(({ components }: TerminationRenderProps) => {
     const { TimeOff } = components;
     return (
       <TimeOff

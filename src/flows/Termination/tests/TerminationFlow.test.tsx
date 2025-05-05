@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
-  RenderProps,
+  TerminationRenderProps,
   TerminationFlow,
 } from '@/src/flows/Termination/TerminationFlow';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -33,38 +33,40 @@ const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
 describe('TerminationFlow', () => {
-  const mockRender = vi.fn(({ terminationBag, components }: RenderProps) => {
-    const { Form, Back, SubmitButton } = components;
+  const mockRender = vi.fn(
+    ({ terminationBag, components }: TerminationRenderProps) => {
+      const { Form, Back, SubmitButton } = components;
 
-    const currentStepIndex = terminationBag.stepState.currentStep.index;
+      const currentStepIndex = terminationBag.stepState.currentStep.index;
 
-    const steps: Record<number, string> = {
-      [0]: 'Employee Communication',
-      [1]: 'Termination Details',
-      [2]: 'Paid Time Off',
-      [3]: 'Additional Information',
-    };
+      const steps: Record<number, string> = {
+        [0]: 'Employee Communication',
+        [1]: 'Termination Details',
+        [2]: 'Paid Time Off',
+        [3]: 'Additional Information',
+      };
 
-    return (
-      <>
-        <h1>Step: {steps[currentStepIndex]}</h1>
-        <Form
-          username="ze"
-          onSubmit={mockOnSubmit}
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
-        />
-        {currentStepIndex > 0 && <Back>Back</Back>}
-        {currentStepIndex <= terminationBag.stepState.totalSteps - 1 && (
-          <SubmitButton>
-            {currentStepIndex < terminationBag.stepState.totalSteps - 1
-              ? 'Next Step'
-              : 'Send termination'}
-          </SubmitButton>
-        )}
-      </>
-    );
-  });
+      return (
+        <>
+          <h1>Step: {steps[currentStepIndex]}</h1>
+          <Form
+            username="ze"
+            onSubmit={mockOnSubmit}
+            onSuccess={mockOnSuccess}
+            onError={mockOnError}
+          />
+          {currentStepIndex > 0 && <Back>Back</Back>}
+          {currentStepIndex <= terminationBag.stepState.totalSteps - 1 && (
+            <SubmitButton>
+              {currentStepIndex < terminationBag.stepState.totalSteps - 1
+                ? 'Next Step'
+                : 'Send termination'}
+            </SubmitButton>
+          )}
+        </>
+      );
+    },
+  );
   const defaultProps = {
     employmentId: '2ef4068b-11c7-4942-bb3c-70606c83688e',
     countryCode: 'PRT',
