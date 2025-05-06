@@ -13,7 +13,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 
 type TerminationFormProps = {
   username: string;
-  onSubmit?: (payload: CreateOffboardingParams) => Promise<void>;
+  onSubmit?: (payload: CreateOffboardingParams) => void | Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
