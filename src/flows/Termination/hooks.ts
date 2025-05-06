@@ -118,7 +118,10 @@ export const useTermination = ({
   const createTermination = useCreateTermination();
   const { mutateAsync } = mutationToPromise(createTermination);
 
-  async function onSubmit(values: TerminationFormValues) {
+  async function onSubmit(
+    values: TerminationFormValues,
+    onSubmitForm?: (values: CreateOffboardingParams) => void,
+  ) {
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
@@ -180,6 +183,10 @@ export const useTermination = ({
         termination_details: terminationDetails,
         type: 'termination',
       };
+
+      if (onSubmitForm) {
+        onSubmitForm(terminationPayload);
+      }
 
       return mutateAsync(terminationPayload);
     }

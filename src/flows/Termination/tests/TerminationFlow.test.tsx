@@ -376,23 +376,25 @@ describe('TerminationFlow', () => {
     });
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
-      acknowledge_termination_procedure: true,
-      additional_comments: '',
-      agrees_to_pto_amount: 'yes',
-      agrees_to_pto_amount_notes: null,
-      confidential: 'no',
-      customer_informed_employee: 'yes',
-      customer_informed_employee_date: dynamicDate,
-      customer_informed_employee_description: 'Whatever text',
-      personal_email: 'ze@remote.com',
-      proposed_termination_date: dynamicDate,
-      reason_description: 'whatever text',
-      risk_assessment_reasons: ['sick_leave'],
-      termination_reason: 'gross_misconduct',
-      termination_reason_files: [],
-      timesheet_file: undefined,
-      will_challenge_termination: 'no',
-      will_challenge_termination_description: null,
+      employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
+      termination_details: {
+        acknowledge_termination_procedure: true,
+        agrees_to_pto_amount: true,
+        confidential: false,
+        customer_informed_employee: true,
+        employee_awareness: {
+          date: dynamicDate,
+          note: 'Whatever text',
+        },
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: dynamicDate,
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        will_challenge_termination: false,
+      },
+      type: 'termination',
     });
 
     await waitFor(() => {
