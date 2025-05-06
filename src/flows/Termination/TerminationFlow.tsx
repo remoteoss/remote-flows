@@ -19,7 +19,7 @@ export type TerminationRenderProps = {
   terminationBag: ReturnType<typeof useTermination>;
   /**
    * The components used in the termination flow.
-   * This includes the form, different step forms, submit button, back button and timeoff.
+   * This includes different steps, submit button, back button and timeoff.
    * @see {@link TerminationSubmit}
    * @see {@link TimeOff}
    * @see {@link TerminationBack}
