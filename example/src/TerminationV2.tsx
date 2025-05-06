@@ -3,6 +3,7 @@ import type {
   TerminationRenderProps,
   TerminationFormValues,
   OffboardingResponse,
+  CreateOffboardingParams,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
@@ -43,7 +44,8 @@ const fetchToken = () => {
 type SwitchFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
   components: TerminationRenderProps['components'];
-  onSubmit: (payload: TerminationFormValues, step: string) => Promise<void>;
+  onSubmitStep: (payload: TerminationFormValues, step: string) => Promise<void>;
+  onSubmitForm: (payload: CreateOffboardingParams) => Promise<void>;
   onError: (error: Error) => void;
   onSuccess: (response: OffboardingResponse) => void;
 };
@@ -51,7 +53,8 @@ type SwitchFormProps = {
 const SwitchForm = ({
   terminationBag,
   components,
-  onSubmit,
+  onSubmitStep,
+  onSubmitForm,
   onError,
   onSuccess,
 }: SwitchFormProps) => {
@@ -76,7 +79,9 @@ const SwitchForm = ({
             </p>
           </div>
           <EmployeeComunicationStep
-            onSubmit={(payload) => onSubmit(payload, 'employee_communication')}
+            onSubmit={(payload) =>
+              onSubmitStep(payload, 'employee_communication')
+            }
           />
           <SubmitButton>Next Step</SubmitButton>
         </>
@@ -85,7 +90,7 @@ const SwitchForm = ({
       return (
         <>
           <TerminationDetailsStep
-            onSubmit={(payload) => onSubmit(payload, 'termination_details')}
+            onSubmit={(payload) => onSubmitStep(payload, 'termination_details')}
           />
           <Back>Back</Back>
           <SubmitButton>Next Step</SubmitButton>
@@ -114,7 +119,7 @@ const SwitchForm = ({
             }}
           />
           <PaidTimeOffStep
-            onSubmit={(payload) => onSubmit(payload, 'paid_time_off')}
+            onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
           />
           <Back>Back</Back>
           <SubmitButton>Next Step</SubmitButton>
@@ -126,7 +131,7 @@ const SwitchForm = ({
         <>
           <AdditionalDetailsStep
             username="ze"
-            onSubmit={(payload) => onSubmit(payload, 'additional_information')}
+            onSubmit={(payload) => onSubmitForm(payload)}
             onSuccess={onSuccess}
             onError={onError}
           />
@@ -145,8 +150,12 @@ const TerminationForm = ({
 
   const stepTitle = STEPS[currentStepIndex];
 
-  const onSubmit = async (payload: TerminationFormValues, step: string) => {
-    console.log('onSubmit', payload, step);
+  const onSubmitStep = async (payload: TerminationFormValues, step: string) => {
+    console.log('onSubmitStep', payload, step);
+  };
+
+  const onSubmitForm = async (payload: CreateOffboardingParams) => {
+    console.log('onSubmitForm', payload);
   };
 
   const onSuccess = (response: OffboardingResponse) => {
@@ -180,7 +189,8 @@ const TerminationForm = ({
         <SwitchForm
           terminationBag={terminationBag}
           components={components}
-          onSubmit={onSubmit}
+          onSubmitStep={onSubmitStep}
+          onSubmitForm={onSubmitForm}
           onError={onError}
           onSuccess={onSuccess}
         />

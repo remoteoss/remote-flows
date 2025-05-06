@@ -41,7 +41,9 @@ export function PaidTimeOffForm({ onSubmit }: PaidTimeOffFormProps) {
   }, []);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(values);
+    await onSubmit?.(
+      terminationBag?.parseFormValues(values) as TerminationFormValues,
+    );
     terminationBag?.next();
   };
 

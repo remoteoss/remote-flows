@@ -5,11 +5,11 @@ import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import { OffboardingResponse } from '@/src/client';
+import { CreateOffboardingParams, OffboardingResponse } from '@/src/client';
 
 type AdditionalDetailsFormProps = {
   username: string;
-  onSubmit?: (payload: TerminationFormValues) => Promise<void>;
+  onSubmit?: (payload: CreateOffboardingParams) => Promise<void>;
   onError?: (error: Error) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
@@ -50,8 +50,7 @@ export function AdditionalDetailsForm({
   }, []);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(values);
-    const terminationResult = await terminationBag?.onSubmit(values);
+    const terminationResult = await terminationBag?.onSubmit(values, onSubmit);
 
     if (terminationResult?.error) {
       onError?.(terminationResult.error);
