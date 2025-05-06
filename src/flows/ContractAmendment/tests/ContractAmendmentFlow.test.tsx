@@ -92,7 +92,7 @@ describe('ContractAmendmentFlow', () => {
     vi.clearAllMocks();
   });
 
-  it.only('submits the form when contract details are changed', async () => {
+  it('submits the form when contract details are changed', async () => {
     const user = userEvent.setup();
     render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
 
@@ -125,13 +125,13 @@ describe('ContractAmendmentFlow', () => {
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         additional_comments_toggle: false,
-        annual_gross_salary: '360000',
+        annual_gross_salary: 36000000,
         contract_duration_type: 'indefinite',
         effective_date: '2025-04-15',
         experience_level:
           'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
         job_title: 'engineer',
-        reason_for_change: '',
+        reason_for_change: null,
         role_description:
           'Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.',
         work_hours_per_week: 40,
@@ -145,13 +145,13 @@ describe('ContractAmendmentFlow', () => {
     await waitFor(() => {
       expect(mockOnSubmitConfirmation).toHaveBeenCalledWith({
         additional_comments_toggle: false,
-        annual_gross_salary: '360000',
+        annual_gross_salary: 36000000,
         contract_duration_type: 'indefinite',
         effective_date: '2025-04-15',
         experience_level:
           'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
         job_title: 'engineer',
-        reason_for_change: '',
+        reason_for_change: null,
         role_description:
           'Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.',
         work_hours_per_week: 40,
