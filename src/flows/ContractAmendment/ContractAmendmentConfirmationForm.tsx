@@ -38,14 +38,14 @@ export function ContractAmendmentConfirmationForm({
 }: ContractAmendmentConfirmationFormProps) {
   const {
     contractAmendment: {
-      values,
+      stepState,
       isSubmitting,
       onSubmit: submitContractAmendment,
     },
     formId,
   } = useContractAmendmentContext();
   const form = useForm({
-    defaultValues: values,
+    defaultValues: stepState.values?.form,
   });
 
   const handleSubmit = async (values: FieldValues) => {
