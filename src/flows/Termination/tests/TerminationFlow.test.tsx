@@ -19,6 +19,7 @@ import {
 import { http, HttpResponse } from 'msw';
 import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 const queryClient = new QueryClient();
 
@@ -28,15 +29,109 @@ const wrapper = ({ children }: PropsWithChildren) => (
   </QueryClientProvider>
 );
 
-const mockOnSubmit = vi.fn();
+const mockOnSubmitStep = vi.fn();
+const mockOnSubmitForm = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
 describe('TerminationFlow', () => {
+  const SwitchForm = ({
+    terminationBag,
+    components,
+    onSubmitStep,
+    onSubmitForm,
+    onError,
+    onSuccess,
+  }: $TSFixMe) => {
+    const {
+      EmployeeComunicationStep,
+      TerminationDetailsStep,
+      PaidTimeOffStep,
+      AdditionalDetailsStep,
+      SubmitButton,
+      Back,
+      TimeOff,
+    } = components;
+    switch (terminationBag.stepState.currentStep.name) {
+      case 'employee_communication':
+        return (
+          <>
+            <div className="alert">
+              <p>
+                Please do not inform the employee of their termination until we
+                review your request for legal risks. When we approve your
+                request, you can inform the employee and we'll take it from
+                there.
+              </p>
+            </div>
+            <EmployeeComunicationStep
+              onSubmit={(payload) =>
+                onSubmitStep(payload, 'employee_communication')
+              }
+            />
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'termination_details':
+        return (
+          <>
+            <TerminationDetailsStep
+              onSubmit={(payload) =>
+                onSubmitStep(payload, 'termination_details')
+              }
+            />
+            <Back>Back</Back>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'paid_time_off':
+        return (
+          <>
+            <TimeOff
+              render={({ employment, timeoff }) => {
+                const username = employment?.data?.employment?.basic_information
+                  ?.name as string;
+                const days = timeoff?.data?.total_count || 0;
+
+                // if days is 0 or > 1 'days' else 'day
+                const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
+                return (
+                  <>
+                    <p>
+                      We have recorded {days} {daysLiteral} of paid time off for{' '}
+                      {username}
+                    </p>
+                    <a href="#">See {username}'s timeoff breakdown</a>
+                  </>
+                );
+              }}
+            />
+            <PaidTimeOffStep
+              onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
+            />
+            <Back>Back</Back>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+
+      case 'additional_information':
+        return (
+          <>
+            <AdditionalDetailsStep
+              username="ze"
+              onSubmit={(payload) => onSubmitForm(payload)}
+              onSuccess={onSuccess}
+              onError={onError}
+            />
+            <Back>Back</Back>
+            <SubmitButton>Send termination</SubmitButton>
+          </>
+        );
+    }
+  };
+
   const mockRender = vi.fn(
     ({ terminationBag, components }: TerminationRenderProps) => {
-      const { Form, Back, SubmitButton } = components;
-
       const currentStepIndex = terminationBag.stepState.currentStep.index;
 
       const steps: Record<number, string> = {
@@ -49,20 +144,14 @@ describe('TerminationFlow', () => {
       return (
         <>
           <h1>Step: {steps[currentStepIndex]}</h1>
-          <Form
-            username="ze"
-            onSubmit={mockOnSubmit}
-            onSuccess={mockOnSuccess}
+          <SwitchForm
+            terminationBag={terminationBag}
+            components={components}
+            onSubmitStep={mockOnSubmitStep}
+            onSubmitForm={mockOnSubmitForm}
             onError={mockOnError}
+            onSuccess={mockOnSuccess}
           />
-          {currentStepIndex > 0 && <Back>Back</Back>}
-          {currentStepIndex <= terminationBag.stepState.totalSteps - 1 && (
-            <SubmitButton>
-              {currentStepIndex < terminationBag.stepState.totalSteps - 1
-                ? 'Next Step'
-                : 'Send termination'}
-            </SubmitButton>
-          )}
         </>
       );
     },
@@ -374,7 +463,7 @@ describe('TerminationFlow', () => {
     expect(submitButton).toBeInTheDocument();
     submitButton.click();
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(mockOnSubmitForm).toHaveBeenCalledTimes(1);
     });
 
     const payloadSubmitted = {
@@ -399,7 +488,7 @@ describe('TerminationFlow', () => {
       type: 'termination',
     };
 
-    expect(mockOnSubmit).toHaveBeenCalledWith(payloadSubmitted);
+    expect(mockOnSubmitForm).toHaveBeenCalledWith(payloadSubmitted);
 
     await waitFor(() => {
       expect(mockOnSuccess).toHaveBeenCalledTimes(1);

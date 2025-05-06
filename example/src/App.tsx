@@ -1,7 +1,7 @@
-import { TerminationV2 } from './TerminationV2';
+import { Termination } from './Termination';
 
 function App() {
-  return <TerminationV2 />;
+  return <Termination />;
 }
 
 export default App;

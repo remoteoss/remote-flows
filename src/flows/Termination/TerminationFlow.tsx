@@ -2,7 +2,6 @@ import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
-import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
@@ -21,7 +20,6 @@ export type TerminationRenderProps = {
   /**
    * The components used in the termination flow.
    * This includes the form, different step forms, submit button, back button and timeoff.
-   * @see {@link TerminationForm}
    * @see {@link TerminationSubmit}
    * @see {@link TimeOff}
    * @see {@link TerminationBack}
@@ -31,7 +29,6 @@ export type TerminationRenderProps = {
    * @see {@link AdditionalDetailsForm}
    */
   components: {
-    Form: typeof TerminationForm;
     SubmitButton: typeof TerminationSubmit;
     TimeOff: typeof TimeOff;
     Back: typeof TerminationBack;
@@ -71,7 +68,6 @@ export const TerminationFlow = ({
       {render({
         terminationBag,
         components: {
-          Form: TerminationForm,
           SubmitButton: TerminationSubmit,
           TimeOff: TimeOff,
           Back: TerminationBack,
