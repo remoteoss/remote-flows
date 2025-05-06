@@ -200,6 +200,7 @@ export const useContractAmendment = ({
         values,
         contractAmendmentHeadlessForm?.fields,
       );
+
       return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
     }
     return null;
@@ -254,7 +255,15 @@ export const useContractAmendment = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: (values: FieldValues) => {
+      if (contractAmendmentHeadlessForm) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractAmendmentHeadlessForm?.fields,
+        );
+        setFieldValues(parsedValues);
+      }
+    },
     /**
      * Function to handle form submission
      * @param values - Form values to submit
