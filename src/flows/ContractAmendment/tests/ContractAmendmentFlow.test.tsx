@@ -1,4 +1,5 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
+import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -8,7 +9,6 @@ import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractAmendmentFlow, RenderProps } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
-import { employment } from '@/src/tests/fixtures';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +21,8 @@ const wrapper = ({ children }: PropsWithChildren) => (
 const mockError = vi.fn();
 const mockSuccess = vi.fn();
 const mockOnSubmit = vi.fn();
+
+const mockOnSubmitConfirmation = vi.fn();
 
 describe('ContractAmendmentFlow', () => {
   const mockRender = vi.fn(
@@ -47,7 +49,7 @@ describe('ContractAmendmentFlow', () => {
         case 'confirmation_form':
           return (
             <div data-testid="confirmation-form">
-              <ConfirmationForm />
+              <ConfirmationForm onSubmit={mockOnSubmitConfirmation} />
               <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
                 Confirm
               </SubmitButton>
@@ -80,6 +82,9 @@ describe('ContractAmendmentFlow', () => {
       http.post('*/v1/contract-amendments/automatable', () => {
         return HttpResponse.json({ data: { automatable: true, message: '' } });
       }),
+      http.post('*/v1/contract-amendments', () => {
+        return HttpResponse.json({ data: {} });
+      }),
     );
   });
 
@@ -87,7 +92,7 @@ describe('ContractAmendmentFlow', () => {
     vi.clearAllMocks();
   });
 
-  it('submits the form when contract details are changed', async () => {
+  it.only('submits the form when contract details are changed', async () => {
     const user = userEvent.setup();
     render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
 
@@ -119,6 +124,26 @@ describe('ContractAmendmentFlow', () => {
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
+        additional_comments_toggle: false,
+        annual_gross_salary: '360000',
+        contract_duration_type: 'indefinite',
+        effective_date: '2025-04-15',
+        experience_level:
+          'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
+        job_title: 'engineer',
+        reason_for_change: '',
+        role_description:
+          'Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.',
+        work_hours_per_week: 40,
+        work_schedule: 'full_time',
+      });
+    });
+
+    const confirmButton = screen.getByRole('button', { name: /Confirm/i });
+    confirmButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmitConfirmation).toHaveBeenCalledWith({
         additional_comments_toggle: false,
         annual_gross_salary: '360000',
         contract_duration_type: 'indefinite',
