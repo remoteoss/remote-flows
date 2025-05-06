@@ -12,6 +12,7 @@ import {
 } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
 import { employment } from '@/src/tests/fixtures';
+import { selectDayInCalendar } from '@/src/tests/testHelpers';
 
 const queryClient = new QueryClient();
 
@@ -103,18 +104,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(salaryInput, '360000');
 
     // change effective date
-    const datePickerButton = screen.getByTestId('date-picker-button');
-    await user.click(datePickerButton);
-    waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
-    const calendar = screen.getByRole('dialog');
-    expect(calendar).toBeInTheDocument();
-    const dateButton = screen.getByRole('button', { name: /15/i });
-    await user.click(dateButton);
-    waitFor(() => {
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    });
+    await selectDayInCalendar('15', 'effective_date');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -139,7 +129,6 @@ describe('ContractAmendmentFlow', () => {
   });
 
   it('shows error when only non contract details fields are changed', async () => {
-    const user = userEvent.setup();
     render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
 
     await waitFor(() => {
@@ -147,18 +136,7 @@ describe('ContractAmendmentFlow', () => {
     });
 
     // change effective date
-    const datePickerButton = screen.getByTestId('date-picker-button');
-    await user.click(datePickerButton);
-    waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
-    const calendar = screen.getByRole('dialog');
-    expect(calendar).toBeInTheDocument();
-    const dateButton = screen.getByRole('button', { name: /15/i });
-    await user.click(dateButton);
-    waitFor(() => {
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    });
+    await selectDayInCalendar('15', 'effective_date');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -195,18 +173,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(screen.getByLabelText('Annual gross salary'), '360000');
 
     // change effective date
-    const datePickerButton = screen.getByTestId('date-picker-button');
-    await user.click(datePickerButton);
-    waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
-    const calendar = screen.getByRole('dialog');
-    expect(calendar).toBeInTheDocument();
-    const dateButton = screen.getByRole('button', { name: /15/i });
-    await user.click(dateButton);
-    waitFor(() => {
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    });
+    await selectDayInCalendar('15', 'effective_date');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', {

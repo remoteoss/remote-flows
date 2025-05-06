@@ -133,7 +133,10 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
-      await selectDayInCalendar(newValues?.whenWasEmployeeInformed);
+      await selectDayInCalendar(
+        newValues?.whenWasEmployeeInformed,
+        'customer_informed_employee_date',
+      );
     }
 
     if (
@@ -204,7 +207,10 @@ describe('TerminationFlow', () => {
       await fillCheckbox(newValues?.riskAssessmentReason);
     }
     if (newValues?.proposedTerminationDate) {
-      await selectDayInCalendar(newValues?.proposedTerminationDate);
+      await selectDayInCalendar(
+        newValues?.proposedTerminationDate,
+        'proposed_termination_date',
+      );
     }
   }
 
@@ -371,37 +377,7 @@ describe('TerminationFlow', () => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockOnSubmit).toHaveBeenCalledWith({
-      acknowledge_termination_procedure: true,
-      additional_comments: '',
-      agrees_to_pto_amount: 'yes',
-      agrees_to_pto_amount_notes: null,
-      confidential: 'no',
-      customer_informed_employee: 'yes',
-      customer_informed_employee_date: dynamicDate,
-      customer_informed_employee_description: 'Whatever text',
-      personal_email: 'ze@remote.com',
-      proposed_termination_date: dynamicDate,
-      reason_description: 'whatever text',
-      risk_assessment_reasons: ['sick_leave'],
-      termination_reason: 'gross_misconduct',
-      termination_reason_files: [],
-      timesheet_file: undefined,
-      will_challenge_termination: 'no',
-      will_challenge_termination_description: null,
-    });
-
-    await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
-    });
-
-    expect(mockOnSuccess).toHaveBeenCalledWith(terminationResponse);
-
-    await waitFor(() => {
-      expect(offboardingRequest).not.toBeNull();
-    });
-
-    expect(offboardingRequest).toEqual({
+    const payloadSubmitted = {
       employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
       termination_details: {
         acknowledge_termination_procedure: true,
@@ -421,7 +397,21 @@ describe('TerminationFlow', () => {
         will_challenge_termination: false,
       },
       type: 'termination',
+    };
+
+    expect(mockOnSubmit).toHaveBeenCalledWith(payloadSubmitted);
+
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
     });
+
+    expect(mockOnSuccess).toHaveBeenCalledWith(terminationResponse);
+
+    await waitFor(() => {
+      expect(offboardingRequest).not.toBeNull();
+    });
+
+    expect(offboardingRequest).toEqual(payloadSubmitted);
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {

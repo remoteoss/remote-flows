@@ -3,13 +3,17 @@ import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-import { OffboardingResponse, PostCreateOffboardingError } from '@/src/client';
+import {
+  CreateOffboardingParams,
+  OffboardingResponse,
+  PostCreateOffboardingError,
+} from '@/src/client';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 
 type TerminationFormProps = {
   username: string;
-  onSubmit?: (payload: TerminationFormValues) => Promise<void>;
+  onSubmit?: (payload: CreateOffboardingParams) => Promise<void>;
   onError?: (error: PostCreateOffboardingError) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
@@ -50,15 +54,7 @@ export function TerminationForm({
   }, []);
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    const lastStep =
-      terminationBag?.stepState.currentStep.index ===
-      terminationBag?.stepState.totalSteps - 1;
-
-    if (lastStep) {
-      await onSubmit?.(values);
-    }
-
-    const terminationResult = await terminationBag?.onSubmit(values);
+    const terminationResult = await terminationBag?.onSubmit(values, onSubmit);
 
     if (terminationResult?.error) {
       onError?.(terminationResult.error);

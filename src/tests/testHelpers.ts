@@ -48,9 +48,11 @@ export async function fillCheckbox(checkboxName: string) {
   await user.click(checkbox);
 }
 
-export async function selectDayInCalendar(day: string) {
+export async function selectDayInCalendar(day: string, fieldName: string) {
   const user = userEvent.setup();
-  const datePickerButton = screen.getByTestId('date-picker-button');
+  const datePickerButton = screen.getByTestId(
+    `date-picker-button-${fieldName}`,
+  );
   await user.click(datePickerButton);
   await waitFor(() => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
