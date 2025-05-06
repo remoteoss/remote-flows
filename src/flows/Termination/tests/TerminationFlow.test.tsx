@@ -421,6 +421,8 @@ describe('TerminationFlow', () => {
   });
 
   it('should submit the termination flow', async () => {
+    const currentDate = getYearMonthDate(new Date());
+    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
@@ -434,6 +436,31 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(1);
+    });
+    expect(mockOnSubmitStep).toHaveBeenCalledWith(
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: null,
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: dynamicDate,
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: null,
+        reason_description: null,
+        risk_assessment_reasons: [],
+        termination_reason: undefined,
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: null,
+        will_challenge_termination_description: null,
+      },
+      'employee_communication',
+    );
     await screen.findByText(/Step: Termination Details/i);
 
     await fillTerminationDetails();
@@ -443,8 +470,31 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
-    const currentDate = getYearMonthDate(new Date());
-    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(2);
+    });
+    expect(mockOnSubmitStep.mock.calls[1]).toEqual([
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: null,
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: '2025-05-15',
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: '2025-05-15',
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+      'termination_details',
+    ]);
 
     await screen.findByText(/Step: Paid Time Off/i);
 
@@ -454,6 +504,33 @@ describe('TerminationFlow', () => {
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(3);
+    });
+
+    expect(mockOnSubmitStep.mock.calls[2]).toEqual([
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: 'yes',
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: '2025-05-15',
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: '2025-05-15',
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+      'paid_time_off',
+    ]);
 
     await screen.findByText(/Step: Additional Information/i);
 
