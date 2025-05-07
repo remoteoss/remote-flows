@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormField } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
+import { FormField } from '../../ui/form';
 import { TextField, TextFieldProps } from './TextField';
 
 export function NumberField(props: TextFieldProps) {
