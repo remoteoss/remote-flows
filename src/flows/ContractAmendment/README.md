@@ -15,13 +15,124 @@ After installation, import the main CSS file in your application:
 ### Full Example
 
 ```tsx
-import { ContractAmendmentFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  ContractAmendmentAutomatableResponse,
+  ContractAmendmentFlow,
+  RemoteFlows,
+  ContractAmendmentRenderProps,
+} from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import './App.css';
 
-const STEPS = ['Contract Amendment Details', 'Confirmation'];
+function AmendmentFlow({
+  contractAmendmentBag,
+  components,
+}: ContractAmendmentRenderProps) {
+  const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
 
-export const ContractAmendment = () => {
+  const [automatable, setAutomatable] = useState<
+    ContractAmendmentAutomatableResponse | undefined
+  >();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSuccess(data: ContractAmendmentAutomatableResponse) {
+    setAutomatable(data);
+  }
+
+  if (contractAmendmentBag.isLoading) {
+    return <div>Loading employment...</div>;
+  }
+
+  switch (contractAmendmentBag.stepState.currentStep.name) {
+    case 'form':
+      return (
+        <div className="amendment_form">
+          <Form
+            onSuccess={handleSuccess}
+            onError={(err) => {
+              if (
+                'message' in err &&
+                err.message === 'no_changes_detected_contract_details'
+              ) {
+                setError(err.message);
+              }
+            }}
+          />
+          {error && (
+            <div className="amendment_form__error">
+              <p className="amendment_form__error__title">
+                Contract detail change required
+              </p>
+              <p>
+                You haven't changed any contract detail value yet. Please change
+                at least one value in order to be able to proceed with the
+                request.
+              </p>
+            </div>
+          )}
+          <SubmitButton
+            className="amendment_form__buttons__submit"
+            disabled={contractAmendmentBag.isSubmitting}
+          >
+            Go to preview and confirm changes
+          </SubmitButton>
+        </div>
+      );
+    case 'confirmation_form':
+      return (
+        <div className="confirmation_form">
+          <ConfirmationForm />
+          <div>
+            {Object.entries(
+              contractAmendmentBag.stepState.values?.form || {},
+            ).map(([key, value]) => {
+              const initialValue = contractAmendmentBag.initialValues[key];
+              if (initialValue !== value) {
+                const label = contractAmendmentBag.fields.find(
+                  (field) => field.name === key,
+                )?.label as string;
+                return (
+                  <div className="confirmation_form__item" key={key}>
+                    <p>{label}:</p>
+                    {initialValue ? (
+                      <div className="confirmation_form__item__value">
+                        <span className="confirmation_form__item__value__initial">
+                          {initialValue}
+                        </span>
+                        <span>&rarr;</span>
+                        <span>{value as string}</span>
+                      </div>
+                    ) : (
+                      <div className="confirmation_form__item__value">
+                        <span>{value as string}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+          {automatable?.data?.automatable ? (
+            <div>{automatable?.data?.message}</div>
+          ) : null}
+          <div className="confirmation_form__buttons">
+            <SubmitButton
+              disabled={contractAmendmentBag.isSubmitting}
+              className="confirmation_form__buttons__submit"
+            >
+              Submit amendment request
+            </SubmitButton>
+            <BackButton className="confirmation_form__buttons__back">
+              Back
+            </BackButton>
+          </div>
+        </div>
+      );
+  }
+}
+
+export function ContractAmendment() {
   const fetchToken = () => {
     return fetch('/api/token')
       .then((res) => res.json())
@@ -37,73 +148,16 @@ export const ContractAmendment = () => {
 
   return (
     <RemoteFlows auth={() => fetchToken()}>
-      <div className="contract-amendment_container">
+      <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
-          employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
-          countryCode="US"
-          options={{
-            jsfModify: {
-              fields: {
-                // Customize form fields here
-              },
-            },
-          }}
-          render={({ contractAmendmentBag, components }) => {
-            if (contractAmendmentBag.isLoading) {
-              return <div>Loading...</div>;
-            }
-
-            const { Form, SubmitButton, BackButton, ConfirmationForm } =
-              components;
-            const currentStepIndex =
-              contractAmendmentBag.stepState.currentStep.index;
-            const stepTitle = STEPS[currentStepIndex];
-
-            return (
-              <>
-                <div className="steps-navigation">
-                  <ul>
-                    {STEPS.map((step, index) => (
-                      <li
-                        key={index}
-                        className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-                      >
-                        {step}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="card" style={{ marginBottom: '20px' }}>
-                  <h1 className="heading">{stepTitle}</h1>
-                  {currentStepIndex === 0 ? (
-                    <Form
-                      onSubmit={(payload) => console.log('payload', payload)}
-                      onError={(error) => console.log('error', error)}
-                      onSuccess={(data) => console.log('data', data)}
-                    />
-                  ) : (
-                    <ConfirmationForm />
-                  )}
-                  {currentStepIndex > 0 && <BackButton>Back</BackButton>}
-                  {currentStepIndex <=
-                    contractAmendmentBag.stepState.totalSteps - 1 && (
-                    <SubmitButton>
-                      {currentStepIndex <
-                      contractAmendmentBag.stepState.totalSteps - 1
-                        ? 'Next Step'
-                        : 'Submit Amendment'}
-                    </SubmitButton>
-                  )}
-                </div>
-              </>
-            );
-          }}
+          countryCode="PRT"
+          employmentId="1c555e8d-3119-4a25-b1a2-8afc3516a106"
+          render={AmendmentFlow}
         />
       </div>
     </RemoteFlows>
   );
-};
-```
+}
 
 ## Components API
 
@@ -145,3 +199,4 @@ Component that displays the confirmation step of the contract amendment process.
 #### options.jsfModify properties
 
 The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
+```
