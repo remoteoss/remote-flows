@@ -208,7 +208,7 @@ export const Termination = () => {
   const [open, setOpen] = useState(false);
   return (
     <RemoteFlows auth={fetchToken}>
-      <div className="cost-calculator__container">
+      <div className="termination_container">
         <TerminationFlow
           employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
           render={TerminationForm}
