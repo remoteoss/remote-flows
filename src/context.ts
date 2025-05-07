@@ -17,9 +17,7 @@ export const useFormFields = () => {
   };
 };
 
-export const RemoteFlowContext = createContext<{
-  client: Client | null;
-}>({
+export const RemoteFlowContext = createContext<{ client: Client | null }>({
   client: null,
 });
 
