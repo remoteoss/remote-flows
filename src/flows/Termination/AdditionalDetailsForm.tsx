@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-import { CreateOffboardingParams, OffboardingResponse } from '@/src/client';
+import { OffboardingResponse } from '@/src/client';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type AdditionalDetailsFormProps = {
@@ -11,9 +11,9 @@ type AdditionalDetailsFormProps = {
    */
   requesterName: string;
   /*
-   * The function is called when the form is submitted. It receives the payload sent to the Remote API endpoint.
+   * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: CreateOffboardingParams) => void | Promise<void>;
+  onSubmit?: (payload: TerminationFormValues) => void | Promise<void>;
   /*
    * The function is called when the form submission has failed.
    */
@@ -34,7 +34,10 @@ export function AdditionalDetailsForm({
   const { terminationBag } = useTerminationContext();
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    const terminationResult = await terminationBag?.onSubmit(values, onSubmit);
+    await onSubmit?.(
+      terminationBag?.parseFormValues(values) as TerminationFormValues,
+    );
+    const terminationResult = await terminationBag?.onSubmit(values);
 
     if (terminationResult?.error) {
       onError?.(terminationResult.error);

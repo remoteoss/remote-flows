@@ -3,7 +3,6 @@ import type {
   TerminationRenderProps,
   TerminationFormValues,
   OffboardingResponse,
-  CreateOffboardingParams,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
@@ -48,7 +47,7 @@ type MultiStepFormProps = {
     payload: TerminationFormValues,
     step: string,
   ) => void | Promise<void>;
-  onSubmitForm: (payload: CreateOffboardingParams) => void | Promise<void>;
+  onSubmitForm: (payload: TerminationFormValues) => void | Promise<void>;
   onError: (error: Error) => void;
   onSuccess: (response: OffboardingResponse) => void;
 };
