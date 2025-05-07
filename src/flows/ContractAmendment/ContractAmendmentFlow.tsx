@@ -42,12 +42,14 @@ export function ContractAmendmentFlow({
   employmentId,
   countryCode,
   options,
+  jsonSchemaVersion,
   render,
 }: ContractAmendmentFlowProps) {
   const contractAmendmentBag = useContractAmendment({
     employmentId,
     countryCode,
     options,
+    jsonSchemaVersion,
   });
   const formId = useId();
 

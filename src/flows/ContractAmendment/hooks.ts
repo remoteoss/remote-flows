@@ -18,7 +18,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
 import { useEmploymentQuery } from '@/src/common/hooks';
-import { useClient, useJsonSchemaVersion } from '@/src/context';
+import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
@@ -28,6 +28,7 @@ type ContractAmendmentSchemaParams = {
   employment: EmploymentShowResponse | undefined;
   fieldValues: FieldValues | undefined;
   options?: ContractAmendmentParams['options'];
+  jsonSchemaVersion: ContractAmendmentParams['jsonSchemaVersion'];
 };
 
 const useContractAmendmentSchemaQuery = ({
@@ -35,9 +36,14 @@ const useContractAmendmentSchemaQuery = ({
   employment,
   fieldValues,
   options,
+  jsonSchemaVersion,
 }: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
-  const jsonSchemaVersion = useJsonSchemaVersion('contract_amendments');
+  const jsonSchemaQueryParam = jsonSchemaVersion?.contract_amendments
+    ? {
+        json_schema_version: jsonSchemaVersion?.contract_amendments,
+      }
+    : {};
   return useQuery({
     queryKey: ['contract-amendment-schema'],
     retry: false,
@@ -50,7 +56,7 @@ const useContractAmendmentSchemaQuery = ({
         query: {
           employment_id: employment?.data?.employment?.id as string,
           country_code: countryCode,
-          ...jsonSchemaVersion,
+          ...jsonSchemaQueryParam,
         },
       });
 
@@ -123,6 +129,7 @@ export const useContractAmendment = ({
   employmentId,
   countryCode,
   options,
+  jsonSchemaVersion,
 }: ContractAmendmentParams) => {
   const { fieldValues, setFieldValues, stepState, nextStep, previousStep } =
     useStepState<keyof typeof STEPS>(STEPS);
@@ -153,6 +160,7 @@ export const useContractAmendment = ({
     // generated with the correct values.
     fieldValues: isNavigatingBackToForm ? stepState.values?.form : fieldValues,
     options,
+    jsonSchemaVersion,
   });
 
   const initialValues = buildInitialValues(

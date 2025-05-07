@@ -131,15 +131,13 @@ export function ContractAmendment() {
   };
 
   return (
-    <RemoteFlows
-      jsonSchemaVersion={{ contract_amendments: 1 }}
-      auth={() => fetchToken()}
-    >
+    <RemoteFlows auth={() => fetchToken()}>
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode="PRT"
           employmentId="b98b7127-d90f-4f5b-b02d-457d65707d35"
           render={AmendmentFlow}
+          jsonSchemaVersion={{ contract_amendments: 1 }}
         />
       </div>
     </RemoteFlows>

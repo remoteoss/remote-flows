@@ -13,12 +13,6 @@ import {
   ContractAmendmentRenderProps,
 } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
-import { useJsonSchemaVersion } from '@/src/context';
-
-vi.mock('@/src/context', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useJsonSchemaVersion: vi.fn(),
-}));
 
 const queryClient = new QueryClient();
 
@@ -105,10 +99,15 @@ describe('ContractAmendmentFlow', () => {
   });
 
   it('should send json schema version in the request', async () => {
-    const mockUseJsonSchemaVersion = vi.mocked(useJsonSchemaVersion);
-    mockUseJsonSchemaVersion.mockReturnValue({ json_schema_version: 1 });
-
-    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+    render(
+      <ContractAmendmentFlow
+        jsonSchemaVersion={{
+          contract_amendments: 1,
+        }}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
