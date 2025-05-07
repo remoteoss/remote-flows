@@ -24,4 +24,8 @@ export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
-export * from './client/types.gen';
+export {
+  ContractAmendmentAutomatableResponse,
+  CostCalculatorEstimateResponse,
+  OffboardingResponse,
+} from './client/types.gen';

@@ -2,12 +2,15 @@ import {
   ContractAmendmentAutomatableResponse,
   ContractAmendmentFlow,
   RemoteFlows,
-  RenderProps,
+  ContractAmendmentRenderProps,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import './App.css';
 
-function AmendmentFlow({ contractAmendmentBag, components }: RenderProps) {
+function AmendmentFlow({
+  contractAmendmentBag,
+  components,
+}: ContractAmendmentRenderProps) {
   const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
 
   const [automatable, setAutomatable] = useState<

@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
-  RenderProps,
+  TerminationRenderProps,
   TerminationFlow,
 } from '@/src/flows/Termination/TerminationFlow';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -19,6 +19,7 @@ import {
 import { http, HttpResponse } from 'msw';
 import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 const queryClient = new QueryClient();
 
@@ -28,43 +29,133 @@ const wrapper = ({ children }: PropsWithChildren) => (
   </QueryClientProvider>
 );
 
-const mockOnSubmit = vi.fn();
+const mockOnSubmitStep = vi.fn();
+const mockOnSubmitForm = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
 describe('TerminationFlow', () => {
-  const mockRender = vi.fn(({ terminationBag, components }: RenderProps) => {
-    const { Form, Back, SubmitButton } = components;
+  const MultiStepForm = ({
+    terminationBag,
+    components,
+    onSubmitStep,
+    onSubmitForm,
+    onError,
+    onSuccess,
+  }: $TSFixMe) => {
+    const {
+      EmployeeComunicationStep,
+      TerminationDetailsStep,
+      PaidTimeOffStep,
+      AdditionalDetailsStep,
+      SubmitButton,
+      Back,
+      TimeOff,
+    } = components;
+    switch (terminationBag.stepState.currentStep.name) {
+      case 'employee_communication':
+        return (
+          <>
+            <div className="alert">
+              <p>
+                Please do not inform the employee of their termination until we
+                review your request for legal risks. When we approve your
+                request, you can inform the employee and we'll take it from
+                there.
+              </p>
+            </div>
+            <EmployeeComunicationStep
+              onSubmit={(payload) =>
+                onSubmitStep(payload, 'employee_communication')
+              }
+            />
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'termination_details':
+        return (
+          <>
+            <TerminationDetailsStep
+              onSubmit={(payload) =>
+                onSubmitStep(payload, 'termination_details')
+              }
+            />
+            <Back>Back</Back>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'paid_time_off':
+        return (
+          <>
+            <TimeOff
+              render={({ employment, timeoff }) => {
+                const username = employment?.data?.employment?.basic_information
+                  ?.name as string;
+                const days = timeoff?.data?.total_count || 0;
 
-    const currentStepIndex = terminationBag.stepState.currentStep.index;
+                // if days is 0 or > 1 'days' else 'day
+                const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
+                return (
+                  <>
+                    <p>
+                      We have recorded {days} {daysLiteral} of paid time off for{' '}
+                      {username}
+                    </p>
+                    <a href="#">See {username}'s timeoff breakdown</a>
+                  </>
+                );
+              }}
+            />
+            <PaidTimeOffStep
+              onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
+            />
+            <Back>Back</Back>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
 
-    const steps: Record<number, string> = {
-      [0]: 'Employee Communication',
-      [1]: 'Termination Details',
-      [2]: 'Paid Time Off',
-      [3]: 'Additional Information',
-    };
+      case 'additional_information':
+        return (
+          <>
+            <AdditionalDetailsStep
+              requesterName="ze"
+              onSubmit={(payload) => onSubmitForm(payload)}
+              onSuccess={onSuccess}
+              onError={onError}
+            />
+            <Back>Back</Back>
+            <SubmitButton>Send termination</SubmitButton>
+          </>
+        );
+    }
+  };
 
-    return (
-      <>
-        <h1>Step: {steps[currentStepIndex]}</h1>
-        <Form
-          username="ze"
-          onSubmit={mockOnSubmit}
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
-        />
-        {currentStepIndex > 0 && <Back>Back</Back>}
-        {currentStepIndex <= terminationBag.stepState.totalSteps - 1 && (
-          <SubmitButton>
-            {currentStepIndex < terminationBag.stepState.totalSteps - 1
-              ? 'Next Step'
-              : 'Send termination'}
-          </SubmitButton>
-        )}
-      </>
-    );
-  });
+  const mockRender = vi.fn(
+    ({ terminationBag, components }: TerminationRenderProps) => {
+      const currentStepIndex = terminationBag.stepState.currentStep.index;
+
+      const steps: Record<number, string> = {
+        [0]: 'Employee Communication',
+        [1]: 'Termination Details',
+        [2]: 'Paid Time Off',
+        [3]: 'Additional Information',
+      };
+
+      return (
+        <>
+          <h1>Step: {steps[currentStepIndex]}</h1>
+          <MultiStepForm
+            terminationBag={terminationBag}
+            components={components}
+            onSubmitStep={mockOnSubmitStep}
+            onSubmitForm={mockOnSubmitForm}
+            onError={mockOnError}
+            onSuccess={mockOnSuccess}
+          />
+        </>
+      );
+    },
+  );
   const defaultProps = {
     employmentId: '2ef4068b-11c7-4942-bb3c-70606c83688e',
     countryCode: 'PRT',
@@ -330,6 +421,8 @@ describe('TerminationFlow', () => {
   });
 
   it('should submit the termination flow', async () => {
+    const currentDate = getYearMonthDate(new Date());
+    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
@@ -343,6 +436,31 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(1);
+    });
+    expect(mockOnSubmitStep).toHaveBeenCalledWith(
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: null,
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: dynamicDate,
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: null,
+        reason_description: null,
+        risk_assessment_reasons: [],
+        termination_reason: undefined,
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: null,
+        will_challenge_termination_description: null,
+      },
+      'employee_communication',
+    );
     await screen.findByText(/Step: Termination Details/i);
 
     await fillTerminationDetails();
@@ -352,8 +470,31 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
-    const currentDate = getYearMonthDate(new Date());
-    const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(2);
+    });
+    expect(mockOnSubmitStep.mock.calls[1]).toEqual([
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: null,
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: '2025-05-15',
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: '2025-05-15',
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+      'termination_details',
+    ]);
 
     await screen.findByText(/Step: Paid Time Off/i);
 
@@ -364,6 +505,33 @@ describe('TerminationFlow', () => {
 
     nextButton.click();
 
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(3);
+    });
+
+    expect(mockOnSubmitStep.mock.calls[2]).toEqual([
+      {
+        acknowledge_termination_procedure: false,
+        additional_comments: null,
+        agrees_to_pto_amount: 'yes',
+        agrees_to_pto_amount_notes: null,
+        confidential: 'no',
+        customer_informed_employee: 'yes',
+        customer_informed_employee_date: '2025-05-15',
+        customer_informed_employee_description: 'Whatever text',
+        personal_email: 'ze@remote.com',
+        proposed_termination_date: '2025-05-15',
+        reason_description: 'whatever text',
+        risk_assessment_reasons: ['sick_leave'],
+        termination_reason: 'gross_misconduct',
+        termination_reason_files: [],
+        timesheet_file: undefined,
+        will_challenge_termination: 'no',
+        will_challenge_termination_description: null,
+      },
+      'paid_time_off',
+    ]);
+
     await screen.findByText(/Step: Additional Information/i);
 
     await fillAdditionalDetails();
@@ -372,20 +540,20 @@ describe('TerminationFlow', () => {
     expect(submitButton).toBeInTheDocument();
     submitButton.click();
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(mockOnSubmitForm).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockOnSubmit).toHaveBeenCalledWith({
+    expect(mockOnSubmitForm).toHaveBeenCalledWith({
       acknowledge_termination_procedure: true,
-      additional_comments: '',
+      additional_comments: null,
       agrees_to_pto_amount: 'yes',
       agrees_to_pto_amount_notes: null,
       confidential: 'no',
       customer_informed_employee: 'yes',
-      customer_informed_employee_date: dynamicDate,
+      customer_informed_employee_date: '2025-05-15',
       customer_informed_employee_description: 'Whatever text',
       personal_email: 'ze@remote.com',
-      proposed_termination_date: dynamicDate,
+      proposed_termination_date: '2025-05-15',
       reason_description: 'whatever text',
       risk_assessment_reasons: ['sick_leave'],
       termination_reason: 'gross_misconduct',

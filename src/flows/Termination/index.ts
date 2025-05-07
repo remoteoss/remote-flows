@@ -1,3 +1,3 @@
 export { TerminationFlow } from './TerminationFlow';
-export { TerminationForm } from './TerminationForm';
-export { TerminationSubmit } from './TerminationSubmit';
+export type { TerminationRenderProps } from './TerminationFlow';
+export type { TerminationFormValues } from './types';

@@ -8,7 +8,7 @@ export const additionalInformationSchema = {
         acknowledge_termination_procedure: {
           description: '',
           title:
-            'I, {{username}} have read and agree to the procedures as defined in the termination form.',
+            'I, {{requesterName}} have read and agree to the procedures as defined in the termination form.',
           type: 'boolean',
           'x-jsf-presentation': {
             direction: 'column',

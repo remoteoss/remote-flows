@@ -8,7 +8,10 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContractAmendmentFlow, RenderProps } from '../ContractAmendmentFlow';
+import {
+  ContractAmendmentFlow,
+  ContractAmendmentRenderProps,
+} from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
 import { useJsonSchemaVersion } from '@/src/context';
 
@@ -33,7 +36,7 @@ const mockOnSubmitConfirmation = vi.fn();
 
 describe('ContractAmendmentFlow', () => {
   const mockRender = vi.fn(
-    ({ contractAmendmentBag, components }: RenderProps) => {
+    ({ contractAmendmentBag, components }: ContractAmendmentRenderProps) => {
       const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
       if (contractAmendmentBag.isLoading) {
         return null;
