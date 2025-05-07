@@ -118,7 +118,7 @@ describe('TerminationFlow', () => {
         return (
           <>
             <AdditionalDetailsStep
-              username="ze"
+              requesterName="ze"
               onSubmit={(payload) => onSubmitForm(payload)}
               onSuccess={onSuccess}
               onError={onError}

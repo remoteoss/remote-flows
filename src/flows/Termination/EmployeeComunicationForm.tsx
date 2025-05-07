@@ -4,6 +4,9 @@ import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type EmployeeComunicationProps = {
+  /*
+   * The function is called when the form is submitted. It receives the form values as an argument.
+   */
   onSubmit?: (payload: TerminationFormValues) => void | Promise<void>;
 };
 

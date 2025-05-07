@@ -5,9 +5,23 @@ import { CreateOffboardingParams, OffboardingResponse } from '@/src/client';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type AdditionalDetailsFormProps = {
+  /*
+   * The name of the person who initiates the termination, used to personalize the label of the
+   * acknowledge_termination_procedure field.
+   */
   requesterName: string;
+  /*
+   * The function is called when the form is submitted. It receives the payload sent to the Remote API endpoint.
+   */
   onSubmit?: (payload: CreateOffboardingParams) => void | Promise<void>;
+  /*
+   * The function is called when the form submission has failed.
+   */
   onError?: (error: Error) => void;
+  /*
+   * The function is called when the form submission is successful. It receives the response data as
+   * an argument.
+   */
   onSuccess?: (data: OffboardingResponse) => void;
 };
 
