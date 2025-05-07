@@ -84,4 +84,10 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
       [key: string]: string;
     };
   };
+  /**
+   * Version of the JSON schema to use when requesting from the Remote API.
+   * This can be used to specify a specific version of the schema if needed.
+   * If not provided, the latest version will be used.
+   */
+  jsonSchemaVersion?: number;
 };

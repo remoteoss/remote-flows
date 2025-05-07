@@ -1,7 +1,12 @@
+import { ContractAmendment } from './ContractAmendment';
 import { Termination } from './Termination';
 
 function App() {
-  return <Termination />;
+  return (
+    <>
+      <ContractAmendment />
+    </>
+  );
 }
 
 export default App;

@@ -18,7 +18,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
 import { useEmploymentQuery } from '@/src/common/hooks';
-import { useClient } from '@/src/context';
+import { useClient, useJsonSchemaVersion } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
@@ -37,6 +37,7 @@ const useContractAmendmentSchemaQuery = ({
   options,
 }: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
+  const jsonSchemaVersion = useJsonSchemaVersion();
   return useQuery({
     queryKey: ['contract-amendment-schema'],
     retry: false,
@@ -49,6 +50,7 @@ const useContractAmendmentSchemaQuery = ({
         query: {
           employment_id: employment?.data?.employment?.id as string,
           country_code: countryCode,
+          ...jsonSchemaVersion,
         },
       });
 

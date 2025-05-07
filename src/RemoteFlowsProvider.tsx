@@ -14,6 +14,7 @@ type RemoteFlowContextWrapperProps = {
   children: React.ReactNode;
   isTestingMode?: RemoteFlowsSDKProps['isTestingMode'];
   proxy?: RemoteFlowsSDKProps['proxy'];
+  jsonSchemaVersion: RemoteFlowsSDKProps['jsonSchemaVersion'];
 };
 
 function RemoteFlowContextWrapper({
@@ -21,6 +22,7 @@ function RemoteFlowContextWrapper({
   auth,
   isTestingMode,
   proxy,
+  jsonSchemaVersion,
 }: RemoteFlowContextWrapperProps) {
   const remoteApiClient = useAuth({
     auth,
@@ -30,7 +32,9 @@ function RemoteFlowContextWrapper({
     },
   });
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+    <RemoteFlowContext.Provider
+      value={{ client: remoteApiClient.current, jsonSchemaVersion }}
+    >
       {children}
     </RemoteFlowContext.Provider>
   );
@@ -58,6 +62,7 @@ export function RemoteFlows({
   isTestingMode = false,
   theme,
   proxy,
+  jsonSchemaVersion,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
@@ -66,6 +71,7 @@ export function RemoteFlows({
           isTestingMode={isTestingMode}
           auth={auth}
           proxy={proxy}
+          jsonSchemaVersion={jsonSchemaVersion}
         >
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
         </RemoteFlowContextWrapper>

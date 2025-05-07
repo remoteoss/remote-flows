@@ -17,8 +17,29 @@ export const useFormFields = () => {
   };
 };
 
-export const RemoteFlowContext = createContext<{ client: Client | null }>({
+export const RemoteFlowContext = createContext<{
+  client: Client | null;
+  jsonSchemaVersion: number | undefined;
+}>({
   client: null,
+  jsonSchemaVersion: undefined,
 });
 
 export const useClient = () => useContext(RemoteFlowContext);
+
+export const useJsonSchemaVersion = () => {
+  const context = useContext(RemoteFlowContext);
+  if (!context) {
+    throw new Error(
+      'useJsonSchemaVersion must be used within a RemoteFlowProvider',
+    );
+  }
+
+  if (context.jsonSchemaVersion === undefined) {
+    return {};
+  }
+
+  return {
+    json_schema_version: context.jsonSchemaVersion,
+  };
+};

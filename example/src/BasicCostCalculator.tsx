@@ -14,27 +14,27 @@ const estimationOptions = {
   includeCostBreakdowns: true,
 };
 
-export function BasicCostCalculator() {
-  const fetchToken = () => {
-    return fetch('/api/token')
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-      }))
-      .catch((error) => {
-        console.error({ error });
-        throw error;
-      });
-  };
+const fetchToken = () => {
+  return fetch('/api/token')
+    .then((res) => res.json())
+    .then((data) => ({
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+    }))
+    .catch((error) => {
+      console.error({ error });
+      throw error;
+    });
+};
 
+export function BasicCostCalculator() {
   const onReset = () => {
     console.log('Reset button clicked');
     // Add your reset logic here
   };
 
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows auth={fetchToken}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

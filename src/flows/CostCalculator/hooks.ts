@@ -19,7 +19,7 @@ import type { Result } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
-import { useClient } from '@/src/context';
+import { useClient, useJsonSchemaVersion } from '@/src/context';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -164,6 +164,7 @@ const useRegionFields = (
   },
 ) => {
   const { client } = useClient();
+  const jsonSchemaVersion = useJsonSchemaVersion();
 
   return useQuery({
     queryKey: ['cost-calculator-region-fields', region, includePremiumBenefits],
@@ -176,6 +177,7 @@ const useRegionFields = (
         path: { slug: region as string },
         query: {
           include_premium_benefits: includePremiumBenefits,
+          ...jsonSchemaVersion,
         },
       });
     },

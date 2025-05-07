@@ -32,13 +32,14 @@ npm install @remoteoss/remote-flows
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop            | Type                                                        | Required | Description                                                        |
-| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
-| `isTestingMode` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
-| `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-| `components`    | `Components`                                                | No       | Custom field components for form rendering                         |
-| `proxy`         | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers          |
+| Prop                | Type                                                        | Required | Description                                                                                                                  |
+| ------------------- | ----------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `auth`              | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                                                                                       |
+| `isTestingMode`     | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production                                                           |
+| `theme`             | `ThemeOptions`                                              | No       | Custom theme configuration                                                                                                   |
+| `components`        | `Components`                                                | No       | Custom field components for form rendering                                                                                   |
+| `proxy`             | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers                                                                    |
+| `jsonSchemaVersion` | `number`                                                    | No       | JSON schemas are versioned, you can set a version to freeze the json schema, if not provided you will use the latest version |
 
 ### Custom Field Components
 

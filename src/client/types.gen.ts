@@ -604,6 +604,51 @@ export type IdentityCurrentResponse =
   | IdentityCompanyAccessTokenResponse
   | IdentityCustomerAccessTokenResponse;
 
+export type EmployeeDetails = {
+  base_salary: {
+    amount?: number;
+    currency?: string;
+  };
+  benefits: {
+    amount?: number;
+    currency?: string;
+  };
+  deductions: {
+    amount?: number;
+    currency?: string;
+  };
+  employer_costs: {
+    amount?: number;
+    currency?: string;
+  };
+  expenses: {
+    amount?: number;
+    currency?: string;
+  };
+  full_name: string;
+  gross_pay: {
+    amount?: number;
+    currency?: string;
+  };
+  incentives: {
+    amount?: number;
+    currency?: string;
+  };
+  net_pay: {
+    amount?: number;
+    currency?: string;
+  };
+  other: {
+    amount?: number;
+    currency?: string;
+  };
+  payslip_id: string | null;
+  total_cost: {
+    amount?: number;
+    currency?: string;
+  };
+};
+
 /**
  * Approve an expense
  */
@@ -928,6 +973,8 @@ export type Country = {
   alpha_2_code: string;
   code: string;
   country_subdivisions?: Array<CountrySubdivision> | null;
+  eor_onboarding?: boolean;
+  locked_benefits?: string;
   name: string;
   region?: string;
   subregion?: string | null;
@@ -951,6 +998,13 @@ export type CreateOffboardingParams = {
    * The type of the offboarding request. For now, only `termination` is allowed.
    */
   type: 'termination';
+};
+
+/**
+ * Parameters for creating a pricing plan
+ */
+export type CreatePricingPlanParams = {
+  pricing_plan_partner_template_id: string;
 };
 
 /**
@@ -1111,11 +1165,6 @@ export type PayslipResponse = {
   };
 };
 
-/**
- * Description of the required params to create an employment.
- */
-export type EmploymentBasicParams = CreateParams | CreateParamsDeprecated;
-
 export type NotFoundResponse = {
   message?: string;
 };
@@ -1124,6 +1173,13 @@ export type CostCalculatorEstimateResponse = {
   data: {
     employments?: Array<CostCalculatorEmployment>;
   };
+};
+
+/**
+ * The list of benefit offers for an employment schema
+ */
+export type EmploymentsBenefitOffersListBenefitOffers = {
+  data: Array<UnifiedEmploymentBenefitOffer>;
 };
 
 /**
@@ -1224,86 +1280,6 @@ export type ContractorInvoiceSchedule = {
 };
 
 /**
- * Providing the params in the root level of the request is now deprecated and will be removed in the future.
- * Please, use the "FullParams" instead.
- *
- */
-export type FullParamsDeprecated = {
-  /**
-   * Home address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `address_details` as path parameters.
-   */
-  address_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Administrative information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `administrative_details` as path parameters.
-   */
-  administrative_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Bank account information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `bank_account_details` as path parameters.
-   */
-  bank_account_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Billing address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `billing_address_details` as path parameters.
-   */
-  billing_address_details?: {
-    [key: string]: unknown;
-  };
-  company_id?: string;
-  /**
-   * Contract information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `contract_details` as path parameters.
-   */
-  contract_details?: {
-    [key: string]: unknown;
-  };
-  country?: Country;
-  country_code: string;
-  /**
-   * Emergency contact information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `emergency_contact_details` as path parameters.
-   */
-  emergency_contact_details?: {
-    [key: string]: unknown;
-  };
-  full_name: string;
-  job_title: string;
-  /**
-   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
-   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
-   * **Update of this field is only available for active employments.**
-   *
-   */
-  manager_id?: string;
-  /**
-   * Personal details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `personal_details` as path parameters.
-   */
-  personal_details?: {
-    [key: string]: unknown;
-  };
-  personal_email: string;
-  pricing_plan_details?: PricingPlanDetails;
-  provisional_start_date?: ProvisionalStartDate;
-  seniority_date?: EmploymentSeniorityDate;
-};
-
-/**
  * SSO Configuration Details response
  */
 export type SsoConfigurationDetailsResponse = {
@@ -1371,6 +1347,12 @@ export type EmploymentDocument = {
 export type ShortId = string;
 
 export type CompanyStructureNode = {
+  /**
+   * Arbitrary attributes including legal entity code
+   */
+  attributes?: {
+    [key: string]: unknown;
+  };
   company_structure?: {
     id?: string;
     name?: string;
@@ -1405,7 +1387,112 @@ export type NullableApproverId = string | null;
  * You do not need to include all onboarding tasks when creating or updating an employment.
  *
  */
-export type EmploymentFullParams = FullParamsDeprecated | FullParams;
+export type EmploymentFullParams = {
+  /**
+   * Home address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `address_details` as path parameters.
+   */
+  address_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Administrative information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `administrative_details` as path parameters.
+   */
+  administrative_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Bank account information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `bank_account_details` as path parameters.
+   */
+  bank_account_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Employment basic information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   */
+  basic_information?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Billing address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `billing_address_details` as path parameters.
+   */
+  billing_address_details?: {
+    [key: string]: unknown;
+  };
+  company_id?: string;
+  /**
+   * Contract information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `contract_details` as path parameters.
+   */
+  contract_details?: {
+    [key: string]: unknown;
+  };
+  country?: Country;
+  country_code?: string;
+  /**
+   * The department of the employment. The department must belong to the same company as the employment.
+   * When set to `null`, the employment will be unassigned from a department.
+   *
+   */
+  department_id?: string | null;
+  /**
+   * Emergency contact information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `emergency_contact_details` as path parameters.
+   */
+  emergency_contact_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id?: string;
+  /**
+   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
+   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
+   * **Update of this field is only available for active employments.**
+   *
+   */
+  manager_id?: string;
+  /**
+   * Personal details information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `personal_details` as path parameters.
+   */
+  personal_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Pricing plan details information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `pricing_plan_details` as path parameters.
+   */
+  pricing_plan_details?: {
+    [key: string]: unknown;
+  };
+  /**
+   * If not provided, it will default to `employee`.
+   */
+  type?: 'employee' | 'contractor';
+  /**
+   * The work email of the employment.
+   */
+  work_email?: string;
+};
+
+export type PayrollRunResponse = {
+  payroll_run?: PayrollRun;
+};
 
 /**
  * Response schema listing many custom_fields
@@ -1450,6 +1537,9 @@ export type CreateWebhookCallbackParams = {
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
+    | 'company.manager_created'
+    | 'company.manager_deleted'
+    | 'company.manager_updated'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -1460,18 +1550,19 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
+    | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
-    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
-    | 'employment.onboarding.completed'
     | 'employment.onboarding.cancelled'
+    | 'employment.onboarding.completed'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -1484,6 +1575,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
+    | 'employment.user_status.invited'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -1512,6 +1604,7 @@ export type CreateWebhookCallbackParams = {
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
+    | 'timeoff.started'
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
@@ -1684,6 +1777,10 @@ export type PayrollCalendarEor = {
  */
 export type OptionValue = string;
 
+export type ListPayrollRunResponse = {
+  payroll_runs?: Array<MinimalPayrollRun>;
+};
+
 /**
  * JSON Schema
  */
@@ -1696,6 +1793,17 @@ export type JsonSchema = {
     'x-jsf-order'?: Array<string>;
   };
   version?: number;
+};
+
+/**
+ * Pricing plan
+ */
+export type PricingPlan = {
+  base_price: Price;
+  id: string;
+  price: Price;
+  product: Product;
+  type: string;
 };
 
 /**
@@ -1723,6 +1831,26 @@ export type CostCalculatorCost = {
   zendesk_article_url: string | null;
 };
 
+export type MinimalPayrollRun = {
+  approval_date: NullableDate;
+  country: Country;
+  currency_code: CurrencyCode;
+  cutoff_date?: NullableDate;
+  expected_payout_date: _Date;
+  id: string;
+  period_end: _Date;
+  period_start: _Date;
+  status:
+    | 'preparing'
+    | 'processing'
+    | 'completed'
+    | 'finalized'
+    | 'waiting_for_customer_approval'
+    | 'rejected';
+  total_payroll_cost: number;
+  type: 'main' | 'one_off' | 'pro_forma' | 'tax_documents' | 'expenses';
+};
+
 export type MaybeUnifiedMinimalBenefitGroup = UnifiedMinimalBenefitGroup | null;
 
 export type OAuth2Tokens =
@@ -1738,34 +1866,15 @@ export type ApprovedWorkAuthozation = {
   status: 'approved_by_manager';
 };
 
-/**
- * Providing the params in the root level of the request is now deprecated and will be removed in the future.
- * Please, use the "CreateParams" instead.
- *
- */
-export type CreateParamsDeprecated = {
-  /**
-   * This optional field is deprecated.
-   */
-  company_id?: string;
-  country_code: string;
-  full_name: string;
-  job_title: string;
-  personal_email: string;
-  provisional_start_date?: ProvisionalStartDate;
-  seniority_date?: EmploymentSeniorityDate;
-  /**
-   * If not provided, it will default to `employee`.
-   */
-  type?: 'employee' | 'contractor';
-};
-
 export type WebhookTriggerEmploymentParams = {
   employment_id: string;
   event_type:
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
+    | 'company.manager_created'
+    | 'company.manager_deleted'
+    | 'company.manager_updated'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -1776,18 +1885,19 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
+    | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
-    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
-    | 'employment.onboarding.completed'
     | 'employment.onboarding.cancelled'
+    | 'employment.onboarding.completed'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -1800,6 +1910,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
+    | 'employment.user_status.invited'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -1828,6 +1939,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
+    | 'timeoff.started'
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
@@ -1845,6 +1957,15 @@ export type WebhookTriggerEmploymentParams = {
 };
 
 /**
+ * Response for creating a pricing plan
+ */
+export type CreatePricingPlanResponse = {
+  data: {
+    pricing_plan: PricingPlan;
+  };
+};
+
+/**
  * Timeoff days params
  */
 export type TimeoffDaysParams = {
@@ -1857,32 +1978,6 @@ export type IdentityUser = {
   id: string;
   name: string;
   status: string;
-};
-
-export type CreateParams = {
-  /**
-   * Employment basic information. When using this field, the same other root level fields (full_name, personal_email, job_title,
-   * provisional_start_date, and seniority_date) will be ignored.
-   * Its properties may vary depending on the country, you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
-   *
-   */
-  basic_information?: {
-    [key: string]: unknown;
-  };
-  /**
-   * This optional field is deprecated.
-   */
-  company_id?: string;
-  country_code: string;
-  /**
-   * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
-   */
-  external_id?: string;
-  /**
-   * If not provided, it will default to `employee`.
-   */
-  type?: 'employee' | 'contractor';
 };
 
 export type CostCalculatorCosts = {
@@ -1961,6 +2056,15 @@ export type ProbationCompletionLetter = {
   status: 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
   submitted_at: DateTimeIso8601;
   zendesk_ticket_url: string | null;
+};
+
+/**
+ * Product
+ */
+export type Product = {
+  frequency: string;
+  name: string;
+  tier: string;
 };
 
 export type TimeoffDaysAndHours = {
@@ -2100,6 +2204,36 @@ export type OfferedBenefitGroup = {
   offered_benefit_tiers: Array<OfferedBenefitTier>;
 };
 
+export type PayrollRun = {
+  approval_date: NullableDate;
+  benefits_total: number;
+  country: Country;
+  currency_code: CurrencyCode;
+  cutoff_date?: NullableDate;
+  employee_details: Array<EmployeeDetails>;
+  employer_contributions_total: number;
+  expected_payout_date: _Date;
+  expenses_total: number;
+  /**
+   * The ID of the payroll run
+   */
+  id: string;
+  incentives_total: number;
+  other_total: number;
+  period_end: _Date;
+  period_start: _Date;
+  salary_total: number;
+  status:
+    | 'preparing'
+    | 'processing'
+    | 'completed'
+    | 'finalized'
+    | 'waiting_for_customer_approval'
+    | 'rejected';
+  total_payroll_cost: number;
+  type?: 'main' | 'one_off' | 'pro_forma' | 'tax_documents' | 'expenses';
+};
+
 export type TimeoffBalanceNotSupportedResponse = ResourceErrorResponse;
 
 /**
@@ -2219,49 +2353,7 @@ export type ContractorInvoiceScheduleStatus =
  *
  */
 export type EmploymentUpdateParams = {
-  status?: EmploymentStatus;
-};
-
-export type UpdateOffboardingParams = {
-  termination_details: {
-    /**
-     * In most cases, employee needs to be notified before termination. The required notice period depends on local labor laws, the employment agreement, and other factors. Remote will use those factors to determine the required notice period. Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.
-     */
-    proposed_termination_date?: string;
-    /**
-     * Description of the reason for termination
-     */
-    reason_description?: string;
-    /**
-     * Choose an accurate termination reason to avoid unfair or unlawful dismissal claims.
-     *
-     * If the termination is created before the employee's start date, this field
-     * will be set to `cancellation_before_start_date`.
-     *
-     */
-    termination_reason?:
-      | 'cancellation_before_start_date'
-      | 'compliance_issue'
-      | 'conversion_to_contractor'
-      | 'dissatisfaction_with_remote_service'
-      | 'end_of_fixed_term_contract_compliance_issue'
-      | 'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties'
-      | 'end_of_fixed_term_contract_local_regulations_max_term_reached'
-      | 'end_of_fixed_term_contract_misconduct'
-      | 'end_of_fixed_term_contract_operational_reasons'
-      | 'end_of_fixed_term_contract_other'
-      | 'end_of_fixed_term_contract_performance'
-      | 'end_of_fixed_term_contract_redundancy'
-      | 'end_of_fixed_term_contract_values'
-      | 'gross_misconduct'
-      | 'incapacity_to_perform_inherent_duties'
-      | 'job_abandonment'
-      | 'mutual_agreement'
-      | 'other'
-      | 'performance'
-      | 'values'
-      | 'workforce_reduction';
-  };
+  status: EmploymentStatus;
 };
 
 export type CostCalculatorListCountryResponse = {
@@ -2354,6 +2446,15 @@ export type Payslip = {
  * Update expense params
  */
 export type UpdateExpenseParams = ApproveExpenseParams | DeclineExpenseParams;
+
+/**
+ * List of pricing plan partner templates
+ */
+export type ListPricingPlanPartnerTemplatesResponse = {
+  data: {
+    pricing_plan_partner_templates: Array<PricingPlanPartnerTemplate>;
+  };
+};
 
 /**
  * Minimal information of an employment.
@@ -2493,6 +2594,16 @@ export type TimeoffBalance = {
  *
  */
 export type AmountTaxType = 'gross' | 'net';
+
+/**
+ * Pricing plan partner template
+ */
+export type PricingPlanPartnerTemplate = {
+  base_price: Price;
+  id: string;
+  price: Price;
+  product: Product;
+};
 
 /**
  * Contract Amendment
@@ -3162,6 +3273,15 @@ export type BenefitRenewalRequestsMinimalBenefitRenewalResponse = {
   updated_at: DateTime;
 };
 
+/**
+ * Company pricing plans
+ */
+export type ListCompanyPricingPlansResponse = {
+  data: {
+    pricing_plans: Array<PricingPlan>;
+  };
+};
+
 export type UuidSlug = string;
 
 /**
@@ -3554,95 +3674,6 @@ export type LeavePolicy = {
   name: string;
 };
 
-export type FullParams = {
-  /**
-   * Home address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `address_details` as path parameters.
-   */
-  address_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Administrative information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `administrative_details` as path parameters.
-   */
-  administrative_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Bank account information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `bank_account_details` as path parameters.
-   */
-  bank_account_details?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
-   */
-  basic_information?: {
-    [key: string]: unknown;
-  };
-  /**
-   * Billing address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `billing_address_details` as path parameters.
-   */
-  billing_address_details?: {
-    [key: string]: unknown;
-  };
-  company_id?: string;
-  /**
-   * Contract information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `contract_details` as path parameters.
-   */
-  contract_details?: {
-    [key: string]: unknown;
-  };
-  country?: Country;
-  country_code: string;
-  /**
-   * The department of the employment. The department must belong to the same company as the employment.
-   *
-   */
-  department_id?: string;
-  /**
-   * Emergency contact information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `emergency_contact_details` as path parameters.
-   */
-  emergency_contact_details?: {
-    [key: string]: unknown;
-  };
-  full_name: string;
-  job_title: string;
-  /**
-   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
-   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
-   * **Update of this field is only available for active employments.**
-   *
-   */
-  manager_id?: string;
-  /**
-   * Personal details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `personal_details` as path parameters.
-   */
-  personal_details?: {
-    [key: string]: unknown;
-  };
-  pricing_plan_details?: PricingPlanDetails;
-  /**
-   * The work email of the employment.
-   */
-  work_email?: string;
-};
-
 export type CompanyManager = {
   /**
    * Company ID
@@ -3935,6 +3966,9 @@ export type WebhookCallback = {
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
+    | 'company.manager_created'
+    | 'company.manager_deleted'
+    | 'company.manager_updated'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -3945,18 +3979,19 @@ export type WebhookCallback = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
+    | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
-    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
-    | 'employment.onboarding.completed'
     | 'employment.onboarding.cancelled'
+    | 'employment.onboarding.completed'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -3969,6 +4004,7 @@ export type WebhookCallback = {
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
+    | 'employment.user_status.invited'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -3997,6 +4033,7 @@ export type WebhookCallback = {
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
+    | 'timeoff.started'
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
@@ -4082,6 +4119,11 @@ export type ListPayslipsResponse = {
 export type SendBackTimesheetParams = {
   sent_back_reason: string;
 };
+
+/**
+ * Optional UTC date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
+ */
+export type NullableDate = string | null;
 
 /**
  * Company currency
@@ -4447,13 +4489,6 @@ export type CreateProbationCompletionLetterParams = {
 };
 
 /**
- * The list of benefit offers for an employment schema
- */
-export type UnifiedEmploymentListBenefitOffers = {
-  data: Array<UnifiedEmploymentBenefitOffer>;
-};
-
-/**
  * Object with required and optional fields, its descriptions and suggested presentation
  */
 export type CompanyFormResponse = {
@@ -4565,14 +4600,18 @@ export type BenefitTier = {
 export type ScheduleId = string;
 
 export type TerminationDetailsParams = {
+  acknowledge_termination_procedure?: boolean | null;
   /**
    * Additional details regarding the termination process.
    */
   additional_comments?: string;
+  agrees_to_pto_amount?: boolean | null;
+  agrees_to_pto_amount_notes?: string | null;
   /**
    * Confidential requests are visible for who authorized the token or integration. Non-confidential requests are visible to all admins in the company.
    */
   confidential: boolean;
+  customer_informed_employee?: boolean | null;
   /**
    * Remote advises not to inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there. This field is only required if employee was informed before creating the offboarding request.
    */
@@ -4805,6 +4844,9 @@ export type UpdateWebhookCallbackParams = {
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
+    | 'company.manager_created'
+    | 'company.manager_deleted'
+    | 'company.manager_updated'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -4815,18 +4857,19 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'custom_field.value_updated'
+    | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
-    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
-    | 'employment.onboarding.completed'
     | 'employment.onboarding.cancelled'
+    | 'employment.onboarding.completed'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -4839,6 +4882,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
+    | 'employment.user_status.invited'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -4867,6 +4911,7 @@ export type UpdateWebhookCallbackParams = {
     | 'timeoff.date_changed'
     | 'timeoff.declined'
     | 'timeoff.requested'
+    | 'timeoff.started'
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
@@ -4944,6 +4989,17 @@ export type ListEmploymentContractResponse = {
   data: {
     employment_contracts: Array<EmploymentContract>;
   };
+};
+
+/**
+ * Price
+ */
+export type Price = {
+  /**
+   * Amount in cents
+   */
+  amount: number;
+  currency: CurrencyDefinition;
 };
 
 export type MessageResponse = {
@@ -5140,6 +5196,35 @@ export type Timeoff = {
  */
 export type ApproveTimeoffParams = {
   approver_id: NullableApproverId;
+};
+
+/**
+ * Description of the basic required and onboarding tasks params to create an employment.
+ * You do not need to include all onboarding tasks when creating or updating an employment.
+ *
+ */
+export type EmploymentCreateParams = {
+  /**
+   * Employment basic information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   */
+  basic_information: {
+    [key: string]: unknown;
+  };
+  /**
+   * This optional field is deprecated.
+   */
+  company_id?: string;
+  country_code: string;
+  /**
+   * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id?: string;
+  /**
+   * If not provided, it will default to `employee`.
+   */
+  type?: 'employee' | 'contractor';
 };
 
 /**
@@ -5651,6 +5736,10 @@ export type GetShowContractAmendmentSchemaData = {
      * Name of the desired form
      */
     form?: 'contract_amendment';
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
   };
   url: '/v1/contract-amendments/schema';
 };
@@ -5884,20 +5973,7 @@ export type GetIndexEmploymentData = {
      * Also supports the value `incomplete` to get all employments that are not onboarded yet.
      *
      */
-    status?:
-      | 'active'
-      | 'created'
-      | 'created_awaiting_reserve'
-      | 'created_reserve_paid'
-      | 'initiated'
-      | 'invited'
-      | 'pending'
-      | 'pre_hire'
-      | 'review'
-      | 'job_title_review'
-      | 'archived'
-      | 'deleted'
-      | 'incomplete';
+    status?: string;
     /**
      * Filters the results by employments whose employment product type matches the value
      * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
@@ -5956,7 +6032,7 @@ export type PostCreateEmployment2Data = {
   /**
    * Employment params
    */
-  body?: EmploymentBasicParams;
+  body?: EmploymentCreateParams;
   headers: {
     /**
      * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
@@ -6197,6 +6273,10 @@ export type GetShowCompanySchemaData = {
      * Name of the desired form
      */
     form: 'address_details';
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
   };
   url: '/v1/companies/schema';
 };
@@ -6276,7 +6356,7 @@ export type GetIndexBenefitOfferResponses = {
   /**
    * Success
    */
-  200: UnifiedEmploymentListBenefitOffers;
+  200: EmploymentsBenefitOffersListBenefitOffers;
 };
 
 export type GetIndexBenefitOfferResponse =
@@ -6416,6 +6496,28 @@ export type PostBypassEligibilityChecksCompanyResponses = {
 
 export type PostBypassEligibilityChecksCompanyResponse =
   PostBypassEligibilityChecksCompanyResponses[keyof PostBypassEligibilityChecksCompanyResponses];
+
+export type GetShowTestSchemaData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
+  url: '/v1/test-schema';
+};
+
+export type GetShowTestSchemaResponses = {
+  /**
+   * Success
+   */
+  200: CompanyFormResponse;
+};
+
+export type GetShowTestSchemaResponse =
+  GetShowTestSchemaResponses[keyof GetShowTestSchemaResponses];
 
 export type GetIndexHolidayData = {
   body?: never;
@@ -7067,7 +7169,12 @@ export type GetSchemaBenefitRenewalRequestData = {
      */
     benefit_renewal_request_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
 };
 
@@ -8099,6 +8206,46 @@ export type PostCreateContractAmendmentResponses = {
 export type PostCreateContractAmendmentResponse =
   PostCreateContractAmendmentResponses[keyof PostCreateContractAmendmentResponses];
 
+export type GetShowPayrollRunData = {
+  body?: never;
+  path: {
+    /**
+     * Payroll run ID
+     */
+    payroll_run_id: string;
+  };
+  query?: never;
+  url: '/v1/payroll-runs/{payroll_run_id}';
+};
+
+export type GetShowPayrollRunErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetShowPayrollRunError =
+  GetShowPayrollRunErrors[keyof GetShowPayrollRunErrors];
+
+export type GetShowPayrollRunResponses = {
+  /**
+   * Success
+   */
+  200: PayrollRunResponse;
+};
+
+export type GetShowPayrollRunResponse =
+  GetShowPayrollRunResponses[keyof GetShowPayrollRunResponses];
+
 export type GetDownloadExpenseReceiptData = {
   body?: never;
   path: {
@@ -8372,6 +8519,10 @@ export type GetShowFormCountryData = {
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
     skip_benefits?: boolean;
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
   };
   url: '/v1/countries/{country_code}/{form}';
 };
@@ -9295,7 +9446,12 @@ export type GetShowSchemaData = {
      */
     employment_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/employments/{employment_id}/benefit-offers/schema';
 };
 
@@ -9464,6 +9620,10 @@ export type PatchUpdateEmployment2Data = {
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
     skip_benefits?: boolean;
+    /**
+     * Complementary action(s) to perform when creating an employment.
+     */
+    actions?: string;
   };
   url: '/v1/employments/{employment_id}';
 };
@@ -9533,6 +9693,10 @@ export type PatchUpdateEmploymentData = {
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
     skip_benefits?: boolean;
+    /**
+     * Complementary action(s) to perform when creating an employment.
+     */
+    actions?: string;
   };
   url: '/v1/employments/{employment_id}';
 };
@@ -9719,7 +9883,7 @@ export type PostCreateEmploymentData = {
   /**
    * Employment params
    */
-  body?: EmploymentBasicParams;
+  body?: EmploymentCreateParams;
   headers: {
     /**
      * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
@@ -12185,6 +12349,54 @@ export type PostCreateTimeoffResponses = {
 export type PostCreateTimeoffResponse =
   PostCreateTimeoffResponses[keyof PostCreateTimeoffResponses];
 
+export type GetIndexPayrollRunData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filters payroll runs where period_start or period_end match the given date
+     */
+    payroll_period?: _Date;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/payroll-runs';
+};
+
+export type GetIndexPayrollRunErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexPayrollRunError =
+  GetIndexPayrollRunErrors[keyof GetIndexPayrollRunErrors];
+
+export type GetIndexPayrollRunResponses = {
+  /**
+   * Success
+   */
+  200: ListPayrollRunResponse;
+};
+
+export type GetIndexPayrollRunResponse =
+  GetIndexPayrollRunResponses[keyof GetIndexPayrollRunResponses];
+
 export type GetIndexEmploymentContractData = {
   body?: never;
   headers: {
@@ -12202,6 +12414,10 @@ export type GetIndexEmploymentContractData = {
      * Employment ID
      */
     employment_id: string;
+    /**
+     * Only Active
+     */
+    only_active?: boolean;
   };
   url: '/v1/employment-contracts';
 };
