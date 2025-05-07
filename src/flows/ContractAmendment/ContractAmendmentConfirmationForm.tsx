@@ -2,6 +2,7 @@ import {
   ContractAmendmentResponse,
   PostCreateContractAmendmentError,
 } from '@/src/client';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { Form } from '@/src/components/ui/form';
 import React from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -38,18 +39,22 @@ export function ContractAmendmentConfirmationForm({
 }: ContractAmendmentConfirmationFormProps) {
   const {
     contractAmendment: {
-      values,
+      stepState,
       isSubmitting,
       onSubmit: submitContractAmendment,
+      fields,
     },
     formId,
   } = useContractAmendmentContext();
   const form = useForm({
-    defaultValues: values,
+    defaultValues: stepState.values?.form,
   });
 
   const handleSubmit = async (values: FieldValues) => {
-    await onSubmit?.(values);
+    const parsedValues = parseJSFToValidate(values, fields, {
+      isPartialValidation: false,
+    });
+    await onSubmit?.(parsedValues);
 
     const contractAmendmentResult = await submitContractAmendment(values);
 

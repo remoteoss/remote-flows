@@ -3,6 +3,7 @@ import {
   PostAutomatableContractAmendmentError,
 } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
@@ -114,7 +115,11 @@ export function ContractAmendmentForm({
       });
     }
 
-    await onSubmit?.(values);
+    const parsedValues = parseJSFToValidate(values, fields, {
+      isPartialValidation: false,
+    });
+
+    await onSubmit?.(parsedValues);
 
     const contractAmendmentResult = await submitContractAmendment(values);
 

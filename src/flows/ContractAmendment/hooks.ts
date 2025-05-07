@@ -6,7 +6,10 @@ import {
   postCreateContractAmendment,
 } from '@/src/client';
 
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  convertToCents,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 
 import { Client } from '@hey-api/client-fetch';
@@ -64,7 +67,14 @@ const useContractAmendmentSchemaQuery = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-      const copyFieldValues = { ...fieldValues };
+
+      const copyFieldValues = {
+        ...fieldValues,
+        annual_gross_salary: fieldValues?.annual_gross_salary
+          ? convertToCents(fieldValues?.annual_gross_salary)
+          : undefined,
+      };
+
       const hasFieldValues = Object.keys(copyFieldValues).length > 0;
 
       const result = createHeadlessForm(jsfSchema, {
@@ -127,6 +137,7 @@ export const useContractAmendment = ({
   const isNavigatingBackToForm =
     Object.keys(fieldValues).length === 0 &&
     Object.keys(stepState.values?.form || {}).length > 0;
+
   const {
     data: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
@@ -200,6 +211,7 @@ export const useContractAmendment = ({
         values,
         contractAmendmentHeadlessForm?.fields,
       );
+
       return contractAmendmentHeadlessForm?.handleValidation(parsedValues);
     }
     return null;
