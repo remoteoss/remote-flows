@@ -123,11 +123,6 @@ export const useTermination = ({
       throw new Error('Employment id is missing');
     }
 
-    if (stepState.currentStep.index < stepState.totalSteps - 1) {
-      nextStep();
-      return;
-    }
-
     if (terminationHeadlessForm) {
       // this is a hack because I need to validate all form values with the entire schema
       const parsedValues = parseJSFToValidate(
@@ -189,6 +184,10 @@ export const useTermination = ({
 
   function back() {
     previousStep();
+  }
+
+  function next() {
+    nextStep();
   }
 
   const initialValues = buildInitialValues({
@@ -253,6 +252,16 @@ export const useTermination = ({
       }
     },
     /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
+    parseFormValues: (values: TerminationFormValues) => {
+      return parseJSFToValidate(values, entireTerminationSchema.fields, {
+        isPartialValidation: true,
+      });
+    },
+    /**
      * Function to handle form submission
      * @param values - Form values to submit
      * @returns Promise resolving to the mutation result
@@ -264,5 +273,11 @@ export const useTermination = ({
      * @returns {void}
      */
     back,
+
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    next,
   };
 };

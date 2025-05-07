@@ -9,7 +9,7 @@ import { ContractAmendmentParams } from './types';
 
 type TUseContractAmendment = ReturnType<typeof useContractAmendment>;
 
-export type RenderProps = {
+export type ContractAmendmentRenderProps = {
   /**
    * The contract amendment bag returned by the useContractAmendment hook.
    * This bag contains all the methods and properties needed to handle the contract amendment flow.
@@ -35,7 +35,7 @@ type ContractAmendmentFlowProps = ContractAmendmentParams & {
   render: ({
     contractAmendmentBag,
     components,
-  }: RenderProps) => React.ReactNode;
+  }: ContractAmendmentRenderProps) => React.ReactNode;
 };
 
 export function ContractAmendmentFlow({
