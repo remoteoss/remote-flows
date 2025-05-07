@@ -543,7 +543,37 @@ describe('TerminationFlow', () => {
       expect(mockOnSubmitForm).toHaveBeenCalledTimes(1);
     });
 
-    const payloadSubmitted = {
+    expect(mockOnSubmitForm).toHaveBeenCalledWith({
+      acknowledge_termination_procedure: true,
+      additional_comments: null,
+      agrees_to_pto_amount: 'yes',
+      agrees_to_pto_amount_notes: null,
+      confidential: 'no',
+      customer_informed_employee: 'yes',
+      customer_informed_employee_date: '2025-05-15',
+      customer_informed_employee_description: 'Whatever text',
+      personal_email: 'ze@remote.com',
+      proposed_termination_date: '2025-05-15',
+      reason_description: 'whatever text',
+      risk_assessment_reasons: ['sick_leave'],
+      termination_reason: 'gross_misconduct',
+      termination_reason_files: [],
+      timesheet_file: undefined,
+      will_challenge_termination: 'no',
+      will_challenge_termination_description: null,
+    });
+
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockOnSuccess).toHaveBeenCalledWith(terminationResponse);
+
+    await waitFor(() => {
+      expect(offboardingRequest).not.toBeNull();
+    });
+
+    expect(offboardingRequest).toEqual({
       employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
       termination_details: {
         acknowledge_termination_procedure: true,
@@ -563,21 +593,7 @@ describe('TerminationFlow', () => {
         will_challenge_termination: false,
       },
       type: 'termination',
-    };
-
-    expect(mockOnSubmitForm).toHaveBeenCalledWith(payloadSubmitted);
-
-    await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
     });
-
-    expect(mockOnSuccess).toHaveBeenCalledWith(terminationResponse);
-
-    await waitFor(() => {
-      expect(offboardingRequest).not.toBeNull();
-    });
-
-    expect(offboardingRequest).toEqual(payloadSubmitted);
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {

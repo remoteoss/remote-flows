@@ -52,7 +52,10 @@ export function AdditionalDetailsForm({
     if (field.name === 'acknowledge_termination_procedure') {
       return {
         ...field,
-        label: (field.label as string).replace('{{username}}', requesterName),
+        label: (field.label as string).replace(
+          '{{requesterName}}',
+          requesterName,
+        ),
       };
     }
     return field;

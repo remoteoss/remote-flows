@@ -243,7 +243,7 @@ export const Termination = () => {
 
 ### TerminationFlow
 
-The `TerminationFlow` component lets you render different components like `EmployeeComunicationStep`, `TerminationDetailsForm`, `PaidTimeOffStep`, `AdditionalDetailsStep`, `SubmitButton`, `Back`, `TimeOff`
+The `TerminationFlow` component lets you render different components like `EmployeeComunicationStep`, `TerminationDetailsStep`, `PaidTimeOffStep`, `AdditionalDetailsStep`, `SubmitButton`, `Back`, `TimeOff`
 
 The component accepts the next props
 
@@ -254,16 +254,40 @@ The component accepts the next props
 | `render`       | `({termination:  ReturnType<typeof useTermination>, components: {Form, SubmitButton, Back, TimeOff}})` | Yes      | render prop function with the params passed by the useTermination hook and the components available to use for this flow |
 | `options`      | `{jsfModify: JSFModify}`                                                                               | No       | JSFModify options lets you modify properties from the form, such as changing the labels                                  |
 
-### Form
+### EmployeeComunicationStep
 
-It renders the form and the fields of the termination flow
+It renders the employee communication step and its respective fields.
 
-| Prop        | Type                                             | Required | Description                                                                                                        |
-| ----------- | ------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `username`  | `string`                                         | Yes      | Replaces the {{username}} placeholder for the acknowledge field in the last step, should be the requester username |
-| `onSubmit`  | `(payload: TerminationFormValues) => void`       | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote                       |
-| `onSuccess` | `(response: PostCreateOffboardingError) => void` | No       | Callback with the successful termination data                                                                      |
-| `onError`   | `(error: Error) => void`                         | No       | Error handling callback                                                                                            |
+| Prop       | Type                                       | Required | Description                                                       |
+| ---------- | ------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `onSubmit` | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before going to the next step |
+
+### TerminationDetailsStep
+
+It renders the termination details step and its respective fields.
+
+| Prop       | Type                                       | Required | Description                                                       |
+| ---------- | ------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `onSubmit` | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before going to the next step |
+
+### PaidTimeOffStep
+
+It renders the paid timeoff step and its respective fields.
+
+| Prop       | Type                                       | Required | Description                                                       |
+| ---------- | ------------------------------------------ | -------- | ----------------------------------------------------------------- |
+| `onSubmit` | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before going to the next step |
+
+### AdditionalDetailsStep
+
+It renders the additional details step and its respective fields.
+
+| Prop            | Type                                       | Required | Description                                                                                                                              |
+| --------------- | ------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `requesterName` | `string`                                   | Yes      | Replaces the {{requesterName}} placeholder for the acknowledge field in the last step, should be the person who requests the termination |
+| `onSubmit`      | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before submitting the form to Remote                                                                 |
+| `onSuccess`     | `(response: OffboardingResponse) => void`  | No       | Callback with the successful termination data                                                                                            |
+| `onError`       | `(error: Error) => void`                   | No       | Error handling callback                                                                                                                  |
 
 ### SubmitButton
 
