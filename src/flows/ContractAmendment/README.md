@@ -174,7 +174,7 @@ The component accepts the following props:
 | `countryCode`       | string                                                                                                                              | Yes      | The country code where the employment is based                                                                                 |
 | `render`            | `({contractAmendmentBag: ReturnType<typeof useContractAmendment>, components: {Form, SubmitButton, BackButton, ConfirmationForm}})` | Yes      | render prop function with the params passed by the useContractAmendment hook and the components available to use for this flow |
 | `options`           | `{jsfModify: JSFModify}`                                                                                                            | No       | JSFModify options lets you modify properties from the form, such as changing the labels                                        |
-| `jsonSchemaVersion` | `{contract_amendments: number}`                                                                                                     | No       | Allows to point to a certain version of a json schema form                                                                     |
+| `jsonSchemaVersion` | `{contract_amendments: number}`                                                                                                     | No       | Allows to point to a certain version of the contract amendment json schema form                                                |
 
 ### Form
 
