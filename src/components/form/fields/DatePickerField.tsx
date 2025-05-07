@@ -86,7 +86,7 @@ export function DatePickerField({
                         'w-full pl-3 text-left font-normal',
                         !field.value && 'text-muted-foreground',
                       )}
-                      data-testid="date-picker-button"
+                      data-testid={`date-picker-button-${name}`}
                     >
                       {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />

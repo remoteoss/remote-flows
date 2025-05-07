@@ -131,7 +131,10 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
-      await selectDayInCalendar(newValues?.whenWasEmployeeInformed);
+      await selectDayInCalendar(
+        newValues?.whenWasEmployeeInformed,
+        'customer_informed_employee_date',
+      );
     }
 
     if (
@@ -202,7 +205,10 @@ describe('TerminationFlow', () => {
       await fillCheckbox(newValues?.riskAssessmentReason);
     }
     if (newValues?.proposedTerminationDate) {
-      await selectDayInCalendar(newValues?.proposedTerminationDate);
+      await selectDayInCalendar(
+        newValues?.proposedTerminationDate,
+        'proposed_termination_date',
+      );
     }
   }
 
