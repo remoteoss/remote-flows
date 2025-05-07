@@ -92,7 +92,7 @@ describe('ContractAmendmentFlow', () => {
     vi.clearAllMocks();
   });
 
-  it.only('submits the form when contract details are changed', async () => {
+  it('submits the form when contract details are changed', async () => {
     const user = userEvent.setup();
     render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
 
