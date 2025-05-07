@@ -27,6 +27,5 @@ export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export {
   ContractAmendmentAutomatableResponse,
   CostCalculatorEstimateResponse,
-  CreateOffboardingParams,
   OffboardingResponse,
 } from './client/types.gen';
