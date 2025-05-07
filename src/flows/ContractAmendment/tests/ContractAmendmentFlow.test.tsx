@@ -69,7 +69,6 @@ describe('ContractAmendmentFlow', () => {
   const defaultProps = {
     employmentId: '2ef4068b-11c7-4942-bb3c-70606c83688e',
     countryCode: 'PRT',
-    options: {},
     render: mockRender,
   };
   let jsonSchemaVersion: URLSearchParams | null = null;
@@ -101,8 +100,10 @@ describe('ContractAmendmentFlow', () => {
   it('should send json schema version in the request', async () => {
     render(
       <ContractAmendmentFlow
-        jsonSchemaVersion={{
-          contract_amendments: 1,
+        options={{
+          jsonSchemaVersion: {
+            contract_amendments: 1,
+          },
         }}
         {...defaultProps}
       />,

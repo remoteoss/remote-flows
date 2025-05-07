@@ -28,7 +28,6 @@ type ContractAmendmentSchemaParams = {
   employment: EmploymentShowResponse | undefined;
   fieldValues: FieldValues | undefined;
   options?: ContractAmendmentParams['options'];
-  jsonSchemaVersion: ContractAmendmentParams['jsonSchemaVersion'];
 };
 
 const useContractAmendmentSchemaQuery = ({
@@ -36,12 +35,11 @@ const useContractAmendmentSchemaQuery = ({
   employment,
   fieldValues,
   options,
-  jsonSchemaVersion,
 }: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = jsonSchemaVersion?.contract_amendments
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.contract_amendments
     ? {
-        json_schema_version: jsonSchemaVersion?.contract_amendments,
+        json_schema_version: options.jsonSchemaVersion.contract_amendments,
       }
     : {};
   return useQuery({
@@ -129,7 +127,6 @@ export const useContractAmendment = ({
   employmentId,
   countryCode,
   options,
-  jsonSchemaVersion,
 }: ContractAmendmentParams) => {
   const { fieldValues, setFieldValues, stepState, nextStep, previousStep } =
     useStepState<keyof typeof STEPS>(STEPS);
@@ -160,7 +157,6 @@ export const useContractAmendment = ({
     // generated with the correct values.
     fieldValues: isNavigatingBackToForm ? stepState.values?.form : fieldValues,
     options,
-    jsonSchemaVersion,
   });
 
   const initialValues = buildInitialValues(

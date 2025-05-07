@@ -168,13 +168,20 @@ The `ContractAmendmentFlow` component lets you render different components like 
 
 The component accepts the following props:
 
-| Prop                | Type                                                                                                                                | Required | Description                                                                                                                    |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `employmentId`      | string                                                                                                                              | Yes      | The employment id of the employee whose contract you want to amend                                                             |
-| `countryCode`       | string                                                                                                                              | Yes      | The country code where the employment is based                                                                                 |
-| `render`            | `({contractAmendmentBag: ReturnType<typeof useContractAmendment>, components: {Form, SubmitButton, BackButton, ConfirmationForm}})` | Yes      | render prop function with the params passed by the useContractAmendment hook and the components available to use for this flow |
-| `options`           | `{jsfModify: JSFModify}`                                                                                                            | No       | JSFModify options lets you modify properties from the form, such as changing the labels                                        |
-| `jsonSchemaVersion` | `{contract_amendments: number}`                                                                                                     | No       | Allows to point to a certain version of the contract amendment json schema form                                                |
+| Prop           | Type                                                                                                                                | Required | Description                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `employmentId` | string                                                                                                                              | Yes      | The employment id of the employee whose contract you want to amend                                                             |
+| `countryCode`  | string                                                                                                                              | Yes      | The country code where the employment is based                                                                                 |
+| `render`       | `({contractAmendmentBag: ReturnType<typeof useContractAmendment>, components: {Form, SubmitButton, BackButton, ConfirmationForm}})` | Yes      | render prop function with the params passed by the useContractAmendment hook and the components available to use for this flow |
+| `options`      | `{jsfModify: JSFModify, jsonSchemaVersion: {contract_amendments: number}}`                                                          | No       | See detailed explanation below                                                                                                 |
+
+#### options.jsfModify properties
+
+The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
+
+#### options.jsonSchemaVersion
+
+Allows to point to a certain version of the contract amendment json schema form
 
 ### Form
 
@@ -197,7 +204,3 @@ It renders the back button for the form and supports all standard `<button>` ele
 ### ConfirmationForm
 
 Component that displays the confirmation step of the contract amendment process. It shows a summary of the changes being made to the contract.
-
-#### options.jsfModify properties
-
-The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
