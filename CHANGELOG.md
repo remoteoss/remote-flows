@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.3.0
+
+### Minor Changes
+
+- ff85a18: - New Termination Architecture
+  - Contract Amendment release
+  - json-schema versioning
+
 ## 0.2.2
 
 ### Patch Changes
