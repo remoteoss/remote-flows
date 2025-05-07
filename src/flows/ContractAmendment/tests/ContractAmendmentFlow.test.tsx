@@ -6,10 +6,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, use } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractAmendmentFlow, RenderProps } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
+import { useJsonSchemaVersion } from '@/src/context';
+
+vi.mock('@/src/context', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useJsonSchemaVersion: vi.fn(),
+}));
 
 const queryClient = new QueryClient();
 
@@ -69,6 +75,7 @@ describe('ContractAmendmentFlow', () => {
     options: {},
     render: mockRender,
   };
+  let jsonSchemaVersion: URLSearchParams | null = null;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -77,7 +84,8 @@ describe('ContractAmendmentFlow', () => {
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employment);
       }),
-      http.get('*/v1/contract-amendments/schema*', () => {
+      http.get('*/v1/contract-amendments/schema*', (req) => {
+        jsonSchemaVersion = new URLSearchParams(req.request.url);
         return HttpResponse.json(contractAmendementSchema);
       }),
       http.post('*/v1/contract-amendments/automatable', () => {
@@ -91,6 +99,19 @@ describe('ContractAmendmentFlow', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('should send json schema version in the request', async () => {
+    const mockUseJsonSchemaVersion = vi.mocked(useJsonSchemaVersion);
+    mockUseJsonSchemaVersion.mockReturnValue({ json_schema_version: 1 });
+
+    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+
+    await waitFor(() => {
+      expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
+    });
+
+    expect(jsonSchemaVersion?.get('json_schema_version')).toBe('1');
   });
 
   it('submits the form when contract details are changed', async () => {
