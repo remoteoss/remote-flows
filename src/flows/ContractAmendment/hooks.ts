@@ -37,7 +37,7 @@ const useContractAmendmentSchemaQuery = ({
   options,
 }: ContractAmendmentSchemaParams) => {
   const { client } = useClient();
-  const jsonSchemaVersion = useJsonSchemaVersion();
+  const jsonSchemaVersion = useJsonSchemaVersion('contract_amendments');
   return useQuery({
     queryKey: ['contract-amendment-schema'],
     retry: false,

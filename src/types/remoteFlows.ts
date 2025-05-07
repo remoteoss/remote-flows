@@ -89,5 +89,7 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * This can be used to specify a specific version of the schema if needed.
    * If not provided, the latest version will be used.
    */
-  jsonSchemaVersion?: number;
+  jsonSchemaVersion?: {
+    contract_amendments?: string;
+  };
 };

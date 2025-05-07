@@ -1,6 +1,6 @@
 import { Client } from '@hey-api/client-fetch';
 import { createContext, useContext } from 'react';
-import { Components } from './types/remoteFlows';
+import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 
 export const FormFieldsContext = createContext<{
   components: Components;
@@ -19,7 +19,7 @@ export const useFormFields = () => {
 
 export const RemoteFlowContext = createContext<{
   client: Client | null;
-  jsonSchemaVersion: number | undefined;
+  jsonSchemaVersion: RemoteFlowsSDKProps['jsonSchemaVersion'] | undefined;
 }>({
   client: null,
   jsonSchemaVersion: undefined,
@@ -27,7 +27,10 @@ export const RemoteFlowContext = createContext<{
 
 export const useClient = () => useContext(RemoteFlowContext);
 
-export const useJsonSchemaVersion = () => {
+type JsonSchemaVersionKeys = keyof NonNullable<
+  RemoteFlowsSDKProps['jsonSchemaVersion']
+>;
+export const useJsonSchemaVersion = (key: JsonSchemaVersionKeys) => {
   const context = useContext(RemoteFlowContext);
   if (!context) {
     throw new Error(
@@ -35,11 +38,11 @@ export const useJsonSchemaVersion = () => {
     );
   }
 
-  if (context.jsonSchemaVersion === undefined) {
+  if (context.jsonSchemaVersion?.[key] === undefined) {
     return {};
   }
 
   return {
-    json_schema_version: context.jsonSchemaVersion,
+    json_schema_version: context.jsonSchemaVersion[key],
   };
 };
