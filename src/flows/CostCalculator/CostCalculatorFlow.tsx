@@ -8,54 +8,8 @@ import {
   CostCalculatorEstimationOptions,
   JSFModify,
 } from '@/src/flows/CostCalculator/types';
-import React, { PropsWithChildren, useId } from 'react';
+import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
-
-function CostCalculatorFlowProvider({
-  costCalculatorBag,
-  defaultValues,
-  render,
-}: PropsWithChildren<{
-  costCalculatorBag: ReturnType<typeof useCostCalculator>;
-  defaultValues: Partial<{
-    countryRegionSlug: string;
-    currencySlug: string;
-    salary: string;
-  }>;
-  render: (
-    costCalculatorBag: ReturnType<typeof useCostCalculator>,
-  ) => React.ReactNode;
-}>) {
-  const formId = useId();
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    costCalculatorBag.handleValidation,
-  );
-
-  const form = useForm({
-    resolver,
-    defaultValues: {
-      country: defaultValues?.countryRegionSlug,
-      currency: defaultValues?.currencySlug,
-      region: '',
-      salary: defaultValues?.salary,
-    },
-    shouldUnregister: true,
-    mode: 'onBlur',
-  });
-
-  return (
-    <CostCalculatorContext.Provider
-      value={{
-        form,
-        formId: formId,
-        costCalculatorBag,
-      }}
-    >
-      {render(costCalculatorBag)}
-    </CostCalculatorContext.Provider>
-  );
-}
 
 export type CostCalculatorFlowProps = {
   /**
@@ -97,17 +51,38 @@ export const CostCalculatorFlow = ({
   options,
   render,
 }: CostCalculatorFlowProps) => {
+  const formId = useId();
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
     options,
   });
+  const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
+    costCalculatorBag.handleValidation,
+  );
+
+  const form = useForm({
+    resolver,
+    defaultValues: {
+      country: defaultValues?.countryRegionSlug,
+      currency: defaultValues?.currencySlug,
+      region: '',
+      salary: defaultValues?.salary,
+    },
+    shouldUnregister: true,
+    mode: 'onBlur',
+  });
 
   return (
-    <CostCalculatorFlowProvider
-      costCalculatorBag={costCalculatorBag}
-      defaultValues={defaultValues}
-      render={render}
-    />
+    <CostCalculatorContext.Provider
+      value={{
+        form,
+        formId: formId,
+        costCalculatorBag,
+      }}
+    >
+      {render(costCalculatorBag)}
+    </CostCalculatorContext.Provider>
   );
 };

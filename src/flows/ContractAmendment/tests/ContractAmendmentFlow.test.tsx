@@ -69,9 +69,9 @@ describe('ContractAmendmentFlow', () => {
   const defaultProps = {
     employmentId: '2ef4068b-11c7-4942-bb3c-70606c83688e',
     countryCode: 'PRT',
-    options: {},
     render: mockRender,
   };
+  let jsonSchemaVersion: URLSearchParams | null = null;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,7 +80,8 @@ describe('ContractAmendmentFlow', () => {
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employment);
       }),
-      http.get('*/v1/contract-amendments/schema*', () => {
+      http.get('*/v1/contract-amendments/schema*', (req) => {
+        jsonSchemaVersion = new URLSearchParams(req.request.url);
         return HttpResponse.json(contractAmendementSchema);
       }),
       http.post('*/v1/contract-amendments/automatable', () => {
@@ -94,6 +95,26 @@ describe('ContractAmendmentFlow', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('should send json schema version in the request', async () => {
+    render(
+      <ContractAmendmentFlow
+        options={{
+          jsonSchemaVersion: {
+            contract_amendments: 1,
+          },
+        }}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
+    });
+
+    expect(jsonSchemaVersion?.get('json_schema_version')).toBe('1');
   });
 
   it('submits the form when contract details are changed', async () => {

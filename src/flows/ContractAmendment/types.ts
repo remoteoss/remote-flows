@@ -6,5 +6,8 @@ export type ContractAmendmentParams = {
     jsfModify?: {
       [K in 'fields' | 'allFields' | 'create' | 'pick' | 'orderRoot']?: any;
     };
+    jsonSchemaVersion?: {
+      contract_amendments?: number;
+    };
   };
 };

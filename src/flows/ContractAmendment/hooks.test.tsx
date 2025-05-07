@@ -53,10 +53,10 @@ describe('useContractAmendment', () => {
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isError).toBe(false);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    waitFor(() => {
+    await waitFor(() => {
       expect(result.current.fields.length).toBeGreaterThan(0);
     });
 

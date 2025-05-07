@@ -63,6 +63,8 @@ import type {
   PostBypassEligibilityChecksCompanyData,
   PostBypassEligibilityChecksCompanyResponse,
   PostBypassEligibilityChecksCompanyError,
+  GetShowTestSchemaData,
+  GetShowTestSchemaResponse,
   GetIndexHolidayData,
   GetIndexHolidayResponse,
   GetIndexHolidayError,
@@ -162,6 +164,9 @@ import type {
   PostCreateContractAmendmentData,
   PostCreateContractAmendmentResponse,
   PostCreateContractAmendmentError,
+  GetShowPayrollRunData,
+  GetShowPayrollRunResponse,
+  GetShowPayrollRunError,
   GetDownloadExpenseReceiptData,
   GetDownloadExpenseReceiptResponse,
   GetDownloadExpenseReceiptError,
@@ -398,6 +403,9 @@ import type {
   PostCreateTimeoffData,
   PostCreateTimeoffResponse,
   PostCreateTimeoffError,
+  GetIndexPayrollRunData,
+  GetIndexPayrollRunResponse,
+  GetIndexPayrollRunError,
   GetIndexEmploymentContractData,
   GetIndexEmploymentContractResponse,
   GetIndexEmploymentContractError,
@@ -977,6 +985,29 @@ export const postBypassEligibilityChecksCompany = <
       },
     ],
     url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
+    ...options,
+  });
+};
+
+/**
+ * Get a mock JSON Schema
+ * Get a mock JSON Schema for testing purposes
+ */
+export const getShowTestSchema = <ThrowOnError extends boolean = false>(
+  options?: Options<GetShowTestSchemaData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetShowTestSchemaResponse,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/test-schema',
     ...options,
   });
 };
@@ -1929,6 +1960,29 @@ export const postCreateContractAmendment = <
 };
 
 /**
+ * Show Company Payroll Runs
+ * Given an ID, shows a payroll run.
+ */
+export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowPayrollRunData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetShowPayrollRunResponse,
+    GetShowPayrollRunError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/payroll-runs/{payroll_run_id}',
+    ...options,
+  });
+};
+
+/**
  * @deprecated
  * Download a receipt
  *   Downloads an expense receipt.
@@ -2082,6 +2136,7 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
  * - global_payroll_administrative_details
  * - global_payroll_contract_details
  * - global_payroll_personal_details
+ * - benefit_renewal_request
  *
  * ```
  *
@@ -2660,7 +2715,9 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  *
  * **For `created` employments:** You can change all basic params and onboarding tasks or perform a per onboarding task update. You can also update basic_information.
  *
- * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details and address_details.
+ * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details, address_details and work_email.
+ *
+ * **For `invited` employments:** You can update the work_email.
  *
  * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
  * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
@@ -2716,7 +2773,9 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * **For `created` employments:** You can change all basic params and onboarding tasks or perform a per onboarding task update. You can also update basic_information.
  *
- * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details and address_details.
+ * **For `active` employments:** You can update the manager (`manager_id` field), emergency_contact_details, address_details and work_email.
+ *
+ * **For `invited` employments:** You can update the work_email.
  *
  * After onboarding, only a limited set of employment data will be available for updates, such as `emergency_contact_details`.
  * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
@@ -4147,8 +4206,31 @@ export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * List Company Payroll Runs
+ * Lists all payroll runs for a company
+ */
+export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexPayrollRunData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexPayrollRunResponse,
+    GetIndexPayrollRunError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/payroll-runs',
+    ...options,
+  });
+};
+
+/**
  * List Employment Contract.
- * Get the employment contract history (list of all contracts active or not) for a given employment.
+ * Get the employment contract history for a given employment. If `only_active` is true, it will return only the active or last active contract.
  */
 export const getIndexEmploymentContract = <
   ThrowOnError extends boolean = false,
