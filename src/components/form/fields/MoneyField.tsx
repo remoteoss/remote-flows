@@ -5,18 +5,18 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TextField, TextFieldProps } from './TextField';
 
-export function NumberField(props: TextFieldProps) {
+export function MoneyField(props: TextFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-
-  if (components?.number) {
+  console.log('MoneyField', props);
+  if (components?.money) {
     return (
       <FormField
         control={control}
         name={props.name}
         render={({ field, fieldState }) => {
           const CustomNumberField =
-            components.number as React.ComponentType<any>;
+            components.money as React.ComponentType<any>;
           return (
             <CustomNumberField
               field={{
