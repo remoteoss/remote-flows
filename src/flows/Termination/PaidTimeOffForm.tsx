@@ -4,7 +4,7 @@ import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type PaidTimeOffFormProps = {
-  onSubmit?: (payload: TerminationFormValues) => Promise<void>;
+  onSubmit?: (payload: TerminationFormValues) => void | Promise<void>;
 };
 
 export function PaidTimeOffForm({ onSubmit }: PaidTimeOffFormProps) {

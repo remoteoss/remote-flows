@@ -5,14 +5,14 @@ import { CreateOffboardingParams, OffboardingResponse } from '@/src/client';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type AdditionalDetailsFormProps = {
-  username: string;
-  onSubmit?: (payload: CreateOffboardingParams) => Promise<void>;
+  requesterName: string;
+  onSubmit?: (payload: CreateOffboardingParams) => void | Promise<void>;
   onError?: (error: Error) => void;
   onSuccess?: (data: OffboardingResponse) => void;
 };
 
 export function AdditionalDetailsForm({
-  username,
+  requesterName,
   onSubmit,
   onSuccess,
   onError,
@@ -35,7 +35,7 @@ export function AdditionalDetailsForm({
     if (field.name === 'acknowledge_termination_procedure') {
       return {
         ...field,
-        label: (field.label as string).replace('{{username}}', username),
+        label: (field.label as string).replace('{{username}}', requesterName),
       };
     }
     return field;

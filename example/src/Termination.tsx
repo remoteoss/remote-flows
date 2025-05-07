@@ -41,23 +41,26 @@ const fetchToken = () => {
     });
 };
 
-type SwitchFormProps = {
+type MultiStepFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
   components: TerminationRenderProps['components'];
-  onSubmitStep: (payload: TerminationFormValues, step: string) => Promise<void>;
-  onSubmitForm: (payload: CreateOffboardingParams) => Promise<void>;
+  onSubmitStep: (
+    payload: TerminationFormValues,
+    step: string,
+  ) => void | Promise<void>;
+  onSubmitForm: (payload: CreateOffboardingParams) => void | Promise<void>;
   onError: (error: Error) => void;
   onSuccess: (response: OffboardingResponse) => void;
 };
 
-const SwitchForm = ({
+const MultiStepForm = ({
   terminationBag,
   components,
   onSubmitStep,
   onSubmitForm,
   onError,
   onSuccess,
-}: SwitchFormProps) => {
+}: MultiStepFormProps) => {
   const {
     EmployeeComunicationStep,
     TerminationDetailsStep,
@@ -150,22 +153,6 @@ const TerminationForm = ({
 
   const stepTitle = STEPS[currentStepIndex];
 
-  const onSubmitStep = async (payload: TerminationFormValues, step: string) => {
-    console.log('onSubmitStep', payload, step);
-  };
-
-  const onSubmitForm = async (payload: CreateOffboardingParams) => {
-    console.log('onSubmitForm', payload);
-  };
-
-  const onSuccess = (response: OffboardingResponse) => {
-    console.log('onSuccess', response);
-  };
-
-  const onError = (error: Error) => {
-    console.error('onError', error);
-  };
-
   if (terminationBag.isLoading) {
     return <div>Loading termination...</div>;
   }
@@ -186,13 +173,15 @@ const TerminationForm = ({
       </div>
       <div className="card" style={{ marginBottom: '20px' }}>
         <h1 className="heading">{stepTitle}</h1>
-        <SwitchForm
+        <MultiStepForm
           terminationBag={terminationBag}
           components={components}
-          onSubmitStep={onSubmitStep}
-          onSubmitForm={onSubmitForm}
-          onError={onError}
-          onSuccess={onSuccess}
+          onSubmitStep={(payload, step) =>
+            console.log('onSubmitStep', payload, step)
+          }
+          onSubmitForm={(payload) => console.log('onSubmitForm', payload)}
+          onError={(error) => console.log('onError', error)}
+          onSuccess={(response) => console.log('onSuccess', response)}
         />
       </div>
     </>

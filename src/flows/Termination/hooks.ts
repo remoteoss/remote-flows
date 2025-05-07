@@ -120,7 +120,7 @@ export const useTermination = ({
 
   async function onSubmit(
     values: TerminationFormValues,
-    onSubmitForm?: (values: CreateOffboardingParams) => Promise<void>,
+    onSubmitForm?: (values: CreateOffboardingParams) => void | Promise<void>,
   ) {
     if (!employmentId) {
       throw new Error('Employment id is missing');

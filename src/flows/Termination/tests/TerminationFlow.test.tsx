@@ -35,7 +35,7 @@ const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
 describe('TerminationFlow', () => {
-  const SwitchForm = ({
+  const MultiStepForm = ({
     terminationBag,
     components,
     onSubmitStep,
@@ -144,7 +144,7 @@ describe('TerminationFlow', () => {
       return (
         <>
           <h1>Step: {steps[currentStepIndex]}</h1>
-          <SwitchForm
+          <MultiStepForm
             terminationBag={terminationBag}
             components={components}
             onSubmitStep={mockOnSubmitStep}
