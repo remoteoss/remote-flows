@@ -28,6 +28,8 @@ import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
 import { Termination } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -1140,9 +1142,9 @@ function App() {
                 </TabsContent>
                 <TabsContent value="code" className="mt-4">
                   <div className="relative">
-                    <pre className="p-4 rounded-md bg-slate-950 text-slate-50 overflow-x-auto text-sm">
-                      <code>{currentDemo.sourceCode}</code>
-                    </pre>
+                    <SyntaxHighlighter language="javascript" style={docco}>
+                      {currentDemo.sourceCode as string}
+                    </SyntaxHighlighter>
                     <Button
                       size="sm"
                       variant="ghost"
