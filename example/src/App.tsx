@@ -26,6 +26,8 @@ import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
 import { CostCalculatorWithResults } from './CostCalculatorWithResults';
 import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
+import { Termination } from './Termination';
+import { ContractAmendment } from './ContractAmendment';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -513,90 +515,379 @@ export function CostCalculatorWithPremiumBenefits() {
 
   `,
 
-  // Termination Flow source code
   terminationFlow: `
-import { SDK } from 'your-sdk';
-import { ChevronRight } from 'lucide-react';
+import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import type {
+  TerminationRenderProps,
+  TerminationFormValues,
+  OffboardingResponse,
+} from '@remoteoss/remote-flows';
+import './App.css';
+import { useState } from 'react';
+import { TerminationDialog } from './TerminationDialog';
 
-const TerminationFlow = () => {
-  const termination = SDK.createTerminationFlow();
-  
-  // Initialize the termination flow
-  termination.initialize({
-    contractId: 'CONT-123',
-    terminationReason: 'end-of-term'
-  });
-  
-  // Get the current step in the flow
-  const currentStep = termination.getCurrentStep();
-  
+const STEPS = [
+  'Employee Communication',
+  'Termination Details',
+  'Paid Time Off',
+  'Additional Information',
+];
+
+const TerminationReasonDetailsDescription = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => (
+  <>
+    Make sure you choose an accurate termination reason to avoid unfair or
+    unlawful dismissal claims.{' '}
+    <a onClick={onClick}>Learn more termination details</a>
+  </>
+);
+
+const fetchToken = () => {
+  return fetch('/api/token')
+    .then((res) => res.json())
+    .then((data) => ({
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+    }))
+    .catch((error) => {
+      console.error({ error });
+      throw error;
+    });
+};
+
+type MultiStepFormProps = {
+  terminationBag: TerminationRenderProps['terminationBag'];
+  components: TerminationRenderProps['components'];
+  onSubmitStep: (
+    payload: TerminationFormValues,
+    step: string,
+  ) => void | Promise<void>;
+  onSubmitForm: (payload: TerminationFormValues) => void | Promise<void>;
+  onError: (error: Error) => void;
+  onSuccess: (response: OffboardingResponse) => void;
+};
+
+const MultiStepForm = ({
+  terminationBag,
+  components,
+  onSubmitStep,
+  onSubmitForm,
+  onError,
+  onSuccess,
+}: MultiStepFormProps) => {
+  const {
+    EmployeeComunicationStep,
+    TerminationDetailsStep,
+    PaidTimeOffStep,
+    AdditionalDetailsStep,
+    SubmitButton,
+    Back,
+    TimeOff,
+  } = components;
+  switch (terminationBag.stepState.currentStep.name) {
+    case 'employee_communication':
+      return (
+        <>
+          <div className="alert">
+            <p>
+              Please do not inform the employee of their termination until we
+              review your request for legal risks. When we approve your request,
+              you can inform the employee and we'll take it from there.
+            </p>
+          </div>
+          <EmployeeComunicationStep
+            onSubmit={(payload) =>
+              onSubmitStep(payload, 'employee_communication')
+            }
+          />
+          <SubmitButton>Next Step</SubmitButton>
+        </>
+      );
+    case 'termination_details':
+      return (
+        <>
+          <TerminationDetailsStep
+            onSubmit={(payload) => onSubmitStep(payload, 'termination_details')}
+          />
+          <Back>Back</Back>
+          <SubmitButton>Next Step</SubmitButton>
+        </>
+      );
+    case 'paid_time_off':
+      return (
+        <>
+          <TimeOff
+            render={({ employment, timeoff }) => {
+              const username = employment?.data?.employment?.basic_information
+                ?.name as string;
+              const days = timeoff?.data?.total_count || 0;
+
+              // if days is 0 or > 1 'days' else 'day
+              const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
+              return (
+                <>
+                  <p>
+                    We have recorded {days} {daysLiteral} of paid time off for{' '}
+                    {username}
+                  </p>
+                  <a href="#">See {username}'s timeoff breakdown</a>
+                </>
+              );
+            }}
+          />
+          <PaidTimeOffStep
+            onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
+          />
+          <Back>Back</Back>
+          <SubmitButton>Next Step</SubmitButton>
+        </>
+      );
+
+    case 'additional_information':
+      return (
+        <>
+          <AdditionalDetailsStep
+            requesterName="ze"
+            onSubmit={(payload) => onSubmitForm(payload)}
+            onSuccess={onSuccess}
+            onError={onError}
+          />
+          <Back>Back</Back>
+          <SubmitButton>Submit</SubmitButton>
+        </>
+      );
+  }
+};
+
+const TerminationForm = ({
+  terminationBag,
+  components,
+}: TerminationRenderProps) => {
+  const currentStepIndex = terminationBag.stepState.currentStep.index;
+
+  const stepTitle = STEPS[currentStepIndex];
+
+  if (terminationBag.isLoading) {
+    return <div>Loading termination...</div>;
+  }
+
   return (
-    <div className="p-4 border rounded-md bg-slate-50">
-      <h3 className="font-medium mb-2">Contract Termination Flow</h3>
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">1</div>
-          <div className="flex-1 p-2 border rounded bg-white">Initiate Termination</div>
-          <ChevronRight className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">2</div>
-          <div className="flex-1 p-2 border rounded bg-white">Review Terms</div>
-          <ChevronRight className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">3</div>
-          <div className="flex-1 p-2 border rounded bg-white">Confirm Termination</div>
-        </div>
+    <>
+      <div className="steps-navigation">
+        <ul>
+          {STEPS.map((step, index) => (
+            <li
+              key={index}
+              className={'step-item' + (index === currentStepIndex ? ' active' : '')}
+            >
+              {step}
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+      <div className="card" style={{ marginBottom: '20px' }}>
+        <h1 className="heading">{stepTitle}</h1>
+        <MultiStepForm
+          terminationBag={terminationBag}
+          components={components}
+          onSubmitStep={(payload, step) =>
+            console.log('onSubmitStep', payload, step)
+          }
+          onSubmitForm={(payload) => console.log('onSubmitForm', payload)}
+          onError={(error) => console.log('onError', error)}
+          onSuccess={(response) => console.log('onSuccess', response)}
+        />
+      </div>
+    </>
   );
-}`,
+};
 
+export const Termination = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <RemoteFlows auth={fetchToken}>
+      <div className="cost-calculator__container">
+        <TerminationFlow
+          employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
+          render={TerminationForm}
+          options={{
+            jsfModify: {
+              // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
+              fields: {
+                confidential: {
+                  'x-jsf-presentation': {
+                    statement: null, // this removes potential fixed statements that come from the confidential field
+                  },
+                },
+                termination_reason: {
+                  description: () => (
+                    <TerminationReasonDetailsDescription
+                      onClick={() => setOpen(true)}
+                    />
+                  ),
+                },
+              },
+            },
+          }}
+        />
+      </div>
+      <TerminationDialog open={open} setOpen={setOpen} />
+    </RemoteFlows>
+  );
+};`,
   // Contract Amendments source code
   contractAmendments: `
-import { SDK } from 'your-sdk';
-import { Button } from "@/components/ui/button";
+import {
+  ContractAmendmentAutomatableResponse,
+  ContractAmendmentFlow,
+  RemoteFlows,
+  ContractAmendmentRenderProps,
+} from '@remoteoss/remote-flows';
+import { useState } from 'react';
+import './App.css';
 
-const ContractAmendments = () => {
-  const amendments = SDK.createAmendmentManager();
-  
-  // Load original contract
-  const originalContract = amendments.getOriginalContract('CONT-123');
-  
-  // Create an amendment
-  const amendment = amendments.createAmendment({
-    field: 'duration',
-    oldValue: '12 months',
-    newValue: '18 months',
-    reason: 'business needs'
-  });
-  
-  const handleApplyAmendment = () => {
-    // Apply the amendment to the contract
-    amendments.applyAmendment(amendment);
-  };
-  
-  return (
-    <div className="p-4 border rounded-md bg-slate-50">
-      <h3 className="font-medium mb-2">Contract Amendments</h3>
-      <div className="space-y-4">
-        <div className="p-3 border rounded bg-white">
-          <div className="font-medium">Original Terms</div>
-          <div className="text-sm text-muted-foreground">Duration: 12 months</div>
+function AmendmentFlow({
+  contractAmendmentBag,
+  components,
+}: ContractAmendmentRenderProps) {
+  const { Form, SubmitButton, ConfirmationForm, BackButton } = components;
+
+  const [automatable, setAutomatable] = useState<
+    ContractAmendmentAutomatableResponse | undefined
+  >();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSuccess(data: ContractAmendmentAutomatableResponse) {
+    setAutomatable(data);
+  }
+
+  if (contractAmendmentBag.isLoading) {
+    return <div>Loading employment...</div>;
+  }
+
+  switch (contractAmendmentBag.stepState.currentStep.name) {
+    case 'form':
+      return (
+        <div className="amendment_form">
+          <Form
+            onSuccess={handleSuccess}
+            onError={(err) => {
+              if (
+                'message' in err &&
+                err.message === 'no_changes_detected_contract_details'
+              ) {
+                setError(err.message);
+              }
+            }}
+          />
+          {error && (
+            <div className="amendment_form__error">
+              <p className="amendment_form__error__title">
+                Contract detail change required
+              </p>
+              <p>
+                You haven't changed any contract detail value yet. Please change
+                at least one value in order to be able to proceed with the
+                request.
+              </p>
+            </div>
+          )}
+          <SubmitButton
+            className="amendment_form__buttons__submit"
+            disabled={contractAmendmentBag.isSubmitting}
+          >
+            Go to preview and confirm changes
+          </SubmitButton>
         </div>
-        <div className="p-3 border rounded bg-white">
-          <div className="font-medium">Amendment</div>
-          <div className="text-sm text-muted-foreground">Duration: 18 months</div>
-          <div className="mt-2 text-sm bg-yellow-50 p-1 rounded border border-yellow-200">
-            Changed: Duration extended by 6 months
+      );
+    case 'confirmation_form':
+      return (
+        <div className="confirmation_form">
+          <ConfirmationForm />
+          <div>
+            {Object.entries(
+              contractAmendmentBag.stepState.values?.form || {},
+            ).map(([key, value]) => {
+              // @ts-expect-error error
+              const initialValue = contractAmendmentBag.initialValues[key];
+              if (initialValue !== value) {
+                const label = contractAmendmentBag.fields.find(
+                  (field) => field.name === key,
+                )?.label as string;
+                return (
+                  <div className="confirmation_form__item" key={key}>
+                    <p>{label}:</p>
+                    {initialValue ? (
+                      <div className="confirmation_form__item__value">
+                        <span className="confirmation_form__item__value__initial">
+                          {initialValue}
+                        </span>
+                        <span>&rarr;</span>
+                        <span>{value as string}</span>
+                      </div>
+                    ) : (
+                      <div className="confirmation_form__item__value">
+                        <span>{value as string}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+          {automatable?.data?.automatable ? (
+            <div>{automatable?.data?.message}</div>
+          ) : null}
+          <div className="confirmation_form__buttons">
+            <SubmitButton
+              disabled={contractAmendmentBag.isSubmitting}
+              className="confirmation_form__buttons__submit"
+            >
+              Submit amendment request
+            </SubmitButton>
+            <BackButton className="confirmation_form__buttons__back">
+              Back
+            </BackButton>
           </div>
         </div>
-        <Button size="sm" onClick={handleApplyAmendment}>Apply Amendment</Button>
+      );
+  }
+}
+
+export function ContractAmendment() {
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }))
+      .catch((error) => {
+        console.error({ error });
+        throw error;
+      });
+  };
+
+  return (
+    <RemoteFlows
+      auth={() => fetchToken()}
+      proxy={{ url: 'http://localhost:3001/' }}
+    >
+      <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
+        <ContractAmendmentFlow
+          countryCode="PRT"
+          employmentId="b98b7127-d90f-4f5b-b02d-457d65707d35"
+          render={AmendmentFlow}
+        />
       </div>
-    </div>
+    </RemoteFlows>
   );
-}`,
+}
+`,
 };
 
 const demoStructure = [
@@ -651,17 +942,17 @@ const demoStructure = [
     ],
   },
   {
-    id: 'termination-flow',
+    id: 'termination',
     title: 'Termination Flow',
-    description: 'Process for terminating contracts',
-    component: () => <div>Termination Flow</div>,
+    description: 'Process for terminating employments',
+    component: Termination,
     sourceCode: sourceCode.terminationFlow,
   },
   {
     id: 'contract-amendments',
     title: 'Contract Amendments',
     description: 'Manage changes to existing contracts',
-    component: () => <div>Contract Amendments</div>,
+    component: ContractAmendment,
     sourceCode: sourceCode.contractAmendments,
   },
 ];
