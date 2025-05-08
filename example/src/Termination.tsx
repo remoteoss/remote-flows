@@ -191,31 +191,29 @@ export const Termination = () => {
   const [open, setOpen] = useState(false);
   return (
     <RemoteFlows auth={fetchToken}>
-      <div className="cost-calculator__container">
-        <TerminationFlow
-          employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
-          render={TerminationForm}
-          options={{
-            jsfModify: {
-              // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
-              fields: {
-                confidential: {
-                  'x-jsf-presentation': {
-                    statement: null, // this removes potential fixed statements that come from the confidential field
-                  },
-                },
-                termination_reason: {
-                  description: () => (
-                    <TerminationReasonDetailsDescription
-                      onClick={() => setOpen(true)}
-                    />
-                  ),
+      <TerminationFlow
+        employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
+        render={TerminationForm}
+        options={{
+          jsfModify: {
+            // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
+            fields: {
+              confidential: {
+                'x-jsf-presentation': {
+                  statement: null, // this removes potential fixed statements that come from the confidential field
                 },
               },
+              termination_reason: {
+                description: () => (
+                  <TerminationReasonDetailsDescription
+                    onClick={() => setOpen(true)}
+                  />
+                ),
+              },
             },
-          }}
-        />
-      </div>
+          },
+        }}
+      />
       <TerminationDialog open={open} setOpen={setOpen} />
     </RemoteFlows>
   );

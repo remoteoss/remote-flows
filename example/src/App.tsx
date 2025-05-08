@@ -898,42 +898,42 @@ const demoStructure = [
       'Calculate the total cost of your employee in different countries',
     children: [
       {
-        id: 'cost-calculator/basic',
+        id: 'basic-cost-calculator',
         title: 'Basic',
         description: 'The most basic cost calculator',
         component: BasicCostCalculator,
         sourceCode: sourceCode.basicCostCalculator,
       },
       {
-        id: 'cost-calculator/with-default-values',
+        id: 'with-default-values-cost-calculator',
         title: 'Default Values',
         description: 'Cost Calculator with default values',
         component: BasicCostCalculatorWithDefaultValues,
         sourceCode: sourceCode.basicCostCalculatorWithDefaultValues,
       },
       {
-        id: 'cost-calculator/with-custom-labels',
+        id: 'with-custom-labels-cost-calculator',
         title: 'Custom Fields Labels',
         description: 'Custom Field Labels in Cost Calculator',
         component: BasicCostCalculatorLabels,
         sourceCode: sourceCode.basicCostCalculatorLabels,
       },
       {
-        id: 'cost-calculator/with-results',
+        id: 'with-results-cost-calculator',
         title: 'Estimation Results',
         description: 'Cost Calculator with an estimation component',
         component: CostCalculatorWithResults,
         sourceCode: sourceCode.costCalculatorWithResults,
       },
       {
-        id: 'cost-calculator/with-export-pdf',
+        id: 'with-export-pdf-cost-calculator',
         title: 'Export PDF',
         description: 'Cost Calculator with an estimation component',
         component: CostCalculatorWithExportPdf,
         sourceCode: sourceCode.costCalculatorWithExportPdf,
       },
       {
-        id: 'cost-calculator/with-premium-benefits',
+        id: 'with-premium-benefits-cost-calculator',
         title: 'Premium Benefits',
         description: 'Cost Calculator with premium benefits',
         component: CostCalculatorWithPremiumBenefits,
@@ -1011,11 +1011,19 @@ function App() {
   >({
     'cost-calculator': true, // Start with Cost Calculator expanded
   });
-  const [activeDemo, setActiveDemo] = useState('cost-calculator/basic'); // Default to first demo
+  const [activeDemo, setActiveDemo] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const demoId = urlParams.get('demo');
+    return demoId && flattenedDemos[demoId] ? demoId : 'basic-cost-calculator';
+  });
   const [copied, setCopied] = useState<string | null>(null);
 
   const selectDemo = (demoId: string) => {
     setActiveDemo(demoId);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('demo', demoId);
+    window.history.pushState({}, '', url);
 
     // If this is a child demo, ensure its parent is expanded
     const demo = flattenedDemos[demoId];
