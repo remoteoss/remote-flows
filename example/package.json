@@ -11,6 +11,7 @@
     "postinstall": "react-flagpack"
   },
   "dependencies": {
+    "@radix-ui/react-collapsible": "1.1.2",
     "@remoteoss/remote-flows": "file:../",
     "axios": "^1.8.3",
     "express": "^4.21.2",
