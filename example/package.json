@@ -11,16 +11,19 @@
     "postinstall": "react-flagpack"
   },
   "dependencies": {
+    "@radix-ui/react-collapsible": "1.1.2",
     "@remoteoss/remote-flows": "file:../",
     "axios": "^1.8.3",
     "express": "^4.21.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-flagpack": "^2.0.6"
+    "react-flagpack": "^2.0.6",
+    "react-syntax-highlighter": "^15.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/react-dom": "^19.0.4",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",

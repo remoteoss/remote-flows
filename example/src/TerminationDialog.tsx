@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './Dialog';
+} from './components/dialog';
 
 export function TerminationDialog({
   open,
