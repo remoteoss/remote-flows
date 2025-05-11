@@ -11,6 +11,8 @@
     "postinstall": "react-flagpack"
   },
   "dependencies": {
+    "@okta/okta-auth-js": "^7.12.1",
+    "@okta/okta-react": "^6.10.0",
     "@radix-ui/react-collapsible": "1.1.2",
     "@remoteoss/remote-flows": "file:../",
     "axios": "^1.8.3",
@@ -18,6 +20,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-flagpack": "^2.0.6",
+    "react-router-dom": "^7.6.0",
     "react-syntax-highlighter": "^15.6.1"
   },
   "devDependencies": {
