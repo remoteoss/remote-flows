@@ -5,6 +5,37 @@ import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
+const getPublicToken = async (req, res) => {
+  const { CLIENT_ID, CLIENT_TOKEN, REMOTE_GATEWAY } = process.env;
+  if (!CLIENT_ID || !CLIENT_TOKEN || !REMOTE_GATEWAY) {
+    return res
+      .status(400)
+      .json({ error: 'Missing clientId or clientToken or RemoteGateway' });
+  }
+  const encodedCredentials = Buffer.from(
+    `${CLIENT_ID}:${CLIENT_TOKEN}`,
+  ).toString('base64');
+
+  try {
+    const response = await axios.post(
+      `${REMOTE_GATEWAY}/auth/oauth2/token`,
+      new URLSearchParams({
+        grant_type: 'client_credentials',
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      },
+    );
+    return res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Error fetching access token:', error);
+    return res.status(500).json({ error: 'Failed to retrieve access token' });
+  }
+};
+
 const getToken = async (req, res) => {
   const { CLIENT_ID, CLIENT_SECRET, REMOTE_GATEWAY, REFRESH_TOKEN } =
     process.env;
@@ -52,6 +83,7 @@ const startServer = async () => {
 
   // API route example
   app.get('/api/token', getToken);
+  app.get('/api/public_token', getPublicToken);
 
   // Proxy middleware for all other API requests
   app.use('/v1', async (req, res) => {
