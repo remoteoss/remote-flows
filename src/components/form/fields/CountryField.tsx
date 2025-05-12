@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useFormFields } from '@/src/context';
 import { JSFField } from '@/src/types/remoteFlows';
@@ -37,6 +37,7 @@ export function CountryField({
 }: CountryFieldProps) {
   const { control } = useFormContext();
   const { components } = useFormFields();
+  const [selected, setSelected] = useState<any[]>([]);
 
   return (
     <FormField
@@ -90,9 +91,11 @@ export function CountryField({
           })),
         ];
 
-        const handleChange = (value: any) => {
-          field.onChange(value);
-          onChange?.(value);
+        const handleChange = (rawValues: any[]) => {
+          const values = rawValues.map(({ value }) => value);
+          field.onChange(values);
+          onChange?.(values);
+          setSelected(rawValues);
         };
 
         return (
@@ -106,7 +109,7 @@ export function CountryField({
             <FormControl>
               <MultiSelect
                 options={countryOptions}
-                selected={field.value || []}
+                selected={selected}
                 onChange={handleChange}
                 {...rest}
               />
