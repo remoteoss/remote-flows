@@ -78,6 +78,7 @@ export function MultiSelect({
                     <div
                       role="button"
                       tabIndex={0}
+                      aria-label={`remove ${option.label}`}
                       className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {

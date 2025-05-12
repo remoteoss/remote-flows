@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -171,5 +177,45 @@ describe('CountryField Component', () => {
     expect(screen.getByText('Northern America')).toBeInTheDocument();
     expect(screen.getByText('United States')).toBeInTheDocument();
     expect(screen.getByText('Canada')).toBeInTheDocument();
+  });
+
+  it('handles selecting and removing a country', async () => {
+    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+
+    // Open the select
+    const select = screen.getByRole('combobox');
+    await act(async () => {
+      fireEvent.click(select);
+    });
+
+    // Wait for the popover to open and options to be visible
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+
+    // Select a country
+    const option = screen.getByRole('option', { name: 'United States' });
+    await act(async () => {
+      fireEvent.click(option);
+    });
+
+    // Wait for the selection to be processed
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(['US']);
+    });
+
+    // Find and click the remove button
+    const removeButton = screen.getByRole('button', {
+      name: /remove United States/i,
+    });
+    await act(async () => {
+      fireEvent.click(removeButton);
+    });
+
+    // Wait for the removal to be processed
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith([]);
+      expect(screen.queryByText('United States')).not.toBeInTheDocument();
+    });
   });
 });
