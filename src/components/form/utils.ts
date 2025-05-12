@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fields } from '@remoteoss/json-schema-form';
+// TODO: We have Field in the new version but it's not exported
+//import { Fields } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/utils';
 import get from 'lodash/get';
 
 const textInputTypes = {
@@ -558,7 +560,7 @@ export function parseSubmitValues(
 
 export function parseJSFToValidate(
   formValues: Record<string, any>,
-  fields: Fields,
+  fields: $TSFixMe,
   config: { isPartialValidation: boolean } = {
     isPartialValidation: false,
   },

@@ -1,7 +1,9 @@
 import { EmploymentShowResponse } from '@/src/client';
 import { convertFromCents } from '@/src/components/form/utils';
-import { Fields } from '@remoteoss/json-schema-form';
+// TODO: We have Field in the new version but it's not exported
+//import { Fields } from '@remoteoss/json-schema-form';
 import { Step } from '../useStepState';
+import { $TSFixMe } from '@/src/types/utils';
 
 type StepKeys = 'form' | 'confirmation_form';
 
@@ -12,7 +14,7 @@ export const STEPS: Record<StepKeys, Step> = {
 
 export function buildInitialValues(
   employment: EmploymentShowResponse | undefined,
-  fields?: Fields | undefined,
+  fields?: $TSFixMe | undefined,
 ) {
   if (!employment) {
     return {};
@@ -32,22 +34,19 @@ export function buildInitialValues(
     };
   }
 
-  const allFields = fields.map((field) => field.name);
+  const allFields: $TSFixMe = fields.map((field: $TSFixMe) => field.name);
   const employmentFields = Object.keys(
     employment?.data?.employment?.contract_details || {},
   );
-  const initialValues = allFields.reduce<Record<string, unknown>>(
+  const initialValues = (allFields as string[]).reduce<Record<string, unknown>>(
     (initialValuesAcc, field) => {
-      // @ts-expect-error error
       if (employmentFields.includes(field)) {
-        const contractDetails = employment?.data?.employment
-          ?.contract_details as Record<string, unknown>;
-        // @ts-expect-error error
-        initialValuesAcc[field] = contractDetails[field];
+        const contractDetails = employment?.data?.employment?.contract_details;
+        initialValuesAcc[field] = contractDetails?.[field] ?? null;
       }
       return initialValuesAcc;
     },
-    {} as Record<string, unknown>,
+    {},
   );
 
   return {

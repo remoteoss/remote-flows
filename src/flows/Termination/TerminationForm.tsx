@@ -5,11 +5,13 @@ import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
-import { Fields } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/utils';
+// TODO: We have Field in the new version but it's not exported
+//import { Fields } from '@remoteoss/json-schema-form';
 
 type TerminationFormProps = {
   onSubmit: (payload: TerminationFormValues) => void;
-  fields?: Fields;
+  fields?: $TSFixMe;
 };
 
 export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {

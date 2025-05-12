@@ -1,6 +1,6 @@
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { server } from '@/src/tests/server';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';

@@ -29,3 +29,5 @@ export {
   CostCalculatorEstimateResponse,
   OffboardingResponse,
 } from './client/types.gen';
+
+export type { $TSFixMe } from '@/src/types/utils';

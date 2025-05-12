@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
-import { Fields } from '@remoteoss/json-schema-form';
+// TODO: We have Field in the new version but it's not exported
+//import { Fields } from '@remoteoss/json-schema-form';
 import React, { Fragment } from 'react';
 import { Statement, StatementProps } from './Statement';
 import { ForcedValueField } from './fields/ForcedValueField';
+import { $TSFixMe } from '@/src/types/utils';
 
 type JSONSchemaFormFieldsProps = {
-  fields: Fields;
+  fields: $TSFixMe[];
 };
 
 function checkFieldHasForcedValue(field: any) {

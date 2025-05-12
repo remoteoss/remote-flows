@@ -14,12 +14,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './components/collapsible';
+import React from 'react';
 import { useState } from 'react';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Button } from './components/button';
 import { cn } from './utils';
-import React from 'react';
+import { $TSFixMe } from '@remoteoss/remote-flows';
 import './App.css';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { BasicCostCalculator } from './BasicCostCalculator';
 import { BasicCostCalculatorWithDefaultValues } from './BasicCostCalculatorDefaultValues';
 import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
@@ -28,8 +30,6 @@ import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
 import { Termination } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const sourceCode = {
   // Cost Calculator source codes
