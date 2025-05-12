@@ -26,6 +26,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
+import { $TSFixMe } from '@/src/types/utils';
 
 type CostCalculatorCountry = {
   value: string;
@@ -411,11 +412,11 @@ export const useCostCalculator = (
     // 3. combine the errors from both validations
     const combinedInnerErrors = [
       ...(errors?.yupError.inner || []),
-      ...(handleValidationResult?.yupError?.inner || []),
+      ...((handleValidationResult as $TSFixMe)?.yupError?.inner || []),
     ];
     const combinedValues = {
       ...(errors?.yupError?.value || {}),
-      ...(handleValidationResult?.yupError?.value || {}),
+      ...((handleValidationResult as $TSFixMe)?.yupError?.value || {}),
     };
 
     return {
