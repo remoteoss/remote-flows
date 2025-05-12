@@ -66,10 +66,7 @@ export function ContractAmendmentForm({
     },
   } = useContractAmendmentContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    handleValidation,
-  );
+  const resolver = useJsonSchemasValidationFormResolver(handleValidation);
 
   const form = useForm({
     resolver,
@@ -101,7 +98,6 @@ export function ContractAmendmentForm({
     for (const [key, value] of Object.entries(values)) {
       if (
         !commonFields.includes(key as CommonFields) &&
-        // @ts-expect-error error
         initialValues[key] !== value
       ) {
         hasContractDetailsChanges = true;
