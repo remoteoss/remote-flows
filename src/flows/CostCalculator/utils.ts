@@ -1,13 +1,13 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
 import { convertToCents } from '@/src/components/form/utils';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
 } from './types';
+import { $TSFixMe } from '@/src/types/utils';
 
 /**
  * Build the validation schema for the form.

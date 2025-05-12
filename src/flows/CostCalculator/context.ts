@@ -1,5 +1,5 @@
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/utils';
 import { createContext, useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 

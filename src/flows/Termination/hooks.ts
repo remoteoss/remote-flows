@@ -20,6 +20,7 @@ import { STEPS } from '@/src/flows/Termination/utils';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
+import { $TSFixMe } from '@/src/types/utils';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -80,7 +81,7 @@ const useTerminationSchema = ({
     select: ({ data }) => {
       const { schema } = modify(data.schema, jsfModify || {});
       const form = createHeadlessForm(schema || {}, {
-        initialValues: formValues || {},
+        initialValues: formValues || ({} as $TSFixMe),
       });
       return form;
     },

@@ -1,6 +1,6 @@
 import { EmploymentShowResponse } from '@/src/client';
 import { convertFromCents } from '@/src/components/form/utils';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Field } from '@remoteoss/json-schema-form';
 import { Step } from '../useStepState';
 
 type StepKeys = 'form' | 'confirmation_form';
@@ -12,7 +12,7 @@ export const STEPS: Record<StepKeys, Step> = {
 
 export function buildInitialValues(
   employment: EmploymentShowResponse | undefined,
-  fields?: Fields | undefined,
+  fields?: Field[] | undefined,
 ) {
   if (!employment) {
     return {};
@@ -38,11 +38,9 @@ export function buildInitialValues(
   );
   const initialValues = allFields.reduce<Record<string, unknown>>(
     (initialValuesAcc, field) => {
-      // @ts-expect-error error
       if (employmentFields.includes(field)) {
         const contractDetails = employment?.data?.employment
           ?.contract_details as Record<string, unknown>;
-        // @ts-expect-error error
         initialValuesAcc[field] = contractDetails[field];
       }
       return initialValuesAcc;
