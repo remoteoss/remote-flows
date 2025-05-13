@@ -2,7 +2,7 @@
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -17,6 +17,7 @@ import { Input } from '../../ui/input';
 export type TextFieldProps = React.ComponentProps<'input'> &
   JSFField & {
     onChange?: (value: any) => void;
+    component?: Components['text'];
   };
 
 export function TextField({
@@ -25,6 +26,7 @@ export function TextField({
   label,
   type,
   onChange,
+  component,
   ...rest
 }: TextFieldProps) {
   const { components } = useFormFields();
@@ -35,8 +37,8 @@ export function TextField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.text) {
-          const CustomTextField = components?.text;
+        const CustomTextField = component || components?.text;
+        if (CustomTextField) {
           const customTextFieldProps = {
             name,
             description,

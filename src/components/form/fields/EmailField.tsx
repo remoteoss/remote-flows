@@ -4,18 +4,24 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 import { TextField, TextFieldProps } from './TextField';
+import { Components } from '@/src/types/remoteFlows';
 
-export function EmailField(props: TextFieldProps) {
+type EmailFieldProps = TextFieldProps & {
+  component?: Components['email'];
+};
+
+export function EmailField(props: EmailFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
 
-  if (components?.email) {
+  const CustomEmailField = props.component || components?.email;
+
+  if (CustomEmailField) {
     return (
       <FormField
         control={control}
         name={props.name}
         render={({ field, fieldState }) => {
-          const CustomEmailField = components.email as React.ComponentType<any>;
           return (
             <CustomEmailField
               field={{

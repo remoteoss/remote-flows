@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FileUploader } from '../../ui/file-uploader';
 import {
@@ -44,6 +44,7 @@ const convertFilesToBase64 = async (
 export type FileUploadFieldProps = JSFField & {
   onChange?: (value: any) => void;
   multiple?: boolean;
+  component?: Components['file'];
 };
 
 export function FileUploadField({
@@ -52,6 +53,7 @@ export function FileUploadField({
   label,
   multiple,
   onChange,
+  component,
   ...rest
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
@@ -62,8 +64,8 @@ export function FileUploadField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.file) {
-          const CustomFileUploadField = components?.file;
+        const CustomFileUploadField = component || components?.file;
+        if (CustomFileUploadField) {
           const customFileUploadFieldProps = {
             name,
             description,

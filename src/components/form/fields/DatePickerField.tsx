@@ -20,12 +20,13 @@ import {
 } from '@/src/components/ui/popover';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { PopoverClose } from '@radix-ui/react-popover';
 import { format } from 'date-fns';
 
 export type DatePickerFieldProps = JSFField & {
   onChange?: (value: any) => void;
+  component?: Components['date'];
 };
 
 export function DatePickerField({
@@ -34,6 +35,7 @@ export function DatePickerField({
   name,
   minDate,
   onChange,
+  component,
   ...rest
 }: DatePickerFieldProps) {
   const { components } = useFormFields();
@@ -43,8 +45,9 @@ export function DatePickerField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.date) {
-          const CustomDatePickerField = components?.date;
+        const CustomDatePickerField = component || components?.date;
+
+        if (CustomDatePickerField) {
           const customDatePickerFieldProps = {
             description,
             label,

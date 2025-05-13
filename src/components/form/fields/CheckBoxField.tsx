@@ -10,7 +10,7 @@ import {
 } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import * as React from 'react';
 import {
@@ -21,6 +21,7 @@ import {
 
 export type CheckBoxFieldProps = JSFField & {
   onChange?: (checked: any, optionId?: string) => void;
+  component?: Components['checkbox'];
 };
 
 export function CheckBoxField({
@@ -31,6 +32,7 @@ export function CheckBoxField({
   onChange,
   multiple,
   options,
+  component,
   ...rest
 }: CheckBoxFieldProps) {
   const { components } = useFormFields();
@@ -60,8 +62,8 @@ export function CheckBoxField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => {
-        if (components?.checkbox) {
-          const CustomCheckboxField = components?.checkbox;
+        const CustomCheckboxField = component || components?.checkbox;
+        if (CustomCheckboxField) {
           const customCheckboxFieldProps = {
             name,
             description,
