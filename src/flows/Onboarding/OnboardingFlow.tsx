@@ -5,6 +5,7 @@ import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationSte
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
 import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
+import { EmploymentCreateParams } from '@/src/client';
 
 export type OnboardingRenderProps = {
   /**
@@ -28,6 +29,8 @@ export type OnboardingRenderProps = {
 type OnboardingFlowProps = {
   employmentId?: string;
   countryCode: string;
+  employeeType?: EmploymentCreateParams['type'];
+  externalId?: string;
   render: ({
     onboardingBag,
     components,
@@ -40,11 +43,19 @@ type OnboardingFlowProps = {
 export const OnboardingFlow = ({
   employmentId,
   countryCode,
+  employeeType = 'employee',
+  externalId,
   render,
   options,
 }: OnboardingFlowProps) => {
   const formId = useId();
-  const onboardingBag = useOnboarding({ employmentId, countryCode, options });
+  const onboardingBag = useOnboarding({
+    employmentId,
+    countryCode,
+    employeeType,
+    externalId,
+    options,
+  });
 
   return (
     <OnboardingContext.Provider

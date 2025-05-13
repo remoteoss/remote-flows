@@ -49,6 +49,8 @@ export const OnboardingEOR = () => {
         <OnboardingFlow
           employmentId="1234"
           countryCode="PRT"
+          type="employee"
+          externalId="1234"
           render={MultiStepForm}
         />
       </div>
