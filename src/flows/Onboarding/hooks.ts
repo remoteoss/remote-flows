@@ -176,15 +176,6 @@ export const useOnboarding = ({
      */
     checkFieldUpdates: setFieldValues,
     /**
-     * Function to parse form values before submission
-     * @param values - Form values to parse
-     * @returns Parsed form values
-     */
-    parseFormValues: (values: $TSFixMe) => {
-      // TODO: TBD
-      return values;
-    },
-    /**
      * Function to handle form submission
      * @param values - Form values to submit
      * @returns Promise resolving to the mutation result

@@ -7,16 +7,25 @@ type BasicInformationStepProps = {
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
   onSubmit?: (payload: unknown) => void | Promise<void>;
+  /*
+   * The function is called when an error occurs during form submission.
+   */
+  onError?: (error: unknown) => void;
 };
 
-export function BasicInformationStep({ onSubmit }: BasicInformationStepProps) {
+export function BasicInformationStep({
+  onSubmit,
+  onError,
+}: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
-  const handleSubmit = async (values: unknown) => {
-    await onSubmit?.(onboardingBag?.parseFormValues(values) as unknown);
-    await onboardingBag.onSubmit(
-      onboardingBag?.parseFormValues(values) as Record<string, unknown>,
-    );
-    onboardingBag?.next();
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    try {
+      await onSubmit?.(values);
+      await onboardingBag.onSubmit(values);
+      onboardingBag?.next();
+    } catch (error) {
+      onError?.(error);
+    }
   };
 
   return <OnboardingForm onSubmit={handleSubmit} />;

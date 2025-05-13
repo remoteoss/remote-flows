@@ -21,11 +21,15 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'basic_information':
       return (
         <>
-          <BasicInformationStep />
+          <BasicInformationStep
+            onSubmit={(payload) => console.log('payload', payload)}
+          />
           <SubmitButton>Next Step</SubmitButton>
           {/* <SubmitButton>Next Step</SubmitButton> */}
         </>
       );
+    case 'contract_details':
+      return <p>hello</p>;
   }
 };
 
@@ -49,7 +53,7 @@ export const OnboardingEOR = () => {
         <OnboardingFlow
           employmentId="1234"
           countryCode="PRT"
-          type="employee"
+          employeeType="employee"
           externalId="1234"
           render={MultiStepForm}
         />

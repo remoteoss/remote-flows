@@ -7,7 +7,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupV
 import { Fields } from '@remoteoss/json-schema-form';
 
 type OnboardingFormProps = {
-  onSubmit: (payload: unknown) => void;
+  onSubmit: (payload: Record<string, unknown>) => void;
   fields?: Fields;
 };
 
