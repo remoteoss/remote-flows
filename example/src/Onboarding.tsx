@@ -1,0 +1,48 @@
+import {
+  OnboardingFlow,
+  RemoteFlows,
+  OnboardingRenderProps,
+} from '@remoteoss/remote-flows';
+import './App.css';
+
+type MultiStepFormProps = {
+  onboardingBag: OnboardingRenderProps['onboardingBag'];
+  components: OnboardingRenderProps['components'];
+};
+
+const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
+  const { BasicInformationStep } = components;
+
+  switch (onboardingBag.stepState.currentStep.name) {
+    case 'basic_information':
+      return (
+        <>
+          <BasicInformationStep />
+          {/* <SubmitButton>Next Step</SubmitButton> */}
+        </>
+      );
+  }
+};
+
+const fetchToken = () => {
+  return fetch('/api/token')
+    .then((res) => res.json())
+    .then((data) => ({
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+    }))
+    .catch((error) => {
+      console.error({ error });
+      throw error;
+    });
+};
+
+export const OnboardingEOR = () => {
+  return (
+    <RemoteFlows auth={fetchToken}>
+      <div className="cost-calculator__container">
+        <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />
+      </div>
+    </RemoteFlows>
+  );
+};
