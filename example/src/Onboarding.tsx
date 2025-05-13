@@ -1,4 +1,4 @@
-import { OnboardingFlow } from '@remoteoss/remote-flows';
+import { OnboardingFlow, RemoteFlows } from '@remoteoss/remote-flows';
 
 const MultiStepForm = ({ onboardingBag, components }) => {
   const { BasicInformationStep } = components;
@@ -21,6 +21,23 @@ const MultiStepForm = ({ onboardingBag, components }) => {
   }
 };
 
+const fetchToken = () => {
+  return fetch('/api/token')
+    .then((res) => res.json())
+    .then((data) => ({
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+    }))
+    .catch((error) => {
+      console.error({ error });
+      throw error;
+    });
+};
+
 export const OnboardingEOR = () => {
-  return <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />;
+  return (
+    <RemoteFlows auth={fetchToken}>
+      <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />
+    </RemoteFlows>
+  );
 };
