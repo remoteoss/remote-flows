@@ -215,7 +215,7 @@ export const useTermination = ({
      */
     isLoading: isLoadingTermination,
     /**
-     * Loading state indicating if a contract amendment mutation is in progress
+     * Loading state indicating if the termination mutation is in progress
      */
     isSubmitting: createTermination.isPending,
     /**
@@ -223,7 +223,7 @@ export const useTermination = ({
      */
     initialValues: initialValues,
     /**
-     * Function to validate form values against the contract amendment schema
+     * Function to validate form values against the termination schema
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
