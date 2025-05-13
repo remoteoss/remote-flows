@@ -13,6 +13,9 @@ export function BasicInformationStep({ onSubmit }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (values: unknown) => {
     await onSubmit?.(onboardingBag?.parseFormValues(values) as unknown);
+    await onboardingBag.onSubmit(
+      onboardingBag?.parseFormValues(values) as Record<string, unknown>,
+    );
     onboardingBag?.next();
   };
 
