@@ -5,6 +5,7 @@ import { FileUploadField } from '@/src/components/form/fields/FileUploadField';
 import { NumberField } from '@/src/components/form/fields/NumberField';
 import { RadioGroupField } from '@/src/components/form/fields/RadioGroupField';
 import { SelectField } from '@/src/components/form/fields/SelectField';
+import { CountryField } from '@/src/components/form/fields/CountryField';
 import { TextAreaField } from '@/src/components/form/fields/TextAreaField';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { EmailField } from '@/src/components/form/fields/EmailField';
@@ -24,4 +25,5 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   fieldset: FieldSetField,
   date: DatePickerField,
   textarea: TextAreaField,
+  countries: CountryField,
 };
