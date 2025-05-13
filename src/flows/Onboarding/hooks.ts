@@ -4,7 +4,7 @@ import {
   postCreateEmployment2,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/context';
@@ -27,10 +27,12 @@ const useJSONSchemaForm = ({
   countryCode,
   form,
   fieldValues,
+  jsfModify,
 }: {
   countryCode: string;
   form: string;
   fieldValues: FieldValues;
+  jsfModify?: JSFModify;
 }) => {
   const { client } = useClient();
 
@@ -57,7 +59,8 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const result = createHeadlessForm(data?.data || {}, {
+      const { schema } = modify(data.data || {}, jsfModify || {});
+      const result = createHeadlessForm(schema, {
         initialValues: fieldValues,
       });
       return result;
@@ -84,6 +87,7 @@ export const useOnboarding = ({
   employmentId,
   countryCode,
   type,
+  options,
 }: OnboardingHookProps) => {
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
@@ -103,9 +107,10 @@ export const useOnboarding = ({
       countryCode: countryCode,
       form: 'employment_basic_information',
       fieldValues: fieldValues,
+      jsfModify: options?.jsfModify,
     });
 
-  async function onSubmit(values: Record<string, unknown>) {
+  async function onSubmit(values: FieldValues) {
     const payload: EmploymentCreateParams = {
       basic_information: values,
       type: type,
@@ -159,7 +164,7 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: $TSFixMe) => {
+    handleValidation: (values: FieldValues) => {
       // TODO: we probably we'll need to validate different forms
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
