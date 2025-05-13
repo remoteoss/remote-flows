@@ -2,17 +2,16 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useOnboardingContext } from './context';
-import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 
-type TerminationFormProps = {
-  onSubmit: (payload: TerminationFormValues) => void;
+type OnboardingFormProps = {
+  onSubmit: (payload: unknown) => void;
   fields?: Fields;
 };
 
-export function OnboardingForm({ fields, onSubmit }: TerminationFormProps) {
+export function OnboardingForm({ fields, onSubmit }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
@@ -30,8 +29,8 @@ export function OnboardingForm({ fields, onSubmit }: TerminationFormProps) {
     const subscription = form?.watch((values) => {
       const isAnyFieldDirty = Object.keys(values).some(
         (key) =>
-          values[key as keyof TerminationFormValues] !==
-          onboardingBag?.initialValues?.[key as keyof TerminationFormValues],
+          values[key as keyof unknown] !==
+          onboardingBag?.initialValues?.[key as keyof unknown],
       );
       if (isAnyFieldDirty) {
         onboardingBag?.checkFieldUpdates(values);
