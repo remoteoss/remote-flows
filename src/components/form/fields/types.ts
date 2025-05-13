@@ -9,4 +9,5 @@ export type SupportedTypes =
   | 'checkbox'
   | 'textarea'
   | 'money'
-  | 'file';
+  | 'file'
+  | 'countries';
