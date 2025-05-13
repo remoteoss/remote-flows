@@ -12,12 +12,12 @@ import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
+import { FieldValues } from 'react-hook-form';
 
 type OnboardingHookProps = {
   employmentId?: string;
   countryCode: string;
-  employeeType?: EmploymentCreateParams['type'];
-  externalId?: string;
+  type?: EmploymentCreateParams['type'];
   options?: {
     jsfModify?: JSFModify;
   };
@@ -26,11 +26,11 @@ type OnboardingHookProps = {
 const useJSONSchemaForm = ({
   countryCode,
   form,
-  formValues,
+  fieldValues,
 }: {
   countryCode: string;
   form: string;
-  formValues: Partial<$TSFixMe>;
+  fieldValues: FieldValues;
 }) => {
   const { client } = useClient();
 
@@ -58,7 +58,7 @@ const useJSONSchemaForm = ({
     },
     select: ({ data }) => {
       const result = createHeadlessForm(data?.data || {}, {
-        initialValues: formValues,
+        initialValues: fieldValues,
       });
       return result;
     },
@@ -83,8 +83,7 @@ const useCreateOnboarding = () => {
 export const useOnboarding = ({
   employmentId,
   countryCode,
-  employeeType,
-  externalId,
+  type,
 }: OnboardingHookProps) => {
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
@@ -103,14 +102,13 @@ export const useOnboarding = ({
     useJSONSchemaForm({
       countryCode: countryCode,
       form: 'employment_basic_information',
-      formValues: fieldValues,
+      fieldValues: fieldValues,
     });
 
   async function onSubmit(values: Record<string, unknown>) {
     const payload: EmploymentCreateParams = {
       basic_information: values,
-      type: employeeType,
-      external_id: externalId,
+      type: type,
       country_code: countryCode,
     };
     return createOnboardingMutationAsync(payload);

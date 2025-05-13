@@ -29,8 +29,7 @@ export type OnboardingRenderProps = {
 type OnboardingFlowProps = {
   employmentId?: string;
   countryCode: string;
-  employeeType?: EmploymentCreateParams['type'];
-  externalId?: string;
+  type?: EmploymentCreateParams['type'];
   render: ({
     onboardingBag,
     components,
@@ -43,8 +42,7 @@ type OnboardingFlowProps = {
 export const OnboardingFlow = ({
   employmentId,
   countryCode,
-  employeeType = 'employee',
-  externalId,
+  type = 'employee',
   render,
   options,
 }: OnboardingFlowProps) => {
@@ -52,8 +50,7 @@ export const OnboardingFlow = ({
   const onboardingBag = useOnboarding({
     employmentId,
     countryCode,
-    employeeType,
-    externalId,
+    type,
     options,
   });
 
