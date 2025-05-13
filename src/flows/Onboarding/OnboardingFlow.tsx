@@ -3,6 +3,8 @@ import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
+import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
+import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
 
 export type OnboardingRenderProps = {
   /**
@@ -17,12 +19,15 @@ export type OnboardingRenderProps = {
    * @see {@link BasicInformationStep}
    */
   components: {
+    SubmitButton: typeof OnboardingSubmit;
+    BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
   };
 };
 
 type OnboardingFlowProps = {
   employmentId?: string;
+  countryCode: string;
   render: ({
     onboardingBag,
     components,
@@ -34,11 +39,12 @@ type OnboardingFlowProps = {
 
 export const OnboardingFlow = ({
   employmentId,
+  countryCode,
   render,
   options,
 }: OnboardingFlowProps) => {
   const formId = useId();
-  const onboardingBag = useOnboarding({ employmentId, options });
+  const onboardingBag = useOnboarding({ employmentId, countryCode, options });
 
   return (
     <OnboardingContext.Provider
@@ -51,6 +57,8 @@ export const OnboardingFlow = ({
         onboardingBag,
         components: {
           BasicInformationStep: BasicInformationStep,
+          SubmitButton: OnboardingSubmit,
+          BackButton: OnboardingBack,
         },
       })}
     </OnboardingContext.Provider>

@@ -9,6 +9,7 @@ import { STEPS } from '@/src/flows/Onboarding/utils';
 
 type OnboardingHookProps = {
   employmentId?: string;
+  countryCode: string;
   options?: {
     jsfModify?: JSFModify;
   };
@@ -17,9 +18,11 @@ type OnboardingHookProps = {
 const useJSONSchemaForm = ({
   countryCode,
   form,
+  formValues,
 }: {
   countryCode: string;
   form: string;
+  formValues: Partial<$TSFixMe>;
 }) => {
   const { client } = useClient();
 
@@ -46,14 +49,19 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const result = createHeadlessForm(data?.data || {});
+      const result = createHeadlessForm(data?.data || {}, {
+        initialValues: formValues,
+      });
       return result;
     },
   });
 };
 
-export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
-  const { stepState, previousStep, nextStep } =
+export const useOnboarding = ({
+  employmentId,
+  countryCode,
+}: OnboardingHookProps) => {
+  const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
   /* const formValues = {
@@ -63,8 +71,9 @@ export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
 
   const { data: onboardingForm, isLoading: isLoadingOnboarding } =
     useJSONSchemaForm({
-      countryCode: 'PRT',
+      countryCode: countryCode,
       form: 'employment_basic_information',
+      formValues: fieldValues,
     });
 
   // TODO: TBD
@@ -122,10 +131,8 @@ export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: (values: Partial<$TSFixMe>) => {
-      // TODO: TBD
-      return values;
-    },
+    // TODO: check with seniority field to see that the conditionals work
+    checkFieldUpdates: setFieldValues,
     /**
      * Function to parse form values before submission
      * @param values - Form values to parse

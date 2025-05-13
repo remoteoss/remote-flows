@@ -11,13 +11,18 @@ type MultiStepFormProps = {
 };
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
-  const { BasicInformationStep } = components;
+  const { BasicInformationStep, SubmitButton } = components;
+
+  if (onboardingBag.isLoading) {
+    return <p>Loading...</p>;
+  }
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
       return (
         <>
           <BasicInformationStep />
+          <SubmitButton>Next Step</SubmitButton>
           {/* <SubmitButton>Next Step</SubmitButton> */}
         </>
       );
@@ -41,7 +46,11 @@ export const OnboardingEOR = () => {
   return (
     <RemoteFlows auth={fetchToken}>
       <div className="cost-calculator__container">
-        <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />
+        <OnboardingFlow
+          employmentId="1234"
+          countryCode="PRT"
+          render={MultiStepForm}
+        />
       </div>
     </RemoteFlows>
   );
