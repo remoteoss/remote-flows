@@ -22,5 +22,5 @@ const MultiStepForm = ({ onboardingBag, components }) => {
 };
 
 export const OnboardingEOR = () => {
-  return <OnboardingFlow employmentId={123} render={MultiStepForm} />;
+  return <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />;
 };

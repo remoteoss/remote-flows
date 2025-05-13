@@ -15,6 +15,7 @@ export function OnboardingForm({ fields, onSubmit }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
+    // @ts-expect-error no matching type
     onboardingBag.handleValidation,
   );
 
