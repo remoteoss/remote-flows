@@ -21,8 +21,14 @@ export function BasicInformationStep({
   const handleSubmit = async (values: Record<string, unknown>) => {
     try {
       await onSubmit?.(values);
-      await onboardingBag.onSubmit(values);
-      onboardingBag?.next();
+      const response = await onboardingBag.onSubmit(values);
+      if (response.data) {
+        onboardingBag?.next();
+        return;
+      }
+      if (response.error) {
+        onError?.(response.error);
+      }
     } catch (error) {
       onError?.(error);
     }
