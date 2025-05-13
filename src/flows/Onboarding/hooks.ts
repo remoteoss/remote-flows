@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Termination/utils';
+import { STEPS } from '@/src/flows/Onboarding/utils';
 
 type OnboardingHookProps = {
   employmentId?: string;

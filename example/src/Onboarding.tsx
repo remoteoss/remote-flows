@@ -1,19 +1,22 @@
-import { OnboardingFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import {
+  OnboardingFlow,
+  RemoteFlows,
+  OnboardingRenderProps,
+} from '@remoteoss/remote-flows';
+import './App.css';
 
-const MultiStepForm = ({ onboardingBag, components }) => {
+type MultiStepFormProps = {
+  onboardingBag: OnboardingRenderProps['onboardingBag'];
+  components: OnboardingRenderProps['components'];
+};
+
+const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
   const { BasicInformationStep } = components;
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
       return (
         <>
-          <div className="alert">
-            <p>
-              Please do not inform the employee of their termination until we
-              review your request for legal risks. When we approve your request,
-              you can inform the employee and we'll take it from there.
-            </p>
-          </div>
           <BasicInformationStep />
           {/* <SubmitButton>Next Step</SubmitButton> */}
         </>
@@ -37,7 +40,9 @@ const fetchToken = () => {
 export const OnboardingEOR = () => {
   return (
     <RemoteFlows auth={fetchToken}>
-      <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />
+      <div className="cost-calculator__container">
+        <OnboardingFlow employmentId={'1234'} render={MultiStepForm} />
+      </div>
     </RemoteFlows>
   );
 };
