@@ -101,7 +101,7 @@ describe('CountryField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
-  it.only('renders custom select component when provided', () => {
+  it('renders custom select component when provided', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
