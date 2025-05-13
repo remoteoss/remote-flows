@@ -13,14 +13,8 @@ export type OnboardingRenderProps = {
   onboardingBag: ReturnType<typeof useOnboarding>;
   /**
    * The components used in the onboarding flow.
-   * This includes different steps, submit button, back button and timeoff.
-   * @see {@link TerminationSubmit}
-   * @see {@link TimeOff}
-   * @see {@link TerminationBack}
-   * @see {@link EmployeeCommunicationForm}
-   * @see {@link TerminationDetailsForm}
-   * @see {@link PaidTimeOffForm}
-   * @see {@link AdditionalDetailsForm}
+   * This includes different steps, submit button, back button.
+   * @see {@link BasicInformationStep}
    */
   components: {
     BasicInformationStep: typeof BasicInformationStep;
