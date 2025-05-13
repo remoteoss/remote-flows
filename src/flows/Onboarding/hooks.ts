@@ -6,6 +6,7 @@ import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 
 type OnboardingHookProps = {
   employmentId?: string;
@@ -126,12 +127,19 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: () => {},
+    handleValidation: (values: $TSFixMe) => {
+      // TODO: we probably we'll need to validate different forms
+      if (onboardingForm) {
+        const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
+
+        return onboardingForm?.handleValidation(parsedValues);
+      }
+      return null;
+    },
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    // TODO: check with seniority field to see that the conditionals work
     checkFieldUpdates: setFieldValues,
     /**
      * Function to parse form values before submission
