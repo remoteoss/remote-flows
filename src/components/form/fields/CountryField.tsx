@@ -45,8 +45,8 @@ export function CountryField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.select) {
-          const CustomSelectField = components?.select;
+        if (components?.countries) {
+          const CustomSelectField = components?.countries;
           const customSelectFieldProps = {
             label,
             name,
@@ -101,9 +101,9 @@ export function CountryField({
         return (
           <FormItem
             data-field={name}
-            className={`RemoteFlows__SelectField__Item__${name}`}
+            className={`RemoteFlows__CountryField__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__SelectField__Label">
+            <FormLabel className="RemoteFlows__CountryField__Label">
               {label}
             </FormLabel>
             <FormControl>

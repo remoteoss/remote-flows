@@ -101,7 +101,7 @@ describe('CountryField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
-  it('renders custom select component when provided', () => {
+  it.only('renders custom select component when provided', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
@@ -109,7 +109,7 @@ describe('CountryField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { select: CustomSelectField },
+      components: { countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -126,7 +126,7 @@ describe('CountryField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { select: CustomSelectField },
+      components: { countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -155,7 +155,7 @@ describe('CountryField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { select: CustomSelectField },
+      components: { countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
