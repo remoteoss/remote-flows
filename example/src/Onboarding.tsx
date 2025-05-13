@@ -52,7 +52,6 @@ export const OnboardingEOR = () => {
     <RemoteFlows auth={fetchToken}>
       <div className="cost-calculator__container">
         <OnboardingFlow
-          employmentId="1234"
           countryCode="PRT"
           type="employee"
           render={MultiStepForm}
