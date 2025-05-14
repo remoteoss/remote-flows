@@ -1,6 +1,5 @@
 import React from 'react';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
-
 import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';

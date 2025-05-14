@@ -137,11 +137,6 @@ export const useOnboarding = ({
     updateOnboardingMutation,
   );
 
-  /* const formValues = {
-    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-    ...fieldValues,
-  }; */
-
   const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
     basic_information: 'employment_basic_information',
     contract_details: 'contract_details',
