@@ -138,4 +138,35 @@ describe('FileUploadField Component', () => {
       expect(mockOnChange).toHaveBeenCalledOnce();
     });
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomFileUploadFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-file-upload-field">
+          Context File Upload Field
+        </div>
+      ));
+    const CustomFileUploadFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-file-upload-field">Prop File Upload Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { file: CustomFileUploadFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomFileUploadFieldProp,
+    });
+
+    expect(CustomFileUploadFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-file-upload-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-file-upload-field'),
+    ).not.toBeInTheDocument();
+  });
 });

@@ -137,4 +137,35 @@ describe('DatePickerField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomDatePickerFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-date-picker-field">
+          Context Date Picker Field
+        </div>
+      ));
+    const CustomDatePickerFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-date-picker-field">Prop Date Picker Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { date: CustomDatePickerFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomDatePickerFieldProp,
+    });
+
+    expect(CustomDatePickerFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-date-picker-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-date-picker-field'),
+    ).not.toBeInTheDocument();
+  });
 });

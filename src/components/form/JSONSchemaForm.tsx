@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
-import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Fields } from '@remoteoss/json-schema-form';
 import React, { Fragment } from 'react';
-import { Statement, StatementProps } from './Statement';
-import { ForcedValueField } from './fields/ForcedValueField';
+
+import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { SupportedTypes } from '@/src/components/form/fields/types';
+import { Statement, StatementProps } from '@/src/components/form/Statement';
+import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
+import { Components } from '@/src/types/remoteFlows';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
+  components?: Components;
 };
 
 function checkFieldHasForcedValue(field: any) {
@@ -20,7 +23,10 @@ function checkFieldHasForcedValue(field: any) {
   );
 }
 
-export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
+export const JSONSchemaFormFields = ({
+  fields,
+  components,
+}: JSONSchemaFormFieldsProps) => {
   if (!fields || fields.length === 0) return null;
 
   return (
@@ -45,7 +51,12 @@ export const JSONSchemaFormFields = ({ fields }: JSONSchemaFormFieldsProps) => {
         const FieldComponent = fieldsMap[field.inputType as SupportedTypes];
         return FieldComponent ? (
           <Fragment key={field.name as string}>
-            <FieldComponent {...field} />
+            <FieldComponent
+              {...field}
+              component={
+                components && components[field.inputType as SupportedTypes]
+              }
+            />
             {field.statement ? (
               <Statement {...(field.statement as StatementProps)} />
             ) : null}

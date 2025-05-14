@@ -124,4 +124,33 @@ describe('NumberField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomNumberFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-number-field">Context Number Field</div>
+      ));
+    const CustomNumberFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-number-field">Prop Number Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { number: CustomNumberFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomNumberFieldProp,
+    });
+
+    expect(CustomNumberFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-number-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-number-field'),
+    ).not.toBeInTheDocument();
+  });
 });
