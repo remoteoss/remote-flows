@@ -1,31 +1,18 @@
 import React from 'react';
 import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
-
-type BasicInformationFormPayload = {
-  name: string;
-  email: string;
-  work_email: string;
-  job_title: string;
-  tax_servicing_countries: string[];
-  tax_job_category: string;
-  department: {
-    id: string;
-    name?: string;
-  };
-  provisional_start_date: string;
-  has_seniority_date: 'yes' | 'no';
-  manager: {
-    id: string;
-  };
-  seniority_date: string;
-};
+import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
+import { EmploymentCreationResponse } from '@/src/client';
 
 type BasicInformationStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
   onSubmit?: (payload: BasicInformationFormPayload) => void | Promise<void>;
+  /*
+   * The function is called when the form submission is successful.
+   */
+  onSuccess?: (data: EmploymentCreationResponse) => void;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -34,15 +21,16 @@ type BasicInformationStepProps = {
 
 export function BasicInformationStep({
   onSubmit,
+  onSuccess,
   onError,
 }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
-  const handleSubmit = async (payload: Record<string, unknown>) => {
+  const handleSubmit = async (payload: BasicInformationFormPayload) => {
     try {
-      const values = payload as BasicInformationFormPayload;
-      await onSubmit?.(values);
-      const response = await onboardingBag.onSubmit(values);
-      if (response.data) {
+      await onSubmit?.(payload);
+      const response = await onboardingBag.onSubmit(payload);
+      if (response.data?.data) {
+        onSuccess?.(response.data.data);
         onboardingBag?.next();
         return;
       }
