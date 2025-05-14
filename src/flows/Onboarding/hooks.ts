@@ -49,7 +49,7 @@ const useEmployment = (employmentId: string | undefined) => {
 
       // If response status is 404 or other error, throw an error to trigger isError
       if (response.error || !response.data) {
-        throw new Error('Failed to fetch onboarding schema');
+        throw new Error('Failed to fetch employment data');
       }
 
       return response;
