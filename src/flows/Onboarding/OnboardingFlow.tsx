@@ -5,6 +5,7 @@ import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
 import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 
 export type OnboardingRenderProps = {
   /**
@@ -22,6 +23,7 @@ export type OnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
+    OnboardingInvite: typeof OnboardingInvite;
   };
 };
 
@@ -60,6 +62,7 @@ export const OnboardingFlow = ({
           BasicInformationStep: BasicInformationStep,
           SubmitButton: OnboardingSubmit,
           BackButton: OnboardingBack,
+          OnboardingInvite: OnboardingInvite,
         },
       })}
     </OnboardingContext.Provider>

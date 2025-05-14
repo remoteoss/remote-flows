@@ -30,6 +30,7 @@ import { Termination } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { OnboardingEOR } from './Onboarding';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -956,6 +957,13 @@ const demoStructure = [
     description: 'Manage changes to existing contracts',
     component: ContractAmendment,
     sourceCode: sourceCode.contractAmendments,
+  },
+  {
+    id: 'onboarding',
+    title: 'Onboarding',
+    description: 'Onboarding flow of a new employee',
+    component: OnboardingEOR,
+    sourceCode: '',
   },
 ];
 
