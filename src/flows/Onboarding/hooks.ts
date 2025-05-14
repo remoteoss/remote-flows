@@ -111,13 +111,25 @@ export const useOnboarding = ({
     review: null,
   };
 
+  const getFormValues = () => {
+    if (!stepState.values) {
+      return fieldValues;
+    }
+    return {
+      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS],
+      ...fieldValues,
+    };
+  };
+
+  const formValues = getFormValues();
+
   const { data: onboardingForm, isLoading: isLoadingOnboarding } =
     useJSONSchemaForm({
       countryCode: countryCode,
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
-      fieldValues: fieldValues,
+      fieldValues: formValues,
       options: options,
     });
 
@@ -138,12 +150,7 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  const initialValues = {}; /* buildInitialValues({
-    ...stepState.values?.employee_communication,
-    ...stepState.values?.termination_details,
-    ...stepState.values?.paid_time_off,
-    ...stepState.values?.additional_information,
-  }); */
+  const initialValues = getFormValues();
 
   return {
     /**

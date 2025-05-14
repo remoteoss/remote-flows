@@ -31,7 +31,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSuccess={(data) => console.log('data', data)}
             onError={(error) => console.log('error', error)}
           />
-          <SubmitButton>Next Step</SubmitButton>
+          <SubmitButton disabled={onboardingBag.isSubmitting}>
+            Next Step
+          </SubmitButton>
         </>
       );
     case 'contract_details':
@@ -42,7 +44,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onError={(error) => console.log('error', error)}
           />
           <BackButton>Back</BackButton>
-          <SubmitButton>Next Step</SubmitButton>
+          <SubmitButton disabled={onboardingBag.isSubmitting}>
+            Next Step
+          </SubmitButton>
         </>
       );
   }
