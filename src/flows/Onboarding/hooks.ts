@@ -46,6 +46,9 @@ const useJSONSchemaForm = ({
         path: {
           country_code: countryCode,
           form: form,
+        },
+        query: {
+          skip_benefits: true,
           ...jsonSchemaQueryParam,
         },
       });
@@ -101,10 +104,19 @@ export const useOnboarding = ({
     ...fieldValues,
   }; */
 
+  const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
+    basic_information: 'employment_basic_information',
+    contract_details: 'contract_details',
+    benefits: null,
+    review: null,
+  };
+
   const { data: onboardingForm, isLoading: isLoadingOnboarding } =
     useJSONSchemaForm({
       countryCode: countryCode,
-      form: 'employment_basic_information',
+      form:
+        form[stepState.currentStep.name as keyof typeof STEPS] ||
+        'employment_basic_information',
       fieldValues: fieldValues,
       options: options,
     });

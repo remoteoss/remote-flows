@@ -5,6 +5,7 @@ import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
 import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -17,11 +18,15 @@ export type OnboardingRenderProps = {
    * The components used in the onboarding flow.
    * This includes different steps, submit button, back button.
    * @see {@link BasicInformationStep}
+   * @see {@link OnboardingSubmit}
+   * @see {@link OnboardingBack}
+   * @see {@link ContractDetailsStep}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
     BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
+    ContractDetailsStep: typeof ContractDetailsStep;
   };
 };
 
@@ -60,6 +65,7 @@ export const OnboardingFlow = ({
           BasicInformationStep: BasicInformationStep,
           SubmitButton: OnboardingSubmit,
           BackButton: OnboardingBack,
+          ContractDetailsStep: ContractDetailsStep,
         },
       })}
     </OnboardingContext.Provider>

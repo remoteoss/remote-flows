@@ -11,7 +11,12 @@ type MultiStepFormProps = {
 };
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
-  const { BasicInformationStep, SubmitButton } = components;
+  const {
+    BasicInformationStep,
+    SubmitButton,
+    BackButton,
+    ContractDetailsStep,
+  } = components;
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -26,11 +31,19 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onError={(error) => console.log('error', error)}
           />
           <SubmitButton>Next Step</SubmitButton>
-          {/* <SubmitButton>Next Step</SubmitButton> */}
         </>
       );
     case 'contract_details':
-      return <p>hello</p>;
+      return (
+        <>
+          <ContractDetailsStep
+            onSubmit={(payload) => console.log('payload', payload)}
+            onError={(error) => console.log('error', error)}
+          />
+          <BackButton>Back</BackButton>
+          <SubmitButton>Next Step</SubmitButton>
+        </>
+      );
   }
 };
 
