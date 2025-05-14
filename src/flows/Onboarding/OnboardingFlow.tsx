@@ -1,8 +1,10 @@
 import React, { useId } from 'react';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
+import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
+import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
+import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 
 export type OnboardingRenderProps = {
   /**
@@ -17,28 +19,33 @@ export type OnboardingRenderProps = {
    * @see {@link BasicInformationStep}
    */
   components: {
+    SubmitButton: typeof OnboardingSubmit;
+    BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
   };
 };
 
-type OnboardingFlowProps = {
-  employmentId?: string;
+type OnboardingFlowProps = OnboardingFlowParams & {
   render: ({
     onboardingBag,
     components,
   }: OnboardingRenderProps) => React.ReactNode;
-  options?: {
-    jsfModify?: JSFModify;
-  };
 };
 
 export const OnboardingFlow = ({
   employmentId,
+  countryCode,
+  type = 'employee',
   render,
   options,
 }: OnboardingFlowProps) => {
   const formId = useId();
-  const onboardingBag = useOnboarding({ employmentId, options });
+  const onboardingBag = useOnboarding({
+    employmentId,
+    countryCode,
+    type,
+    options,
+  });
 
   return (
     <OnboardingContext.Provider
@@ -51,6 +58,8 @@ export const OnboardingFlow = ({
         onboardingBag,
         components: {
           BasicInformationStep: BasicInformationStep,
+          SubmitButton: OnboardingSubmit,
+          BackButton: OnboardingBack,
         },
       })}
     </OnboardingContext.Provider>

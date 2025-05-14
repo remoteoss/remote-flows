@@ -1,28 +1,39 @@
-import { getShowFormCountry } from '@/src/client';
+import {
+  EmploymentCreateParams,
+  getShowFormCountry,
+  postCreateEmployment2,
+} from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
-import { useQuery } from '@tanstack/react-query';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
+import { mutationToPromise } from '@/src/lib/mutations';
+import { FieldValues } from 'react-hook-form';
+import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { JSONSchemaFormType } from '@/src/flows/types';
 
-type OnboardingHookProps = {
-  employmentId?: string;
-  options?: {
-    jsfModify?: JSFModify;
-  };
-};
+type OnboardingHookProps = OnboardingFlowParams;
 
 const useJSONSchemaForm = ({
   countryCode,
   form,
+  fieldValues,
+  options,
 }: {
   countryCode: string;
-  form: string;
+  form: JSONSchemaFormType;
+  fieldValues: FieldValues;
+  options?: OnboardingHookProps['options'];
 }) => {
   const { client } = useClient();
-
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
+    ? {
+        json_schema_version: options.jsonSchemaVersion.form_schema[form],
+      }
+    : {};
   return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
@@ -36,6 +47,9 @@ const useJSONSchemaForm = ({
           country_code: countryCode,
           form: form,
         },
+        query: {
+          ...jsonSchemaQueryParam,
+        },
       });
 
       // If response status is 404 or other error, throw an error to trigger isError
@@ -46,15 +60,43 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const result = createHeadlessForm(data?.data || {});
+      const { schema } = modify(data.data || {}, options?.jsfModify || {});
+      const result = createHeadlessForm(schema, {
+        initialValues: fieldValues,
+      });
       return result;
     },
   });
 };
 
-export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
-  const { stepState, previousStep, nextStep } =
+const useCreateOnboarding = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: EmploymentCreateParams) => {
+      return postCreateEmployment2({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
+};
+
+export const useOnboarding = ({
+  employmentId,
+  countryCode,
+  type,
+  options,
+}: OnboardingHookProps) => {
+  const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
+
+  const createOnboardingMutation = useCreateOnboarding();
+  const { mutateAsync: createOnboardingMutationAsync } = mutationToPromise(
+    createOnboardingMutation,
+  );
 
   /* const formValues = {
     ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
@@ -63,13 +105,19 @@ export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
 
   const { data: onboardingForm, isLoading: isLoadingOnboarding } =
     useJSONSchemaForm({
-      countryCode: 'PRT',
+      countryCode: countryCode,
       form: 'employment_basic_information',
+      fieldValues: fieldValues,
+      options: options,
     });
 
-  // TODO: TBD
-  async function onSubmit() {
-    return;
+  async function onSubmit(values: FieldValues) {
+    const payload: EmploymentCreateParams = {
+      basic_information: values,
+      type: type,
+      country_code: countryCode,
+    };
+    return createOnboardingMutationAsync(payload);
   }
 
   function back() {
@@ -107,7 +155,7 @@ export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting: false, // TODO: TBD
+    isSubmitting: createOnboardingMutation.isPending,
     /**
      * Initial form values
      */
@@ -117,24 +165,20 @@ export const useOnboarding = ({ employmentId }: OnboardingHookProps) => {
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: () => {},
+    handleValidation: (values: FieldValues) => {
+      // TODO: we probably we'll need to validate different forms
+      if (onboardingForm) {
+        const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
+
+        return onboardingForm?.handleValidation(parsedValues);
+      }
+      return null;
+    },
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: (values: Partial<$TSFixMe>) => {
-      // TODO: TBD
-      return values;
-    },
-    /**
-     * Function to parse form values before submission
-     * @param values - Form values to parse
-     * @returns Parsed form values
-     */
-    parseFormValues: (values: $TSFixMe) => {
-      // TODO: TBD
-      return values;
-    },
+    checkFieldUpdates: setFieldValues,
     /**
      * Function to handle form submission
      * @param values - Form values to submit
