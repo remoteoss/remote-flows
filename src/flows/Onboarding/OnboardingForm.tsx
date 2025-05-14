@@ -10,9 +10,14 @@ import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 type OnboardingFormProps = {
   onSubmit: (payload: BasicInformationFormPayload) => void;
   fields?: Fields;
+  defaultValues: Record<string, unknown>;
 };
 
-export function OnboardingForm({ fields, onSubmit }: OnboardingFormProps) {
+export function OnboardingForm({
+  fields,
+  defaultValues,
+  onSubmit,
+}: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
@@ -22,7 +27,7 @@ export function OnboardingForm({ fields, onSubmit }: OnboardingFormProps) {
 
   const form = useForm({
     resolver,
-    defaultValues: onboardingBag?.initialValues,
+    defaultValues,
     shouldUnregister: false,
     mode: 'onBlur',
   });

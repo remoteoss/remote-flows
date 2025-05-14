@@ -42,5 +42,10 @@ export function BasicInformationStep({
     }
   };
 
-  return <OnboardingForm onSubmit={handleSubmit} />;
+  return (
+    <OnboardingForm
+      defaultValues={onboardingBag.initialValues.basic_information}
+      onSubmit={handleSubmit}
+    />
+  );
 }
