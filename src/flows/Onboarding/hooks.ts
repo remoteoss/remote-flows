@@ -2,10 +2,13 @@ import {
   EmploymentCreateParams,
   getShowFormCountry,
   postCreateEmployment2,
+  postInviteEmploymentInvitation,
+  PostInviteEmploymentInvitationData,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
+
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
@@ -17,6 +20,31 @@ import { JSONSchemaFormType } from '@/src/flows/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
+/**
+ * Use this hook to invite an employee to the onboarding flow
+ * @returns
+ */
+export const useEmploymentInvite = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: (payload: PostInviteEmploymentInvitationData['path']) => {
+      return postInviteEmploymentInvitation({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: payload,
+      });
+    },
+  });
+};
+
+/**
+ * Use this hook to get the JSON schema form for the onboarding flow
+ * @param param0
+ * @returns
+ */
 const useJSONSchemaForm = ({
   countryCode,
   form,
@@ -69,7 +97,11 @@ const useJSONSchemaForm = ({
   });
 };
 
-const useCreateOnboarding = () => {
+/**
+ * Use this hook to create an employment
+ * @returns
+ */
+const useCreateEmployment = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
@@ -93,9 +125,9 @@ export const useOnboarding = ({
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
-  const createOnboardingMutation = useCreateOnboarding();
-  const { mutateAsync: createOnboardingMutationAsync } = mutationToPromise(
-    createOnboardingMutation,
+  const createEmploymentMutation = useCreateEmployment();
+  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
+    createEmploymentMutation,
   );
 
   /* const formValues = {
@@ -117,7 +149,7 @@ export const useOnboarding = ({
       type: type,
       country_code: countryCode,
     };
-    return createOnboardingMutationAsync(payload);
+    return createEmploymentMutationAsync(payload);
   }
 
   function back() {
@@ -155,7 +187,7 @@ export const useOnboarding = ({
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting: createOnboardingMutation.isPending,
+    isSubmitting: createEmploymentMutation.isPending,
     /**
      * Initial form values
      */

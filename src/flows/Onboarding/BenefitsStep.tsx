@@ -5,7 +5,7 @@ import { Form } from '@/src/components/ui/form';
 import { useOnboardingContext } from './context';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 
-type BenefitsFormProps = {
+type BenefitsStepProps = {
   components: Components;
   /**
    * Callback function to be called when the benefits form is submitted.
@@ -30,7 +30,7 @@ type BenefitsFormProps = {
   onSuccess?: (data: unknown) => void;
 };
 
-export function BenefitsForm({ components }: BenefitsFormProps) {
+export function BenefitsStep({ components }: BenefitsStepProps) {
   const { formId } = useOnboardingContext();
 
   const form = useForm({
