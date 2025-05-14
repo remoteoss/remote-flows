@@ -20,6 +20,10 @@ import { JSONSchemaFormType } from '@/src/flows/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
+/**
+ * Use this hook to invite an employee to the onboarding flow
+ * @returns
+ */
 export const useEmploymentInvite = () => {
   const { client } = useClient();
 
@@ -36,6 +40,11 @@ export const useEmploymentInvite = () => {
   });
 };
 
+/**
+ * Use this hook to get the JSON schema form for the onboarding flow
+ * @param param0
+ * @returns
+ */
 const useJSONSchemaForm = ({
   countryCode,
   form,
@@ -88,6 +97,10 @@ const useJSONSchemaForm = ({
   });
 };
 
+/**
+ * Use this hook to create an employment
+ * @returns
+ */
 const useCreateEmployment = () => {
   const { client } = useClient();
   return useMutation({
