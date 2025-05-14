@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/src/components/ui/select';
 import { useFormFields } from '@/src/context';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -26,6 +26,7 @@ type SelectFieldProps = JSFField & {
   options: Array<{ value: string; label: string }>;
   className?: string;
   onChange?: (value: any) => void;
+  component?: Components['select'];
 };
 
 export function SelectField({
@@ -35,6 +36,7 @@ export function SelectField({
   defaultValue,
   description,
   onChange,
+  component,
   ...rest
 }: SelectFieldProps) {
   const { control } = useFormContext();
@@ -46,8 +48,8 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.select) {
-          const CustomSelectField = components?.select;
+        const CustomSelectField = component || components?.select;
+        if (CustomSelectField) {
           const customSelectFieldProps = {
             label,
             name,

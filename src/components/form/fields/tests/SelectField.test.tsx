@@ -146,4 +146,33 @@ describe('SelectField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomSelectFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-select-field">Context Select Field</div>
+      ));
+    const CustomSelectFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-select-field">Prop Select Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { select: CustomSelectFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomSelectFieldProp,
+    });
+
+    expect(CustomSelectFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-select-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-select-field'),
+    ).not.toBeInTheDocument();
+  });
 });

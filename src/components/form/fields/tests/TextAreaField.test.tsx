@@ -123,4 +123,33 @@ describe('TextAreaField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomTextAreaFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-textarea-field">Context TextArea Field</div>
+      ));
+    const CustomTextAreaFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-textarea-field">Prop TextArea Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { textarea: CustomTextAreaFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomTextAreaFieldProp,
+    });
+
+    expect(CustomTextAreaFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-textarea-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-textarea-field'),
+    ).not.toBeInTheDocument();
+  });
 });

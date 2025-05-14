@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 
 import { useFormFields } from '@/src/context';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -15,14 +15,13 @@ import {
 import { MultiSelect } from '../../ui/multi-select';
 
 type CountryFieldProps = JSFField & {
-  placeholder?: string;
   options: Array<{ value: string; label: string }>;
-  className?: string;
   onChange?: (value: any) => void;
   $meta: {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
   };
+  component?: Components['countries'];
 };
 
 export function CountryField({
@@ -33,6 +32,7 @@ export function CountryField({
   description,
   onChange,
   $meta,
+  component,
   ...rest
 }: CountryFieldProps) {
   const { control } = useFormContext();
@@ -45,8 +45,9 @@ export function CountryField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.countries) {
-          const CustomSelectField = components?.countries;
+        const CustomSelectField = component || components?.countries;
+
+        if (CustomSelectField) {
           const customSelectFieldProps = {
             label,
             name,
