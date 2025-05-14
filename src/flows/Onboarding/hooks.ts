@@ -1,5 +1,7 @@
 import {
+  Employment,
   EmploymentCreateParams,
+  getShowEmployment,
   getShowFormCountry,
   postCreateEmployment2,
   postInviteEmploymentInvitation,
@@ -19,6 +21,41 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
+
+const jsonSchemaToEmployment: Partial<
+  Record<JSONSchemaFormType, keyof Employment>
+> = {
+  employment_basic_information: 'basic_information',
+  contract_details: 'contract_details',
+};
+
+const useEmployment = (employmentId: string | undefined) => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['employment', employmentId],
+    retry: false,
+    enabled: !!employmentId,
+    queryFn: async () => {
+      const response = await getShowEmployment({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId as string,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch employment data');
+      }
+
+      return response;
+    },
+  });
+};
 
 /**
  * Use this hook to invite an employee to the onboarding flow
@@ -50,11 +87,13 @@ const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
+  employment,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: OnboardingHookProps['options'];
+  employment?: Employment;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -75,9 +114,7 @@ const useJSONSchemaForm = ({
           country_code: countryCode,
           form: form,
         },
-        query: {
-          ...jsonSchemaQueryParam,
-        },
+        query: jsonSchemaQueryParam,
       });
 
       // If response status is 404 or other error, throw an error to trigger isError
@@ -89,9 +126,14 @@ const useJSONSchemaForm = ({
     },
     select: ({ data }) => {
       const { schema } = modify(data.data || {}, options?.jsfModify || {});
+      const hasFieldValues = Object.keys(fieldValues).length > 0;
+      const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const result = createHeadlessForm(schema, {
-        initialValues: fieldValues,
+        initialValues: hasFieldValues
+          ? fieldValues
+          : (employment?.[employmentField] as Record<string, unknown>),
       });
+
       return result;
     },
   });
@@ -122,6 +164,8 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmployment(employmentId);
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
@@ -135,12 +179,13 @@ export const useOnboarding = ({
     ...fieldValues,
   }; */
 
-  const { data: onboardingForm, isLoading: isLoadingOnboarding } =
+  const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
       countryCode: countryCode,
       form: 'employment_basic_information',
       fieldValues: fieldValues,
       options: options,
+      employment: employment?.data?.data?.employment,
     });
 
   async function onSubmit(values: FieldValues) {
@@ -160,12 +205,11 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  const initialValues = {}; /* buildInitialValues({
-    ...stepState.values?.employee_communication,
-    ...stepState.values?.termination_details,
-    ...stepState.values?.paid_time_off,
-    ...stepState.values?.additional_information,
-  }); */
+  const initialValues = {
+    basic_information:
+      employment?.data?.data.employment?.basic_information || {},
+    contract_details: employment?.data?.data.employment?.contract_details || {},
+  };
 
   return {
     /**
@@ -183,7 +227,7 @@ export const useOnboarding = ({
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
-    isLoading: isLoadingOnboarding,
+    isLoading: isLoadingBasicInformation || isLoadingEmployment,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
