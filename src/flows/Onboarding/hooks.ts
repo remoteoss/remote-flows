@@ -6,36 +6,34 @@ import {
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
+import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { JSONSchemaFormType } from '@/src/flows/types';
 
-type OnboardingHookProps = {
-  employmentId?: string;
-  countryCode: string;
-  type?: EmploymentCreateParams['type'];
-  options?: {
-    jsfModify?: JSFModify;
-  };
-};
+type OnboardingHookProps = OnboardingFlowParams;
 
 const useJSONSchemaForm = ({
   countryCode,
   form,
   fieldValues,
-  jsfModify,
+  options,
 }: {
   countryCode: string;
-  form: string;
+  form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  jsfModify?: JSFModify;
+  options?: OnboardingHookProps['options'];
 }) => {
   const { client } = useClient();
-
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
+    ? {
+        json_schema_version: options.jsonSchemaVersion.form_schema[form],
+      }
+    : {};
   return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
@@ -48,6 +46,7 @@ const useJSONSchemaForm = ({
         path: {
           country_code: countryCode,
           form: form,
+          ...jsonSchemaQueryParam,
         },
       });
 
@@ -59,7 +58,7 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const { schema } = modify(data.data || {}, jsfModify || {});
+      const { schema } = modify(data.data || {}, options?.jsfModify || {});
       const result = createHeadlessForm(schema, {
         initialValues: fieldValues,
       });
@@ -107,7 +106,7 @@ export const useOnboarding = ({
       countryCode: countryCode,
       form: 'employment_basic_information',
       fieldValues: fieldValues,
-      jsfModify: options?.jsfModify,
+      options: options,
     });
 
   async function onSubmit(values: FieldValues) {

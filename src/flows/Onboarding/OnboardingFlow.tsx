@@ -1,11 +1,10 @@
 import React, { useId } from 'react';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
 import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
-import { EmploymentCreateParams } from '@/src/client';
+import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 
 export type OnboardingRenderProps = {
   /**
@@ -26,17 +25,11 @@ export type OnboardingRenderProps = {
   };
 };
 
-type OnboardingFlowProps = {
-  employmentId?: string;
-  countryCode: string;
-  type?: EmploymentCreateParams['type'];
+type OnboardingFlowProps = OnboardingFlowParams & {
   render: ({
     onboardingBag,
     components,
   }: OnboardingRenderProps) => React.ReactNode;
-  options?: {
-    jsfModify?: JSFModify;
-  };
 };
 
 export const OnboardingFlow = ({
