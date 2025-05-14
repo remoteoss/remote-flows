@@ -25,11 +25,11 @@ export function ContractDetailsStep({
       const values = payload as ContractDetailsPayload;
       await onSubmit?.(values);
       const response = await onboardingBag.onSubmit(values);
-      if (response.data) {
+      if (response?.data) {
         onboardingBag?.next();
         return;
       }
-      if (response.error) {
+      if (response?.error) {
         onError?.(response.error);
       }
     } catch (error) {

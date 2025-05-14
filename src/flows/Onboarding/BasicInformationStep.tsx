@@ -1,4 +1,6 @@
 import React from 'react';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
+
 import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
@@ -29,12 +31,12 @@ export function BasicInformationStep({
     try {
       await onSubmit?.(payload);
       const response = await onboardingBag.onSubmit(payload);
-      if (response.data?.data) {
-        onSuccess?.(response.data.data);
+      if (response?.data) {
+        onSuccess?.(response.data as $TSFixMe);
         onboardingBag?.next();
         return;
       }
-      if (response.error) {
+      if (response?.error) {
         onError?.(response.error);
       }
     } catch (error) {

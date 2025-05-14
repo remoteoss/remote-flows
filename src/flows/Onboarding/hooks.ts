@@ -1,10 +1,17 @@
 import {
   EmploymentCreateParams,
+  EmploymentFullParams,
   getShowFormCountry,
+  patchUpdateEmployment2,
   postCreateEmployment2,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  $TSFixMe,
+  createHeadlessForm,
+  modify,
+} from '@remoteoss/json-schema-form';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
@@ -85,18 +92,49 @@ const useCreateOnboarding = () => {
   });
 };
 
+export const useUpdateOnboarding = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: EmploymentFullParams & { employmentId: string }) => {
+      return patchUpdateEmployment2({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+        query: {
+          skip_benefits: true,
+        },
+      });
+    },
+  });
+};
+
 export const useOnboarding = ({
   employmentId,
   countryCode,
   type,
   options,
 }: OnboardingHookProps) => {
+  const [employmentIdState, setEmploymentId] = useState<string | undefined>(
+    employmentId,
+  );
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
   const createOnboardingMutation = useCreateOnboarding();
+  const updateOnboardingMutation = useUpdateOnboarding();
   const { mutateAsync: createOnboardingMutationAsync } = mutationToPromise(
     createOnboardingMutation,
+  );
+  const { mutateAsync: updateOnboardingMutationAsync } = mutationToPromise(
+    updateOnboardingMutation,
   );
 
   /* const formValues = {
@@ -134,12 +172,36 @@ export const useOnboarding = ({
     });
 
   async function onSubmit(values: FieldValues) {
-    const payload: EmploymentCreateParams = {
-      basic_information: values,
-      type: type,
-      country_code: countryCode,
-    };
-    return createOnboardingMutationAsync(payload);
+    switch (stepState.currentStep.name) {
+      case 'basic_information': {
+        const payload: EmploymentCreateParams = {
+          basic_information: values,
+          type: type,
+          country_code: countryCode,
+        };
+        try {
+          const response = await createOnboardingMutationAsync(payload);
+          // @ts-expect-error the types from the response are not matching
+          setEmploymentId(response.data?.data?.employment?.id as $TSFixMe);
+          return response;
+        } catch (error) {
+          console.error('Error creating onboarding:', error);
+          throw error;
+        }
+      }
+
+      case 'contract_details': {
+        const payload: EmploymentFullParams = {
+          contract_details: values,
+        };
+        return updateOnboardingMutationAsync({
+          employmentId: employmentIdState as string,
+          ...payload,
+        });
+      }
+    }
+
+    return;
   }
 
   function back() {
@@ -183,7 +245,6 @@ export const useOnboarding = ({
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
-      // TODO: we probably we'll need to validate different forms
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
 
