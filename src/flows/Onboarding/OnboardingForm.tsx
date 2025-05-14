@@ -5,9 +5,10 @@ import { useOnboardingContext } from './context';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
+import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 
 type OnboardingFormProps = {
-  onSubmit: (payload: Record<string, unknown>) => void;
+  onSubmit: (payload: BasicInformationFormPayload) => void;
   fields?: Fields;
 };
 

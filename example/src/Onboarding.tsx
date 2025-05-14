@@ -23,6 +23,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
         <>
           <BasicInformationStep
             onSubmit={(payload) => console.log('payload', payload)}
+            onSuccess={(data) => console.log('data', data)}
             onError={(error) => console.log('error', error)}
           />
           <SubmitButton>Next Step</SubmitButton>
