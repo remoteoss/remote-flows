@@ -55,7 +55,10 @@ const useJSONSchemaForm = ({
           form: form,
         },
         query: {
+<<<<<<< HEAD
           skip_benefits: true,
+=======
+>>>>>>> onboarding-flow
           ...jsonSchemaQueryParam,
         },
       });

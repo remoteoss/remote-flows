@@ -5,7 +5,10 @@ import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
 import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+<<<<<<< HEAD
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
+=======
+>>>>>>> onboarding-flow
 
 export type OnboardingRenderProps = {
   /**
