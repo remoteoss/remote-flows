@@ -218,4 +218,33 @@ describe('CountryField Component', () => {
       expect(screen.queryByText('United States')).not.toBeInTheDocument();
     });
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomCountryFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-country-field">Context Country Field</div>
+      ));
+    const CustomCountryFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-country-field">Prop Country Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { countries: CustomCountryFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...(defaultProps as any),
+      onChange: mockOnChange,
+      component: CustomCountryFieldProp,
+    });
+
+    expect(CustomCountryFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-country-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-country-field'),
+    ).not.toBeInTheDocument();
+  });
 });
