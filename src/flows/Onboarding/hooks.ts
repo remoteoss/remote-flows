@@ -46,6 +46,8 @@ const useJSONSchemaForm = ({
         path: {
           country_code: countryCode,
           form: form,
+        },
+        query: {
           ...jsonSchemaQueryParam,
         },
       });
