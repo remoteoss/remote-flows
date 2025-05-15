@@ -3,10 +3,10 @@ import { useEmploymentInvite } from './hooks';
 import { Button } from '@/src/components/ui/button';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
+import { useOnboardingContext } from './context';
 
 type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
-    employmentId: string;
     onSuccess?: (data: SuccessResponse) => void;
     onError?: (error: unknown) => void;
     onSubmit?: () => void;
@@ -14,12 +14,12 @@ type OnboardingInviteProps = PropsWithChildren<
 >;
 
 export function OnboardingInvite({
-  employmentId,
   onSubmit,
   onSuccess,
   onError,
   ...props
 }: OnboardingInviteProps) {
+  const { onboardingBag } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
 
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
@@ -29,8 +29,13 @@ export function OnboardingInvite({
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
+
+      if (!onboardingBag.employmentId) {
+        throw new Error('Employment ID is required');
+      }
+
       const response = await employmentInviteMutationAsync({
-        employment_id: employmentId,
+        employment_id: onboardingBag.employmentId,
       });
       if (response.data?.data) {
         onSuccess?.(response.data.data);

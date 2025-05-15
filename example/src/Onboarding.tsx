@@ -10,6 +10,36 @@ type MultiStepFormProps = {
   components: OnboardingRenderProps['components'];
 };
 
+function Review({ values }: { values: Record<string, unknown> }) {
+  return (
+    <div className="onboarding-values">
+      {Object.entries(values).map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return (
+            <pre>
+              {key}: {value.join(', ')}
+            </pre>
+          );
+        }
+        if (typeof value === 'object') {
+          return (
+            <pre>
+              {key}: {JSON.stringify(value)}
+            </pre>
+          );
+        }
+        if (typeof value === 'string' || typeof value === 'number') {
+          return (
+            <pre>
+              {key}: {value}
+            </pre>
+          );
+        }
+      })}
+    </div>
+  );
+}
+
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
   const {
     BasicInformationStep,
@@ -17,6 +47,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
+    OnboardingInvite,
   } = components;
 
   if (onboardingBag.isLoading) {
@@ -62,9 +93,23 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           </SubmitButton>
         </>
       );
-
     case 'review':
-      return <p>hello review</p>;
+      return (
+        <div className="onboarding-review">
+          <h2 className="title">Basic Information</h2>
+          <Review
+            values={onboardingBag.stepState.values?.basic_information || {}}
+          />
+          <h2 className="title">Contract Details</h2>
+          <Review
+            values={onboardingBag.stepState.values?.contract_details || {}}
+          />
+          <h2 className="title">Benefits</h2>
+          <Review values={onboardingBag.stepState.values?.benefits || {}} />
+
+          <OnboardingInvite>Invite Employee</OnboardingInvite>
+        </div>
+      );
   }
 };
 
