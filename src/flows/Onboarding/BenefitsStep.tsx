@@ -31,17 +31,22 @@ type BenefitsStepProps = {
 };
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
-  const { formId } = useOnboardingContext();
+  const { formId, onboardingBag } = useOnboardingContext();
 
   const form = useForm({
     shouldUnregister: false,
     mode: 'onBlur',
   });
 
+  const jsonSchemaFields = onboardingBag?.fields.benefits ?? [];
+
   return (
     <Form {...form}>
       <form id={formId} className="space-y-4 RemoteFlows__OnboardingForm">
-        <JSONSchemaFormFields fields={[]} components={components} />
+        <JSONSchemaFormFields
+          fields={jsonSchemaFields}
+          components={components}
+        />
       </form>
     </Form>
   );

@@ -10,6 +10,7 @@ import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 type OnboardingFormProps = {
   onSubmit: (payload: BasicInformationFormPayload) => void;
   fields?: Fields;
+  fieldsKey: 'basic_information' | 'contract_details' | 'benefits';
   defaultValues: Record<string, unknown>;
 };
 
@@ -17,6 +18,7 @@ export function OnboardingForm({
   fields,
   defaultValues,
   onSubmit,
+  fieldsKey,
 }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
@@ -47,7 +49,9 @@ export function OnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const jsonSchemaFields = fields ? fields : (onboardingBag?.fields ?? []);
+  const jsonSchemaFields = fields
+    ? fields
+    : (onboardingBag?.fields[fieldsKey] ?? []);
 
   return (
     <Form {...form}>

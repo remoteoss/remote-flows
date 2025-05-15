@@ -8,6 +8,7 @@ import {
   postCreateEmployment2,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
+  getShowSchema,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
@@ -145,6 +146,57 @@ const useJSONSchemaForm = ({
   });
 };
 
+const useBenefitOffersSchema = (
+  employmentId: string,
+  options: OnboardingHookProps['options'],
+) => {
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion
+    ?.benefit_offers_form_schema
+    ? {
+        json_schema_version:
+          options.jsonSchemaVersion.benefit_offers_form_schema,
+      }
+    : {};
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['benefit-offers-schema', employmentId],
+    retry: false,
+    enabled: !!employmentId,
+    queryFn: async () => {
+      const response = await getShowSchema({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId,
+        },
+        query: {
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch benefit offers schema');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      const { schema } = modify(
+        data.data?.schema || {},
+        options?.jsfModify || {},
+      );
+      const result = createHeadlessForm(schema, {
+        initialValues: {},
+      });
+
+      return result;
+    },
+  });
+};
+
 /**
  * Use this hook to create an employment
  * @returns
@@ -229,6 +281,11 @@ export const useOnboarding = ({
       employment: employment?.data?.data?.employment,
     });
 
+  const {
+    data: benefitOffersSchema,
+    isLoading: isLoadingBenefitsOffersSchema,
+  } = useBenefitOffersSchema(employmentIdState as string, options);
+
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
       case 'basic_information': {
@@ -287,11 +344,18 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: onboardingForm?.fields || [],
+    fields: {
+      basic_information: onboardingForm?.fields,
+      contract_details: onboardingForm?.fields,
+      benefits: benefitOffersSchema?.fields,
+    },
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
-    isLoading: isLoadingBasicInformation || isLoadingEmployment,
+    isLoading:
+      isLoadingBasicInformation ||
+      isLoadingEmployment ||
+      isLoadingBenefitsOffersSchema,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */

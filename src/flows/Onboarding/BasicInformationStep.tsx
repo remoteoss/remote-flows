@@ -46,6 +46,7 @@ export function BasicInformationStep({
 
   return (
     <OnboardingForm
+      fieldsKey="basic_information"
       defaultValues={onboardingBag.initialValues.basic_information}
       onSubmit={handleSubmit}
     />
