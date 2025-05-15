@@ -40,11 +40,7 @@ export function BenefitsStep({ components }: BenefitsStepProps) {
 
   return (
     <Form {...form}>
-      <form
-        id={formId}
-        data-testid="contract-amendment-form"
-        className="space-y-4 RemoteFlows__ContractAmendmentForm"
-      >
+      <form id={formId} className="space-y-4 RemoteFlows__OnboardingForm">
         <JSONSchemaFormFields fields={[]} components={components} />
       </form>
     </Form>
