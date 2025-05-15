@@ -192,9 +192,9 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
-  const [employmentIdState, setEmploymentId] = useState<string | undefined>(
-    employmentId,
-  );
+  const [internalEmploymentId, setInternalEmploymentId] = useState<
+    string | undefined
+  >(employmentId);
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
@@ -230,19 +230,28 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
       case 'basic_information': {
-        const payload: EmploymentCreateParams = {
-          basic_information: values,
-          type: type,
-          country_code: countryCode,
-        };
-        try {
-          const response = await createEmploymentMutationAsync(payload);
-          // @ts-expect-error the types from the response are not matching
-          setEmploymentId(response.data?.data?.employment?.id as $TSFixMe);
-          return response;
-        } catch (error) {
-          console.error('Error creating onboarding:', error);
-          throw error;
+        if (!internalEmploymentId) {
+          const payload: EmploymentCreateParams = {
+            basic_information: values,
+            type: type,
+            country_code: countryCode,
+          };
+          try {
+            const response = await createEmploymentMutationAsync(payload);
+            setInternalEmploymentId(
+              // @ts-expect-error the types from the response are not matching
+              response.data?.data?.employment?.id,
+            );
+            return response;
+          } catch (error) {
+            console.error('Error creating onboarding:', error);
+            throw error;
+          }
+        } else {
+          return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: values,
+          });
         }
       }
 
@@ -251,7 +260,7 @@ export const useOnboarding = ({
           contract_details: values,
         };
         return updateEmploymentMutationAsync({
-          employmentId: employmentIdState as string,
+          employmentId: internalEmploymentId as string,
           ...payload,
         });
       }
