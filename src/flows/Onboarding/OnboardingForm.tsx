@@ -33,6 +33,15 @@ export function OnboardingForm({
   });
 
   useEffect(() => {
+    // When the employmentId is set,
+    // we need to run the checkFieldUpdates to update fieldValues in useStepState
+    if (onboardingBag.employmentId) {
+      onboardingBag?.checkFieldUpdates(form.getValues());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const subscription = form?.watch((values) => {
       const isAnyFieldDirty = Object.keys(values).some(
         (key) =>
