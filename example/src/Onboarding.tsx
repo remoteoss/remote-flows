@@ -55,12 +55,13 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'benefits':
       return (
         <>
-        <BenefitsStep />
+          <BenefitsStep components={{}} />
           <BackButton>Back</BackButton>
           <SubmitButton disabled={onboardingBag.isSubmitting}>
             Next Step
           </SubmitButton>
         </>
+      );
   }
 };
 
