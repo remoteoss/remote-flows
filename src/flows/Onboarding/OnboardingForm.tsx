@@ -33,8 +33,9 @@ export function OnboardingForm({
   });
 
   useEffect(() => {
+    // When the employmentId is set,
+    // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (onboardingBag.employmentId) {
-      // When the employmentId is set, we need to run the checkFieldUpdates to update fieldValues in useStepState
       onboardingBag?.checkFieldUpdates(form.getValues());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

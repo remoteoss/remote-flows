@@ -245,3 +245,20 @@ a:active {
   color: #004085; /* Even darker blue for active state */
   text-decoration: underline; /* Keep underline for active state */
 }
+
+.onboarding-review {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .title {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .onboarding-values {
+    font-size: 12px;
+    padding-left: 12px;
+  }
+}
