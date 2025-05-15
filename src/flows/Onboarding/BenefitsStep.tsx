@@ -2,6 +2,10 @@ import React from 'react';
 import { FieldValues } from 'react-hook-form';
 import { Components } from '@/src/types/remoteFlows';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
+import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { SuccessResponse } from '@/src/client';
+
+type BenefitsPayload = Record<string, unknown>;
 
 type BenefitsStepProps = {
   components: Components;
@@ -12,7 +16,7 @@ type BenefitsStepProps = {
    * @param values
    * @returns
    */
-  onSubmit?: (values: FieldValues) => Promise<void>;
+  onSubmit?: (values: BenefitsPayload) => Promise<void>;
   /**
    * Callback function to be called when the submitting benefits form fails.
    * @param error
@@ -25,12 +29,34 @@ type BenefitsStepProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: unknown) => void;
+  onSuccess?: (data: SuccessResponse) => void;
 };
 
-export function BenefitsStep({ components }: BenefitsStepProps) {
-  const handleSubmit = (payload: FieldValues) => {
-    console.log('Benefits form submitted with values:', payload);
+export function BenefitsStep({
+  components,
+  onSubmit,
+  onError,
+  onSuccess,
+}: BenefitsStepProps) {
+  const { onboardingBag } = useOnboardingContext();
+
+  const handleSubmit = async (payload: FieldValues) => {
+    try {
+      await onSubmit?.(
+        onboardingBag.parseFormValues(payload) as BenefitsPayload,
+      );
+      const response = await onboardingBag.onSubmit(payload);
+      if (response?.data?.data) {
+        onSuccess?.(response?.data?.data as SuccessResponse);
+        onboardingBag?.next();
+        return;
+      }
+      if (response?.error) {
+        onError?.(response?.error);
+      }
+    } catch (error) {
+      onError?.(error);
+    }
   };
   return (
     <OnboardingForm

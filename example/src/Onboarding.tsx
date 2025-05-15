@@ -62,6 +62,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           </SubmitButton>
         </>
       );
+
+    case 'review':
+      return <p>hello review</p>;
   }
 };
 

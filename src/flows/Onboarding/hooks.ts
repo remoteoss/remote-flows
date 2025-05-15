@@ -398,7 +398,10 @@ export const useOnboarding = ({
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting: createEmploymentMutation.isPending,
+    isSubmitting:
+      createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
+      updateBenefitsOffersMutation.isPending,
     /**
      * Initial form values
      */
