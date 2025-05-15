@@ -238,9 +238,9 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            // @ts-expect-error the types from the response are not matching
             setInternalEmploymentId(
-              response.data?.data?.employment?.id as $TSFixMe,
+              // @ts-expect-error the types from the response are not matching
+              response.data?.data?.employment?.id,
             );
             return response;
           } catch (error) {
