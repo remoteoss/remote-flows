@@ -27,15 +27,17 @@ export function BasicInformationStep({
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: BasicInformationFormPayload) => {
     try {
-      await onSubmit?.(payload);
+      await onSubmit?.(
+        onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
+      );
       const response = await onboardingBag.onSubmit(payload);
-      if (response.data?.data) {
-        onSuccess?.(response.data.data);
+      if (response?.data?.data) {
+        onSuccess?.(response?.data?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }
-      if (response.error) {
-        onError?.(response.error);
+      if (response?.error) {
+        onError?.(response?.error);
       }
     } catch (error) {
       onError?.(error);

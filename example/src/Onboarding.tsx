@@ -11,7 +11,12 @@ type MultiStepFormProps = {
 };
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
-  const { BasicInformationStep, SubmitButton } = components;
+  const {
+    BasicInformationStep,
+    ContractDetailsStep,
+    SubmitButton,
+    BackButton,
+  } = components;
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -26,12 +31,25 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSuccess={(data) => console.log('data', data)}
             onError={(error) => console.log('error', error)}
           />
-          <SubmitButton>Next Step</SubmitButton>
-          {/* <SubmitButton>Next Step</SubmitButton> */}
+          <SubmitButton disabled={onboardingBag.isSubmitting}>
+            Next Step
+          </SubmitButton>
         </>
       );
     case 'contract_details':
-      return <p>hello</p>;
+      return (
+        <>
+          <ContractDetailsStep
+            onSubmit={(payload) => console.log('payload', payload)}
+            onSuccess={(data) => console.log('data', data)}
+            onError={(error) => console.log('error', error)}
+          />
+          <BackButton>Back</BackButton>
+          <SubmitButton disabled={onboardingBag.isSubmitting}>
+            Next Step
+          </SubmitButton>
+        </>
+      );
   }
 };
 
@@ -51,13 +69,11 @@ const fetchToken = () => {
 export const OnboardingEOR = () => {
   return (
     <RemoteFlows auth={fetchToken}>
-      <div className="cost-calculator__container">
-        <OnboardingFlow
-          countryCode="PRT"
-          type="employee"
-          render={MultiStepForm}
-        />
-      </div>
+      <OnboardingFlow
+        countryCode="PRT"
+        type="employee"
+        render={MultiStepForm}
+      />
     </RemoteFlows>
   );
 };
