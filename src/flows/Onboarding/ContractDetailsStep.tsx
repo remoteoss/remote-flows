@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
+import { EmploymentResponse } from '@/src/client';
 
 type ContractDetailsPayload = Record<string, unknown>;
 
@@ -10,6 +11,10 @@ type ContractDetailsStepProps = {
    */
   onSubmit?: (payload: ContractDetailsPayload) => void | Promise<void>;
   /*
+   * The function is called when the form submission is successful.
+   */
+  onSuccess?: (response: EmploymentResponse) => void | Promise<void>;
+  /*
    * The function is called when an error occurs during form submission.
    */
   onError?: (error: unknown) => void;
@@ -18,6 +23,7 @@ type ContractDetailsStepProps = {
 export function ContractDetailsStep({
   onSubmit,
   onError,
+  onSuccess,
 }: ContractDetailsStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: ContractDetailsPayload) => {
@@ -29,6 +35,7 @@ export function ContractDetailsStep({
         onboardingBag.parseFormValues(payload) as ContractDetailsPayload,
       );
       if (response?.data) {
+        onSuccess?.(response.data as EmploymentResponse);
         onboardingBag?.next();
         return;
       }
