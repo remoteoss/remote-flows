@@ -62,12 +62,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           </SubmitButton>
         </>
       );
-<<<<<<< HEAD
 
     case 'review':
       return <p>hello review</p>;
-=======
->>>>>>> onboarding-flow
   }
 };
 

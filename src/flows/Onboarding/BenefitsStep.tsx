@@ -59,19 +59,11 @@ export function BenefitsStep({
     }
   };
   return (
-<<<<<<< HEAD
     <OnboardingForm
       fieldsKey="benefits"
       defaultValues={{}}
       components={components}
       onSubmit={handleSubmit}
     />
-=======
-    <Form {...form}>
-      <form id={formId} className="space-y-4 RemoteFlows__OnboardingForm">
-        <JSONSchemaFormFields fields={[]} components={components} />
-      </form>
-    </Form>
->>>>>>> onboarding-flow
   );
 }

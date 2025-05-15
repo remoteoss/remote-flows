@@ -49,12 +49,8 @@ export function ContractDetailsStep({
 
   return (
     <OnboardingForm
-<<<<<<< HEAD
       fieldsKey="contract_details"
-      defaultValues={{}}
-=======
       defaultValues={onboardingBag.initialValues.contract_details}
->>>>>>> onboarding-flow
       onSubmit={handleSubmit}
     />
   );
