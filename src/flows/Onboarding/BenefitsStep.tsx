@@ -1,9 +1,7 @@
 import React from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { FieldValues } from 'react-hook-form';
 import { Components } from '@/src/types/remoteFlows';
-import { Form } from '@/src/components/ui/form';
-import { useOnboardingContext } from './context';
-import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 
 type BenefitsStepProps = {
   components: Components;
@@ -31,23 +29,15 @@ type BenefitsStepProps = {
 };
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
-  const { formId, onboardingBag } = useOnboardingContext();
-
-  const form = useForm({
-    shouldUnregister: false,
-    mode: 'onBlur',
-  });
-
-  const jsonSchemaFields = onboardingBag?.fields.benefits ?? [];
-
+  const handleSubmit = (payload: FieldValues) => {
+    console.log('Benefits form submitted with values:', payload);
+  };
   return (
-    <Form {...form}>
-      <form id={formId} className="space-y-4 RemoteFlows__OnboardingForm">
-        <JSONSchemaFormFields
-          fields={jsonSchemaFields}
-          components={components}
-        />
-      </form>
-    </Form>
+    <OnboardingForm
+      fieldsKey="benefits"
+      defaultValues={{}}
+      components={components}
+      onSubmit={handleSubmit}
+    />
   );
 }

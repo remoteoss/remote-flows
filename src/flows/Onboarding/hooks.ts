@@ -9,6 +9,8 @@ import {
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
   getShowSchema,
+  putUpdateBenefitOffer,
+  UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
@@ -216,7 +218,7 @@ const useCreateEmployment = () => {
   });
 };
 
-export const useUpdateEmployment = () => {
+const useUpdateEmployment = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: ({
@@ -240,6 +242,29 @@ export const useUpdateEmployment = () => {
   });
 };
 
+const useUpdateBenefitsOffers = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: UnifiedEmploymentUpsertBenefitOffersRequest & {
+      employmentId: string;
+    }) => {
+      return putUpdateBenefitOffer({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
 export const useOnboarding = ({
   employmentId,
   countryCode,
@@ -256,11 +281,15 @@ export const useOnboarding = ({
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
   const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
     updateEmploymentMutation,
+  );
+  const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
+    updateBenefitsOffersMutation,
   );
 
   const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
@@ -310,6 +339,16 @@ export const useOnboarding = ({
           contract_details: values,
         };
         return updateEmploymentMutationAsync({
+          employmentId: employmentIdState as string,
+          ...payload,
+        });
+      }
+
+      case 'benefits': {
+        const payload: UnifiedEmploymentUpsertBenefitOffersRequest = {
+          benefit_offers: values,
+        };
+        return updateBenefitsOffersMutationAsync({
           employmentId: employmentIdState as string,
           ...payload,
         });
@@ -370,7 +409,14 @@ export const useOnboarding = ({
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
-      // TODO: we probably we'll need to validate different forms
+      if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          benefitOffersSchema?.fields,
+        );
+
+        return benefitOffersSchema?.handleValidation(parsedValues);
+      }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
 
