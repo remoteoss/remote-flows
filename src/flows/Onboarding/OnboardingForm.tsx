@@ -6,17 +6,19 @@ import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
+import { Components } from '@/src/types/remoteFlows';
 
 type OnboardingFormProps = {
   onSubmit: (payload: BasicInformationFormPayload) => void;
+  components?: Components;
   fields?: Fields;
   defaultValues: Record<string, unknown>;
 };
 
 export function OnboardingForm({
-  fields,
   defaultValues,
   onSubmit,
+  components,
 }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
@@ -56,8 +58,6 @@ export function OnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const jsonSchemaFields = fields ? fields : (onboardingBag?.fields ?? []);
-
   return (
     <Form {...form}>
       <form
@@ -65,7 +65,10 @@ export function OnboardingForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 RemoteFlows__OnboardingForm"
       >
-        <JSONSchemaFormFields fields={jsonSchemaFields} />
+        <JSONSchemaFormFields
+          components={components}
+          fields={onboardingBag.fields}
+        />
       </form>
     </Form>
   );

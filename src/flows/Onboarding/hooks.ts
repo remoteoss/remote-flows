@@ -8,9 +8,16 @@ import {
   postCreateEmployment2,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
+  getShowSchema,
+  putUpdateBenefitOffer,
+  UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  createHeadlessForm,
+  Fields,
+  modify,
+} from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useClient } from '@/src/context';
@@ -143,6 +150,55 @@ const useJSONSchemaForm = ({
   });
 };
 
+const useBenefitOffersSchema = (
+  employmentId: string,
+  options: OnboardingHookProps['options'],
+) => {
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion
+    ?.benefit_offers_form_schema
+    ? {
+        json_schema_version:
+          options.jsonSchemaVersion.benefit_offers_form_schema,
+      }
+    : {};
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['benefit-offers-schema', employmentId],
+    retry: false,
+    enabled: !!employmentId,
+    queryFn: async () => {
+      const response = await getShowSchema({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId,
+        },
+        query: jsonSchemaQueryParam,
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch benefit offers schema');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      const { schema } = modify(
+        data.data?.schema || {},
+        options?.jsfModify || {},
+      );
+      const result = createHeadlessForm(schema, {
+        initialValues: {},
+      });
+
+      return result;
+    },
+  });
+};
+
 /**
  * Use this hook to create an employment
  * @returns
@@ -162,7 +218,7 @@ const useCreateEmployment = () => {
   });
 };
 
-export const useUpdateEmployment = () => {
+const useUpdateEmployment = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: ({
@@ -186,6 +242,29 @@ export const useUpdateEmployment = () => {
   });
 };
 
+const useUpdateBenefitsOffers = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: UnifiedEmploymentUpsertBenefitOffersRequest & {
+      employmentId: string;
+    }) => {
+      return putUpdateBenefitOffer({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
 export const useOnboarding = ({
   employmentId,
   countryCode,
@@ -202,11 +281,15 @@ export const useOnboarding = ({
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
   const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
     updateEmploymentMutation,
+  );
+  const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
+    updateBenefitsOffersMutation,
   );
 
   const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
@@ -226,6 +309,11 @@ export const useOnboarding = ({
       options: options,
       employment: employment?.data?.data?.employment,
     });
+
+  const {
+    data: benefitOffersSchema,
+    isLoading: isLoadingBenefitsOffersSchema,
+  } = useBenefitOffersSchema(internalEmploymentId as string, options);
 
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
@@ -264,6 +352,16 @@ export const useOnboarding = ({
           ...payload,
         });
       }
+
+      case 'benefits': {
+        const payload: UnifiedEmploymentUpsertBenefitOffersRequest = {
+          benefit_offers: values,
+        };
+        return updateBenefitsOffersMutationAsync({
+          employmentId: internalEmploymentId as string,
+          ...payload,
+        });
+      }
     }
     return;
   }
@@ -282,6 +380,13 @@ export const useOnboarding = ({
     contract_details: employment?.data?.data.employment?.contract_details || {},
   };
 
+  const stepFields: Record<keyof typeof STEPS, Fields> = {
+    basic_information: onboardingForm?.fields || [],
+    contract_details: onboardingForm?.fields || [],
+    benefits: benefitOffersSchema?.fields || [],
+    review: [],
+  };
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -294,15 +399,21 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: onboardingForm?.fields || [],
+    fields: stepFields[stepState.currentStep.name as keyof typeof stepFields],
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
-    isLoading: isLoadingBasicInformation || isLoadingEmployment,
+    isLoading:
+      isLoadingBasicInformation ||
+      isLoadingEmployment ||
+      isLoadingBenefitsOffersSchema,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting: createEmploymentMutation.isPending,
+    isSubmitting:
+      createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
+      updateBenefitsOffersMutation.isPending,
     /**
      * Initial form values
      */
@@ -313,7 +424,14 @@ export const useOnboarding = ({
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
-      // TODO: we probably we'll need to validate different forms
+      if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          benefitOffersSchema?.fields,
+        );
+
+        return benefitOffersSchema?.handleValidation(parsedValues);
+      }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
 

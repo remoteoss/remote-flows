@@ -75,5 +75,6 @@ export type FlowOptions = {
     form_schema?: {
       [key in JSONSchemaFormType]: number;
     };
+    benefit_offers_form_schema?: number;
   };
 };

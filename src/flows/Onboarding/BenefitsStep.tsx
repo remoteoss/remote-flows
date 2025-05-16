@@ -1,9 +1,10 @@
 import React from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
 import { Components } from '@/src/types/remoteFlows';
-import { Form } from '@/src/components/ui/form';
-import { useOnboardingContext } from './context';
-import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
+import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { SuccessResponse } from '@/src/client';
+
+type BenefitsPayload = Record<string, unknown>;
 
 type BenefitsStepProps = {
   components: Components;
@@ -14,7 +15,7 @@ type BenefitsStepProps = {
    * @param values
    * @returns
    */
-  onSubmit?: (values: FieldValues) => Promise<void>;
+  onSubmit?: (values: BenefitsPayload) => Promise<void>;
   /**
    * Callback function to be called when the submitting benefits form fails.
    * @param error
@@ -27,22 +28,21 @@ type BenefitsStepProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: unknown) => void;
+  onSuccess?: (data: SuccessResponse) => void;
 };
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
-  const { formId } = useOnboardingContext();
+  const { onboardingBag } = useOnboardingContext();
 
-  const form = useForm({
-    shouldUnregister: false,
-    mode: 'onBlur',
-  });
+  const handleSubmit = async () => {
+    onboardingBag?.next();
+  };
 
   return (
-    <Form {...form}>
-      <form id={formId} className="space-y-4 RemoteFlows__OnboardingForm">
-        <JSONSchemaFormFields fields={[]} components={components} />
-      </form>
-    </Form>
+    <OnboardingForm
+      defaultValues={{}}
+      components={components}
+      onSubmit={handleSubmit}
+    />
   );
 }
