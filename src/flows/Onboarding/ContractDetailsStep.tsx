@@ -49,7 +49,10 @@ export function ContractDetailsStep({
 
   return (
     <OnboardingForm
-      defaultValues={onboardingBag.initialValues.contract_details}
+      defaultValues={
+        onboardingBag.stepState.values?.contract_details ||
+        onboardingBag.initialValues.contract_details
+      }
       onSubmit={handleSubmit}
     />
   );
