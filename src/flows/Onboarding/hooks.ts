@@ -195,7 +195,6 @@ const useBenefitOffersSchema = (
       const result = createHeadlessForm(schema, {
         initialValues: hasFieldValues ? fieldValues : {},
       });
-      console.log('result', result);
       return result;
     },
   });
