@@ -3,7 +3,6 @@ import { Components } from '@/src/types/remoteFlows';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { SuccessResponse } from '@/src/client';
-import { useForm } from '@/src/components/form/Form';
 
 type BenefitsPayload = Record<string, unknown>;
 
