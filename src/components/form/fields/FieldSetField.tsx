@@ -2,6 +2,7 @@ import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { cn } from '@/src/lib/utils';
 import * as React from 'react';
 import { SupportedTypes } from './types';
+import { Components } from '@/src/types/remoteFlows';
 
 type FieldBase = {
   label: string;
@@ -26,6 +27,7 @@ type FieldSetProps = {
   name: string;
   description: string;
   fields: Field[];
+  components: Components;
 };
 
 export function FieldSetField({
@@ -33,6 +35,7 @@ export function FieldSetField({
   name,
   fields,
   description,
+  components,
 }: FieldSetProps) {
   return (
     <fieldset
@@ -56,6 +59,7 @@ export function FieldSetField({
               {...field}
               key={field.name}
               name={`${name}.${field.name}`}
+              component={components?.[field.type]}
             />
           );
         })}
