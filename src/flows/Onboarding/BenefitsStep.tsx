@@ -3,6 +3,7 @@ import { Components } from '@/src/types/remoteFlows';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { SuccessResponse } from '@/src/client';
+import { getInitialValues } from '@/src/components/form/utils';
 
 type BenefitsPayload = Record<string, unknown>;
 
@@ -33,6 +34,8 @@ type BenefitsStepProps = {
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
+  const fields = onboardingBag.fields ?? [];
+  const initialValues = getInitialValues(fields, {});
 
   const handleSubmit = async () => {
     onboardingBag?.next();
@@ -40,7 +43,7 @@ export function BenefitsStep({ components }: BenefitsStepProps) {
 
   return (
     <OnboardingForm
-      defaultValues={{}}
+      defaultValues={initialValues}
       components={components}
       onSubmit={handleSubmit}
     />
