@@ -34,7 +34,6 @@ type BenefitsStepProps = {
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
-  const { initialValues } = useForm({ fields: onboardingBag.fields }); // TODO: We need to see if we should use it internally instead of passing it as a prop
 
   const handleSubmit = async () => {
     onboardingBag?.next();
@@ -42,7 +41,7 @@ export function BenefitsStep({ components }: BenefitsStepProps) {
 
   return (
     <OnboardingForm
-      defaultValues={initialValues}
+      defaultValues={{}}
       components={components}
       onSubmit={handleSubmit}
     />
