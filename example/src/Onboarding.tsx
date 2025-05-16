@@ -130,7 +130,6 @@ export const OnboardingEOR = () => {
   return (
     <RemoteFlows auth={fetchToken}>
       <OnboardingFlow
-        employmentId="0b20b5a1-9840-452c-8bdc-bf8aec4e71d0"
         countryCode="PRT"
         type="employee"
         render={MultiStepForm}
