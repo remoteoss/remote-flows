@@ -65,8 +65,6 @@ export function OnboardingForm({
     ? fields
     : (onboardingBag?.fields[fieldsKey] ?? []);
 
-  console.log('form values', form.getValues());
-
   return (
     <Form {...form}>
       <form
