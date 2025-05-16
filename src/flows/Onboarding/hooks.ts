@@ -13,7 +13,11 @@ import {
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  createHeadlessForm,
+  Fields,
+  modify,
+} from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useClient } from '@/src/context';
@@ -376,6 +380,13 @@ export const useOnboarding = ({
     contract_details: employment?.data?.data.employment?.contract_details || {},
   };
 
+  const stepFields: Record<keyof typeof STEPS, Fields> = {
+    basic_information: onboardingForm?.fields || [],
+    contract_details: onboardingForm?.fields || [],
+    benefits: benefitOffersSchema?.fields || [],
+    review: [],
+  };
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -388,11 +399,7 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: {
-      basic_information: onboardingForm?.fields,
-      contract_details: onboardingForm?.fields,
-      benefits: benefitOffersSchema?.fields,
-    },
+    fields: stepFields[stepState.currentStep.name as keyof typeof stepFields],
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */

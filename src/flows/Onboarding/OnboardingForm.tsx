@@ -12,15 +12,12 @@ type OnboardingFormProps = {
   onSubmit: (payload: BasicInformationFormPayload) => void;
   components?: Components;
   fields?: Fields;
-  fieldsKey: 'basic_information' | 'contract_details' | 'benefits';
   defaultValues: Record<string, unknown>;
 };
 
 export function OnboardingForm({
-  fields,
   defaultValues,
   onSubmit,
-  fieldsKey,
   components,
 }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
@@ -61,10 +58,6 @@ export function OnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const jsonSchemaFields = fields
-    ? fields
-    : (onboardingBag?.fields[fieldsKey] ?? []);
-
   return (
     <Form {...form}>
       <form
@@ -74,7 +67,7 @@ export function OnboardingForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={jsonSchemaFields}
+          fields={onboardingBag.fields}
         />
       </form>
     </Form>
