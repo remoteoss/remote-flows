@@ -1,5 +1,4 @@
 import React from 'react';
-import { FieldValues } from 'react-hook-form';
 import { Components } from '@/src/types/remoteFlows';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
@@ -32,31 +31,11 @@ type BenefitsStepProps = {
   onSuccess?: (data: SuccessResponse) => void;
 };
 
-export function BenefitsStep({
-  components,
-  onSubmit,
-  onError,
-  onSuccess,
-}: BenefitsStepProps) {
+export function BenefitsStep({ components }: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
 
-  const handleSubmit = async (payload: FieldValues) => {
-    try {
-      await onSubmit?.(
-        onboardingBag.parseFormValues(payload) as BenefitsPayload,
-      );
-      const response = await onboardingBag.onSubmit(payload);
-      if (response?.data?.data) {
-        onSuccess?.(response?.data?.data as SuccessResponse);
-        onboardingBag?.next();
-        return;
-      }
-      if (response?.error) {
-        onError?.(response?.error);
-      }
-    } catch (error) {
-      onError?.(error);
-    }
+  const handleSubmit = async () => {
+    onboardingBag?.next();
   };
   return (
     <OnboardingForm
