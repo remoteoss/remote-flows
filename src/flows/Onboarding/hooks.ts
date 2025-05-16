@@ -143,13 +143,9 @@ const useJSONSchemaForm = ({
       const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const employmentFieldData = (employment?.[employmentField] ||
         {}) as Record<string, unknown>;
-
-      console.log('before createHeadlessForm', hasFieldValues, fieldValues);
-      const result = createHeadlessForm(schema, {
+      return createHeadlessForm(schema, {
         initialValues: hasFieldValues ? fieldValues : employmentFieldData,
       });
-      console.log('after createHeadlessForm', result.fields);
-      return result;
     },
   });
 };
