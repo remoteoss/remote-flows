@@ -152,6 +152,7 @@ const useJSONSchemaForm = ({
 
 const useBenefitOffersSchema = (
   employmentId: string,
+  fieldValues: FieldValues,
   options: OnboardingHookProps['options'],
 ) => {
   const jsonSchemaQueryParam = options?.jsonSchemaVersion
@@ -190,10 +191,10 @@ const useBenefitOffersSchema = (
         data.data?.schema || {},
         options?.jsfModify || {},
       );
+      const hasFieldValues = Object.keys(fieldValues).length > 0;
       const result = createHeadlessForm(schema, {
-        initialValues: {},
+        initialValues: hasFieldValues ? fieldValues : {},
       });
-
       return result;
     },
   });
@@ -313,7 +314,11 @@ export const useOnboarding = ({
   const {
     data: benefitOffersSchema,
     isLoading: isLoadingBenefitsOffersSchema,
-  } = useBenefitOffersSchema(internalEmploymentId as string, options);
+  } = useBenefitOffersSchema(
+    internalEmploymentId as string,
+    fieldValues,
+    options,
+  );
 
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
