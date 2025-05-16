@@ -49,6 +49,11 @@ export const JSONSchemaFormFields = ({
         }
 
         const FieldComponent = fieldsMap[field.inputType as SupportedTypes];
+
+        if (field.inputType === 'fieldset') {
+          return <FieldComponent {...field} components={components} />;
+        }
+
         return FieldComponent ? (
           <Fragment key={field.name as string}>
             <FieldComponent
