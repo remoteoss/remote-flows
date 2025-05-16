@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fields } from '@remoteoss/json-schema-form';
+import { Field } from '@/src/flows/types';
+import { $TSFixMe, Fields } from '@remoteoss/json-schema-form';
 import get from 'lodash/get';
 
 const textInputTypes = {
@@ -569,4 +570,145 @@ export function parseJSFToValidate(
     keepInvisibleValues: config?.isPartialValidation,
   });
   return valuesParsed;
+}
+
+function castFieldTo<T>(field: Field) {
+  return field as unknown as T;
+}
+
+function getDefaultValueForType(type: string) {
+  switch (type) {
+    case supportedTypes.FILE:
+      return undefined; // Allows fallback values in function declarations to be used
+    default:
+      return '';
+  }
+}
+
+function getInitialDefaultValue(
+  defaultValues: Record<string, any>,
+  field: Field,
+) {
+  // lodash get is needed because some values could be nested object, like billing address
+  // use camelCase to support forms with fields in snake_case or kebab_case.
+  const defaultFieldValue = get(defaultValues, field.name);
+  const fieldTransformValueFromAPI =
+    field?.transformValueFromAPI ||
+    fieldTypesTransformations[field.type]?.transformValueFromAPI;
+
+  if (fieldTransformValueFromAPI) {
+    return fieldTransformValueFromAPI(field)(defaultFieldValue);
+  }
+
+  // TODO: We need to get rid of value as fn for json-schema. Related !5560
+  const generatedValue =
+    typeof field.value === 'function'
+      ? field.value(defaultFieldValue, defaultValues)
+      : null;
+
+  // field.value is deprecated. should use "default" instead.
+  const defaultValueDeprecated =
+    typeof field.value !== 'function' ? field.value : null;
+  const initialValueForCheckboxAsBool =
+    castFieldTo<$TSFixMe>(field).checkboxValue === true
+      ? defaultFieldValue || false
+      : null;
+
+  // nullish coalescing but excluding empty strings. (to support 0 (zero) as valid numbers)
+  const excludeString = (val: any) => (val === '' ? undefined : val);
+
+  return (
+    excludeString(generatedValue) ??
+    excludeString(defaultFieldValue) ??
+    excludeString(defaultValueDeprecated) ??
+    excludeString(field.default) ??
+    initialValueForCheckboxAsBool ??
+    getDefaultValueForType(field.type)
+  );
+}
+
+/**
+ * Get initial values for sub fields within fieldsets
+ * @param {Object} field The form field
+ * @param {Object} defaultValues The form default values
+ * @param {String=} parentFieldKeyPath The path to the parent field using dot-notation
+ * @returns {Object} The initial values for a fieldset
+ */
+function getInitialSubFieldValues(
+  field: $TSFixMe,
+  defaultValues: Record<string, unknown>,
+  parentFieldKeyPath?: string,
+) {
+  const initialValue: Record<string, Record<string, unknown>> = {};
+
+  let fieldKeyPath = field.name;
+
+  if (parentFieldKeyPath) {
+    fieldKeyPath = fieldKeyPath
+      ? `${parentFieldKeyPath}.${fieldKeyPath}`
+      : parentFieldKeyPath;
+  }
+
+  const subFields = field.fields;
+
+  if (Array.isArray(subFields)) {
+    const subFieldValues = {};
+
+    subFields.forEach((subField) => {
+      Object.assign(
+        subFieldValues,
+        getInitialSubFieldValues(subField, defaultValues, fieldKeyPath),
+      );
+    });
+
+    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+      Object.assign(initialValue, subFieldValues);
+    } else {
+      initialValue[field.name!] = subFieldValues;
+    }
+  } else {
+    initialValue[field.name!] = getInitialDefaultValue(defaultValues, {
+      ...field,
+      // NOTE: To utilize the `get` function from `lodash` in `getInitialDefaultValue` correctly
+      // we need to use the field path instead of just its name.
+      name: fieldKeyPath,
+    });
+  }
+
+  return initialValue;
+}
+
+export function getInitialValues(
+  fields: Fields,
+  defaultValues: Record<string, unknown>,
+) {
+  const initialValues: Record<string, unknown> = {};
+  const defaultFieldValues = defaultValues;
+
+  // loop over fields array
+  // if prop does not exit in the initialValues object,
+  // pluck off the name and value props and add it to the initialValues object;
+  fields
+    .map((field) => applyFieldDynamicProperties(field, defaultFieldValues))
+    .forEach((field) => {
+      switch (field.type) {
+        case supportedTypes.FIELDSET: {
+          if (field.valueGroupingDisabled) {
+            Object.assign(
+              initialValues,
+              getInitialValues(field.fields, defaultFieldValues),
+            );
+          } else {
+            const subFieldValues = getInitialSubFieldValues(
+              field,
+              defaultFieldValues,
+            );
+            Object.assign(initialValues, subFieldValues);
+          }
+          break;
+        }
+      }
+    });
+
+  return initialValues;
 }

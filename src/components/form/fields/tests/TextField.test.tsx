@@ -123,4 +123,31 @@ describe('TextField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomTextFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-text-field">Context Text Field</div>
+      ));
+    const CustomTextFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-text-field">Prop Text Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { text: CustomTextFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomTextFieldProp,
+    });
+
+    expect(CustomTextFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-text-field')).toBeInTheDocument();
+    expect(screen.queryByTestId('context-text-field')).not.toBeInTheDocument();
+  });
 });

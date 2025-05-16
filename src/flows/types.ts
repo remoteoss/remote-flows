@@ -1,3 +1,5 @@
+import { JSFModify } from '@/src/flows/CostCalculator/types';
+
 type Success<T> = {
   data: T;
   error: null;
@@ -43,4 +45,36 @@ export type Field = {
   onChange?: (value: string) => void;
   // Allow additional properties from x-jsf-presentation (e.g. meta from oneOf/anyOf)
   [key: string]: unknown;
+};
+
+export type JSONSchemaFormType =
+  // Employee/contractor forms
+  | 'address_details'
+  | 'administrative_details'
+  | 'bank_account_details'
+  | 'employment_basic_information'
+  | 'billing_address_details'
+  | 'contract_details'
+  | 'emergency_contact'
+  | 'employment_document_details'
+  | 'personal_details'
+  | 'pricing_plan_details'
+
+  // Global payroll forms
+  | 'global_payroll_administrative_details'
+  | 'global_payroll_contract_details'
+  | 'global_payroll_personal_details'
+
+  // Benefits forms
+  | 'benefit_renewal_request';
+
+export type FlowOptions = {
+  jsfModify?: JSFModify;
+  jsonSchemaVersion?: {
+    contract_amendments?: number;
+    form_schema?: {
+      [key in JSONSchemaFormType]: number;
+    };
+    benefit_offers_form_schema?: number;
+  };
 };

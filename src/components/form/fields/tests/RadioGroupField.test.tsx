@@ -11,6 +11,7 @@ import { JSFField } from '@/src/types/remoteFlows';
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string | React.ChangeEvent<HTMLInputElement>) => void;
   options: { value: string; label: string }[];
+  component?: any;
 };
 
 // Mock dependencies
@@ -146,5 +147,32 @@ describe('RadioGroupField Component', () => {
     fireEvent.click(customRadioInput);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomRadioGroupFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-radio-field">Context Radio Field</div>
+      ));
+    const CustomRadioGroupFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-radio-field">Prop Radio Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { radio: CustomRadioGroupFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...(defaultProps as any),
+      onChange: mockOnChange,
+      component: CustomRadioGroupFieldProp,
+    });
+
+    expect(CustomRadioGroupFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-radio-field')).toBeInTheDocument();
+    expect(screen.queryByTestId('context-radio-field')).not.toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
@@ -18,6 +18,7 @@ import { Textarea } from '../../ui/textarea';
 export type TextAreaFieldProps = JSFField & {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   maxLength?: number;
+  component?: Components['textarea'];
 };
 
 export function TextAreaField({
@@ -26,6 +27,7 @@ export function TextAreaField({
   label,
   onChange,
   maxLength,
+  component,
   ...rest
 }: TextAreaFieldProps) {
   const { components } = useFormFields();
@@ -35,8 +37,8 @@ export function TextAreaField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        if (components?.textarea) {
-          const CustomTextAreaField = components?.textarea;
+        const CustomTextAreaField = component || components?.textarea;
+        if (CustomTextAreaField) {
           const customTextAreaFieldProps = {
             name,
             description,

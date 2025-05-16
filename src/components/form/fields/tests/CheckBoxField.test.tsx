@@ -190,4 +190,33 @@ describe('CheckBoxField Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledWith(false, 'option1');
   });
+
+  it('component prop takes precedence over useFormFields().components', () => {
+    const CustomCheckboxFieldFromContext = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="context-checkbox-field">Context Checkbox Field</div>
+      ));
+    const CustomCheckboxFieldProp = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="prop-checkbox-field">Prop Checkbox Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { checkbox: CustomCheckboxFieldFromContext },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      component: CustomCheckboxFieldProp,
+    });
+
+    expect(CustomCheckboxFieldProp).toHaveBeenCalled();
+    expect(screen.getByTestId('prop-checkbox-field')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-checkbox-field'),
+    ).not.toBeInTheDocument();
+  });
 });
