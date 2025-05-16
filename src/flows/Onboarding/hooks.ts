@@ -171,9 +171,7 @@ const useBenefitOffersSchema = (
         path: {
           employment_id: employmentId,
         },
-        query: {
-          ...jsonSchemaQueryParam,
-        },
+        query: jsonSchemaQueryParam,
       });
 
       // If response status is 404 or other error, throw an error to trigger isError
