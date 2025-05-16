@@ -34,8 +34,6 @@ type BenefitsStepProps = {
 
 export function BenefitsStep({ components }: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
-  const fields = onboardingBag?.fields.benefits ?? [];
-  const { initialValues } = useForm({ fields });
 
   const handleSubmit = async () => {
     onboardingBag?.next();
@@ -43,8 +41,7 @@ export function BenefitsStep({ components }: BenefitsStepProps) {
 
   return (
     <OnboardingForm
-      fieldsKey="benefits"
-      defaultValues={initialValues}
+      defaultValues={{}}
       components={components}
       onSubmit={handleSubmit}
     />
