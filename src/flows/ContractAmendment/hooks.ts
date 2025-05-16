@@ -140,10 +140,6 @@ export const useContractAmendment = ({
     employmentId,
   });
 
-  const isNavigatingBackToForm =
-    Object.keys(fieldValues).length === 0 &&
-    Object.keys(stepState.values?.form || {}).length > 0;
-
   const {
     data: contractAmendmentHeadlessForm,
     isLoading: isLoadingContractAmendments,
@@ -155,7 +151,10 @@ export const useContractAmendment = ({
     // In case the user is navigating back to the form step, we need to
     // pass the previous field values, so that the schema can be
     // generated with the correct values.
-    fieldValues: isNavigatingBackToForm ? stepState.values?.form : fieldValues,
+    fieldValues: {
+      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+      ...fieldValues,
+    },
     options,
   });
 

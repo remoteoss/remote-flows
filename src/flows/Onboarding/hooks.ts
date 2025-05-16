@@ -306,7 +306,10 @@ export const useOnboarding = ({
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
-      fieldValues: fieldValues,
+      fieldValues: {
+        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+        ...fieldValues,
+      },
       options: options,
       employment: employment?.data?.data?.employment,
     });
