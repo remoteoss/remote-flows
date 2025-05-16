@@ -143,9 +143,13 @@ const useJSONSchemaForm = ({
       const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const employmentFieldData = (employment?.[employmentField] ||
         {}) as Record<string, unknown>;
-      return createHeadlessForm(schema, {
+
+      console.log('before createHeadlessForm', hasFieldValues, fieldValues);
+      const result = createHeadlessForm(schema, {
         initialValues: hasFieldValues ? fieldValues : employmentFieldData,
       });
+      console.log('after createHeadlessForm', result.fields);
+      return result;
     },
   });
 };
@@ -306,7 +310,10 @@ export const useOnboarding = ({
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
-      fieldValues: fieldValues,
+      fieldValues: {
+        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+        ...fieldValues,
+      },
       options: options,
       employment: employment?.data?.data?.employment,
     });
