@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.0
+
+### Minor Changes
+
+- 9dbe4c1: Add onboarding flow (WIP)
+
 ## 0.3.0
 
 ### Minor Changes
