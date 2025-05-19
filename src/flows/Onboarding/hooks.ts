@@ -398,16 +398,20 @@ export const useOnboarding = ({
     benefits: initialValuesBenefitOffers || {},
   };
 
+  function parseFormValues(values: FieldValues) {
+    if (onboardingForm) {
+      return parseJSFToValidate(values, onboardingForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+    return {};
+  }
+
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
       case 'basic_information': {
-        const parsedValues = parseJSFToValidate(
-          values,
-          stepFields[stepState.currentStep.name as keyof typeof stepFields],
-          {
-            isPartialValidation: true,
-          },
-        );
+        const parsedValues = parseFormValues(values);
+
         if (!internalEmploymentId) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
@@ -525,14 +529,7 @@ export const useOnboarding = ({
      * @param values - Form values to parse
      * @returns Parsed form values
      */
-    parseFormValues: (values: Record<string, unknown>) => {
-      if (onboardingForm) {
-        return parseJSFToValidate(values, onboardingForm?.fields, {
-          isPartialValidation: true,
-        });
-      }
-      return null;
-    },
+    parseFormValues,
 
     /**
      * Function to handle form submission
