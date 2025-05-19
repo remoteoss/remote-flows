@@ -6,3 +6,4 @@
 - Don't render fieldsets that aren't visible
 - Fix submission basic information step
 - Fix money field transformation for the contract details step
+- Fix custom components prop for fieldsets
