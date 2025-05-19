@@ -408,10 +408,10 @@ export const useOnboarding = ({
   }
 
   async function onSubmit(values: FieldValues) {
+    const parsedValues = parseFormValues(values);
+
     switch (stepState.currentStep.name) {
       case 'basic_information': {
-        const parsedValues = parseFormValues(values);
-
         if (!internalEmploymentId) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
@@ -439,7 +439,7 @@ export const useOnboarding = ({
 
       case 'contract_details': {
         const payload: EmploymentFullParams = {
-          contract_details: values,
+          contract_details: parsedValues,
         };
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
