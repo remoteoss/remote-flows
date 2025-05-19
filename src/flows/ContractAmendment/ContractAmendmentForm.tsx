@@ -101,7 +101,6 @@ export function ContractAmendmentForm({
     for (const [key, value] of Object.entries(values)) {
       if (
         !commonFields.includes(key as CommonFields) &&
-        // @ts-expect-error error
         initialValues[key] !== value
       ) {
         hasContractDetailsChanges = true;
