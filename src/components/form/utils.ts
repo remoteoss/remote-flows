@@ -221,12 +221,6 @@ export const fieldTypesTransformations: Record<string, any> = {
         if (!field.multiple || typeof selectedCountries === 'string') {
           return selectedCountries;
         }
-        console.log(
-          'selectedCountries',
-          selectedCountries.map((option) =>
-            typeof option === 'string' ? option : option.name,
-          ),
-        );
         // NOTE: The value should be an array of strings, however legacy data can come as
         // an array of country objects. So, we always send an array of strings to normalize
         // the data (eg old form values being modified) until DB migration is done !5667
@@ -418,7 +412,6 @@ export function parseFormValuesToAPI(
     { ...formValues },
   );
 
-  console.log('parsedFormValues', parsedFormValues);
   return parsedFormValues;
 }
 
