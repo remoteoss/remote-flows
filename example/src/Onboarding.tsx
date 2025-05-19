@@ -99,7 +99,70 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
       return (
         <>
           <BenefitsStep
-            components={{}}
+            components={{
+              radio: ({ field, fieldData }) => {
+                const selectedValue = field.value;
+
+                type OptionWithMeta = {
+                  value: string;
+                  label: string;
+                  description?: string;
+                  meta?: { display_cost?: string };
+                };
+
+                return (
+                  <div className="benefit-cards-container">
+                    {(fieldData.options as OptionWithMeta[] | undefined)?.map(
+                      (option) => {
+                        const isSelected = selectedValue === option.value;
+                        const meta = option.meta || {};
+                        return (
+                          <label
+                            key={option.value}
+                            className={`benefit-card${isSelected ? ' benefit-card--selected' : ''}`}
+                          >
+                            <input
+                              type="radio"
+                              name={field.name}
+                              value={option.value}
+                              checked={isSelected}
+                              onChange={field.onChange}
+                              style={{ display: 'none' }}
+                            />
+                            <div
+                              className="benefit-card__label"
+                              title={option.label}
+                            >
+                              {option.label}
+                            </div>
+                            <div className="benefit-card__summary">
+                              Plan summary
+                            </div>
+                            <div className="benefit-card__cost">
+                              {meta.display_cost || ''}
+                            </div>
+                            <button
+                              type="button"
+                              className={`benefit-card__button${isSelected ? ' benefit-card__button--selected' : ''}`}
+                              tabIndex={-1}
+                            >
+                              {isSelected
+                                ? 'Plan Selected!'
+                                : 'Select This Plan'}
+                            </button>
+                            {isSelected && (
+                              <span className="benefit-card__selected-check">
+                                ✓ Plan Selected!
+                              </span>
+                            )}
+                          </label>
+                        );
+                      },
+                    )}
+                  </div>
+                );
+              },
+            }}
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
             }
@@ -152,6 +215,7 @@ export const OnboardingEOR = () => {
         countryCode="PRT"
         type="employee"
         render={MultiStepForm}
+        employmentId="0b20b5a1-9840-452c-8bdc-bf8aec4e71d0"
       />
     </RemoteFlows>
   );

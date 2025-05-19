@@ -262,3 +262,88 @@ a:active {
     padding-left: 12px;
   }
 }
+
+.benefit-cards-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
+}
+
+.benefit-card {
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 280px;
+  background: #fff;
+  box-shadow: 0 1px 4px #eee;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  scroll-snap-align: start;
+  transition:
+    border 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.benefit-card--selected {
+  border: 2px solid #388e3c;
+  background: #e8f5e9;
+  box-shadow: 0 2px 8px #c8e6c9;
+}
+
+.benefit-card__label {
+  font-weight: 600;
+  font-size: 20px;
+  color: #388e3c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
+}
+
+.benefit-card__summary {
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.benefit-card__cost {
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.benefit-card__button {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.benefit-card__button--selected {
+  background: #388e3c;
+  color: #fff;
+}
+
+.benefit-card__selected-check {
+  color: #388e3c;
+  font-weight: 500;
+  font-size: 16px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
