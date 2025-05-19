@@ -688,7 +688,6 @@ export function getInitialValues(
   // loop over fields array
   // if prop does not exit in the initialValues object,
   // pluck off the name and value props and add it to the initialValues object;
-
   fields
     .map((field) => applyFieldDynamicProperties(field, defaultFieldValues))
     .forEach((field) => {
