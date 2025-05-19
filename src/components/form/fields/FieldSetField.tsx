@@ -54,6 +54,12 @@ export function FieldSetField({
       <div className="grid gap-4">
         {fields.map((field) => {
           const FieldComponent = fieldsMap[field.type];
+
+          // @ts-expect-error - TODO: use types from json-schema-form v1
+          if (field.isVisible === false || field.deprecated) {
+            return null; // Skip hidden or deprecated fields
+          }
+
           return (
             <FieldComponent
               {...field}
