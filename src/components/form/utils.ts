@@ -209,41 +209,6 @@ function extractFieldsetFieldsValues(
 export const fieldTypesTransformations: Record<string, any> = {
   [supportedTypes.COUNTRIES]: {
     /**
-     *
-     * @param {Object} field - Field config that must contain field.countries
-     * @param {String[]|String} value - Selected country
-     *  - Current data (multi): an array of country names - eg: ['Peru', 'Germany']
-     *  - Legacy data (multi): a string of country names - eg: "Peru,Germany"
-     * @returns {String[]} Eg [{ label: 'PER', name: 'Peru' }]
-     */
-    transformValueFromAPI: (field: any) => (value: string) => {
-      if (!field.multiple) {
-        return value ?? '';
-      }
-
-      let countryNames;
-
-      if (typeof value === 'string') {
-        // support legacy data (when the fields were open text fields before)
-        countryNames = value.split(',');
-      } else {
-        countryNames = value || [];
-      }
-
-      const countryValues = countryNames.map(
-        // Return { name: countryName } as fallback to legacy data
-        // The "name" is used at react-select, to connect to the country flag.
-        (countryName) =>
-          field.countries?.find?.(
-            (country: any) => 'name' in country && country.name === countryName,
-          ) || {
-            name: countryName,
-          },
-      );
-
-      return countryValues;
-    },
-    /**
      * @param {String[] | { name: String }[]} value
      *  - Excepted: array of strings.
      *  - Edge cases: array of objects. (when using dangerousTransformValue)
@@ -704,6 +669,15 @@ export function getInitialValues(
               defaultFieldValues,
             );
             Object.assign(initialValues, subFieldValues);
+          }
+          break;
+        }
+        default: {
+          if (!initialValues[field.name]) {
+            initialValues[field.name] = getInitialDefaultValue(
+              defaultFieldValues,
+              field,
+            );
           }
           break;
         }

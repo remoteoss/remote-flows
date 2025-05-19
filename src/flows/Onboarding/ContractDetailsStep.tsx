@@ -31,9 +31,7 @@ export function ContractDetailsStep({
       await onSubmit?.(
         onboardingBag.parseFormValues(payload) as ContractDetailsFormPayload,
       );
-      const response = await onboardingBag.onSubmit(
-        onboardingBag.parseFormValues(payload) as ContractDetailsFormPayload,
-      );
+      const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
         onSuccess?.(response.data as EmploymentResponse);
         onboardingBag?.next();
