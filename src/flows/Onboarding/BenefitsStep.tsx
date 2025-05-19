@@ -40,7 +40,10 @@ export function BenefitsStep({
 }: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const fields = onboardingBag.fields ?? [];
-  const initialValues = getInitialValues(fields, {});
+  const initialValues = getInitialValues(
+    fields,
+    onboardingBag.initialValues.benefits,
+  );
 
   const handleSubmit = async (payload: BenefitsPayload) => {
     try {

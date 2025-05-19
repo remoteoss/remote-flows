@@ -111,7 +111,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-
+          <BackButton>Back</BackButton>
           <OnboardingInvite>Invite Employee</OnboardingInvite>
         </div>
       );
@@ -135,6 +135,7 @@ export const OnboardingEOR = () => {
   return (
     <RemoteFlows auth={fetchToken}>
       <OnboardingFlow
+        employmentId="38d8bb00-3d78-4dd7-98f8-bd735e68d9a9"
         countryCode="PRT"
         type="employee"
         render={MultiStepForm}
