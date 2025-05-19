@@ -97,7 +97,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
 
     case 'benefits':
       return (
-        <>
+        <div className="benefits-container">
           <BenefitsStep
             components={{
               radio: ({ field, fieldData }) => {
@@ -173,7 +173,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           <SubmitButton disabled={onboardingBag.isSubmitting}>
             Next Step
           </SubmitButton>
-        </>
+        </div>
       );
     case 'review':
       return (

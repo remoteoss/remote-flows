@@ -246,6 +246,17 @@ a:active {
   text-decoration: underline; /* Keep underline for active state */
 }
 
+.benefits-container {
+  fieldset {
+    border: 0;
+    padding: 0;
+
+    legend {
+      margin-bottom: 8px;
+    }
+  }
+}
+
 .onboarding-review {
   display: flex;
   flex-direction: column;
