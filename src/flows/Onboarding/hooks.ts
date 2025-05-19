@@ -11,6 +11,7 @@ import {
   getShowSchema,
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
+  getIndexBenefitOffer,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
@@ -29,6 +30,7 @@ import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
 import { useState } from 'react';
+import mergeWith from 'lodash/mergeWith';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -67,6 +69,44 @@ const useEmployment = (employmentId: string | undefined) => {
   });
 };
 
+const useBenefitOffers = (employmentId: string | undefined) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['benefit-offers', employmentId],
+    retry: false,
+    enabled: !!employmentId,
+    queryFn: async () => {
+      return getIndexBenefitOffer({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId as string,
+        },
+      }).then((response) => {
+        // If response status is 404 or other error, throw an error to trigger isError
+        if (response.error || !response.data) {
+          throw new Error('Failed to fetch benefit offers data');
+        }
+
+        return response;
+      });
+    },
+    select: ({ data }) =>
+      data?.data?.reduce(
+        (acc, item) => {
+          return {
+            ...acc,
+            [item.benefit_group.slug]: {
+              value: item.benefit_tier?.slug ?? '',
+            },
+          };
+        },
+        {} as Record<string, { value: string }>,
+      ),
+  });
+};
 /**
  * Use this hook to invite an employee to the onboarding flow
  * @returns
@@ -277,6 +317,9 @@ export const useOnboarding = ({
   >(employmentId);
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
+
+  const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
+    useBenefitOffers(internalEmploymentId);
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
@@ -313,6 +356,18 @@ export const useOnboarding = ({
       options: options,
       employment: employment?.data?.data?.employment,
     });
+
+  const benefitsFormValues = {
+    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+    ...fieldValues,
+  };
+
+  console.log({ benefitOffers });
+
+  const initialValuesBenefitOffers =
+    stepState.currentStep.name === 'benefits'
+      ? mergeWith({}, benefitOffers, benefitsFormValues)
+      : {};
 
   const {
     data: benefitOffersSchema,
@@ -362,12 +417,9 @@ export const useOnboarding = ({
       }
 
       case 'benefits': {
-        const payload: UnifiedEmploymentUpsertBenefitOffersRequest = {
-          benefit_offers: values,
-        };
         return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
-          ...payload,
+          ...values,
         });
       }
     }
@@ -386,6 +438,7 @@ export const useOnboarding = ({
     basic_information:
       employment?.data?.data.employment?.basic_information || {},
     contract_details: employment?.data?.data.employment?.contract_details || {},
+    benefits: initialValuesBenefitOffers || {},
   };
 
   const stepFields: Record<keyof typeof STEPS, Fields> = {
@@ -414,7 +467,8 @@ export const useOnboarding = ({
     isLoading:
       isLoadingBasicInformation ||
       isLoadingEmployment ||
-      isLoadingBenefitsOffersSchema,
+      isLoadingBenefitsOffersSchema ||
+      isLoadingBenefitOffers,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */

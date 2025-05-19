@@ -4,8 +4,8 @@ import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { SuccessResponse } from '@/src/client';
 import { getInitialValues } from '@/src/components/form/utils';
-
-type BenefitsPayload = Record<string, unknown>;
+import { BenefitsFormPayload } from '@/src/flows/Onboarding/types';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type BenefitsStepProps = {
   components: Components;
@@ -16,13 +16,13 @@ type BenefitsStepProps = {
    * @param values
    * @returns
    */
-  onSubmit?: (values: BenefitsPayload) => Promise<void>;
+  onSubmit?: (values: BenefitsFormPayload) => void | Promise<void>;
   /**
    * Callback function to be called when the submitting benefits form fails.
    * @param error
    * @returns
    */
-  onError?: (error: unknown) => void;
+  onError?: (error: Error) => void;
   /**
    * Callback function to be called when benefits form is successfully submitted.
    * This function is called after the submitting benefits form is submitted.
@@ -32,13 +32,34 @@ type BenefitsStepProps = {
   onSuccess?: (data: SuccessResponse) => void;
 };
 
-export function BenefitsStep({ components }: BenefitsStepProps) {
+export function BenefitsStep({
+  components,
+  onSubmit,
+  onError,
+  onSuccess,
+}: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const fields = onboardingBag.fields ?? [];
-  const initialValues = getInitialValues(fields, {});
+  const initialValues = getInitialValues(
+    fields,
+    onboardingBag.initialValues.benefits,
+  );
 
-  const handleSubmit = async () => {
-    onboardingBag?.next();
+  const handleSubmit = async (payload: $TSFixMe) => {
+    try {
+      await onSubmit?.(payload as BenefitsFormPayload);
+      const response = await onboardingBag.onSubmit(payload);
+      if (response?.data) {
+        onSuccess?.(response.data as SuccessResponse);
+        onboardingBag?.next();
+        return;
+      }
+      if (response?.error) {
+        onError?.(response.error);
+      }
+    } catch (error: unknown) {
+      onError?.(error as Error);
+    }
   };
 
   return (

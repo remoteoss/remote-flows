@@ -3,6 +3,7 @@ import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { EmploymentCreationResponse } from '@/src/client';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type BasicInformationStepProps = {
   /*
@@ -16,7 +17,7 @@ type BasicInformationStepProps = {
   /*
    * The function is called when an error occurs during form submission.
    */
-  onError?: (error: unknown) => void;
+  onError?: (error: Error) => void;
 };
 
 export function BasicInformationStep({
@@ -25,7 +26,7 @@ export function BasicInformationStep({
   onError,
 }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
-  const handleSubmit = async (payload: BasicInformationFormPayload) => {
+  const handleSubmit = async (payload: $TSFixMe) => {
     try {
       await onSubmit?.(
         onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
@@ -39,8 +40,8 @@ export function BasicInformationStep({
       if (response?.error) {
         onError?.(response?.error);
       }
-    } catch (error) {
-      onError?.(error);
+    } catch (error: unknown) {
+      onError?.(error as Error);
     }
   };
 

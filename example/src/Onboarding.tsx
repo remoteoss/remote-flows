@@ -2,6 +2,12 @@ import {
   OnboardingFlow,
   RemoteFlows,
   OnboardingRenderProps,
+  SuccessResponse,
+  BenefitsFormPayload,
+  BasicInformationFormPayload,
+  EmploymentCreationResponse,
+  EmploymentResponse,
+  ContractDetailsFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
 
@@ -59,9 +65,13 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
       return (
         <>
           <BasicInformationStep
-            onSubmit={(payload) => console.log('payload', payload)}
-            onSuccess={(data) => console.log('data', data)}
-            onError={(error) => console.log('error', error)}
+            onSubmit={(payload: BasicInformationFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(data: EmploymentCreationResponse) =>
+              console.log('data', data)
+            }
+            onError={(error: Error) => console.log('error', error)}
           />
           <SubmitButton disabled={onboardingBag.isSubmitting}>
             Next Step
@@ -72,9 +82,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
       return (
         <>
           <ContractDetailsStep
-            onSubmit={(payload) => console.log('payload', payload)}
-            onSuccess={(data) => console.log('data', data)}
-            onError={(error) => console.log('error', error)}
+            onSubmit={(payload: ContractDetailsFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(data: EmploymentResponse) => console.log('data', data)}
+            onError={(error: Error) => console.log('error', error)}
           />
           <BackButton>Back</BackButton>
           <SubmitButton disabled={onboardingBag.isSubmitting}>
@@ -86,7 +98,14 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'benefits':
       return (
         <>
-          <BenefitsStep components={{}} />
+          <BenefitsStep
+            components={{}}
+            onSubmit={(payload: BenefitsFormPayload) =>
+              console.log('payload', payload)
+            }
+            onError={(error: Error) => console.log('error', error)}
+            onSuccess={(data: SuccessResponse) => console.log('data', data)}
+          />
           <BackButton>Back</BackButton>
           <SubmitButton disabled={onboardingBag.isSubmitting}>
             Next Step
@@ -106,7 +125,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-
+          <BackButton>Back</BackButton>
           <OnboardingInvite>Invite Employee</OnboardingInvite>
         </div>
       );

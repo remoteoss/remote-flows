@@ -29,4 +29,7 @@ export {
   ContractAmendmentAutomatableResponse,
   CostCalculatorEstimateResponse,
   OffboardingResponse,
+  SuccessResponse,
+  EmploymentCreationResponse,
+  EmploymentResponse,
 } from './client/types.gen';
