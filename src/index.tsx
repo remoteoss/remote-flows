@@ -34,6 +34,4 @@ export {
   EmploymentResponse,
 } from './client/types.gen';
 
-export type {
-  $TSFixMe,
-} from './types/remoteFlows';
+export type { $TSFixMe } from './types/remoteFlows';

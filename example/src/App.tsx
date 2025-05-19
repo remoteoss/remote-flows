@@ -32,7 +32,6 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingEOR } from './Onboarding';
 import './App.css';
 
-
 const sourceCode = {
   // Cost Calculator source codes
   basicCostCalculator: `
