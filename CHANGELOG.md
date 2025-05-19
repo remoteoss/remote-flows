@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- 9333ec4: - Submit benefits to the Remote API server and retrieve the benefits selected
+  - Handle field visibility in fieldsets
+  - Fix submission basic information step values
+  - Fix money field transformation for the contract details step
+  - Fix custom components prop for fieldsets
+
 ## 0.4.0-alpha.0
 
 ### Minor Changes
