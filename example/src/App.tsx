@@ -18,8 +18,7 @@ import { useState } from 'react';
 import { Button } from './components/button';
 import { cn } from './utils';
 import React from 'react';
-import './App.css';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import type { $TSFixMe } from '@remoteoss/remote-flows';
 import { BasicCostCalculator } from './BasicCostCalculator';
 import { BasicCostCalculatorWithDefaultValues } from './BasicCostCalculatorDefaultValues';
 import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
@@ -31,6 +30,8 @@ import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingEOR } from './Onboarding';
+import './App.css';
+
 
 const sourceCode = {
   // Cost Calculator source codes

@@ -5,7 +5,7 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { SuccessResponse } from '@/src/client';
 import { getInitialValues } from '@/src/components/form/utils';
 import { BenefitsFormPayload } from '@/src/flows/Onboarding/types';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type BenefitsStepProps = {
   components: Components;

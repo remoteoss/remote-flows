@@ -1,7 +1,7 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
 import { convertToCents } from '@/src/components/form/utils';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
 import type {
