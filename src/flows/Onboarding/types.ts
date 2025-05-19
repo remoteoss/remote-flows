@@ -26,3 +26,10 @@ export type BasicInformationFormPayload = {
   };
   seniority_date: string;
 };
+
+export type BenefitsFormPayload = Record<
+  string,
+  { value: string; filter?: string }
+>;
+
+export type ContractDetailsFormPayload = Record<string, unknown>;
