@@ -401,9 +401,16 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     switch (stepState.currentStep.name) {
       case 'basic_information': {
+        const parsedValues = parseJSFToValidate(
+          values,
+          stepFields[stepState.currentStep.name as keyof typeof stepFields],
+          {
+            isPartialValidation: true,
+          },
+        );
         if (!internalEmploymentId) {
           const payload: EmploymentCreateParams = {
-            basic_information: values,
+            basic_information: parsedValues,
             type: type,
             country_code: countryCode,
           };
@@ -421,7 +428,7 @@ export const useOnboarding = ({
         } else {
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
-            basic_information: values,
+            basic_information: parsedValues,
           });
         }
       }
