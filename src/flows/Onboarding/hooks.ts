@@ -23,7 +23,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
@@ -382,12 +385,6 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  const initialValues = {
-    basic_information:
-      employment?.data?.data.employment?.basic_information || {},
-    contract_details: employment?.data?.data.employment?.contract_details || {},
-  };
-
   const stepFields: Record<keyof typeof STEPS, Fields> = {
     basic_information: onboardingForm?.fields || [],
     contract_details: onboardingForm?.fields || [],
@@ -395,6 +392,18 @@ export const useOnboarding = ({
     review: [],
   };
 
+  const initialValues = {
+    basic_information: getInitialValues(
+      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      employment?.data?.data.employment?.basic_information || {},
+    ),
+    contract_details: getInitialValues(
+      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      employment?.data?.data.employment?.contract_details || {},
+    ),
+  };
+
+  console.log('hook initialValues', initialValues);
   return {
     /**
      * Employment id passed useful to be used between components
