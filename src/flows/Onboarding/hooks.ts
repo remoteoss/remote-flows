@@ -403,7 +403,6 @@ export const useOnboarding = ({
     ),
   };
 
-  console.log('hook initialValues', initialValues);
   return {
     /**
      * Employment id passed useful to be used between components
