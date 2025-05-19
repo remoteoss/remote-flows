@@ -93,6 +93,18 @@ const useBenefitOffers = (employmentId: string | undefined) => {
         return response;
       });
     },
+    select: ({ data }) =>
+      data?.data?.reduce(
+        (acc, item) => {
+          return {
+            ...acc,
+            [item.benefit_group.slug]: {
+              value: item.benefit_tier?.slug ?? '',
+            },
+          };
+        },
+        {} as Record<string, { value: string }>,
+      ),
   });
 };
 /**
@@ -345,26 +357,16 @@ export const useOnboarding = ({
       employment: employment?.data?.data?.employment,
     });
 
-  const benefitsSavedValues = benefitOffers?.data?.data.reduce(
-    (acc, item) => {
-      return {
-        ...acc,
-        [item.benefit_group.slug]: {
-          value: item.benefit_tier?.slug ?? '',
-        },
-      };
-    },
-    {} as Record<string, { value: string }>,
-  );
-
   const benefitsFormValues = {
     ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
     ...fieldValues,
   };
 
+  console.log({ benefitOffers });
+
   const initialValuesBenefitOffers =
     stepState.currentStep.name === 'benefits'
-      ? mergeWith({}, benefitsSavedValues, benefitsFormValues)
+      ? mergeWith({}, benefitOffers, benefitsFormValues)
       : {};
 
   const {
