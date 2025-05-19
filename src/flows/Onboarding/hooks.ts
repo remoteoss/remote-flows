@@ -362,12 +362,9 @@ export const useOnboarding = ({
       }
 
       case 'benefits': {
-        const payload: UnifiedEmploymentUpsertBenefitOffersRequest = {
-          benefit_offers: values,
-        };
         return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
-          ...payload,
+          ...values,
         });
       }
     }

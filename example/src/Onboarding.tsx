@@ -86,7 +86,12 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'benefits':
       return (
         <>
-          <BenefitsStep components={{}} />
+          <BenefitsStep
+            components={{}}
+            onSubmit={(payload) => console.log('payload', payload)}
+            onError={(error) => console.log('error', error)}
+            onSuccess={(data) => console.log('data', data)}
+          />
           <BackButton>Back</BackButton>
           <SubmitButton disabled={onboardingBag.isSubmitting}>
             Next Step

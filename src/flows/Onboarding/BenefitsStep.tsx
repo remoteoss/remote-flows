@@ -32,13 +32,31 @@ type BenefitsStepProps = {
   onSuccess?: (data: SuccessResponse) => void;
 };
 
-export function BenefitsStep({ components }: BenefitsStepProps) {
+export function BenefitsStep({
+  components,
+  onSubmit,
+  onError,
+  onSuccess,
+}: BenefitsStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const fields = onboardingBag.fields ?? [];
   const initialValues = getInitialValues(fields, {});
 
-  const handleSubmit = async () => {
-    onboardingBag?.next();
+  const handleSubmit = async (payload: BenefitsPayload) => {
+    try {
+      await onSubmit?.(payload);
+      const response = await onboardingBag.onSubmit(payload as BenefitsPayload);
+      if (response?.data) {
+        onSuccess?.(response.data as SuccessResponse);
+        onboardingBag?.next();
+        return;
+      }
+      if (response?.error) {
+        onError?.(response.error);
+      }
+    } catch (error) {
+      onError?.(error);
+    }
   };
 
   return (
