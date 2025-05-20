@@ -99,7 +99,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="onboarding-contract-details__buttons">
-            <BackButton type="submit" onClick={() => setApiError(null)}>
+            <BackButton
+              type="submit"
+              className="back-button"
+              onClick={() => setApiError(null)}
+            >
               Previous Step
             </BackButton>
             <SubmitButton
@@ -189,7 +193,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="onboarding-benefits__buttons">
-            <BackButton>Previous Step</BackButton>
+            <BackButton className="back-button">Previous Step</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
               Continue
             </SubmitButton>
@@ -210,7 +214,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
           <div className="onboarding-review__buttons">
-            <BackButton>Previous Step</BackButton>
+            <BackButton className="back-button">Previous Step</BackButton>
             <OnboardingInvite>Invite Employee</OnboardingInvite>
           </div>
         </div>

@@ -382,6 +382,12 @@ button[type='reset'] {
   transition: opacity 0.2s;
 }
 
+button[type='submit'].back-button {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+}
+
 .error {
   color: #dc2626;
   background-color: #fee2e2;

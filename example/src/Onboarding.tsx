@@ -99,7 +99,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="onboarding-contract-details__buttons">
-            <BackButton type="submit" onClick={() => setApiError(null)}>
+            <BackButton
+              type="submit"
+              className="back-button"
+              onClick={() => setApiError(null)}
+            >
               Previous Step
             </BackButton>
             <SubmitButton
@@ -125,7 +129,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="onboarding-benefits__buttons">
-            <BackButton onClick={() => setApiError(null)} type="submit">
+            <BackButton
+              className="back-button"
+              onClick={() => setApiError(null)}
+              type="submit"
+            >
               Previous Step
             </BackButton>
             <SubmitButton
@@ -152,7 +160,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
           <div className="onboarding-review__buttons">
-            <BackButton onClick={() => setApiError(null)} type="submit">
+            <BackButton
+              className="back-button"
+              onClick={() => setApiError(null)}
+              type="submit"
+            >
               Back
             </BackButton>
             <OnboardingInvite onClick={() => setApiError(null)} type="submit">
@@ -184,6 +196,7 @@ export const OnboardingEOR = () => {
         countryCode="PRT"
         type="employee"
         render={MultiStepForm}
+        employmentId="0b20b5a1-9840-452c-8bdc-bf8aec4e71d0"
       />
     </RemoteFlows>
   );
