@@ -24,6 +24,7 @@ import {
 } from '@/src/client';
 import {
   basicInformationSchema,
+  contractDetailsSchema,
   employmentCreatedResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { fillRadio, selectDayInCalendar } from '@/src/tests/testHelpers';
@@ -199,6 +200,9 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
+      http.get('*/v1/countries/PRT/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
+      }),
       http.post('*/v1/employments', async () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
@@ -276,6 +280,117 @@ describe('OnboardingFlow', () => {
     }
   }
 
+  async function fillContractDetails(
+    values?: Partial<{
+      contractDurationType: boolean;
+      employeeType: string;
+      probationPeriod: string;
+      paidTimeOffPolicy: string;
+      numberOfPTO: string;
+      roleDescription: string;
+      experienceLevel: string;
+      workAddress: string;
+      annualGrossSalary: string;
+      installmentsConfirmation: boolean;
+      workFromHomeAllowance: boolean;
+      trainingRequirementAck: boolean;
+      workOutsideHours: string;
+      signingBonus: string;
+      otherBonus: string;
+      offerComission: string;
+      equityManagement: string;
+    }>,
+  ) {
+    const defaultValues = {
+      contractDurationType: true,
+      employeeType: 'Full-time',
+      probationPeriod: '30',
+      paidTimeOffPolicy: 'Unlimited paid time off',
+      roleDescription: `oorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororo`,
+      experienceLevel: 'Level 2 - Entry Level',
+      workAddress: "Same as the employee's residential address",
+      annualGrossSalary: '50000',
+      installmentsConfirmation: true,
+      workFromHomeAllowance: true,
+      trainingRequirementAck: true,
+      workOutsideHours: 'No',
+      signingBonus: 'No',
+      otherBonus: 'No',
+      offerComission: 'No',
+      equityManagement: 'No',
+    };
+
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Type of employee/i)).toBeInTheDocument();
+    });
+
+    if (newValues?.employeeType) {
+      await fillRadio('Type of employee', newValues?.employeeType);
+    }
+
+    if (newValues?.probationPeriod) {
+      const probationPeriod = screen.getByLabelText(
+        /Probation period, in days/i,
+      );
+      await userEvent.type(probationPeriod, newValues?.probationPeriod);
+    }
+
+    if (newValues?.paidTimeOffPolicy) {
+      await fillRadio('Paid time off policy', newValues?.paidTimeOffPolicy);
+    }
+
+    if (newValues?.roleDescription) {
+      const roleDescription = screen.getByLabelText(/Role description/i);
+      await userEvent.type(roleDescription, newValues?.roleDescription);
+    }
+
+    if (newValues?.experienceLevel) {
+      await fillRadio('Experience level', newValues?.experienceLevel);
+    }
+
+    if (newValues?.workAddress) {
+      await fillRadio('Local', newValues?.workAddress);
+    }
+
+    if (newValues?.annualGrossSalary) {
+      const annualGrossSalary = screen.getByRole('textbox', {
+        name: /Annual gross salary/i,
+      });
+      await userEvent.type(annualGrossSalary, newValues?.annualGrossSalary);
+    }
+
+    if (newValues?.workOutsideHours) {
+      await fillRadio(
+        'Will this employee need to work outside regular work hours?',
+        newValues?.workOutsideHours,
+      );
+    }
+
+    if (newValues?.signingBonus) {
+      await fillRadio('Offer a signing bonus?', newValues?.signingBonus);
+    }
+
+    if (newValues?.otherBonus) {
+      await fillRadio('Offer other bonuses?', newValues?.otherBonus);
+    }
+
+    if (newValues?.offerComission) {
+      await fillRadio('Offer commission?', newValues?.offerComission);
+    }
+
+    if (newValues?.equityManagement) {
+      await fillRadio(
+        'Will this employee receive equity?',
+        newValues?.equityManagement,
+      );
+    }
+  }
+
   it('should render first step of the form', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
@@ -316,5 +431,28 @@ describe('OnboardingFlow', () => {
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+  });
+
+  it.only('should submit the entire form and go till the latest step', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await fillContractDetails();
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
   });
 });
