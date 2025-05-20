@@ -26,8 +26,13 @@ import {
   basicInformationSchema,
   contractDetailsSchema,
   employmentCreatedResponse,
+  employmentUpdatedResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { fillRadio, selectDayInCalendar } from '@/src/tests/testHelpers';
+import {
+  fillCheckbox,
+  fillRadio,
+  selectDayInCalendar,
+} from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
 
 const queryClient = new QueryClient();
@@ -206,6 +211,9 @@ describe('OnboardingFlow', () => {
       http.post('*/v1/employments', async () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
+      http.patch('*/v1/employments/*', async () => {
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
     );
   });
 
@@ -329,6 +337,10 @@ describe('OnboardingFlow', () => {
       expect(screen.getByLabelText(/Type of employee/i)).toBeInTheDocument();
     });
 
+    if (newValues?.contractDurationType) {
+      await fillCheckbox('Contract duration');
+    }
+
     if (newValues?.employeeType) {
       await fillRadio('Type of employee', newValues?.employeeType);
     }
@@ -362,6 +374,22 @@ describe('OnboardingFlow', () => {
         name: /Annual gross salary/i,
       });
       await userEvent.type(annualGrossSalary, newValues?.annualGrossSalary);
+    }
+
+    if (newValues?.installmentsConfirmation) {
+      await fillCheckbox(
+        'I confirm the annual gross salary includes 13th and 14th salaries',
+      );
+    }
+
+    if (newValues?.workFromHomeAllowance) {
+      await fillCheckbox("I acknowledge Portugal's work-from-home allowance");
+    }
+
+    if (newValues?.trainingRequirementAck) {
+      await fillCheckbox(
+        "I acknowledge Portugal's annual training requirement",
+      );
     }
 
     if (newValues?.workOutsideHours) {
