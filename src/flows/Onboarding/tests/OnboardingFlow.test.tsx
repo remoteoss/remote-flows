@@ -7,7 +7,6 @@ import { server } from '@/src/tests/server';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import { http, HttpResponse } from 'msw';
-import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
 import {
   OnboardingFlow,
@@ -23,7 +22,10 @@ import {
   EmploymentResponse,
   SuccessResponse,
 } from '@/src/client';
-import { basicInformationSchema } from '@/src/flows/Onboarding/tests/fixtures';
+import {
+  basicInformationSchema,
+  employmentCreatedResponse,
+} from '@/src/flows/Onboarding/tests/fixtures';
 import { fillRadio, selectDayInCalendar } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
 
@@ -190,7 +192,6 @@ describe('OnboardingFlow', () => {
     render: mockRender,
   };
 
-  let offboardingRequest: Record<string, unknown> | null = null;
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -198,12 +199,8 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
-      http.post('*/v1/offboardings', async (req) => {
-        offboardingRequest = (await req.request.json()) as Record<
-          string,
-          unknown
-        >;
-        return HttpResponse.json(terminationResponse);
+      http.post('*/v1/employments', async () => {
+        return HttpResponse.json(employmentCreatedResponse);
       }),
     );
   });
@@ -226,7 +223,7 @@ describe('OnboardingFlow', () => {
   ) {
     const defaultValues = {
       fullName: 'John Doe',
-      personalEmail: 'ze@remote.com',
+      personalEmail: 'john.doe@gmail.com',
       workEmail: 'john.doe@remote.com',
       jobTitle: 'Software Engineer',
       provisionalStartDate: '15',
@@ -297,7 +294,7 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it.only('should fill the first step, go to the second step and go back to the first step', async () => {
+  it('should fill the first step, go to the second step and go back to the first step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await screen.findByText(/Step: Basic Information/i);
 
@@ -307,8 +304,6 @@ describe('OnboardingFlow', () => {
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
-
-    // mock the API call server to create an employment
 
     await screen.findByText(/Step: Contract Details/i);
 
@@ -320,12 +315,12 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue('ze@remote.com');
+    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
   });
 
-  it('should render the form with values when a employment is passed and we haved save information before', async () => {});
+  it.skip('should render the form with values when a employment is passed and we haved save information before', async () => {});
 
-  it('should render the benefits step with the values saved before', async () => {});
+  it.skip('should render the benefits step with the values saved before', async () => {});
 
-  it("should call the invite employee endpoint when the user clicks on 'Invite Employee'", async () => {});
+  it.skip("should call the invite employee endpoint when the user clicks on 'Invite Employee'", async () => {});
 });

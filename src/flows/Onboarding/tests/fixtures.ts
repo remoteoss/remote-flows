@@ -3198,3 +3198,40 @@ export const basicInformationSchema = {
     ],
   },
 };
+
+export const employmentCreatedResponse = {
+  data: {
+    employment: {
+      id: 'f3b9ee0a-b50c-4a20-8c5e-9303781479a1',
+      type: 'employee',
+      country_code: 'PRT',
+      updated_at: '2025-05-20T08:20:04',
+      external_id: null,
+      created_at: '2025-05-20T08:20:02',
+      full_name: 'John Doe',
+      company_id: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+      provisional_start_date: '2025-05-29',
+      job_title: 'Software Engineer',
+      manager_id: null,
+      department_id: null,
+      user_status: 'created',
+      basic_information: {
+        name: 'John Doe',
+        email: 'john.doe@gmail.com',
+        provisional_start_date: '2025-05-29',
+        job_title: 'Software Engineer',
+        tax_servicing_countries: [],
+        work_email: 'john.doe@remote.com',
+        has_seniority_date: 'no',
+        tax_job_category: 'operations',
+      },
+      seniority_date: null,
+      personal_email: 'john.doe@gmail.com',
+      employment_lifecycle_stage: 'employment_creation',
+      short_id: 'D02YZR',
+      eligible_for_onboarding_cancellation: true,
+      probation_period_end_date: null,
+      active_contract_id: '126758da-5e2a-4032-b05e-6ff62832b08c',
+    },
+  },
+};
