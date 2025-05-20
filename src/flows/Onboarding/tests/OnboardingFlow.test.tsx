@@ -13,16 +13,6 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  BasicInformationFormPayload,
-  BenefitsFormPayload,
-  ContractDetailsFormPayload,
-} from '@/src/flows/Onboarding/types';
-import {
-  EmploymentCreationResponse,
-  EmploymentResponse,
-  SuccessResponse,
-} from '@/src/client';
-import {
   basicInformationSchema,
   contractDetailsSchema,
   benefitOffersSchema,
@@ -45,8 +35,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
   </QueryClientProvider>
 );
 
-const mockOnSubmitStep = vi.fn();
-const mockOnSubmitForm = vi.fn();
+const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
@@ -97,13 +86,9 @@ describe('OnboardingFlow', () => {
         return (
           <>
             <BasicInformationStep
-              onSubmit={(payload: BasicInformationFormPayload) =>
-                console.log('payload', payload)
-              }
-              onSuccess={(data: EmploymentCreationResponse) =>
-                console.log('data', data)
-              }
-              onError={(error: Error) => console.log('error', error)}
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
             />
             <SubmitButton disabled={onboardingBag.isSubmitting}>
               Next Step
@@ -114,13 +99,9 @@ describe('OnboardingFlow', () => {
         return (
           <>
             <ContractDetailsStep
-              onSubmit={(payload: ContractDetailsFormPayload) =>
-                console.log('payload', payload)
-              }
-              onSuccess={(data: EmploymentResponse) =>
-                console.log('data', data)
-              }
-              onError={(error: Error) => console.log('error', error)}
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
             />
             <BackButton>Back</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
@@ -134,11 +115,9 @@ describe('OnboardingFlow', () => {
           <>
             <BenefitsStep
               components={{}}
-              onSubmit={(payload: BenefitsFormPayload) =>
-                console.log('payload', payload)
-              }
-              onError={(error: Error) => console.log('error', error)}
-              onSuccess={(data: SuccessResponse) => console.log('data', data)}
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
             />
             <BackButton>Back</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
@@ -185,10 +164,6 @@ describe('OnboardingFlow', () => {
           <MultiStepForm
             onboardingBag={onboardingBag}
             components={components}
-            onSubmitStep={mockOnSubmitStep}
-            onSubmitForm={mockOnSubmitForm}
-            onError={mockOnError}
-            onSuccess={mockOnSuccess}
           />
         </>
       );
@@ -212,6 +187,9 @@ describe('OnboardingFlow', () => {
       }),
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
         return HttpResponse.json(benefitOffersSchema);
+      }),
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
       }),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
