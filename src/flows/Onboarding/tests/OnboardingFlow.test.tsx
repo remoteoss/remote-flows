@@ -317,10 +317,4 @@ describe('OnboardingFlow', () => {
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
   });
-
-  it.skip('should render the form with values when a employment is passed and we haved save information before', async () => {});
-
-  it.skip('should render the benefits step with the values saved before', async () => {});
-
-  it.skip("should call the invite employee endpoint when the user clicks on 'Invite Employee'", async () => {});
 });
