@@ -189,15 +189,100 @@ const fetchToken = () => {
     });
 };
 
-export const OnboardingEOR = () => {
+type OnboardingFormData = {
+  countryCode: string;
+  type: 'employee' | 'contractor';
+  employmentId: string;
+};
+
+const OnboardingWithProps = ({
+  countryCode,
+  type,
+  employmentId,
+}: OnboardingFormData) => (
+  <RemoteFlows auth={fetchToken}>
+    <OnboardingFlow
+      countryCode={countryCode}
+      type={type}
+      render={MultiStepForm}
+      employmentId={employmentId}
+    />
+  </RemoteFlows>
+);
+
+export const OnboardingForm = () => {
+  const [formData, setFormData] = useState<OnboardingFormData>({
+    countryCode: 'PRT',
+    type: 'employee',
+    employmentId: '',
+  });
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowOnboarding(true);
+  };
+
+  if (showOnboarding) {
+    return <OnboardingWithProps {...formData} />;
+  }
+
   return (
-    <RemoteFlows auth={fetchToken}>
-      <OnboardingFlow
-        countryCode="PRT"
-        type="employee"
-        render={MultiStepForm}
-        employmentId="0b20b5a1-9840-452c-8bdc-bf8aec4e71d0"
-      />
-    </RemoteFlows>
+    <form onSubmit={handleSubmit} className="onboarding-form-container">
+      <div className="onboarding-form-group">
+        <label htmlFor="countryCode" className="onboarding-form-label">
+          Country Code:
+        </label>
+        <input
+          id="countryCode"
+          type="text"
+          value={formData.countryCode}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+          }
+          required
+          placeholder="e.g. PRT"
+          className="onboarding-form-input"
+        />
+      </div>
+      <div className="onboarding-form-group">
+        <label htmlFor="type" className="onboarding-form-label">
+          Type:
+        </label>
+        <select
+          id="type"
+          value={formData.type}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              type: e.target.value as 'employee' | 'contractor',
+            }))
+          }
+          required
+          className="onboarding-form-select"
+        >
+          <option value="employee">Employee</option>
+          <option value="contractor">Contractor</option>
+        </select>
+      </div>
+      <div className="onboarding-form-group">
+        <label htmlFor="employmentId" className="onboarding-form-label">
+          Employment ID:
+        </label>
+        <input
+          id="employmentId"
+          type="text"
+          value={formData.employmentId}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
+          }
+          placeholder="Enter employment ID"
+          className="onboarding-form-input"
+        />
+      </div>
+      <button type="submit" className="onboarding-form-button">
+        Start Onboarding
+      </button>
+    </form>
   );
 };
