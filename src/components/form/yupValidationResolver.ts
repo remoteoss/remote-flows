@@ -30,6 +30,9 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
   return async (data: FieldValues) => {
     const { yupError, formErrors } = await handleValidation(data);
 
+    console.log('yupError', yupError);
+    console.log('formErrors', formErrors);
+
     if (Object.keys(formErrors || {}).length > 0) {
       return {
         values: {},
