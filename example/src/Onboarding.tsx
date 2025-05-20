@@ -10,6 +10,7 @@ import {
   ContractDetailsFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
+import { useState } from 'react';
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -47,6 +48,7 @@ function Review({ values }: { values: Record<string, unknown> }) {
 }
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
+  const [apiError, setApiError] = useState<string | null>();
   const {
     BasicInformationStep,
     ContractDetailsStep,
@@ -71,11 +73,18 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentCreationResponse) =>
               console.log('data', data)
             }
-            onError={(error: Error) => console.log('error', error)}
+            onError={(error: Error) => setApiError(error.message)}
           />
-          <SubmitButton disabled={onboardingBag.isSubmitting}>
-            Next Step
-          </SubmitButton>
+          {apiError && <p className="error">{apiError}</p>}
+          <div className="onboarding-basic-information__buttons">
+            <SubmitButton
+              type="submit"
+              disabled={onboardingBag.isSubmitting}
+              onClick={() => setApiError(null)}
+            >
+              Next Step
+            </SubmitButton>
+          </div>
         </>
       );
     case 'contract_details':
@@ -86,12 +95,21 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
               console.log('payload', payload)
             }
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
-            onError={(error: Error) => console.log('error', error)}
+            onError={(error: Error) => setApiError(error.message)}
           />
-          <BackButton>Back</BackButton>
-          <SubmitButton disabled={onboardingBag.isSubmitting}>
-            Next Step
-          </SubmitButton>
+          {apiError && <p className="error">{apiError}</p>}
+          <div className="onboarding-contract-details__buttons">
+            <BackButton type="submit" onClick={() => setApiError(null)}>
+              Back
+            </BackButton>
+            <SubmitButton
+              type="submit"
+              onClick={() => setApiError(null)}
+              disabled={onboardingBag.isSubmitting}
+            >
+              Next Step
+            </SubmitButton>
+          </div>
         </>
       );
 
@@ -102,13 +120,22 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
             }
-            onError={(error: Error) => console.log('error', error)}
+            onError={(error: Error) => setApiError(error.message)}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          <BackButton>Back</BackButton>
-          <SubmitButton disabled={onboardingBag.isSubmitting}>
-            Next Step
-          </SubmitButton>
+          {apiError && <p className="error">{apiError}</p>}
+          <div className="onboarding-benefits__buttons">
+            <BackButton onClick={() => setApiError(null)} type="submit">
+              Back
+            </BackButton>
+            <SubmitButton
+              onClick={() => setApiError(null)}
+              type="submit"
+              disabled={onboardingBag.isSubmitting}
+            >
+              Next Step
+            </SubmitButton>
+          </div>
         </div>
       );
     case 'review':
@@ -124,8 +151,14 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           />
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-          <BackButton>Back</BackButton>
-          <OnboardingInvite>Invite Employee</OnboardingInvite>
+          <div className="onboarding-review__buttons">
+            <BackButton onClick={() => setApiError(null)} type="submit">
+              Back
+            </BackButton>
+            <OnboardingInvite onClick={() => setApiError(null)} type="submit">
+              Invite Employee
+            </OnboardingInvite>
+          </div>
         </div>
       );
   }
@@ -151,7 +184,6 @@ export const OnboardingEOR = () => {
         countryCode="PRT"
         type="employee"
         render={MultiStepForm}
-        employmentId="0b20b5a1-9840-452c-8bdc-bf8aec4e71d0"
       />
     </RemoteFlows>
   );
