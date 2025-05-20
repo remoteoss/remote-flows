@@ -276,7 +276,6 @@ export const OnboardingForm = () => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
           }
-          required
           placeholder="Enter employment ID"
           className="onboarding-form-input"
         />

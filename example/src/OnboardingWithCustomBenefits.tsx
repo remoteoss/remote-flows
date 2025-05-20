@@ -334,7 +334,6 @@ export const OnboardingCustomBenefitsForm = () => {
           }
           placeholder="Enter employment ID"
           className="onboarding-form-input"
-          required
         />
       </div>
 
