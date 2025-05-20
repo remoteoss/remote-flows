@@ -266,7 +266,7 @@ type OnboardingFormData = {
 
 export const OnboardingCustomBenefitsForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    countryCode: '',
+    countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
   });

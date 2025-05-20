@@ -212,7 +212,7 @@ const OnboardingWithProps = ({
 
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    countryCode: '',
+    countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
   });
