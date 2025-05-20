@@ -408,9 +408,7 @@ export const useOnboarding = ({
   }
 
   async function onSubmit(values: FieldValues) {
-    console.log('values', values);
     const parsedValues = parseFormValues(values);
-    console.log('parsedValues', parsedValues);
     switch (stepState.currentStep.name) {
       case 'basic_information': {
         if (!internalEmploymentId) {
