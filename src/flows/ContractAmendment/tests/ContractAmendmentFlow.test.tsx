@@ -145,7 +145,6 @@ describe('ContractAmendmentFlow', () => {
         experience_level:
           'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
         job_title: 'engineer',
-        reason_for_change: null,
         role_description:
           'Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.',
         work_hours_per_week: 40,
@@ -165,7 +164,6 @@ describe('ContractAmendmentFlow', () => {
         experience_level:
           'Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions',
         job_title: 'engineer',
-        reason_for_change: null,
         role_description:
           'Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.Very nice job.',
         work_hours_per_week: 40,

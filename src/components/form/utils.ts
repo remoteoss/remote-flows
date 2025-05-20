@@ -114,31 +114,6 @@ const trimStringValues = (values: Record<string, any>) =>
     {},
   );
 
-function convertEmptyStringsToNull(values: Record<string, any>) {
-  const result: Record<string, any> = {};
-
-  Object.entries(values).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      // If the value is an array, recursively process each element
-      result[key] = value.map((item) =>
-        typeof item === 'object' && item !== null
-          ? convertEmptyStringsToNull(item)
-          : item === ''
-            ? null
-            : item,
-      );
-    } else if (typeof value === 'object' && value !== null) {
-      // If the value is an object, recursively process it
-      result[key] = convertEmptyStringsToNull(value);
-    } else {
-      // Otherwise, convert empty strings to null or keep the value as is
-      result[key] = value === '' ? null : value;
-    }
-  });
-
-  return result;
-}
-
 /**
  * Given a list of form values, modify the ones that are readOnly,
  * based on their field config, by adding its defaultValue.
@@ -502,6 +477,16 @@ function excludeValuesInvisible(
   return valuesAsked;
 }
 
+function removeEmptyValues<T extends Record<string, any>>(
+  obj: T,
+): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([, value]) => value !== undefined && value !== null && value !== '',
+    ),
+  );
+}
+
 export function parseSubmitValues(
   formValues: Record<string, any>,
   fields: any[],
@@ -512,9 +497,11 @@ export function parseSubmitValues(
     : excludeValuesInvisible(formValues, fields);
   const convertedFormValues = parseFormValuesToAPI(visibleFormValues, fields);
   const formValuesWithTrimmedStrings = trimStringValues(convertedFormValues);
-  const formValuesWithUndefined = convertEmptyStringsToNull(
+
+  const formValuesWithUndefined = removeEmptyValues(
     formValuesWithTrimmedStrings,
   );
+
   const valuesWithReadOnly = prefillReadOnlyFields(
     formValuesWithUndefined,
     fields,
