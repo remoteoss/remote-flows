@@ -25,8 +25,10 @@ import {
 import {
   basicInformationSchema,
   contractDetailsSchema,
+  benefitOffersSchema,
   employmentCreatedResponse,
   employmentUpdatedResponse,
+  benefitOffersResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   fillCheckbox,
@@ -208,8 +210,14 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/contract_details*', () => {
         return HttpResponse.json(contractDetailsSchema);
       }),
-      http.post('*/v1/employments', async () => {
+      http.get('*/v1/employments/*/benefit-offers/schema', () => {
+        return HttpResponse.json(benefitOffersSchema);
+      }),
+      http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
+      }),
+      http.put('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json(benefitOffersResponse);
       }),
       http.patch('*/v1/employments/*', async () => {
         return HttpResponse.json(employmentUpdatedResponse);
@@ -419,6 +427,44 @@ describe('OnboardingFlow', () => {
     }
   }
 
+  async function fillBenefits(
+    values?: Partial<{
+      mealBenefit: string;
+      healthInsurance: string;
+      lifeInsurance: string;
+    }>,
+  ) {
+    const defaultValues = {
+      mealBenefit: 'Meal Allowance Standard 2025',
+      healthInsurance: 'Basic Health Plan 2025',
+      lifeInsurance: "I don't want to offer this benefit.",
+    };
+
+    const newValues = {
+      ...defaultValues,
+      ...values,
+    };
+
+    await waitFor(() => {
+      expect(screen.getByText(/Meal Benefit/i)).toBeInTheDocument();
+    });
+
+    await fillRadio(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      newValues?.mealBenefit,
+    );
+
+    await fillRadio(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      newValues?.healthInsurance,
+    );
+
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      newValues?.lifeInsurance,
+    );
+  }
+
   it('should render first step of the form', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
@@ -461,7 +507,7 @@ describe('OnboardingFlow', () => {
     expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
   });
 
-  it.only('should submit the entire form and go till the latest step', async () => {
+  it('should submit the entire form and go till the latest step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await screen.findByText(/Step: Basic Information/i);
 
@@ -482,5 +528,14 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Benefits/i);
+
+    await fillBenefits();
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Review/i);
   });
 });
