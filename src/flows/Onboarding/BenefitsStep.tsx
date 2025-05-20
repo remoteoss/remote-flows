@@ -8,7 +8,7 @@ import { BenefitsFormPayload } from '@/src/flows/Onboarding/types';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type BenefitsStepProps = {
-  components: Components;
+  components?: Components;
   /**
    * Callback function to be called when the benefits form is submitted.
    * It can be used to perform any additional validation or processing before
