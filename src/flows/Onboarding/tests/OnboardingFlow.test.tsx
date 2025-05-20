@@ -437,7 +437,7 @@ describe('OnboardingFlow', () => {
     const defaultValues = {
       mealBenefit: 'Meal Allowance Standard 2025',
       healthInsurance: 'Basic Health Plan 2025',
-      lifeInsurance: "I don't want to offer this benefit.",
+      lifeInsurance: 'Life Insurance 50K',
     };
 
     const newValues = {

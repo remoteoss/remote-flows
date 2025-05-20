@@ -4727,7 +4727,7 @@ export const benefitOffersSchema = {
                     oneOf: [
                       {
                         const: '0b097ff7-8b59-49dc-9cba-16543bd6a44c',
-                        title: 'Life Insurance $50K',
+                        title: 'Life Insurance 50K',
                         'x-jsf-presentation': {
                           description:
                             "Covers Life Insurance only. In the unfortunate event of an employee's demise, their beneficiary will receive a payout equivalent to up to 6 times the employee's annual salary. However, this compensation is capped at a maximum of $50,000. This means that regardless of an employee's salary, the payout will not exceed $50,000.",
