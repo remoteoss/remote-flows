@@ -398,3 +398,60 @@ button[type='submit'].back-button {
   font-size: 14px;
   font-weight: 500;
 }
+
+.onboarding-form-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  background: #fff;
+  border: 1px solid #e0e4ea;
+  text-align: left;
+}
+
+.onboarding-form-group {
+  margin-bottom: 2rem;
+}
+
+.onboarding-form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #222;
+}
+
+.onboarding-form-input,
+.onboarding-form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #222;
+  background: #fafbfc;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.onboarding-form-select {
+  appearance: none;
+}
+
+.onboarding-form-button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.onboarding-form-button:hover,
+.onboarding-form-button:focus {
+  background-color: #333;
+}
