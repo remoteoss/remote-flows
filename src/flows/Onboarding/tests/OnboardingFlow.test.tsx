@@ -405,7 +405,7 @@ describe('OnboardingFlow', () => {
     }
   }
 
-  async function fillBenefits(
+  /* async function fillBenefits(
     values?: Partial<{
       mealBenefit: string;
       healthInsurance: string;
@@ -441,7 +441,7 @@ describe('OnboardingFlow', () => {
       '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
       newValues?.lifeInsurance,
     );
-  }
+  } */
 
   it('should render first step of the form', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
