@@ -181,12 +181,16 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const { schema } = modify(data.data || {}, options?.jsfModify || {});
+      let jsfSchema = data?.data || {};
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
       const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const employmentFieldData = (employment?.[employmentField] ||
         {}) as Record<string, unknown>;
-      return createHeadlessForm(schema, {
+      return createHeadlessForm(jsfSchema, {
         initialValues: hasFieldValues ? fieldValues : employmentFieldData,
       });
     },
@@ -230,12 +234,14 @@ const useBenefitOffersSchema = (
       return response;
     },
     select: ({ data }) => {
-      const { schema } = modify(
-        data.data?.schema || {},
-        options?.jsfModify || {},
-      );
+      let jsfSchema = data?.data?.schema || {};
+
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(schema, {
+      const result = createHeadlessForm(jsfSchema, {
         initialValues: hasFieldValues ? fieldValues : {},
       });
       return result;
