@@ -12,6 +12,13 @@ import {
 import './App.css';
 import { useState } from 'react';
 
+const STEPS = [
+  'Basic Information',
+  'Contract Details',
+  'Benefits',
+  'Review & Invite',
+];
+
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
   components: OnboardingRenderProps['components'];
@@ -47,8 +54,7 @@ function Review({ values }: { values: Record<string, unknown> }) {
   );
 }
 
-const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
-  const [apiError, setApiError] = useState<string | null>();
+const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
   const {
     BasicInformationStep,
     ContractDetailsStep,
@@ -57,10 +63,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     BackButton,
     OnboardingInvite,
   } = components;
-
-  if (onboardingBag.isLoading) {
-    return <p>Loading...</p>;
-  }
+  const [apiError, setApiError] = useState<string | null>();
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
@@ -176,6 +179,41 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
   }
 };
 
+const OnBoardingRender = ({
+  onboardingBag,
+  components,
+}: MultiStepFormProps) => {
+  const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+  const stepTitle = STEPS[currentStepIndex];
+
+  if (onboardingBag.isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  return (
+    <>
+      <div className="steps-navigation">
+        <ul>
+          {STEPS.map((step, index) => (
+            <li
+              key={index}
+              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
+            >
+              {step}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="card" style={{ marginBottom: '20px' }}>
+        <h1 className="heading">{stepTitle}</h1>
+        <MultiStepForm onboardingBag={onboardingBag} components={components} />
+      </div>
+    </>
+  );
+};
+
 const fetchToken = () => {
   return fetch('/api/token')
     .then((res) => res.json())
@@ -204,7 +242,7 @@ const OnboardingWithProps = ({
     <OnboardingFlow
       countryCode={countryCode}
       type={type}
-      render={MultiStepForm}
+      render={OnBoardingRender}
       employmentId={employmentId}
     />
   </RemoteFlows>
