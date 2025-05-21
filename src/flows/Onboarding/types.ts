@@ -3,7 +3,6 @@ import { FlowOptions } from '@/src/flows/types';
 
 export type OnboardingFlowParams = {
   employmentId?: string;
-  pricingPlanFrequency?: 'monthly' | 'annually';
   countryCode: string;
   type?: EmploymentCreateParams['type'];
   options?: FlowOptions;
