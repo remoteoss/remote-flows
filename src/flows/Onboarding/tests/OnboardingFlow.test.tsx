@@ -93,7 +93,6 @@ describe('OnboardingFlow', () => {
     }
     switch (onboardingBag.stepState.currentStep.name) {
       case 'basic_information':
-        console.log('basic_information', onboardingBag.isSubmitting);
         return (
           <>
             <BasicInformationStep

@@ -27,7 +27,6 @@ export function BasicInformationStep({
 }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: $TSFixMe) => {
-    console.log('payload', payload);
     try {
       await onSubmit?.(
         onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
