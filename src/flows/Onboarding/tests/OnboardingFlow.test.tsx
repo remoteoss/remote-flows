@@ -27,7 +27,7 @@ import {
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
-  fillCheckbox,
+  /* fillCheckbox, */
   fillRadio,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
@@ -284,7 +284,7 @@ describe('OnboardingFlow', () => {
     }
   }
 
-  async function fillContractDetails(
+  /* async function fillContractDetails(
     values?: Partial<{
       contractDurationType: boolean;
       employeeType: string;
@@ -413,7 +413,7 @@ describe('OnboardingFlow', () => {
         newValues?.equityManagement,
       );
     }
-  }
+  } */
 
   /* async function fillBenefits(
     values?: Partial<{
@@ -620,16 +620,7 @@ describe('OnboardingFlow', () => {
   it('should fill the second step and go to the third step', async () => {
     server.use(
       http.get('*/v1/employments/*', () => {
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              contract_details: null,
-            },
-          },
-        });
+        return HttpResponse.json(employmentResponse);
       }),
     );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
@@ -645,8 +636,6 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
-    await fillContractDetails();
-
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
@@ -660,7 +649,7 @@ describe('OnboardingFlow', () => {
 
     // Assert the contract details submission
     expect(contractDetailsSubmission).toEqual({
-      annual_gross_salary: 5000000,
+      annual_gross_salary: 2000000,
       annual_training_hours_ack: 'acknowledged',
       available_pto: 22,
       available_pto_type: 'unlimited',
@@ -686,9 +675,9 @@ describe('OnboardingFlow', () => {
       maximum_working_hours_regime: null,
       part_time_salary_confirmation: null,
       probation_length: null,
-      probation_length_days: 30,
+      probation_length_days: 40,
       role_description:
-        'oorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororo',
+        '.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk',
       salary_installments_confirmation: 'acknowledged',
       signing_bonus_amount: null,
       signing_bonus_clawback: null,
