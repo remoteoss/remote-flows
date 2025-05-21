@@ -5440,6 +5440,8 @@ export const employmentUpdatedResponse = {
 
 export const benefitOffersUpdatedResponse = { data: { status: 'ok' } };
 
+export const inviteResponse = { data: { status: 'ok' } };
+
 export const benefitOffersResponse = {
   data: [
     {

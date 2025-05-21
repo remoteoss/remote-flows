@@ -33,6 +33,8 @@ export function ContractDetailsStep({
       );
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
+        console.log('ContractDetails response', response);
+
         onSuccess?.(response.data as EmploymentResponse);
         onboardingBag?.next();
         return;

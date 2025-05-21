@@ -32,8 +32,8 @@ export function BasicInformationStep({
         onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
       );
       const response = await onboardingBag.onSubmit(payload);
-      if (response?.data?.data) {
-        onSuccess?.(response?.data?.data as EmploymentCreationResponse);
+      if (response?.data) {
+        onSuccess?.(response?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }

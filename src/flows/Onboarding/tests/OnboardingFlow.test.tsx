@@ -26,6 +26,7 @@ import {
   benefitOffersResponse,
   employmentResponse,
   benefitOffersUpdatedResponse,
+  inviteResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -150,7 +151,9 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite>Invite Employee</OnboardingInvite>
+            <OnboardingInvite onSuccess={mockOnSuccess}>
+              Invite Employee
+            </OnboardingInvite>
           </div>
         );
     }
@@ -604,5 +607,54 @@ describe('OnboardingFlow', () => {
         value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
       },
     });
+  });
+
+  it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Only match direct employment requests, not sub-resources
+        if (params?.id?.includes('/')) return HttpResponse.error();
+        return HttpResponse.json(employmentResponse);
+      }),
+      http.post('*/v1/employments/*/invite', () => {
+        return HttpResponse.json(inviteResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Review/i);
+
+    const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
+    expect(inviteEmployeeButton).toBeInTheDocument();
+
+    inviteEmployeeButton.click();
+
+    // it should be called
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+    });
+
+    expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 });
