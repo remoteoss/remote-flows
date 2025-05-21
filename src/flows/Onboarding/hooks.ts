@@ -321,6 +321,8 @@ export const useOnboarding = ({
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
 
+  console.log('employment', employment?.data.data);
+
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
@@ -430,6 +432,10 @@ export const useOnboarding = ({
             throw error;
           }
         } else {
+          console.log('Updating employment', {
+            employmentId: internalEmploymentId,
+            basic_information: parsedValues,
+          });
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,

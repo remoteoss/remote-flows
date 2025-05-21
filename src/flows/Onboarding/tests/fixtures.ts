@@ -5439,3 +5439,159 @@ export const employmentUpdatedResponse = {
 };
 
 export const benefitOffersResponse = { data: { status: 'ok' } };
+
+export const employmentResponse = {
+  data: {
+    employment: {
+      company_id: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+      personal_details: null,
+      contract_details: {
+        annual_gross_salary: 2000000,
+        annual_training_hours_ack: 'acknowledged',
+        available_pto: 22,
+        available_pto_type: 'unlimited',
+        benefits: {
+          health_insurance_2025:
+            'Basic Health Plan 2025 (Single) (Advance Care/ Tranquilidade - Basic Health Plan 2025 (Single))',
+          life_insurance_2_0:
+            'Life Insurance - $100K (Allianz Life - Global Life - Life 100k)',
+          meal_benefit:
+            'Meal Card Standard 2025 (Coverflex - Meal Card Standard 2025)',
+        },
+        bonus_amount: null,
+        bonus_details: null,
+        commissions_ack: null,
+        commissions_details: null,
+        contract_duration_type: 'indefinite',
+        contract_end_date: null,
+        equity_compensation: {
+          offer_equity_compensation: 'no',
+        },
+        experience_level:
+          'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+        has_bonus: 'no',
+        has_commissions: 'no',
+        has_signing_bonus: 'no',
+        maximum_working_hours_regime: null,
+        part_time_salary_confirmation: null,
+        probation_length: null,
+        probation_length_days: 40,
+        role_description:
+          '.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk',
+        salary_installments_confirmation: 'acknowledged',
+        signing_bonus_amount: null,
+        signing_bonus_clawback: null,
+        work_address: {
+          is_home_address: 'yes',
+        },
+        work_from_home_allowance: null,
+        work_from_home_allowance_ack: 'acknowledged',
+        work_hours_per_week: 40,
+        work_schedule: 'full_time',
+        working_hours_exemption: 'no',
+        working_hours_exemption_allowance: null,
+      },
+      external_id: null,
+      onboarding_tasks: {
+        bank_account_details: {
+          status: 'pending',
+          description: 'Bank account used for receiving salary payments.',
+        },
+        administrative_details: {
+          status: 'pending',
+          description: 'Information we need for tax purposes.',
+        },
+        address_details: {
+          status: 'pending',
+          description: 'Primary residence.',
+        },
+        contract_details: {
+          status: 'completed',
+          description:
+            'Employee-specific details for their employment agreement.',
+        },
+        personal_details: {
+          status: 'pending',
+          description: 'Personal details, such as name and date of birth.',
+        },
+        emergency_contact_details: {
+          status: 'pending',
+          description: 'Who should be called in an emergency.',
+        },
+        pricing_plan_details: {
+          status: 'pending',
+          description:
+            'How often Remote will bill employers for management fees.',
+        },
+        billing_address_details: {
+          status: 'pending',
+          description: "Address associated with the employee's bank account.",
+        },
+        employment_document_details: {
+          status: 'pending',
+          description: 'We need some additional documents.',
+        },
+        employment_eligibility: {
+          status: 'pending',
+          description:
+            'We’ll make sure you can work in the country where you live.',
+        },
+      },
+      job_title: 'pm',
+      manager_employment_id: null,
+      manager_id: null,
+      work_email: 'gabriel.garcia@remote.com',
+      pricing_plan_details: null,
+      personal_email: 'ggarciaseco@gmail.com',
+      billing_address_details: null,
+      full_name: 'Gabriel',
+      basic_information: {
+        name: 'Gabriel',
+        email: 'ggarciaseco@gmail.com',
+        provisional_start_date: '2025-05-29',
+        job_title: 'pm',
+        tax_servicing_countries: ['Belarus'],
+        work_email: 'gabriel.garcia@remote.com',
+        has_seniority_date: 'no',
+        tax_job_category: 'engineering_it',
+      },
+      status: 'created',
+      manager: null,
+      provisional_start_date: '2025-05-29',
+      probation_period_end_date: '2025-07-07',
+      created_at: '2025-05-19T08:12:18',
+      manager_email: null,
+      user_status: 'created',
+      country: {
+        code: 'PRT',
+        name: 'Portugal',
+        alpha_2_code: 'PT',
+        supported_json_schemas: [
+          'additional_documents',
+          'administrative_details',
+          'contract_details',
+          'employment_basic_information',
+          'emergency_contact',
+          'address_details',
+        ],
+      },
+      seniority_date: null,
+      user_id: '36081a5d-4e4a-492b-afcd-6d859a98ea9e',
+      short_id: 'DWS1T3',
+      department_id: null,
+      active_contract_id: 'a52001cb-05fa-4b63-b80a-7830c0c664e3',
+      bank_account_details: [],
+      department: null,
+      employment_lifecycle_stage: 'employment_creation',
+      files: [],
+      emergency_contact_details: null,
+      eligible_for_onboarding_cancellation: true,
+      id: '38d8bb00-3d78-4dd7-98f8-bd735e68d9a9',
+      administrative_details: null,
+      updated_at: '2025-05-20T15:44:02',
+      type: 'employee',
+      termination_date: null,
+      address_details: null,
+    },
+  },
+};

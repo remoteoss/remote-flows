@@ -27,6 +27,7 @@ export function BasicInformationStep({
 }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: $TSFixMe) => {
+    console.log('payload', payload);
     try {
       await onSubmit?.(
         onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
@@ -45,13 +46,11 @@ export function BasicInformationStep({
     }
   };
 
+  const initialValues =
+    onboardingBag.stepState.values?.basic_information ||
+    onboardingBag.initialValues.basic_information;
+
   return (
-    <OnboardingForm
-      defaultValues={
-        onboardingBag.stepState.values?.basic_information ||
-        onboardingBag.initialValues.basic_information
-      }
-      onSubmit={handleSubmit}
-    />
+    <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
   );
 }

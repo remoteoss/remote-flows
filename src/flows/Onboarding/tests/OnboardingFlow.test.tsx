@@ -4,7 +4,12 @@ import React from 'react';
 import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 
 import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
@@ -19,6 +24,7 @@ import {
   employmentCreatedResponse,
   employmentUpdatedResponse,
   benefitOffersResponse,
+  employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   fillCheckbox,
@@ -81,8 +87,13 @@ describe('OnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
     } = components;
+
+    if (onboardingBag.isLoading) {
+      return <div data-testid="spinner">Loading...</div>;
+    }
     switch (onboardingBag.stepState.currentStep.name) {
       case 'basic_information':
+        console.log('basic_information', onboardingBag.isSubmitting);
         return (
           <>
             <BasicInformationStep
@@ -474,6 +485,8 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
@@ -485,11 +498,146 @@ describe('OnboardingFlow', () => {
     expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
   });
 
-  it('should submit the entire form and go till the latest step', async () => {
+  it('should submit the basic information step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await screen.findByText(/Step: Basic Information/i);
 
     await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      department: {
+        id: undefined,
+        name: undefined,
+      },
+      email: 'john.doe@gmail.com',
+      has_seniority_date: 'no',
+      job_title: 'Software Engineer',
+      manager: {
+        id: undefined,
+      },
+      name: 'John Doe',
+      provisional_start_date: '2025-05-15',
+      seniority_date: null,
+      tax_job_category: null,
+      tax_servicing_countries: null,
+      work_email: 'john.doe@remote.com',
+    });
+
+    await screen.findByText(/Step: Contract Details/i);
+  });
+
+  it('should retrieve the basic information step based on an employmentId', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+  });
+
+  it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+
+    // First get the input element
+    const personalEmailInput = screen.getByLabelText(/Personal email/i);
+
+    // Clear the existing value
+    await user.clear(personalEmailInput);
+
+    // Then type the new value
+    await user.type(personalEmailInput, 'gabriel@gmail.com');
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      department: {
+        id: undefined,
+        name: undefined,
+      },
+      email: 'gabriel@gmail.com',
+      has_seniority_date: 'no',
+      job_title: employmentResponse.data.employment.job_title,
+      manager: {
+        id: undefined,
+      },
+      name: employmentResponse.data.employment.basic_information.name,
+      provisional_start_date:
+        employmentResponse.data.employment.provisional_start_date,
+      seniority_date: null,
+      tax_job_category:
+        employmentResponse.data.employment.basic_information.tax_job_category,
+      tax_servicing_countries:
+        employmentResponse.data.employment.basic_information
+          .tax_servicing_countries,
+      work_email: employmentResponse.data.employment.work_email,
+    });
+
+    await screen.findByText(/Step: Contract Details/i);
+  });
+
+  it('should fill the second step and go to the third step', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              contract_details: null,
+            },
+          },
+        });
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -502,18 +650,66 @@ describe('OnboardingFlow', () => {
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
-
     nextButton.click();
 
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+    });
+
+    // Get the second call to mockOnSubmit (index 1)
+    const contractDetailsSubmission = mockOnSubmit.mock.calls[1][0];
+
+    // Assert the contract details submission
+    expect(contractDetailsSubmission).toEqual({
+      annual_gross_salary: 5000000,
+      annual_training_hours_ack: 'acknowledged',
+      available_pto: 22,
+      available_pto_type: 'unlimited',
+      bonus_amount: null,
+      bonus_details: null,
+      commissions_ack: null,
+      commissions_details: null,
+      contract_duration: null,
+      contract_duration_type: 'indefinite',
+      contract_end_date: null,
+      equity_compensation: {
+        equity_cliff: undefined,
+        equity_description: undefined,
+        equity_vesting_period: undefined,
+        number_of_stock_options: undefined,
+        offer_equity_compensation: 'no',
+      },
+      experience_level:
+        'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+      has_bonus: 'no',
+      has_commissions: 'no',
+      has_signing_bonus: 'no',
+      maximum_working_hours_regime: null,
+      part_time_salary_confirmation: null,
+      probation_length: null,
+      probation_length_days: 30,
+      role_description:
+        'oorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororo',
+      salary_installments_confirmation: 'acknowledged',
+      signing_bonus_amount: null,
+      signing_bonus_clawback: null,
+      work_address: {
+        address: undefined,
+        address_line_2: undefined,
+        city: undefined,
+        is_home_address: 'yes',
+        postal_code: undefined,
+        work_in_person_days_per_week: undefined,
+      },
+      work_from_home_allowance: null,
+      work_from_home_allowance_ack: 'acknowledged',
+      work_hours_per_week: 40,
+      work_schedule: 'full_time',
+      working_hours_exemption: 'no',
+      working_hours_exemption_allowance: null,
+    });
+
+    // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
-
-    /* await fillBenefits();
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Review/i); */
   });
 });

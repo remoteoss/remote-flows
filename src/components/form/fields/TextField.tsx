@@ -62,6 +62,8 @@ export function TextField({
           );
         }
 
+        console.log({ name, field: field.value });
+
         return (
           <FormItem
             data-field={name}
