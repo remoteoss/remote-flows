@@ -312,6 +312,7 @@ const useUpdateBenefitsOffers = () => {
 export const useOnboarding = ({
   employmentId,
   countryCode,
+  pricingPlanFrequency = 'monthly',
   type,
   options,
 }: OnboardingHookProps) => {
@@ -433,6 +434,9 @@ export const useOnboarding = ({
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
+            pricing_plan_details: {
+              frequency: pricingPlanFrequency,
+            },
           });
         }
       }

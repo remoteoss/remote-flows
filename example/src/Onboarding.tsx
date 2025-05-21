@@ -193,6 +193,7 @@ type OnboardingFormData = {
   countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
+  pricingPlanFrequency?: 'monthly' | 'annually';
 };
 
 const OnboardingWithProps = ({
@@ -215,6 +216,7 @@ export const OnboardingForm = () => {
     countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
+    pricingPlanFrequency: 'monthly',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -263,6 +265,26 @@ export const OnboardingForm = () => {
         >
           <option value="employee">Employee</option>
           <option value="contractor">Contractor</option>
+        </select>
+      </div>
+      <div className="onboarding-form-group">
+        <label htmlFor="type" className="onboarding-form-label">
+          Type:
+        </label>
+        <select
+          id="type"
+          value={formData.type}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              type: e.target.value as 'employee' | 'contractor',
+            }))
+          }
+          required
+          className="onboarding-form-select"
+        >
+          <option value="monthly">Monthly</option>
+          <option value="annualy">Annualy</option>
         </select>
       </div>
       <div className="onboarding-form-group">
