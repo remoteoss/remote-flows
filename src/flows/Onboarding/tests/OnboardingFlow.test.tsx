@@ -25,9 +25,10 @@ import {
   employmentUpdatedResponse,
   benefitOffersResponse,
   employmentResponse,
+  benefitOffersUpdatedResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
-  /* fillCheckbox, */
+  assertRadioValue,
   fillRadio,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
@@ -199,13 +200,13 @@ describe('OnboardingFlow', () => {
         return HttpResponse.json(benefitOffersSchema);
       }),
       http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json({ data: [] });
+        return HttpResponse.json(benefitOffersResponse);
       }),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
       http.put('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
+        return HttpResponse.json(benefitOffersUpdatedResponse);
       }),
       http.patch('*/v1/employments/*', async () => {
         return HttpResponse.json(employmentUpdatedResponse);
@@ -283,175 +284,6 @@ describe('OnboardingFlow', () => {
       );
     }
   }
-
-  /* async function fillContractDetails(
-    values?: Partial<{
-      contractDurationType: boolean;
-      employeeType: string;
-      probationPeriod: string;
-      paidTimeOffPolicy: string;
-      numberOfPTO: string;
-      roleDescription: string;
-      experienceLevel: string;
-      workAddress: string;
-      annualGrossSalary: string;
-      installmentsConfirmation: boolean;
-      workFromHomeAllowance: boolean;
-      trainingRequirementAck: boolean;
-      workOutsideHours: string;
-      signingBonus: string;
-      otherBonus: string;
-      offerComission: string;
-      equityManagement: string;
-    }>,
-  ) {
-    const defaultValues = {
-      contractDurationType: true,
-      employeeType: 'Full-time',
-      probationPeriod: '30',
-      paidTimeOffPolicy: 'Unlimited paid time off',
-      roleDescription: `oorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororoorororororo`,
-      experienceLevel: 'Level 2 - Entry Level',
-      workAddress: "Same as the employee's residential address",
-      annualGrossSalary: '50000',
-      installmentsConfirmation: true,
-      workFromHomeAllowance: true,
-      trainingRequirementAck: true,
-      workOutsideHours: 'No',
-      signingBonus: 'No',
-      otherBonus: 'No',
-      offerComission: 'No',
-      equityManagement: 'No',
-    };
-
-    const newValues = {
-      ...defaultValues,
-      ...values,
-    };
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Type of employee/i)).toBeInTheDocument();
-    });
-
-    if (newValues?.contractDurationType) {
-      await fillCheckbox('Contract duration');
-    }
-
-    if (newValues?.employeeType) {
-      await fillRadio('Type of employee', newValues?.employeeType);
-    }
-
-    if (newValues?.probationPeriod) {
-      const probationPeriod = screen.getByLabelText(
-        /Probation period, in days/i,
-      );
-      await userEvent.type(probationPeriod, newValues?.probationPeriod);
-    }
-
-    if (newValues?.paidTimeOffPolicy) {
-      await fillRadio('Paid time off policy', newValues?.paidTimeOffPolicy);
-    }
-
-    if (newValues?.roleDescription) {
-      const roleDescription = screen.getByLabelText(/Role description/i);
-      await userEvent.type(roleDescription, newValues?.roleDescription);
-    }
-
-    if (newValues?.experienceLevel) {
-      await fillRadio('Experience level', newValues?.experienceLevel);
-    }
-
-    if (newValues?.workAddress) {
-      await fillRadio('Local', newValues?.workAddress);
-    }
-
-    if (newValues?.annualGrossSalary) {
-      const annualGrossSalary = screen.getByRole('textbox', {
-        name: /Annual gross salary/i,
-      });
-      await userEvent.type(annualGrossSalary, newValues?.annualGrossSalary);
-    }
-
-    if (newValues?.installmentsConfirmation) {
-      await fillCheckbox(
-        'I confirm the annual gross salary includes 13th and 14th salaries',
-      );
-    }
-
-    if (newValues?.workFromHomeAllowance) {
-      await fillCheckbox("I acknowledge Portugal's work-from-home allowance");
-    }
-
-    if (newValues?.trainingRequirementAck) {
-      await fillCheckbox(
-        "I acknowledge Portugal's annual training requirement",
-      );
-    }
-
-    if (newValues?.workOutsideHours) {
-      await fillRadio(
-        'Will this employee need to work outside regular work hours?',
-        newValues?.workOutsideHours,
-      );
-    }
-
-    if (newValues?.signingBonus) {
-      await fillRadio('Offer a signing bonus?', newValues?.signingBonus);
-    }
-
-    if (newValues?.otherBonus) {
-      await fillRadio('Offer other bonuses?', newValues?.otherBonus);
-    }
-
-    if (newValues?.offerComission) {
-      await fillRadio('Offer commission?', newValues?.offerComission);
-    }
-
-    if (newValues?.equityManagement) {
-      await fillRadio(
-        'Will this employee receive equity?',
-        newValues?.equityManagement,
-      );
-    }
-  } */
-
-  /* async function fillBenefits(
-    values?: Partial<{
-      mealBenefit: string;
-      healthInsurance: string;
-      lifeInsurance: string;
-    }>,
-  ) {
-    const defaultValues = {
-      mealBenefit: 'Meal Allowance Standard 2025',
-      healthInsurance: 'Basic Health Plan 2025',
-      lifeInsurance: 'Life Insurance 50K',
-    };
-
-    const newValues = {
-      ...defaultValues,
-      ...values,
-    };
-
-    await waitFor(() => {
-      expect(screen.getByText(/Meal Benefit/i)).toBeInTheDocument();
-    });
-
-    await fillRadio(
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
-      newValues?.mealBenefit,
-    );
-
-    await fillRadio(
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
-      newValues?.healthInsurance,
-    );
-
-    await fillRadio(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      newValues?.lifeInsurance,
-    );
-  } */
 
   it('should render first step of the form', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
@@ -699,5 +531,78 @@ describe('OnboardingFlow', () => {
 
     // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
+  });
+
+  it('should go to the third step and check that benefits are initalized correctly', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Only match direct employment requests, not sub-resources
+        if (params?.id?.includes('/')) return HttpResponse.error();
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
+
+    await assertRadioValue(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
+
+    await assertRadioValue(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
+
+    await assertRadioValue(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      'Life Insurance 50K',
+    );
+
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+    });
+
+    const benefitsSubmission = mockOnSubmit.mock.calls[2][0];
+
+    // Assert the contract details submission
+    expect(benefitsSubmission).toEqual({
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        value: 'no',
+      },
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
+        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+      },
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
+        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+      },
+    });
   });
 });

@@ -5438,7 +5438,54 @@ export const employmentUpdatedResponse = {
   },
 };
 
-export const benefitOffersResponse = { data: { status: 'ok' } };
+export const benefitOffersUpdatedResponse = { data: { status: 'ok' } };
+
+export const benefitOffersResponse = {
+  data: [
+    {
+      benefit_group: {
+        name: 'Meal Benefit',
+        filter: null,
+        slug: '0e0293ae-eec6-4d0e-9176-51c46eed435e',
+      },
+      benefit_tier: {
+        name: 'Meal Card Standard 2025',
+        slug: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+        display_cost: '~160 EUR/mo',
+      },
+    },
+    {
+      benefit_group: {
+        name: 'Health Insurance 2025',
+        filter: {
+          name: 'Single',
+          slug: '866c0615-a810-429b-b480-3a4f6ca6157d',
+        },
+        slug: 'baa1ce1d-39ea-4eec-acf0-88fc8a357f54',
+      },
+      benefit_tier: {
+        name: 'Basic Health Plan 2025 (Single)',
+        slug: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+        display_cost: '45.40 EUR/mo',
+      },
+    },
+    {
+      benefit_group: {
+        name: 'Life Insurance 2.0',
+        filter: {
+          name: 'Basic',
+          slug: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        },
+        slug: '072e0edb-bfca-46e8-a449-9eed5cbaba33',
+      },
+      benefit_tier: {
+        name: 'Life Insurance - $50K',
+        slug: '0b097ff7-8b59-49dc-9cba-16543bd6a44c',
+        display_cost: '5.64 USD/mo',
+      },
+    },
+  ],
+};
 
 export const employmentResponse = {
   data: {
