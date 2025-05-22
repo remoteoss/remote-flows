@@ -26,16 +26,25 @@ export function ForcedValueField({
 
   return (
     <div>
-      <p
-        className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
-        dangerouslySetInnerHTML={{ __html: statement.title }}
-      />
-      <p
-        className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-        dangerouslySetInnerHTML={{
-          __html: statement.description || description,
-        }}
-      />
+      {statement ? (
+        <>
+          <p
+            className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
+            dangerouslySetInnerHTML={{ __html: statement?.title }}
+          />
+          <p
+            className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
+            dangerouslySetInnerHTML={{
+              __html: statement?.description,
+            }}
+          />
+        </>
+      ) : (
+        <p
+          className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
+      )}
     </div>
   );
 }
