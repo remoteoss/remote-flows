@@ -452,7 +452,7 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Contract Details/i);
   });
 
-  it('should fill the second step and go to the third step', async () => {
+  it('should fill the contract details step and go to the benefits step', async () => {
     server.use(
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employmentResponse);
