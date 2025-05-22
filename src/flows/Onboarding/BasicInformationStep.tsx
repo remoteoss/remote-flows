@@ -13,7 +13,7 @@ type BasicInformationStepProps = {
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: EmploymentCreationResponse) => void;
+  onSuccess?: (data: EmploymentCreationResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -33,7 +33,7 @@ export function BasicInformationStep({
       );
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        onSuccess?.(response?.data as EmploymentCreationResponse);
+        await onSuccess?.(response?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }
