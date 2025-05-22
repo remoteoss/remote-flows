@@ -5,7 +5,7 @@ type ForcedValueFieldProps = {
   name: string;
   value: string;
   description: string;
-  statement: {
+  statement?: {
     title: string;
     description: string;
   };
