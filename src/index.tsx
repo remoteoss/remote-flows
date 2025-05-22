@@ -24,6 +24,7 @@ export * from '@/src/common/hooks';
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
+export type { Components } from '@/src/types/remoteFlows';
 
 export {
   ContractAmendmentAutomatableResponse,
@@ -32,4 +33,6 @@ export {
   SuccessResponse,
   EmploymentCreationResponse,
   EmploymentResponse,
+  CostCalculatorEmployment,
+  Currency,
 } from './client/types.gen';
