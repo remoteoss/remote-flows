@@ -360,9 +360,6 @@ describe('OnboardingFlow', () => {
       },
       name: 'John Doe',
       provisional_start_date: '2025-05-15',
-      seniority_date: null,
-      tax_job_category: null,
-      tax_servicing_countries: null,
       work_email: 'john.doe@remote.com',
     });
 
@@ -440,7 +437,6 @@ describe('OnboardingFlow', () => {
       name: employmentResponse.data.employment.basic_information.name,
       provisional_start_date:
         employmentResponse.data.employment.provisional_start_date,
-      seniority_date: null,
       tax_job_category:
         employmentResponse.data.employment.basic_information.tax_job_category,
       tax_servicing_countries:
@@ -488,18 +484,8 @@ describe('OnboardingFlow', () => {
       annual_training_hours_ack: 'acknowledged',
       available_pto: 22,
       available_pto_type: 'unlimited',
-      bonus_amount: null,
-      bonus_details: null,
-      commissions_ack: null,
-      commissions_details: null,
-      contract_duration: null,
       contract_duration_type: 'indefinite',
-      contract_end_date: null,
       equity_compensation: {
-        equity_cliff: undefined,
-        equity_description: undefined,
-        equity_vesting_period: undefined,
-        number_of_stock_options: undefined,
         offer_equity_compensation: 'no',
       },
       experience_level:
@@ -507,29 +493,17 @@ describe('OnboardingFlow', () => {
       has_bonus: 'no',
       has_commissions: 'no',
       has_signing_bonus: 'no',
-      maximum_working_hours_regime: null,
-      part_time_salary_confirmation: null,
-      probation_length: null,
       probation_length_days: 40,
       role_description:
         employmentResponse.data.employment.contract_details.role_description,
       salary_installments_confirmation: 'acknowledged',
-      signing_bonus_amount: null,
-      signing_bonus_clawback: null,
       work_address: {
-        address: undefined,
-        address_line_2: undefined,
-        city: undefined,
         is_home_address: 'yes',
-        postal_code: undefined,
-        work_in_person_days_per_week: undefined,
       },
-      work_from_home_allowance: null,
       work_from_home_allowance_ack: 'acknowledged',
       work_hours_per_week: 40,
       work_schedule: 'full_time',
       working_hours_exemption: 'no',
-      working_hours_exemption_allowance: null,
     });
 
     // Verify we move to the next step (Benefits)
