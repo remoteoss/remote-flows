@@ -73,7 +73,7 @@ export function RadioGroupField({
             <FormLabel>{label}</FormLabel>
             <FormControl>
               <RadioGroup
-                aria-label={label}
+                aria-label={label || name}
                 onValueChange={(value: string) => {
                   field.onChange(value);
                   onChange?.(value);
