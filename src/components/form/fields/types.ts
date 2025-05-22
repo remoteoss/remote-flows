@@ -10,4 +10,5 @@ export type SupportedTypes =
   | 'textarea'
   | 'money'
   | 'file'
-  | 'countries';
+  | 'countries'
+  | 'hidden';
