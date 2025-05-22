@@ -5526,7 +5526,7 @@ export const employmentResponse = {
         probation_length: null,
         probation_length_days: 40,
         role_description:
-          '.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk',
+          'A Product Manager is responsible for guiding the development and success of a product from concept to launch. They act as the bridge between business, design, and engineering teams, ensuring alignment with user needs and company goals. Product Managers conduct market research, define product requirements, prioritize features, and manage the product roadmap. They communicate clearly with stakeholders, analyze performance data, and make decisions to optimize user experience and business outcomes. Strategic thinking, problem-solving, and leadership are key traits. A Product Manager must balance customer desires, technical feasibility, and business viability to deliver valuable, innovative products in a competitive market.',
         salary_installments_confirmation: 'acknowledged',
         signing_bonus_amount: null,
         signing_bonus_clawback: null,

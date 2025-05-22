@@ -512,7 +512,7 @@ describe('OnboardingFlow', () => {
       probation_length: null,
       probation_length_days: 40,
       role_description:
-        '.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk.asdsadksmlsdljsdkdskljdslkjsdkldskjsdljk',
+        employmentResponse.data.employment.contract_details.role_description,
       salary_installments_confirmation: 'acknowledged',
       signing_bonus_amount: null,
       signing_bonus_clawback: null,
