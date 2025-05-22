@@ -63,7 +63,9 @@ export function ContractAmendmentConfirmationForm({
         contractAmendmentResult.error as PostCreateContractAmendmentError,
       );
     } else {
-      onSuccess?.(contractAmendmentResult.data as ContractAmendmentResponse);
+      await onSuccess?.(
+        contractAmendmentResult.data as ContractAmendmentResponse,
+      );
     }
   };
 

@@ -33,7 +33,7 @@ export function BasicInformationStep({
       );
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        onSuccess?.(response?.data as EmploymentCreationResponse);
+        await onSuccess?.(response?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }

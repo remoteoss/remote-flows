@@ -128,7 +128,7 @@ export function ContractAmendmentForm({
     if (contractAmendmentResult.error) {
       onError?.(contractAmendmentResult.error);
     } else {
-      onSuccess?.(
+      await onSuccess?.(
         contractAmendmentResult.data as ContractAmendmentAutomatableResponse,
       );
     }

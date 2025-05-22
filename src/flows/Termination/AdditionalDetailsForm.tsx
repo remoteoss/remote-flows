@@ -43,7 +43,7 @@ export function AdditionalDetailsForm({
       onError?.(terminationResult.error);
     } else {
       if (terminationResult?.data) {
-        onSuccess?.(terminationResult.data as OffboardingResponse);
+        await onSuccess?.(terminationResult.data as OffboardingResponse);
       }
     }
   };

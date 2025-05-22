@@ -38,7 +38,7 @@ export function OnboardingInvite({
         employment_id: onboardingBag.employmentId,
       });
       if (response.data) {
-        onSuccess?.(response.data as SuccessResponse);
+        await onSuccess?.(response.data as SuccessResponse);
         return;
       }
       if (response.error) {

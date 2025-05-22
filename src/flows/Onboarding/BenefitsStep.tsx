@@ -50,7 +50,7 @@ export function BenefitsStep({
       await onSubmit?.(payload as BenefitsFormPayload);
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        onSuccess?.(response.data as SuccessResponse);
+        await onSuccess?.(response.data as SuccessResponse);
         onboardingBag?.next();
         return;
       }
