@@ -4,7 +4,12 @@ import React from 'react';
 import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 
 import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
@@ -13,20 +18,21 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  BasicInformationFormPayload,
-  BenefitsFormPayload,
-  ContractDetailsFormPayload,
-} from '@/src/flows/Onboarding/types';
-import {
-  EmploymentCreationResponse,
-  EmploymentResponse,
-  SuccessResponse,
-} from '@/src/client';
-import {
   basicInformationSchema,
+  contractDetailsSchema,
+  benefitOffersSchema,
   employmentCreatedResponse,
+  employmentUpdatedResponse,
+  benefitOffersResponse,
+  employmentResponse,
+  benefitOffersUpdatedResponse,
+  inviteResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { fillRadio, selectDayInCalendar } from '@/src/tests/testHelpers';
+import {
+  assertRadioValue,
+  fillRadio,
+  selectDayInCalendar,
+} from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
 
 const queryClient = new QueryClient();
@@ -37,8 +43,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
   </QueryClientProvider>
 );
 
-const mockOnSubmitStep = vi.fn();
-const mockOnSubmitForm = vi.fn();
+const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
@@ -84,18 +89,18 @@ describe('OnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
     } = components;
+
+    if (onboardingBag.isLoading) {
+      return <div data-testid="spinner">Loading...</div>;
+    }
     switch (onboardingBag.stepState.currentStep.name) {
       case 'basic_information':
         return (
           <>
             <BasicInformationStep
-              onSubmit={(payload: BasicInformationFormPayload) =>
-                console.log('payload', payload)
-              }
-              onSuccess={(data: EmploymentCreationResponse) =>
-                console.log('data', data)
-              }
-              onError={(error: Error) => console.log('error', error)}
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
             />
             <SubmitButton disabled={onboardingBag.isSubmitting}>
               Next Step
@@ -106,13 +111,9 @@ describe('OnboardingFlow', () => {
         return (
           <>
             <ContractDetailsStep
-              onSubmit={(payload: ContractDetailsFormPayload) =>
-                console.log('payload', payload)
-              }
-              onSuccess={(data: EmploymentResponse) =>
-                console.log('data', data)
-              }
-              onError={(error: Error) => console.log('error', error)}
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
             />
             <BackButton>Back</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
@@ -126,11 +127,9 @@ describe('OnboardingFlow', () => {
           <>
             <BenefitsStep
               components={{}}
-              onSubmit={(payload: BenefitsFormPayload) =>
-                console.log('payload', payload)
-              }
-              onError={(error: Error) => console.log('error', error)}
-              onSuccess={(data: SuccessResponse) => console.log('data', data)}
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
             />
             <BackButton>Back</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
@@ -152,7 +151,9 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite>Invite Employee</OnboardingInvite>
+            <OnboardingInvite onSuccess={mockOnSuccess}>
+              Invite Employee
+            </OnboardingInvite>
           </div>
         );
     }
@@ -177,10 +178,6 @@ describe('OnboardingFlow', () => {
           <MultiStepForm
             onboardingBag={onboardingBag}
             components={components}
-            onSubmitStep={mockOnSubmitStep}
-            onSubmitForm={mockOnSubmitForm}
-            onError={mockOnError}
-            onSuccess={mockOnSuccess}
           />
         </>
       );
@@ -199,8 +196,23 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
-      http.post('*/v1/employments', async () => {
+      http.get('*/v1/countries/PRT/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
+      }),
+      http.get('*/v1/employments/*/benefit-offers/schema', () => {
+        return HttpResponse.json(benefitOffersSchema);
+      }),
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json(benefitOffersResponse);
+      }),
+      http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
+      }),
+      http.put('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json(benefitOffersUpdatedResponse);
+      }),
+      http.patch('*/v1/employments/*', async () => {
+        return HttpResponse.json(employmentUpdatedResponse);
       }),
     );
   });
@@ -307,6 +319,8 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
@@ -316,5 +330,305 @@ describe('OnboardingFlow', () => {
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+  });
+
+  it('should submit the basic information step', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      department: {
+        id: undefined,
+        name: undefined,
+      },
+      email: 'john.doe@gmail.com',
+      has_seniority_date: 'no',
+      job_title: 'Software Engineer',
+      manager: {
+        id: undefined,
+      },
+      name: 'John Doe',
+      provisional_start_date: '2025-05-15',
+      work_email: 'john.doe@remote.com',
+    });
+
+    await screen.findByText(/Step: Contract Details/i);
+  });
+
+  it('should retrieve the basic information step based on an employmentId', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+  });
+
+  it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+
+    // First get the input element
+    const personalEmailInput = screen.getByLabelText(/Personal email/i);
+
+    // Clear the existing value
+    await user.clear(personalEmailInput);
+
+    // Then type the new value
+    await user.type(personalEmailInput, 'gabriel@gmail.com');
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      department: {
+        id: undefined,
+        name: undefined,
+      },
+      email: 'gabriel@gmail.com',
+      has_seniority_date: 'no',
+      job_title: employmentResponse.data.employment.job_title,
+      manager: {
+        id: undefined,
+      },
+      name: employmentResponse.data.employment.basic_information.name,
+      provisional_start_date:
+        employmentResponse.data.employment.provisional_start_date,
+      tax_job_category:
+        employmentResponse.data.employment.basic_information.tax_job_category,
+      tax_servicing_countries:
+        employmentResponse.data.employment.basic_information
+          .tax_servicing_countries,
+      work_email: employmentResponse.data.employment.work_email,
+    });
+
+    await screen.findByText(/Step: Contract Details/i);
+  });
+
+  it('should fill the contract details step and go to the benefits step', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+    });
+
+    // Get the second call to mockOnSubmit (index 1)
+    const contractDetailsSubmission = mockOnSubmit.mock.calls[1][0];
+
+    // Assert the contract details submission
+    expect(contractDetailsSubmission).toEqual({
+      annual_gross_salary: 2000000,
+      annual_training_hours_ack: 'acknowledged',
+      available_pto: 22,
+      available_pto_type: 'unlimited',
+      contract_duration_type: 'indefinite',
+      equity_compensation: {
+        offer_equity_compensation: 'no',
+      },
+      experience_level:
+        'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+      has_bonus: 'no',
+      has_commissions: 'no',
+      has_signing_bonus: 'no',
+      probation_length_days: 40,
+      role_description:
+        employmentResponse.data.employment.contract_details.role_description,
+      salary_installments_confirmation: 'acknowledged',
+      work_address: {
+        is_home_address: 'yes',
+      },
+      work_from_home_allowance_ack: 'acknowledged',
+      work_hours_per_week: 40,
+      work_schedule: 'full_time',
+      working_hours_exemption: 'no',
+    });
+
+    // Verify we move to the next step (Benefits)
+    await screen.findByText(/Step: Benefits/i);
+  });
+
+  it('should go to the third step and check that benefits are initalized correctly', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Only match direct employment requests, not sub-resources
+        if (params?.id?.includes('/')) return HttpResponse.error();
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
+
+    await assertRadioValue(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
+
+    await assertRadioValue(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
+
+    await assertRadioValue(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      'Life Insurance 50K',
+    );
+
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+    });
+
+    const benefitsSubmission = mockOnSubmit.mock.calls[2][0];
+
+    // Assert the contract details submission
+    expect(benefitsSubmission).toEqual({
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        value: 'no',
+      },
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
+        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+      },
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
+        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+      },
+    });
+  });
+
+  it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Only match direct employment requests, not sub-resources
+        if (params?.id?.includes('/')) return HttpResponse.error();
+        return HttpResponse.json(employmentResponse);
+      }),
+      http.post('*/v1/employments/*/invite', () => {
+        return HttpResponse.json(inviteResponse);
+      }),
+    );
+    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      wrapper,
+    });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Review/i);
+
+    const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
+    expect(inviteEmployeeButton).toBeInTheDocument();
+
+    inviteEmployeeButton.click();
+
+    // it should be called
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+    });
+
+    expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 });

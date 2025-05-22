@@ -13,7 +13,7 @@ type BasicInformationStepProps = {
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: EmploymentCreationResponse) => void;
+  onSuccess?: (data: EmploymentCreationResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -32,8 +32,8 @@ export function BasicInformationStep({
         onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
       );
       const response = await onboardingBag.onSubmit(payload);
-      if (response?.data?.data) {
-        onSuccess?.(response?.data?.data as EmploymentCreationResponse);
+      if (response?.data) {
+        await onSuccess?.(response?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }
@@ -45,13 +45,11 @@ export function BasicInformationStep({
     }
   };
 
+  const initialValues =
+    onboardingBag.stepState.values?.basic_information ||
+    onboardingBag.initialValues.basic_information;
+
   return (
-    <OnboardingForm
-      defaultValues={
-        onboardingBag.stepState.values?.basic_information ||
-        onboardingBag.initialValues.basic_information
-      }
-      onSubmit={handleSubmit}
-    />
+    <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
   );
 }
