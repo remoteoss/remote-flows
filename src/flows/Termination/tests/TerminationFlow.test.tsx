@@ -442,22 +442,13 @@ describe('TerminationFlow', () => {
     expect(mockOnSubmitStep).toHaveBeenCalledWith(
       {
         acknowledge_termination_procedure: false,
-        additional_comments: null,
-        agrees_to_pto_amount: null,
-        agrees_to_pto_amount_notes: null,
         confidential: 'no',
         customer_informed_employee: 'yes',
         customer_informed_employee_date: dynamicDate,
         customer_informed_employee_description: 'Whatever text',
         personal_email: 'ze@remote.com',
-        proposed_termination_date: null,
-        reason_description: null,
         risk_assessment_reasons: [],
-        termination_reason: undefined,
         termination_reason_files: [],
-        timesheet_file: undefined,
-        will_challenge_termination: null,
-        will_challenge_termination_description: null,
       },
       'employee_communication',
     );
@@ -476,9 +467,7 @@ describe('TerminationFlow', () => {
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
         acknowledge_termination_procedure: false,
-        additional_comments: null,
-        agrees_to_pto_amount: null,
-        agrees_to_pto_amount_notes: null,
+
         confidential: 'no',
         customer_informed_employee: 'yes',
         customer_informed_employee_date: '2025-05-15',
@@ -489,9 +478,7 @@ describe('TerminationFlow', () => {
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
         termination_reason_files: [],
-        timesheet_file: undefined,
         will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
       },
       'termination_details',
     ]);
@@ -512,9 +499,7 @@ describe('TerminationFlow', () => {
     expect(mockOnSubmitStep.mock.calls[2]).toEqual([
       {
         acknowledge_termination_procedure: false,
-        additional_comments: null,
         agrees_to_pto_amount: 'yes',
-        agrees_to_pto_amount_notes: null,
         confidential: 'no',
         customer_informed_employee: 'yes',
         customer_informed_employee_date: '2025-05-15',
@@ -525,9 +510,7 @@ describe('TerminationFlow', () => {
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
         termination_reason_files: [],
-        timesheet_file: undefined,
         will_challenge_termination: 'no',
-        will_challenge_termination_description: null,
       },
       'paid_time_off',
     ]);
@@ -545,9 +528,7 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitForm).toHaveBeenCalledWith({
       acknowledge_termination_procedure: true,
-      additional_comments: null,
       agrees_to_pto_amount: 'yes',
-      agrees_to_pto_amount_notes: null,
       confidential: 'no',
       customer_informed_employee: 'yes',
       customer_informed_employee_date: '2025-05-15',
@@ -558,9 +539,7 @@ describe('TerminationFlow', () => {
       risk_assessment_reasons: ['sick_leave'],
       termination_reason: 'gross_misconduct',
       termination_reason_files: [],
-      timesheet_file: undefined,
       will_challenge_termination: 'no',
-      will_challenge_termination_description: null,
     });
 
     await waitFor(() => {

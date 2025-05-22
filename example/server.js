@@ -50,6 +50,8 @@ const startServer = async () => {
     server: { middlewareMode: true },
   });
 
+  app.use(express.json());
+
   // API route example
   app.get('/api/token', getToken);
 
@@ -57,6 +59,7 @@ const startServer = async () => {
   app.use('/v1', async (req, res) => {
     try {
       const targetUrl = `${process.env.REMOTE_GATEWAY}${req.originalUrl}`;
+
       const response = await axios({
         method: req.method,
         url: targetUrl,

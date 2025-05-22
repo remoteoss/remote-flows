@@ -114,31 +114,6 @@ const trimStringValues = (values: Record<string, any>) =>
     {},
   );
 
-function convertEmptyStringsToNull(values: Record<string, any>) {
-  const result: Record<string, any> = {};
-
-  Object.entries(values).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      // If the value is an array, recursively process each element
-      result[key] = value.map((item) =>
-        typeof item === 'object' && item !== null
-          ? convertEmptyStringsToNull(item)
-          : item === ''
-            ? null
-            : item,
-      );
-    } else if (typeof value === 'object' && value !== null) {
-      // If the value is an object, recursively process it
-      result[key] = convertEmptyStringsToNull(value);
-    } else {
-      // Otherwise, convert empty strings to null or keep the value as is
-      result[key] = value === '' ? null : value;
-    }
-  });
-
-  return result;
-}
-
 /**
  * Given a list of form values, modify the ones that are readOnly,
  * based on their field config, by adding its defaultValue.
@@ -208,41 +183,6 @@ function extractFieldsetFieldsValues(
 
 export const fieldTypesTransformations: Record<string, any> = {
   [supportedTypes.COUNTRIES]: {
-    /**
-     *
-     * @param {Object} field - Field config that must contain field.countries
-     * @param {String[]|String} value - Selected country
-     *  - Current data (multi): an array of country names - eg: ['Peru', 'Germany']
-     *  - Legacy data (multi): a string of country names - eg: "Peru,Germany"
-     * @returns {String[]} Eg [{ label: 'PER', name: 'Peru' }]
-     */
-    transformValueFromAPI: (field: any) => (value: string) => {
-      if (!field.multiple) {
-        return value ?? '';
-      }
-
-      let countryNames;
-
-      if (typeof value === 'string') {
-        // support legacy data (when the fields were open text fields before)
-        countryNames = value.split(',');
-      } else {
-        countryNames = value || [];
-      }
-
-      const countryValues = countryNames.map(
-        // Return { name: countryName } as fallback to legacy data
-        // The "name" is used at react-select, to connect to the country flag.
-        (countryName) =>
-          field.countries?.find?.(
-            (country: any) => 'name' in country && country.name === countryName,
-          ) || {
-            name: countryName,
-          },
-      );
-
-      return countryValues;
-    },
     /**
      * @param {String[] | { name: String }[]} value
      *  - Excepted: array of strings.
@@ -537,6 +477,16 @@ function excludeValuesInvisible(
   return valuesAsked;
 }
 
+function removeEmptyValues<T extends Record<string, any>>(
+  obj: T,
+): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([, value]) => value !== undefined && value !== null && value !== '',
+    ),
+  );
+}
+
 export function parseSubmitValues(
   formValues: Record<string, any>,
   fields: any[],
@@ -547,9 +497,11 @@ export function parseSubmitValues(
     : excludeValuesInvisible(formValues, fields);
   const convertedFormValues = parseFormValuesToAPI(visibleFormValues, fields);
   const formValuesWithTrimmedStrings = trimStringValues(convertedFormValues);
-  const formValuesWithUndefined = convertEmptyStringsToNull(
+
+  const formValuesWithUndefined = removeEmptyValues(
     formValuesWithTrimmedStrings,
   );
+
   const valuesWithReadOnly = prefillReadOnlyFields(
     formValuesWithUndefined,
     fields,
@@ -704,6 +656,15 @@ export function getInitialValues(
               defaultFieldValues,
             );
             Object.assign(initialValues, subFieldValues);
+          }
+          break;
+        }
+        default: {
+          if (!initialValues[field.name]) {
+            initialValues[field.name] = getInitialDefaultValue(
+              defaultFieldValues,
+              field,
+            );
           }
           break;
         }

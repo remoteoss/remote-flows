@@ -29,8 +29,8 @@ import { Termination } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { OnboardingEOR } from './Onboarding';
-import './App.css';
+import { OnboardingForm } from './Onboarding';
+import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -962,8 +962,22 @@ const demoStructure = [
     id: 'onboarding',
     title: 'Onboarding',
     description: 'Onboarding flow of a new employee',
-    component: OnboardingEOR,
-    sourceCode: '',
+    children: [
+      {
+        id: 'onboarding-basic',
+        title: 'Basic',
+        description: 'Standard onboarding flow',
+        component: OnboardingForm,
+        sourceCode: '',
+      },
+      {
+        id: 'onboarding-custom-benefits',
+        title: 'Custom Benefits',
+        description: 'Onboarding flow with custom benefits step UI',
+        component: OnboardingCustomBenefitsForm,
+        sourceCode: '',
+      },
+    ],
   },
 ];
 

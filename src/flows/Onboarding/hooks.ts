@@ -24,7 +24,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Onboarding/utils';
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
@@ -178,12 +181,16 @@ const useJSONSchemaForm = ({
       return response;
     },
     select: ({ data }) => {
-      const { schema } = modify(data.data || {}, options?.jsfModify || {});
+      let jsfSchema = data?.data || {};
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
       const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const employmentFieldData = (employment?.[employmentField] ||
         {}) as Record<string, unknown>;
-      return createHeadlessForm(schema, {
+      return createHeadlessForm(jsfSchema, {
         initialValues: hasFieldValues ? fieldValues : employmentFieldData,
       });
     },
@@ -227,12 +234,14 @@ const useBenefitOffersSchema = (
       return response;
     },
     select: ({ data }) => {
-      const { schema } = modify(
-        data.data?.schema || {},
-        options?.jsfModify || {},
-      );
+      let jsfSchema = data?.data?.schema || {};
+
+      if (options && options.jsfModify) {
+        const { schema } = modify(jsfSchema, options.jsfModify);
+        jsfSchema = schema;
+      }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(schema, {
+      const result = createHeadlessForm(jsfSchema, {
         initialValues: hasFieldValues ? fieldValues : {},
       });
       return result;
@@ -362,8 +371,6 @@ export const useOnboarding = ({
     ...fieldValues,
   };
 
-  console.log({ benefitOffers });
-
   const initialValuesBenefitOffers =
     stepState.currentStep.name === 'benefits'
       ? mergeWith({}, benefitOffers, benefitsFormValues)
@@ -378,12 +385,41 @@ export const useOnboarding = ({
     options,
   );
 
+  const stepFields: Record<keyof typeof STEPS, Fields> = {
+    basic_information: onboardingForm?.fields || [],
+    contract_details: onboardingForm?.fields || [],
+    benefits: benefitOffersSchema?.fields || [],
+    review: [],
+  };
+
+  const initialValues = {
+    basic_information: getInitialValues(
+      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      employment?.data?.data.employment?.basic_information || {},
+    ),
+    contract_details: getInitialValues(
+      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      employment?.data?.data.employment?.contract_details || {},
+    ),
+    benefits: initialValuesBenefitOffers || {},
+  };
+
+  function parseFormValues(values: FieldValues) {
+    if (onboardingForm) {
+      return parseJSFToValidate(values, onboardingForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+    return {};
+  }
+
   async function onSubmit(values: FieldValues) {
+    const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'basic_information': {
         if (!internalEmploymentId) {
           const payload: EmploymentCreateParams = {
-            basic_information: values,
+            basic_information: parsedValues,
             type: type,
             country_code: countryCode,
           };
@@ -401,14 +437,14 @@ export const useOnboarding = ({
         } else {
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
-            basic_information: values,
+            basic_information: parsedValues,
           });
         }
       }
 
       case 'contract_details': {
         const payload: EmploymentFullParams = {
-          contract_details: values,
+          contract_details: parsedValues,
         };
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
@@ -433,20 +469,6 @@ export const useOnboarding = ({
   function next() {
     nextStep();
   }
-
-  const initialValues = {
-    basic_information:
-      employment?.data?.data.employment?.basic_information || {},
-    contract_details: employment?.data?.data.employment?.contract_details || {},
-    benefits: initialValuesBenefitOffers || {},
-  };
-
-  const stepFields: Record<keyof typeof STEPS, Fields> = {
-    basic_information: onboardingForm?.fields || [],
-    contract_details: onboardingForm?.fields || [],
-    benefits: benefitOffersSchema?.fields || [],
-    review: [],
-  };
 
   return {
     /**
@@ -512,14 +534,7 @@ export const useOnboarding = ({
      * @param values - Form values to parse
      * @returns Parsed form values
      */
-    parseFormValues: (values: Record<string, unknown>) => {
-      if (onboardingForm) {
-        return parseJSFToValidate(values, onboardingForm?.fields, {
-          isPartialValidation: true,
-        });
-      }
-      return null;
-    },
+    parseFormValues,
 
     /**
      * Function to handle form submission

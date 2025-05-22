@@ -78,8 +78,12 @@ const useTerminationSchema = ({
       return schema[step as keyof typeof schema] ?? defaultSchema;
     },
     select: ({ data }) => {
-      const { schema } = modify(data.schema, jsfModify || {});
-      const form = createHeadlessForm(schema || {}, {
+      let jsfSchema = data?.schema || {};
+      if (jsfModify) {
+        const { schema } = modify(jsfSchema, jsfModify);
+        jsfSchema = schema;
+      }
+      const form = createHeadlessForm(jsfSchema || {}, {
         initialValues: formValues || {},
       });
       return form;
