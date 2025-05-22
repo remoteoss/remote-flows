@@ -17,7 +17,7 @@ type ContractAmendmentConfirmationFormProps = {
    * @param values
    * @returns
    */
-  onSubmit?: (values: FieldValues) => Promise<void>;
+  onSubmit?: (values: FieldValues) => void | Promise<void>;
   /**
    * Callback function to be called when the contract amendment fails.
    * @param error
@@ -29,7 +29,7 @@ type ContractAmendmentConfirmationFormProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: ContractAmendmentResponse) => void;
+  onSuccess?: (data: ContractAmendmentResponse) => void | Promise<void>;
 };
 
 export function ContractAmendmentConfirmationForm({

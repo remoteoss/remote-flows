@@ -19,7 +19,7 @@ type ContractAmendmentFormProps = {
    * @param values
    * @returns
    */
-  onSubmit?: (values: FieldValues) => Promise<void>;
+  onSubmit?: (values: FieldValues) => void | Promise<void>;
   /**
    * Callback function to be called when the contract amendment fails.
    * @param error
@@ -36,7 +36,9 @@ type ContractAmendmentFormProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: ContractAmendmentAutomatableResponse) => void;
+  onSuccess?: (
+    data: ContractAmendmentAutomatableResponse,
+  ) => void | Promise<void>;
 };
 
 const commonFields = [

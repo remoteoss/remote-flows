@@ -29,7 +29,7 @@ type BenefitsStepProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: SuccessResponse) => void;
+  onSuccess?: (data: SuccessResponse) => void | Promise<void>;
 };
 
 export function BenefitsStep({

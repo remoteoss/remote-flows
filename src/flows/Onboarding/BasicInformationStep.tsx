@@ -13,7 +13,7 @@ type BasicInformationStepProps = {
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: EmploymentCreationResponse) => void;
+  onSuccess?: (data: EmploymentCreationResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
