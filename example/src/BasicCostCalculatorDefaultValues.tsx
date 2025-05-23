@@ -48,10 +48,17 @@ export function BasicCostCalculatorWithDefaultValues() {
                 onError={(error) => console.error({ error })}
                 onSuccess={(response) => console.log({ response })}
               />
-              <CostCalculatorSubmitButton>
-                Get estimate
-              </CostCalculatorSubmitButton>
-              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+              <div className="buttons-container">
+                <CostCalculatorResetButton className="reset-button">
+                  Reset
+                </CostCalculatorResetButton>
+                <CostCalculatorSubmitButton
+                  className="submit-button"
+                  disabled={props.isSubmitting}
+                >
+                  Get estimate
+                </CostCalculatorSubmitButton>
+              </div>
             </div>
           );
         }}
