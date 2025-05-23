@@ -49,7 +49,10 @@ export function BasicCostCalculator() {
                 onSuccess={(response) => console.log({ response })}
               />
               <div className="buttons-container">
-                <CostCalculatorResetButton className="reset-button">
+                <CostCalculatorResetButton
+                  className="reset-button"
+                  onClick={onReset}
+                >
                   Reset
                 </CostCalculatorResetButton>
                 <CostCalculatorSubmitButton
