@@ -79,9 +79,9 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onError={(error: Error) => setApiError(error.message)}
           />
           {apiError && <p className="error">{apiError}</p>}
-          <div className="onboarding-basic-information__buttons">
+          <div className="buttons-container">
             <SubmitButton
-              type="submit"
+              className="submit-button"
               disabled={onboardingBag.isSubmitting}
               onClick={() => setApiError(null)}
             >
@@ -101,16 +101,15 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onError={(error: Error) => setApiError(error.message)}
           />
           {apiError && <p className="error">{apiError}</p>}
-          <div className="onboarding-contract-details__buttons">
+          <div className="buttons-container">
             <BackButton
-              type="submit"
               className="back-button"
               onClick={() => setApiError(null)}
             >
               Previous Step
             </BackButton>
             <SubmitButton
-              type="submit"
+              className="submit-button"
               onClick={() => setApiError(null)}
               disabled={onboardingBag.isSubmitting}
             >
@@ -131,17 +130,16 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
           {apiError && <p className="error">{apiError}</p>}
-          <div className="onboarding-benefits__buttons">
+          <div className="buttons-container">
             <BackButton
               className="back-button"
               onClick={() => setApiError(null)}
-              type="submit"
             >
               Previous Step
             </BackButton>
             <SubmitButton
               onClick={() => setApiError(null)}
-              type="submit"
+              className="submit-button"
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -162,15 +160,17 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           />
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-          <div className="onboarding-review__buttons">
+          <div className="buttons-container">
             <BackButton
               className="back-button"
               onClick={() => setApiError(null)}
-              type="submit"
             >
               Back
             </BackButton>
-            <OnboardingInvite onClick={() => setApiError(null)} type="submit">
+            <OnboardingInvite
+              className="submit-button"
+              onClick={() => setApiError(null)}
+            >
               Invite Employee
             </OnboardingInvite>
           </div>

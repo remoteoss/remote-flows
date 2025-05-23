@@ -12,6 +12,7 @@ import {
   RemoteFlows,
   useCostCalculatorEstimationPdf,
 } from '@remoteoss/remote-flows';
+import Flag from 'react-flagpack';
 import { useState } from 'react';
 import './App.css';
 
@@ -68,18 +69,37 @@ function CostCalculatorFormDemo() {
                   setEstimations(response);
                 }}
               />
-              <CostCalculatorSubmitButton>
-                Get estimate
-              </CostCalculatorSubmitButton>
-              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+              <div className="buttons-container">
+                <CostCalculatorResetButton className="reset-button">
+                  Reset
+                </CostCalculatorResetButton>
+                <CostCalculatorSubmitButton
+                  className="submit-button"
+                  disabled={props.isSubmitting}
+                >
+                  Get estimate
+                </CostCalculatorSubmitButton>
+              </div>
             </div>
           );
         }}
       />
       {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <div>
+          <div className="mt-4 mb-2 flex gap-2">
+            <Flag
+              code={estimations.data.employments?.[0].country.alpha_2_code}
+            />
+            <label className="text-md font-bold">
+              {estimations.data.employments?.[0].country.name}
+            </label>
+          </div>
+          <CostCalculatorResults employmentData={estimations.data} />
+          <button className="submit-button" onClick={handleExportPdf}>
+            Export as PDF
+          </button>
+        </div>
       )}
-      {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
