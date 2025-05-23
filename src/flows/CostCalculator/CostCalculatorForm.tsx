@@ -40,7 +40,7 @@ export function CostCalculatorForm({
       onError?.(costCalculatorResults.error);
     } else {
       if (costCalculatorResults?.data) {
-        onSuccess?.(costCalculatorResults?.data);
+        await onSuccess?.(costCalculatorResults?.data);
       }
     }
   };

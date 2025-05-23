@@ -29,7 +29,7 @@ type BenefitsStepProps = {
    * @param data
    * @returns
    */
-  onSuccess?: (data: SuccessResponse) => void;
+  onSuccess?: (data: SuccessResponse) => void | Promise<void>;
 };
 
 export function BenefitsStep({
@@ -50,7 +50,7 @@ export function BenefitsStep({
       await onSubmit?.(payload as BenefitsFormPayload);
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        onSuccess?.(response.data as SuccessResponse);
+        await onSuccess?.(response.data as SuccessResponse);
         onboardingBag?.next();
         return;
       }

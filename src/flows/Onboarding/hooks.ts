@@ -438,6 +438,9 @@ export const useOnboarding = ({
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
+            pricing_plan_details: {
+              frequency: 'monthly',
+            },
           });
         }
       }

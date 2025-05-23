@@ -7,9 +7,9 @@ import { useOnboardingContext } from './context';
 
 type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
-    onSuccess?: (data: SuccessResponse) => void;
+    onSuccess?: (data: SuccessResponse) => void | Promise<void>;
     onError?: (error: unknown) => void;
-    onSubmit?: () => void;
+    onSubmit?: () => void | Promise<void>;
   }
 >;
 
@@ -37,8 +37,8 @@ export function OnboardingInvite({
       const response = await employmentInviteMutationAsync({
         employment_id: onboardingBag.employmentId,
       });
-      if (response.data?.data) {
-        onSuccess?.(response.data.data);
+      if (response.data) {
+        await onSuccess?.(response.data as SuccessResponse);
         return;
       }
       if (response.error) {

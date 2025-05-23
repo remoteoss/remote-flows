@@ -22,7 +22,7 @@ type AdditionalDetailsFormProps = {
    * The function is called when the form submission is successful. It receives the response data as
    * an argument.
    */
-  onSuccess?: (data: OffboardingResponse) => void;
+  onSuccess?: (data: OffboardingResponse) => void | Promise<void>;
 };
 
 export function AdditionalDetailsForm({
@@ -43,7 +43,7 @@ export function AdditionalDetailsForm({
       onError?.(terminationResult.error);
     } else {
       if (terminationResult?.data) {
-        onSuccess?.(terminationResult.data as OffboardingResponse);
+        await onSuccess?.(terminationResult.data as OffboardingResponse);
       }
     }
   };
