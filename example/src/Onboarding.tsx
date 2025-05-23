@@ -228,18 +228,21 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
+  companyId: string;
   countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
 const OnboardingWithProps = ({
+  companyId,
   countryCode,
   type,
   employmentId,
 }: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
+      companyId={companyId}
       countryCode={countryCode}
       type={type}
       render={OnBoardingRender}
@@ -253,6 +256,7 @@ export const OnboardingForm = () => {
     countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -267,6 +271,22 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="onboarding-form-container">
+      <div className="onboarding-form-group">
+        <label htmlFor="companyId" className="onboarding-form-label">
+          Company ID:
+        </label>
+        <input
+          id="companyId"
+          type="text"
+          value={formData.companyId}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, companyId: e.target.value }))
+          }
+          required
+          placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
       <div className="onboarding-form-group">
         <label htmlFor="countryCode" className="onboarding-form-label">
           Country Code:

@@ -12,6 +12,7 @@ import {
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
   getIndexBenefitOffer,
+  getShowCompany,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
@@ -63,6 +64,32 @@ const useEmployment = (employmentId: string | undefined) => {
       });
 
       // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch employment data');
+      }
+
+      return response;
+    },
+  });
+};
+
+const useCompany = (companyId: string) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['company', companyId],
+    retry: false,
+    enabled: !!companyId,
+    queryFn: async () => {
+      const response = await getShowCompany({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          company_id: companyId,
+        },
+      });
+
       if (response.error || !response.data) {
         throw new Error('Failed to fetch employment data');
       }
@@ -317,6 +344,7 @@ const useUpdateBenefitsOffers = () => {
 
 export const useOnboarding = ({
   employmentId,
+  companyId,
   countryCode,
   type,
   options,
@@ -329,6 +357,7 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
+  const { data: company, isLoading: isLoadingCompany } = useCompany(companyId);
   const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
     useStepState<keyof typeof STEPS>(STEPS);
 
@@ -478,6 +507,11 @@ export const useOnboarding = ({
      * Employment id passed useful to be used between components
      */
     employmentId,
+
+    /**
+     * Credit risk status of the company, useful to know what to to show in the review step
+     */
+    creditRiskStatus: 'no_deposit_required', // company?.data?.company?.credit_risk_status,
     /**
      * Current step state containing the current step and total number of steps
      */
@@ -493,7 +527,8 @@ export const useOnboarding = ({
       isLoadingBasicInformation ||
       isLoadingEmployment ||
       isLoadingBenefitsOffersSchema ||
-      isLoadingBenefitOffers,
+      isLoadingBenefitOffers ||
+      isLoadingCompany,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
