@@ -32,6 +32,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingForm } from './Onboarding';
 import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
+import { OnboardingCreateExample } from './OnboardingCreateExample';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -976,6 +977,13 @@ const demoStructure = [
         title: 'Custom Benefits',
         description: 'Onboarding flow with custom benefits step UI',
         component: OnboardingCustomBenefitsForm,
+        sourceCode: '',
+      },
+      {
+        id: 'onboarding-create-example',
+        title: 'Employment create',
+        description: 'Onboarding create employment',
+        component: OnboardingCreateExample,
         sourceCode: '',
       },
     ],
