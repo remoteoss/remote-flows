@@ -170,9 +170,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Back
             </BackButton>
-            <OnboardingInvite onClick={() => setApiError(null)} type="submit">
-              Invite Employee
-            </OnboardingInvite>
+            {onboardingBag.creditRiskStatus === 'no_deposit_required' && (
+              <OnboardingInvite onClick={() => setApiError(null)} type="submit">
+                Invite Employee
+              </OnboardingInvite>
+            )}
+            {onboardingBag.creditRiskStatus === 'referred' && (
+              <p className="onboarding-review__referred">
+                Your onboarding is under review. We will notify you once it is
+                approved.
+              </p>
+            )}
+
+            {onboardingBag.creditRiskStatus === 'deposit_required' && (
+              <p className="onboarding-review__deposit">
+                show here a message about deposit required Generate Invoice
+                button
+              </p>
+            )}
           </div>
         </div>
       );

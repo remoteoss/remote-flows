@@ -96,6 +96,7 @@ const useCompany = (companyId: string) => {
 
       return response;
     },
+    select: (response) => response.data.company,
   });
 };
 
@@ -510,8 +511,18 @@ export const useOnboarding = ({
 
     /**
      * Credit risk status of the company, useful to know what to to show in the review step
+     * The possible values are:
+     * - not_started
+     * - ready
+     * - in_progress
+     * - referred
+     * - fail
+     * - deposit_required
+     * - no_deposit_required
      */
-    creditRiskStatus: 'no_deposit_required', // company?.data?.company?.credit_risk_status,
+
+    creditRiskStatus:
+      company?.default_legal_entity_credit_risk_status || 'no_deposit_required', // company?.data?.company?.credit_risk_status,
     /**
      * Current step state containing the current step and total number of steps
      */
