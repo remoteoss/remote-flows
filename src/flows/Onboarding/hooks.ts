@@ -523,8 +523,6 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  console.log({ company });
-
   return {
     /**
      * Employment id passed useful to be used between components
