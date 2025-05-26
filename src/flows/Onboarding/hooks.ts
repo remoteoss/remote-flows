@@ -242,7 +242,9 @@ const useBenefitOffersSchema = (
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
       const result = createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : {},
+        // we need to clone the fieldValues to prevent side effects
+        // if we don't do this, the benefits get included in the other steps
+        initialValues: hasFieldValues ? { ...fieldValues } : {},
       });
       return result;
     },
