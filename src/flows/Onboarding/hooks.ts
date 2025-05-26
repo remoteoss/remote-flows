@@ -329,8 +329,14 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
-  const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
-    useStepState<keyof typeof STEPS>(STEPS);
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+  } = useStepState<keyof typeof STEPS>(STEPS);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -473,6 +479,10 @@ export const useOnboarding = ({
     nextStep();
   }
 
+  function goTo(step: keyof typeof STEPS) {
+    goToStep(step);
+  }
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -504,7 +514,7 @@ export const useOnboarding = ({
     /**
      * Initial form values
      */
-    initialValues: initialValues,
+    initialValues,
     /**
      * Function to validate form values against the onboarding schema
      * @param values - Form values to validate
@@ -557,5 +567,12 @@ export const useOnboarding = ({
      * @returns {void}
      */
     next,
+
+    /**
+     * Function to handle going to a specific step
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goTo,
   };
 };

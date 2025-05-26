@@ -154,12 +154,30 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           <Review
             values={onboardingBag.stepState.values?.basic_information || {}}
           />
+          <button
+            className="back-button"
+            onClick={() => onboardingBag.goTo('basic_information')}
+          >
+            Edit Basic Information
+          </button>
           <h2 className="title">Contract Details</h2>
           <Review
             values={onboardingBag.stepState.values?.contract_details || {}}
           />
+          <button
+            className="back-button"
+            onClick={() => onboardingBag.goTo('contract_details')}
+          >
+            Edit Contract Details
+          </button>
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
+          <button
+            className="back-button"
+            onClick={() => onboardingBag.goTo('benefits')}
+          >
+            Edit Benefits
+          </button>
           <div className="buttons-container">
             <BackButton
               className="back-button"

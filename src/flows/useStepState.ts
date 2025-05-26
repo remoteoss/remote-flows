@@ -74,6 +74,16 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     }
   }
 
+  function goToStep(step: T) {
+    // to avoid going to a steps that hasn't been filled yet
+    if (stepState.values?.[step]) {
+      setStepState((previousState) => ({
+        ...previousState,
+        currentStep: steps[step],
+      }));
+    }
+  }
+
   return {
     /**
      * Moves to the next step in the step state.
@@ -95,6 +105,12 @@ export const useStepState = <T extends string, Fields = FieldValues>(
      * @returns {StepState<T>} The current step state.
      */
     stepState,
+    /**
+     * Goes to a specific step in the step state.
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goToStep,
     /**
      * The field values for the current step.
      * @returns {FieldValues} The field values for the current step.
