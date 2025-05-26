@@ -13,10 +13,10 @@ import {
   UnifiedEmploymentUpsertBenefitOffersRequest,
   getIndexBenefitOffer,
   getShowCompany,
-  CompanyResponse,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
+  $TSFixMe,
   createHeadlessForm,
   Fields,
   modify,
@@ -98,7 +98,7 @@ const useCompany = (companyId: string) => {
       return response;
     },
     // TODO: OpenApi types are not matching, so we need to cast the response
-    select: ({ data }: { data: { data: CompanyResponse } }) => {
+    select: ({ data }: { data: $TSFixMe }) => {
       return data.data.company;
     },
   });
