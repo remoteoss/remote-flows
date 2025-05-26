@@ -13,6 +13,7 @@ import {
   UnifiedEmploymentUpsertBenefitOffersRequest,
   getIndexBenefitOffer,
   getShowCompany,
+  CompanyResponse,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
@@ -96,7 +97,10 @@ const useCompany = (companyId: string) => {
 
       return response;
     },
-    select: (response) => response.data.company,
+    // TODO: OpenApi types are not matching, so we need to cast the response
+    select: ({ data }: { data: { data: CompanyResponse } }) => {
+      return data.data.company;
+    },
   });
 };
 
@@ -147,6 +151,22 @@ export const useEmploymentInvite = () => {
 
   return useMutation({
     mutationFn: (payload: PostInviteEmploymentInvitationData['path']) => {
+      return postInviteEmploymentInvitation({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: payload,
+      });
+    },
+  });
+};
+
+// TODO: This hooks uses the incorrect endpoint as it hasn't been created yet.``
+export const useCreateReserve = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: { employment_id: string }) => {
       return postInviteEmploymentInvitation({
         client: client as Client,
         headers: {
@@ -503,6 +523,8 @@ export const useOnboarding = ({
     nextStep();
   }
 
+  console.log({ company });
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -521,8 +543,7 @@ export const useOnboarding = ({
      * - no_deposit_required
      */
 
-    creditRiskStatus:
-      company?.default_legal_entity_credit_risk_status || 'no_deposit_required', // company?.data?.company?.credit_risk_status,
+    creditRiskStatus: company?.default_legal_entity_credit_risk_status,
     /**
      * Current step state containing the current step and total number of steps
      */
