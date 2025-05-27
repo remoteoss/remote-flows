@@ -1,25 +1,42 @@
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 type Props = {
   title?: string;
   description?: string;
-  render?: (props: {
+  render: (props: {
     onboardingBag: ReturnType<typeof useOnboardingContext>['onboardingBag'];
-    copy: {
+    props: {
       title: React.ReactNode;
       description: React.ReactNode;
     };
+    DefaultComponent: ({
+      children,
+    }: {
+      children?: ReactNode;
+    }) => React.ReactNode;
   }) => React.ReactNode;
-  children?: React.ReactNode;
 };
 
-export const InviteSection = ({
+const DefaultComponent = ({
   title,
   description,
-  render,
   children,
-}: Props) => {
+}: {
+  title: React.ReactNode;
+  description: React.ReactNode;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div className="rmt-invite-section">
+      <h2 className="rmt-invite-section-title">{title}</h2>
+      <p className="rmt-invite-section-description">{description}</p>
+      {children}
+    </div>
+  );
+};
+
+export const InviteSection = ({ title, description, render }: Props) => {
   const { onboardingBag } = useOnboardingContext();
 
   if (onboardingBag.creditRiskStatus === 'deposit_required') {
@@ -40,20 +57,18 @@ export const InviteSection = ({
     </>
   );
 
-  if (typeof render === 'function') {
-    return render({
-      onboardingBag,
-      copy: { title: copyTitle, description: descriptionCopy },
-    });
-  }
+  const finalTitle = title || copyTitle;
+  const finalDescription = description || descriptionCopy;
 
-  return (
-    <div className="rmt-invite-section">
-      <h2 className="rmt-invite-section-title">{title ? title : copyTitle}</h2>
-      <p className="rmt-invite-section-description">
-        {description ? description : descriptionCopy}
-      </p>
-      {children}
-    </div>
-  );
+  return render({
+    onboardingBag,
+    props: { title: finalTitle, description: finalDescription },
+    DefaultComponent: ({ children }: { children?: ReactNode }) => (
+      <DefaultComponent
+        title={finalTitle}
+        description={finalDescription}
+        children={children}
+      />
+    ),
+  });
 };

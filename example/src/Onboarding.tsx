@@ -175,14 +175,26 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </button>
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-          <InviteSection />
-          <DepositRequiredSection
-            renderChildren={({ supportLink }) => {
+          <InviteSection
+            title="Ready to invite employee? or Not ready yet?"
+            render={({ DefaultComponent }) => {
               return (
                 <>
+                  <DefaultComponent>
+                    injected children to default component
+                  </DefaultComponent>
+                </>
+              );
+            }}
+          />
+          <DepositRequiredSection
+            title="Ready to invite employee? or Not ready yet?"
+            render={({ DefaultComponent, props }) => {
+              return (
+                <>
+                  <DefaultComponent>injected children</DefaultComponent>
                   <p>Reserve payment required to hire this employee</p>
-
-                  <a href={supportLink}>What is a reserve payment</a>
+                  <a href={props.supportLink}>What is a reserve payment</a>
                 </>
               );
             }}
