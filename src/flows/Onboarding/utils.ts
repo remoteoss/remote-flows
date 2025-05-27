@@ -53,7 +53,7 @@ export function prettifyFormValues(
           return;
         }
 
-        if (field?.type === 'countries') {
+        if (field?.type === 'countries' && Array.isArray(value)) {
           return [
             key,
             { prettyValue: (value as string[])?.join(), label: field.label },
