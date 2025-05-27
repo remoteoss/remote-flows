@@ -323,7 +323,8 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
-  const fieldsMetaRef = useRef<Record<string, unknown>>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fieldsMetaRef = useRef<Record<string, any>>({});
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -412,22 +413,6 @@ export const useOnboarding = ({
     ),
     benefits: initialValuesBenefitOffers || {},
   };
-
-  // const hasNoStepFieldMetadata =
-  //   !fieldsMetaRef.current[stepState.currentStep.name] ||
-  //   Object.keys(fieldsMetaRef.current[stepState.currentStep.name] || {})
-  //     .length === 0;
-
-  // if (hasNoStepFieldMetadata) {
-  //   fieldsMetaRef.current[stepState.currentStep.name] = stepFields[
-  //     stepState.currentStep.name as keyof typeof stepFields
-  //   ].reduce((fieldMetadata, field) => {
-  //     fieldMetadata[field.name as string] = {
-  //       label: field.label,
-  //     };
-  //     return fieldMetadata;
-  //   }, {});
-  // }
 
   function parseFormValues(values: FieldValues) {
     if (onboardingForm) {

@@ -38,6 +38,10 @@ export function prettifyFormValues(
 
         const field = fields.find((field) => field.name === key);
 
+        if (field?.isVisible === false || field?.deprecated) {
+          return [key, undefined];
+        }
+
         if (field?.type === 'radio' || field?.type === 'select') {
           const option = (
             field.options as Array<{ value: string; label: string }>
@@ -57,13 +61,22 @@ export function prettifyFormValues(
         }
 
         if (field?.type === 'fieldset') {
-          return [
-            key,
-            prettifyFormValues(
-              value as Record<string, unknown>,
-              field.fields as Fields,
-            ),
-          ];
+          // @ts-expect-error need to check function return type
+          const prettiedFieldset = prettifyFormValues(
+            value as Record<string, unknown>,
+            field.fields as Fields,
+          );
+
+          // Handles benefits fieldset in specific
+          if (!prettiedFieldset.label && prettiedFieldset.value) {
+            const prettyValue: Record<string, unknown> = {
+              ...prettiedFieldset.value,
+              label: field.label,
+            };
+            return [key, prettyValue];
+          }
+
+          return [key, prettiedFieldset];
         }
 
         if (field) {
