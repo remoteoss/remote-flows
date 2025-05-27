@@ -1,5 +1,6 @@
 import {
   Employment,
+  EmploymentCreateParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
   getShowCompany,
@@ -7,6 +8,7 @@ import {
   getShowFormCountry,
   getShowSchema,
   patchUpdateEmployment2,
+  postCreateEmployment2,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
   putUpdateBenefitOffer,
