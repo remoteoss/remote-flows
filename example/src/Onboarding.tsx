@@ -29,11 +29,27 @@ function Review({
 }: {
   meta: Record<string, { label: string; prettyValue: string }>;
 }) {
+  console.log('meta', meta);
   return (
     <div className="onboarding-values">
       {Object.values(meta)
         .filter(Boolean)
         .map((value) => {
+          if (!value.prettyValue) {
+            return Object.values(value)
+              .filter(Boolean)
+              .map((v) => {
+                const val = v as unknown as {
+                  label: string;
+                  prettyValue: string;
+                };
+                return (
+                  <pre>
+                    {val.label}: {val.prettyValue}
+                  </pre>
+                );
+              });
+          }
           return (
             <pre>
               {value.label}: {value.prettyValue}
