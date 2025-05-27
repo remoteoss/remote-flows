@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useEmploymentInvite } from './hooks';
+import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
@@ -28,11 +28,17 @@ export function OnboardingInvite({
 
   const handleSubmit = async () => {
     try {
-      await onSubmit?.();
-
       if (!onboardingBag.employmentId) {
         throw new Error('Employment ID is required');
       }
+
+      if (onboardingBag.creditRiskStatus === 'deposit_required') {
+        throw new Error(
+          'You cannot invite employees while a deposit is required.',
+        );
+      }
+
+      await onSubmit?.();
 
       const response = await employmentInviteMutationAsync({
         employment_id: onboardingBag.employmentId,

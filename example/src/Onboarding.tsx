@@ -216,12 +216,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Back
             </BackButton>
-            <OnboardingInvite
-              className="submit-button"
-              onClick={() => setApiError(null)}
-            >
-              Invite Employee
-            </OnboardingInvite>
+            {onboardingBag.creditRiskStatus !== 'deposit_required' ? (
+              <OnboardingInvite type="submit">Invite Employee</OnboardingInvite>
+            ) : (
+              <OnboardingCreateReserve type="submit">
+                Continue
+              </OnboardingCreateReserve>
+            )}
           </div>
         </div>
       );

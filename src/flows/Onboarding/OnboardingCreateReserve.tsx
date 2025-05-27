@@ -1,9 +1,10 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useCreateReserve } from './hooks';
+import { useCreateReserve } from './api';
 import { Button } from '@/src/components/ui/button';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type OnboardingCreateReserveProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -28,17 +29,23 @@ export function OnboardingCreateReserve({
 
   const handleSubmit = async () => {
     try {
-      await onSubmit?.();
-
       if (!onboardingBag.employmentId) {
         throw new Error('Employment ID is required');
       }
+
+      if (onboardingBag.creditRiskStatus !== 'deposit_required') {
+        throw new Error(
+          'You can only create a reserve when a deposit is required.',
+        );
+      }
+
+      await onSubmit?.();
 
       const response = await createReserveMutationAsync({
         employment_id: onboardingBag.employmentId,
       });
       if (response.data) {
-        await onSuccess?.(response.data as SuccessResponse);
+        await onSuccess?.(response.data as $TSFixMe);
         return;
       }
       if (response.error) {
