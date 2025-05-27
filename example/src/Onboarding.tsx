@@ -63,6 +63,8 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     OnboardingInvite,
     OnboardingCreateReserve,
+    InviteSection,
+    DepositRequiredSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
 
@@ -173,36 +175,18 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </button>
           <h2 className="title">Benefits</h2>
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
-          {onboardingBag.creditRiskStatus !== 'deposit_required' && (
-            <>
-              <h2>
-                Ready to invite{' '}
-                {onboardingBag.stepState.values?.basic_information?.name} to
-                complete their onboarding?
-              </h2>
-              <p>
-                If the details look good, invite them now. Only invite this
-                employee if you're ready to start the onboarding process.
-              </p>
-            </>
-          )}
-          {onboardingBag.creditRiskStatus === 'deposit_required' && (
-            <>
-              <h2>Confirm Details && Continue</h2>
-              <p>
-                If the employee's details look good, click Continue to check if
-                your reserve invoice is ready for payment. After we receive
-                payment, you'll be able to invite the employee to onboard to
-                Remote.
-              </p>
+          <InviteSection />
+          <DepositRequiredSection
+            renderChildren={({ supportLink }) => {
+              return (
+                <>
+                  <p>Reserve payment required to hire this employee</p>
 
-              <p>Reserve payment required to hire this employee</p>
-
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                What is a reserve payment
-              </a>
-            </>
-          )}
+                  <a href={supportLink}>What is a reserve payment</a>
+                </>
+              );
+            }}
+          />
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('benefits')}
