@@ -4,6 +4,7 @@ import { Button } from '@/src/components/ui/button';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { MagicLinkResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type OnboardingCreateReserveProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -43,8 +44,8 @@ export function OnboardingCreateReserve({
         user_id: onboardingBag.owner_id as string,
         path: '/dashboard/billing',
       });
-      if (response.data?.data) {
-        await onSuccess?.(response.data.data);
+      if (response.data) {
+        await onSuccess?.(response.data as $TSFixMe);
       }
 
       if (response.data?.error) {
