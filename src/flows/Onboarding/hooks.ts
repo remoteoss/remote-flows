@@ -424,6 +424,9 @@ export const useOnboarding = ({
   }
 
   async function onSubmit(values: FieldValues) {
+    // Prettify values for the current step
+    prettifyValues(values);
+
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'basic_information': {
@@ -487,10 +490,12 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  function prettify(values: FieldValues, fields: Fields) {
+  function prettifyValues(values: FieldValues) {
+    const currentFields =
+      stepFields[stepState.currentStep.name as keyof typeof stepFields];
     fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
       values,
-      fields,
+      currentFields,
     );
   }
 
@@ -592,13 +597,5 @@ export const useOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
     },
-
-    /**
-     * Function to prettify form values
-     * @param values - Form values to prettify
-     * @param fields - Form fields
-     * @returns Prettified form values
-     */
-    updateMetadata: prettify,
   };
 };
