@@ -46,8 +46,6 @@ const DefaultDepositRequiredSection = ({
 );
 
 export const DepositRequiredSection = ({
-  title,
-  description,
   render,
 }: DepositRequiredSectionProps) => {
   const { onboardingBag } = useOnboardingContext();
@@ -58,20 +56,25 @@ export const DepositRequiredSection = ({
     return null;
   }
 
-  const finalTitle = title || copyTitle;
-  const finalDescription = description || copyDescription;
-
   return render({
     onboardingBag,
     props: {
-      title: finalTitle,
-      description: finalDescription,
+      title: copyTitle,
+      description: copyDescription,
       supportLink,
     },
-    DefaultComponent: ({ children }: { children?: ReactNode }) => (
+    DefaultComponent: ({
+      title,
+      description,
+      children,
+    }: {
+      children?: ReactNode;
+      title?: React.ReactNode;
+      description?: React.ReactNode;
+    }) => (
       <DefaultDepositRequiredSection
-        title={finalTitle}
-        description={finalDescription}
+        title={title || copyTitle}
+        description={description || copyDescription}
       >
         {children}
       </DefaultDepositRequiredSection>

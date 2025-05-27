@@ -2,8 +2,6 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import React, { ReactNode } from 'react';
 
 type Props = {
-  title?: string;
-  description?: string;
   render: (props: {
     onboardingBag: ReturnType<typeof useOnboardingContext>['onboardingBag'];
     props: {
@@ -13,6 +11,8 @@ type Props = {
     DefaultComponent: ({
       children,
     }: {
+      title?: React.ReactNode;
+      description?: React.ReactNode;
       children?: ReactNode;
     }) => React.ReactNode;
   }) => React.ReactNode;
@@ -36,7 +36,7 @@ const DefaultComponent = ({
   );
 };
 
-export const InviteSection = ({ title, description, render }: Props) => {
+export const InviteSection = ({ render }: Props) => {
   const { onboardingBag } = useOnboardingContext();
 
   if (onboardingBag.creditRiskStatus === 'deposit_required') {
@@ -50,23 +50,28 @@ export const InviteSection = ({ title, description, render }: Props) => {
     </>
   );
 
-  const descriptionCopy = (
+  const copyDescription = (
     <>
       If you're ready to invite this employee to onboard with Remote, click the
       button below.
     </>
   );
 
-  const finalTitle = title || copyTitle;
-  const finalDescription = description || descriptionCopy;
-
   return render({
     onboardingBag,
-    props: { title: finalTitle, description: finalDescription },
-    DefaultComponent: ({ children }: { children?: ReactNode }) => (
+    props: { title: copyTitle, description: copyDescription },
+    DefaultComponent: ({
+      title,
+      description,
+      children,
+    }: {
+      title?: ReactNode;
+      description?: ReactNode;
+      children?: ReactNode;
+    }) => (
       <DefaultComponent
-        title={finalTitle}
-        description={finalDescription}
+        title={title || copyTitle}
+        description={description || copyDescription}
         children={children}
       />
     ),
