@@ -16,7 +16,6 @@ import {
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
-  $TSFixMe,
   createHeadlessForm,
   Fields,
   modify,
@@ -97,8 +96,7 @@ const useCompany = (companyId: string) => {
 
       return response;
     },
-    // TODO: OpenApi types are not matching, so we need to cast the response
-    select: ({ data }: { data: $TSFixMe }) => {
+    select: ({ data }) => {
       return data.data.company;
     },
   });

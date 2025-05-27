@@ -2087,7 +2087,9 @@ export type TimeoffDaysAndHours = {
  * Shows a company
  */
 export type CompanyResponse = {
-  company?: Company;
+  data: {
+    company?: Company;
+  };
 };
 
 export type UnifiedEmploymentBenefitTier = {
