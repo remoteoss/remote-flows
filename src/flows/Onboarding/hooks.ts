@@ -23,7 +23,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Onboarding/utils';
+import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
   parseJSFToValidate,
@@ -32,7 +32,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 
 type OnboardingHookProps = OnboardingFlowParams;
@@ -323,6 +323,7 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
+  const fieldsMetaRef = useRef<Record<string, unknown>>({});
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -374,6 +375,15 @@ export const useOnboarding = ({
       employment: employment?.data?.data?.employment,
     });
 
+  const {
+    data: benefitOffersSchema,
+    isLoading: isLoadingBenefitsOffersSchema,
+  } = useBenefitOffersSchema(
+    internalEmploymentId as string,
+    fieldValues,
+    options,
+  );
+
   const benefitsFormValues = {
     ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
     ...fieldValues,
@@ -383,15 +393,6 @@ export const useOnboarding = ({
     stepState.currentStep.name === 'benefits'
       ? mergeWith({}, benefitOffers, benefitsFormValues)
       : {};
-
-  const {
-    data: benefitOffersSchema,
-    isLoading: isLoadingBenefitsOffersSchema,
-  } = useBenefitOffersSchema(
-    internalEmploymentId as string,
-    fieldValues,
-    options,
-  );
 
   const stepFields: Record<keyof typeof STEPS, Fields> = {
     basic_information: onboardingForm?.fields || [],
@@ -411,6 +412,22 @@ export const useOnboarding = ({
     ),
     benefits: initialValuesBenefitOffers || {},
   };
+
+  // const hasNoStepFieldMetadata =
+  //   !fieldsMetaRef.current[stepState.currentStep.name] ||
+  //   Object.keys(fieldsMetaRef.current[stepState.currentStep.name] || {})
+  //     .length === 0;
+
+  // if (hasNoStepFieldMetadata) {
+  //   fieldsMetaRef.current[stepState.currentStep.name] = stepFields[
+  //     stepState.currentStep.name as keyof typeof stepFields
+  //   ].reduce((fieldMetadata, field) => {
+  //     fieldMetadata[field.name as string] = {
+  //       label: field.label,
+  //     };
+  //     return fieldMetadata;
+  //   }, {});
+  // }
 
   function parseFormValues(values: FieldValues) {
     if (onboardingForm) {
@@ -483,6 +500,13 @@ export const useOnboarding = ({
 
   function goTo(step: keyof typeof STEPS) {
     goToStep(step);
+  }
+
+  function prettify(values: FieldValues, fields: Fields) {
+    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
+      values,
+      fields,
+    );
   }
 
   return {
@@ -576,5 +600,20 @@ export const useOnboarding = ({
      * @returns {void}
      */
     goTo,
+
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+    },
+
+    /**
+     * Function to prettify form values
+     * @param values - Form values to prettify
+     * @param fields - Form fields
+     * @returns Prettified form values
+     */
+    updateMetadata: prettify,
   };
 };

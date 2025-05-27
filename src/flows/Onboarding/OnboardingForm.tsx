@@ -2,7 +2,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import React, { useEffect } from 'react';
 import { useOnboardingContext } from './context';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 import {
@@ -66,11 +66,16 @@ export function OnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleSubmit(values: FieldValues) {
+    onboardingBag.updateMetadata(values, onboardingBag.fields);
+    onSubmit(values);
+  }
+
   return (
     <Form {...form}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__OnboardingForm"
       >
         <JSONSchemaFormFields

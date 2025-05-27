@@ -24,7 +24,14 @@ type MultiStepFormProps = {
   components: OnboardingRenderProps['components'];
 };
 
-function Review({ values }: { values: Record<string, unknown> }) {
+function Review({
+  values,
+  meta,
+}: {
+  values: Record<string, unknown>;
+  meta: Record<string, unknown>;
+}) {
+  console.log('META', meta);
   return (
     <div className="onboarding-values">
       {Object.entries(values).map(([key, value]) => {
@@ -153,6 +160,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           <h2 className="title">Basic Information</h2>
           <Review
             values={onboardingBag.stepState.values?.basic_information || {}}
+            meta={onboardingBag.meta.fields.basic_information}
           />
           <button
             className="back-button"
@@ -163,6 +171,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           <h2 className="title">Contract Details</h2>
           <Review
             values={onboardingBag.stepState.values?.contract_details || {}}
+            meta={onboardingBag.meta.fields.contract_details}
           />
           <button
             className="back-button"
@@ -171,7 +180,10 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             Edit Contract Details
           </button>
           <h2 className="title">Benefits</h2>
-          <Review values={onboardingBag.stepState.values?.benefits || {}} />
+          <Review
+            values={onboardingBag.stepState.values?.benefits || {}}
+            meta={onboardingBag.meta.fields.benefits}
+          />
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('benefits')}
