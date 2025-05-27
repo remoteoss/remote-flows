@@ -359,10 +359,7 @@ a:active {
   gap: 4px;
 }
 
-.onboarding-basic-information__buttons,
-.onboarding-contract-details__buttons,
-.onboarding-benefits__buttons,
-.onboarding-review__buttons {
+.buttons-container {
   display: flex;
   gap: 16px;
   margin-top: 24px;
@@ -370,22 +367,30 @@ a:active {
 
 /* Only style cost calculator action buttons */
 button[type='submit'],
-button[type='reset'] {
+button.submit-button {
   background-color: black;
+  border: none;
   color: white;
+
   padding: 8px 16px;
   border-radius: 4px;
-  border: none;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   transition: opacity 0.2s;
 }
 
-button[type='submit'].back-button {
+button.back-button,
+button.reset-button {
   background-color: white;
   border: 1px solid black;
   color: black;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
 .error {
