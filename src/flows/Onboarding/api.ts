@@ -7,8 +7,10 @@ import {
   getShowEmployment,
   getShowFormCountry,
   getShowSchema,
+  MagicLinkParams,
   patchUpdateEmployment2,
   postCreateEmployment2,
+  postGenerateMagicLink,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
   putUpdateBenefitOffer,
@@ -336,6 +338,21 @@ export const useUpdateBenefitsOffers = () => {
         path: {
           employment_id: employmentId,
         },
+      });
+    },
+  });
+};
+
+export const useMagicLink = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (params: MagicLinkParams) => {
+      return postGenerateMagicLink({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: params,
       });
     },
   });
