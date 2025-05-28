@@ -44,16 +44,14 @@ function Review({
                 };
                 return (
                   <pre>
-                    {val.label}:{' '}
-                    {value.prettyValue === true ? 'Yes' : value.prettyValue}
+                    {val.label}: {value.prettyValue === true ? 'Yes' : 'No'}
                   </pre>
                 );
               });
           }
           return (
             <pre>
-              {value.label}:{' '}
-              {value.prettyValue === true ? 'Yes' : value.prettyValue}
+              {value.label}: {value.prettyValue === true ? 'Yes' : 'No'}
             </pre>
           );
         })}
