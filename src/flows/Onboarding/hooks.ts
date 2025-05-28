@@ -2,7 +2,7 @@ import { EmploymentCreateParams, EmploymentFullParams } from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Onboarding/utils';
+import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
   parseJSFToValidate,
@@ -11,7 +11,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 import {
   useBenefitOffers,
@@ -33,6 +33,8 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fieldsMetaRef = useRef<Record<string, any>>({});
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -85,6 +87,15 @@ export const useOnboarding = ({
       employment: employment?.data?.data?.employment,
     });
 
+  const {
+    data: benefitOffersSchema,
+    isLoading: isLoadingBenefitsOffersSchema,
+  } = useBenefitOffersSchema(
+    internalEmploymentId as string,
+    fieldValues,
+    options,
+  );
+
   const benefitsFormValues = {
     ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
     ...fieldValues,
@@ -95,15 +106,6 @@ export const useOnboarding = ({
       ? mergeWith({}, benefitOffers, benefitsFormValues)
       : {};
 
-  const {
-    data: benefitOffersSchema,
-    isLoading: isLoadingBenefitsOffersSchema,
-  } = useBenefitOffersSchema(
-    internalEmploymentId as string,
-    fieldValues,
-    options,
-  );
-
   const stepFields: Record<keyof typeof STEPS, Fields> = {
     basic_information: onboardingForm?.fields || [],
     contract_details: onboardingForm?.fields || [],
@@ -113,11 +115,11 @@ export const useOnboarding = ({
 
   const initialValues = {
     basic_information: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
     ),
     contract_details: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.contract_details || {},
     ),
     benefits: initialValuesBenefitOffers || {},
@@ -133,6 +135,12 @@ export const useOnboarding = ({
   }
 
   async function onSubmit(values: FieldValues) {
+    // Prettify values for the current step
+    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
+      values,
+      stepFields[stepState.currentStep.name],
+    );
+
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'basic_information': {
@@ -224,7 +232,7 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: stepFields[stepState.currentStep.name as keyof typeof stepFields],
+    fields: stepFields[stepState.currentStep.name],
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
@@ -304,5 +312,12 @@ export const useOnboarding = ({
      * @returns {void}
      */
     goTo,
+
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+    },
   };
 };
