@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- db506de: - Locked benefits statement,
+- db506de: - Locked benefits statement
   - Mapped labels in the review step
   - Fix benefits as they were included the results in each step
   - Allow jumping to previous step
