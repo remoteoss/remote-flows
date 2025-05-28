@@ -51,7 +51,7 @@ function Review({
           }
           return (
             <pre>
-              {value.label}: {value.prettyValue === true ? 'Yes' : 'No'}
+              {value.label}: {value.prettyValue}
             </pre>
           );
         })}
@@ -68,8 +68,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     OnboardingInvite,
     OnboardingCreateReserve,
-    InviteSection,
-    DepositRequiredSection,
+    InvitationSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
 
@@ -159,7 +158,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       return (
         <div className="onboarding-review">
           <h2 className="title">Basic Information</h2>
-          <Review meta={onboardingBag.meta.fields.basic_information} />
+          <Review meta={onboardingBag.meta.fields.basic_information || {}} />
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('basic_information')}
@@ -167,7 +166,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             Edit Basic Information
           </button>
           <h2 className="title">Contract Details</h2>
-          <Review meta={onboardingBag.meta.fields.contract_details} />
+          <Review meta={onboardingBag.meta.fields.contract_details || {}} />
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('contract_details')}
@@ -175,37 +174,30 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             Edit Contract Details
           </button>
           <h2 className="title">Benefits</h2>
-          <Review values={onboardingBag.meta.fields.benefits || {}} />
-          <InviteSection
-            render={({ DefaultComponent }) => {
-              return (
-                <>
-                  <DefaultComponent title="Ready to invite employee? or Not ready yet?">
-                    injected children to default component
-                  </DefaultComponent>
-                </>
-              );
-            }}
-          />
-          <DepositRequiredSection
-            render={({ DefaultComponent, props }) => {
-              return (
-                <>
-                  <DefaultComponent title="Ready to invite employee? or Not ready yet?">
-                    injected children to default component
-                  </DefaultComponent>
-                  <p>Reserve payment required to hire this employee</p>
-                  <a href={props.supportLink}>What is a reserve payment</a>
-                </>
-              );
-            }}
-          />
+          <Review meta={onboardingBag.meta.fields.benefits || {}} />
+
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('benefits')}
           >
             Edit Benefits
           </button>
+          <h2 className="title">Review</h2>
+          <InvitationSection
+            render={({ DefaultComponent, props, onboardingBag }) => {
+              return (
+                <>
+                  <DefaultComponent />
+                  {onboardingBag.creditRiskStatus === 'deposit_required' && (
+                    <>
+                      <p>Reserve payment required to hire this employee</p>
+                      <a href={props.supportLink}>What is a reserve payment</a>
+                    </>
+                  )}
+                </>
+              );
+            }}
+          />
           <div className="buttons-container">
             <BackButton
               className="back-button"

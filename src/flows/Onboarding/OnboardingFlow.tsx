@@ -9,8 +9,7 @@ import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
 import { OnboardingCreateReserve } from '@/src/flows/Onboarding/OnboardingCreateReserve';
-import { InviteSection } from '@/src/flows/Onboarding/InviteSection';
-import { DepositRequiredSection } from '@/src/flows/Onboarding/DepositRequiredSection';
+import { InvitationSection } from '@/src/flows/Onboarding/InvitationSection';
 
 export type OnboardingRenderProps = {
   /**
@@ -29,8 +28,7 @@ export type OnboardingRenderProps = {
    * @see {@link OnboardingInvite}
    * @see {@link BenefitsStep}
    * @see {@link OnboardingCreateReserve}
-   * @see {@link InviteSection}
-   * @see {@link DepositRequiredSection}
+   * @see {@link InvitationSection}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -40,8 +38,7 @@ export type OnboardingRenderProps = {
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
     OnboardingCreateReserve: typeof OnboardingCreateReserve;
-    InviteSection: typeof InviteSection;
-    DepositRequiredSection: typeof DepositRequiredSection;
+    InvitationSection: typeof InvitationSection;
   };
 };
 
@@ -86,8 +83,7 @@ export const OnboardingFlow = ({
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
           OnboardingCreateReserve: OnboardingCreateReserve,
-          InviteSection: InviteSection,
-          DepositRequiredSection: DepositRequiredSection,
+          InvitationSection: InvitationSection,
         },
       })}
     </OnboardingContext.Provider>
