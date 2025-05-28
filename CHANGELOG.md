@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- db506de: - Locked benefits statement,
+  - Mapped labels in the review step
+  - Fix benefits as they were included the results in each step
+  - Allow jumping to previous step
+  - Add hidden field
+  - Handle undefined statements
+
 ## 0.4.0-alpha.2
 
 ### Minor Changes
