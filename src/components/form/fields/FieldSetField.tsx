@@ -3,6 +3,7 @@ import { cn } from '@/src/lib/utils';
 import * as React from 'react';
 import { SupportedTypes } from './types';
 import { Components } from '@/src/types/remoteFlows';
+import { Statement, StatementProps } from '@/src/components/form/Statement';
 
 type FieldBase = {
   label: string;
@@ -28,6 +29,7 @@ type FieldSetProps = {
   description: string;
   fields: Field[];
   components: Components;
+  statement?: StatementProps;
 };
 
 export function FieldSetField({
@@ -36,6 +38,7 @@ export function FieldSetField({
   fields,
   description,
   components,
+  statement,
 }: FieldSetProps) {
   return (
     <fieldset
@@ -69,6 +72,7 @@ export function FieldSetField({
             />
           );
         })}
+        {statement ? <Statement {...statement} /> : null}
       </div>
     </fieldset>
   );
