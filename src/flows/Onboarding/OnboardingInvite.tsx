@@ -1,9 +1,10 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useEmploymentInvite } from './api';
+import { useEmploymentInvite, useMagicLink } from './api';
 import { Button } from '@/src/components/ui/button';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -25,30 +26,38 @@ export function OnboardingInvite({
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
     employmentInviteMutation,
   );
+  const magicLinkMutation = useMagicLink();
+
+  const { mutateAsync: createMagicLinkMutation } =
+    mutationToPromise(magicLinkMutation);
 
   const handleSubmit = async () => {
     try {
-      if (!onboardingBag.employmentId) {
-        throw new Error('Employment ID is required');
-      }
-
-      if (onboardingBag.creditRiskStatus === 'deposit_required') {
-        throw new Error(
-          'You cannot invite employees while a deposit is required.',
-        );
-      }
-
       await onSubmit?.();
 
-      const response = await employmentInviteMutationAsync({
-        employment_id: onboardingBag.employmentId,
-      });
-      if (response.data) {
-        await onSuccess?.(response.data as SuccessResponse);
-        return;
-      }
-      if (response.error) {
-        onError?.(response.error);
+      if (onboardingBag.creditRiskStatus === 'deposit_required') {
+        const response = await createMagicLinkMutation({
+          user_id: onboardingBag.owner_id as string,
+          path: '/dashboard/billing',
+        });
+        if (response.data) {
+          await onSuccess?.(response.data as $TSFixMe);
+        }
+
+        if (response.data?.error) {
+          onError?.(response.data.error as Error);
+        }
+      } else if (onboardingBag.employmentId) {
+        const response = await employmentInviteMutationAsync({
+          employment_id: onboardingBag.employmentId,
+        });
+        if (response.data) {
+          await onSuccess?.(response.data as SuccessResponse);
+          return;
+        }
+        if (response.error) {
+          onError?.(response.error);
+        }
       }
     } catch (error) {
       onError?.(error);
@@ -62,7 +71,11 @@ export function OnboardingInvite({
         handleSubmit();
       }}
     >
-      {props.children}
+      {props.children === undefined
+        ? onboardingBag.creditRiskStatus === 'deposit_required'
+          ? 'Create Reserve'
+          : 'Invite Employee'
+        : props.children}
     </Button>
   );
 }

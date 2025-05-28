@@ -67,7 +67,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
-    OnboardingCreateReserve,
     InvitationSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
@@ -205,22 +204,22 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Back
             </BackButton>
-            {onboardingBag.creditRiskStatus !== 'deposit_required' ? (
-              <OnboardingInvite type="submit">Invite Employee</OnboardingInvite>
-            ) : (
-              <OnboardingCreateReserve
-                onSuccess={(response) => {
+            <OnboardingInvite
+              onSuccess={(response) => {
+                if ('url' in response.data && response.data.url) {
                   const open = window.open(response.data.url, '_blank');
                   if (open) {
                     open.focus();
                   }
-                }}
-                onError={(error: Error) => setApiError(error.message)}
-                type="submit"
-              >
-                Continue
-              </OnboardingCreateReserve>
-            )}
+                }
+              }}
+              onError={(error: Error) => setApiError(error.message)}
+              type="submit"
+            >
+              {onboardingBag.creditRiskStatus === 'deposit_required'
+                ? 'Create Reserve...'
+                : 'Invite Employee'}
+            </OnboardingInvite>
           </div>
         </div>
       );

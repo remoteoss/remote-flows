@@ -8,7 +8,6 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
-import { OnboardingCreateReserve } from '@/src/flows/Onboarding/OnboardingCreateReserve';
 import { InvitationSection } from '@/src/flows/Onboarding/InvitationSection';
 
 export type OnboardingRenderProps = {
@@ -37,7 +36,6 @@ export type OnboardingRenderProps = {
     OnboardingInvite: typeof OnboardingInvite;
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
-    OnboardingCreateReserve: typeof OnboardingCreateReserve;
     InvitationSection: typeof InvitationSection;
   };
 };
@@ -82,7 +80,6 @@ export const OnboardingFlow = ({
           SubmitButton: OnboardingSubmit,
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
-          OnboardingCreateReserve: OnboardingCreateReserve,
           InvitationSection: InvitationSection,
         },
       })}
