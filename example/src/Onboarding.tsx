@@ -27,9 +27,8 @@ type MultiStepFormProps = {
 function Review({
   meta,
 }: {
-  meta: Record<string, { label: string; prettyValue: string }>;
+  meta: Record<string, { label: string; prettyValue: string | boolean }>;
 }) {
-  console.log('meta', meta);
   return (
     <div className="onboarding-values">
       {Object.values(meta)
@@ -45,14 +44,16 @@ function Review({
                 };
                 return (
                   <pre>
-                    {val.label}: {val.prettyValue}
+                    {val.label}:{' '}
+                    {value.prettyValue === true ? 'Yes' : value.prettyValue}
                   </pre>
                 );
               });
           }
           return (
             <pre>
-              {value.label}: {value.prettyValue}
+              {value.label}:{' '}
+              {value.prettyValue === true ? 'Yes' : value.prettyValue}
             </pre>
           );
         })}

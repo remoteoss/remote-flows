@@ -5,7 +5,7 @@ import { Step } from '../useStepState';
 
 type StepKeys = 'form' | 'confirmation_form';
 
-export const STEPS: Record<StepKeys, Step> = {
+export const STEPS: Record<StepKeys, Step<StepKeys>> = {
   form: { index: 0, name: 'form' },
   confirmation_form: { index: 1, name: 'confirmation_form' },
 } as const;

@@ -404,11 +404,11 @@ export const useOnboarding = ({
 
   const initialValues = {
     basic_information: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
     ),
     contract_details: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.contract_details || {},
     ),
     benefits: initialValuesBenefitOffers || {},
@@ -425,7 +425,10 @@ export const useOnboarding = ({
 
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
-    prettifyValues(values);
+    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
+      values,
+      stepFields[stepState.currentStep.name],
+    );
 
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
@@ -490,15 +493,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  function prettifyValues(values: FieldValues) {
-    const currentFields =
-      stepFields[stepState.currentStep.name as keyof typeof stepFields];
-    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
-      values,
-      currentFields,
-    );
-  }
-
   return {
     /**
      * Employment id passed useful to be used between components
@@ -511,7 +505,7 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: stepFields[stepState.currentStep.name as keyof typeof stepFields],
+    fields: stepFields[stepState.currentStep.name],
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */

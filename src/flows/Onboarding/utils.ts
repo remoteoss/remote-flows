@@ -7,7 +7,7 @@ type StepKeys =
   | 'benefits'
   | 'review';
 
-export const STEPS: Record<StepKeys, Step> = {
+export const STEPS: Record<StepKeys, Step<StepKeys>> = {
   basic_information: { index: 0, name: 'basic_information' },
   contract_details: { index: 1, name: 'contract_details' },
   benefits: { index: 2, name: 'benefits' },
@@ -53,11 +53,12 @@ export function prettifyFormValues(
           return;
         }
 
+        if (field?.type === 'checkbox' && field?.const) {
+          return [key, { prettyValue: true, label: field.label }];
+        }
+
         if (field?.type === 'countries' && Array.isArray(value)) {
-          return [
-            key,
-            { prettyValue: (value as string[])?.join(), label: field.label },
-          ];
+          return [key, { prettyValue: value.join(), label: field.label }];
         }
 
         if (field?.type === 'fieldset') {
