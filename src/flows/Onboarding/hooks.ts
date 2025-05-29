@@ -25,6 +25,7 @@ import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
 import {
+  convertToCents,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
@@ -34,6 +35,7 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
+import { findFieldsByType } from '../utils';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -190,8 +192,23 @@ const useJSONSchemaForm = ({
       const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
       const employmentFieldData = (employment?.[employmentField] ||
         {}) as Record<string, unknown>;
+
+      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
+        (acc, field) => {
+          acc[field] = convertToCents(fieldValues[field]);
+          return acc;
+        },
+        {},
+      );
+
       return createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : employmentFieldData,
+        initialValues: hasFieldValues
+          ? {
+              ...fieldValues,
+              ...moneyFieldsData,
+            }
+          : employmentFieldData,
       });
     },
   });
@@ -541,7 +558,6 @@ export const useOnboarding = ({
       }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-
         return onboardingForm?.handleValidation(parsedValues);
       }
       return null;
