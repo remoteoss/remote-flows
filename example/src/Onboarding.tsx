@@ -278,19 +278,13 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
-  countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
-const OnboardingWithProps = ({
-  countryCode,
-  type,
-  employmentId,
-}: OnboardingFormData) => (
+const OnboardingWithProps = ({ type, employmentId }: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      countryCode={countryCode}
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
@@ -300,7 +294,6 @@ const OnboardingWithProps = ({
 
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
   });
@@ -317,22 +310,6 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="onboarding-form-container">
-      <div className="onboarding-form-group">
-        <label htmlFor="countryCode" className="onboarding-form-label">
-          Country Code:
-        </label>
-        <input
-          id="countryCode"
-          type="text"
-          value={formData.countryCode}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
-          }
-          required
-          placeholder="e.g. PRT"
-          className="onboarding-form-input"
-        />
-      </div>
       <div className="onboarding-form-group">
         <label htmlFor="type" className="onboarding-form-label">
           Type:

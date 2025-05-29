@@ -357,7 +357,6 @@ export const useCountries = () => {
 
 export const useOnboarding = ({
   employmentId,
-  countryCode,
   type,
   options,
 }: OnboardingHookProps) => {
@@ -366,8 +365,9 @@ export const useOnboarding = ({
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
-  const [internalCountryCode, setInternalCountryCode] =
-    useState<string>(countryCode);
+  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
+    null,
+  );
   const { data: countries, isLoading: isLoadingCountries } = useCountries();
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
@@ -413,7 +413,7 @@ export const useOnboarding = ({
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
-      countryCode: internalCountryCode,
+      countryCode: internalCountryCode as string,
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
@@ -456,7 +456,9 @@ export const useOnboarding = ({
   };
 
   const initialValues = {
-    select_country: {},
+    select_country: getInitialValues(stepFields[stepState.currentStep.name], {
+      country: employment?.data.data.employment?.country.code || '',
+    }),
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
@@ -505,7 +507,7 @@ export const useOnboarding = ({
         return Promise.resolve({ data: { countryCode: parsedValues.country } });
       }
       case 'basic_information': {
-        if (!internalEmploymentId) {
+        if (!internalEmploymentId && internalCountryCode) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
@@ -522,7 +524,7 @@ export const useOnboarding = ({
             console.error('Error creating onboarding:', error);
             throw error;
           }
-        } else {
+        } else if (internalEmploymentId) {
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
@@ -531,8 +533,9 @@ export const useOnboarding = ({
             },
           });
         }
-      }
 
+        return;
+      }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
