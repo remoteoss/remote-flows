@@ -208,7 +208,7 @@ export const useOnboarding = ({
     /**
      * Employment id passed useful to be used between components
      */
-    employmentId,
+    employmentId: internalEmploymentId,
 
     /**
      * Credit risk status of the company, useful to know what to to show in the review step
