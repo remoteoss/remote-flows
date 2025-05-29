@@ -430,6 +430,10 @@ export type ContractorInvoiceResponse = {
   };
 };
 
+export type CreateRiskReserveParams = {
+  employment_slug: string;
+};
+
 /**
  * Holidays response
  */
@@ -1041,6 +1045,13 @@ export type SingleSelectMetadata = {
   options: Array<string>;
 };
 
+/**
+ * Response schema for listing leave policies details
+ */
+export type ListLeavePoliciesDetailsResponse = {
+  data: Array<LeavePolicyDetails>;
+};
+
 export type CreateOneTimeIncentiveParams = CommonIncentiveParams & {
   employment_id: string;
   type:
@@ -1543,6 +1554,8 @@ export type CreateWebhookCallbackParams = {
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.no_reserve_payment_requested'
+    | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -1563,6 +1576,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -1878,6 +1892,8 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.no_reserve_payment_requested'
+    | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -1898,6 +1914,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -2076,7 +2093,9 @@ export type TimeoffDaysAndHours = {
  * Shows a company
  */
 export type CompanyResponse = {
-  company?: Company;
+  data: {
+    company?: Company;
+  };
 };
 
 export type UnifiedEmploymentBenefitTier = {
@@ -2510,8 +2529,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -2928,6 +2947,39 @@ export type ProbationExtensionStatus =
   | 'done'
   | 'canceled'
   | 'deleted';
+
+/**
+ * Leave Policy Details
+ */
+export type LeavePolicyDetails = {
+  custom: boolean;
+  /**
+   * The ID of the leave policy variant
+   */
+  leave_policy_variant_id:
+    | string
+    | (
+        | 'time_off'
+        | 'sick_leave'
+        | 'public_holiday'
+        | 'unpaid_leave'
+        | 'extended_leave'
+        | 'in_lieu_time'
+        | 'maternity_leave'
+        | 'paternity_leave'
+        | 'parental_leave'
+        | 'bereavement'
+        | 'military_leave'
+        | 'other'
+        | 'paid_time_off'
+        | 'custom_company_leave'
+        | 'rtt'
+        | 'casual_leave'
+        | 'rol'
+        | 'ex_festivita'
+      );
+  name: string;
+};
 
 /**
  * Contract Amendment Automatable response
@@ -3567,7 +3619,7 @@ export type CreateSsoConfigurationParams = {
 export type MagicLinkParams =
   | {
       /**
-       * The path to which the user will be redirected to after login. This field has a max length of 255 characters.
+       * The path to which the user will be redirected to after login. This field has a max length of 2000 characters.
        *
        * If not specified, `/dashboard` will be used by default.
        *
@@ -3604,7 +3656,7 @@ export type MagicLinkParams =
   | {
       employment_id: UuidSlug;
       /**
-       * The path to which the user will be redirected to after login. This field has a max length of 255 characters.
+       * The path to which the user will be redirected to after login. This field has a max length of 2000 characters.
        *
        * If not specified, `/dashboard` will be used by default.
        *
@@ -3726,6 +3778,25 @@ export type Company = {
   company_owner_user_id: string;
   country_code: string;
   created_at: string;
+  /**
+   * The credit risk status of the company default legal entity.
+   * - `not_started`: The credit risk assessment has not started yet.
+   * - `ready`: The credit risk assessment is ready to be started.
+   * - `in_progress`: The automated credit risk assessment is in progress.
+   * - `referred`: The credit risk assessment has been referred to a human reviewer.
+   * - `fail`: The credit risk assessment has failed and the company will be archived.
+   * - `deposit_required`: The company default legal entity requires a deposit before onboarding new employees.
+   * - `no_deposit_required`: The company default legal entity does not require a deposit before onboarding new employees.
+   *
+   */
+  default_legal_entity_credit_risk_status:
+    | 'not_started'
+    | 'ready'
+    | 'in_progress'
+    | 'referred'
+    | 'fail'
+    | 'deposit_required'
+    | 'no_deposit_required';
   desired_currency: string;
   external_id?: string | null;
   id: string;
@@ -3972,6 +4043,8 @@ export type WebhookCallback = {
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.no_reserve_payment_requested'
+    | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -3992,6 +4065,7 @@ export type WebhookCallback = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -4850,6 +4924,8 @@ export type UpdateWebhookCallbackParams = {
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
+    | 'company.eor_hiring.no_reserve_payment_requested'
+    | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -4870,6 +4946,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -4931,7 +5008,7 @@ export type UpdateWebhookCallbackParams = {
 };
 
 export type TimeoffType =
-  | 'paid_time_off'
+  | 'time_off'
   | 'sick_leave'
   | 'public_holiday'
   | 'unpaid_leave'
@@ -4942,7 +5019,13 @@ export type TimeoffType =
   | 'parental_leave'
   | 'bereavement'
   | 'military_leave'
-  | 'other';
+  | 'other'
+  | 'paid_time_off'
+  | 'custom_company_leave'
+  | 'rtt'
+  | 'casual_leave'
+  | 'rol'
+  | 'ex_festivita';
 
 export type CreateCompanyDepartmentParams = {
   /**
@@ -5679,7 +5762,13 @@ export type PostUpdateCancelOnboardingData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Whether the request should be performed async
+     *
+     */
+    async?: boolean;
+  };
   url: '/v1/cancel-onboarding/{employment_id}';
 };
 
@@ -5861,6 +5950,89 @@ export type PostCreateDataSyncResponses = {
    */
   202: unknown;
 };
+
+export type GetIndexCompanyPricingPlanData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/pricing-plans';
+};
+
+export type GetIndexCompanyPricingPlanErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexCompanyPricingPlanError =
+  GetIndexCompanyPricingPlanErrors[keyof GetIndexCompanyPricingPlanErrors];
+
+export type GetIndexCompanyPricingPlanResponses = {
+  /**
+   * Success
+   */
+  200: ListCompanyPricingPlansResponse;
+};
+
+export type GetIndexCompanyPricingPlanResponse =
+  GetIndexCompanyPricingPlanResponses[keyof GetIndexCompanyPricingPlanResponses];
+
+export type PostCreateCompanyPricingPlanData = {
+  /**
+   * Create Pricing Plan parameters
+   */
+  body: CreatePricingPlanParams;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/pricing-plans';
+};
+
+export type PostCreateCompanyPricingPlanErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateCompanyPricingPlanError =
+  PostCreateCompanyPricingPlanErrors[keyof PostCreateCompanyPricingPlanErrors];
+
+export type PostCreateCompanyPricingPlanResponses = {
+  /**
+   * Success
+   */
+  200: CreatePricingPlanResponse;
+};
+
+export type PostCreateCompanyPricingPlanResponse =
+  PostCreateCompanyPricingPlanResponses[keyof PostCreateCompanyPricingPlanResponses];
 
 export type GetShowProbationCompletionLetterData = {
   body?: never;
@@ -6667,6 +6839,41 @@ export type GetIndexEmploymentJobResponses = {
 
 export type GetIndexEmploymentJobResponse =
   GetIndexEmploymentJobResponses[keyof GetIndexEmploymentJobResponses];
+
+export type GetIndexPricingPlanPartnerTemplateData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/pricing-plan-partner-templates';
+};
+
+export type GetIndexPricingPlanPartnerTemplateErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexPricingPlanPartnerTemplateError =
+  GetIndexPricingPlanPartnerTemplateErrors[keyof GetIndexPricingPlanPartnerTemplateErrors];
+
+export type GetIndexPricingPlanPartnerTemplateResponses = {
+  /**
+   * Success
+   */
+  200: ListPricingPlanPartnerTemplatesResponse;
+};
+
+export type GetIndexPricingPlanPartnerTemplateResponse =
+  GetIndexPricingPlanPartnerTemplateResponses[keyof GetIndexPricingPlanPartnerTemplateResponses];
 
 export type GetIndexEorPayrollCalendarData = {
   body?: never;
@@ -7868,6 +8075,44 @@ export type PostCreateProbationExtensionResponses = {
 
 export type PostCreateProbationExtensionResponse =
   PostCreateProbationExtensionResponses[keyof PostCreateProbationExtensionResponses];
+
+export type PostCreateRiskReserveData = {
+  /**
+   * Risk Reserve
+   */
+  body: CreateRiskReserveParams;
+  path?: never;
+  query?: never;
+  url: '/v1/risk-reserve';
+};
+
+export type PostCreateRiskReserveErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateRiskReserveError =
+  PostCreateRiskReserveErrors[keyof PostCreateRiskReserveErrors];
+
+export type PostCreateRiskReserveResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostCreateRiskReserveResponse =
+  PostCreateRiskReserveResponses[keyof PostCreateRiskReserveResponses];
 
 export type GetShowCompanyData = {
   body?: never;
@@ -10039,6 +10284,46 @@ export type PostCompleteOnboardingEmploymentResponses = {
 
 export type PostCompleteOnboardingEmploymentResponse =
   PostCompleteOnboardingEmploymentResponses[keyof PostCompleteOnboardingEmploymentResponses];
+
+export type GetIndexLeavePoliciesDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/leave-policies/details/{employment_id}';
+};
+
+export type GetIndexLeavePoliciesDetailsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexLeavePoliciesDetailsError =
+  GetIndexLeavePoliciesDetailsErrors[keyof GetIndexLeavePoliciesDetailsErrors];
+
+export type GetIndexLeavePoliciesDetailsResponses = {
+  /**
+   * Success
+   */
+  200: ListLeavePoliciesDetailsResponse;
+};
+
+export type GetIndexLeavePoliciesDetailsResponse =
+  GetIndexLeavePoliciesDetailsResponses[keyof GetIndexLeavePoliciesDetailsResponses];
 
 export type GetTimeoffTypesTimeoffData = {
   body?: never;
@@ -12529,6 +12814,11 @@ export type PostCreateCompanyData = {
      *
      */
     action?: string;
+    /**
+     * Whether the request should be performed async
+     *
+     */
+    async?: boolean;
   };
   url: '/v1/companies';
 };

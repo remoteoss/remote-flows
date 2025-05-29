@@ -51,7 +51,7 @@ function Review({
           }
           return (
             <pre>
-              {value.label}: {value.prettyValue === true ? 'Yes' : 'No'}
+              {value.label}: {value.prettyValue}
             </pre>
           );
         })}
@@ -67,6 +67,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
+    InvitationSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
 
@@ -173,12 +174,29 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </button>
           <h2 className="title">Benefits</h2>
           <Review meta={onboardingBag.meta.fields.benefits} />
+
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('benefits')}
           >
             Edit Benefits
           </button>
+          <h2 className="title">Review</h2>
+          <InvitationSection
+            render={({ DefaultComponent, props, onboardingBag }) => {
+              return (
+                <>
+                  <DefaultComponent />
+                  {onboardingBag.creditRiskStatus === 'deposit_required' && (
+                    <>
+                      <p>Reserve payment required to hire this employee</p>
+                      <a href={props.supportLink}>What is a reserve payment</a>
+                    </>
+                  )}
+                </>
+              );
+            }}
+          />
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -187,10 +205,17 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Back
             </BackButton>
             <OnboardingInvite
-              className="submit-button"
-              onClick={() => setApiError(null)}
+              onSuccess={() => {
+                console.log(
+                  'after inviting or creating a reserve navigate to whatever place you want',
+                );
+              }}
+              onError={(error: Error) => setApiError(error.message)}
+              type="submit"
             >
-              Invite Employee
+              {onboardingBag.creditRiskStatus === 'deposit_required'
+                ? 'Create Reserve...'
+                : 'Invite Employee'}
             </OnboardingInvite>
           </div>
         </div>
@@ -247,18 +272,21 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
+  companyId: string;
   countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
 const OnboardingWithProps = ({
+  companyId,
   countryCode,
   type,
   employmentId,
 }: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
+      companyId={companyId}
       countryCode={countryCode}
       type={type}
       render={OnBoardingRender}
@@ -272,6 +300,7 @@ export const OnboardingForm = () => {
     countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -286,6 +315,22 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="onboarding-form-container">
+      <div className="onboarding-form-group">
+        <label htmlFor="companyId" className="onboarding-form-label">
+          Company ID:
+        </label>
+        <input
+          id="companyId"
+          type="text"
+          value={formData.companyId}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, companyId: e.target.value }))
+          }
+          required
+          placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
       <div className="onboarding-form-group">
         <label htmlFor="countryCode" className="onboarding-form-label">
           Country Code:
