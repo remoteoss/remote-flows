@@ -186,11 +186,10 @@ const useJSONSchemaForm = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-      // const hasFieldValues = Object.keys(fieldValues).length > 0;
-      // const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
-      // const employmentFieldData = (employment?.[employmentField] ||
-      //   {}) as Record<string, unknown>;
 
+      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
+      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
+      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
       const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
       const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
         (acc, field) => {
