@@ -16,7 +16,6 @@ import {
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
-  $TSFixMe,
   createHeadlessForm,
   Fields,
   modify,
@@ -37,21 +36,6 @@ import { JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { buildValidationSchema } from '@/src/flows/utils';
-import { ValidationError } from 'yup';
-import { iterateErrors } from '@/src/components/form/yupValidationResolver';
-
-// TODO: duplicated code
-type JSFValidationError = {
-  formErrors: Record<
-    string,
-    {
-      type: string;
-      message: string;
-    }
-  >;
-  yupError: ValidationError;
-};
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -493,47 +477,6 @@ export const useOnboarding = ({
     }
   }
 
-  const validationSchema = buildValidationSchema(selectCountryForm.fields);
-
-  async function handleValidation(values: { country: string }) {
-    let errors: JSFValidationError | null = null;
-
-    // 1. validate static fields first using Yup validate function
-    try {
-      await validationSchema.validate(values, {
-        abortEarly: false,
-      });
-      errors = {
-        formErrors: {},
-        yupError: new ValidationError([], values),
-      };
-    } catch (error) {
-      const iterateResult = iterateErrors(error as ValidationError);
-
-      errors = {
-        // convert the errors to a format that can be used in the form
-        formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
-          {},
-        ),
-        yupError: error as ValidationError,
-      };
-    }
-
-    // 3. combine the errors from both validations
-    const combinedInnerErrors = [...(errors?.yupError.inner || [])];
-    const combinedValues = {
-      ...(errors?.yupError?.value || {}),
-    };
-
-    return {
-      formErrors: {
-        ...(errors?.formErrors || {}),
-      },
-      yupError: new ValidationError(combinedInnerErrors, combinedValues),
-    };
-  }
-
   function parseFormValues(values: FieldValues) {
     if (onboardingForm) {
       return parseJSFToValidate(values, onboardingForm?.fields, {
@@ -619,8 +562,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  console.log({ stepState });
-
   return {
     /**
      * Employment id passed useful to be used between components
@@ -661,7 +602,11 @@ export const useOnboarding = ({
      */
     handleValidation: (values: FieldValues) => {
       if (stepState.currentStep.name === 'select_country') {
-        return handleValidation(values as $TSFixMe);
+        const parsedValues = parseJSFToValidate(
+          values,
+          selectCountryForm?.fields,
+        );
+        return selectCountryForm.handleValidation(parsedValues);
       }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
         const parsedValues = parseJSFToValidate(

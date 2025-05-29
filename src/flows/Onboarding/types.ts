@@ -8,6 +8,14 @@ export type OnboardingFlowParams = {
   options?: FlowOptions;
 };
 
+export type SelectCountryFormPayload = {
+  countryCode: string;
+};
+
+export type SelectCountrySuccess = {
+  countryCode: string;
+};
+
 export type BasicInformationFormPayload = {
   name: string;
   email: string;

@@ -8,6 +8,8 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
+  SelectCountrySuccess,
+  SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
@@ -75,7 +77,15 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'select_country':
       return (
         <>
-          <SelectCountryStep />
+          <SelectCountryStep
+            onSubmit={(payload: SelectCountryFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: SelectCountrySuccess) =>
+              console.log('response', response)
+            }
+            onError={(error: Error) => setApiError(error.message)}
+          />
           <div className="buttons-container">
             <SubmitButton
               className="submit-button"
