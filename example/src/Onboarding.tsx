@@ -205,13 +205,10 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Back
             </BackButton>
             <OnboardingInvite
-              onSuccess={(response) => {
-                if ('url' in response.data && response.data.url) {
-                  const open = window.open(response.data.url, '_blank');
-                  if (open) {
-                    open.focus();
-                  }
-                }
+              onSuccess={() => {
+                console.log(
+                  'after inviting or creating a reserve navigate to whatever place you want',
+                );
               }}
               onError={(error: Error) => setApiError(error.message)}
               type="submit"
