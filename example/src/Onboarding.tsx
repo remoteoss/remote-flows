@@ -54,7 +54,7 @@ function Review({
           }
           return (
             <pre>
-              {value.label}: {value.prettyValue === true ? 'Yes' : 'No'}
+              {value.label}: {value.prettyValue}
             </pre>
           );
         })}
@@ -186,6 +186,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'review':
       return (
         <div className="onboarding-review">
+          <h2 className="title">Select country</h2>
+          <Review meta={onboardingBag.meta.fields.select_country} />
+          <button
+            className="back-button"
+            onClick={() => onboardingBag.goTo('select_country')}
+          >
+            Edit Basic Information
+          </button>
           <h2 className="title">Basic Information</h2>
           <Review meta={onboardingBag.meta.fields.basic_information} />
           <button
