@@ -30,10 +30,8 @@ export function SelectCountryStep({
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.(payload);
-      const response = await onboardingBag.onSubmit({
-        countryCode: payload.country,
-      });
+      await onSubmit?.({ countryCode: payload.country });
+      const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as SelectCountrySuccess);
         onboardingBag?.next();

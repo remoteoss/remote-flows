@@ -478,7 +478,12 @@ export const useOnboarding = ({
   }
 
   function parseFormValues(values: FieldValues) {
-    if (onboardingForm) {
+    if (selectCountryForm && stepState.currentStep.name === 'select_country') {
+      return parseJSFToValidate(values, selectCountryForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+    if (onboardingForm && stepState.currentStep.name !== 'select_country') {
       return parseJSFToValidate(values, onboardingForm?.fields, {
         isPartialValidation: true,
       });
@@ -496,10 +501,8 @@ export const useOnboarding = ({
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'select_country': {
-        // TODO: For now we're not parsing the values, let's reconsider it later
-        const countryCode = values.country as string;
-        setInternalCountryCode(countryCode);
-        return Promise.resolve({ data: { countryCode } });
+        setInternalCountryCode(parsedValues.country);
+        return Promise.resolve({ data: { countryCode: parsedValues.country } });
       }
       case 'basic_information': {
         if (!internalEmploymentId) {
