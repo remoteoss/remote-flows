@@ -10,6 +10,7 @@ import {
   MagicLinkParams,
   patchUpdateEmployment2,
   postCreateEmployment2,
+  postCreateRiskReserve,
   postGenerateMagicLink,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
@@ -146,12 +147,17 @@ export const useEmploymentInvite = () => {
   });
 };
 
-// TODO: This hooks uses the incorrect endpoint as it hasn't been created yet.``
-export const useCreateReserve = () => {
-  //const { client } = useClient();
+export const useCreateReserveInvoice = () => {
+  const { client } = useClient();
   return useMutation({
-    mutationFn: (payload: { employment_id: string }) => {
-      return Promise.resolve(payload);
+    mutationFn: (payload: { employment_slug: string }) => {
+      return postCreateRiskReserve({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
     },
   });
 };

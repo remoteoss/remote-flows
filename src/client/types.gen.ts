@@ -430,6 +430,10 @@ export type ContractorInvoiceResponse = {
   };
 };
 
+export type CreateRiskReserveParams = {
+  employment_slug: string;
+};
+
 /**
  * Holidays response
  */
@@ -1572,6 +1576,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -1909,6 +1914,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -2523,8 +2529,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -4059,6 +4065,7 @@ export type WebhookCallback = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -4939,6 +4946,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
     | 'employment.onboarding.completed'
+    | 'employment.onboarding.started'
     | 'employment.personal_information.updated'
     | 'employment.probation_completion_letter.cancelled'
     | 'employment.probation_completion_letter.completed'
@@ -8067,6 +8075,44 @@ export type PostCreateProbationExtensionResponses = {
 
 export type PostCreateProbationExtensionResponse =
   PostCreateProbationExtensionResponses[keyof PostCreateProbationExtensionResponses];
+
+export type PostCreateRiskReserveData = {
+  /**
+   * Risk Reserve
+   */
+  body: CreateRiskReserveParams;
+  path?: never;
+  query?: never;
+  url: '/v1/risk-reserve';
+};
+
+export type PostCreateRiskReserveErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateRiskReserveError =
+  PostCreateRiskReserveErrors[keyof PostCreateRiskReserveErrors];
+
+export type PostCreateRiskReserveResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostCreateRiskReserveResponse =
+  PostCreateRiskReserveResponses[keyof PostCreateRiskReserveResponses];
 
 export type GetShowCompanyData = {
   body?: never;

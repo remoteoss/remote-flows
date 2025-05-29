@@ -1,10 +1,10 @@
-import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useEmploymentInvite, useMagicLink } from './api';
+import React, { ButtonHTMLAttributes, PropsWithChildren, use } from 'react';
+import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
+import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -22,30 +22,33 @@ export function OnboardingInvite({
 }: OnboardingInviteProps) {
   const { onboardingBag } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
+  const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
     employmentInviteMutation,
   );
-  const magicLinkMutation = useMagicLink();
 
-  const { mutateAsync: createMagicLinkMutation } =
-    mutationToPromise(magicLinkMutation);
+  const { mutateAsync: createReserveInvoiceMutationAsync } = mutationToPromise(
+    useCreateReserveInvoiceMutation,
+  );
 
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
-
-      if (onboardingBag.creditRiskStatus === 'deposit_required') {
-        const response = await createMagicLinkMutation({
-          user_id: onboardingBag.owner_id as string,
-          path: '/dashboard/billing',
+      if (
+        onboardingBag.creditRiskStatus === 'deposit_required' &&
+        onboardingBag.employmentId
+      ) {
+        const response = await createReserveInvoiceMutationAsync({
+          employment_slug: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(response.data as $TSFixMe);
+          await onSuccess?.(response.data as SuccessResponse);
+          return;
         }
 
-        if (response.data?.error) {
-          onError?.(response.data.error as Error);
+        if (response.error) {
+          onError?.(response.error);
         }
       } else if (onboardingBag.employmentId) {
         const response = await employmentInviteMutationAsync({

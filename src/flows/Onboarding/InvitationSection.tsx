@@ -53,7 +53,6 @@ type InvitationSectionProps = {
 export const InvitationSection = ({ render }: InvitationSectionProps) => {
   const { onboardingBag } = useOnboardingContext();
 
-  // TODO: do the BG call here to create a reserve invoice when creditRiskStatus is 'deposit_required'
   const { creditRiskStatus } = onboardingBag;
   const props = copy[creditRiskStatus as keyof typeof copy] ?? {
     title: (

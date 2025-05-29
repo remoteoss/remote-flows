@@ -155,6 +155,9 @@ import type {
   PostCreateProbationExtensionData,
   PostCreateProbationExtensionResponse,
   PostCreateProbationExtensionError,
+  PostCreateRiskReserveData,
+  PostCreateRiskReserveResponse,
+  PostCreateRiskReserveError,
   GetShowCompanyData,
   GetShowCompanyResponse,
   GetShowCompanyError,
@@ -1839,6 +1842,33 @@ export const postCreateProbationExtension = <
       },
     ],
     url: '/v1/probation-extensions',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Create risk reserve
+ * Create a new risk reserve
+ */
+export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateRiskReserveData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateRiskReserveResponse,
+    PostCreateRiskReserveError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/risk-reserve',
     ...options,
     headers: {
       'Content-Type': 'application/json',
