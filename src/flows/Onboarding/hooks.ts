@@ -142,13 +142,11 @@ const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
-  employment,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: OnboardingHookProps['options'];
-  employment?: Employment;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -188,10 +186,10 @@ const useJSONSchemaForm = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
-      const employmentFieldData = (employment?.[employmentField] ||
-        {}) as Record<string, unknown>;
+      // const hasFieldValues = Object.keys(fieldValues).length > 0;
+      // const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
+      // const employmentFieldData = (employment?.[employmentField] ||
+      //   {}) as Record<string, unknown>;
 
       const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
       const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
@@ -203,12 +201,10 @@ const useJSONSchemaForm = ({
       );
 
       return createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues
-          ? {
-              ...fieldValues,
-              ...moneyFieldsData,
-            }
-          : employmentFieldData,
+        initialValues: {
+          ...fieldValues,
+          ...moneyFieldsData,
+        },
       });
     },
   });
@@ -334,6 +330,16 @@ const useUpdateBenefitsOffers = () => {
   });
 };
 
+const stepToFormSchemaMap: Record<
+  keyof typeof STEPS,
+  JSONSchemaFormType | null
+> = {
+  basic_information: 'employment_basic_information',
+  contract_details: 'contract_details',
+  benefits: null,
+  review: null,
+};
+
 export const useOnboarding = ({
   employmentId,
   countryCode,
@@ -372,25 +378,26 @@ export const useOnboarding = ({
     updateBenefitsOffersMutation,
   );
 
-  const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
-    basic_information: 'employment_basic_information',
-    contract_details: 'contract_details',
-    benefits: null,
-    review: null,
-  };
+  const formType =
+    stepToFormSchemaMap[stepState.currentStep.name] ||
+    'employment_basic_information';
+  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
+  const serverEmploymentData = (employment?.data?.data?.employment?.[
+    employmentKey
+  ] || {}) as Record<string, unknown>;
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
       countryCode: countryCode,
-      form:
-        form[stepState.currentStep.name as keyof typeof STEPS] ||
-        'employment_basic_information',
-      fieldValues: {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-        ...fieldValues,
-      },
-      options: options,
-      employment: employment?.data?.data?.employment,
+      form: formType,
+      fieldValues:
+        Object.keys(fieldValues).length > 0
+          ? {
+              ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+              ...fieldValues,
+            }
+          : serverEmploymentData,
+      options,
     });
 
   const {
