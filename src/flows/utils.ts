@@ -1,5 +1,6 @@
 import { AnyObjectSchema, object } from 'yup';
 import { Field } from './types';
+import { SupportedTypes } from '../components/form/fields/types';
 
 /**
  * Build the validation schema for the form.
@@ -46,4 +47,18 @@ export function parseFormRadioValues(
     },
     {},
   );
+}
+
+export function findFieldsByType(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fields: Record<string, any>,
+  type: SupportedTypes,
+) {
+  const fieldsNames = [];
+  for (const [key, value] of Object.entries(fields)) {
+    if (value['x-jsf-presentation'].inputType === type) {
+      fieldsNames.push(key);
+    }
+  }
+  return fieldsNames;
 }
