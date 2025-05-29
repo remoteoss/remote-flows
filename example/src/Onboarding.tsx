@@ -13,6 +13,7 @@ import './App.css';
 import { useState } from 'react';
 
 const STEPS = [
+  'Select Country',
   'Basic Information',
   'Contract Details',
   'Benefits',
@@ -67,10 +68,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
+    SelectCountryStep,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
-
   switch (onboardingBag.stepState.currentStep.name) {
+    case 'select_country':
+      return (
+        <>
+          <SelectCountryStep />
+          <div className="buttons-container">
+            <SubmitButton
+              className="submit-button"
+              disabled={onboardingBag.isSubmitting}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </>
+      );
     case 'basic_information':
       return (
         <>
@@ -85,6 +100,12 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="buttons-container">
+            <BackButton
+              className="back-button"
+              onClick={() => setApiError(null)}
+            >
+              Previous Step
+            </BackButton>
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}

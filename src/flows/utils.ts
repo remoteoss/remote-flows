@@ -1,11 +1,12 @@
 import { AnyObjectSchema, object } from 'yup';
-import { Field } from './types';
+import { $TSFixMe } from '@remoteoss/json-schema-form';
 
 /**
  * Build the validation schema for the form.
  * @returns
  */
-export function buildValidationSchema(fields: Field[]) {
+// TODO: repeated code here and in src/flows/CostCalculator/utils.ts
+export function buildValidationSchema(fields: $TSFixMe[]) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
       fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;

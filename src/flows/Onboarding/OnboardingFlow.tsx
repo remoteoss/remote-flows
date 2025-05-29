@@ -8,6 +8,7 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
+import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -33,6 +34,7 @@ export type OnboardingRenderProps = {
     OnboardingInvite: typeof OnboardingInvite;
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
+    SelectCountryStep: typeof SelectCountryStep;
   };
 };
 
@@ -74,6 +76,7 @@ export const OnboardingFlow = ({
           SubmitButton: OnboardingSubmit,
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
+          SelectCountryStep: SelectCountryStep,
         },
       })}
     </OnboardingContext.Provider>

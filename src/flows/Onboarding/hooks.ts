@@ -12,9 +12,11 @@ import {
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
   getIndexBenefitOffer,
+  getSupportedCountry,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
+  $TSFixMe,
   createHeadlessForm,
   Fields,
   modify,
@@ -34,6 +36,22 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
+import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
+import { buildValidationSchema } from '@/src/flows/utils';
+import { ValidationError } from 'yup';
+import { iterateErrors } from '@/src/components/form/yupValidationResolver';
+
+// TODO: duplicated code
+type JSFValidationError = {
+  formErrors: Record<
+    string,
+    {
+      type: string;
+      message: string;
+    }
+  >;
+  yupError: ValidationError;
+};
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -141,12 +159,14 @@ const useJSONSchemaForm = ({
   fieldValues,
   options,
   employment,
+  enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: OnboardingHookProps['options'];
   employment?: Employment;
+  enabled: boolean;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -157,6 +177,7 @@ const useJSONSchemaForm = ({
   return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
+    enabled: enabled,
     queryFn: async () => {
       const response = await getShowFormCountry({
         client: client as Client,
@@ -317,6 +338,39 @@ const useUpdateBenefitsOffers = () => {
   });
 };
 
+export const useCountries = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['countries'],
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      return (
+        data?.data?.map((country) => {
+          return {
+            label: country.name,
+            value: country.code,
+          };
+        }) || []
+      );
+    },
+  });
+};
+
 export const useOnboarding = ({
   employmentId,
   countryCode,
@@ -328,6 +382,9 @@ export const useOnboarding = ({
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
+  const [internalCountryCode, setInternalCountryCode] =
+    useState<string>(countryCode);
+  const { data: countries, isLoading: isLoadingCountries } = useCountries();
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
 
@@ -341,6 +398,13 @@ export const useOnboarding = ({
     nextStep,
     goToStep,
   } = useStepState<keyof typeof STEPS>(STEPS);
+
+  const { schema: selectCountrySchema } = modify(
+    selectCountryStepSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const selectCountryForm = createHeadlessForm(selectCountrySchema);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -356,6 +420,7 @@ export const useOnboarding = ({
   );
 
   const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
+    select_country: null,
     basic_information: 'employment_basic_information',
     contract_details: 'contract_details',
     benefits: null,
@@ -364,7 +429,7 @@ export const useOnboarding = ({
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
-      countryCode: countryCode,
+      countryCode: internalCountryCode,
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
@@ -374,6 +439,9 @@ export const useOnboarding = ({
       },
       options: options,
       employment: employment?.data?.data?.employment,
+      enabled: Boolean(
+        stepState.currentStep.name !== 'select_country' && internalCountryCode,
+      ),
     });
 
   const {
@@ -396,6 +464,7 @@ export const useOnboarding = ({
       : {};
 
   const stepFields: Record<keyof typeof STEPS, Fields> = {
+    select_country: selectCountryForm?.fields || [],
     basic_information: onboardingForm?.fields || [],
     contract_details: onboardingForm?.fields || [],
     benefits: benefitOffersSchema?.fields || [],
@@ -403,6 +472,7 @@ export const useOnboarding = ({
   };
 
   const initialValues = {
+    select_country: {},
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
@@ -413,6 +483,56 @@ export const useOnboarding = ({
     ),
     benefits: initialValuesBenefitOffers || {},
   };
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  const validationSchema = buildValidationSchema(selectCountryForm.fields);
+
+  async function handleValidation(values: { country: string }) {
+    let errors: JSFValidationError | null = null;
+
+    // 1. validate static fields first using Yup validate function
+    try {
+      await validationSchema.validate(values, {
+        abortEarly: false,
+      });
+      errors = {
+        formErrors: {},
+        yupError: new ValidationError([], values),
+      };
+    } catch (error) {
+      const iterateResult = iterateErrors(error as ValidationError);
+
+      errors = {
+        // convert the errors to a format that can be used in the form
+        formErrors: Object.entries(iterateResult).reduce(
+          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
+          {},
+        ),
+        yupError: error as ValidationError,
+      };
+    }
+
+    // 3. combine the errors from both validations
+    const combinedInnerErrors = [...(errors?.yupError.inner || [])];
+    const combinedValues = {
+      ...(errors?.yupError?.value || {}),
+    };
+
+    return {
+      formErrors: {
+        ...(errors?.formErrors || {}),
+      },
+      yupError: new ValidationError(combinedInnerErrors, combinedValues),
+    };
+  }
 
   function parseFormValues(values: FieldValues) {
     if (onboardingForm) {
@@ -432,12 +552,18 @@ export const useOnboarding = ({
 
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
+      case 'select_country': {
+        // TODO: For now we're not parsing the values, let's reconsider it later
+        const countryCode = values.country as string;
+        setInternalCountryCode(countryCode);
+        return Promise.resolve({ data: { countryCode } });
+      }
       case 'basic_information': {
         if (!internalEmploymentId) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
-            country_code: countryCode,
+            country_code: internalCountryCode,
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
@@ -493,6 +619,8 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
+  console.log({ stepState });
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -513,7 +641,8 @@ export const useOnboarding = ({
       isLoadingBasicInformation ||
       isLoadingEmployment ||
       isLoadingBenefitsOffersSchema ||
-      isLoadingBenefitOffers,
+      isLoadingBenefitOffers ||
+      isLoadingCountries,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
@@ -531,6 +660,9 @@ export const useOnboarding = ({
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
+      if (stepState.currentStep.name === 'select_country') {
+        return handleValidation(values as $TSFixMe);
+      }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
         const parsedValues = parseJSFToValidate(
           values,
