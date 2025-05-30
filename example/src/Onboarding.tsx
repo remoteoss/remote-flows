@@ -12,6 +12,8 @@ import {
 import './App.css';
 import { useState } from 'react';
 
+import React from 'react';
+
 const STEPS = [
   'Basic Information',
   'Contract Details',
@@ -67,7 +69,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
-    InvitationSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
@@ -200,64 +201,79 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             Edit Benefits
           </button>
           <h2 className="title">Review</h2>
+          {!showReserveInvoice &&
+            onboardingBag.creditRiskStatus === 'deposit_required' && (
+              <div className="rmt-invitation-section">
+                <h2 className="rmt-invitation-title">
+                  Confirm Details && Continue
+                </h2>
+                <p className="rmt-invitation-description">
+                  If the employee's details look good, click Continue to check
+                  if your reserve invoice is ready for payment. After we receive
+                  payment, you'll be able to invite the employee to onboard to
+                  Remote.
+                </p>
+                <p>Reserve payment required to hire this employee</p>
+                <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                  What is a reserve payment
+                </a>
+              </div>
+            )}
+          {!showInviteSuccessful &&
+            onboardingBag.creditRiskStatus !== 'deposit_required' && (
+              <div className="rmt-invitation-section">
+                <h2 className="rmt-invitation-title">
+                  Ready to invite{' '}
+                  {onboardingBag.stepState.values?.basic_information?.name} to
+                  complete their onboarding?
+                </h2>
+                <p className="rmt-invitation-description">
+                  If you're ready to invite this employee to onboard with
+                  Remote, click the button below.
+                </p>
+              </div>
+            )}
 
-          <InvitationSection
-            render={({ DefaultComponent, props, onboardingBag }) => {
-              if (showInviteSuccessful) {
-                return (
-                  <div className="invite-successful">
-                    <h2>You’re all set!</h2>
-                    <p>
-                      {onboardingBag.stepState.values?.basic_information.name}{' '}
-                      at{' '}
-                      {
-                        onboardingBag.stepState.values?.basic_information
-                          .personal_email
-                      }{' '}
-                      has been invited to Remote. We’ll let you know once they
-                      complete their onboarding process
-                    </p>
-                    <div>
-                      <button type="submit">Go to dashboard</button>
-                    </div>
-                  </div>
-                );
-              }
-              if (showReserveInvoice) {
-                return (
-                  <div className="reserve-invoice">
-                    <h2>You’ll receive a reserve invoice soon</h2>
-                    <p>
-                      We saved{' '}
-                      {onboardingBag.stepState.values?.basic_information.name}{' '}
-                      details as a draft. You’ll be able to invite them to
-                      Remote after you complete the reserve payment.
-                    </p>
-                    <div>
-                      <button type="submit">Go to dashboard</button>
+          {onboardingBag.creditRiskStatus === 'deposit_required' &&
+            showReserveInvoice && (
+              <div className="reserve-invoice">
+                <h2>You’ll receive a reserve invoice soon</h2>
+                <p>
+                  We saved{' '}
+                  {onboardingBag.stepState.values?.basic_information.name}{' '}
+                  details as a draft. You’ll be able to invite them to Remote
+                  after you complete the reserve payment.
+                </p>
+                <div>
+                  <button type="submit">Go to dashboard</button>
 
-                      <br />
+                  <br />
 
-                      <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                        What is a reserve payment
-                      </a>
-                    </div>
-                  </div>
-                );
-              }
-              return (
-                <>
-                  <DefaultComponent />
-                  {onboardingBag.creditRiskStatus === 'deposit_required' && (
-                    <>
-                      <p>Reserve payment required to hire this employee</p>
-                      <a href={props.supportLink}>What is a reserve payment</a>
-                    </>
-                  )}
-                </>
-              );
-            }}
-          />
+                  <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                    What is a reserve payment
+                  </a>
+                </div>
+              </div>
+            )}
+
+          {onboardingBag.creditRiskStatus !== 'deposit_required' &&
+            showInviteSuccessful && (
+              <div className="invite-successful">
+                <h2>You’re all set!</h2>
+                <p>
+                  {onboardingBag.stepState.values?.basic_information.name} at{' '}
+                  {
+                    onboardingBag.stepState.values?.basic_information
+                      .personal_email
+                  }{' '}
+                  has been invited to Remote. We’ll let you know once they
+                  complete their onboarding process
+                </p>
+                <div>
+                  <button type="submit">Go to dashboard</button>
+                </div>
+              </div>
+            )}
 
           <div className="buttons-container">
             <BackButton
