@@ -70,11 +70,21 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     InvitationSection,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
+  const [showReserveInvoice, setShowReserveInvoice] = useState(false);
+  const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
       return (
         <>
+          {onboardingBag.creditRiskStatus === 'deposit_required' && (
+            <div className="alert">
+              Reserve payment required to hire this employee. Check this{' '}
+              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                support article
+              </a>
+            </div>
+          )}
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -99,6 +109,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
+          {onboardingBag.creditRiskStatus === 'deposit_required' && (
+            <div className="alert">
+              Reserve payment required to hire this employee. Check this{' '}
+              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                support article
+              </a>
+            </div>
+          )}
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)
@@ -182,8 +200,51 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             Edit Benefits
           </button>
           <h2 className="title">Review</h2>
+
           <InvitationSection
             render={({ DefaultComponent, props, onboardingBag }) => {
+              if (showInviteSuccessful) {
+                return (
+                  <div className="invite-successful">
+                    <h2>You’re all set!</h2>
+                    <p>
+                      {onboardingBag.stepState.values?.basic_information.name}{' '}
+                      at{' '}
+                      {
+                        onboardingBag.stepState.values?.basic_information
+                          .personal_email
+                      }{' '}
+                      has been invited to Remote. We’ll let you know once they
+                      complete their onboarding process
+                    </p>
+                    <div>
+                      <button type="submit">Go to dashboard</button>
+                    </div>
+                  </div>
+                );
+              }
+              if (showReserveInvoice) {
+                return (
+                  <div className="reserve-invoice">
+                    <h2>You’ll receive a reserve invoice soon</h2>
+                    <p>
+                      We saved{' '}
+                      {onboardingBag.stepState.values?.basic_information.name}{' '}
+                      details as a draft. You’ll be able to invite them to
+                      Remote after you complete the reserve payment.
+                    </p>
+                    <div>
+                      <button type="submit">Go to dashboard</button>
+
+                      <br />
+
+                      <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                        What is a reserve payment
+                      </a>
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <>
                   <DefaultComponent />
@@ -197,6 +258,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               );
             }}
           />
+
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -206,6 +268,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             </BackButton>
             <OnboardingInvite
               onSuccess={() => {
+                if (onboardingBag.creditRiskStatus === 'deposit_required') {
+                  setShowReserveInvoice(true);
+                  return;
+                } else {
+                  setShowInviteSuccessful(true);
+                }
+
                 console.log(
                   'after inviting or creating a reserve navigate to whatever place you want',
                 );
@@ -214,7 +283,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               type="submit"
             >
               {onboardingBag.creditRiskStatus === 'deposit_required'
-                ? 'Create Reserve...'
+                ? 'Continue'
                 : 'Invite Employee'}
             </OnboardingInvite>
           </div>
