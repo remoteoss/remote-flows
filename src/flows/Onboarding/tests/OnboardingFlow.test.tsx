@@ -31,6 +31,7 @@ import {
 import {
   assertRadioValue,
   fillRadio,
+  fillSelect,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -88,12 +89,31 @@ describe('OnboardingFlow', () => {
       SubmitButton,
       BackButton,
       OnboardingInvite,
+      SelectCountryStep,
     } = components;
 
     if (onboardingBag.isLoading) {
       return <div data-testid="spinner">Loading...</div>;
     }
     switch (onboardingBag.stepState.currentStep.name) {
+      case 'select_country':
+        return (
+          <>
+            <SelectCountryStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <div className="buttons-container">
+              <SubmitButton
+                className="submit-button"
+                disabled={onboardingBag.isSubmitting}
+              >
+                Continue
+              </SubmitButton>
+            </div>
+          </>
+        );
       case 'basic_information':
         return (
           <>
@@ -166,10 +186,11 @@ describe('OnboardingFlow', () => {
       const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
       const steps: Record<number, string> = {
-        [0]: 'Basic Information',
-        [1]: 'Contract Details',
-        [2]: 'Benefits',
-        [3]: 'Review',
+        [0]: 'Select Country',
+        [1]: 'Basic Information',
+        [2]: 'Contract Details',
+        [3]: 'Benefits',
+        [4]: 'Review',
       };
 
       return (
@@ -193,6 +214,20 @@ describe('OnboardingFlow', () => {
     vi.clearAllMocks();
 
     server.use(
+      http.get('*/v1/countries', () => {
+        return HttpResponse.json({
+          data: [
+            {
+              code: 'PRT',
+              name: 'Portugal',
+            },
+            {
+              code: 'ESP',
+              name: 'Spain',
+            },
+          ],
+        });
+      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
@@ -288,16 +323,29 @@ describe('OnboardingFlow', () => {
     }
   }
 
-  it('should render first step of the form', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+  async function fillCountry(country: string) {
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', country);
+
+    const nextButton = screen.getByText(/Continue/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
 
     await screen.findByText(/Step: Basic Information/i);
+  }
+
+  it('should select a country and advance to the next step', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await fillCountry('Portugal');
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await fillRadio('Does the employee have a seniority date?', 'Yes');
 
@@ -308,7 +356,7 @@ describe('OnboardingFlow', () => {
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await fillBasicInformation();
 
@@ -334,7 +382,8 @@ describe('OnboardingFlow', () => {
 
   it('should submit the basic information step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await screen.findByText(/Step: Basic Information/i);
+
+    await fillCountry('Portugal');
 
     await fillBasicInformation();
 
@@ -344,10 +393,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
     });
 
-    expect(mockOnSubmit).toHaveBeenCalledWith({
+    expect(mockOnSubmit.mock.calls[1][0]).toEqual({
       department: {
         id: undefined,
         name: undefined,
@@ -377,7 +426,8 @@ describe('OnboardingFlow', () => {
     });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Basic Information/i);
+
+    await fillCountry('Portugal');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -397,7 +447,7 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -458,7 +508,13 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -467,16 +523,20 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
     });
 
     // Get the second call to mockOnSubmit (index 1)
-    const contractDetailsSubmission = mockOnSubmit.mock.calls[1][0];
+    const contractDetailsSubmission = mockOnSubmit.mock.calls[2][0];
 
     // Assert the contract details submission
     expect(contractDetailsSubmission).toEqual({
@@ -522,7 +582,13 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -530,6 +596,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -562,10 +632,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
     });
 
-    const benefitsSubmission = mockOnSubmit.mock.calls[2][0];
+    const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
 
     // Assert the contract details submission
     expect(benefitsSubmission).toEqual({
@@ -598,7 +668,7 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
