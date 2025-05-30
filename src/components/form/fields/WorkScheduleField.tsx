@@ -187,6 +187,11 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
   const CustomWorkScheduleField =
     props.component || components?.['work-schedule'];
 
+  const { workHoursSummary, breakSummary } = buildWorkScheduleSummary(
+    props.default,
+  );
+  const totalWorkHours = calculateTotalWorkHours(props.default);
+
   useEffect(() => {
     setValue(props.name, props.default);
   }, [props.default, props.name, setValue]);
@@ -207,7 +212,15 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
                 },
               }}
               fieldState={fieldState}
-              fieldData={props}
+              fieldData={{
+                ...props,
+                // @ts-expect-error - defaultFormattedValue is not part of fieldData. It's generated in this component.
+                defaultFormattedValue: {
+                  workHoursSummary,
+                  breakSummary,
+                  totalWorkHours,
+                },
+              }}
             />
           );
         }}
@@ -215,14 +228,13 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
     );
   }
 
-  const { workHoursSummary, breakSummary } = buildWorkScheduleSummary(
-    props.default,
-  );
-  const totalWorkHours = calculateTotalWorkHours(props.default);
-
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm">Work hours</p>
+    <div
+      className={`flex flex-col gap-3 RemoteFlows__WorkScheduleField__${props.name}`}
+    >
+      <p className={`text-sm RemoteFlows__WorkScheduleField__Title`}>
+        Work hours
+      </p>
       <div className="flex flex-col gap-1">
         <p className="text-sm text-gray-500">{workHoursSummary.join(', ')}</p>
         <p className="text-sm text-gray-500">{breakSummary.join()}</p>
