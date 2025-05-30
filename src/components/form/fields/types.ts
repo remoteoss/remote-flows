@@ -11,4 +11,5 @@ export type SupportedTypes =
   | 'money'
   | 'file'
   | 'countries'
-  | 'hidden';
+  | 'hidden'
+  | 'work-schedule';
