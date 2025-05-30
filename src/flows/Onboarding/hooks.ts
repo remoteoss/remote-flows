@@ -26,6 +26,7 @@ import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
 import {
+  convertToCents,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
@@ -36,6 +37,7 @@ import { JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
+import { findFieldsByType } from '../utils';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -142,14 +144,12 @@ const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
-  employment,
   enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: OnboardingHookProps['options'];
-  employment?: Employment;
   enabled: boolean;
 }) => {
   const { client } = useClient();
@@ -191,12 +191,24 @@ const useJSONSchemaForm = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
-      const employmentFieldData = (employment?.[employmentField] ||
-        {}) as Record<string, unknown>;
+
+      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
+      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
+      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
+      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
+        (acc, field) => {
+          acc[field] = convertToCents(fieldValues[field]);
+          return acc;
+        },
+        {},
+      );
+
       return createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : employmentFieldData,
+        initialValues: {
+          ...fieldValues,
+          ...moneyFieldsData,
+        },
       });
     },
   });
@@ -355,6 +367,17 @@ export const useCountries = () => {
   });
 };
 
+const stepToFormSchemaMap: Record<
+  keyof typeof STEPS,
+  JSONSchemaFormType | null
+> = {
+  select_country: null,
+  basic_information: 'employment_basic_information',
+  contract_details: 'contract_details',
+  benefits: null,
+  review: null,
+};
+
 export const useOnboarding = ({
   employmentId,
   type,
@@ -411,18 +434,28 @@ export const useOnboarding = ({
     review: null,
   };
 
+  const formType =
+    stepToFormSchemaMap[stepState.currentStep.name] ||
+    'employment_basic_information';
+  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
+  const serverEmploymentData = (employment?.data?.data?.employment?.[
+    employmentKey
+  ] || {}) as Record<string, unknown>;
+
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form:
         form[stepState.currentStep.name as keyof typeof STEPS] ||
         'employment_basic_information',
-      fieldValues: {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-        ...fieldValues,
-      },
+      fieldValues:
+        Object.keys(fieldValues).length > 0
+          ? {
+              ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+              ...fieldValues,
+            }
+          : serverEmploymentData,
       options: options,
-      employment: employment?.data?.data?.employment,
       enabled: Boolean(
         stepState.currentStep.name !== 'select_country' && internalCountryCode,
       ),
@@ -624,7 +657,6 @@ export const useOnboarding = ({
       }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-
         return onboardingForm?.handleValidation(parsedValues);
       }
       return null;
