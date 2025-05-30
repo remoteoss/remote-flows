@@ -426,14 +426,6 @@ export const useOnboarding = ({
     updateBenefitsOffersMutation,
   );
 
-  const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
-    select_country: null,
-    basic_information: 'employment_basic_information',
-    contract_details: 'contract_details',
-    benefits: null,
-    review: null,
-  };
-
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'employment_basic_information';
@@ -445,9 +437,7 @@ export const useOnboarding = ({
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
       countryCode: internalCountryCode as string,
-      form:
-        form[stepState.currentStep.name as keyof typeof STEPS] ||
-        'employment_basic_information',
+      form: formType,
       fieldValues:
         Object.keys(fieldValues).length > 0
           ? {
