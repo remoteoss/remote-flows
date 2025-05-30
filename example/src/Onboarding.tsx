@@ -30,34 +30,33 @@ type MultiStepFormProps = {
 function Review({
   meta,
 }: {
-  meta: Record<string, { label: string; prettyValue: string | boolean }>;
+  meta: Record<string, { label?: string; prettyValue?: string | boolean }>;
 }) {
   return (
     <div className="onboarding-values">
-      {Object.values(meta)
-        .filter(Boolean)
-        .map((value) => {
-          if (!value.prettyValue) {
-            return Object.values(value)
-              .filter(Boolean)
-              .map((v) => {
-                const val = v as unknown as {
-                  label: string;
-                  prettyValue: string;
-                };
-                return (
-                  <pre>
-                    {val.label}: {value.prettyValue === true ? 'Yes' : 'No'}
-                  </pre>
-                );
-              });
-          }
-          return (
-            <pre>
-              {value.label}: {value.prettyValue}
-            </pre>
-          );
-        })}
+      {Object.entries(meta).map(([key, value]) => {
+        const label = value?.label;
+        const prettyValue = value?.prettyValue;
+
+        // Skip if there's no label or prettyValue is undefined or empty string
+        if (!label || prettyValue === undefined || prettyValue === '') {
+          return null;
+        }
+
+        // Handle boolean prettyValue
+        const displayValue =
+          typeof prettyValue === 'boolean'
+            ? prettyValue
+              ? 'Yes'
+              : 'No'
+            : prettyValue;
+
+        return (
+          <pre key={key}>
+            {label}: {displayValue}
+          </pre>
+        );
+      })}
     </div>
   );
 }
@@ -192,7 +191,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             className="back-button"
             onClick={() => onboardingBag.goTo('select_country')}
           >
-            Edit Basic Information
+            Edit Country
           </button>
           <h2 className="title">Basic Information</h2>
           <Review meta={onboardingBag.meta.fields.basic_information} />
