@@ -33,7 +33,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
@@ -367,6 +367,36 @@ export const useCountries = () => {
   });
 };
 
+const useCountriesSchemaField = (options?: FlowOptions) => {
+  const { data: countries, isLoading } = useCountries();
+
+  const { schema: selectCountrySchema } = modify(
+    selectCountryStepSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+
+    return {
+      isLoading,
+      selectCountryForm,
+    };
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+  };
+};
+
 const stepToFormSchemaMap: Record<
   keyof typeof STEPS,
   JSONSchemaFormType | null
@@ -391,7 +421,6 @@ export const useOnboarding = ({
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     null,
   );
-  const { data: countries, isLoading: isLoadingCountries } = useCountries();
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
 
@@ -406,12 +435,8 @@ export const useOnboarding = ({
     goToStep,
   } = useStepState<keyof typeof STEPS>(STEPS);
 
-  const { schema: selectCountrySchema } = modify(
-    selectCountryStepSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+  const { selectCountryForm, isLoading: isLoadingCountries } =
+    useCountriesSchemaField(options);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -492,15 +517,6 @@ export const useOnboarding = ({
     ),
     benefits: initialValuesBenefitOffers || {},
   };
-
-  if (countries) {
-    const countryField = selectCountryForm.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
