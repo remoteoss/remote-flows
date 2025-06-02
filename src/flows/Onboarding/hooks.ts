@@ -520,9 +520,7 @@ export const useOnboarding = ({
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
-      return parseJSFToValidate(values, selectCountryForm?.fields, {
-        isPartialValidation: true,
-      });
+      return values;
     }
     if (onboardingForm && stepState.currentStep.name !== 'select_country') {
       return parseJSFToValidate(values, onboardingForm?.fields, {
@@ -654,11 +652,7 @@ export const useOnboarding = ({
      */
     handleValidation: (values: FieldValues) => {
       if (stepState.currentStep.name === 'select_country') {
-        const parsedValues = parseJSFToValidate(
-          values,
-          selectCountryForm?.fields,
-        );
-        return selectCountryForm.handleValidation(parsedValues);
+        return selectCountryForm.handleValidation(values);
       }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
         const parsedValues = parseJSFToValidate(
