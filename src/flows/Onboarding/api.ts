@@ -1,5 +1,4 @@
 import {
-  Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
@@ -17,20 +16,15 @@ import {
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
+import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
+import { findFieldsByType } from '@/src/flows/utils';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
-
-const jsonSchemaToEmployment: Partial<
-  Record<JSONSchemaFormType, keyof Employment>
-> = {
-  employment_basic_information: 'basic_information',
-  contract_details: 'contract_details',
-};
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -172,13 +166,11 @@ export const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
-  employment,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: OnboardingFlowParams['options'];
-  employment?: Employment;
+  options?: FlowOptions;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -218,12 +210,24 @@ export const useJSONSchemaForm = ({
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
-      const employmentFieldData = (employment?.[employmentField] ||
-        {}) as Record<string, unknown>;
+
+      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
+      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
+      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
+      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
+        (acc, field) => {
+          acc[field] = convertToCents(fieldValues[field]);
+          return acc;
+        },
+        {},
+      );
+
       return createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : employmentFieldData,
+        initialValues: {
+          ...fieldValues,
+          ...moneyFieldsData,
+        },
       });
     },
   });

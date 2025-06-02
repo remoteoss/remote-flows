@@ -1,4 +1,8 @@
-import { EmploymentCreateParams, EmploymentFullParams } from '@/src/client';
+import {
+  Employment,
+  EmploymentCreateParams,
+  EmploymentFullParams,
+} from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState } from '@/src/flows/useStepState';
@@ -10,7 +14,6 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
 import {
@@ -23,8 +26,26 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
+import { JSONSchemaFormType } from '@/src/flows/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
+
+const jsonSchemaToEmployment: Partial<
+  Record<JSONSchemaFormType, keyof Employment>
+> = {
+  employment_basic_information: 'basic_information',
+  contract_details: 'contract_details',
+};
+
+const stepToFormSchemaMap: Record<
+  keyof typeof STEPS,
+  JSONSchemaFormType | null
+> = {
+  basic_information: 'employment_basic_information',
+  contract_details: 'contract_details',
+  benefits: null,
+  review: null,
+};
 
 export const useOnboarding = ({
   employmentId,
@@ -66,25 +87,26 @@ export const useOnboarding = ({
     updateBenefitsOffersMutation,
   );
 
-  const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
-    basic_information: 'employment_basic_information',
-    contract_details: 'contract_details',
-    benefits: null,
-    review: null,
-  };
+  const formType =
+    stepToFormSchemaMap[stepState.currentStep.name] ||
+    'employment_basic_information';
+  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
+  const serverEmploymentData = (employment?.data?.data?.employment?.[
+    employmentKey
+  ] || {}) as Record<string, unknown>;
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
       countryCode: countryCode,
-      form:
-        form[stepState.currentStep.name as keyof typeof STEPS] ||
-        'employment_basic_information',
-      fieldValues: {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-        ...fieldValues,
-      },
-      options: options,
-      employment: employment?.data?.data?.employment,
+      form: formType,
+      fieldValues:
+        Object.keys(fieldValues).length > 0
+          ? {
+              ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+              ...fieldValues,
+            }
+          : serverEmploymentData,
+      options,
     });
 
   const {
@@ -269,7 +291,6 @@ export const useOnboarding = ({
       }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-
         return onboardingForm?.handleValidation(parsedValues);
       }
       return null;
