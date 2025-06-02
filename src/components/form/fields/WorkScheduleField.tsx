@@ -46,12 +46,13 @@ function WorkScheduleSelectionForm({
   defaultSchedule,
   onSubmit,
 }: WorkScheduleSelectionProps) {
-  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const transformedSchedule = DAYS_OF_THE_WEEK.map((day) => {
     const existingSchedule = defaultSchedule.find(
       (schedule) =>
-        schedule.day.toLowerCase() === getShortWeekday(day).toLowerCase(),
+        schedule.day.toLowerCase() === getShortWeekday(day).toLowerCase() ||
+        schedule.day.toLowerCase() === day.toLowerCase(),
     );
 
     if (existingSchedule) {
@@ -93,36 +94,39 @@ function WorkScheduleSelectionForm({
       }));
 
     onSubmit(schedule);
-    setOpen(false);
+    setOpenDialog(false);
   }
 
   function handleCancel() {
     reset();
-    setOpen(false);
+    setOpenDialog(false);
   }
 
   return (
     <div className="flex items-center justify-between">
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button variant={'link'} className="flex items-center p-0">
+          <Button
+            variant={'link'}
+            className="flex items-center p-0 RemoteFlows__WorkScheduleSelectionForm__Trigger"
+          >
             Edit Schedule
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-8">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__WorkScheduleSelectionForm__Title">
           <DialogHeader>
             <DialogTitle>Edit employee working hours</DialogTitle>
           </DialogHeader>
 
           <Form {...form}>
-            <form className="space-y-6">
+            <form className="space-y-6 RemoteFlows__WorkScheduleSelectionForm__Form">
               <div className="rounded-lg">
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4 RemoteFlows__WorkScheduleSelectionForm__Description">
                   The times displayed are in the employee's time zone in the
                   24-hour format.
                 </p>
 
-                <div className="grid grid-cols-12 gap-4 mb-6 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide RemoteFlows__WorkScheduleSelectionForm__Header">
                   <div className="col-span-2"></div>
                   <div className="col-span-3 text-center">START</div>
                   <div className="col-span-1 text-center"></div>
@@ -138,7 +142,7 @@ function WorkScheduleSelectionForm({
 
                     return (
                       <div key={field.id}>
-                        <div className="grid grid-cols-12 gap-4 items-center py-2">
+                        <div className="grid grid-cols-12 gap-4 items-center py-1 border-b border-gray-200">
                           <div className="col-span-2 flex items-center gap-3">
                             <CheckBoxField
                               label={field.day}
@@ -155,11 +159,13 @@ function WorkScheduleSelectionForm({
                             <TextField name={`schedule.${index}.end_time`} />
                           </div>
                           <div className="col-span-2 text-center text-gray-600">
-                            {`${calculatedHours} hours`}
+                            {isNaN(calculatedHours)
+                              ? '-'
+                              : `${calculatedHours} hours`}
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-12 gap-4 items-center py-2">
+                        <div className="grid grid-cols-12 gap-4 items-center py-1">
                           <div className="col-span-2 text-gray-500">Break</div>
                           <div className="col-span-2">
                             <TextField
