@@ -12,10 +12,25 @@ import {
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-import React from 'react';
-
+export const InviteSection = ({
+  title,
+  description,
+  children,
+}: {
+  title: React.ReactNode;
+  description: React.ReactNode;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div className="rmt-invitation-section">
+      <h2 className="rmt-invitation-title">{title}</h2>
+      <p className="rmt-invitation-description">{description}</p>
+      {children}
+    </div>
+  );
+};
 const STEPS = [
   'Select Country',
   'Basic Information',
@@ -242,35 +257,22 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           <h2 className="title">Review</h2>
           {!showReserveInvoice &&
             onboardingBag.creditRiskStatus === 'deposit_required' && (
-              <div className="rmt-invitation-section">
-                <h2 className="rmt-invitation-title">
-                  Confirm Details && Continue
-                </h2>
-                <p className="rmt-invitation-description">
-                  If the employee's details look good, click Continue to check
-                  if your reserve invoice is ready for payment. After we receive
-                  payment, you'll be able to invite the employee to onboard to
-                  Remote.
-                </p>
+              <InviteSection
+                title="Confirm Details && Continue"
+                description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
+              >
                 <p>Reserve payment required to hire this employee</p>
                 <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
                   What is a reserve payment
                 </a>
-              </div>
+              </InviteSection>
             )}
           {!showInviteSuccessful &&
             onboardingBag.creditRiskStatus !== 'deposit_required' && (
-              <div className="rmt-invitation-section">
-                <h2 className="rmt-invitation-title">
-                  Ready to invite{' '}
-                  {onboardingBag.stepState.values?.basic_information?.name} to
-                  complete their onboarding?
-                </h2>
-                <p className="rmt-invitation-description">
-                  If you're ready to invite this employee to onboard with
-                  Remote, click the button below.
-                </p>
-              </div>
+              <InviteSection
+                title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
+                description="If you're ready to invite this employee to onboard with Remote, click the button below."
+              />
             )}
 
           {onboardingBag.creditRiskStatus === 'deposit_required' &&
