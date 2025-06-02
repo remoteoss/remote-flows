@@ -85,7 +85,6 @@ function WorkScheduleSelectionForm({
   const watchedSchedule = watch('schedule');
 
   function handleSubmitWorkingHours(data: WorkScheduleFormData) {
-    // remove checked property from each day
     const schedule = data.schedule
       .filter(({ checked }) => checked)
       .map((day) => ({
@@ -123,7 +122,6 @@ function WorkScheduleSelectionForm({
                   24-hour format.
                 </p>
 
-                {/* Header */}
                 <div className="grid grid-cols-12 gap-4 mb-6 text-sm font-medium text-gray-500 uppercase tracking-wide">
                   <div className="col-span-2"></div>
                   <div className="col-span-3 text-center">START</div>
@@ -133,7 +131,6 @@ function WorkScheduleSelectionForm({
                   {/* <div className="col-span-2 text-center">ACTIONS</div> */}
                 </div>
 
-                {/* Schedule Rows */}
                 <div className="space-y-4">
                   {fields.map((field, index) => {
                     const currentDay = watchedSchedule[index];
@@ -141,7 +138,6 @@ function WorkScheduleSelectionForm({
 
                     return (
                       <div key={field.id}>
-                        {/* Day Row */}
                         <div className="grid grid-cols-12 gap-4 items-center py-2">
                           <div className="col-span-2 flex items-center gap-3">
                             <CheckBoxField
@@ -181,7 +177,6 @@ function WorkScheduleSelectionForm({
                 </div>
               </div>
 
-              {/* Form Actions */}
               <div className="flex justify-end gap-4 pt-4">
                 <Button
                   type="button"

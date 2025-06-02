@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import groupBy from 'lodash/groupBy';
 import capitalize from 'lodash/capitalize';
 
@@ -18,7 +17,7 @@ export type DailySchedule = {
   day: string;
   start_time: string;
   end_time: string;
-  hours: number | string;
+  hours: number;
   break_duration_minutes: string;
   checked?: boolean;
 };
@@ -48,7 +47,7 @@ function convertBreakDurationToHours(breakDuration: number) {
  * @param dailySchedules - Daily schedules
  * @returns Total work hours
  */
-export function calculateTotalWorkHours(dailySchedules: any[]) {
+export function calculateTotalWorkHours(dailySchedules: DailySchedule[]) {
   const totalWorkHours = dailySchedules.reduce((total, daySchedule) => {
     const sum = daySchedule.hours + total;
     return sum;
@@ -63,13 +62,16 @@ export function calculateTotalWorkHours(dailySchedules: any[]) {
  * @param dailySchedule - The daily schedule
  * @returns The last consecutive day
  */
-function findLastConsecutiveDay(startDay: string, dailySchedule: any) {
-  const daysScheduled = dailySchedule.map((daySchedule: any) =>
-    daySchedule.day.toLowerCase(),
+function findLastConsecutiveDay(
+  startDay: string,
+  dailySchedule: DailySchedule[],
+): Weekday | null {
+  const daysScheduled = dailySchedule.map(
+    ({ day }: DailySchedule) => day.toLowerCase() as Weekday,
   );
 
-  let idx = daysScheduled.indexOf(startDay);
-  let day = null;
+  let idx = daysScheduled.indexOf(startDay as Weekday);
+  let day: Weekday | null = null;
 
   while (idx < daysScheduled.length && !day) {
     const currentDay = daysScheduled[idx];
@@ -93,9 +95,13 @@ function findLastConsecutiveDay(startDay: string, dailySchedule: any) {
  * @param daySchedule - The day schedule
  * @returns True if the day schedule should be summarized
  */
-function shouldSummarizeSchedule(daySchedule: any) {
+function shouldSummarizeSchedule(daySchedule: DailySchedule) {
   return (
-    daySchedule.start_time && daySchedule.end_time && daySchedule.hours > 0
+    daySchedule.start_time &&
+    daySchedule.end_time &&
+    (typeof daySchedule.hours === 'number'
+      ? daySchedule.hours
+      : Number.parseInt(daySchedule.hours)) > 0
   );
 }
 
@@ -104,8 +110,8 @@ function shouldSummarizeSchedule(daySchedule: any) {
  * @param daySchedule - The day schedule
  * @returns True if the break duration should be summarized
  */
-function shouldSummarizeBreaks(daySchedule: any) {
-  return daySchedule.break_duration_minutes > 0;
+function shouldSummarizeBreaks(daySchedule: DailySchedule) {
+  return Number.parseInt(daySchedule.break_duration_minutes) > 0;
 }
 
 /**
@@ -113,7 +119,7 @@ function shouldSummarizeBreaks(daySchedule: any) {
  * @param dailySchedules - The daily schedules
  * @returns The work schedule summary
  */
-export function buildWorkScheduleSummary(dailySchedules: any) {
+export function buildWorkScheduleSummary(dailySchedules: DailySchedule[]) {
   const activeScheduleDays = dailySchedules.filter(shouldSummarizeSchedule);
 
   const groupedWorkHours = groupBy(activeScheduleDays, (dailySchedule) => {
@@ -134,9 +140,11 @@ export function buildWorkScheduleSummary(dailySchedules: any) {
         startDay,
         sameDailySchedule,
       );
-      const lastConsecutiveDayIdx = sameDailySchedule.findIndex(
-        (dailySchedule) => dailySchedule.day === lastConsecutiveDay,
-      );
+      const lastConsecutiveDayIdx = lastConsecutiveDay
+        ? sameDailySchedule.findIndex(
+            (dailySchedule) => dailySchedule.day === lastConsecutiveDay,
+          )
+        : -1;
       const allDaysAreConsecutive =
         lastConsecutiveDayIdx === sameDailySchedule.length - 1;
 
@@ -144,7 +152,7 @@ export function buildWorkScheduleSummary(dailySchedules: any) {
         return `${capitalize(startDay)}, ${timeSummary}`;
       }
 
-      if (!allDaysAreConsecutive) {
+      if (!allDaysAreConsecutive || !lastConsecutiveDay) {
         return sameDailySchedule.reduce((summary, dailySchedule, idx) => {
           const day = capitalize(dailySchedule.day);
           if (idx === sameDailySchedule.length - 1) {
@@ -216,7 +224,7 @@ export function calculateHours(day: DailySchedule) {
     Number.parseInt(break_duration_minutes || '0');
 
   const hours = workMinutes / 60;
-  return hours === Math.floor(hours) ? hours : hours.toFixed(2);
+  return hours === Math.floor(hours) ? hours : Number(hours.toFixed(2));
 }
 
 type Weekday = (typeof DAYS_OF_THE_WEEK)[number];
