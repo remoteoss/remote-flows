@@ -2,18 +2,11 @@
 import { JSFField } from '@/src/types/remoteFlows';
 import React, { useEffect, useState } from 'react';
 
-import {
-  useForm,
-  useFormContext,
-  useFieldArray,
-  Controller,
-} from 'react-hook-form';
+import { useForm, useFormContext, useFieldArray } from 'react-hook-form';
 import { useFormFields } from '@/src/context';
-import { FormField } from '@/src/components/ui/form';
+import { Form, FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
 import { Button } from '@/src/components/ui/button';
-import { Checkbox } from '@/src/components/ui/checkbox';
-import { Input } from '@/src/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +23,8 @@ import {
   DAYS_OF_THE_WEEK,
   getShortWeekday,
 } from './workScheduleUtils';
+import { CheckBoxField } from './CheckBoxField';
+import { TextField } from './TextField';
 
 type WorkScheduleFieldProps = JSFField & {
   name: string;
@@ -55,7 +50,8 @@ function WorkScheduleSelectionForm({
 
   const transformedSchedule = DAYS_OF_THE_WEEK.map((day) => {
     const existingSchedule = defaultSchedule.find(
-      (schedule) => schedule.day.toLowerCase() === day,
+      (schedule) =>
+        schedule.day.toLowerCase() === getShortWeekday(day).toLowerCase(),
     );
 
     if (existingSchedule) {
@@ -73,17 +69,17 @@ function WorkScheduleSelectionForm({
     };
   });
 
-  const { control, handleSubmit, watch, reset } = useForm<WorkScheduleFormData>(
-    {
-      defaultValues: {
-        schedule: transformedSchedule,
-      },
+  const form = useForm<WorkScheduleFormData>({
+    defaultValues: {
+      schedule: transformedSchedule,
     },
-  );
+  });
+
+  const { handleSubmit, watch, reset, control } = form;
 
   const { fields } = useFieldArray({
-    control,
     name: 'schedule',
+    control,
   });
 
   const watchedSchedule = watch('schedule');
@@ -114,136 +110,97 @@ function WorkScheduleSelectionForm({
             Edit Schedule
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-8">
           <DialogHeader>
             <DialogTitle>Edit employee working hours</DialogTitle>
           </DialogHeader>
 
-          <form className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-gray-600 text-sm mb-4">
-                The times displayed are in the employee's time zone in the
-                24-hour format.
-              </p>
+          <Form {...form}>
+            <form className="space-y-6">
+              <div className="rounded-lg">
+                <p className="text-gray-600 text-sm mb-4">
+                  The times displayed are in the employee's time zone in the
+                  24-hour format.
+                </p>
 
-              {/* Header */}
-              <div className="grid grid-cols-12 gap-4 mb-6 text-sm font-medium text-gray-500 uppercase tracking-wide">
-                <div className="col-span-2"></div>
-                <div className="col-span-2 text-center">START</div>
-                <div className="col-span-1 text-center"></div>
-                <div className="col-span-2 text-center">END</div>
-                <div className="col-span-3 text-center">HOURS</div>
-                {/* <div className="col-span-2 text-center">ACTIONS</div> */}
-              </div>
+                {/* Header */}
+                <div className="grid grid-cols-12 gap-4 mb-6 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                  <div className="col-span-2"></div>
+                  <div className="col-span-3 text-center">START</div>
+                  <div className="col-span-1 text-center"></div>
+                  <div className="col-span-3 text-center">END</div>
+                  <div className="col-span-2 text-center">HOURS</div>
+                  {/* <div className="col-span-2 text-center">ACTIONS</div> */}
+                </div>
 
-              {/* Schedule Rows */}
-              <div className="space-y-4">
-                {fields.map((field, index) => {
-                  const currentDay = watchedSchedule[index];
-                  const calculatedHours = calculateHours(currentDay);
+                {/* Schedule Rows */}
+                <div className="space-y-4">
+                  {fields.map((field, index) => {
+                    const currentDay = watchedSchedule[index];
+                    const calculatedHours = calculateHours(currentDay);
 
-                  return (
-                    <div key={field.id}>
-                      {/* Day Row */}
-                      <div className="grid grid-cols-12 gap-4 items-center py-2">
-                        <div className="col-span-2 flex items-center gap-3">
-                          <Controller
-                            name={`schedule.${index}.checked`}
-                            control={control}
-                            render={({ field: checkboxField }) => (
-                              <Checkbox
-                                checked={checkboxField.value}
-                                onCheckedChange={checkboxField.onChange}
-                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                              />
-                            )}
-                          />
-                          <span className="font-medium text-gray-900">
-                            {field.day}
-                          </span>
+                    return (
+                      <div key={field.id}>
+                        {/* Day Row */}
+                        <div className="grid grid-cols-12 gap-4 items-center py-2">
+                          <div className="col-span-2 flex items-center gap-3">
+                            <CheckBoxField
+                              label={field.day}
+                              name={`schedule.${index}.checked`}
+                            />
+                          </div>
+                          <div className="col-span-3">
+                            <TextField name={`schedule.${index}.start_time`} />
+                          </div>
+                          <div className="col-span-1 text-center text-gray-500">
+                            to
+                          </div>
+                          <div className="col-span-3">
+                            <TextField name={`schedule.${index}.end_time`} />
+                          </div>
+                          <div className="col-span-2 text-center text-gray-600">
+                            {`${calculatedHours} hours`}
+                          </div>
                         </div>
-                        <div className="col-span-2">
-                          <Controller
-                            name={`schedule.${index}.start_time`}
-                            control={control}
-                            render={({ field }) => (
-                              <Input
-                                {...field}
-                                className="text-center border-gray-300 rounded-lg px-2"
-                                disabled={!currentDay?.checked}
-                                type="time"
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="col-span-1 text-center text-gray-500">
-                          to
-                        </div>
-                        <div className="col-span-2">
-                          <Controller
-                            name={`schedule.${index}.end_time`}
-                            control={control}
-                            render={({ field }) => (
-                              <Input
-                                {...field}
-                                className="text-center border-gray-300 rounded-lg px-2"
-                                disabled={!currentDay?.checked}
-                                type="time"
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="col-span-3 text-center text-gray-600">
-                          {`${calculatedHours} hours`}
+
+                        <div className="grid grid-cols-12 gap-4 items-center py-2">
+                          <div className="col-span-2 text-gray-500">Break</div>
+                          <div className="col-span-2">
+                            <TextField
+                              name={`schedule.${index}.break_duration_minutes`}
+                            />
+                          </div>
+                          <div className="col-span-2 text-gray-500">
+                            minutes
+                          </div>
+                          <div className="col-span-4"></div>
                         </div>
                       </div>
-
-                      <div className="grid grid-cols-12 gap-4 items-center py-2">
-                        <div className="col-span-2 text-gray-500">Break</div>
-                        <div className="col-span-2">
-                          <Controller
-                            name={`schedule.${index}.break_duration_minutes`}
-                            control={control}
-                            render={({ field }) => (
-                              <Input
-                                {...field}
-                                className="text-center border-gray-300 rounded-lg"
-                                disabled={!currentDay?.checked}
-                                type="number"
-                                min="0"
-                                max="480"
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="col-span-2 text-gray-500">minutes</div>
-                        <div className="col-span-4"></div>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Form Actions */}
-            <div className="flex justify-end gap-4 pt-4">
-              <Button
-                type="button"
-                className="reset-button"
-                variant="outline"
-                onClick={handleCancel}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                className="submit-button"
-                onClick={handleSubmit(handleSubmitWorkingHours)}
-              >
-                Save Schedule
-              </Button>
-            </div>
-          </form>
+              {/* Form Actions */}
+              <div className="flex justify-end gap-4 pt-4">
+                <Button
+                  type="button"
+                  className="reset-button"
+                  variant="outline"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  className="submit-button"
+                  onClick={handleSubmit(handleSubmitWorkingHours)}
+                >
+                  Save Schedule
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
@@ -318,7 +275,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
           Total of {totalWorkHours} hours per week
         </p>
         <WorkScheduleSelectionForm
-          defaultSchedule={props.default}
+          defaultSchedule={currentSchedule}
           onSubmit={onSubmit}
         />
       </div>

@@ -14,11 +14,14 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 
-export type TextFieldProps = React.ComponentProps<'input'> &
-  JSFField & {
-    onChange?: (value: any) => void;
-    component?: Components['text'];
-  };
+export type TextFieldProps = React.ComponentProps<'input'> & {
+  name: string;
+} & Partial<
+    JSFField & {
+      onChange?: (value: any) => void;
+      component?: Components['text'];
+    }
+  >;
 
 export function TextField({
   name,
