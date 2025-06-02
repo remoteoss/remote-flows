@@ -205,7 +205,7 @@ describe('OnboardingFlow', () => {
     },
   );
   const defaultProps = {
-    countryCode: 'PRT',
+    companyId: '1234',
     options: {},
     render: mockRender,
   };
