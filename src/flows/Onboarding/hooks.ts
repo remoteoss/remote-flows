@@ -12,6 +12,7 @@ import {
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
   getIndexBenefitOffer,
+  getSupportedCountry,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
 import {
@@ -32,9 +33,10 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
+import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { findFieldsByType } from '../utils';
 
 type OnboardingHookProps = OnboardingFlowParams;
@@ -142,11 +144,13 @@ const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
+  enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: OnboardingHookProps['options'];
+  enabled: boolean;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -157,6 +161,7 @@ const useJSONSchemaForm = ({
   return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
+    enabled: enabled,
     queryFn: async () => {
       const response = await getShowFormCountry({
         client: client as Client,
@@ -329,10 +334,69 @@ const useUpdateBenefitsOffers = () => {
   });
 };
 
+export const useCountries = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['countries'],
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      return (
+        data?.data?.map((country) => {
+          return {
+            label: country.name,
+            value: country.code,
+          };
+        }) || []
+      );
+    },
+  });
+};
+
+const useCountriesSchemaField = (options?: FlowOptions) => {
+  const { data: countries, isLoading } = useCountries();
+
+  const { schema: selectCountrySchema } = modify(
+    selectCountryStepSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+  };
+};
+
 const stepToFormSchemaMap: Record<
   keyof typeof STEPS,
   JSONSchemaFormType | null
 > = {
+  select_country: null,
   basic_information: 'employment_basic_information',
   contract_details: 'contract_details',
   benefits: null,
@@ -341,7 +405,6 @@ const stepToFormSchemaMap: Record<
 
 export const useOnboarding = ({
   employmentId,
-  countryCode,
   type,
   options,
 }: OnboardingHookProps) => {
@@ -350,6 +413,9 @@ export const useOnboarding = ({
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
+  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
+    null,
+  );
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
 
@@ -363,6 +429,9 @@ export const useOnboarding = ({
     nextStep,
     goToStep,
   } = useStepState<keyof typeof STEPS>(STEPS);
+
+  const { selectCountryForm, isLoading: isLoadingCountries } =
+    useCountriesSchemaField(options);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -387,7 +456,7 @@ export const useOnboarding = ({
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
-      countryCode: countryCode,
+      countryCode: internalCountryCode as string,
       form: formType,
       fieldValues:
         Object.keys(fieldValues).length > 0
@@ -396,7 +465,10 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
-      options,
+      options: options,
+      enabled: Boolean(
+        stepState.currentStep.name !== 'select_country' && internalCountryCode,
+      ),
     });
 
   const {
@@ -419,6 +491,7 @@ export const useOnboarding = ({
       : {};
 
   const stepFields: Record<keyof typeof STEPS, Fields> = {
+    select_country: selectCountryForm?.fields || [],
     basic_information: onboardingForm?.fields || [],
     contract_details: onboardingForm?.fields || [],
     benefits: benefitOffersSchema?.fields || [],
@@ -426,6 +499,9 @@ export const useOnboarding = ({
   };
 
   const initialValues = {
+    select_country: getInitialValues(stepFields[stepState.currentStep.name], {
+      country: employment?.data.data.employment?.country.code || '',
+    }),
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
@@ -438,7 +514,10 @@ export const useOnboarding = ({
   };
 
   function parseFormValues(values: FieldValues) {
-    if (onboardingForm) {
+    if (selectCountryForm && stepState.currentStep.name === 'select_country') {
+      return values;
+    }
+    if (onboardingForm && stepState.currentStep.name !== 'select_country') {
       return parseJSFToValidate(values, onboardingForm?.fields, {
         isPartialValidation: true,
       });
@@ -455,12 +534,23 @@ export const useOnboarding = ({
 
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
+      case 'select_country': {
+        setInternalCountryCode(parsedValues.country);
+        return Promise.resolve({ data: { countryCode: parsedValues.country } });
+      }
       case 'basic_information': {
-        if (!internalEmploymentId) {
+        const notLoadedEmployment =
+          !internalEmploymentId && internalCountryCode;
+        const hasChangedCountry =
+          internalEmploymentId &&
+          internalCountryCode &&
+          employment?.data?.data?.employment?.country.code !==
+            internalCountryCode;
+        if (notLoadedEmployment || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
-            country_code: countryCode,
+            country_code: internalCountryCode,
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
@@ -473,7 +563,7 @@ export const useOnboarding = ({
             console.error('Error creating onboarding:', error);
             throw error;
           }
-        } else {
+        } else if (internalEmploymentId) {
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
@@ -482,8 +572,9 @@ export const useOnboarding = ({
             },
           });
         }
-      }
 
+        return;
+      }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
@@ -536,7 +627,8 @@ export const useOnboarding = ({
       isLoadingBasicInformation ||
       isLoadingEmployment ||
       isLoadingBenefitsOffersSchema ||
-      isLoadingBenefitOffers,
+      isLoadingBenefitOffers ||
+      isLoadingCountries,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
@@ -554,6 +646,9 @@ export const useOnboarding = ({
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
+      if (stepState.currentStep.name === 'select_country') {
+        return selectCountryForm.handleValidation(values);
+      }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
         const parsedValues = parseJSFToValidate(
           values,
