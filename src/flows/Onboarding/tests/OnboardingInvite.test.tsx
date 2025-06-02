@@ -166,7 +166,7 @@ describe('OnboardingInvite', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('should call onSubmit, onSuccess when invite is successful', async () => {
+  it('should call onSubmit and onSuccess when invite is successful', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     const button = screen.getByText(/Invite Employee/i);
