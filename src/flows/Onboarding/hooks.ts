@@ -375,7 +375,7 @@ const useCountriesSchemaField = (options?: FlowOptions) => {
     options?.jsfModify || {},
   );
 
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+ const selectCountryForm = createHeadlessForm(selectCountrySchema);
 
   if (countries) {
     const countryField = selectCountryForm.fields.find(
@@ -384,11 +384,6 @@ const useCountriesSchemaField = (options?: FlowOptions) => {
     if (countryField) {
       countryField.options = countries;
     }
-
-    return {
-      isLoading,
-      selectCountryForm,
-    };
   }
 
   return {
