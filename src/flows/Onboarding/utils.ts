@@ -2,16 +2,21 @@ import { Step } from '@/src/flows/useStepState';
 import { Fields } from '@remoteoss/json-schema-form';
 
 type StepKeys =
+  | 'select_country'
   | 'basic_information'
   | 'contract_details'
   | 'benefits'
   | 'review';
 
 export const STEPS: Record<StepKeys, Step<StepKeys>> = {
-  basic_information: { index: 0, name: 'basic_information' },
-  contract_details: { index: 1, name: 'contract_details' },
-  benefits: { index: 2, name: 'benefits' },
-  review: { index: 3, name: 'review' },
+  select_country: {
+    index: 0,
+    name: 'select_country',
+  },
+  basic_information: { index: 1, name: 'basic_information' },
+  contract_details: { index: 2, name: 'contract_details' },
+  benefits: { index: 3, name: 'benefits' },
+  review: { index: 4, name: 'review' },
 } as const;
 
 /**

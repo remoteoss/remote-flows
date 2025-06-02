@@ -6,6 +6,7 @@ import {
   getShowEmployment,
   getShowFormCountry,
   getShowSchema,
+  getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
   postCreateEmployment2,
@@ -18,6 +19,7 @@ import {
 } from '@/src/client';
 import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
+import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
@@ -166,11 +168,13 @@ export const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
+  enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: FlowOptions;
+  enabled?: boolean;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -204,6 +208,7 @@ export const useJSONSchemaForm = ({
 
       return response;
     },
+    enabled: enabled,
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {
@@ -366,4 +371,62 @@ export const useMagicLink = () => {
       });
     },
   });
+};
+
+const useCountries = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['countries'],
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      return (
+        data?.data?.map((country) => {
+          return {
+            label: country.name,
+            value: country.code,
+          };
+        }) || []
+      );
+    },
+  });
+};
+
+export const useCountriesSchemaField = (options?: FlowOptions) => {
+  const { data: countries, isLoading } = useCountries();
+
+  const { schema: selectCountrySchema } = modify(
+    selectCountryStepSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+  };
 };

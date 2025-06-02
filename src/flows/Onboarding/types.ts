@@ -4,9 +4,16 @@ import { FlowOptions } from '@/src/flows/types';
 export type OnboardingFlowParams = {
   employmentId?: string;
   companyId: string;
-  countryCode: string;
   type?: EmploymentCreateParams['type'];
   options?: FlowOptions;
+};
+
+export type SelectCountryFormPayload = {
+  countryCode: string;
+};
+
+export type SelectCountrySuccess = {
+  countryCode: string;
 };
 
 export type BasicInformationFormPayload = {

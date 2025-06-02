@@ -467,7 +467,6 @@ describe('TerminationFlow', () => {
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
         acknowledge_termination_procedure: false,
-
         confidential: 'no',
         customer_informed_employee: 'yes',
         customer_informed_employee_date: dynamicDate,

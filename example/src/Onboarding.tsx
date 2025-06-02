@@ -8,6 +8,8 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
+  SelectCountrySuccess,
+  SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
@@ -15,6 +17,7 @@ import { useState } from 'react';
 import React from 'react';
 
 const STEPS = [
+  'Select Country',
   'Basic Information',
   'Contract Details',
   'Benefits',
@@ -29,34 +32,33 @@ type MultiStepFormProps = {
 function Review({
   meta,
 }: {
-  meta: Record<string, { label: string; prettyValue: string | boolean }>;
+  meta: Record<string, { label?: string; prettyValue?: string | boolean }>;
 }) {
   return (
     <div className="onboarding-values">
-      {Object.values(meta)
-        .filter(Boolean)
-        .map((value) => {
-          if (!value.prettyValue) {
-            return Object.values(value)
-              .filter(Boolean)
-              .map((v) => {
-                const val = v as unknown as {
-                  label: string;
-                  prettyValue: string;
-                };
-                return (
-                  <pre>
-                    {val.label}: {value.prettyValue === true ? 'Yes' : 'No'}
-                  </pre>
-                );
-              });
-          }
-          return (
-            <pre>
-              {value.label}: {value.prettyValue}
-            </pre>
-          );
-        })}
+      {Object.entries(meta).map(([key, value]) => {
+        const label = value?.label;
+        const prettyValue = value?.prettyValue;
+
+        // Skip if there's no label or prettyValue is undefined or empty string
+        if (!label || prettyValue === undefined || prettyValue === '') {
+          return null;
+        }
+
+        // Handle boolean prettyValue
+        const displayValue =
+          typeof prettyValue === 'boolean'
+            ? prettyValue
+              ? 'Yes'
+              : 'No'
+            : prettyValue;
+
+        return (
+          <pre key={key}>
+            {label}: {displayValue}
+          </pre>
+        );
+      })}
     </div>
   );
 }
@@ -69,12 +71,35 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
+    SelectCountryStep,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
   const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
 
   switch (onboardingBag.stepState.currentStep.name) {
+    case 'select_country':
+      return (
+        <>
+          <SelectCountryStep
+            onSubmit={(payload: SelectCountryFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: SelectCountrySuccess) =>
+              console.log('response', response)
+            }
+            onError={(error: Error) => setApiError(error.message)}
+          />
+          <div className="buttons-container">
+            <SubmitButton
+              className="submit-button"
+              disabled={onboardingBag.isSubmitting}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </>
+      );
     case 'basic_information':
       return (
         <>
@@ -97,6 +122,12 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           />
           {apiError && <p className="error">{apiError}</p>}
           <div className="buttons-container">
+            <BackButton
+              className="back-button"
+              onClick={() => setApiError(null)}
+            >
+              Previous Step
+            </BackButton>
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
@@ -175,6 +206,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'review':
       return (
         <div className="onboarding-review">
+          <h2 className="title">Select country</h2>
+          <Review meta={onboardingBag.meta.fields.select_country} />
+          <button
+            className="back-button"
+            onClick={() => onboardingBag.goTo('select_country')}
+          >
+            Edit Country
+          </button>
           <h2 className="title">Basic Information</h2>
           <Review meta={onboardingBag.meta.fields.basic_information} />
           <button
@@ -357,7 +396,6 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
-  companyId: string;
   countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
@@ -365,14 +403,12 @@ type OnboardingFormData = {
 
 const OnboardingWithProps = ({
   companyId,
-  countryCode,
   type,
   employmentId,
 }: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
-      countryCode={countryCode}
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
@@ -382,7 +418,6 @@ const OnboardingWithProps = ({
 
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    countryCode: 'PRT',
     type: 'employee',
     employmentId: '',
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
@@ -413,22 +448,6 @@ export const OnboardingForm = () => {
           }
           required
           placeholder="e.g. Your Company ID"
-          className="onboarding-form-input"
-        />
-      </div>
-      <div className="onboarding-form-group">
-        <label htmlFor="countryCode" className="onboarding-form-label">
-          Country Code:
-        </label>
-        <input
-          id="countryCode"
-          type="text"
-          value={formData.countryCode}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
-          }
-          required
-          placeholder="e.g. PRT"
           className="onboarding-form-input"
         />
       </div>
