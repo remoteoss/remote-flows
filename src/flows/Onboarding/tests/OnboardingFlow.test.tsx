@@ -27,6 +27,7 @@ import {
   employmentResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
+  companyResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -214,6 +215,9 @@ describe('OnboardingFlow', () => {
     vi.clearAllMocks();
 
     server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        HttpResponse.json(companyResponse);
+      }),
       http.get('*/v1/countries', () => {
         return HttpResponse.json({
           data: [
@@ -324,6 +328,7 @@ describe('OnboardingFlow', () => {
   }
 
   async function fillCountry(country: string) {
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Select Country/i);
 
     await fillSelect('Country', country);
@@ -338,7 +343,6 @@ describe('OnboardingFlow', () => {
 
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('Portugal');
   });
 
@@ -424,8 +428,6 @@ describe('OnboardingFlow', () => {
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillCountry('Portugal');
 
