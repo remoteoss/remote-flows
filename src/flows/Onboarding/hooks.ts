@@ -539,14 +539,13 @@ export const useOnboarding = ({
         return Promise.resolve({ data: { countryCode: parsedValues.country } });
       }
       case 'basic_information': {
-        const notLoadedEmployment =
-          !internalEmploymentId && internalCountryCode;
+        const isEmploymentLoaded = !internalEmploymentId && internalCountryCode;
         const hasChangedCountry =
           internalEmploymentId &&
           internalCountryCode &&
           employment?.data?.data?.employment?.country.code !==
             internalCountryCode;
-        if (notLoadedEmployment || hasChangedCountry) {
+        if (isEmploymentLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
