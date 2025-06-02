@@ -2,7 +2,12 @@ import {
   OnboardingFlow,
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
-import { benefitOffersResponse, benefitOffersSchema, companyResponse, employmentResponse } from '@/src/flows/Onboarding/tests/fixtures';
+import {
+  benefitOffersResponse,
+  benefitOffersSchema,
+  companyResponse,
+  employmentResponse,
+} from '@/src/flows/Onboarding/tests/fixtures';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -50,7 +55,7 @@ const mockRender = vi.fn(
     return (
       <>
         <h1>Step: {steps[currentStepIndex]}</h1>
-        <OnboardingInvite 
+        <OnboardingInvite
           data-testid="onboarding-invite"
           onSuccess={mockSuccess}
           onError={mockError}
@@ -99,7 +104,7 @@ describe('OnboardingInvite', () => {
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
         return HttpResponse.json(benefitOffersSchema);
       }),
-      
+
       http.get('*/v1/employments/*/benefit-offers', () => {
         return HttpResponse.json(benefitOffersResponse);
       }),
@@ -162,8 +167,7 @@ describe('OnboardingInvite', () => {
   });
 
   it('should call onSubmit, onSuccess when invite is successful', async () => {
-
-    render(<OnboardingFlow {...defaultProps}  />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     const button = screen.getByText(/Invite Employee/i);
     fireEvent.click(button);
@@ -180,7 +184,7 @@ describe('OnboardingInvite', () => {
       http.post('*/v1/employments/:employmentId/invite', () => {
         return HttpResponse.json(
           { error: 'Failed to invite employee' },
-          { status: 400 }
+          { status: 400 },
         );
       }),
     );
@@ -220,7 +224,7 @@ describe('OnboardingInvite', () => {
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
-    
+
     fireEvent.click(button);
 
     await waitFor(() => {
@@ -251,7 +255,7 @@ describe('OnboardingInvite', () => {
       http.post('*/v1/risk-reserve', () => {
         return HttpResponse.json(
           { error: 'Failed to create reserve invoice' },
-          { status: 400 }
+          { status: 400 },
         );
       }),
     );
@@ -291,7 +295,7 @@ describe('OnboardingInvite', () => {
     mockRender.mockImplementationOnce(({ components }) => {
       const { OnboardingInvite } = components;
       return (
-        <OnboardingInvite 
+        <OnboardingInvite
           data-testid="onboarding-invite"
           onSuccess={mockSuccess}
           onError={mockError}
@@ -306,6 +310,5 @@ describe('OnboardingInvite', () => {
 
     const button = await screen.findByText('Custom Button Text');
     expect(button).toBeInTheDocument();
-   
   });
 });
