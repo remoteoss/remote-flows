@@ -5644,3 +5644,33 @@ export const employmentResponse = {
     },
   },
 };
+
+export const companyResponse = {
+  data: {
+    company: {
+      id: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+      name: 'vadance',
+      status: 'active',
+      country_code: 'GBR',
+      updated_at: '2025-05-30T11:34:39',
+      external_id: null,
+      created_at: '2024-08-27T22:45:26',
+      phone_number: '+12403606587',
+      bank_account_details: null,
+      tax_number: '7984469',
+      registration_number: null,
+      terms_of_service_accepted_at: '2024-08-27T22:45:26Z',
+      desired_currency: 'GBP',
+      company_owner_email: 'mohit.mahindroo+vadance@remote.com',
+      company_owner_name: 'Michelll sdassPustomer',
+      address_details: {
+        address: '1509 Broderick St',
+        address_line_2: 'Flat number 123',
+        city: 'London',
+        postal_code: 'SW79 8SY',
+      },
+      default_legal_entity_credit_risk_status: 'not_started',
+      company_owner_user_id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
+    },
+  },
+};
