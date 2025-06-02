@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- 81fe6de: - Add new step to the onboarding flow to select country
+  - Add support to the OnboardingInvite button to create a reserve invoice if creditRiskStatus is "deposit_required"
+  - Fix money values passed to the json schema form
+
 ## 0.4.0-alpha.3
 
 ### Minor Changes
