@@ -1,177 +1,35 @@
-import { JSFField } from '@/src/types/remoteFlows';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from 'react';
-import groupBy from 'lodash/groupBy';
-import capitalize from 'lodash/capitalize';
-import { useFormContext } from 'react-hook-form';
+import { JSFField } from '@/src/types/remoteFlows';
+import React, { useEffect, useState } from 'react';
+
+import {
+  useForm,
+  useFormContext,
+  useFieldArray,
+  Controller,
+} from 'react-hook-form';
 import { useFormFields } from '@/src/context';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
+import { Button } from '@/src/components/ui/button';
+import { Checkbox } from '@/src/components/ui/checkbox';
+import { Input } from '@/src/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/src/components/ui/dialog';
 
-const MINUTES_IN_HOUR = 60;
-const DAYS_OF_THE_WEEK = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-] as const;
-
-function convertBreakDurationToHours(breakDuration: number) {
-  if (breakDuration < 60) {
-    return `${breakDuration}m`;
-  }
-
-  const hours = Math.floor(breakDuration / MINUTES_IN_HOUR);
-  const minutes = breakDuration % MINUTES_IN_HOUR;
-
-  if (minutes > 0) {
-    return `${hours}h${minutes}m`;
-  }
-
-  return `${hours}h`;
-}
-
-function calculateTotalWorkHours(dailySchedules: any[]) {
-  const totalWorkHours = dailySchedules.reduce((total, daySchedule) => {
-    const sum = daySchedule.hours + total;
-    return sum;
-  }, 0);
-
-  return Number(totalWorkHours.toFixed(2));
-}
-
-function findLastConsecutiveDay(startDay: string, dailySchedule: any) {
-  const daysScheduled = dailySchedule.map((daySchedule: any) =>
-    daySchedule.day.toLowerCase(),
-  );
-
-  let idx = daysScheduled.indexOf(startDay);
-  let day = null;
-
-  while (idx < daysScheduled.length && !day) {
-    const currentDay = daysScheduled[idx];
-    const nextDay = daysScheduled[idx + 1];
-
-    const nextDayIdx = DAYS_OF_THE_WEEK.indexOf(currentDay) + 1;
-    const isNextDay = DAYS_OF_THE_WEEK[nextDayIdx] === nextDay;
-
-    if (!isNextDay) {
-      day = currentDay;
-    }
-
-    idx += 1;
-  }
-
-  return day;
-}
-
-function shouldSummarizeSchedule(daySchedule: any) {
-  return (
-    daySchedule.start_time && daySchedule.end_time && daySchedule.hours > 0
-  );
-}
-
-function shouldSummarizeBreaks(daySchedule: any) {
-  return daySchedule.break_duration_minutes > 0;
-}
-
-function buildWorkScheduleSummary(dailySchedules: any) {
-  const activeScheduleDays = dailySchedules.filter(shouldSummarizeSchedule);
-
-  const groupedWorkHours = groupBy(activeScheduleDays, (dailySchedule) => {
-    return `${dailySchedule.start_time}|${dailySchedule.end_time}`;
-  });
-
-  const activeBreakDays = dailySchedules.filter(shouldSummarizeBreaks);
-  const groupedBreaks = groupBy(activeBreakDays, 'break_duration_minutes');
-
-  const workHoursSummary = Object.keys(groupedWorkHours).map(
-    (scheduleTimes) => {
-      const sameDailySchedule = groupedWorkHours[scheduleTimes];
-      const startDay = sameDailySchedule[0].day;
-      const [start_time, end_time] = scheduleTimes.split('|');
-      const timeSummary = `from ${start_time.replace(':', 'h')} to ${end_time.replace(':', 'h')}`;
-
-      const lastConsecutiveDay = findLastConsecutiveDay(
-        startDay,
-        sameDailySchedule,
-      );
-      const lastConsecutiveDayIdx = sameDailySchedule.findIndex(
-        (dailySchedule) => dailySchedule.day === lastConsecutiveDay,
-      );
-      const allDaysAreConsecutive =
-        lastConsecutiveDayIdx === sameDailySchedule.length - 1;
-
-      if (sameDailySchedule.length === 1) {
-        return `${capitalize(startDay)}, ${timeSummary}`;
-      }
-
-      if (!allDaysAreConsecutive) {
-        return sameDailySchedule.reduce((summary, dailySchedule, idx) => {
-          const day = capitalize(dailySchedule.day);
-          if (idx === sameDailySchedule.length - 1) {
-            return `${summary}and ${day}, ${timeSummary}`;
-          }
-
-          return `${summary}${day}, `;
-        }, '');
-      }
-
-      return `${capitalize(startDay)} to ${capitalize(lastConsecutiveDay)}, ${timeSummary}`;
-    },
-  );
-
-  const breakSummary = Object.keys(groupedBreaks)
-    .reverse()
-    .map((breakDuration, idx) => {
-      const isFirstGroup = idx === 0;
-      const sameDailyBreaks = groupedBreaks[breakDuration];
-      const breakString = convertBreakDurationToHours(
-        parseInt(breakDuration, 10),
-      );
-
-      if (Object.keys(groupedBreaks).length === 1) {
-        return `With ${breakString} daily breaks`;
-      }
-
-      if (sameDailyBreaks.length === 1) {
-        const breakText = `${breakString} break on ${capitalize(sameDailyBreaks[0].day)}.`;
-        return isFirstGroup ? `With ${breakText}` : breakText;
-      }
-
-      return sameDailyBreaks.reduce(
-        (summary, dailySchedule, breakIdx) => {
-          const day = capitalize(dailySchedule.day);
-
-          if (breakIdx === 0) {
-            return `${summary} ${day}`;
-          }
-
-          if (breakIdx === sameDailyBreaks.length - 1) {
-            return `${summary}, and ${day}.`;
-          }
-
-          return `${summary}, ${day}`;
-        },
-        isFirstGroup
-          ? `With ${breakString} break on`
-          : `${breakString} break on`,
-      );
-    });
-
-  return { workHoursSummary, breakSummary };
-}
-
-type DailySchedule = {
-  day: string;
-  start_time: string;
-  end_time: string;
-  hours: number;
-  break_duration_minutes: number;
-};
+import {
+  buildWorkScheduleSummary,
+  calculateHours,
+  calculateTotalWorkHours,
+  DailySchedule,
+  DAYS_OF_THE_WEEK,
+  getShortWeekday,
+} from './workScheduleUtils';
 
 type WorkScheduleFieldProps = JSFField & {
   name: string;
@@ -180,21 +38,239 @@ type WorkScheduleFieldProps = JSFField & {
   component?: Components['work-schedule'];
 };
 
+type WorkScheduleFormData = {
+  schedule: DailySchedule[];
+};
+
+type WorkScheduleSelectionProps = {
+  defaultSchedule: DailySchedule[];
+  onSubmit: (data: WorkScheduleFormData['schedule']) => void;
+};
+
+function WorkScheduleSelectionForm({
+  defaultSchedule,
+  onSubmit,
+}: WorkScheduleSelectionProps) {
+  const [open, setOpen] = useState(false);
+
+  const transformedSchedule = DAYS_OF_THE_WEEK.map((day) => {
+    const existingSchedule = defaultSchedule.find(
+      (schedule) => schedule.day.toLowerCase() === day,
+    );
+
+    if (existingSchedule) {
+      return {
+        ...existingSchedule,
+        day: getShortWeekday(day),
+        checked: true,
+      };
+    }
+
+    return {
+      ...defaultSchedule[0],
+      checked: false,
+      day: getShortWeekday(day),
+    };
+  });
+
+  const { control, handleSubmit, watch, reset } = useForm<WorkScheduleFormData>(
+    {
+      defaultValues: {
+        schedule: transformedSchedule,
+      },
+    },
+  );
+
+  const { fields } = useFieldArray({
+    control,
+    name: 'schedule',
+  });
+
+  const watchedSchedule = watch('schedule');
+
+  function handleSubmitWorkingHours(data: WorkScheduleFormData) {
+    // remove checked property from each day
+    const schedule = data.schedule
+      .filter(({ checked }) => checked)
+      .map((day) => ({
+        ...day,
+        hours: calculateHours(day),
+      }));
+
+    onSubmit(schedule);
+    setOpen(false);
+  }
+
+  function handleCancel() {
+    reset();
+    setOpen(false);
+  }
+
+  return (
+    <div className="flex items-center justify-between">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant={'link'} className="flex items-center p-0">
+            Edit Schedule
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit employee working hours</DialogTitle>
+          </DialogHeader>
+
+          <form className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-600 text-sm mb-4">
+                The times displayed are in the employee's time zone in the
+                24-hour format.
+              </p>
+
+              {/* Header */}
+              <div className="grid grid-cols-12 gap-4 mb-6 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                <div className="col-span-2"></div>
+                <div className="col-span-2 text-center">START</div>
+                <div className="col-span-1 text-center"></div>
+                <div className="col-span-2 text-center">END</div>
+                <div className="col-span-3 text-center">HOURS</div>
+                {/* <div className="col-span-2 text-center">ACTIONS</div> */}
+              </div>
+
+              {/* Schedule Rows */}
+              <div className="space-y-4">
+                {fields.map((field, index) => {
+                  const currentDay = watchedSchedule[index];
+                  const calculatedHours = calculateHours(currentDay);
+
+                  return (
+                    <div key={field.id}>
+                      {/* Day Row */}
+                      <div className="grid grid-cols-12 gap-4 items-center py-2">
+                        <div className="col-span-2 flex items-center gap-3">
+                          <Controller
+                            name={`schedule.${index}.checked`}
+                            control={control}
+                            render={({ field: checkboxField }) => (
+                              <Checkbox
+                                checked={checkboxField.value}
+                                onCheckedChange={checkboxField.onChange}
+                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                              />
+                            )}
+                          />
+                          <span className="font-medium text-gray-900">
+                            {field.day}
+                          </span>
+                        </div>
+                        <div className="col-span-2">
+                          <Controller
+                            name={`schedule.${index}.start_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                className="text-center border-gray-300 rounded-lg px-2"
+                                disabled={!currentDay?.checked}
+                                type="time"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 text-center text-gray-500">
+                          to
+                        </div>
+                        <div className="col-span-2">
+                          <Controller
+                            name={`schedule.${index}.end_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                className="text-center border-gray-300 rounded-lg px-2"
+                                disabled={!currentDay?.checked}
+                                type="time"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-3 text-center text-gray-600">
+                          {`${calculatedHours} hours`}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-12 gap-4 items-center py-2">
+                        <div className="col-span-2 text-gray-500">Break</div>
+                        <div className="col-span-2">
+                          <Controller
+                            name={`schedule.${index}.break_duration_minutes`}
+                            control={control}
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                className="text-center border-gray-300 rounded-lg"
+                                disabled={!currentDay?.checked}
+                                type="number"
+                                min="0"
+                                max="480"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-2 text-gray-500">minutes</div>
+                        <div className="col-span-4"></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex justify-end gap-4 pt-4">
+              <Button
+                type="button"
+                className="reset-button"
+                variant="outline"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                className="submit-button"
+                onClick={handleSubmit(handleSubmitWorkingHours)}
+              >
+                Save Schedule
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 export function WorkScheduleField(props: WorkScheduleFieldProps) {
   const { components } = useFormFields();
-  const { setValue, control } = useFormContext();
+  const { setValue, control, watch } = useFormContext();
+  const watchedSchedule = watch(props.name);
+  const [currentSchedule, setCurrentSchedule] =
+    useState<DailySchedule[]>(watchedSchedule);
+
+  const { workHoursSummary, breakSummary } =
+    buildWorkScheduleSummary(currentSchedule);
+  const totalWorkHours = calculateTotalWorkHours(currentSchedule);
+
+  useEffect(() => {
+    setValue(props.name, currentSchedule);
+  }, [currentSchedule, props.name, setValue]);
+
+  function onSubmit(data: WorkScheduleFormData['schedule']) {
+    setCurrentSchedule(data);
+  }
 
   const CustomWorkScheduleField =
     props.component || components?.['work-schedule'];
-
-  const { workHoursSummary, breakSummary } = buildWorkScheduleSummary(
-    props.default,
-  );
-  const totalWorkHours = calculateTotalWorkHours(props.default);
-
-  useEffect(() => {
-    setValue(props.name, props.default);
-  }, [props.default, props.name, setValue]);
 
   if (CustomWorkScheduleField) {
     return (
@@ -235,12 +311,16 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
       <p className={`text-sm RemoteFlows__WorkScheduleField__Title`}>
         Work hours
       </p>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 RemoteFlows__WorkScheduleField__Summary">
         <p className="text-sm text-gray-500">{workHoursSummary.join(', ')}</p>
         <p className="text-sm text-gray-500">{breakSummary.join()}</p>
         <p className="text-sm text-gray-500">
           Total of {totalWorkHours} hours per week
         </p>
+        <WorkScheduleSelectionForm
+          defaultSchedule={props.default}
+          onSubmit={onSubmit}
+        />
       </div>
     </div>
   );

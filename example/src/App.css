@@ -366,7 +366,6 @@ a:active {
 }
 
 /* Only style cost calculator action buttons */
-button[type='submit'],
 button.submit-button {
   background-color: black;
   border: none;
