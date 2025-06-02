@@ -26,6 +26,8 @@ export type OnboardingRenderProps = {
    * @see {@link OnboardingBack}
    * @see {@link OnboardingInvite}
    * @see {@link BenefitsStep}
+   * @see {@link OnboardingCreateReserve}
+   * @see {@link InvitationSection}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -47,12 +49,14 @@ type OnboardingFlowProps = OnboardingFlowParams & {
 
 export const OnboardingFlow = ({
   employmentId,
+  companyId,
   type = 'employee',
   render,
   options,
 }: OnboardingFlowProps) => {
   const formId = useId();
   const onboardingBag = useOnboarding({
+    companyId,
     employmentId,
     type,
     options,

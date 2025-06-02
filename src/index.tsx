@@ -35,4 +35,5 @@ export {
   EmploymentResponse,
   CostCalculatorEmployment,
   Currency,
+  Company,
 } from './client/types.gen';

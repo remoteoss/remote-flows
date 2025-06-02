@@ -12,8 +12,25 @@ import {
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
+export const InviteSection = ({
+  title,
+  description,
+  children,
+}: {
+  title: React.ReactNode;
+  description: React.ReactNode;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div className="rmt-invitation-section">
+      <h2 className="rmt-invitation-title">{title}</h2>
+      <p className="rmt-invitation-description">{description}</p>
+      {children}
+    </div>
+  );
+};
 const STEPS = [
   'Select Country',
   'Basic Information',
@@ -72,6 +89,9 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SelectCountryStep,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
+  const [showReserveInvoice, setShowReserveInvoice] = useState(false);
+  const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
+
   switch (onboardingBag.stepState.currentStep.name) {
     case 'select_country':
       return (
@@ -98,6 +118,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'basic_information':
       return (
         <>
+          {onboardingBag.creditRiskStatus === 'deposit_required' && (
+            <div className="alert">
+              Reserve payment required to hire this employee. Check this{' '}
+              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                support article
+              </a>
+            </div>
+          )}
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -128,6 +156,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
+          {onboardingBag.creditRiskStatus === 'deposit_required' && (
+            <div className="alert">
+              Reserve payment required to hire this employee. Check this{' '}
+              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                support article
+              </a>
+            </div>
+          )}
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)
@@ -211,12 +247,75 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </button>
           <h2 className="title">Benefits</h2>
           <Review meta={onboardingBag.meta.fields.benefits} />
+
           <button
             className="back-button"
             onClick={() => onboardingBag.goTo('benefits')}
           >
             Edit Benefits
           </button>
+          <h2 className="title">Review</h2>
+          {!showReserveInvoice &&
+            onboardingBag.creditRiskStatus === 'deposit_required' && (
+              <InviteSection
+                title="Confirm Details && Continue"
+                description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
+              >
+                <p>Reserve payment required to hire this employee</p>
+                <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                  What is a reserve payment
+                </a>
+              </InviteSection>
+            )}
+          {!showInviteSuccessful &&
+            onboardingBag.creditRiskStatus !== 'deposit_required' && (
+              <InviteSection
+                title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
+                description="If you're ready to invite this employee to onboard with Remote, click the button below."
+              />
+            )}
+
+          {onboardingBag.creditRiskStatus === 'deposit_required' &&
+            showReserveInvoice && (
+              <div className="reserve-invoice">
+                <h2>You’ll receive a reserve invoice soon</h2>
+                <p>
+                  We saved{' '}
+                  {onboardingBag.stepState.values?.basic_information.name}{' '}
+                  details as a draft. You’ll be able to invite them to Remote
+                  after you complete the reserve payment.
+                </p>
+                <div>
+                  <button type="submit">Go to dashboard</button>
+
+                  <br />
+
+                  <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+                    What is a reserve payment
+                  </a>
+                </div>
+              </div>
+            )}
+
+          {onboardingBag.creditRiskStatus !== 'deposit_required' &&
+            showInviteSuccessful && (
+              <div className="invite-successful">
+                <h2>You’re all set!</h2>
+                <p>
+                  {onboardingBag.stepState.values?.basic_information.name} at{' '}
+                  {
+                    onboardingBag.stepState.values?.basic_information
+                      .personal_email
+                  }{' '}
+                  has been invited to Remote. We’ll let you know once they
+                  complete their onboarding process
+                </p>
+                <div>
+                  <button type="submit">Go to dashboard</button>
+                </div>
+              </div>
+            )}
+
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -225,10 +324,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Back
             </BackButton>
             <OnboardingInvite
-              className="submit-button"
-              onClick={() => setApiError(null)}
+              onSuccess={() => {
+                if (onboardingBag.creditRiskStatus === 'deposit_required') {
+                  setShowReserveInvoice(true);
+                  return;
+                } else {
+                  setShowInviteSuccessful(true);
+                }
+
+                console.log(
+                  'after inviting or creating a reserve navigate to whatever place you want',
+                );
+              }}
+              onError={(error: Error) => setApiError(error.message)}
+              type="submit"
             >
-              Invite Employee
+              {onboardingBag.creditRiskStatus === 'deposit_required'
+                ? 'Continue'
+                : 'Invite Employee'}
             </OnboardingInvite>
           </div>
         </div>
@@ -285,13 +398,19 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
+  countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
-const OnboardingWithProps = ({ type, employmentId }: OnboardingFormData) => (
+const OnboardingWithProps = ({
+  companyId,
+  type,
+  employmentId,
+}: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
+      companyId={companyId}
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
@@ -303,6 +422,7 @@ export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
     employmentId: '',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -317,6 +437,22 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="onboarding-form-container">
+      <div className="onboarding-form-group">
+        <label htmlFor="companyId" className="onboarding-form-label">
+          Company ID:
+        </label>
+        <input
+          id="companyId"
+          type="text"
+          value={formData.companyId}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, companyId: e.target.value }))
+          }
+          required
+          placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
       <div className="onboarding-form-group">
         <label htmlFor="type" className="onboarding-form-label">
           Type:

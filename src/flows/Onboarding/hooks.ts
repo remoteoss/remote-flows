@@ -2,42 +2,32 @@ import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
-  getShowEmployment,
-  getShowFormCountry,
-  patchUpdateEmployment2,
-  postCreateEmployment2,
-  postInviteEmploymentInvitation,
-  PostInviteEmploymentInvitationData,
-  getShowSchema,
-  putUpdateBenefitOffer,
-  UnifiedEmploymentUpsertBenefitOffersRequest,
-  getIndexBenefitOffer,
-  getSupportedCountry,
 } from '@/src/client';
-import { Client } from '@hey-api/client-fetch';
-import {
-  createHeadlessForm,
-  Fields,
-  modify,
-} from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Fields } from '@remoteoss/json-schema-form';
 
-import { useClient } from '@/src/context';
 import { useStepState } from '@/src/flows/useStepState';
 import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
 import {
-  convertToCents,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { useRef, useState } from 'react';
 import mergeWith from 'lodash/mergeWith';
-import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { findFieldsByType } from '../utils';
+import {
+  useBenefitOffers,
+  useBenefitOffersSchema,
+  useCompany,
+  useCountriesSchemaField,
+  useCreateEmployment,
+  useEmployment,
+  useJSONSchemaForm,
+  useUpdateBenefitsOffers,
+  useUpdateEmployment,
+} from '@/src/flows/Onboarding/api';
+import { JSONSchemaFormType } from '@/src/flows/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -46,350 +36,6 @@ const jsonSchemaToEmployment: Partial<
 > = {
   employment_basic_information: 'basic_information',
   contract_details: 'contract_details',
-};
-
-const useEmployment = (employmentId: string | undefined) => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['employment', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      const response = await getShowEmployment({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId as string,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch employment data');
-      }
-
-      return response;
-    },
-  });
-};
-
-const useBenefitOffers = (employmentId: string | undefined) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['benefit-offers', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      return getIndexBenefitOffer({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId as string,
-        },
-      }).then((response) => {
-        // If response status is 404 or other error, throw an error to trigger isError
-        if (response.error || !response.data) {
-          throw new Error('Failed to fetch benefit offers data');
-        }
-
-        return response;
-      });
-    },
-    select: ({ data }) =>
-      data?.data?.reduce(
-        (acc, item) => {
-          return {
-            ...acc,
-            [item.benefit_group.slug]: {
-              value: item.benefit_tier?.slug ?? '',
-            },
-          };
-        },
-        {} as Record<string, { value: string }>,
-      ),
-  });
-};
-/**
- * Use this hook to invite an employee to the onboarding flow
- * @returns
- */
-export const useEmploymentInvite = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: PostInviteEmploymentInvitationData['path']) => {
-      return postInviteEmploymentInvitation({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: payload,
-      });
-    },
-  });
-};
-
-/**
- * Use this hook to get the JSON schema form for the onboarding flow
- * @param param0
- * @returns
- */
-const useJSONSchemaForm = ({
-  countryCode,
-  form,
-  fieldValues,
-  options,
-  enabled,
-}: {
-  countryCode: string;
-  form: JSONSchemaFormType;
-  fieldValues: FieldValues;
-  options?: OnboardingHookProps['options'];
-  enabled: boolean;
-}) => {
-  const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
-    ? {
-        json_schema_version: options.jsonSchemaVersion.form_schema[form],
-      }
-    : {};
-  return useQuery({
-    queryKey: ['onboarding-json-schema-form', countryCode, form],
-    retry: false,
-    enabled: enabled,
-    queryFn: async () => {
-      const response = await getShowFormCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          country_code: countryCode,
-          form: form,
-        },
-        query: {
-          skip_benefits: true,
-          ...jsonSchemaQueryParam,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch onboarding schema');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.data || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-
-      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
-      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
-      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
-      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
-      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
-        (acc, field) => {
-          acc[field] = convertToCents(fieldValues[field]);
-          return acc;
-        },
-        {},
-      );
-
-      return createHeadlessForm(jsfSchema, {
-        initialValues: {
-          ...fieldValues,
-          ...moneyFieldsData,
-        },
-      });
-    },
-  });
-};
-
-const useBenefitOffersSchema = (
-  employmentId: string,
-  fieldValues: FieldValues,
-  options: OnboardingHookProps['options'],
-) => {
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ?.benefit_offers_form_schema
-    ? {
-        json_schema_version:
-          options.jsonSchemaVersion.benefit_offers_form_schema,
-      }
-    : {};
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['benefit-offers-schema', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      const response = await getShowSchema({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId,
-        },
-        query: jsonSchemaQueryParam,
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch benefit offers schema');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(jsfSchema, {
-        // we need to clone the fieldValues to prevent side effects
-        // if we don't do this, the benefits get included in the other steps
-        initialValues: hasFieldValues ? { ...fieldValues } : {},
-      });
-      return result;
-    },
-  });
-};
-
-/**
- * Use this hook to create an employment
- * @returns
- */
-const useCreateEmployment = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (payload: EmploymentCreateParams) => {
-      return postCreateEmployment2({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-const useUpdateEmployment = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: ({
-      employmentId,
-      ...payload
-    }: EmploymentFullParams & { employmentId: string }) => {
-      return patchUpdateEmployment2({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-        query: {
-          skip_benefits: true,
-        },
-      });
-    },
-  });
-};
-
-const useUpdateBenefitsOffers = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: ({
-      employmentId,
-      ...payload
-    }: UnifiedEmploymentUpsertBenefitOffersRequest & {
-      employmentId: string;
-    }) => {
-      return putUpdateBenefitOffer({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-      });
-    },
-  });
-};
-
-export const useCountries = () => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['countries'],
-    retry: false,
-    queryFn: async () => {
-      const response = await getSupportedCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch supported countries');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      return (
-        data?.data?.map((country) => {
-          return {
-            label: country.name,
-            value: country.code,
-          };
-        }) || []
-      );
-    },
-  });
-};
-
-const useCountriesSchemaField = (options?: FlowOptions) => {
-  const { data: countries, isLoading } = useCountries();
-
-  const { schema: selectCountrySchema } = modify(
-    selectCountryStepSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
-
-  if (countries) {
-    const countryField = selectCountryForm.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
-
-  return {
-    isLoading,
-    selectCountryForm,
-  };
 };
 
 const stepToFormSchemaMap: Record<
@@ -405,6 +51,7 @@ const stepToFormSchemaMap: Record<
 
 export const useOnboarding = ({
   employmentId,
+  companyId,
   type,
   options,
 }: OnboardingHookProps) => {
@@ -421,6 +68,7 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
+  const { data: company, isLoading: isLoadingCompany } = useCompany(companyId);
   const {
     fieldValues,
     stepState,
@@ -610,7 +258,23 @@ export const useOnboarding = ({
     /**
      * Employment id passed useful to be used between components
      */
-    employmentId,
+    employmentId: internalEmploymentId,
+
+    /**
+     * Credit risk status of the company, useful to know what to to show in the review step
+     * The possible values are:
+     * - not_started
+     * - ready
+     * - in_progress
+     * - referred
+     * - fail
+     * - deposit_required
+     * - no_deposit_required
+     */
+
+    creditRiskStatus: company?.default_legal_entity_credit_risk_status,
+
+    owner_id: company?.company_owner_user_id,
     /**
      * Current step state containing the current step and total number of steps
      */
@@ -627,6 +291,7 @@ export const useOnboarding = ({
       isLoadingEmployment ||
       isLoadingBenefitsOffersSchema ||
       isLoadingBenefitOffers ||
+      isLoadingCompany ||
       isLoadingCountries,
     /**
      * Loading state indicating if the onboarding mutation is in progress

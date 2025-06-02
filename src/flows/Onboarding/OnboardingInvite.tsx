@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useEmploymentInvite } from './hooks';
+import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
+import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
@@ -21,28 +22,45 @@ export function OnboardingInvite({
 }: OnboardingInviteProps) {
   const { onboardingBag } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
+  const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
     employmentInviteMutation,
   );
 
+  const { mutateAsync: createReserveInvoiceMutationAsync } = mutationToPromise(
+    useCreateReserveInvoiceMutation,
+  );
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
+      if (
+        onboardingBag.creditRiskStatus === 'deposit_required' &&
+        onboardingBag.employmentId
+      ) {
+        const response = await createReserveInvoiceMutationAsync({
+          employment_slug: onboardingBag.employmentId,
+        });
+        if (response.data) {
+          await onSuccess?.(response.data as SuccessResponse);
+          return;
+        }
 
-      if (!onboardingBag.employmentId) {
-        throw new Error('Employment ID is required');
-      }
-
-      const response = await employmentInviteMutationAsync({
-        employment_id: onboardingBag.employmentId,
-      });
-      if (response.data) {
-        await onSuccess?.(response.data as SuccessResponse);
-        return;
-      }
-      if (response.error) {
-        onError?.(response.error);
+        if (response.error) {
+          onError?.(response.error);
+        }
+      } else if (onboardingBag.employmentId) {
+        const response = await employmentInviteMutationAsync({
+          employment_id: onboardingBag.employmentId,
+        });
+        if (response.data) {
+          await onSuccess?.(response.data as SuccessResponse);
+          return;
+        }
+        if (response.error) {
+          onError?.(response.error);
+        }
       }
     } catch (error) {
       onError?.(error);
@@ -56,7 +74,11 @@ export function OnboardingInvite({
         handleSubmit();
       }}
     >
-      {props.children}
+      {props.children === undefined
+        ? onboardingBag.creditRiskStatus === 'deposit_required'
+          ? 'Create Reserve'
+          : 'Invite Employee'
+        : props.children}
     </Button>
   );
 }
