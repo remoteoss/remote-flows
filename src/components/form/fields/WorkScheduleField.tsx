@@ -145,9 +145,11 @@ function WorkScheduleSelectionForm({
             Edit Schedule
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__WorkScheduleSelectionForm__Title">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__WorkScheduleSelectionForm__Content">
           <DialogHeader>
-            <DialogTitle>Edit employee working hours</DialogTitle>
+            <DialogTitle className="RemoteFlows__WorkScheduleSelectionForm__Title">
+              Edit employee working hours
+            </DialogTitle>
           </DialogHeader>
 
           <Form {...form}>
