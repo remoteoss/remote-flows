@@ -19,10 +19,14 @@ import {
   useFormContext,
 } from 'react-hook-form';
 
-export type CheckBoxFieldProps = JSFField & {
-  onChange?: (checked: any, optionId?: string) => void;
-  component?: Components['checkbox'];
-};
+export type CheckBoxFieldProps = {
+  name: string;
+} & Partial<
+  JSFField & {
+    onChange?: (checked: any, optionId?: string) => void;
+    component?: Components['checkbox'];
+  }
+>;
 
 export function CheckBoxField({
   name,
