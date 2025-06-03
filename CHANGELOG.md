@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- 797e279: - Ability to skip the country step
+  - Add work-schedule field
+
 ## 0.4.0-alpha.4
 
 ### Minor Changes
