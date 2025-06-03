@@ -19,6 +19,16 @@ export const STEPS: Record<StepKeys, Step<StepKeys>> = {
   review: { index: 4, name: 'review' },
 } as const;
 
+export const STEPS_WITHOUT_SELECT_COUNTRY: Record<
+  Exclude<StepKeys, 'select_country'>,
+  Step<Exclude<StepKeys, 'select_country'>>
+> = {
+  basic_information: { index: 0, name: 'basic_information' },
+  contract_details: { index: 1, name: 'contract_details' },
+  benefits: { index: 2, name: 'benefits' },
+  review: { index: 3, name: 'review' },
+} as const;
+
 /**
  * Function to prettify form values. Returns a pretty value and label for each field.
  * @param values - Form values to prettify

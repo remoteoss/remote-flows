@@ -17,8 +17,7 @@ type StepState<T extends string, Fields = FieldValues> = {
 };
 
 export const useStepState = <T extends string, Fields = FieldValues>(
-  steps: Record<T, Step<T>>,
-  currentStepIndex: number = 0,
+  steps: Partial<Record<T, Step<T>>>,
 ) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
@@ -28,14 +27,14 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
-    currentStep: steps[stepKeys[currentStepIndex]],
+    currentStep: steps[stepKeys[0]] as Step<T>,
     totalSteps: stepKeys.length,
     values: null,
   });
 
   function nextStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(steps);
+    const stepValues = Object.values(steps).filter((step): step is Step<T> => step !== undefined);
     const nextStep = stepValues.find((step) => step.index === index + 1);
 
     if (nextStep) {
@@ -56,7 +55,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function previousStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(steps);
+    const stepValues = Object.values(steps).filter((step): step is Step<T> => step !== undefined);
     const previousStep = stepValues.find((step) => step.index === index - 1);
 
     if (previousStep) {
@@ -77,10 +76,10 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function goToStep(step: T) {
     // to avoid going to a steps that hasn't been filled yet
-    if (stepState.values?.[step]) {
+    if (stepState.values?.[step] && steps[step]) {
       setStepState((previousState) => ({
         ...previousState,
-        currentStep: steps[step],
+        currentStep: steps[step] as Step<T>,
       }));
     }
   }

@@ -328,7 +328,6 @@ const OnBoardingRender = ({
   components,
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
-
   const stepTitle = STEPS[currentStepIndex];
 
   if (onboardingBag.isLoading) {

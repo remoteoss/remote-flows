@@ -6,7 +6,7 @@ import {
 import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState } from '@/src/flows/useStepState';
-import { prettifyFormValues, STEPS } from '@/src/flows/Onboarding/utils';
+import { prettifyFormValues, STEPS, STEPS_WITHOUT_SELECT_COUNTRY } from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
   parseJSFToValidate,
@@ -70,6 +70,8 @@ export const useOnboarding = ({
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
   const { data: company, isLoading: isLoadingCompany } = useCompany(companyId);
+  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
+
   const {
     fieldValues,
     stepState,
@@ -77,7 +79,8 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState<keyof typeof STEPS>(STEPS, countryCode ? 1 : 0);
+  } = useStepState(stepsToUse);
+
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField(options);

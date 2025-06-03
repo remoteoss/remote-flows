@@ -82,7 +82,7 @@ function Review({ values }: { values: Record<string, unknown> }) {
 }
 
 describe('OnboardingFlow', () => {
-  const MultiStepForm = ({ components, onboardingBag }: $TSFixMe) => {
+  const MultiStepFormWithCountry = ({ components, onboardingBag }: $TSFixMe) => {
     const {
       BasicInformationStep,
       ContractDetailsStep,
@@ -182,6 +182,87 @@ describe('OnboardingFlow', () => {
     return null;
   };
 
+  const MultiStepFormWithoutCountry = ({ components, onboardingBag }: $TSFixMe) => {
+    const {
+      BasicInformationStep,
+      ContractDetailsStep,
+      BenefitsStep,
+      SubmitButton,
+      BackButton,
+      OnboardingInvite,
+    } = components;
+
+    if (onboardingBag.isLoading) {
+      return <div data-testid="spinner">Loading...</div>;
+    }
+    switch (onboardingBag.stepState.currentStep.name) {
+      case 'basic_information':
+        return (
+          <>
+            <BasicInformationStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'contract_details':
+        return (
+          <>
+            <ContractDetailsStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+
+      case 'benefits':
+        return (
+          <>
+            <BenefitsStep
+              components={{}}
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'review':
+        return (
+          <div className="onboarding-review">
+            <h2 className="title">Basic Information</h2>
+            <Review
+              values={onboardingBag.stepState.values?.basic_information || {}}
+            />
+            <h2 className="title">Contract Details</h2>
+            <Review
+              values={onboardingBag.stepState.values?.contract_details || {}}
+            />
+            <h2 className="title">Benefits</h2>
+            <Review values={onboardingBag.stepState.values?.benefits || {}} />
+            <BackButton>Back</BackButton>
+            <OnboardingInvite onSuccess={mockOnSuccess}>
+              Invite Employee
+            </OnboardingInvite>
+          </div>
+        );
+    }
+
+    return null;
+  };
+
   const mockRender = vi.fn(
     ({ onboardingBag, components }: OnboardingRenderProps) => {
       const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -197,7 +278,7 @@ describe('OnboardingFlow', () => {
       return (
         <>
           <h1>Step: {steps[currentStepIndex]}</h1>
-          <MultiStepForm
+          <MultiStepFormWithCountry
             onboardingBag={onboardingBag}
             components={components}
           />
@@ -258,6 +339,7 @@ describe('OnboardingFlow', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
   });
 
   async function fillBasicInformation(
@@ -342,10 +424,11 @@ describe('OnboardingFlow', () => {
   }
 
   it('should skip rendering the select country step when a countryCode is provided', async () => {
-    mockRender.mockImplementationOnce(
+    mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
+        // If we have a countryCode, use the steps without country selection
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
@@ -356,7 +439,7 @@ describe('OnboardingFlow', () => {
         return (
           <>
             <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepForm
+            <MultiStepFormWithoutCountry
               onboardingBag={onboardingBag}
               components={components}
             />
@@ -364,7 +447,12 @@ describe('OnboardingFlow', () => {
         );
       },
     );
-    render(<OnboardingFlow countryCode="PRT" {...defaultProps} />, { wrapper });
+
+    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
 
     await fillBasicInformation();
 
@@ -374,7 +462,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
