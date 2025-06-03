@@ -47,16 +47,22 @@ type WorkScheduleSelectionProps = {
 const fieldSchema = yup.object({
   day: yup.string().required(),
   checked: yup.boolean().required(),
-  start_time: yup.string().when('checked', {
-    is: true,
-    then: (schema) => schema.required('Required'),
-    otherwise: (schema) => schema.optional().nullable(),
-  }),
-  end_time: yup.string().when('checked', {
-    is: true,
-    then: (schema) => schema.required('Required'),
-    otherwise: (schema) => schema.optional().nullable(),
-  }),
+  start_time: yup
+    .string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)')
+    .when('checked', {
+      is: true,
+      then: (schema) => schema.required('Required'),
+      otherwise: (schema) => schema.optional().nullable(),
+    }),
+  end_time: yup
+    .string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)')
+    .when('checked', {
+      is: true,
+      then: (schema) => schema.required('Required'),
+      otherwise: (schema) => schema.optional().nullable(),
+    }),
   hours: yup.number().default(0),
   break_duration_minutes: yup.string().default('0'),
 });
@@ -218,7 +224,7 @@ function WorkScheduleSelectionForm({
 
               {Object.keys(formState.errors).length > 0 && (
                 <p className="text-destructive text-sm mb-0">
-                  Please fill in all time fields for the selected days
+                  Invalid time format (HH:mm)
                 </p>
               )}
 
