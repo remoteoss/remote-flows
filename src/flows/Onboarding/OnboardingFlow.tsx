@@ -50,6 +50,7 @@ type OnboardingFlowProps = OnboardingFlowParams & {
 export const OnboardingFlow = ({
   employmentId,
   companyId,
+  countryCode,
   type = 'employee',
   render,
   options,
@@ -57,6 +58,7 @@ export const OnboardingFlow = ({
   const formId = useId();
   const onboardingBag = useOnboarding({
     companyId,
+    countryCode,
     employmentId,
     type,
     options,

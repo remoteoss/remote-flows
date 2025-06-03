@@ -2,6 +2,7 @@ import { EmploymentCreateParams } from '@/src/client';
 import { FlowOptions } from '@/src/flows/types';
 
 export type OnboardingFlowParams = {
+  countryCode?: string;
   employmentId?: string;
   companyId: string;
   type?: EmploymentCreateParams['type'];

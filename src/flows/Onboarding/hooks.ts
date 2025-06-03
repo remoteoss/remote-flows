@@ -52,6 +52,7 @@ const stepToFormSchemaMap: Record<
 export const useOnboarding = ({
   employmentId,
   companyId,
+  countryCode,
   type,
   options,
 }: OnboardingHookProps) => {
@@ -61,7 +62,7 @@ export const useOnboarding = ({
     string | undefined
   >(employmentId);
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
-    null,
+    countryCode || null,
   );
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
@@ -76,7 +77,7 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState<keyof typeof STEPS>(STEPS);
+  } = useStepState<keyof typeof STEPS>(STEPS, countryCode ? 1 : 0);
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField(options);
@@ -148,7 +149,10 @@ export const useOnboarding = ({
 
   const initialValues = {
     select_country: getInitialValues(stepFields[stepState.currentStep.name], {
-      country: employment?.data.data.employment?.country.code || '',
+      country:
+        internalCountryCode ||
+        employment?.data.data.employment?.country.code ||
+        '',
     }),
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],

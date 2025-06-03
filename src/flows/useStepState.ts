@@ -18,6 +18,7 @@ type StepState<T extends string, Fields = FieldValues> = {
 
 export const useStepState = <T extends string, Fields = FieldValues>(
   steps: Record<T, Step<T>>,
+  currentStepIndex: number = 0,
 ) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
@@ -27,7 +28,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
-    currentStep: steps[stepKeys[0]],
+    currentStep: steps[stepKeys[currentStepIndex]],
     totalSteps: stepKeys.length,
     values: null,
   });
