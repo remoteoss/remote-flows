@@ -131,24 +131,12 @@ describe('WorkScheduleField Component', () => {
     await waitFor(() => {
       expect(screen.getByRole('checkbox', { name: 'Mon' })).toBeChecked();
     });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Tue' })).toBeChecked();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Wed' })).not.toBeChecked();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Thu' })).not.toBeChecked();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Fri' })).not.toBeChecked();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Sat' })).not.toBeChecked();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Sun' })).not.toBeChecked();
-    });
+    expect(screen.getByRole('checkbox', { name: 'Tue' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Wed' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Thu' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Fri' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Sat' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Sun' })).not.toBeChecked();
   });
 
   it('validates time format in schedule editor', async () => {
