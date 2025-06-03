@@ -7,9 +7,7 @@ import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { useAuth } from './useAuth';
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
+const queryClient = new QueryClient();
 
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
