@@ -5,7 +5,7 @@ import {
 } from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
 
-import { useStepState } from '@/src/flows/useStepState';
+import { useStepState, Step } from '@/src/flows/useStepState';
 import { prettifyFormValues, STEPS, STEPS_WITHOUT_SELECT_COUNTRY } from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
@@ -79,7 +79,7 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState(stepsToUse);
+  } = useStepState(stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>);
 
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
