@@ -82,7 +82,10 @@ function Review({ values }: { values: Record<string, unknown> }) {
 }
 
 describe('OnboardingFlow', () => {
-  const MultiStepForm = ({ components, onboardingBag }: $TSFixMe) => {
+  const MultiStepFormWithCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
     const {
       BasicInformationStep,
       ContractDetailsStep,
@@ -182,6 +185,90 @@ describe('OnboardingFlow', () => {
     return null;
   };
 
+  const MultiStepFormWithoutCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
+    const {
+      BasicInformationStep,
+      ContractDetailsStep,
+      BenefitsStep,
+      SubmitButton,
+      BackButton,
+      OnboardingInvite,
+    } = components;
+
+    if (onboardingBag.isLoading) {
+      return <div data-testid="spinner">Loading...</div>;
+    }
+    switch (onboardingBag.stepState.currentStep.name) {
+      case 'basic_information':
+        return (
+          <>
+            <BasicInformationStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'contract_details':
+        return (
+          <>
+            <ContractDetailsStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+
+      case 'benefits':
+        return (
+          <>
+            <BenefitsStep
+              components={{}}
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'review':
+        return (
+          <div className="onboarding-review">
+            <h2 className="title">Basic Information</h2>
+            <Review
+              values={onboardingBag.stepState.values?.basic_information || {}}
+            />
+            <h2 className="title">Contract Details</h2>
+            <Review
+              values={onboardingBag.stepState.values?.contract_details || {}}
+            />
+            <h2 className="title">Benefits</h2>
+            <Review values={onboardingBag.stepState.values?.benefits || {}} />
+            <BackButton>Back</BackButton>
+            <OnboardingInvite onSuccess={mockOnSuccess}>
+              Invite Employee
+            </OnboardingInvite>
+          </div>
+        );
+    }
+
+    return null;
+  };
+
   const mockRender = vi.fn(
     ({ onboardingBag, components }: OnboardingRenderProps) => {
       const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -197,7 +284,7 @@ describe('OnboardingFlow', () => {
       return (
         <>
           <h1>Step: {steps[currentStepIndex]}</h1>
-          <MultiStepForm
+          <MultiStepFormWithCountry
             onboardingBag={onboardingBag}
             components={components}
           />
@@ -258,6 +345,7 @@ describe('OnboardingFlow', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
   });
 
   async function fillBasicInformation(
@@ -341,6 +429,58 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   }
 
+  it('should skip rendering the select country step when a countryCode is provided', async () => {
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        // If we have a countryCode, use the steps without country selection
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
+    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+  });
+
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await fillCountry('Portugal');
@@ -370,8 +510,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -702,5 +840,77 @@ describe('OnboardingFlow', () => {
     });
 
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
+  });
+
+  it('should call PATCH instead of POST when resubmitting basic information', async () => {
+    const postSpy = vi.fn();
+    const patchSpy = vi.fn();
+
+    server.use(
+      http.post('*/v1/employments', () => {
+        postSpy();
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+      http.patch('*/v1/employments/*', () => {
+        patchSpy();
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    // First submission
+    await fillBasicInformation();
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify POST was called
+    expect(postSpy).toHaveBeenCalledTimes(1);
+
+    // Go back
+    const backButton = screen.getByText(/Back/i);
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify PATCH was called instead of another POST
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledTimes(1); // Still only called once
+    });
   });
 });

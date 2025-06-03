@@ -238,20 +238,20 @@ const fetchToken = () => {
 };
 
 type OnboardingWithCustomBenefitsProps = {
-  countryCode: string;
+  companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
 const OnboardingWithCustomBenefits = ({
-  countryCode,
   type,
+  companyId,
   employmentId,
 }: OnboardingWithCustomBenefitsProps) => {
   return (
     <RemoteFlows auth={fetchToken}>
       <OnboardingFlow
-        countryCode={countryCode}
+        companyId={companyId}
         type={type}
         render={MultiStepForm}
         employmentId={employmentId}
@@ -261,14 +261,14 @@ const OnboardingWithCustomBenefits = ({
 };
 
 type OnboardingFormData = {
-  countryCode: string;
+  companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
 
 export const OnboardingCustomBenefitsForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    countryCode: 'PRT',
+    companyId: '',
     type: 'employee',
     employmentId: '',
   });
@@ -286,18 +286,18 @@ export const OnboardingCustomBenefitsForm = () => {
   return (
     <form onSubmit={handleSubmit} className="onboarding-form-container">
       <div className="onboarding-form-group">
-        <label htmlFor="countryCode" className="onboarding-form-label">
-          Country Code:
+        <label htmlFor="companyId" className="onboarding-form-label">
+          Company ID:
         </label>
         <input
-          id="countryCode"
+          id="companyId"
           type="text"
-          value={formData.countryCode}
+          value={formData.companyId}
           onChange={(e) =>
-            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+            setFormData((prev) => ({ ...prev, companyId: e.target.value }))
           }
           required
-          placeholder="e.g. PRT"
+          placeholder="e.g. Your Company ID"
           className="onboarding-form-input"
         />
       </div>
