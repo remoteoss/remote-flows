@@ -6,7 +6,11 @@ import {
 import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState, Step } from '@/src/flows/useStepState';
-import { prettifyFormValues, STEPS, STEPS_WITHOUT_SELECT_COUNTRY } from '@/src/flows/Onboarding/utils';
+import {
+  prettifyFormValues,
+  STEPS,
+  STEPS_WITHOUT_SELECT_COUNTRY,
+} from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
   parseJSFToValidate,
@@ -79,8 +83,9 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState(stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>);
-
+  } = useStepState(
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+  );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField(options);
@@ -194,19 +199,22 @@ export const useOnboarding = ({
         return Promise.resolve({ data: { countryCode: parsedValues.country } });
       }
       case 'basic_information': {
-        const isEmploymentLoaded = !internalEmploymentId && internalCountryCode;
+        const isEmploymentNotLoaded =
+          !internalEmploymentId && internalCountryCode;
         const hasChangedCountry =
           internalEmploymentId &&
           internalCountryCode &&
+          employment?.data?.data?.employment?.country &&
           employment?.data?.data?.employment?.country.code !==
             internalCountryCode;
-        if (isEmploymentLoaded || hasChangedCountry) {
+        if (isEmploymentNotLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
             country_code: internalCountryCode,
           };
           try {
+            console.log('Creating employment with payload:', payload);
             const response = await createEmploymentMutationAsync(payload);
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching

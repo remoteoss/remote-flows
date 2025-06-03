@@ -82,7 +82,10 @@ function Review({ values }: { values: Record<string, unknown> }) {
 }
 
 describe('OnboardingFlow', () => {
-  const MultiStepFormWithCountry = ({ components, onboardingBag }: $TSFixMe) => {
+  const MultiStepFormWithCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
     const {
       BasicInformationStep,
       ContractDetailsStep,
@@ -182,7 +185,10 @@ describe('OnboardingFlow', () => {
     return null;
   };
 
-  const MultiStepFormWithoutCountry = ({ components, onboardingBag }: $TSFixMe) => {
+  const MultiStepFormWithoutCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
     const {
       BasicInformationStep,
       ContractDetailsStep,
