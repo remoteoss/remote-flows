@@ -341,6 +341,53 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   }
 
+  it('should skip rendering the select country step when a countryCode is provided', async () => {
+    mockRender.mockImplementationOnce(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepForm
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+    render(<OnboardingFlow countryCode="PRT" {...defaultProps} />, { wrapper });
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
+    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+  });
+
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
     await fillCountry('Portugal');
@@ -370,8 +417,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
