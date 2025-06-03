@@ -19,7 +19,7 @@ export type DailySchedule = {
   end_time: string;
   hours: number;
   break_duration_minutes: string;
-  checked?: boolean;
+  checked: boolean;
 };
 
 /**
@@ -134,7 +134,7 @@ export function buildWorkScheduleSummary(dailySchedules: DailySchedule[]) {
       const sameDailySchedule = groupedWorkHours[scheduleTimes];
       const startDay = sameDailySchedule[0].day;
       const [start_time, end_time] = scheduleTimes.split('|');
-      const timeSummary = `from ${start_time.replace(':', 'h')} to ${end_time.replace(':', 'h')}`;
+      const timeSummary = `from <span>${start_time.replace(':', 'h')}</span> to <span>${end_time.replace(':', 'h')}</span>`;
 
       const lastConsecutiveDay = findLastConsecutiveDay(
         startDay,
@@ -159,11 +159,11 @@ export function buildWorkScheduleSummary(dailySchedules: DailySchedule[]) {
             return `${summary}and ${day}, ${timeSummary}`;
           }
 
-          return `${summary}${day}, `;
+          return `${summary}<span>${day}</span>, `;
         }, '');
       }
 
-      return `${capitalize(startDay)} to ${capitalize(lastConsecutiveDay)}, ${timeSummary}`;
+      return `<span>${capitalize(startDay)}</span> to <span>${capitalize(lastConsecutiveDay)}</span>, ${timeSummary}`;
     },
   );
 

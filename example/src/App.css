@@ -459,3 +459,17 @@ button.reset-button {
 .onboarding-form-button:focus {
   background-color: #333;
 }
+
+.RemoteFlows__WorkScheduleSelectionForm__Header {
+  background-color: #f0f0f0;
+  padding: 8px;
+}
+
+.RemoteFlows__WorkScheduleSelectionForm__Row-Break {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.RemoteFlows__WorkScheduleSelectionForm__Row-Hours,
+.RemoteFlows__WorkScheduleSelectionForm__Row-Break {
+  padding: 16px 0;
+}

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { JSFField } from '@/src/types/remoteFlows';
 import React, { useEffect, useState } from 'react';
-
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFormContext, useFieldArray } from 'react-hook-form';
+import * as yup from 'yup';
+
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { Form, FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
@@ -42,6 +44,27 @@ type WorkScheduleSelectionProps = {
   onSubmit: (data: WorkScheduleFormData['schedule']) => void;
 };
 
+const fieldSchema = yup.object({
+  day: yup.string().required(),
+  checked: yup.boolean().required(),
+  start_time: yup.string().when('checked', {
+    is: true,
+    then: (schema) => schema.required('Required'),
+    otherwise: (schema) => schema.optional().nullable(),
+  }),
+  end_time: yup.string().when('checked', {
+    is: true,
+    then: (schema) => schema.required('Required'),
+    otherwise: (schema) => schema.optional().nullable(),
+  }),
+  hours: yup.number().default(0),
+  break_duration_minutes: yup.string().default('0'),
+});
+
+const formSchema = yup.object({
+  schedule: yup.array(fieldSchema),
+});
+
 function WorkScheduleSelectionForm({
   defaultSchedule,
   onSubmit,
@@ -64,6 +87,7 @@ function WorkScheduleSelectionForm({
     }
 
     return {
+      // We just need to override the day and checked. The rest of the fields are the same for every day.
       ...defaultSchedule[0],
       checked: false,
       day: getShortWeekday(day),
@@ -74,9 +98,10 @@ function WorkScheduleSelectionForm({
     defaultValues: {
       schedule: transformedSchedule,
     },
+    resolver: yupResolver(formSchema) as any,
   });
 
-  const { handleSubmit, watch, reset, control } = form;
+  const { handleSubmit, watch, reset, control, formState } = form;
 
   const { fields } = useFieldArray({
     name: 'schedule',
@@ -86,6 +111,7 @@ function WorkScheduleSelectionForm({
   const watchedSchedule = watch('schedule');
 
   function handleSubmitWorkingHours(data: WorkScheduleFormData) {
+    // We can only send the days that are checked.
     const schedule = data.schedule
       .filter(({ checked }) => checked)
       .map((day) => ({
@@ -119,7 +145,7 @@ function WorkScheduleSelectionForm({
           </DialogHeader>
 
           <Form {...form}>
-            <form className="space-y-6 RemoteFlows__WorkScheduleSelectionForm__Form">
+            <form className="space-y-4 RemoteFlows__WorkScheduleSelectionForm__Form">
               <div className="rounded-lg">
                 <p className="text-gray-600 text-sm mb-4 RemoteFlows__WorkScheduleSelectionForm__Description">
                   The times displayed are in the employee's time zone in the
@@ -135,14 +161,14 @@ function WorkScheduleSelectionForm({
                   {/* <div className="col-span-2 text-center">ACTIONS</div> */}
                 </div>
 
-                <div className="space-y-4">
+                <div className="RemoteFlows__WorkScheduleSelectionForm__Rows">
                   {fields.map((field, index) => {
                     const currentDay = watchedSchedule[index];
                     const calculatedHours = calculateHours(currentDay);
 
                     return (
-                      <div key={field.id}>
-                        <div className="grid grid-cols-12 gap-4 items-center py-1 border-b border-gray-200">
+                      <React.Fragment key={field.id}>
+                        <div className="grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Hours">
                           <div className="col-span-2 flex items-center gap-3">
                             <CheckBoxField
                               label={field.day}
@@ -150,13 +176,19 @@ function WorkScheduleSelectionForm({
                             />
                           </div>
                           <div className="col-span-3">
-                            <TextField name={`schedule.${index}.start_time`} />
+                            <TextField
+                              name={`schedule.${index}.start_time`}
+                              includeErrorMessage={false}
+                            />
                           </div>
                           <div className="col-span-1 text-center text-gray-500">
                             to
                           </div>
                           <div className="col-span-3">
-                            <TextField name={`schedule.${index}.end_time`} />
+                            <TextField
+                              name={`schedule.${index}.end_time`}
+                              includeErrorMessage={false}
+                            />
                           </div>
                           <div className="col-span-2 text-center text-gray-600">
                             {isNaN(calculatedHours)
@@ -165,11 +197,12 @@ function WorkScheduleSelectionForm({
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-12 gap-4 items-center py-1">
+                        <div className="grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Break">
                           <div className="col-span-2 text-gray-500">Break</div>
                           <div className="col-span-2">
                             <TextField
                               name={`schedule.${index}.break_duration_minutes`}
+                              includeErrorMessage={false}
                             />
                           </div>
                           <div className="col-span-2 text-gray-500">
@@ -177,13 +210,19 @@ function WorkScheduleSelectionForm({
                           </div>
                           <div className="col-span-4"></div>
                         </div>
-                      </div>
+                      </React.Fragment>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="flex justify-end gap-4 pt-4">
+              {Object.keys(formState.errors).length > 0 && (
+                <p className="text-destructive text-sm mb-0">
+                  Please fill in all time fields for the selected days
+                </p>
+              )}
+
+              <div className="flex gap-4 pt-4">
                 <Button
                   type="button"
                   className="reset-button"
@@ -263,17 +302,23 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
   }
 
   return (
-    <div
-      className={`flex flex-col gap-3 RemoteFlows__WorkScheduleField__${props.name}`}
-    >
+    <div className={`flex flex-col gap-3 RemoteFlows__WorkScheduleField`}>
       <p className={`text-sm RemoteFlows__WorkScheduleField__Title`}>
         Work hours
       </p>
       <div className="flex flex-col gap-1 RemoteFlows__WorkScheduleField__Summary">
-        <p className="text-sm text-gray-500">{workHoursSummary.join(', ')}</p>
-        <p className="text-sm text-gray-500">{breakSummary.join()}</p>
-        <p className="text-sm text-gray-500">
-          Total of {totalWorkHours} hours per week
+        <p
+          className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__WorkHours"
+          dangerouslySetInnerHTML={{
+            __html: workHoursSummary.join(', '),
+          }}
+        />
+
+        <p className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Break">
+          {breakSummary.join()}
+        </p>
+        <p className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Total">
+          Total of <span>{totalWorkHours}</span> hours per week
         </p>
         <WorkScheduleSelectionForm
           defaultSchedule={currentSchedule}
