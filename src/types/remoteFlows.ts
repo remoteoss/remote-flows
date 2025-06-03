@@ -51,7 +51,7 @@ export type Components = {
      * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
      * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
      */
-    fieldData: JSFField;
+    fieldData: Partial<JSFField>;
   }>;
 } & {
   statement?: React.ComponentType<{ data: StatementProps }>;
