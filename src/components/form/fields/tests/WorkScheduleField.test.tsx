@@ -267,7 +267,7 @@ describe('WorkScheduleField Component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it.only('handles unchecking a day correctly', async () => {
+  it('handles unchecking a day correctly', async () => {
     renderWithFormContext(defaultProps);
 
     // Open dialog
