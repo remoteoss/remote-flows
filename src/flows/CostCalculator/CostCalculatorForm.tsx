@@ -60,8 +60,8 @@ export function CostCalculatorForm({
       if (costCalculatorResults?.data) {
         await onSuccess?.(costCalculatorResults?.data);
         if (shouldResetForm) {
-          form.reset();
           costCalculatorBag?.resetForm();
+          form.reset();
         }
       }
     }
