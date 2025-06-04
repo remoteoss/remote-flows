@@ -1,6 +1,5 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
-import { convertToCents } from '@/src/components/form/utils';
 import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
@@ -61,10 +60,8 @@ export function buildPayload(
     employments: [
       {
         region_slug: values.region || values.country,
-        annual_gross_salary: convertToCents(values.salary) as number,
-        annual_gross_salary_in_employer_currency: convertToCents(
-          values.salary,
-        ) as number,
+        annual_gross_salary: Number(values.salary),
+        annual_gross_salary_in_employer_currency: Number(values.salary),
         employment_term: values.contract_duration_type ?? 'fixed',
         title: estimationOptions.title,
         regional_to_employer_exchange_rate: '1',

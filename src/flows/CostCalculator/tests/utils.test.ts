@@ -21,8 +21,8 @@ describe('buildPayload', () => {
       employments: [
         {
           region_slug: 'US',
-          annual_gross_salary: 10000000, // convertToCents(100000)
-          annual_gross_salary_in_employer_currency: 10000000,
+          annual_gross_salary: 100000,
+          annual_gross_salary_in_employer_currency: 100000,
           employment_term: 'fixed',
           title: defaultEstimationOptions.title,
           regional_to_employer_exchange_rate: '1',

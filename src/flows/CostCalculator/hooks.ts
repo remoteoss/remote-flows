@@ -435,6 +435,29 @@ export const useCostCalculator = (
     },
     fields: allFields,
     validationSchema,
+    parseFormValues: (values: CostCalculatorEstimationFormValues) => {
+      const { country, region, salary, currency, ...rest } = values;
+      const jsonSchemaStaticFieldValues = {
+        country,
+        region,
+        salary,
+        currency,
+      };
+      const parsedStaticFields = parseJSFToValidate(
+        jsonSchemaStaticFieldValues,
+        fieldsJSONSchema.fields,
+      );
+
+      const parsedRegionFields = parseJSFToValidate(
+        rest,
+        jsonSchemaRegionFields?.fields || [],
+      );
+
+      return {
+        ...parsedStaticFields,
+        ...parsedRegionFields,
+      };
+    },
     handleValidation,
     isSubmitting: costCalculatorEstimationMutation.isPending,
     isLoading:
