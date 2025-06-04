@@ -1,6 +1,6 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';

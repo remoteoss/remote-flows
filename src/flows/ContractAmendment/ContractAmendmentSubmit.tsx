@@ -1,5 +1,5 @@
 import { Button } from '@/src/components/ui/button';
-import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useContractAmendmentContext } from './context';
 
 export function ContractAmendmentSubmit({

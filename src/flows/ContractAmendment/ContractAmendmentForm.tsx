@@ -6,7 +6,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Form } from '@/src/components/ui/form';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 

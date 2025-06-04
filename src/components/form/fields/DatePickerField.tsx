@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CalendarIcon } from 'lucide-react';
-import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/src/components/ui/button';

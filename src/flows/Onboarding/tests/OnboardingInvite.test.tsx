@@ -19,7 +19,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
 const queryClient = new QueryClient();

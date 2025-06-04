@@ -1,6 +1,5 @@
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { cn } from '@/src/lib/utils';
-import * as React from 'react';
 import { SupportedTypes } from './types';
 import { Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';

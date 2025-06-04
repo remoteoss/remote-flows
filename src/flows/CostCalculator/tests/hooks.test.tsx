@@ -4,7 +4,7 @@ import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { countries, currencies, estimation, regionFields } from './fixtures';
 
