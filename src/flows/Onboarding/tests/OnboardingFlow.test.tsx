@@ -429,6 +429,11 @@ describe('OnboardingFlow', () => {
   }
 
   it('should skip rendering the select country step when a countryCode is provided', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -453,13 +458,18 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId="1234"
+        {...defaultProps}
+        countryCode="PRT"
+      />,
+      { wrapper },
+    );
 
     // Wait for loading to finish and form to be ready
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Basic Information/i);
-
-    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -477,7 +487,9 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+    expect(employeePersonalEmail).toHaveValue(
+      employmentResponse.data.employment.personal_email,
+    );
   });
 
   it('should select a country and advance to the next step', async () => {
