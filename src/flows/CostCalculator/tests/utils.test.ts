@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { defaultEstimationOptions } from '../hooks';
-import type { CostCalculatorEstimationFormValues } from '../types';
+import type { CostCalculatorEstimationSubmitValues } from '../types';
 import { buildPayload } from '../utils';
 
 describe('buildPayload', () => {
   it('should build a payload with minimal values', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: '100000',
+      salary: 100000,
     };
 
     const payload = buildPayload(values);
@@ -21,8 +21,8 @@ describe('buildPayload', () => {
       employments: [
         {
           region_slug: 'US',
-          annual_gross_salary: 100000,
-          annual_gross_salary_in_employer_currency: 100000,
+          annual_gross_salary: 100_000,
+          annual_gross_salary_in_employer_currency: 100_000,
           employment_term: 'fixed',
           title: defaultEstimationOptions.title,
           regional_to_employer_exchange_rate: '1',
@@ -32,11 +32,11 @@ describe('buildPayload', () => {
   });
 
   it('should use region if provided', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
       region: 'CA',
-      salary: '100000',
+      salary: 100000,
     };
 
     const payload = buildPayload(values);
@@ -45,10 +45,10 @@ describe('buildPayload', () => {
   });
 
   it('should include benefits if provided', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: '100000',
+      salary: 100000,
       benefits: {
         'benefit-health': 'premium',
         'benefit-dental': 'basic',
@@ -64,10 +64,10 @@ describe('buildPayload', () => {
   });
 
   it('should include age if provided', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: '100000',
+      salary: 100000,
       age: 30,
     };
 
@@ -77,10 +77,10 @@ describe('buildPayload', () => {
   });
 
   it('should use contract_duration_type if provided', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: '100000',
+      salary: 100000,
       contract_duration_type: 'fixed',
     };
 
@@ -90,10 +90,10 @@ describe('buildPayload', () => {
   });
 
   it('should use custom estimation options if provided', () => {
-    const values: CostCalculatorEstimationFormValues = {
+    const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: '100000',
+      salary: 100000,
     };
 
     const customOptions = {
