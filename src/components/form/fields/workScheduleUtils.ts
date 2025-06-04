@@ -1,5 +1,5 @@
-import groupBy from 'lodash/groupBy';
-import capitalize from 'lodash/capitalize';
+import groupBy from 'lodash.groupby';
+import capitalize from 'lodash.capitalize';
 
 const MINUTES_IN_HOUR = 60;
 

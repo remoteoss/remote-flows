@@ -26,6 +26,37 @@ Welcome to the `@remoteoss/remote-flows` package, a React library that provides 
 npm install @remoteoss/remote-flows
 ```
 
+## Development
+
+To run the SDK locally for development:
+
+1. Clone the repository and install dependencies:
+
+```sh
+git clone https://github.com/remoteoss/remote-flows.git
+cd remote-flows
+npm install
+```
+
+2. Create a `.env` file in the example directory with your Remote credentials:
+
+```env
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+REFRESH_TOKEN=your_refresh_token
+REMOTE_GATEWAY=https://gateway.partners.remote-sandbox.com # for sandbox
+# REMOTE_GATEWAY=https://gateway.remote.com # for production
+```
+
+3. Start the development server:
+
+```sh
+cd example
+npm run dev
+```
+
+The example app will be available at `http://localhost:3001`. The server handles authentication and proxies API requests to Remote's gateway.
+
 ## Components API
 
 ### RemoteFlows
