@@ -86,7 +86,7 @@ export function TextField({
                   onChange?.(event);
                 }}
                 className="RemoteFlows__TextField__Input"
-                placeholder={label}
+                placeholder={''}
               />
             </FormControl>
             {description && (

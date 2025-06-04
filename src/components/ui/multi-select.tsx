@@ -97,7 +97,7 @@ export function MultiSelect({
                 );
               })
             ) : (
-              <span className="text-foreground">{placeholder}</span>
+              <span className="text-foreground"></span>
             )}
           </div>
           <ChevronDownIcon className="size-4" />

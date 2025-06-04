@@ -97,7 +97,7 @@ export function SelectField({
                     aria-label={label}
                   >
                     <span className="absolute">
-                      <SelectValue placeholder={label} />
+                      <SelectValue placeholder={''} />
                     </span>
                   </SelectTrigger>
                   <SelectContent className="RemoteFlows__SelectField__Content">
