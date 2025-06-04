@@ -83,7 +83,7 @@ export function TextAreaField({
                     'border-red-500 focus-visible:ring-red-500',
                   'RemoteFlows__TextArea__Input',
                 )}
-                placeholder={label}
+                placeholder={''}
               />
             </FormControl>
             {(description || maxLength) && (
