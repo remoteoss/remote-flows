@@ -22,12 +22,17 @@ type CostCalculatorFormProps = Partial<{
    * @param error - The error object.
    */
   onError: (error: EstimationError) => void;
+  /**
+   * Whether to reset the form when the form is successfully submitted.
+   */
+  shouldResetForm?: boolean;
 }>;
 
 export function CostCalculatorForm({
   onSubmit,
   onError,
   onSuccess,
+  shouldResetForm,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
@@ -41,6 +46,10 @@ export function CostCalculatorForm({
     } else {
       if (costCalculatorResults?.data) {
         await onSuccess?.(costCalculatorResults?.data);
+        if (shouldResetForm) {
+          costCalculatorBag?.resetForm();
+          form.reset();
+        }
       }
     }
   };
