@@ -1,6 +1,6 @@
 import type {
   CostCalculatorEstimateResponse,
-  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -27,7 +27,7 @@ function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
-    useState<CostCalculatorEstimationFormValues | null>(null);
+    useState<CostCalculatorEstimationSubmitValues | null>(null);
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
