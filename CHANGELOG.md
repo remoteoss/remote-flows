@@ -1,6 +1,6 @@
 # @remoteoss/remote-flows
 
-## 0.4.0
+## 0.4.0-alpha.6
 
 ### Minor Changes
 
