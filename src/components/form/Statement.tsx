@@ -1,7 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { useFormFields } from '@/src/context';
 import { AlertCircle } from 'lucide-react';
-import React from 'react';
 
 export type StatementProps = {
   title?: string;

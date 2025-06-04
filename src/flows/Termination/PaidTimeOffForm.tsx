@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
