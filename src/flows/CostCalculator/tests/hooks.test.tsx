@@ -34,7 +34,7 @@ describe('useCostCalculator', () => {
     queryClient.clear();
   });
 
-  test('should load regions when a country with regions is selected', async () => {
+  it('should load regions when a country with regions is selected', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
 
     await waitFor(() => {
@@ -67,7 +67,7 @@ describe('useCostCalculator', () => {
     expect(regionField?.required).toBe(true);
   });
 
-  test('should not return errors when valid data is passed to handleValidation', async () => {
+  it('should not return errors when valid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const validValues = {
       country: 'PRT',
@@ -82,7 +82,7 @@ describe('useCostCalculator', () => {
     });
   });
 
-  test('should return an error when invalid data is passed to handleValidation', async () => {
+  it('should return an error when invalid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const invalidValues = {
       country: 'PRT',

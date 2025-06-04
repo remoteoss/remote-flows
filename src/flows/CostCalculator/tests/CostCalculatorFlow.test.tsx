@@ -10,7 +10,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import React, { PropsWithChildren } from 'react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   countries,
   currencies,
@@ -94,7 +94,7 @@ describe('CostCalculatorFlow', () => {
     );
   });
 
-  test('should render the form with default values', async () => {
+  it('should render the form with default values', async () => {
     renderComponent();
 
     await waitFor(() => {
@@ -114,7 +114,7 @@ describe('CostCalculatorFlow', () => {
     expect(salaryInput).toHaveValue('50000');
   });
 
-  test('should submit the form with default values', async () => {
+  it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
@@ -131,7 +131,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test('should call onSuccess callback when estimation succeeds', async () => {
+  it('should call onSuccess callback when estimation succeeds', async () => {
     server.use(
       http.post('*/v1/cost-calculator/estimation', () => {
         return HttpResponse.json({ data: {} });
@@ -150,7 +150,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test('should call onError callback when estimation fails', async () => {
+  it('should call onError callback when estimation fails', async () => {
     server.use(
       http.post('*/v1/cost-calculator/estimation', () => {
         return new HttpResponse('Not found', { status: 422 });
@@ -169,7 +169,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test('should display validation errors when form is submitted with empty fields', async () => {
+  it('should display validation errors when form is submitted with empty fields', async () => {
     renderComponent({ defaultValues: {} });
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
@@ -182,7 +182,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test('should load the form with regional fields based on the selected country', async () => {
+  it('should load the form with regional fields based on the selected country', async () => {
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
         return HttpResponse.json(regionFieldsWithAgeProperty);
@@ -208,7 +208,7 @@ describe('CostCalculatorFlow', () => {
     expect(screen.getByLabelText('Life Insurance')).toBeInTheDocument();
   });
 
-  test('should load, fill and submit form with regional fields', async () => {
+  it('should load, fill and submit form with regional fields', async () => {
     const user = userEvent.setup();
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
@@ -275,7 +275,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test("should reset to the initial form values when the 'Reset' button is clicked", async () => {
+  it("should reset to the initial form values when the 'Reset' button is clicked", async () => {
     const user = userEvent.setup();
 
     server.use(
@@ -318,7 +318,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  test('should change the form fields labels from the consumer API', async () => {
+  it('should change the form fields labels from the consumer API', async () => {
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
         return HttpResponse.json(regionFieldsWithAgeProperty);
@@ -355,5 +355,86 @@ describe('CostCalculatorFlow', () => {
 
     await screen.findByText(/Enter your age/i);
     await screen.findByText(/Enter your salary/i);
+  });
+
+  it('should reset form after successful submission when shouldResetForm is true', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(
+      <CostCalculatorFlow
+        defaultValues={defaultProps.defaultValues}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div data-testid="loading">Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={mockOnSubmit}
+                onError={mockOnError}
+                onSuccess={mockOnSuccess}
+                shouldResetForm={true}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+            </div>
+          );
+        }}
+      />,
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    // Fill in the age field
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /age/i,
+      }),
+      '30',
+    );
+
+    // select benefits
+    const [, , lifeInsurance, healthInsurance] =
+      screen.getAllByRole('combobox');
+
+    // select life insurance
+    await user.click(lifeInsurance);
+    const [, healthInsuranceOption] = screen.getAllByText(
+      'Option 1 - 5.64 USD/mo',
+    );
+    await user.click(healthInsuranceOption);
+
+    // select health insurance
+    await user.click(healthInsurance);
+    const [, lifeInsuranceOption] = screen.getAllByText(
+      'Option 1 - 113 USD/mo',
+    );
+    await user.click(lifeInsuranceOption);
+
+    // Submit the form
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    // Wait for success callback
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
+
+    // Verify form was reset
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toHaveValue('');
+    });
   });
 });
