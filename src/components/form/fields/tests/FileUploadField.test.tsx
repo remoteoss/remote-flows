@@ -3,7 +3,6 @@ import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
 

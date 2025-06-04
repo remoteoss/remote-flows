@@ -3,7 +3,6 @@ import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React, { act } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkScheduleField } from '../WorkScheduleField';
 import { DailySchedule } from '../workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';

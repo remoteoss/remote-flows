@@ -70,7 +70,7 @@ export const CostCalculatorFlow = ({
       region: '',
       salary: defaultValues?.salary,
     },
-    shouldUnregister: true,
+    shouldUnregister: false,
     mode: 'onBlur',
   });
 
