@@ -11,7 +11,7 @@ export function CostCalculatorResetButton({
   return (
     <Button
       {...props}
-      type="reset"
+      type="button"
       className={cn(
         'RemoteFlows__CostCalculatorForm__ResetButton',
         props.className,

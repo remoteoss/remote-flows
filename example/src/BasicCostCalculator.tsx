@@ -37,14 +37,17 @@ export function BasicCostCalculator() {
     <RemoteFlows auth={fetchToken}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        render={(props) => {
+        render={(props, onResetForm) => {
           if (props.isLoading) {
             return <div>Loading...</div>;
           }
           return (
             <div>
               <CostCalculatorForm
-                onSubmit={(payload) => console.log(payload)}
+                onSubmit={(payload) => {
+                  console.log({ payload });
+                  onResetForm();
+                }}
                 onError={(error) => console.error({ error })}
                 onSuccess={(response) => console.log({ response })}
               />

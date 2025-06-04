@@ -38,6 +38,7 @@ export type CostCalculatorFlowProps = {
   };
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
+    onReset: () => void,
   ) => React.ReactNode;
 };
 
@@ -70,9 +71,14 @@ export const CostCalculatorFlow = ({
       region: '',
       salary: defaultValues?.salary,
     },
-    shouldUnregister: true,
+    shouldUnregister: false,
     mode: 'onBlur',
   });
+
+  const onReset = () => {
+    costCalculatorBag.resetForm();
+    form.reset();
+  };
 
   return (
     <CostCalculatorContext.Provider
@@ -82,7 +88,7 @@ export const CostCalculatorFlow = ({
         costCalculatorBag,
       }}
     >
-      {render(costCalculatorBag)}
+      {render(costCalculatorBag, onReset)}
     </CostCalculatorContext.Provider>
   );
 };
