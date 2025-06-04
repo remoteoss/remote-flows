@@ -19,7 +19,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useRef, useState } from 'react';
-import mergeWith from 'lodash/mergeWith';
+import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
   useBenefitOffersSchema,

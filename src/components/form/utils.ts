@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
 import { $TSFixMe, Fields } from '@remoteoss/json-schema-form';
-import get from 'lodash/get';
+import get from 'lodash.get';
 
 const textInputTypes = {
   TEXT: 'text',
