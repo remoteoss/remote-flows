@@ -3,7 +3,7 @@ import { CreditRiskStatus } from '@remoteoss/remote-flows';
 export const OnboardingAlertStatutes = ({
   creditRiskStatus,
 }: {
-  creditRiskStatus: CreditRiskStatus;
+  creditRiskStatus?: CreditRiskStatus;
 }) => {
   if (creditRiskStatus === 'deposit_required') {
     return (

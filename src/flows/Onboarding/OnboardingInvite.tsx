@@ -77,12 +77,14 @@ export function OnboardingInvite({
     return null;
   }
 
-  // TODO: what's the final status when you invite the employee?
   // the button should be disabled after:
   // - a reserve invoice is created
   // - after the user has been invited
   const isDisabled =
-    employment?.data.data.employment?.status === 'created_awaiting_reserve';
+    employment?.data.data.employment?.status &&
+    ['created_awaiting_reserve', 'invited'].includes(
+      employment?.data.data.employment?.status,
+    );
 
   return (
     <Button
