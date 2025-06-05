@@ -290,6 +290,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Back
             </BackButton>
             <OnboardingInvite
+              className="submit-button"
               onSuccess={() => {
                 if (onboardingBag.creditRiskStatus === 'deposit_required') {
                   setShowReserveInvoice(true);
@@ -375,7 +376,7 @@ const OnboardingWithProps = ({
   employmentId,
   countryCode,
 }: OnboardingFormData) => (
-  <RemoteFlows auth={fetchToken}>
+  <RemoteFlows isTestingMode auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
@@ -389,8 +390,8 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: '',
-    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+    employmentId: '763d5a55-c269-4ed0-8026-584bda762a7a',
+    companyId: 'e52ffe5c-327e-41a4-8b18-701acdea71ec',
     countryCode: 'PRT',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);

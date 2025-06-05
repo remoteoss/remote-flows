@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { useEmploymentInvite } from './api';
+import { useEmployment, useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -24,6 +24,10 @@ export function OnboardingInvite({
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
+  const { data: employment, refetch: refetchEmployment } = useEmployment(
+    onboardingBag.employmentId,
+  );
+
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
     employmentInviteMutation,
   );
@@ -44,6 +48,7 @@ export function OnboardingInvite({
         });
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
+          await refetchEmployment();
           return;
         }
 
@@ -54,6 +59,7 @@ export function OnboardingInvite({
         const response = await employmentInviteMutationAsync({
           employment_id: onboardingBag.employmentId,
         });
+        await refetchEmployment();
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
           return;
@@ -67,12 +73,17 @@ export function OnboardingInvite({
     }
   };
 
+  // TODO: what's the final status when you invite the employee?
+  const isDisabled =
+    employment?.data.data.employment?.status === 'created_awaiting_reserve';
+
   return (
     <Button
       {...props}
       onClick={() => {
         handleSubmit();
       }}
+      disabled={isDisabled}
     >
       {props.children === undefined
         ? onboardingBag.creditRiskStatus === 'deposit_required'

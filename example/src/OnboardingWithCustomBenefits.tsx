@@ -217,7 +217,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
           <Review values={onboardingBag.stepState.values?.benefits || {}} />
           <div className="buttons-container">
             <BackButton className="back-button">Previous Step</BackButton>
-            <OnboardingInvite>Invite Employee</OnboardingInvite>
+            <OnboardingInvite className="submit-button">
+              Invite Employee
+            </OnboardingInvite>
           </div>
         </div>
       );

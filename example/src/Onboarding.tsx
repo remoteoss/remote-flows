@@ -324,6 +324,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Back
             </BackButton>
             <OnboardingInvite
+              className="submit-button"
               onSuccess={() => {
                 if (onboardingBag.creditRiskStatus === 'deposit_required') {
                   setShowReserveInvoice(true);
