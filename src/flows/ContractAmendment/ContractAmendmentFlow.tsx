@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import { useId } from 'react';
 import { ContractAmendmentContext } from './context';
 import { ContractAmendmentBack } from './ContractAmendmentBack';
 import { ContractAmendmentConfirmationForm } from './ContractAmendmentConfirmationForm';

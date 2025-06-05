@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React, { act } from 'react';
+import { act } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { WorkScheduleField } from '../WorkScheduleField';
 import { DailySchedule } from '../workScheduleUtils';

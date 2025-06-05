@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
 

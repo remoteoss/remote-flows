@@ -7,7 +7,6 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { CountryField } from '../CountryField';

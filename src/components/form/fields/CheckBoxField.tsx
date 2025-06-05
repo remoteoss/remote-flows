@@ -12,7 +12,6 @@ import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { CheckedState } from '@radix-ui/react-checkbox';
-import * as React from 'react';
 import {
   ControllerRenderProps,
   FieldValues,

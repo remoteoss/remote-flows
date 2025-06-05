@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fields } from '@remoteoss/json-schema-form';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';

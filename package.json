@@ -16,7 +16,8 @@
     "changeset:version": "changeset version",
     "prepare": "npm run build",
     "prerelease": "npm run ci",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "type-check": "tsc --noEmit"
   },
   "type": "module",
   "main": "dist/index.js",

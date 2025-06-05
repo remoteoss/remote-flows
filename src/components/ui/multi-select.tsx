@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Check, ChevronDownIcon, X } from 'lucide-react';
 
 import { Button } from '@/src/components/ui/button';
