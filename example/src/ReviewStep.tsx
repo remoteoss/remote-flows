@@ -25,7 +25,7 @@ export const InviteSection = ({
   );
 };
 
-const DISABLED_CREDIT_STATUS: Employment['status'][] = [
+const DISABLED_EMPLOYMENT_STATUS: Employment['status'][] = [
   'created_awaiting_reserve',
   'invited',
 ];
@@ -46,7 +46,7 @@ export const MyOnboardingInviteButton = ({
   employment?: Employment;
 }) => {
   const isDisabled =
-    employment && DISABLED_CREDIT_STATUS.includes(employment?.status);
+    employment && DISABLED_EMPLOYMENT_STATUS.includes(employment?.status);
   if (creditRiskStatus !== 'referred') {
     return (
       <Component
