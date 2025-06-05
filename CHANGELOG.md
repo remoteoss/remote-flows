@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.6
+
+### Minor Changes
+
+- 20c86ba: - Fix lodash imports for webpack
+  - You can use the `shouldResetForm` in the `<CostCalculatorForm>` to reset after you submit
+
 ## 0.4.0-alpha.5
 
 ### Minor Changes

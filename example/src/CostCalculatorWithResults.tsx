@@ -47,7 +47,10 @@ export function CostCalculatorWithResults() {
               <CostCalculatorForm
                 onSubmit={(payload) => console.log(payload)}
                 onError={(error) => console.error({ error })}
-                onSuccess={(response) => setEstimations(response)}
+                shouldResetForm
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
               />
               <div className="buttons-container">
                 <CostCalculatorResetButton className="reset-button">

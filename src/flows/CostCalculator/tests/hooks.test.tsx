@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
-import { beforeEach, describe, expect, test } from 'vitest';
 import { countries, currencies, estimation, regionFields } from './fixtures';
 
 const queryClient = new QueryClient();
@@ -34,7 +33,7 @@ describe('useCostCalculator', () => {
     queryClient.clear();
   });
 
-  test('should load regions when a country with regions is selected', async () => {
+  it('should load regions when a country with regions is selected', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
 
     await waitFor(() => {
@@ -67,7 +66,7 @@ describe('useCostCalculator', () => {
     expect(regionField?.required).toBe(true);
   });
 
-  test('should not return errors when valid data is passed to handleValidation', async () => {
+  it('should not return errors when valid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const validValues = {
       country: 'PRT',
@@ -82,7 +81,7 @@ describe('useCostCalculator', () => {
     });
   });
 
-  test('should return an error when invalid data is passed to handleValidation', async () => {
+  it('should return an error when invalid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), { wrapper });
     const invalidValues = {
       country: 'PRT',
