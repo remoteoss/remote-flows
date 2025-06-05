@@ -42,3 +42,12 @@ export type BenefitsFormPayload = Record<
 >;
 
 export type ContractDetailsFormPayload = Record<string, unknown>;
+
+export type CreditRiskStatus =
+  | 'not_started'
+  | 'ready'
+  | 'in_progress'
+  | 'referred'
+  | 'fail'
+  | 'deposit_required'
+  | 'no_deposit_required';
