@@ -25,6 +25,11 @@ export const InviteSection = ({
   );
 };
 
+const DISABLED_CREDIT_STATUS: Employment['status'][] = [
+  'created_awaiting_reserve',
+  'invited',
+];
+
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
@@ -41,8 +46,7 @@ export const MyOnboardingInviteButton = ({
   employment?: Employment;
 }) => {
   const isDisabled =
-    employment &&
-    ['created_awaiting_reserve', 'invited'].includes(employment?.status);
+    employment && DISABLED_CREDIT_STATUS.includes(employment?.status);
   if (creditRiskStatus !== 'referred') {
     return (
       <Component
@@ -110,6 +114,10 @@ function Review({
   );
 }
 
+const CREDIT_RISK_STATUSES: CreditRiskStatus[] = [
+  'deposit_required',
+  'referred',
+];
 export const ReviewStep = ({
   onboardingBag,
   components,
@@ -176,9 +184,7 @@ export const ReviewStep = ({
         )}
       {!showInviteSuccessful &&
         onboardingBag.creditRiskStatus &&
-        !['deposit_required', 'referred'].includes(
-          onboardingBag.creditRiskStatus,
-        ) && (
+        !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) && (
           <InviteSection
             title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
             description="If you're ready to invite this employee to onboard with Remote, click the button below."
@@ -207,9 +213,7 @@ export const ReviewStep = ({
         )}
 
       {onboardingBag.creditRiskStatus &&
-        !['deposit_required', 'referred'].includes(
-          onboardingBag.creditRiskStatus,
-        ) &&
+        !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) &&
         showInviteSuccessful && (
           <div className="invite-successful">
             <h2>You’re all set!</h2>
