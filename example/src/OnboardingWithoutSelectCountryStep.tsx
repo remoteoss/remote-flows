@@ -11,6 +11,8 @@ import {
 } from '@remoteoss/remote-flows';
 import './App.css';
 import React, { useState } from 'react';
+import ReviewStep from './ReviewStep';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
 export const InviteSection = ({
   title,
@@ -41,40 +43,6 @@ type MultiStepFormProps = {
   components: OnboardingRenderProps['components'];
 };
 
-function Review({
-  meta,
-}: {
-  meta: Record<string, { label?: string; prettyValue?: string | boolean }>;
-}) {
-  return (
-    <div className="onboarding-values">
-      {Object.entries(meta).map(([key, value]) => {
-        const label = value?.label;
-        const prettyValue = value?.prettyValue;
-
-        // Skip if there's no label or prettyValue is undefined or empty string
-        if (!label || prettyValue === undefined || prettyValue === '') {
-          return null;
-        }
-
-        // Handle boolean prettyValue
-        const displayValue =
-          typeof prettyValue === 'boolean'
-            ? prettyValue
-              ? 'Yes'
-              : 'No'
-            : prettyValue;
-
-        return (
-          <pre key={key}>
-            {label}: {displayValue}
-          </pre>
-        );
-      })}
-    </div>
-  );
-}
-
 const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
   const {
     BasicInformationStep,
@@ -82,24 +50,16 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
-    OnboardingInvite,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
-  const [showReserveInvoice, setShowReserveInvoice] = useState(false);
-  const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
       return (
         <>
-          {onboardingBag.creditRiskStatus === 'deposit_required' && (
-            <div className="alert">
-              Reserve payment required to hire this employee. Check this{' '}
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                support article
-              </a>
-            </div>
-          )}
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -130,14 +90,9 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
-          {onboardingBag.creditRiskStatus === 'deposit_required' && (
-            <div className="alert">
-              Reserve payment required to hire this employee. Check this{' '}
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                support article
-              </a>
-            </div>
-          )}
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)
@@ -194,123 +149,11 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       );
     case 'review':
       return (
-        <div className="onboarding-review">
-          <h2 className="title">Basic Information</h2>
-          <Review meta={onboardingBag.meta.fields.basic_information} />
-          <button
-            className="back-button"
-            onClick={() => onboardingBag.goTo('basic_information')}
-          >
-            Edit Basic Information
-          </button>
-          <h2 className="title">Contract Details</h2>
-          <Review meta={onboardingBag.meta.fields.contract_details} />
-          <button
-            className="back-button"
-            onClick={() => onboardingBag.goTo('contract_details')}
-          >
-            Edit Contract Details
-          </button>
-          <h2 className="title">Benefits</h2>
-          <Review meta={onboardingBag.meta.fields.benefits} />
-
-          <button
-            className="back-button"
-            onClick={() => onboardingBag.goTo('benefits')}
-          >
-            Edit Benefits
-          </button>
-          <h2 className="title">Review</h2>
-          {!showReserveInvoice &&
-            onboardingBag.creditRiskStatus === 'deposit_required' && (
-              <InviteSection
-                title="Confirm Details && Continue"
-                description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
-              >
-                <p>Reserve payment required to hire this employee</p>
-                <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                  What is a reserve payment
-                </a>
-              </InviteSection>
-            )}
-          {!showInviteSuccessful &&
-            onboardingBag.creditRiskStatus !== 'deposit_required' && (
-              <InviteSection
-                title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
-                description="If you're ready to invite this employee to onboard with Remote, click the button below."
-              />
-            )}
-
-          {onboardingBag.creditRiskStatus === 'deposit_required' &&
-            showReserveInvoice && (
-              <div className="reserve-invoice">
-                <h2>You’ll receive a reserve invoice soon</h2>
-                <p>
-                  We saved{' '}
-                  {onboardingBag.stepState.values?.basic_information.name}{' '}
-                  details as a draft. You’ll be able to invite them to Remote
-                  after you complete the reserve payment.
-                </p>
-                <div>
-                  <button type="submit">Go to dashboard</button>
-
-                  <br />
-
-                  <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                    What is a reserve payment
-                  </a>
-                </div>
-              </div>
-            )}
-
-          {onboardingBag.creditRiskStatus !== 'deposit_required' &&
-            showInviteSuccessful && (
-              <div className="invite-successful">
-                <h2>You’re all set!</h2>
-                <p>
-                  {onboardingBag.stepState.values?.basic_information.name} at{' '}
-                  {
-                    onboardingBag.stepState.values?.basic_information
-                      .personal_email
-                  }{' '}
-                  has been invited to Remote. We’ll let you know once they
-                  complete their onboarding process
-                </p>
-                <div>
-                  <button type="submit">Go to dashboard</button>
-                </div>
-              </div>
-            )}
-
-          <div className="buttons-container">
-            <BackButton
-              className="back-button"
-              onClick={() => setApiError(null)}
-            >
-              Back
-            </BackButton>
-            <OnboardingInvite
-              onSuccess={() => {
-                if (onboardingBag.creditRiskStatus === 'deposit_required') {
-                  setShowReserveInvoice(true);
-                  return;
-                } else {
-                  setShowInviteSuccessful(true);
-                }
-
-                console.log(
-                  'after inviting or creating a reserve navigate to whatever place you want',
-                );
-              }}
-              onError={(error: Error) => setApiError(error.message)}
-              type="submit"
-            >
-              {onboardingBag.creditRiskStatus === 'deposit_required'
-                ? 'Continue'
-                : 'Invite Employee'}
-            </OnboardingInvite>
-          </div>
-        </div>
+        <ReviewStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setApiError={setApiError}
+        />
       );
   }
 };

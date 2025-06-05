@@ -240,6 +240,9 @@ export const useOnboarding = ({
       case 'contract_details': {
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
+          pricing_plan_details: {
+            frequency: 'monthly',
+          },
         };
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,

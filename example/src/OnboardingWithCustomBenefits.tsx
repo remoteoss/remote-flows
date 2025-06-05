@@ -11,41 +11,13 @@ import {
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
+import ReviewStep from './ReviewStep';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
   components: OnboardingRenderProps['components'];
 };
-
-function Review({ values }: { values: Record<string, unknown> }) {
-  return (
-    <div className="onboarding-values">
-      {Object.entries(values).map(([key, value]) => {
-        if (Array.isArray(value)) {
-          return (
-            <pre>
-              {key}: {value.join(', ')}
-            </pre>
-          );
-        }
-        if (typeof value === 'object') {
-          return (
-            <pre>
-              {key}: {JSON.stringify(value)}
-            </pre>
-          );
-        }
-        if (typeof value === 'string' || typeof value === 'number') {
-          return (
-            <pre>
-              {key}: {value}
-            </pre>
-          );
-        }
-      })}
-    </div>
-  );
-}
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
   const [apiError, setApiError] = useState<string | null>();
@@ -55,7 +27,6 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
-    OnboardingInvite,
   } = components;
 
   if (onboardingBag.isLoading) {
@@ -66,6 +37,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'basic_information':
       return (
         <>
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -90,6 +64,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)
@@ -204,22 +181,11 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
       );
     case 'review':
       return (
-        <div className="onboarding-review">
-          <h2 className="title">Basic Information</h2>
-          <Review
-            values={onboardingBag.stepState.values?.basic_information || {}}
-          />
-          <h2 className="title">Contract Details</h2>
-          <Review
-            values={onboardingBag.stepState.values?.contract_details || {}}
-          />
-          <h2 className="title">Benefits</h2>
-          <Review values={onboardingBag.stepState.values?.benefits || {}} />
-          <div className="buttons-container">
-            <BackButton className="back-button">Previous Step</BackButton>
-            <OnboardingInvite>Invite Employee</OnboardingInvite>
-          </div>
-        </div>
+        <ReviewStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setApiError={setApiError}
+        />
       );
   }
 };
