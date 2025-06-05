@@ -14,6 +14,7 @@ import {
 import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
 export const InviteSection = ({
   title,
@@ -82,14 +83,9 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'basic_information':
       return (
         <>
-          {onboardingBag.creditRiskStatus === 'deposit_required' && (
-            <div className="alert">
-              Reserve payment required to hire this employee. Check this{' '}
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                support article
-              </a>
-            </div>
-          )}
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -120,14 +116,9 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
-          {onboardingBag.creditRiskStatus === 'deposit_required' && (
-            <div className="alert">
-              Reserve payment required to hire this employee. Check this{' '}
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                support article
-              </a>
-            </div>
-          )}
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)

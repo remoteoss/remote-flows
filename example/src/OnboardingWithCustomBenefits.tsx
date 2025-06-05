@@ -12,6 +12,7 @@ import {
 import './App.css';
 import { useState } from 'react';
 import ReviewStep from './ReviewStep';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -36,6 +37,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'basic_information':
       return (
         <>
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -60,6 +64,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
     case 'contract_details':
       return (
         <>
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
           <ContractDetailsStep
             onSubmit={(payload: ContractDetailsFormPayload) =>
               console.log('payload', payload)
