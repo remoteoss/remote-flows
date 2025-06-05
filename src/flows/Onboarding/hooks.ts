@@ -72,7 +72,7 @@ export const useOnboarding = ({
     data: employment,
     isLoading: isLoadingEmployment,
     refetch: refetchEmployment,
-  } = useEmployment(employmentId);
+  } = useEmployment(internalEmploymentId);
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
@@ -392,6 +392,7 @@ export const useOnboarding = ({
     },
     /**
      * Function to refetch the employment data
+     * @returns {void}
      */
     refetchEmployment,
     /**
