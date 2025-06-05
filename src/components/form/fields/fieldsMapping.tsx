@@ -11,6 +11,7 @@ import { TextField } from '@/src/components/form/fields/TextField';
 import { EmailField } from '@/src/components/form/fields/EmailField';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { HiddenField } from '@/src/components/form/fields/HiddenField';
+import { WorkScheduleField } from '@/src/components/form/fields/WorkScheduleField';
 import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,4 +29,5 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   textarea: TextAreaField,
   countries: CountryField,
   hidden: HiddenField,
+  'work-schedule': WorkScheduleField,
 };

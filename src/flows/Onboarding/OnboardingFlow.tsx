@@ -8,6 +8,7 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
+import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -25,6 +26,8 @@ export type OnboardingRenderProps = {
    * @see {@link OnboardingBack}
    * @see {@link OnboardingInvite}
    * @see {@link BenefitsStep}
+   * @see {@link OnboardingCreateReserve}
+   * @see {@link InvitationSection}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -33,6 +36,7 @@ export type OnboardingRenderProps = {
     OnboardingInvite: typeof OnboardingInvite;
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
+    SelectCountryStep: typeof SelectCountryStep;
   };
 };
 
@@ -45,6 +49,7 @@ type OnboardingFlowProps = OnboardingFlowParams & {
 
 export const OnboardingFlow = ({
   employmentId,
+  companyId,
   countryCode,
   type = 'employee',
   render,
@@ -52,8 +57,9 @@ export const OnboardingFlow = ({
 }: OnboardingFlowProps) => {
   const formId = useId();
   const onboardingBag = useOnboarding({
-    employmentId,
+    companyId,
     countryCode,
+    employmentId,
     type,
     options,
   });
@@ -74,6 +80,7 @@ export const OnboardingFlow = ({
           SubmitButton: OnboardingSubmit,
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
+          SelectCountryStep: SelectCountryStep,
         },
       })}
     </OnboardingContext.Provider>

@@ -27,6 +27,12 @@ import type {
   GetIndexDataSyncError,
   PostCreateDataSyncData,
   PostCreateDataSyncError,
+  GetIndexCompanyPricingPlanData,
+  GetIndexCompanyPricingPlanResponse,
+  GetIndexCompanyPricingPlanError,
+  PostCreateCompanyPricingPlanData,
+  PostCreateCompanyPricingPlanResponse,
+  PostCreateCompanyPricingPlanError,
   GetShowProbationCompletionLetterData,
   GetShowProbationCompletionLetterResponse,
   GetShowProbationCompletionLetterError,
@@ -74,6 +80,9 @@ import type {
   GetIndexEmploymentJobData,
   GetIndexEmploymentJobResponse,
   GetIndexEmploymentJobError,
+  GetIndexPricingPlanPartnerTemplateData,
+  GetIndexPricingPlanPartnerTemplateResponse,
+  GetIndexPricingPlanPartnerTemplateError,
   GetIndexEorPayrollCalendarData,
   GetIndexEorPayrollCalendarResponse,
   GetIndexEorPayrollCalendarError,
@@ -146,6 +155,9 @@ import type {
   PostCreateProbationExtensionData,
   PostCreateProbationExtensionResponse,
   PostCreateProbationExtensionError,
+  PostCreateRiskReserveData,
+  PostCreateRiskReserveResponse,
+  PostCreateRiskReserveError,
   GetShowCompanyData,
   GetShowCompanyResponse,
   GetShowCompanyError,
@@ -271,6 +283,9 @@ import type {
   PostCompleteOnboardingEmploymentData,
   PostCompleteOnboardingEmploymentResponse,
   PostCompleteOnboardingEmploymentError,
+  GetIndexLeavePoliciesDetailsData,
+  GetIndexLeavePoliciesDetailsResponse,
+  GetIndexLeavePoliciesDetailsError,
   GetTimeoffTypesTimeoffData,
   GetTimeoffTypesTimeoffResponse,
   GetTimeoffTypesTimeoffError,
@@ -643,6 +658,62 @@ export const postCreateDataSync = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/data-sync',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * List pricing plans
+ * List all pricing plans for a company.
+ *
+ */
+export const getIndexCompanyPricingPlan = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyPricingPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexCompanyPricingPlanResponse,
+    GetIndexCompanyPricingPlanError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/companies/{company_id}/pricing-plans',
+    ...options,
+  });
+};
+
+/**
+ * Create a pricing plan for a company from a partner template
+ * Create a pricing plan for a company from a partner template.
+ *
+ */
+export const postCreateCompanyPricingPlan = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateCompanyPricingPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateCompanyPricingPlanResponse,
+    PostCreateCompanyPricingPlanError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/companies/{company_id}/pricing-plans',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1082,6 +1153,32 @@ export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/employments/{employment_id}/job',
+    ...options,
+  });
+};
+
+/**
+ * List pricing plan partner templates
+ * List all pricing plan partner templates.
+ *
+ */
+export const getIndexPricingPlanPartnerTemplate = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexPricingPlanPartnerTemplateData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexPricingPlanPartnerTemplateResponse,
+    GetIndexPricingPlanPartnerTemplateError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/pricing-plan-partner-templates',
     ...options,
   });
 };
@@ -1745,6 +1842,33 @@ export const postCreateProbationExtension = <
       },
     ],
     url: '/v1/probation-extensions',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Create risk reserve
+ * Create a new risk reserve
+ */
+export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateRiskReserveData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateRiskReserveResponse,
+    PostCreateRiskReserveError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/risk-reserve',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2985,6 +3109,31 @@ export const postCompleteOnboardingEmployment = <
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+/**
+ * List Leave Policies Details
+ * Describe the leave policies (custom or not) for a given employment
+ */
+export const getIndexLeavePoliciesDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexLeavePoliciesDetailsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexLeavePoliciesDetailsResponse,
+    GetIndexLeavePoliciesDetailsError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/leave-policies/details/{employment_id}',
+    ...options,
   });
 };
 

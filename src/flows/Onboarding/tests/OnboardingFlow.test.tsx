@@ -27,10 +27,12 @@ import {
   employmentResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
+  companyResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
   fillRadio,
+  fillSelect,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -80,7 +82,113 @@ function Review({ values }: { values: Record<string, unknown> }) {
 }
 
 describe('OnboardingFlow', () => {
-  const MultiStepForm = ({ components, onboardingBag }: $TSFixMe) => {
+  const MultiStepFormWithCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
+    const {
+      BasicInformationStep,
+      ContractDetailsStep,
+      BenefitsStep,
+      SubmitButton,
+      BackButton,
+      OnboardingInvite,
+      SelectCountryStep,
+    } = components;
+
+    if (onboardingBag.isLoading) {
+      return <div data-testid="spinner">Loading...</div>;
+    }
+    switch (onboardingBag.stepState.currentStep.name) {
+      case 'select_country':
+        return (
+          <>
+            <SelectCountryStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <div className="buttons-container">
+              <SubmitButton
+                className="submit-button"
+                disabled={onboardingBag.isSubmitting}
+              >
+                Continue
+              </SubmitButton>
+            </div>
+          </>
+        );
+      case 'basic_information':
+        return (
+          <>
+            <BasicInformationStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'contract_details':
+        return (
+          <>
+            <ContractDetailsStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+
+      case 'benefits':
+        return (
+          <>
+            <BenefitsStep
+              components={{}}
+              onSubmit={mockOnSubmit}
+              onError={mockOnError}
+              onSuccess={mockOnSuccess}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton disabled={onboardingBag.isSubmitting}>
+              Next Step
+            </SubmitButton>
+          </>
+        );
+      case 'review':
+        return (
+          <div className="onboarding-review">
+            <h2 className="title">Basic Information</h2>
+            <Review
+              values={onboardingBag.stepState.values?.basic_information || {}}
+            />
+            <h2 className="title">Contract Details</h2>
+            <Review
+              values={onboardingBag.stepState.values?.contract_details || {}}
+            />
+            <h2 className="title">Benefits</h2>
+            <Review values={onboardingBag.stepState.values?.benefits || {}} />
+            <BackButton>Back</BackButton>
+            <OnboardingInvite onSuccess={mockOnSuccess}>
+              Invite Employee
+            </OnboardingInvite>
+          </div>
+        );
+    }
+
+    return null;
+  };
+
+  const MultiStepFormWithoutCountry = ({
+    components,
+    onboardingBag,
+  }: $TSFixMe) => {
     const {
       BasicInformationStep,
       ContractDetailsStep,
@@ -166,16 +274,17 @@ describe('OnboardingFlow', () => {
       const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
       const steps: Record<number, string> = {
-        [0]: 'Basic Information',
-        [1]: 'Contract Details',
-        [2]: 'Benefits',
-        [3]: 'Review',
+        [0]: 'Select Country',
+        [1]: 'Basic Information',
+        [2]: 'Contract Details',
+        [3]: 'Benefits',
+        [4]: 'Review',
       };
 
       return (
         <>
           <h1>Step: {steps[currentStepIndex]}</h1>
-          <MultiStepForm
+          <MultiStepFormWithCountry
             onboardingBag={onboardingBag}
             components={components}
           />
@@ -184,7 +293,7 @@ describe('OnboardingFlow', () => {
     },
   );
   const defaultProps = {
-    countryCode: 'PRT',
+    companyId: '1234',
     options: {},
     render: mockRender,
   };
@@ -193,6 +302,23 @@ describe('OnboardingFlow', () => {
     vi.clearAllMocks();
 
     server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        HttpResponse.json(companyResponse);
+      }),
+      http.get('*/v1/countries', () => {
+        return HttpResponse.json({
+          data: [
+            {
+              code: 'PRT',
+              name: 'Portugal',
+            },
+            {
+              code: 'ESP',
+              name: 'Spain',
+            },
+          ],
+        });
+      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
@@ -219,6 +345,7 @@ describe('OnboardingFlow', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
   });
 
   async function fillBasicInformation(
@@ -288,16 +415,93 @@ describe('OnboardingFlow', () => {
     }
   }
 
-  it('should render first step of the form', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+  async function fillCountry(country: string) {
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', country);
+
+    const nextButton = screen.getByText(/Continue/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
 
     await screen.findByText(/Step: Basic Information/i);
+  }
+
+  it('should skip rendering the select country step when a countryCode is provided', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        // If we have a countryCode, use the steps without country selection
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId="1234"
+        {...defaultProps}
+        countryCode="PRT"
+      />,
+      { wrapper },
+    );
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
+    expect(employeePersonalEmail).toHaveValue(
+      employmentResponse.data.employment.personal_email,
+    );
+  });
+
+  it('should select a country and advance to the next step', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await fillCountry('Portugal');
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await fillRadio('Does the employee have a seniority date?', 'Yes');
 
@@ -308,7 +512,7 @@ describe('OnboardingFlow', () => {
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await fillBasicInformation();
 
@@ -318,8 +522,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -334,7 +536,8 @@ describe('OnboardingFlow', () => {
 
   it('should submit the basic information step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await screen.findByText(/Step: Basic Information/i);
+
+    await fillCountry('Portugal');
 
     await fillBasicInformation();
 
@@ -344,10 +547,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
     });
 
-    expect(mockOnSubmit).toHaveBeenCalledWith({
+    expect(mockOnSubmit.mock.calls[1][0]).toEqual({
       department: {
         id: undefined,
         name: undefined,
@@ -376,8 +579,7 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -397,7 +599,7 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -458,7 +660,13 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -467,16 +675,20 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
     });
 
     // Get the second call to mockOnSubmit (index 1)
-    const contractDetailsSubmission = mockOnSubmit.mock.calls[1][0];
+    const contractDetailsSubmission = mockOnSubmit.mock.calls[2][0];
 
     // Assert the contract details submission
     expect(contractDetailsSubmission).toEqual({
@@ -522,7 +734,13 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -530,6 +748,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -562,10 +784,10 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
     });
 
-    const benefitsSubmission = mockOnSubmit.mock.calls[2][0];
+    const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
 
     // Assert the contract details submission
     expect(benefitsSubmission).toEqual({
@@ -598,7 +820,7 @@ describe('OnboardingFlow', () => {
       wrapper,
     });
 
-    await screen.findByText(/Step: Basic Information/i);
+    await fillCountry('Portugal');
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -630,5 +852,77 @@ describe('OnboardingFlow', () => {
     });
 
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
+  });
+
+  it('should call PATCH instead of POST when resubmitting basic information', async () => {
+    const postSpy = vi.fn();
+    const patchSpy = vi.fn();
+
+    server.use(
+      http.post('*/v1/employments', () => {
+        postSpy();
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+      http.patch('*/v1/employments/*', () => {
+        patchSpy();
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    // First submission
+    await fillBasicInformation();
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify POST was called
+    expect(postSpy).toHaveBeenCalledTimes(1);
+
+    // Go back
+    const backButton = screen.getByText(/Back/i);
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify PATCH was called instead of another POST
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledTimes(1); // Still only called once
+    });
   });
 });

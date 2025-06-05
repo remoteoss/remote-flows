@@ -152,7 +152,7 @@ export const useContractAmendment = ({
     // pass the previous field values, so that the schema can be
     // generated with the correct values.
     fieldValues: {
-      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+      ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
       ...fieldValues,
     },
     options,

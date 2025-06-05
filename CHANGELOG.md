@@ -1,5 +1,38 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.6
+
+### Minor Changes
+
+- 20c86ba: - Fix lodash imports for webpack
+  - You can use the `shouldResetForm` in the `<CostCalculatorForm>` to reset after you submit
+
+## 0.4.0-alpha.5
+
+### Minor Changes
+
+- 797e279: - Ability to skip the country step
+  - Add work-schedule field
+
+## 0.4.0-alpha.4
+
+### Minor Changes
+
+- 81fe6de: - Add new step to the onboarding flow to select country
+  - Add support to the OnboardingInvite button to create a reserve invoice if creditRiskStatus is "deposit_required"
+  - Fix money values passed to the json schema form
+
+## 0.4.0-alpha.3
+
+### Minor Changes
+
+- db506de: - Locked benefits statement
+  - Mapped labels in the review step
+  - Fix benefits as they were included the results in each step
+  - Allow jumping to previous step
+  - Add hidden field
+  - Handle undefined statements
+
 ## 0.4.0-alpha.2
 
 ### Minor Changes

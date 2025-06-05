@@ -14,11 +14,15 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 
-export type TextFieldProps = React.ComponentProps<'input'> &
-  JSFField & {
-    onChange?: (value: any) => void;
-    component?: Components['text'];
-  };
+export type TextFieldProps = React.ComponentProps<'input'> & {
+  name: string;
+} & Partial<
+    JSFField & {
+      onChange?: (value: any) => void;
+      component?: Components['text'];
+      includeErrorMessage?: boolean;
+    }
+  >;
 
 export function TextField({
   name,
@@ -27,6 +31,7 @@ export function TextField({
   type,
   onChange,
   component,
+  includeErrorMessage = true,
   ...rest
 }: TextFieldProps) {
   const { components } = useFormFields();
@@ -67,9 +72,11 @@ export function TextField({
             data-field={name}
             className={`RemoteFlows__TextField__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__TextField__Label">
-              {label}
-            </FormLabel>
+            {label && (
+              <FormLabel className="RemoteFlows__TextField__Label">
+                {label}
+              </FormLabel>
+            )}
             <FormControl>
               <Input
                 {...field}
@@ -87,7 +94,7 @@ export function TextField({
                 {description}
               </FormDescription>
             )}
-            {fieldState.error && (
+            {includeErrorMessage && fieldState.error && (
               <FormMessage className="RemoteFlows__TextField__Error" />
             )}
           </FormItem>

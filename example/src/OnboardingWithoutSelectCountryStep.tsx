@@ -8,8 +8,6 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
-  SelectCountrySuccess,
-  SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import React, { useState } from 'react';
@@ -32,7 +30,6 @@ export const InviteSection = ({
   );
 };
 const STEPS = [
-  'Select Country',
   'Basic Information',
   'Contract Details',
   'Benefits',
@@ -86,35 +83,12 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     OnboardingInvite,
-    SelectCountryStep,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
   const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
 
   switch (onboardingBag.stepState.currentStep.name) {
-    case 'select_country':
-      return (
-        <>
-          <SelectCountryStep
-            onSubmit={(payload: SelectCountryFormPayload) =>
-              console.log('payload', payload)
-            }
-            onSuccess={(response: SelectCountrySuccess) =>
-              console.log('response', response)
-            }
-            onError={(error: Error) => setApiError(error.message)}
-          />
-          <div className="buttons-container">
-            <SubmitButton
-              className="submit-button"
-              disabled={onboardingBag.isSubmitting}
-            >
-              Continue
-            </SubmitButton>
-          </div>
-        </>
-      );
     case 'basic_information':
       return (
         <>
@@ -221,14 +195,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'review':
       return (
         <div className="onboarding-review">
-          <h2 className="title">Select country</h2>
-          <Review meta={onboardingBag.meta.fields.select_country} />
-          <button
-            className="back-button"
-            onClick={() => onboardingBag.goTo('select_country')}
-          >
-            Edit Country
-          </button>
           <h2 className="title">Basic Information</h2>
           <Review meta={onboardingBag.meta.fields.basic_information} />
           <button
@@ -354,7 +320,6 @@ const OnBoardingRender = ({
   components,
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
-
   const stepTitle = STEPS[currentStepIndex];
 
   if (onboardingBag.isLoading) {
@@ -398,8 +363,8 @@ const fetchToken = () => {
 };
 
 type OnboardingFormData = {
-  countryCode?: string;
   companyId: string;
+  countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
 };
@@ -408,6 +373,7 @@ const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
+  countryCode,
 }: OnboardingFormData) => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
@@ -415,6 +381,7 @@ const OnboardingWithProps = ({
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
+      countryCode={countryCode}
     />
   </RemoteFlows>
 );
@@ -424,6 +391,7 @@ export const OnboardingForm = () => {
     type: 'employee',
     employmentId: '',
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+    countryCode: 'PRT',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -451,6 +419,22 @@ export const OnboardingForm = () => {
           }
           required
           placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
+      <div className="onboarding-form-group">
+        <label htmlFor="countryCode" className="onboarding-form-label">
+          Country Code:
+        </label>
+        <input
+          id="countryCode"
+          type="text"
+          value={formData.countryCode}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+          }
+          required
+          placeholder="e.g. PRT"
           className="onboarding-form-input"
         />
       </div>

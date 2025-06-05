@@ -6,6 +6,16 @@ import { EstimationError } from '@/src/flows/CostCalculator/hooks';
 import { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
 import React from 'react';
 
+function removeEmptyFields<T extends Record<string, unknown>>(
+  values: T,
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(values).filter(
+      ([, value]) => value !== undefined && value !== null && value !== '',
+    ),
+  ) as Partial<T>;
+}
+
 type CostCalculatorFormProps = Partial<{
   /**
    * Callback function that handles form submission. When form is submit, the form values are sent to the consumer app before behind submitted to Remote.
@@ -22,25 +32,37 @@ type CostCalculatorFormProps = Partial<{
    * @param error - The error object.
    */
   onError: (error: EstimationError) => void;
+  /**
+   * Whether to reset the form when the form is successfully submitted.
+   */
+  shouldResetForm?: boolean;
 }>;
 
 export function CostCalculatorForm({
   onSubmit,
   onError,
   onSuccess,
+  shouldResetForm,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
-    const costCalculatorResults = await costCalculatorBag?.onSubmit(values);
+    const cleanedValues = removeEmptyFields(values);
+    const costCalculatorResults = await costCalculatorBag?.onSubmit(
+      cleanedValues as CostCalculatorEstimationFormValues,
+    );
 
-    await onSubmit?.(values);
+    await onSubmit?.(cleanedValues as CostCalculatorEstimationFormValues);
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
     } else {
       if (costCalculatorResults?.data) {
         await onSuccess?.(costCalculatorResults?.data);
+        if (shouldResetForm) {
+          costCalculatorBag?.resetForm();
+          form.reset();
+        }
       }
     }
   };

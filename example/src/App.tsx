@@ -30,6 +30,7 @@ import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingForm } from './Onboarding';
+import { OnboardingForm as OnboardingFormWithoutSelectCountry } from './OnboardingWithoutSelectCountryStep';
 import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
 
 const sourceCode = {
@@ -968,6 +969,13 @@ const demoStructure = [
         title: 'Basic',
         description: 'Standard onboarding flow',
         component: OnboardingForm,
+        sourceCode: '',
+      },
+      {
+        id: 'onboarding-without-select-country',
+        title: 'Without Select Country',
+        description: 'Standard onboarding flow without select country step',
+        component: OnboardingFormWithoutSelectCountry,
         sourceCode: '',
       },
       {

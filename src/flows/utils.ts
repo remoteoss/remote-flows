@@ -1,20 +1,4 @@
-import { AnyObjectSchema, object } from 'yup';
-import { Field } from './types';
-
-/**
- * Build the validation schema for the form.
- * @returns
- */
-export function buildValidationSchema(fields: Field[]) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
-}
+import { SupportedTypes } from '../components/form/fields/types';
 
 type ParsedRadioValues = Record<string, unknown>;
 
@@ -46,4 +30,18 @@ export function parseFormRadioValues(
     },
     {},
   );
+}
+
+export function findFieldsByType(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fields: Record<string, any>,
+  type: SupportedTypes,
+) {
+  const fieldsNames = [];
+  for (const [key, value] of Object.entries(fields)) {
+    if (value['x-jsf-presentation'].inputType === type) {
+      fieldsNames.push(key);
+    }
+  }
+  return fieldsNames;
 }

@@ -2,28 +2,15 @@ import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
-  getShowEmployment,
-  getShowFormCountry,
-  patchUpdateEmployment2,
-  postCreateEmployment2,
-  postInviteEmploymentInvitation,
-  PostInviteEmploymentInvitationData,
-  getShowSchema,
-  putUpdateBenefitOffer,
-  UnifiedEmploymentUpsertBenefitOffersRequest,
-  getIndexBenefitOffer,
 } from '@/src/client';
-import { Client } from '@hey-api/client-fetch';
-import {
-  createHeadlessForm,
-  Fields,
-  modify,
-} from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Fields } from '@remoteoss/json-schema-form';
 
-import { useClient } from '@/src/context';
-import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Onboarding/utils';
+import { useStepState, Step } from '@/src/flows/useStepState';
+import {
+  prettifyFormValues,
+  STEPS,
+  STEPS_WITHOUT_SELECT_COUNTRY,
+} from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
   parseJSFToValidate,
@@ -31,9 +18,20 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { useRef, useState } from 'react';
+import mergeWith from 'lodash.mergewith';
+import {
+  useBenefitOffers,
+  useBenefitOffersSchema,
+  useCompany,
+  useCountriesSchemaField,
+  useCreateEmployment,
+  useEmployment,
+  useJSONSchemaForm,
+  useUpdateBenefitsOffers,
+  useUpdateEmployment,
+} from '@/src/flows/Onboarding/api';
 import { JSONSchemaFormType } from '@/src/flows/types';
-import { useState } from 'react';
-import mergeWith from 'lodash/mergeWith';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -44,293 +42,53 @@ const jsonSchemaToEmployment: Partial<
   contract_details: 'contract_details',
 };
 
-const useEmployment = (employmentId: string | undefined) => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['employment', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      const response = await getShowEmployment({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId as string,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch employment data');
-      }
-
-      return response;
-    },
-  });
-};
-
-const useBenefitOffers = (employmentId: string | undefined) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['benefit-offers', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      return getIndexBenefitOffer({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId as string,
-        },
-      }).then((response) => {
-        // If response status is 404 or other error, throw an error to trigger isError
-        if (response.error || !response.data) {
-          throw new Error('Failed to fetch benefit offers data');
-        }
-
-        return response;
-      });
-    },
-    select: ({ data }) =>
-      data?.data?.reduce(
-        (acc, item) => {
-          return {
-            ...acc,
-            [item.benefit_group.slug]: {
-              value: item.benefit_tier?.slug ?? '',
-            },
-          };
-        },
-        {} as Record<string, { value: string }>,
-      ),
-  });
-};
-/**
- * Use this hook to invite an employee to the onboarding flow
- * @returns
- */
-export const useEmploymentInvite = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: PostInviteEmploymentInvitationData['path']) => {
-      return postInviteEmploymentInvitation({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: payload,
-      });
-    },
-  });
-};
-
-/**
- * Use this hook to get the JSON schema form for the onboarding flow
- * @param param0
- * @returns
- */
-const useJSONSchemaForm = ({
-  countryCode,
-  form,
-  fieldValues,
-  options,
-  employment,
-}: {
-  countryCode: string;
-  form: JSONSchemaFormType;
-  fieldValues: FieldValues;
-  options?: OnboardingHookProps['options'];
-  employment?: Employment;
-}) => {
-  const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
-    ? {
-        json_schema_version: options.jsonSchemaVersion.form_schema[form],
-      }
-    : {};
-  return useQuery({
-    queryKey: ['onboarding-json-schema-form', countryCode, form],
-    retry: false,
-    queryFn: async () => {
-      const response = await getShowFormCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          country_code: countryCode,
-          form: form,
-        },
-        query: {
-          skip_benefits: true,
-          ...jsonSchemaQueryParam,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch onboarding schema');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.data || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const employmentField = jsonSchemaToEmployment[form] as keyof Employment;
-      const employmentFieldData = (employment?.[employmentField] ||
-        {}) as Record<string, unknown>;
-      return createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : employmentFieldData,
-      });
-    },
-  });
-};
-
-const useBenefitOffersSchema = (
-  employmentId: string,
-  fieldValues: FieldValues,
-  options: OnboardingHookProps['options'],
-) => {
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ?.benefit_offers_form_schema
-    ? {
-        json_schema_version:
-          options.jsonSchemaVersion.benefit_offers_form_schema,
-      }
-    : {};
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['benefit-offers-schema', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    queryFn: async () => {
-      const response = await getShowSchema({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId,
-        },
-        query: jsonSchemaQueryParam,
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch benefit offers schema');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues ? fieldValues : {},
-      });
-      return result;
-    },
-  });
-};
-
-/**
- * Use this hook to create an employment
- * @returns
- */
-const useCreateEmployment = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (payload: EmploymentCreateParams) => {
-      return postCreateEmployment2({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-const useUpdateEmployment = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: ({
-      employmentId,
-      ...payload
-    }: EmploymentFullParams & { employmentId: string }) => {
-      return patchUpdateEmployment2({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-        query: {
-          skip_benefits: true,
-        },
-      });
-    },
-  });
-};
-
-const useUpdateBenefitsOffers = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: ({
-      employmentId,
-      ...payload
-    }: UnifiedEmploymentUpsertBenefitOffersRequest & {
-      employmentId: string;
-    }) => {
-      return putUpdateBenefitOffer({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-      });
-    },
-  });
+const stepToFormSchemaMap: Record<
+  keyof typeof STEPS,
+  JSONSchemaFormType | null
+> = {
+  select_country: null,
+  basic_information: 'employment_basic_information',
+  contract_details: 'contract_details',
+  benefits: null,
+  review: null,
 };
 
 export const useOnboarding = ({
   employmentId,
+  companyId,
   countryCode,
   type,
   options,
 }: OnboardingHookProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fieldsMetaRef = useRef<Record<string, any>>({});
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
+  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
+    countryCode || null,
+  );
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmployment(employmentId);
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
-  const { fieldValues, stepState, setFieldValues, previousStep, nextStep } =
-    useStepState<keyof typeof STEPS>(STEPS);
+  const { data: company, isLoading: isLoadingCompany } = useCompany(companyId);
+  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+  } = useStepState(
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+  );
+
+  const { selectCountryForm, isLoading: isLoadingCountries } =
+    useCountriesSchemaField(options);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -345,26 +103,39 @@ export const useOnboarding = ({
     updateBenefitsOffersMutation,
   );
 
-  const form: Record<keyof typeof STEPS, JSONSchemaFormType | null> = {
-    basic_information: 'employment_basic_information',
-    contract_details: 'contract_details',
-    benefits: null,
-    review: null,
-  };
+  const formType =
+    stepToFormSchemaMap[stepState.currentStep.name] ||
+    'employment_basic_information';
+  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
+  const serverEmploymentData = (employment?.data?.data?.employment?.[
+    employmentKey
+  ] || {}) as Record<string, unknown>;
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
-      countryCode: countryCode,
-      form:
-        form[stepState.currentStep.name as keyof typeof STEPS] ||
-        'employment_basic_information',
-      fieldValues: {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-        ...fieldValues,
-      },
+      countryCode: internalCountryCode as string,
+      form: formType,
+      fieldValues:
+        Object.keys(fieldValues).length > 0
+          ? {
+              ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+              ...fieldValues,
+            }
+          : serverEmploymentData,
       options: options,
-      employment: employment?.data?.data?.employment,
+      enabled: Boolean(
+        stepState.currentStep.name !== 'select_country' && internalCountryCode,
+      ),
     });
+
+  const {
+    data: benefitOffersSchema,
+    isLoading: isLoadingBenefitsOffersSchema,
+  } = useBenefitOffersSchema(
+    internalEmploymentId as string,
+    fieldValues,
+    options,
+  );
 
   const benefitsFormValues = {
     ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
@@ -376,16 +147,8 @@ export const useOnboarding = ({
       ? mergeWith({}, benefitOffers, benefitsFormValues)
       : {};
 
-  const {
-    data: benefitOffersSchema,
-    isLoading: isLoadingBenefitsOffersSchema,
-  } = useBenefitOffersSchema(
-    internalEmploymentId as string,
-    fieldValues,
-    options,
-  );
-
   const stepFields: Record<keyof typeof STEPS, Fields> = {
+    select_country: selectCountryForm?.fields || [],
     basic_information: onboardingForm?.fields || [],
     contract_details: onboardingForm?.fields || [],
     benefits: benefitOffersSchema?.fields || [],
@@ -393,19 +156,28 @@ export const useOnboarding = ({
   };
 
   const initialValues = {
+    select_country: getInitialValues(stepFields[stepState.currentStep.name], {
+      country:
+        internalCountryCode ||
+        employment?.data.data.employment?.country.code ||
+        '',
+    }),
     basic_information: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.basic_information || {},
     ),
     contract_details: getInitialValues(
-      stepFields[stepState.currentStep.name as keyof typeof stepFields],
+      stepFields[stepState.currentStep.name],
       employment?.data?.data.employment?.contract_details || {},
     ),
     benefits: initialValuesBenefitOffers || {},
   };
 
   function parseFormValues(values: FieldValues) {
-    if (onboardingForm) {
+    if (selectCountryForm && stepState.currentStep.name === 'select_country') {
+      return values;
+    }
+    if (onboardingForm && stepState.currentStep.name !== 'select_country') {
       return parseJSFToValidate(values, onboardingForm?.fields, {
         isPartialValidation: true,
       });
@@ -414,16 +186,35 @@ export const useOnboarding = ({
   }
 
   async function onSubmit(values: FieldValues) {
+    // Prettify values for the current step
+    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
+      values,
+      stepFields[stepState.currentStep.name],
+    );
+
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
+      case 'select_country': {
+        setInternalCountryCode(parsedValues.country);
+        return Promise.resolve({ data: { countryCode: parsedValues.country } });
+      }
       case 'basic_information': {
-        if (!internalEmploymentId) {
+        const isEmploymentNotLoaded =
+          !internalEmploymentId && internalCountryCode;
+        const hasChangedCountry =
+          internalEmploymentId &&
+          internalCountryCode &&
+          employment?.data?.data?.employment?.country &&
+          employment?.data?.data?.employment?.country.code !==
+            internalCountryCode;
+        if (isEmploymentNotLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
             type: type,
-            country_code: countryCode,
+            country_code: internalCountryCode,
           };
           try {
+            console.log('Creating employment with payload:', payload);
             const response = await createEmploymentMutationAsync(payload);
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
@@ -434,7 +225,7 @@ export const useOnboarding = ({
             console.error('Error creating onboarding:', error);
             throw error;
           }
-        } else {
+        } else if (internalEmploymentId) {
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
@@ -443,8 +234,9 @@ export const useOnboarding = ({
             },
           });
         }
-      }
 
+        return;
+      }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
@@ -473,11 +265,31 @@ export const useOnboarding = ({
     nextStep();
   }
 
+  function goTo(step: keyof typeof STEPS) {
+    goToStep(step);
+  }
+
   return {
     /**
      * Employment id passed useful to be used between components
      */
-    employmentId,
+    employmentId: internalEmploymentId,
+
+    /**
+     * Credit risk status of the company, useful to know what to to show in the review step
+     * The possible values are:
+     * - not_started
+     * - ready
+     * - in_progress
+     * - referred
+     * - fail
+     * - deposit_required
+     * - no_deposit_required
+     */
+
+    creditRiskStatus: company?.default_legal_entity_credit_risk_status,
+
+    owner_id: company?.company_owner_user_id,
     /**
      * Current step state containing the current step and total number of steps
      */
@@ -485,7 +297,7 @@ export const useOnboarding = ({
     /**
      * Array of form fields from the onboarding schema
      */
-    fields: stepFields[stepState.currentStep.name as keyof typeof stepFields],
+    fields: stepFields[stepState.currentStep.name],
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
@@ -493,7 +305,9 @@ export const useOnboarding = ({
       isLoadingBasicInformation ||
       isLoadingEmployment ||
       isLoadingBenefitsOffersSchema ||
-      isLoadingBenefitOffers,
+      isLoadingBenefitOffers ||
+      isLoadingCompany ||
+      isLoadingCountries,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
@@ -504,13 +318,16 @@ export const useOnboarding = ({
     /**
      * Initial form values
      */
-    initialValues: initialValues,
+    initialValues,
     /**
      * Function to validate form values against the onboarding schema
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
     handleValidation: (values: FieldValues) => {
+      if (stepState.currentStep.name === 'select_country') {
+        return selectCountryForm.handleValidation(values);
+      }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
         const parsedValues = parseJSFToValidate(
           values,
@@ -521,7 +338,6 @@ export const useOnboarding = ({
       }
       if (onboardingForm) {
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-
         return onboardingForm?.handleValidation(parsedValues);
       }
       return null;
@@ -557,5 +373,19 @@ export const useOnboarding = ({
      * @returns {void}
      */
     next,
+
+    /**
+     * Function to handle going to a specific step
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goTo,
+
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+    },
   };
 };

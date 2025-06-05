@@ -47,26 +47,38 @@ export function CostCalculatorWithResults() {
               <CostCalculatorForm
                 onSubmit={(payload) => console.log(payload)}
                 onError={(error) => console.error({ error })}
-                onSuccess={(response) => setEstimations(response)}
+                shouldResetForm
+                onSuccess={(response) => {
+                  setEstimations(response);
+                }}
               />
-              <CostCalculatorSubmitButton>
-                Get estimate
-              </CostCalculatorSubmitButton>
-              <CostCalculatorResetButton>Reset</CostCalculatorResetButton>
+              <div className="buttons-container">
+                <CostCalculatorResetButton className="reset-button">
+                  Reset
+                </CostCalculatorResetButton>
+                <CostCalculatorSubmitButton
+                  className="submit-button"
+                  disabled={props.isSubmitting}
+                >
+                  Get estimate
+                </CostCalculatorSubmitButton>
+              </div>
             </div>
           );
         }}
       />
       {estimations && (
-        <div className="mt-4 mb-2 flex gap-2">
-          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
-          <label className="text-md font-bold">
-            {estimations.data.employments?.[0].country.name}
-          </label>
-        </div>
-      )}
-      {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <>
+          <div className="mt-4 mb-2 flex gap-2">
+            <Flag
+              code={estimations.data.employments?.[0].country.alpha_2_code}
+            />
+            <label className="text-md font-bold">
+              {estimations.data.employments?.[0].country.name}
+            </label>
+          </div>
+          <CostCalculatorResults employmentData={estimations.data} />
+        </>
       )}
     </RemoteFlows>
   );

@@ -34,7 +34,10 @@ const getToken = async (req, res) => {
         },
       },
     );
-    return res.status(200).json(response.data);
+    return res.status(200).json({
+      access_token: response.data.access_token,
+      expires_in: response.data.expires_in,
+    });
   } catch (error) {
     console.error('Error fetching access token:', error);
     return res.status(500).json({ error: 'Failed to retrieve access token' });

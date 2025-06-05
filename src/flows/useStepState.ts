@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 
-export type Step = {
+export type Step<T extends string> = {
   index: number;
-  name: string;
+  name: T;
 };
 
 type StepState<T extends string, Fields = FieldValues> = {
-  currentStep: Step;
+  currentStep: Step<T>;
   totalSteps: number;
   values:
     | {
@@ -17,7 +17,7 @@ type StepState<T extends string, Fields = FieldValues> = {
 };
 
 export const useStepState = <T extends string, Fields = FieldValues>(
-  steps: Record<T, Step>,
+  steps: Record<T, Step<T>>,
 ) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
@@ -34,7 +34,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function nextStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step>(steps);
+    const stepValues = Object.values<Step<T>>(steps);
     const nextStep = stepValues.find((step) => step.index === index + 1);
 
     if (nextStep) {
@@ -55,7 +55,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function previousStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step>(steps);
+    const stepValues = Object.values<Step<T>>(steps);
     const previousStep = stepValues.find((step) => step.index === index - 1);
 
     if (previousStep) {
@@ -71,6 +71,16 @@ export const useStepState = <T extends string, Fields = FieldValues>(
         } as { [key in T]: Fields },
       }));
       setFieldValues({} as Fields); // Reset field values for the previous step
+    }
+  }
+
+  function goToStep(step: T) {
+    // to avoid going to a steps that hasn't been filled yet
+    if (stepState.values?.[step]) {
+      setStepState((previousState) => ({
+        ...previousState,
+        currentStep: steps[step],
+      }));
     }
   }
 
@@ -95,6 +105,12 @@ export const useStepState = <T extends string, Fields = FieldValues>(
      * @returns {StepState<T>} The current step state.
      */
     stepState,
+    /**
+     * Goes to a specific step in the step state.
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goToStep,
     /**
      * The field values for the current step.
      * @returns {FieldValues} The field values for the current step.
