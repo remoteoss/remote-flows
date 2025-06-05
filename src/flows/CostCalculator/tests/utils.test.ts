@@ -8,7 +8,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: 100000,
+      salary: 100_000,
     };
 
     const payload = buildPayload(values);
@@ -36,7 +36,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       region: 'CA',
-      salary: 100000,
+      salary: 100_000,
     };
 
     const payload = buildPayload(values);
@@ -48,7 +48,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: 100000,
+      salary: 100_000,
       benefits: {
         'benefit-health': 'premium',
         'benefit-dental': 'basic',
@@ -67,7 +67,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: 100000,
+      salary: 100_000,
       age: 30,
     };
 
@@ -80,7 +80,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: 100000,
+      salary: 100_000,
       contract_duration_type: 'fixed',
     };
 
@@ -93,7 +93,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary: 100000,
+      salary: 100_000,
     };
 
     const customOptions = {
