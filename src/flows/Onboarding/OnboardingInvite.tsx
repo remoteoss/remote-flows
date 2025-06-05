@@ -59,9 +59,10 @@ export function OnboardingInvite({
         const response = await employmentInviteMutationAsync({
           employment_id: onboardingBag.employmentId,
         });
-        await refetchEmployment();
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
+          await refetchEmployment();
+
           return;
         }
         if (response.error) {

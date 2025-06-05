@@ -218,7 +218,7 @@ const OnboardingWithProps = ({
   employmentId,
   countryCode,
 }: OnboardingFormData) => (
-  <RemoteFlows isTestingMode auth={fetchToken}>
+  <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
@@ -232,8 +232,8 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: '763d5a55-c269-4ed0-8026-584bda762a7a',
-    companyId: 'e52ffe5c-327e-41a4-8b18-701acdea71ec',
+    employmentId: '',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
     countryCode: 'PRT',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
