@@ -311,4 +311,75 @@ describe('OnboardingInvite', () => {
     const button = await screen.findByText('Custom Button Text');
     expect(button).toBeInTheDocument();
   });
+
+  it('should not render the OnboardingInvite button when creditRiskStatus is referred', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'referred',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/);
+
+    // The button should not be rendered
+    expect(screen.queryByTestId('onboarding-invite')).not.toBeInTheDocument();
+  });
+
+  it('should disable the OnboardingInvite button when employment status is created_awaiting_reserve', async () => {
+    // Test for 'created_awaiting_reserve'
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_awaiting_reserve',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    const button = await screen.findByTestId('onboarding-invite');
+    expect(button).toBeDisabled();
+  });
+
+  it('should disable the OnboardingInvite button when employment status is invited', async () => {
+    // Test for 'invited'
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'invited',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    const button = await screen.findByTestId('onboarding-invite');
+    expect(button).toBeDisabled();
+  });
 });
