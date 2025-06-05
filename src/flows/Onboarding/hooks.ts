@@ -161,18 +161,15 @@ export const useOnboarding = ({
 
   const initialValues = {
     select_country: getInitialValues(stepFields[stepState.currentStep.name], {
-      country:
-        internalCountryCode ||
-        employment?.data.data.employment?.country.code ||
-        '',
+      country: internalCountryCode || employment?.country.code || '',
     }),
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],
-      employment?.data?.data.employment?.basic_information || {},
+      employment?.basic_information || {},
     ),
     contract_details: getInitialValues(
       stepFields[stepState.currentStep.name],
-      employment?.data?.data.employment?.contract_details || {},
+      employment?.contract_details || {},
     ),
     benefits: initialValuesBenefitOffers || {},
   };
@@ -208,9 +205,8 @@ export const useOnboarding = ({
         const hasChangedCountry =
           internalEmploymentId &&
           internalCountryCode &&
-          employment?.data?.data?.employment?.country &&
-          employment?.data?.data?.employment?.country.code !==
-            internalCountryCode;
+          employment?.country &&
+          employment?.country.code !== internalCountryCode;
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,

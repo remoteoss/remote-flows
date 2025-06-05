@@ -26,7 +26,6 @@ export const InviteSection = ({
 };
 
 export const MyOnboardingInviteButton = ({
-  showInviteSuccessful,
   creditRiskStatus,
   Component,
   setShowReserveInvoice,
@@ -34,20 +33,17 @@ export const MyOnboardingInviteButton = ({
   setApiError,
   employment,
 }: {
-  showInviteSuccessful: boolean;
-  creditRiskStatus: CreditRiskStatus;
+  creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
   setShowReserveInvoice: (show: boolean) => void;
   setShowInviteSuccessful: (show: boolean) => void;
   setApiError: (error: string | null) => void;
-  employment: Employment;
+  employment?: Employment;
 }) => {
-  const shouldButtonRender =
-    !showInviteSuccessful && creditRiskStatus !== 'referred';
-  const isDisabled = ['created_awaiting_reserve', 'invited'].includes(
-    employment.status,
-  );
-  if (shouldButtonRender) {
+  const isDisabled =
+    employment &&
+    ['created_awaiting_reserve', 'invited'].includes(employment?.status);
+  if (creditRiskStatus !== 'referred') {
     return (
       <Component
         disabled={isDisabled}
@@ -234,7 +230,6 @@ export const ReviewStep = ({
           Back
         </BackButton>
         <MyOnboardingInviteButton
-          showInviteSuccessful={showInviteSuccessful}
           creditRiskStatus={onboardingBag.creditRiskStatus}
           Component={OnboardingInvite}
           setShowReserveInvoice={setShowReserveInvoice}
