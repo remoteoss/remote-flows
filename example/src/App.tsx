@@ -318,7 +318,7 @@ export function CostCalculatorWithResults() {
 } from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
-  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
@@ -333,7 +333,7 @@ function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
-    useState<CostCalculatorEstimationFormValues | null>(null);
+    useState<CostCalculatorEstimationSubmitValues | null>(null);
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
@@ -413,7 +413,7 @@ export function CostCalculatorWithExportPdf() {
   costCalculatorWithPremiumBenefits: `
   import type {
   CostCalculatorEstimateResponse,
-  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -438,7 +438,7 @@ function CostCalculatorFormDemo() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
   const [payload, setPayload] =
-    useState<CostCalculatorEstimationFormValues | null>(null);
+    useState<CostCalculatorEstimationSubmitValues | null>(null);
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
