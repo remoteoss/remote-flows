@@ -73,7 +73,14 @@ export function OnboardingInvite({
     }
   };
 
+  if (onboardingBag.creditRiskStatus === 'referred') {
+    return null;
+  }
+
   // TODO: what's the final status when you invite the employee?
+  // the button should be disabled after:
+  // - a reserve invoice is created
+  // - after the user has been invited
   const isDisabled =
     employment?.data.data.employment?.status === 'created_awaiting_reserve';
 
