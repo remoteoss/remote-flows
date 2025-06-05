@@ -125,7 +125,7 @@ describe('CostCalculatorFlow', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        salary: '50000',
+        salary: 5_000_000,
       });
     });
   });
@@ -260,7 +260,7 @@ describe('CostCalculatorFlow', () => {
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
-        age: '30',
+        age: 30,
         benefits: {
           'benefit-53c5fc69-f299-47e7-9004-86def3f0e845':
             '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
@@ -269,7 +269,7 @@ describe('CostCalculatorFlow', () => {
         },
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-        salary: '50000',
+        salary: 5_000_000,
       });
     });
   });

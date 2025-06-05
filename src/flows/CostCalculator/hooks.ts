@@ -13,6 +13,7 @@ import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
+  CostCalculatorEstimationSubmitValues,
   JSFModify,
 } from '@/src/flows/CostCalculator/types';
 import type { Result } from '@/src/flows/types';
@@ -255,7 +256,7 @@ export const useCostCalculator = (
    * @param values
    */
   async function onSubmit(
-    values: CostCalculatorEstimationFormValues,
+    values: CostCalculatorEstimationSubmitValues,
   ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
     try {
       await validationSchema.validate(values, { abortEarly: false });
@@ -435,6 +436,31 @@ export const useCostCalculator = (
     },
     fields: allFields,
     validationSchema,
+    parseFormValues: (
+      values: CostCalculatorEstimationFormValues,
+    ): CostCalculatorEstimationSubmitValues => {
+      const { country, region, salary, currency, ...rest } = values;
+      const jsonSchemaStaticFieldValues = {
+        country,
+        region,
+        salary,
+        currency,
+      };
+      const parsedStaticFields = parseJSFToValidate(
+        jsonSchemaStaticFieldValues,
+        fieldsJSONSchema.fields,
+      );
+
+      const parsedRegionFields = parseJSFToValidate(
+        rest,
+        jsonSchemaRegionFields?.fields || [],
+      );
+
+      return {
+        ...parsedStaticFields,
+        ...parsedRegionFields,
+      } as CostCalculatorEstimationSubmitValues;
+    },
     handleValidation,
     isSubmitting: costCalculatorEstimationMutation.isPending,
     isLoading:
