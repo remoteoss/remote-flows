@@ -37,3 +37,5 @@ export type {
   Currency,
   Company,
 } from './client/types.gen';
+
+export type { $TSFixMe } from './types/remoteFlows';

@@ -4,7 +4,7 @@ import {
   SelectCountryFormPayload,
   SelectCountrySuccess,
 } from '@/src/flows/Onboarding/types';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type SelectCountryStepProps = {
   /*

@@ -11,7 +11,7 @@ import {
 } from '@testing-library/react';
 
 import { http, HttpResponse } from 'msw';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   OnboardingFlow,
   OnboardingRenderProps,

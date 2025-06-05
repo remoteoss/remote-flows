@@ -3,24 +3,19 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import { EstimationError } from '@/src/flows/CostCalculator/hooks';
-import { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
-
-function removeEmptyFields<T extends Record<string, unknown>>(
-  values: T,
-): Partial<T> {
-  return Object.fromEntries(
-    Object.entries(values).filter(
-      ([, value]) => value !== undefined && value !== null && value !== '',
-    ),
-  ) as Partial<T>;
-}
+import {
+  CostCalculatorEstimationFormValues,
+  CostCalculatorEstimationSubmitValues,
+} from '@/src/flows/CostCalculator/types';
 
 type CostCalculatorFormProps = Partial<{
   /**
    * Callback function that handles form submission. When form is submit, the form values are sent to the consumer app before behind submitted to Remote.
    * @param data - The payload sent to the /cost-calculator/estimation endpoint.
    */
-  onSubmit: (data: CostCalculatorEstimationFormValues) => Promise<void> | void;
+  onSubmit: (
+    data: CostCalculatorEstimationSubmitValues,
+  ) => Promise<void> | void;
   /**
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
@@ -46,12 +41,13 @@ export function CostCalculatorForm({
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
-    const cleanedValues = removeEmptyFields(values);
-    const costCalculatorResults = await costCalculatorBag?.onSubmit(
-      cleanedValues as CostCalculatorEstimationFormValues,
-    );
+    const cleanedValues = costCalculatorBag?.parseFormValues(
+      values,
+    ) as CostCalculatorEstimationSubmitValues;
+    const costCalculatorResults =
+      await costCalculatorBag?.onSubmit(cleanedValues);
 
-    await onSubmit?.(cleanedValues as CostCalculatorEstimationFormValues);
+    await onSubmit?.(cleanedValues);
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
