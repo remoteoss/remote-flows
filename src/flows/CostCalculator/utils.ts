@@ -1,6 +1,6 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
 import type {
