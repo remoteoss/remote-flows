@@ -311,4 +311,82 @@ describe('OnboardingInvite', () => {
     const button = await screen.findByText('Custom Button Text');
     expect(button).toBeInTheDocument();
   });
+
+  it('should refetch employment after creating a reserve invoice (deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
+
+  it('should refetch employment after inviting the user (not deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_not_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
 });
