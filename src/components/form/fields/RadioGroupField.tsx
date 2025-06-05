@@ -11,7 +11,6 @@ import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
-import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 type RadioGroupFieldProps = JSFField & {

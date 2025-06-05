@@ -26,7 +26,7 @@ export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 export type { Components } from '@/src/types/remoteFlows';
 
-export {
+export type {
   ContractAmendmentAutomatableResponse,
   CostCalculatorEstimateResponse,
   OffboardingResponse,

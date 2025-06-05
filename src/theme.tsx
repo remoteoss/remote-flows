@@ -1,5 +1,5 @@
 import { applyTheme } from '@/src/lib/applyTheme';
-import React, { createContext, useEffect, useMemo } from 'react';
+import { createContext, useEffect, useMemo } from 'react';
 import { ThemeProviderProps } from './types/theme';
 
 const ThemeContext = createContext<Omit<ThemeProviderProps, 'children'>>({

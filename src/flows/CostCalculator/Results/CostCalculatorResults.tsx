@@ -1,5 +1,5 @@
 import { Euro } from 'lucide-react';
-import React, { lazy, useState } from 'react';
+import { lazy, useState } from 'react';
 
 import { CostCalculatorEstimateResponse } from '@/src/client';
 import { Badge } from '@/src/components/ui/badge';

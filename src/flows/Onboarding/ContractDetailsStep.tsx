@@ -1,4 +1,3 @@
-import React from 'react';
 import { useOnboardingContext } from './context';
 import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { EmploymentResponse } from '@/src/client';

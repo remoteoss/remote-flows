@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { formatCurrency } from '@/src/lib/utils';
 
 type CostCalculatorTotalCostProps = {

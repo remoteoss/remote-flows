@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';

@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     "target": "esnext",
-    "module": "commonjs",
+    "module": "esnext",
+    "declaration": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -12,7 +16,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
     "lib": ["es2021", "dom"],
     "skipLibCheck": true,
     "noEmit": true,
