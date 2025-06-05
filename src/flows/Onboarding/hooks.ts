@@ -68,8 +68,11 @@ export const useOnboarding = ({
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
-  const { data: employment, isLoading: isLoadingEmployment } =
-    useEmployment(employmentId);
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmployment(employmentId);
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
@@ -107,9 +110,10 @@ export const useOnboarding = ({
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'employment_basic_information';
   const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
-  const serverEmploymentData = (employment?.data?.data?.employment?.[
-    employmentKey
-  ] || {}) as Record<string, unknown>;
+  const serverEmploymentData = (employment?.[employmentKey] || {}) as Record<
+    string,
+    unknown
+  >;
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
@@ -390,5 +394,13 @@ export const useOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
     },
+    /**
+     * Function to refetch the employment data
+     */
+    refetchEmployment,
+    /**
+     * Employment data
+     */
+    employment,
   };
 };

@@ -16,5 +16,17 @@ export const OnboardingAlertStatuses = ({
     );
   }
 
+  if (creditRiskStatus === 'referred') {
+    // TODO: Add link to support article
+    return (
+      <div className="alert">
+        We're reviewing your company account
+        <p>
+          You can enter this employee's details and save them as a draft until
+          our review is complete. <a href="#">Learn more</a>
+        </p>
+      </div>
+    );
+  }
   return null;
 };

@@ -6,7 +6,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 
-type OnboardingInviteProps = PropsWithChildren<
+export type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
     onSuccess?: (data: SuccessResponse) => void | Promise<void>;
     onError?: (error: unknown) => void;
@@ -44,6 +44,7 @@ export function OnboardingInvite({
         });
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
+          await onboardingBag.refetchEmployment();
           return;
         }
 
@@ -56,6 +57,7 @@ export function OnboardingInvite({
         });
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
+          await onboardingBag.refetchEmployment();
           return;
         }
         if (response.error) {

@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { OnboardingRenderProps } from '@remoteoss/remote-flows';
+import {
+  OnboardingRenderProps,
+  OnboardingInviteProps,
+  CreditRiskStatus,
+  Employment,
+} from '@remoteoss/remote-flows';
+
 export const InviteSection = ({
   title,
   description,
@@ -17,6 +23,61 @@ export const InviteSection = ({
       {children}
     </div>
   );
+};
+
+export const MyOnboardingInviteButton = ({
+  showInviteSuccessful,
+  creditRiskStatus,
+  Component,
+  setShowReserveInvoice,
+  setShowInviteSuccessful,
+  setApiError,
+  employment,
+}: {
+  showInviteSuccessful: boolean;
+  creditRiskStatus: CreditRiskStatus;
+  Component: React.ComponentType<OnboardingInviteProps>;
+  setShowReserveInvoice: (show: boolean) => void;
+  setShowInviteSuccessful: (show: boolean) => void;
+  setApiError: (error: string | null) => void;
+  employment: Employment;
+}) => {
+  const shouldButtonRender =
+    !showInviteSuccessful && creditRiskStatus !== 'referred';
+  const isDisabled = ['created_awaiting_reserve', 'invited'].includes(
+    employment.status,
+  );
+  if (shouldButtonRender) {
+    return (
+      <Component
+        disabled={isDisabled}
+        className="submit-button"
+        onSuccess={() => {
+          if (creditRiskStatus === 'deposit_required') {
+            setShowReserveInvoice(true);
+            return;
+          } else {
+            setShowInviteSuccessful(true);
+          }
+
+          console.log(
+            'after inviting or creating a reserve navigate to whatever place you want',
+          );
+        }}
+        onError={(error: unknown) => {
+          if (error instanceof Error) {
+            setApiError(error.message);
+          } else if (typeof error === 'string') {
+            setApiError(error);
+          } else {
+            setApiError('An unknown error occurred');
+          }
+        }}
+        type="submit"
+      />
+    );
+  }
+  return null;
 };
 
 function Review({
@@ -93,6 +154,16 @@ export const ReviewStep = ({
         Edit Benefits
       </button>
       <h2 className="title">Review</h2>
+      {onboardingBag.creditRiskStatus === 'referred' && (
+        <InviteSection
+          title={`Confirm ${onboardingBag.stepState.values?.basic_information?.name} Profile`}
+          description="Once your account is approved, you can invite your employees to Remote."
+        >
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
+        </InviteSection>
+      )}
       {!showReserveInvoice &&
         onboardingBag.creditRiskStatus === 'deposit_required' && (
           <InviteSection
@@ -109,7 +180,9 @@ export const ReviewStep = ({
         )}
       {!showInviteSuccessful &&
         onboardingBag.creditRiskStatus &&
-        !['deposit_required'].includes(onboardingBag.creditRiskStatus) && (
+        !['deposit_required', 'referred'].includes(
+          onboardingBag.creditRiskStatus,
+        ) && (
           <InviteSection
             title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
             description="If you're ready to invite this employee to onboard with Remote, click the button below."
@@ -138,7 +211,9 @@ export const ReviewStep = ({
         )}
 
       {onboardingBag.creditRiskStatus &&
-        !['deposit_required'].includes(onboardingBag.creditRiskStatus) &&
+        !['deposit_required', 'referred'].includes(
+          onboardingBag.creditRiskStatus,
+        ) &&
         showInviteSuccessful && (
           <div className="invite-successful">
             <h2>You’re all set!</h2>
@@ -158,37 +233,15 @@ export const ReviewStep = ({
         <BackButton className="back-button" onClick={() => setApiError(null)}>
           Back
         </BackButton>
-        {!showInviteSuccessful && (
-          <OnboardingInvite
-            className="submit-button"
-            onSuccess={() => {
-              if (onboardingBag.creditRiskStatus === 'deposit_required') {
-                setShowReserveInvoice(true);
-                return;
-              } else {
-                setShowInviteSuccessful(true);
-              }
-
-              console.log(
-                'after inviting or creating a reserve navigate to whatever place you want',
-              );
-            }}
-            onError={(error: unknown) => {
-              if (error instanceof Error) {
-                setApiError(error.message);
-              } else if (typeof error === 'string') {
-                setApiError(error);
-              } else {
-                setApiError('An unknown error occurred');
-              }
-            }}
-            type="submit"
-          >
-            {onboardingBag.creditRiskStatus === 'deposit_required'
-              ? 'Continue'
-              : 'Invite Employee'}
-          </OnboardingInvite>
-        )}
+        <MyOnboardingInviteButton
+          showInviteSuccessful={showInviteSuccessful}
+          creditRiskStatus={onboardingBag.creditRiskStatus}
+          Component={OnboardingInvite}
+          setShowReserveInvoice={setShowReserveInvoice}
+          setShowInviteSuccessful={setShowInviteSuccessful}
+          setApiError={setApiError}
+          employment={onboardingBag.employment}
+        />
       </div>
     </div>
   );
