@@ -62,7 +62,6 @@ export function OnboardingInvite({
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse);
           await refetchEmployment();
-
           return;
         }
         if (response.error) {

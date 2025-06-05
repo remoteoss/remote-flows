@@ -186,7 +186,15 @@ export const ReviewStep = ({
               'after inviting or creating a reserve navigate to whatever place you want',
             );
           }}
-          onError={(error: Error) => setApiError(error.message)}
+          onError={(error: unknown) => {
+            if (error instanceof Error) {
+              setApiError(error.message);
+            } else if (typeof error === 'string') {
+              setApiError(error);
+            } else {
+              setApiError('An unknown error occurred');
+            }
+          }}
           type="submit"
         >
           {onboardingBag.creditRiskStatus === 'deposit_required'
