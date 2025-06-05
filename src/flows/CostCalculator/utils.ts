@@ -1,12 +1,11 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
-import { convertToCents } from '@/src/components/form/utils';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AnyObjectSchema, object } from 'yup';
 import { defaultEstimationOptions } from './hooks';
 import type {
-  CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
+  CostCalculatorEstimationSubmitValues,
 } from './types';
 
 /**
@@ -50,7 +49,7 @@ function formatBenefits(benefits: Record<string, string>) {
  * @returns
  */
 export function buildPayload(
-  values: CostCalculatorEstimationFormValues,
+  values: CostCalculatorEstimationSubmitValues,
   estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
 ): CostCalculatorEstimateParams {
   return {
@@ -61,10 +60,8 @@ export function buildPayload(
     employments: [
       {
         region_slug: values.region || values.country,
-        annual_gross_salary: convertToCents(values.salary) as number,
-        annual_gross_salary_in_employer_currency: convertToCents(
-          values.salary,
-        ) as number,
+        annual_gross_salary: values.salary,
+        annual_gross_salary_in_employer_currency: values.salary,
         employment_term: values.contract_duration_type ?? 'fixed',
         title: estimationOptions.title,
         regional_to_employer_exchange_rate: '1',

@@ -1,6 +1,17 @@
 import type { EmploymentTermType } from '@/src/client';
 import { modify } from '@remoteoss/json-schema-form';
 
+export type CostCalculatorEstimationSubmitValues = {
+  currency: string;
+  country: string;
+  salary: number;
+} & Partial<{
+  region: string;
+  age: number;
+  contract_duration_type: EmploymentTermType;
+  benefits: Record<string, string>;
+}>;
+
 export type CostCalculatorEstimationFormValues = {
   currency: string;
   country: string;
