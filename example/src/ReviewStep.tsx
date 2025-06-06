@@ -136,7 +136,9 @@ export const ReviewStep = ({
     onboardingBag.employment?.status !== 'created_reserve_paid';
 
   const showDepositRequiredSuccesfulSection =
-    onboardingBag.creditRiskStatus === 'deposit_required' && showReserveInvoice;
+    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    showReserveInvoice &&
+    onboardingBag.employment?.status !== 'created_reserve_paid';
 
   const showInviteSection =
     (!showInviteSuccessful &&

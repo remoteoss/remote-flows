@@ -434,4 +434,64 @@ describe('OnboardingInvite', () => {
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
   });
+
+  it('should not call risk-reserve endpoint when employmentStatus is created_reserve_paid', async () => {
+    const reserveInvoiceSpy = vi.fn();
+    const inviteSpy = vi.fn();
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
+        reserveInvoiceSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        inviteSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      // Should call invite endpoint
+      expect(inviteSpy).toHaveBeenCalledTimes(1);
+      // Should NOT call reserve invoice endpoint
+      expect(reserveInvoiceSpy).not.toHaveBeenCalled();
+    });
+
+    expect(mockSuccess).toHaveBeenCalled();
+  });
 });

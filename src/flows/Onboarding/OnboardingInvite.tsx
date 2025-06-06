@@ -60,7 +60,8 @@ export function OnboardingInvite({
       await onSubmit?.();
       if (
         onboardingBag.creditRiskStatus === 'deposit_required' &&
-        onboardingBag.employmentId
+        onboardingBag.employmentId &&
+        onboardingBag.employment?.status !== 'created_reserve_paid'
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
