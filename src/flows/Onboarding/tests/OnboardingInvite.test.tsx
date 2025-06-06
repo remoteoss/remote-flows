@@ -3,9 +3,11 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchema,
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
+  contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
@@ -95,6 +97,14 @@ describe('OnboardingInvite', () => {
             },
           ],
         });
+      }),
+
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(basicInformationSchema);
+      }),
+
+      http.get('*/v1/countries/*/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
       }),
 
       http.get('*/v1/employments/*', () => {
@@ -310,5 +320,176 @@ describe('OnboardingInvite', () => {
 
     const button = await screen.findByText('Custom Button Text');
     expect(button).toBeInTheDocument();
+  });
+  it('should refetch employment after creating a reserve invoice (deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
+
+  it('should refetch employment after inviting the user (not deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_not_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
+
+  it('should render "Invite Employee" when creditRiskStatus is deposit_required and employmentStatus is created_reserve_paid', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should not call risk-reserve endpoint when employmentStatus is created_reserve_paid', async () => {
+    const reserveInvoiceSpy = vi.fn();
+    const inviteSpy = vi.fn();
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
+        reserveInvoiceSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        inviteSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      // Should call invite endpoint
+      expect(inviteSpy).toHaveBeenCalledTimes(1);
+      // Should NOT call reserve invoice endpoint
+      expect(reserveInvoiceSpy).not.toHaveBeenCalled();
+    });
+
+    expect(mockSuccess).toHaveBeenCalled();
   });
 });
