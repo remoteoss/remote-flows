@@ -8,4 +8,5 @@ export type {
   SelectCountryFormPayload,
   SelectCountrySuccess,
   CreditRiskStatus,
+  Employment,
 } from './types';
