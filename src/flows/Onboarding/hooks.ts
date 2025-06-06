@@ -218,7 +218,6 @@ export const useOnboarding = ({
             country_code: internalCountryCode,
           };
           try {
-            console.log('Creating employment with payload:', payload);
             const response = await createEmploymentMutationAsync(payload);
             await refetchCompany();
             setInternalEmploymentId(
