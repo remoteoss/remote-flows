@@ -35,6 +35,9 @@ export const useEmployment = (employmentId: string | undefined) => {
     queryKey: ['employment', employmentId],
     retry: false,
     enabled: !!employmentId,
+    select: ({ data }) => {
+      return data?.data.employment;
+    },
     queryFn: async () => {
       const response = await getShowEmployment({
         client: client as Client,

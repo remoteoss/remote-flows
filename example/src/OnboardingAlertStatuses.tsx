@@ -16,5 +16,20 @@ export const OnboardingAlertStatuses = ({
     );
   }
 
+  if (creditRiskStatus === 'referred') {
+    return (
+      <div className="alert">
+        We're reviewing your company account
+        <p>
+          You can enter this employee's details and save them as a draft until
+          our review is complete.{' '}
+          <a href="https://support.remote.com/hc/en-us/articles/12696640919949-KYB-review-Why-your-company-account-is-under-review-and-what-it-means-for-payments">
+            Learn more
+          </a>
+        </p>
+      </div>
+    );
+  }
+
   return null;
 };
