@@ -818,8 +818,9 @@ describe('OnboardingFlow', () => {
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
-
     await fillCountry('Portugal');
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -827,18 +828,22 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await screen.findByText(/Step: Benefits/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await screen.findByText(/Step: Review/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
     expect(inviteEmployeeButton).toBeInTheDocument();
