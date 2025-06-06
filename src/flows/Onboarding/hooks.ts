@@ -18,7 +18,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -76,7 +76,11 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
-  const { data: company, isLoading: isLoadingCompany } = useCompany(companyId);
+  const {
+    data: company,
+    isLoading: isLoadingCompany,
+    refetch: refetchCompany,
+  } = useCompany(companyId);
   const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
 
   const {
@@ -216,6 +220,7 @@ export const useOnboarding = ({
           try {
             console.log('Creating employment with payload:', payload);
             const response = await createEmploymentMutationAsync(payload);
+            await refetchCompany();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
               response.data?.data?.employment?.id,
@@ -226,6 +231,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
+          await refetchCompany();
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
@@ -244,6 +250,7 @@ export const useOnboarding = ({
             frequency: 'monthly',
           },
         };
+        await refetchCompany();
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           ...payload,
@@ -251,6 +258,7 @@ export const useOnboarding = ({
       }
 
       case 'benefits': {
+        await refetchCompany();
         return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
           ...values,
