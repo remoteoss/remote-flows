@@ -74,13 +74,15 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     }
   }
 
-  function goToStep(step: T) {
+  function goToStep(step: T, forceNavigation = false) {
     // to avoid going to a steps that hasn't been filled yet
-    if (stepState.values?.[step]) {
+    if (stepState.values?.[step] || forceNavigation) {
       setStepState((previousState) => ({
         ...previousState,
         currentStep: steps[step],
       }));
+    } else {
+      console.warn(`Cannot go to step ${step} as it has not been filled yet.`);
     }
   }
 

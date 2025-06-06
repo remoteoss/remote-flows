@@ -53,6 +53,12 @@ const stepToFormSchemaMap: Record<
   review: null,
 };
 
+const statusToGoReviewStep: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+];
+
 export const useOnboarding = ({
   employmentId,
   companyId,
@@ -60,6 +66,18 @@ export const useOnboarding = ({
   type,
   options,
 }: OnboardingHookProps) => {
+  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+  } = useStepState(
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fieldsMetaRef = useRef<Record<string, any>>({});
   const [internalEmploymentId, setInternalEmploymentId] = useState<
@@ -81,35 +99,8 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
-  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
-
-  const {
-    fieldValues,
-    stepState,
-    setFieldValues,
-    previousStep,
-    nextStep,
-    goToStep,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
-
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField(options);
-
-  const createEmploymentMutation = useCreateEmployment();
-  const updateEmploymentMutation = useUpdateEmployment();
-  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
-  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
-    createEmploymentMutation,
-  );
-  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
-    updateEmploymentMutation,
-  );
-  const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
-    updateBenefitsOffersMutation,
-  );
-
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'employment_basic_information';
@@ -143,6 +134,76 @@ export const useOnboarding = ({
     internalEmploymentId as string,
     fieldValues,
     options,
+  );
+
+  const isLoading =
+    isLoadingBasicInformation ||
+    isLoadingEmployment ||
+    isLoadingBenefitsOffersSchema ||
+    isLoadingBenefitOffers ||
+    isLoadingCompany ||
+    isLoadingCountries;
+
+  useEffect(() => {
+    console.log({});
+    if (
+      employmentId &&
+      employment &&
+      statusToGoReviewStep.includes(employment?.status) &&
+      !isLoading
+    ) {
+      console.log('Going to review step');
+      // first we need to set the metadata for each field
+      // let's fix it for now and then we can improve it later
+      // next fix will be deleting the forceNavigation and fill the stepState.values
+
+      fieldsMetaRef.current = {
+        select_country: prettifyFormValues(
+          getInitialValues(stepFields['select_country'], {
+            country: internalCountryCode || employment?.country.code || '',
+          }),
+          stepFields['select_country'],
+        ),
+        basic_information: prettifyFormValues(
+          getInitialValues(
+            stepFields['basic_information'],
+            employment?.basic_information || {},
+          ),
+          stepFields['basic_information'],
+        ),
+        contract_details: prettifyFormValues(
+          getInitialValues(
+            stepFields['contract_details'],
+            employment?.contract_details || {},
+          ),
+          stepFields['contract_details'],
+        ),
+        benefits: prettifyFormValues(
+          getInitialValues(
+            stepFields['benefits'],
+            initialValuesBenefitOffers || {},
+          ),
+          stepFields['benefits'],
+        ),
+      };
+
+      goToStep('review', true);
+    }
+    //
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employmentId, employment, isLoading]);
+
+  const createEmploymentMutation = useCreateEmployment();
+  const updateEmploymentMutation = useUpdateEmployment();
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
+  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
+    createEmploymentMutation,
+  );
+  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
+    updateEmploymentMutation,
+  );
+  const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
+    updateBenefitsOffersMutation,
   );
 
   const benefitsFormValues = {
