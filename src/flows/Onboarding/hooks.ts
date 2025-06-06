@@ -243,6 +243,7 @@ export const useOnboarding = ({
     goToStep,
     initialValuesBenefitOffers,
     stepFields,
+    stepState.currentStep.name,
   ]);
 
   const createEmploymentMutation = useCreateEmployment();
