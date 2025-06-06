@@ -277,8 +277,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  console.log({ employment });
-
   return {
     /**
      * Employment id passed useful to be used between components
