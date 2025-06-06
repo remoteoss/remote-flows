@@ -93,6 +93,16 @@ export const ReviewStep = ({
         Edit Benefits
       </button>
       <h2 className="title">Review</h2>
+      {onboardingBag.creditRiskStatus === 'referred' && (
+        <InviteSection
+          title={`Confirm ${onboardingBag.employment?.basic_information?.name} Profile`}
+          description="Once your account is approved, you can invite your employees to Remote."
+        >
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
+        </InviteSection>
+      )}
       {!showReserveInvoice &&
         onboardingBag.creditRiskStatus === 'deposit_required' && (
           <InviteSection

@@ -68,8 +68,11 @@ export const useOnboarding = ({
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
-  const { data: employment, isLoading: isLoadingEmployment } =
-    useEmployment(employmentId);
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmployment(employmentId);
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
@@ -390,5 +393,15 @@ export const useOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
     },
+
+    /**
+     * Function to refetch the employment data
+     * @returns {void}
+     */
+    refetchEmployment,
+    /**
+     * Employment data
+     */
+    employment,
   };
 };
