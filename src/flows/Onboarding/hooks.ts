@@ -198,7 +198,6 @@ export const useOnboarding = ({
 
     const parsedValues = parseFormValues(values);
     refetchCompany();
-
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
