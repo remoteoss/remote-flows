@@ -130,6 +130,27 @@ export const ReviewStep = ({
   const { OnboardingInvite, BackButton } = components;
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
   const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
+  const showDepositRequiredSection =
+    !showReserveInvoice &&
+    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    onboardingBag.employment?.status !== 'created_reserve_paid';
+
+  const showDepositRequiredSuccesfulSection =
+    onboardingBag.creditRiskStatus === 'deposit_required' && showReserveInvoice;
+
+  const showInviteSection =
+    (!showInviteSuccessful &&
+      onboardingBag.creditRiskStatus &&
+      !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus)) ||
+    (!showInviteSuccessful &&
+      onboardingBag.employment?.status === 'created_reserve_paid');
+
+  const showInviteSuccesfulSection =
+    (onboardingBag.creditRiskStatus &&
+      !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) &&
+      showInviteSuccessful) ||
+    (showInviteSuccessful &&
+      onboardingBag.employment?.status === 'created_reserve_paid');
   return (
     <div className="onboarding-review">
       <h2 className="title">Basic Information</h2>
@@ -160,7 +181,7 @@ export const ReviewStep = ({
       <h2 className="title">Review</h2>
       {onboardingBag.creditRiskStatus === 'referred' && (
         <InviteSection
-          title={`Confirm ${onboardingBag.stepState.values?.basic_information?.name} Profile`}
+          title={`Confirm ${onboardingBag.employment?.basic_information?.name} Profile`}
           description="Once your account is approved, you can invite your employees to Remote."
         >
           <OnboardingAlertStatuses
@@ -168,66 +189,64 @@ export const ReviewStep = ({
           />
         </InviteSection>
       )}
-      {!showReserveInvoice &&
-        onboardingBag.creditRiskStatus === 'deposit_required' && (
-          <InviteSection
-            title="Confirm Details && Continue"
-            description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
-          >
-            <OnboardingAlertStatuses
-              creditRiskStatus={onboardingBag.creditRiskStatus}
-            />
+      {showDepositRequiredSection && (
+        <InviteSection
+          title="Confirm Details && Continue"
+          description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
+        >
+          <OnboardingAlertStatuses
+            creditRiskStatus={onboardingBag.creditRiskStatus}
+          />
+          <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+            What is a reserve payment
+          </a>
+        </InviteSection>
+      )}
+      {showInviteSection && (
+        <InviteSection
+          title={`Ready to invite ${onboardingBag.employment?.basic_information?.name} to Remote?`}
+          description="If you're ready to invite this employee to onboard with Remote, click the button below."
+        />
+      )}
+
+      {showDepositRequiredSuccesfulSection && (
+        <div className="reserve-invoice">
+          <h2>You’ll receive a reserve invoice soon</h2>
+          <p>
+            We saved $
+            {onboardingBag.employment?.basic_information?.name as string}{' '}
+            details as a draft. You’ll be able to invite them to Remote after
+            you complete the reserve payment.
+          </p>
+          <div>
+            <button type="submit">Go to dashboard</button>
+
+            <br />
+
             <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
               What is a reserve payment
             </a>
-          </InviteSection>
-        )}
-      {!showInviteSuccessful &&
-        onboardingBag.creditRiskStatus &&
-        !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) && (
-          <InviteSection
-            title={`Ready to invite ${onboardingBag.stepState.values?.basic_information?.name} to Remote?`}
-            description="If you're ready to invite this employee to onboard with Remote, click the button below."
-          />
-        )}
-
-      {onboardingBag.creditRiskStatus === 'deposit_required' &&
-        showReserveInvoice && (
-          <div className="reserve-invoice">
-            <h2>You’ll receive a reserve invoice soon</h2>
-            <p>
-              We saved {onboardingBag.stepState.values?.basic_information.name}{' '}
-              details as a draft. You’ll be able to invite them to Remote after
-              you complete the reserve payment.
-            </p>
-            <div>
-              <button type="submit">Go to dashboard</button>
-
-              <br />
-
-              <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
-                What is a reserve payment
-              </a>
-            </div>
           </div>
-        )}
+        </div>
+      )}
 
-      {onboardingBag.creditRiskStatus &&
-        !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) &&
-        showInviteSuccessful && (
-          <div className="invite-successful">
-            <h2>You’re all set!</h2>
-            <p>
-              {onboardingBag.stepState.values?.basic_information.name} at{' '}
-              {onboardingBag.stepState.values?.basic_information.personal_email}{' '}
-              has been invited to Remote. We’ll let you know once they complete
-              their onboarding process
-            </p>
-            <div>
-              <button type="submit">Go to dashboard</button>
-            </div>
+      {showInviteSuccesfulSection && (
+        <div className="invite-successful">
+          <h2>You’re all set!</h2>
+          <p>
+            {onboardingBag.employment?.basic_information?.name as string} at{' '}
+            {
+              onboardingBag.employment?.basic_information
+                ?.personal_email as string
+            }{' '}
+            has been invited to Remote. We’ll let you know once they complete
+            their onboarding process
+          </p>
+          <div>
+            <button type="submit">Go to dashboard</button>
           </div>
-        )}
+        </div>
+      )}
 
       <div className="buttons-container">
         <BackButton className="back-button" onClick={() => setApiError(null)}>
