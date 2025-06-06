@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.7
+
+### Minor Changes
+
+- 278e485: - Change onSubmit argument on the CostCalculatorForm
+  - Fix invitation process, the invite didn't work if you tried to complete the onboarding in one go
+
 ## 0.4.0-alpha.6
 
 ### Minor Changes
