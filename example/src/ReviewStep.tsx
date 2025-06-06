@@ -215,7 +215,7 @@ export const ReviewStep = ({
         <div className="reserve-invoice">
           <h2>You’ll receive a reserve invoice soon</h2>
           <p>
-            We saved $
+            We saved{' '}
             {onboardingBag.employment?.basic_information?.name as string}{' '}
             details as a draft. You’ll be able to invite them to Remote after
             you complete the reserve payment.
