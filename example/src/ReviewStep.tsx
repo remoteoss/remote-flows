@@ -114,7 +114,6 @@ export const ReviewStep = ({
   const { OnboardingInvite, BackButton } = components;
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
   const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
-  console.log({ onboardingBag: onboardingBag.employment });
   return (
     <div className="onboarding-review">
       <h2 className="title">Basic Information</h2>
