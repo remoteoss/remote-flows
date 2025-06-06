@@ -197,6 +197,8 @@ export const useOnboarding = ({
     );
 
     const parsedValues = parseFormValues(values);
+    refetchCompany();
+
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
@@ -230,7 +232,6 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          await refetchCompany();
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
@@ -249,7 +250,6 @@ export const useOnboarding = ({
             frequency: 'monthly',
           },
         };
-        await refetchCompany();
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           ...payload,
@@ -257,7 +257,6 @@ export const useOnboarding = ({
       }
 
       case 'benefits': {
-        await refetchCompany();
         return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
           ...values,
