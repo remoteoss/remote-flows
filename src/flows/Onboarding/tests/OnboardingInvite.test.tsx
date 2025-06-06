@@ -3,9 +3,11 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchema,
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
+  contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
@@ -69,6 +71,7 @@ const mockRender = vi.fn(
 const defaultProps = {
   companyId: '1234',
   employmentId: '1234',
+  countryCode: 'PRT',
   options: {},
   render: mockRender,
 };
@@ -103,6 +106,14 @@ describe('OnboardingInvite', () => {
 
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
         return HttpResponse.json(benefitOffersSchema);
+      }),
+
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(basicInformationSchema);
+      }),
+
+      http.get('*/v1/countries/*/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
       }),
 
       http.get('*/v1/employments/*/benefit-offers', () => {
@@ -388,5 +399,39 @@ describe('OnboardingInvite', () => {
     await waitFor(() => {
       expect(refetchEmploymentMock).toHaveBeenCalled();
     });
+  });
+
+  it('should render "Invite Employee" when creditRiskStatus is deposit_required and employmentStatus is created_reserve_paid', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
   });
 });
