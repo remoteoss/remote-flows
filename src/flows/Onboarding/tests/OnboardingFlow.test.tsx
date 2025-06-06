@@ -477,7 +477,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -521,6 +520,8 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();

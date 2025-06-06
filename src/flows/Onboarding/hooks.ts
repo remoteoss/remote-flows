@@ -18,7 +18,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -163,18 +163,45 @@ export const useOnboarding = ({
     isLoadingCompany ||
     isLoadingCountries;
 
+  const initialValuesBenefitOffers = useMemo(() => {
+    const benefitsFormValues = {
+      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+      ...fieldValues,
+    };
+    return stepState.currentStep.name === 'benefits'
+      ? mergeWith({}, benefitOffers, benefitsFormValues)
+      : {};
+  }, [
+    stepState.currentStep.name,
+    benefitOffers,
+    fieldValues,
+    stepState.values,
+  ]);
+
+  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+    () => ({
+      select_country: selectCountryForm?.fields || [],
+      basic_information: basicInfomationForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
+      benefits: benefitOffersSchema?.fields || [],
+      review: [],
+    }),
+    [
+      selectCountryForm?.fields,
+      basicInfomationForm?.fields,
+      contractDetailsForm?.fields,
+      benefitOffersSchema?.fields,
+    ],
+  );
+
   useEffect(() => {
     if (
       employmentId &&
       employment &&
       statusToGoReviewStep.includes(employment?.status) &&
-      !isLoading
+      !isLoading &&
+      stepState.currentStep.name !== 'review'
     ) {
-      console.log('Going to review step');
-      // first we need to set the metadata for each field
-      // let's fix it for now and then we can improve it later
-      // next fix will be deleting the forceNavigation and fill the stepState.values
-
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
           getInitialValues(stepFields['select_country'], {
@@ -208,8 +235,15 @@ export const useOnboarding = ({
       goToStep('review', true);
     }
     //
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employmentId, employment, isLoading]);
+  }, [
+    employmentId,
+    employment,
+    isLoading,
+    internalCountryCode,
+    goToStep,
+    initialValuesBenefitOffers,
+    stepFields,
+  ]);
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -223,24 +257,6 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
-
-  const benefitsFormValues = {
-    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-    ...fieldValues,
-  };
-
-  const initialValuesBenefitOffers =
-    stepState.currentStep.name === 'benefits'
-      ? mergeWith({}, benefitOffers, benefitsFormValues)
-      : {};
-
-  const stepFields: Record<keyof typeof STEPS, Fields> = {
-    select_country: selectCountryForm?.fields || [],
-    basic_information: basicInfomationForm?.fields || [],
-    contract_details: contractDetailsForm?.fields || [],
-    benefits: benefitOffersSchema?.fields || [],
-    review: [],
-  };
 
   const initialValues = {
     select_country: getInitialValues(stepFields[stepState.currentStep.name], {
