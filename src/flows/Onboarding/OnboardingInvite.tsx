@@ -6,7 +6,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 
-type OnboardingInviteProps = PropsWithChildren<
+export type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
     onSuccess?: (data: SuccessResponse) => void | Promise<void>;
     onError?: (error: unknown) => void;

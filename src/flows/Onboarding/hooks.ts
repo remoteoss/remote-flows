@@ -72,7 +72,7 @@ export const useOnboarding = ({
     data: employment,
     isLoading: isLoadingEmployment,
     refetch: refetchEmployment,
-  } = useEmployment(employmentId);
+  } = useEmployment(internalEmploymentId);
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
@@ -110,9 +110,10 @@ export const useOnboarding = ({
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'employment_basic_information';
   const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
-  const serverEmploymentData = (employment?.data?.data?.employment?.[
-    employmentKey
-  ] || {}) as Record<string, unknown>;
+  const serverEmploymentData = (employment?.[employmentKey] || {}) as Record<
+    string,
+    unknown
+  >;
 
   const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
     useJSONSchemaForm({
@@ -160,18 +161,15 @@ export const useOnboarding = ({
 
   const initialValues = {
     select_country: getInitialValues(stepFields[stepState.currentStep.name], {
-      country:
-        internalCountryCode ||
-        employment?.data.data.employment?.country.code ||
-        '',
+      country: internalCountryCode || employment?.country.code || '',
     }),
     basic_information: getInitialValues(
       stepFields[stepState.currentStep.name],
-      employment?.data?.data.employment?.basic_information || {},
+      employment?.basic_information || {},
     ),
     contract_details: getInitialValues(
       stepFields[stepState.currentStep.name],
-      employment?.data?.data.employment?.contract_details || {},
+      employment?.contract_details || {},
     ),
     benefits: initialValuesBenefitOffers || {},
   };
@@ -207,9 +205,8 @@ export const useOnboarding = ({
         const hasChangedCountry =
           internalEmploymentId &&
           internalCountryCode &&
-          employment?.data?.data?.employment?.country &&
-          employment?.data?.data?.employment?.country.code !==
-            internalCountryCode;
+          employment?.country &&
+          employment?.country.code !== internalCountryCode;
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
@@ -274,6 +271,8 @@ export const useOnboarding = ({
   function goTo(step: keyof typeof STEPS) {
     goToStep(step);
   }
+
+  console.log({ employment });
 
   return {
     /**
