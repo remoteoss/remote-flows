@@ -15,6 +15,12 @@ export type OnboardingInviteProps = PropsWithChildren<
   }
 >;
 
+const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+];
+
 const getLabel = ({
   children,
   creditRiskStatus,
@@ -29,7 +35,8 @@ const getLabel = ({
   }
   if (
     creditRiskStatus === 'deposit_required' &&
-    employmentStatus !== 'created_reserve_paid'
+    employmentStatus &&
+    !FINAL_EMPLOYMENT_STATUSES.includes(employmentStatus)
   ) {
     return 'Create Reserve';
   }
@@ -61,8 +68,8 @@ export function OnboardingInvite({
       if (
         onboardingBag.creditRiskStatus === 'deposit_required' &&
         onboardingBag.employmentId &&
-        onboardingBag.employmentId &&
-        onboardingBag.employment?.status !== 'created_reserve_paid'
+        onboardingBag.employment?.status &&
+        !FINAL_EMPLOYMENT_STATUSES.includes(onboardingBag.employment?.status)
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
@@ -103,6 +110,11 @@ export function OnboardingInvite({
   return (
     <Button
       {...props}
+      disabled={
+        employmentInviteMutation.isPending ||
+        useCreateReserveInvoiceMutation.isPending ||
+        props.disabled
+      }
       onClick={() => {
         handleSubmit();
       }}

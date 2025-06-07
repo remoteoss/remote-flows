@@ -130,29 +130,37 @@ export const ReviewStep = ({
   const { OnboardingInvite, BackButton } = components;
   const [showReserveInvoice, setShowReserveInvoice] = useState(false);
   const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
+  const statusesToNotShowDeposit: Employment['status'][] = [
+    'invited',
+    'created_reserve_paid',
+  ];
   const showDepositRequiredSection =
     !showReserveInvoice &&
     onboardingBag.creditRiskStatus === 'deposit_required' &&
-    onboardingBag.employment?.status !== 'created_reserve_paid';
+    onboardingBag.employment?.status &&
+    !statusesToNotShowDeposit.includes(onboardingBag.employment?.status);
 
   const showDepositRequiredSuccesfulSection =
     onboardingBag.creditRiskStatus === 'deposit_required' &&
     showReserveInvoice &&
-    onboardingBag.employment?.status !== 'created_reserve_paid';
+    onboardingBag.employment?.status &&
+    !statusesToNotShowDeposit.includes(onboardingBag.employment?.status);
 
   const showInviteSection =
     (!showInviteSuccessful &&
       onboardingBag.creditRiskStatus &&
       !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus)) ||
     (!showInviteSuccessful &&
-      onboardingBag.employment?.status === 'created_reserve_paid');
+      onboardingBag.employment?.status &&
+      statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
 
   const showInviteSuccesfulSection =
     (onboardingBag.creditRiskStatus &&
       !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) &&
       showInviteSuccessful) ||
     (showInviteSuccessful &&
-      onboardingBag.employment?.status === 'created_reserve_paid');
+      onboardingBag.employment?.status &&
+      statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
 
   return (
     <div className="onboarding-review">
