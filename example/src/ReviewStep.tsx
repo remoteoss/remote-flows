@@ -58,9 +58,15 @@ function Review({
   );
 }
 
-const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
+const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
   'created_awaiting_reserve',
   'invited',
+];
+
+const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
 ];
 
 export const MyOnboardingInviteButton = ({
@@ -79,17 +85,24 @@ export const MyOnboardingInviteButton = ({
   employment?: Employment;
 }) => {
   const isDisabled =
-    employment && FINAL_EMPLOYMENT_STATUSES.includes(employment?.status);
+    employment &&
+    DISABLED_BUTTON_EMPLOYMENT_STATUS.includes(employment?.status);
   if (creditRiskStatus !== 'referred') {
     return (
       <Component
         disabled={isDisabled}
         className="submit-button"
         onSuccess={() => {
-          if (creditRiskStatus === 'deposit_required') {
+          if (
+            creditRiskStatus === 'deposit_required' &&
+            employment?.status &&
+            !FINAL_EMPLOYMENT_STATUSES.includes(employment?.status)
+          ) {
+            console.log('show reserve invoice');
             setShowReserveInvoice(true);
             return;
           } else {
+            console.log('show invite successful');
             setShowInviteSuccessful(true);
           }
 
@@ -161,6 +174,14 @@ export const ReviewStep = ({
     (showInviteSuccessful &&
       onboardingBag.employment?.status &&
       statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
+
+  console.log({
+    showInviteSuccessful,
+    onboardingBag: onboardingBag.employment?.status,
+    isStatus: statusesToNotShowDeposit.includes(
+      onboardingBag.employment?.status,
+    ),
+  });
 
   return (
     <div className="onboarding-review">
