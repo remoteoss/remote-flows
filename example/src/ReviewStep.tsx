@@ -257,6 +257,7 @@ export const ReviewStep = ({
           setShowReserveInvoice={setShowReserveInvoice}
           setShowInviteSuccessful={setShowInviteSuccessful}
           setApiError={setApiError}
+          employment={onboardingBag.employment}
         />
       </div>
     </div>
