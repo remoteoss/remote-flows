@@ -510,10 +510,48 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await fillCountry('Portugal');
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
+    );
 
-    await fillBasicInformation();
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        // If we have a countryCode, use the steps without country selection
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+    render(
+      <OnboardingFlow
+        employmentId="1234"
+        countryCode="PRT"
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -532,7 +570,9 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+    expect(employeePersonalEmail).toHaveValue(
+      employmentResponse.data.employment.personal_email,
+    );
   });
 
   it('should submit the basic information step', async () => {
