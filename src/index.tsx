@@ -24,7 +24,7 @@ export * from '@/src/common/hooks';
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
-export type { Components } from '@/src/types/remoteFlows';
+export type { Components, RemoteFlowsSDKProps } from '@/src/types/remoteFlows';
 
 export type {
   ContractAmendmentAutomatableResponse,
