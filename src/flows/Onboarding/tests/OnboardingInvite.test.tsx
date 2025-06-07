@@ -3,9 +3,11 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchema,
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
+  contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
@@ -69,6 +71,7 @@ const mockRender = vi.fn(
 const defaultProps = {
   companyId: '1234',
   employmentId: '1234',
+  countryCode: 'PRT',
   options: {},
   render: mockRender,
 };
@@ -95,6 +98,14 @@ describe('OnboardingInvite', () => {
             },
           ],
         });
+      }),
+
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(basicInformationSchema);
+      }),
+
+      http.get('*/v1/countries/*/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
       }),
 
       http.get('*/v1/employments/*', () => {
