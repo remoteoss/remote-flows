@@ -3,9 +3,11 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchema,
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
+  contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
@@ -95,6 +97,14 @@ describe('OnboardingInvite', () => {
             },
           ],
         });
+      }),
+
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(basicInformationSchema);
+      }),
+
+      http.get('*/v1/countries/*/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchema);
       }),
 
       http.get('*/v1/employments/*', () => {
@@ -310,5 +320,457 @@ describe('OnboardingInvite', () => {
 
     const button = await screen.findByText('Custom Button Text');
     expect(button).toBeInTheDocument();
+  });
+  it('should refetch employment after creating a reserve invoice (deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
+
+  it('should refetch employment after inviting the user (not deposit_required)', async () => {
+    // Mock refetchEmployment
+    const refetchEmploymentMock = vi.fn();
+    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+      onboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_not_required',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    const button = await screen.findByTestId('onboarding-invite');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+    });
+  });
+
+  it('should render "Invite Employee" when creditRiskStatus is deposit_required and employmentStatus is created_reserve_paid', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should not call risk-reserve endpoint when employmentStatus is created_reserve_paid', async () => {
+    const reserveInvoiceSpy = vi.fn();
+    const inviteSpy = vi.fn();
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
+        reserveInvoiceSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        inviteSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      // Should call invite endpoint
+      expect(inviteSpy).toHaveBeenCalledTimes(1);
+      // Should NOT call reserve invoice endpoint
+      expect(reserveInvoiceSpy).not.toHaveBeenCalled();
+    });
+
+    expect(mockSuccess).toHaveBeenCalled();
+  });
+
+  it('should disable button when disabled prop is passed', async () => {
+    mockRender.mockImplementationOnce(({ components }) => {
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid="onboarding-invite"
+          disabled={true}
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+        />
+      );
+    });
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByTestId('onboarding-invite');
+    expect(button).toBeDisabled();
+  });
+
+  it('should disable button when employmentInviteMutation is pending', async () => {
+    server.use(
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        // Return a delayed response to keep the mutation pending
+        return new Promise(() => {}); // Never resolves to keep pending
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    // Wait a bit and check if button becomes disabled
+    await waitFor(() => {
+      expect(button).toBeDisabled();
+    });
+  });
+
+  it('should disable button when useCreateReserveInvoiceMutation is pending', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/risk-reserve', () => {
+        // Return a delayed response to keep the mutation pending
+        return new Promise(() => {}); // Never resolves to keep pending
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Create Reserve/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    // Wait a bit and check if button becomes disabled
+    await waitFor(() => {
+      expect(button).toBeDisabled();
+    });
+  });
+
+  it('should render "Invite Employee" when employment.status is created_reserve_paid and creditRiskStatus is deposit_required', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_reserve_paid',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    // Ensure it's not showing "Create Reserve"
+    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
+  });
+
+  it('should render "Invite Employee" when employment.status is invited and creditRiskStatus is deposit_required', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'invited',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    // Ensure it's not showing "Create Reserve"
+    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
+  });
+
+  it('should render "Invite Employee" when employment.status is created_awaiting_reserve and creditRiskStatus is deposit_required', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created_awaiting_reserve',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    // Ensure it's not showing "Create Reserve"
+    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
+  });
+
+  it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Create Reserve/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSuccess).toHaveBeenCalledWith(
+        { data: { status: 'ok' } },
+        'created_awaiting_reserve',
+      );
+    });
+  });
+
+  it('should call onSuccess with "invited" status when inviting an employee', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_not_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSuccess).toHaveBeenCalledWith(
+        { data: { status: 'ok' } },
+        'invited',
+      );
+    });
   });
 });
