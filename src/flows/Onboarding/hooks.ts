@@ -96,6 +96,7 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
+    setStepValues,
   } = useStepState(
     stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
@@ -263,7 +264,26 @@ export const useOnboarding = ({
         ),
       };
 
-      goToStep('review', true);
+      setStepValues({
+        select_country: getInitialValues(stepFields['select_country'], {
+          country: internalCountryCode || employment?.country.code || '',
+        }),
+        basic_information: getInitialValues(
+          stepFields['basic_information'],
+          employment?.basic_information || {},
+        ),
+        contract_details: getInitialValues(
+          stepFields['contract_details'],
+          employment?.contract_details || {},
+        ),
+        benefits: getInitialValues(
+          stepFields['benefits'],
+          initialValuesBenefitOffers || {},
+        ),
+        review: {},
+      });
+
+      goToStep('review');
     }
   }, [
     employmentId,
@@ -274,6 +294,7 @@ export const useOnboarding = ({
     initialValuesBenefitOffers,
     stepFields,
     stepState.currentStep.name,
+    setStepValues,
   ]);
 
   function parseFormValues(values: FieldValues) {

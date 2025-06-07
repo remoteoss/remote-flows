@@ -74,14 +74,21 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     }
   }
 
-  function goToStep(step: T, forceNavigation = false) {
-    // to avoid going to a steps that hasn't been filled yet
-    if (stepState.values?.[step] || forceNavigation) {
+  function goToStep(step: T) {
+    // to avoid going to a steps that hasn't been filled yetç
+    if (stepState.values?.[step]) {
       setStepState((previousState) => ({
         ...previousState,
         currentStep: steps[step],
       }));
     }
+  }
+
+  function setStepValues(values: Record<T, Fields>) {
+    setStepState((previousState) => ({
+      ...previousState,
+      values: values,
+    }));
   }
 
   return {
@@ -122,5 +129,12 @@ export const useStepState = <T extends string, Fields = FieldValues>(
      * @returns {void}
      */
     setFieldValues,
+    /**
+     * Sets the step values for the step state.
+     * This is used to update all values in the step state.
+     * @param values The values to set for the all steps.
+     * @returns {void}
+     */
+    setStepValues,
   };
 };
