@@ -98,11 +98,9 @@ export const MyOnboardingInviteButton = ({
             employment?.status &&
             !FINAL_EMPLOYMENT_STATUSES.includes(employment?.status)
           ) {
-            console.log('show reserve invoice');
             setShowReserveInvoice(true);
             return;
           } else {
-            console.log('show invite successful');
             setShowInviteSuccessful(true);
           }
 
