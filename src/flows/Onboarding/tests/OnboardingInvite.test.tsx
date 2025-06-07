@@ -677,4 +677,100 @@ describe('OnboardingInvite', () => {
     // Ensure it's not showing "Create Reserve"
     expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
   });
+
+  it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Create Reserve/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSuccess).toHaveBeenCalledWith(
+        { data: { status: 'ok' } },
+        'created_awaiting_reserve',
+      );
+    });
+  });
+
+  it('should call onSuccess with "invited" status when inviting an employee', async () => {
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'deposit_not_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSuccess).toHaveBeenCalledWith(
+        { data: { status: 'ok' } },
+        'invited',
+      );
+    });
+  });
 });

@@ -63,12 +63,6 @@ const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
   'invited',
 ];
 
-const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
-
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
@@ -92,12 +86,8 @@ export const MyOnboardingInviteButton = ({
       <Component
         disabled={isDisabled}
         className="submit-button"
-        onSuccess={() => {
-          if (
-            creditRiskStatus === 'deposit_required' &&
-            employment?.status &&
-            !FINAL_EMPLOYMENT_STATUSES.includes(employment?.status)
-          ) {
+        onSuccess={(_, status) => {
+          if (status === 'created_awaiting_reserve') {
             setShowReserveInvoice(true);
             return;
           } else {
@@ -172,14 +162,6 @@ export const ReviewStep = ({
     (showInviteSuccessful &&
       onboardingBag.employment?.status &&
       statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
-
-  console.log({
-    showInviteSuccessful,
-    onboardingBag: onboardingBag.employment?.status,
-    isStatus: statusesToNotShowDeposit.includes(
-      onboardingBag.employment?.status,
-    ),
-  });
 
   return (
     <div className="onboarding-review">
