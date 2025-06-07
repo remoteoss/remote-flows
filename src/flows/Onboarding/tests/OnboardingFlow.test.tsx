@@ -522,6 +522,8 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
@@ -929,4 +931,34 @@ describe('OnboardingFlow', () => {
       expect(postSpy).toHaveBeenCalledTimes(1); // Still only called once
     });
   });
+
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
+    'should automatically navigate to review step when employment status is %s',
+    async (status) => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                status: status,
+              },
+            },
+          });
+        }),
+      );
+
+      render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+        wrapper,
+      });
+
+      // Wait for loading to finish
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Should automatically go to review step instead of starting from select country
+      await screen.findByText(/Step: Review/i);
+    },
+  );
 });
