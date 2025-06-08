@@ -318,6 +318,9 @@ describe('OnboardingFlow', () => {
           ],
         });
       }),
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
@@ -429,11 +432,6 @@ describe('OnboardingFlow', () => {
   }
 
   it('should skip rendering the select country step when a countryCode is provided', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -510,12 +508,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
-
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -611,11 +603,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should retrieve the basic information step based on an employmentId', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
@@ -631,11 +618,6 @@ describe('OnboardingFlow', () => {
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
     const user = userEvent.setup();
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
@@ -692,11 +674,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the contract details step and go to the benefits step', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
@@ -990,9 +967,39 @@ describe('OnboardingFlow', () => {
         }),
       );
 
-      render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
-        wrapper,
-      });
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Contract Details',
+            [2]: 'Benefits',
+            [3]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <OnboardingFlow
+          countryCode="PRT"
+          employmentId="1234"
+          {...defaultProps}
+        />,
+        {
+          wrapper,
+        },
+      );
 
       // Wait for loading to finish
       await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
