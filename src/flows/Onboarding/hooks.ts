@@ -156,9 +156,11 @@ export const useOnboarding = ({
             }
           : serverEmploymentData,
       options: options,
-      enabled:
-        Boolean(stepState.currentStep.name === 'contract_details') ||
-        !!employmentId,
+      enabled: Boolean(
+        (stepState.currentStep.name === 'contract_details' &&
+          internalCountryCode) ||
+          (employmentId && internalCountryCode),
+      ),
     });
 
   const {
