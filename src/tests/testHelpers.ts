@@ -47,23 +47,28 @@ export async function assertRadioValue(
 
 export async function fillRadio(radioName: string, radioValue: string) {
   const user = userEvent.setup();
+
+  // Wait for the radio group to be available
   await waitFor(() => {
-    const radioGroup = screen.getByRole('radiogroup', {
-      name: new RegExp(radioName, 'i'),
-    });
-    expect(radioGroup).toBeInTheDocument();
+    screen.getByRole('radiogroup', { name: new RegExp(radioName, 'i') });
   });
+
   const radioGroup = screen.getByRole('radiogroup', {
     name: new RegExp(radioName, 'i'),
   });
-  expect(radioGroup).toBeInTheDocument();
 
+  // Find the radio button
   const radioButton = within(radioGroup).getByRole('radio', {
     name: new RegExp(radioValue, 'i'),
   });
-  expect(radioButton).toBeInTheDocument();
 
+  // Use userEvent to click the radio button
   await user.click(radioButton);
+
+  // Wait for the radio button to be checked
+  await waitFor(() => {
+    expect(radioButton).toBeChecked();
+  });
 }
 
 export async function fillSelect(selectName: string, selectValue: string) {
