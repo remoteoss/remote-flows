@@ -126,15 +126,12 @@ export const useOnboarding = ({
     unknown
   >;
 
-  const isOnboardingFormEnabled =
-    Boolean(
-      stepState.currentStep.name === 'basic_information' && internalCountryCode,
-    ) ||
-    Boolean(
-      (stepState.currentStep.name === 'contract_details' &&
-        internalCountryCode) ||
-        (employmentId && internalCountryCode),
-    );
+  const isOnboardingFormEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
+  );
 
   const { data: onboardingForm, isLoading: isLoadingOnboardingForm } =
     useJSONSchemaForm({
