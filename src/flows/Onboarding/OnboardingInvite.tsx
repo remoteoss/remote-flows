@@ -17,7 +17,7 @@ export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onError?: (error: unknown) => void;
   onSubmit?: () => void | Promise<void>;
   render: (props: {
-    status: 'invited' | 'created_awaiting_reserve';
+    employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => ReactNode;
 };
 
@@ -117,7 +117,9 @@ export function OnboardingInvite({
       }}
     >
       {render({
-        status: isReserveFlow ? 'created_awaiting_reserve' : 'invited',
+        employmentStatus: isReserveFlow
+          ? 'created_awaiting_reserve'
+          : 'invited',
       })}
     </Button>
   );

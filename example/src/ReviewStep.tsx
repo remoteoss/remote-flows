@@ -156,8 +156,8 @@ export const MyOnboardingInviteButton = ({
             'after inviting or creating a reserve navigate to whatever place you want',
           );
         }}
-        render={({ status }) => {
-          return status === 'created_awaiting_reserve'
+        render={({ employmentStatus }) => {
+          return employmentStatus === 'created_awaiting_reserve'
             ? 'Create Reserve'
             : 'Invite Employee';
         }}

@@ -62,8 +62,8 @@ const mockRender = vi.fn(
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
-          render={({ status }) =>
-            status === 'created_awaiting_reserve'
+          render={({ employmentStatus }) =>
+            employmentStatus === 'created_awaiting_reserve'
               ? 'Create Reserve'
               : 'Invite Employee'
           }
@@ -303,8 +303,8 @@ describe('OnboardingInvite', () => {
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
-          render={({ status }) =>
-            status === 'created_awaiting_reserve'
+          render={({ employmentStatus }) =>
+            employmentStatus === 'created_awaiting_reserve'
               ? 'Create Reserve'
               : 'Invite Employee'
           }
@@ -347,8 +347,8 @@ describe('OnboardingInvite', () => {
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
-          render={({ status }) =>
-            status === 'created_awaiting_reserve'
+          render={({ employmentStatus }) =>
+            employmentStatus === 'created_awaiting_reserve'
               ? 'Create Reserve'
               : 'Invite Employee'
           }
@@ -483,8 +483,8 @@ describe('OnboardingInvite', () => {
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
-          render={({ status }) =>
-            status === 'created_awaiting_reserve'
+          render={({ employmentStatus }) =>
+            employmentStatus === 'created_awaiting_reserve'
               ? 'Create Reserve'
               : 'Invite Employee'
           }
@@ -795,13 +795,13 @@ describe('OnboardingInvite', () => {
 
       await screen.findByText('Custom Invite Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
-        status: 'invited',
+        employmentStatus: 'invited',
       });
     });
 
     it('should call render prop with "created_awaiting_reserve" status for reserve flow', async () => {
-      const mockRenderProp = vi.fn(({ status }) =>
-        status === 'created_awaiting_reserve'
+      const mockRenderProp = vi.fn(({ employmentStatus }) =>
+        employmentStatus === 'created_awaiting_reserve'
           ? 'Custom Reserve Button'
           : 'Custom Invite Button',
       );
@@ -840,7 +840,7 @@ describe('OnboardingInvite', () => {
 
       await screen.findByText('Custom Reserve Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
-        status: 'created_awaiting_reserve',
+        employmentStatus: 'created_awaiting_reserve',
       });
     });
 
@@ -891,7 +891,7 @@ describe('OnboardingInvite', () => {
 
       await screen.findByText('Hidden Deposit Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
-        status: 'invited',
+        employmentStatus: 'invited',
       });
     });
   });
