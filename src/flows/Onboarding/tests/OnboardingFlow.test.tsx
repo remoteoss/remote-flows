@@ -331,6 +331,9 @@ describe('OnboardingFlow', () => {
           ],
         });
       }),
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json(employmentResponse);
+      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
@@ -518,10 +521,42 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-    await fillCountry('Portugal');
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-    await fillBasicInformation();
+        // If we have a countryCode, use the steps without country selection
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+    render(
+      <OnboardingFlow
+        employmentId="1234"
+        countryCode="PRT"
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -529,6 +564,8 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -538,7 +575,9 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue('john.doe@gmail.com');
+    expect(employeePersonalEmail).toHaveValue(
+      employmentResponse.data.employment.personal_email,
+    );
   });
 
   it('should submit the basic information step', async () => {
@@ -922,4 +961,64 @@ describe('OnboardingFlow', () => {
       expect(postSpy).toHaveBeenCalledTimes(1); // Still only called once
     });
   });
+
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
+    'should automatically navigate to review step when employment status is %s',
+    async (status) => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                status: status,
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Contract Details',
+            [2]: 'Benefits',
+            [3]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <OnboardingFlow
+          countryCode="PRT"
+          employmentId="1234"
+          {...defaultProps}
+        />,
+        {
+          wrapper,
+        },
+      );
+
+      // Wait for loading to finish
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Should automatically go to review step instead of starting from select country
+      await screen.findByText(/Step: Review/i);
+    },
+  );
 });

@@ -18,7 +18,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -52,6 +52,12 @@ const stepToFormSchemaMap: Record<
   benefits: null,
   review: null,
 };
+
+const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+];
 
 export const useOnboarding = ({
   employmentId,
@@ -90,6 +96,7 @@ export const useOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
+    setStepValues,
   } = useStepState(
     stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
@@ -119,7 +126,14 @@ export const useOnboarding = ({
     unknown
   >;
 
-  const { data: onboardingForm, isLoading: isLoadingBasicInformation } =
+  const isOnboardingFormEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
+  );
+
+  const { data: onboardingForm, isLoading: isLoadingOnboardingForm } =
     useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: formType,
@@ -131,9 +145,7 @@ export const useOnboarding = ({
             }
           : serverEmploymentData,
       options: options,
-      enabled: Boolean(
-        stepState.currentStep.name !== 'select_country' && internalCountryCode,
-      ),
+      enabled: isOnboardingFormEnabled,
     });
 
   const {
@@ -145,23 +157,36 @@ export const useOnboarding = ({
     options,
   );
 
-  const benefitsFormValues = {
-    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-    ...fieldValues,
-  };
+  const initialValuesBenefitOffers = useMemo(() => {
+    if (stepState.currentStep.name === 'benefits') {
+      const benefitsFormValues = {
+        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+        ...fieldValues,
+      };
+      return mergeWith({}, benefitOffers, benefitsFormValues);
+    }
+    return {};
+  }, [
+    stepState.currentStep.name,
+    benefitOffers,
+    stepState.values,
+    fieldValues,
+  ]);
 
-  const initialValuesBenefitOffers =
-    stepState.currentStep.name === 'benefits'
-      ? mergeWith({}, benefitOffers, benefitsFormValues)
-      : {};
-
-  const stepFields: Record<keyof typeof STEPS, Fields> = {
-    select_country: selectCountryForm?.fields || [],
-    basic_information: onboardingForm?.fields || [],
-    contract_details: onboardingForm?.fields || [],
-    benefits: benefitOffersSchema?.fields || [],
-    review: [],
-  };
+  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+    () => ({
+      select_country: selectCountryForm?.fields || [],
+      basic_information: onboardingForm?.fields || [],
+      contract_details: onboardingForm?.fields || [],
+      benefits: benefitOffersSchema?.fields || [],
+      review: [],
+    }),
+    [
+      selectCountryForm?.fields,
+      onboardingForm?.fields,
+      benefitOffersSchema?.fields,
+    ],
+  );
 
   const initialValues = {
     select_country: getInitialValues(stepFields[stepState.currentStep.name], {
@@ -178,15 +203,94 @@ export const useOnboarding = ({
     benefits: initialValuesBenefitOffers || {},
   };
 
+  const isLoading =
+    isLoadingOnboardingForm ||
+    isLoadingEmployment ||
+    isLoadingBenefitsOffersSchema ||
+    isLoadingBenefitOffers ||
+    isLoadingCompany ||
+    isLoadingCountries;
+
+  useEffect(() => {
+    if (
+      employmentId &&
+      employment &&
+      reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
+      !isLoading &&
+      stepState.currentStep.name !== 'review'
+    ) {
+      const selectCountryInitialValues = getInitialValues(
+        stepFields['select_country'],
+        {
+          country: internalCountryCode || employment?.country.code || '',
+        },
+      );
+
+      const basicInformationInitialValues = getInitialValues(
+        stepFields['basic_information'],
+        employment?.basic_information || {},
+      );
+
+      const contractDetailsInitialValues = getInitialValues(
+        stepFields['contract_details'],
+        employment?.contract_details || {},
+      );
+
+      const benefitsInitialValues = getInitialValues(
+        stepFields['benefits'],
+        initialValuesBenefitOffers || {},
+      );
+      fieldsMetaRef.current = {
+        select_country: prettifyFormValues(
+          selectCountryInitialValues,
+          stepFields['select_country'],
+        ),
+        basic_information: prettifyFormValues(
+          basicInformationInitialValues,
+          stepFields['basic_information'],
+        ),
+        contract_details: prettifyFormValues(
+          contractDetailsInitialValues,
+          stepFields['contract_details'],
+        ),
+        benefits: prettifyFormValues(
+          benefitsInitialValues,
+          stepFields['benefits'],
+        ),
+      };
+
+      setStepValues({
+        select_country: selectCountryInitialValues,
+        basic_information: basicInformationInitialValues,
+        contract_details: contractDetailsInitialValues,
+        benefits: benefitsInitialValues,
+        review: {},
+      });
+
+      goToStep('review');
+    }
+  }, [
+    employmentId,
+    employment,
+    isLoading,
+    internalCountryCode,
+    goToStep,
+    initialValuesBenefitOffers,
+    stepFields,
+    stepState.currentStep.name,
+    setStepValues,
+  ]);
+
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
-    if (onboardingForm && stepState.currentStep.name !== 'select_country') {
+    if (onboardingForm) {
       return parseJSFToValidate(values, onboardingForm?.fields, {
         isPartialValidation: true,
       });
     }
+
     return {};
   }
 
@@ -309,13 +413,7 @@ export const useOnboarding = ({
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
-    isLoading:
-      isLoadingBasicInformation ||
-      isLoadingEmployment ||
-      isLoadingBenefitsOffersSchema ||
-      isLoadingBenefitOffers ||
-      isLoadingCompany ||
-      isLoadingCountries,
+    isLoading: isLoading,
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
@@ -348,6 +446,7 @@ export const useOnboarding = ({
         const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
         return onboardingForm?.handleValidation(parsedValues);
       }
+
       return null;
     },
     /**

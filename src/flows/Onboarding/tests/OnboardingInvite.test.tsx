@@ -76,6 +76,7 @@ const mockRender = vi.fn(
 const defaultProps = {
   companyId: '1234',
   employmentId: '1234',
+  countryCode: 'PRT',
   options: {},
   render: mockRender,
 };
