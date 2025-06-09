@@ -68,7 +68,7 @@ export function ReviewStep({ render }: ReviewStepProps) {
     (onboardingBag.creditRiskStatus && !isCreditRiskStatusInExclusionList) ||
     (onboardingBag.employment?.status && hasEmploymentStatusThatHidesDeposit);
 
-  const getCreditRiskType = (): CreditRiskState => {
+  const getCreditRiskState = (): CreditRiskState => {
     // Priority 1: Deposit required flow
     if (shouldShowDepositFlow) {
       return creditScore.showReserveInvoice
@@ -85,10 +85,10 @@ export function ReviewStep({ render }: ReviewStepProps) {
     return null;
   };
 
-  const creditRiskType = getCreditRiskType();
+  const creditRiskState = getCreditRiskState();
 
   return render({
-    creditRiskState: creditRiskType,
+    creditRiskState,
     creditRiskStatus: onboardingBag.creditRiskStatus,
   });
 }

@@ -4,7 +4,7 @@ import {
   OnboardingRenderProps,
   OnboardingInviteProps,
   Employment,
-  CreditRiskType,
+  CreditRiskState,
 } from '@remoteoss/remote-flows';
 export const InviteSection = ({
   title,
@@ -25,15 +25,15 @@ export const InviteSection = ({
 };
 
 const CreditRiskSections = ({
-  creditRiskType,
+  creditRiskState,
   creditRiskStatus,
   employment,
 }: {
-  creditRiskType: CreditRiskType;
+  creditRiskState: CreditRiskState;
   creditRiskStatus?: CreditRiskStatus;
   employment?: Employment;
 }) => {
-  switch (creditRiskType) {
+  switch (creditRiskState) {
     case 'deposit_required':
       return (
         <InviteSection
@@ -231,11 +231,11 @@ export const ReviewStep = ({
         </InviteSection>
       )}
       <ReviewStepCreditRisk
-        render={({ creditRiskType, creditRiskStatus }) => {
+        render={({ creditRiskState, creditRiskStatus }) => {
           return (
             <>
               <CreditRiskSections
-                creditRiskType={creditRiskType}
+                creditRiskState={creditRiskState}
                 creditRiskStatus={creditRiskStatus}
                 employment={onboardingBag.employment}
               />
