@@ -236,52 +236,51 @@ export const useOnboarding = ({
       !isLoading &&
       stepState.currentStep.name !== 'review'
     ) {
+      const selectCountryInitialValues = getInitialValues(
+        stepFields['select_country'],
+        {
+          country: internalCountryCode || employment?.country.code || '',
+        },
+      );
+
+      const basicInformationInitialValues = getInitialValues(
+        stepFields['basic_information'],
+        employment?.basic_information || {},
+      );
+
+      const contractDetailsInitialValues = getInitialValues(
+        stepFields['contract_details'],
+        employment?.contract_details || {},
+      );
+
+      const benefitsInitialValues = getInitialValues(
+        stepFields['benefits'],
+        initialValuesBenefitOffers || {},
+      );
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
-          getInitialValues(stepFields['select_country'], {
-            country: internalCountryCode || employment?.country.code || '',
-          }),
+          selectCountryInitialValues,
           stepFields['select_country'],
         ),
         basic_information: prettifyFormValues(
-          getInitialValues(
-            stepFields['basic_information'],
-            employment?.basic_information || {},
-          ),
+          basicInformationInitialValues,
           stepFields['basic_information'],
         ),
         contract_details: prettifyFormValues(
-          getInitialValues(
-            stepFields['contract_details'],
-            employment?.contract_details || {},
-          ),
+          contractDetailsInitialValues,
           stepFields['contract_details'],
         ),
         benefits: prettifyFormValues(
-          getInitialValues(
-            stepFields['benefits'],
-            initialValuesBenefitOffers || {},
-          ),
+          benefitsInitialValues,
           stepFields['benefits'],
         ),
       };
 
       setStepValues({
-        select_country: getInitialValues(stepFields['select_country'], {
-          country: internalCountryCode || employment?.country.code || '',
-        }),
-        basic_information: getInitialValues(
-          stepFields['basic_information'],
-          employment?.basic_information || {},
-        ),
-        contract_details: getInitialValues(
-          stepFields['contract_details'],
-          employment?.contract_details || {},
-        ),
-        benefits: getInitialValues(
-          stepFields['benefits'],
-          initialValuesBenefitOffers || {},
-        ),
+        select_country: selectCountryInitialValues,
+        basic_information: basicInformationInitialValues,
+        contract_details: contractDetailsInitialValues,
+        benefits: benefitsInitialValues,
         review: {},
       });
 
