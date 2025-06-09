@@ -65,10 +65,6 @@ export function ReviewStep({ render }: ReviewStepProps) {
 
   const creditRiskType = getCreditRiskType();
 
-  console.log('ReviewStep creditRiskType:', creditRiskType);
-
-  console.log('creditScore state', { creditScore });
-
   return render({
     creditRiskType: creditRiskType,
     creditRiskStatus: onboardingBag.creditRiskStatus,
