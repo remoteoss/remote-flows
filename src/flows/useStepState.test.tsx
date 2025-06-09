@@ -198,4 +198,51 @@ describe('useStepState', () => {
     });
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
+
+  it('should set all step values at once with setStepValues', () => {
+    const { result } = renderHook(() => useStepState(mockSteps));
+
+    const allStepValues = {
+      step1: { name: 'John', email: 'john@example.com' },
+      step2: { age: 30, position: 'Developer' },
+      step3: { skills: ['React', 'TypeScript'], experience: 5 },
+    };
+
+    act(() => {
+      result.current.setStepValues(allStepValues);
+    });
+
+    expect(result.current.stepState.values).toEqual(allStepValues);
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1); // Should stay on current step
+  });
+
+  it('should allow navigation to any step after setting values with setStepValues', () => {
+    const { result } = renderHook(() => useStepState(mockSteps));
+
+    const allStepValues = {
+      step1: { name: 'John' },
+      step2: { age: 30 },
+      step3: { email: 'john@example.com' },
+    };
+
+    act(() => {
+      result.current.setStepValues(allStepValues);
+    });
+
+    // Should be able to navigate to any step since all are filled
+    act(() => {
+      result.current.goToStep('step3');
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step3);
+
+    act(() => {
+      result.current.goToStep('step2');
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
+
+    act(() => {
+      result.current.goToStep('step1');
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+  });
 });
