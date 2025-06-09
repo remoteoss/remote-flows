@@ -95,8 +95,10 @@ describe('OnboardingSubmit Component', () => {
   it('passes correct props to custom button component', () => {
     const CustomButton = vi
       .fn()
-      .mockImplementationOnce(({ children }) => (
-        <button data-testid="custom-button">{children}</button>
+      .mockImplementationOnce(({ children, ...props }) => (
+        <button data-testid="custom-button" {...props}>
+          {children}
+        </button>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -119,21 +121,26 @@ describe('OnboardingSubmit Component', () => {
     const call = CustomButton.mock.calls[0][0];
     expect(call.form).toBe(mockFormId);
     expect(call.children).toBe('Submit Application');
-    expect(call.props).toEqual(additionalProps);
+    expect(call.onClick).toBe(mockOnClick);
+    expect(call.disabled).toBe(true);
+    expect(call.className).toBe('custom-class');
+    expect(call.type).toBe('submit');
   });
 
   it('handles custom button component with form interaction correctly', () => {
-    const CustomButton = vi
-      .fn()
-      .mockImplementationOnce(({ form, children, props }) => (
+    const CustomButton = vi.fn().mockImplementationOnce(
+      (
+        { form, children, ...props }, // Changed: destructure onClick directly
+      ) => (
         <button
           data-testid="custom-button"
           form={form}
-          onClick={props?.onClick}
+          onClick={props.onClick} // Changed: use onClick directly, not props?.onClick
         >
           {children}
         </button>
-      ));
+      ),
+    );
 
     (useFormFields as any).mockReturnValue({
       components: { button: CustomButton },
@@ -179,5 +186,54 @@ describe('OnboardingSubmit Component', () => {
     const button = screen.getByRole('button', { name: 'Submit' });
     expect(button).toBeInTheDocument();
     expect(button).not.toHaveAttribute('form');
+  });
+
+  it('passes unknown props like variant to custom button component', () => {
+    const CustomButton = vi
+      .fn()
+      .mockImplementationOnce(({ children, variant, form, ...props }) => (
+        <button
+          data-testid="custom-button"
+          data-variant={variant}
+          form={form}
+          {...props}
+        >
+          {children}
+        </button>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { button: CustomButton },
+    });
+
+    render(
+      <OnboardingSubmit
+        onClick={mockOnClick}
+        variant="outline"
+        className="submit-button"
+        disabled={false}
+      >
+        Continue
+      </OnboardingSubmit>,
+    );
+
+    // Verify the custom button was called
+    expect(CustomButton).toHaveBeenCalledTimes(1);
+
+    // Verify the component received all props including unknown ones
+    const call = CustomButton.mock.calls[0][0];
+    expect(call.form).toBe(mockFormId);
+    expect(call.children).toBe('Continue');
+    expect(call.variant).toBe('outline');
+    expect(call.className).toBe('submit-button');
+    expect(call.disabled).toBe(false);
+    expect(call.onClick).toBe(mockOnClick);
+
+    // Verify the rendered output contains the variant
+    const customButton = screen.getByTestId('custom-button');
+    expect(customButton).toHaveAttribute('data-variant', 'outline');
+    expect(customButton).toHaveAttribute('form', mockFormId);
+    expect(customButton).toHaveClass('submit-button');
+    expect(customButton).not.toBeDisabled();
   });
 });

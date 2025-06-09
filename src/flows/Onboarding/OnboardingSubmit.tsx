@@ -6,13 +6,15 @@ import { useFormFields } from '@/src/context';
 export function OnboardingSubmit({
   children,
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
+}: PropsWithChildren<
+  ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
+>) {
   const { formId } = useOnboardingContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
   if (CustomButton) {
-    return <CustomButton form={formId} children={children} props={props} />;
+    return <CustomButton form={formId} children={children} {...props} />;
   }
 
   return (

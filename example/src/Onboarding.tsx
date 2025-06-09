@@ -12,7 +12,11 @@ import {
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
-import React, { useState } from 'react';
+import React, {
+  ButtonHTMLAttributes,
+  PropsWithChildren,
+  useState,
+} from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
@@ -74,6 +78,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
+              variant="outline"
             >
               Continue
             </SubmitButton>
@@ -239,12 +244,28 @@ type OnboardingFormData = {
   employmentId: string;
 };
 
+const Button = ({
+  children,
+  variant,
+  ...props
+}: PropsWithChildren<
+  ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
+>) => {
+  console.log('variant', variant);
+  return <button {...props}>{children}</button>;
+};
+
 const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows auth={fetchToken}>
+  <RemoteFlows
+    components={{
+      button: Button,
+    }}
+    auth={fetchToken}
+  >
     <OnboardingFlow
       companyId={companyId}
       type={type}
