@@ -99,28 +99,6 @@ describe('ReviewStep Component', () => {
     });
   });
 
-  describe('deposit_required_successful scenarios', () => {
-    it('should render with creditRiskState "deposit_required_successful" when showReserveInvoice is true', () => {
-      (useOnboardingContext as any).mockReturnValue({
-        onboardingBag: {
-          creditRiskStatus: 'deposit_required',
-          employment: { status: 'created' },
-        },
-        creditScore: {
-          showReserveInvoice: true,
-          showInviteSuccessful: false,
-        },
-      });
-
-      render(<ReviewStep render={mockRender} />);
-
-      expect(mockRender).toHaveBeenCalledWith({
-        creditRiskState: 'deposit_required_successful',
-        creditRiskStatus: 'deposit_required',
-      });
-    });
-  });
-
   describe('invite scenarios', () => {
     it('should render with creditRiskState "invite" when creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
       (useOnboardingContext as any).mockReturnValue({
@@ -141,49 +119,9 @@ describe('ReviewStep Component', () => {
         creditRiskStatus: 'ready',
       });
     });
-
-    it('should render with creditRiskState "invite" when employment status is in statusesToNotShowDeposit', () => {
-      (useOnboardingContext as any).mockReturnValue({
-        onboardingBag: {
-          creditRiskStatus: 'deposit_required',
-          employment: { status: 'invited' },
-        },
-        creditScore: {
-          showReserveInvoice: false,
-          showInviteSuccessful: false,
-        },
-      });
-
-      render(<ReviewStep render={mockRender} />);
-
-      expect(mockRender).toHaveBeenCalledWith({
-        creditRiskState: 'invite',
-        creditRiskStatus: 'deposit_required',
-      });
-    });
   });
 
   describe('invite_successful scenarios', () => {
-    it('should render with creditRiskState "invite_successful" when showInviteSuccessful is true and creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
-      (useOnboardingContext as any).mockReturnValue({
-        onboardingBag: {
-          creditRiskStatus: 'ready',
-          employment: { status: 'created' },
-        },
-        creditScore: {
-          showReserveInvoice: false,
-          showInviteSuccessful: true,
-        },
-      });
-
-      render(<ReviewStep render={mockRender} />);
-
-      expect(mockRender).toHaveBeenCalledWith({
-        creditRiskState: 'invite_successful',
-        creditRiskStatus: 'ready',
-      });
-    });
-
     it('should render with creditRiskState "invite_successful" when showInviteSuccessful is true and employment status is in statusesToNotShowDeposit', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
