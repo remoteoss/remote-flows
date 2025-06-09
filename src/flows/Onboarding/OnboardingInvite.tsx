@@ -1,26 +1,40 @@
-import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { SuccessResponse } from '@/src/client';
+import { Employment, SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 
-export type OnboardingInviteProps = PropsWithChildren<
-  ButtonHTMLAttributes<HTMLButtonElement> & {
-    onSuccess?: (data: SuccessResponse) => void | Promise<void>;
-    onError?: (error: unknown) => void;
-    onSubmit?: () => void | Promise<void>;
-  }
->;
+export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  onSuccess?: ({
+    data,
+    employmentStatus,
+  }: {
+    data: SuccessResponse;
+    employmentStatus: 'invited' | 'created_awaiting_reserve';
+  }) => void | Promise<void>;
+  onError?: (error: unknown) => void;
+  onSubmit?: () => void | Promise<void>;
+  render: (props: {
+    employmentStatus: 'invited' | 'created_awaiting_reserve';
+  }) => ReactNode;
+};
+
+const employmentStatusList: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+];
 
 export function OnboardingInvite({
   onSubmit,
   onSuccess,
   onError,
+  render,
   ...props
 }: OnboardingInviteProps) {
-  const { onboardingBag } = useOnboardingContext();
+  const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
@@ -37,13 +51,23 @@ export function OnboardingInvite({
       await onSubmit?.();
       if (
         onboardingBag.creditRiskStatus === 'deposit_required' &&
-        onboardingBag.employmentId
+        onboardingBag.employmentId &&
+        onboardingBag.employment?.status &&
+        !employmentStatusList.includes(onboardingBag.employment?.status)
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(response.data as SuccessResponse);
+          await onSuccess?.({
+            data: response.data as SuccessResponse,
+            employmentStatus: 'created_awaiting_reserve',
+          });
+          setCreditScore?.((prev) => ({
+            ...prev,
+            showReserveInvoice: true,
+          }));
+          onboardingBag.refetchEmployment();
           return;
         }
 
@@ -55,7 +79,15 @@ export function OnboardingInvite({
           employment_id: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(response.data as SuccessResponse);
+          await onSuccess?.({
+            data: response.data as SuccessResponse,
+            employmentStatus: 'invited',
+          });
+          setCreditScore?.((prev) => ({
+            ...prev,
+            showInviteSuccessful: true,
+          }));
+          onboardingBag.refetchEmployment();
           return;
         }
         if (response.error) {
@@ -67,18 +99,28 @@ export function OnboardingInvite({
     }
   };
 
+  const isReserveFlow =
+    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    onboardingBag.employment?.status &&
+    !employmentStatusList.includes(onboardingBag.employment.status);
+
   return (
     <Button
       {...props}
+      disabled={
+        employmentInviteMutation.isPending ||
+        useCreateReserveInvoiceMutation.isPending ||
+        props.disabled
+      }
       onClick={() => {
         handleSubmit();
       }}
     >
-      {props.children === undefined
-        ? onboardingBag.creditRiskStatus === 'deposit_required'
-          ? 'Create Reserve'
-          : 'Invite Employee'
-        : props.children}
+      {render({
+        employmentStatus: isReserveFlow
+          ? 'created_awaiting_reserve'
+          : 'invited',
+      })}
     </Button>
   );
 }

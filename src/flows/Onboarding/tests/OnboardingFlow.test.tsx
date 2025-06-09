@@ -174,9 +174,18 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite onSuccess={mockOnSuccess}>
-              Invite Employee
-            </OnboardingInvite>
+            <OnboardingInvite
+              render={({
+                status,
+              }: {
+                status: 'invited' | 'created_awaiting_reserve';
+              }) => {
+                return status === 'created_awaiting_reserve'
+                  ? 'Create Reserve'
+                  : 'Invite Employee';
+              }}
+              onSuccess={mockOnSuccess}
+            />
           </div>
         );
     }
@@ -258,9 +267,10 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite onSuccess={mockOnSuccess}>
-              Invite Employee
-            </OnboardingInvite>
+            <OnboardingInvite
+              render={() => 'Invite Employee'}
+              onSuccess={mockOnSuccess}
+            />
           </div>
         );
     }
@@ -303,6 +313,9 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         HttpResponse.json(companyResponse);
+      }),
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json(employmentResponse);
       }),
       http.get('*/v1/countries', () => {
         return HttpResponse.json({
