@@ -9,5 +9,5 @@ export type {
   SelectCountrySuccess,
   CreditRiskStatus,
   Employment,
-  CreditRiskVariant,
+  CreditRiskType,
 } from './types';
