@@ -9,6 +9,7 @@ import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
+import { CreditRisk } from '@/src/flows/Onboarding/CreditRisk';
 
 export type OnboardingRenderProps = {
   /**
@@ -28,6 +29,8 @@ export type OnboardingRenderProps = {
    * @see {@link BenefitsStep}
    * @see {@link OnboardingCreateReserve}
    * @see {@link InvitationSection}
+   * @see {@link SelectCountryStep}
+   * @see {@link CreditRisk}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -37,6 +40,7 @@ export type OnboardingRenderProps = {
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
     SelectCountryStep: typeof SelectCountryStep;
+    CreditRisk: typeof CreditRisk;
   };
 };
 
@@ -81,6 +85,7 @@ export const OnboardingFlow = ({
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
           SelectCountryStep: SelectCountryStep,
+          CreditRisk: CreditRisk,
         },
       })}
     </OnboardingContext.Provider>
