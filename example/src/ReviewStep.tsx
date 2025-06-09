@@ -232,9 +232,6 @@ export const ReviewStep = ({
       )}
       <ReviewStepCreditRisk
         render={({ creditRiskType, creditRiskStatus }) => {
-          console.log({
-            creditRiskType,
-          });
           return (
             <>
               <CreditRiskSections
