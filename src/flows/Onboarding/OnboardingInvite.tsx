@@ -18,7 +18,7 @@ export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   }) => ReactNode;
 };
 
-const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
+const employmentStatusList: Employment['status'][] = [
   'invited',
   'created_awaiting_reserve',
   'created_reserve_paid',
@@ -50,7 +50,7 @@ export function OnboardingInvite({
         onboardingBag.creditRiskStatus === 'deposit_required' &&
         onboardingBag.employmentId &&
         onboardingBag.employment?.status &&
-        !FINAL_EMPLOYMENT_STATUSES.includes(onboardingBag.employment?.status)
+        !employmentStatusList.includes(onboardingBag.employment?.status)
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
@@ -95,8 +95,8 @@ export function OnboardingInvite({
 
   const isReserveFlow =
     onboardingBag.creditRiskStatus === 'deposit_required' &&
-    onboardingBag.employment?.status !== undefined &&
-    !FINAL_EMPLOYMENT_STATUSES.includes(onboardingBag.employment.status);
+    onboardingBag.employment?.status &&
+    !employmentStatusList.includes(onboardingBag.employment.status);
 
   return (
     <Button
