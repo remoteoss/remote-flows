@@ -135,15 +135,11 @@ const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
-  setShowReserveInvoice,
-  setShowInviteSuccessful,
   setApiError,
   employment,
 }: {
   creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
-  setShowReserveInvoice: (show: boolean) => void;
-  setShowInviteSuccessful: (show: boolean) => void;
   setApiError: (error: string | null) => void;
   employment?: Employment;
 }) => {
@@ -155,14 +151,7 @@ export const MyOnboardingInviteButton = ({
       <Component
         disabled={isDisabled}
         className="submit-button"
-        onSuccess={(_, status) => {
-          if (status === 'created_awaiting_reserve') {
-            setShowReserveInvoice(true);
-            return;
-          } else {
-            setShowInviteSuccessful(true);
-          }
-
+        onSuccess={() => {
           console.log(
             'after inviting or creating a reserve navigate to whatever place you want',
           );
@@ -233,12 +222,7 @@ export const ReviewStep = ({
         </InviteSection>
       )}
       <CreditRisk
-        render={({
-          variant,
-          creditRiskStatus,
-          setShowReserveInvoice,
-          setShowInviteSuccessful,
-        }) => {
+        render={({ variant, creditRiskStatus }) => {
           return (
             <>
               <CreditRiskSections
@@ -256,8 +240,6 @@ export const ReviewStep = ({
                 <MyOnboardingInviteButton
                   creditRiskStatus={onboardingBag.creditRiskStatus}
                   Component={OnboardingInvite}
-                  setShowReserveInvoice={setShowReserveInvoice}
-                  setShowInviteSuccessful={setShowInviteSuccessful}
                   setApiError={setApiError}
                   employment={onboardingBag.employment}
                 />

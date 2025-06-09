@@ -9,10 +9,7 @@ import { CreditRiskStatus } from '@/src/flows/Onboarding/types';
 
 export type OnboardingInviteProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & {
-    onSuccess?: (
-      data: SuccessResponse,
-      status: 'invited' | 'created_awaiting_reserve',
-    ) => void | Promise<void>;
+    onSuccess?: (data: SuccessResponse) => void | Promise<void>;
     onError?: (error: unknown) => void;
     onSubmit?: () => void | Promise<void>;
   }
@@ -53,7 +50,8 @@ export function OnboardingInvite({
   onError,
   ...props
 }: OnboardingInviteProps) {
-  const { onboardingBag } = useOnboardingContext();
+  const { onboardingBag, setShowReserveInvoice, setShowInviteSuccessful } =
+    useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
@@ -78,10 +76,8 @@ export function OnboardingInvite({
           employment_slug: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(
-            response.data as SuccessResponse,
-            'created_awaiting_reserve',
-          );
+          await onSuccess?.(response.data as SuccessResponse);
+          setShowReserveInvoice?.(true);
           onboardingBag.refetchEmployment();
           return;
         }
@@ -94,7 +90,8 @@ export function OnboardingInvite({
           employment_id: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(response.data as SuccessResponse, 'invited');
+          await onSuccess?.(response.data as SuccessResponse);
+          setShowInviteSuccessful?.(true);
           onboardingBag.refetchEmployment();
           return;
         }

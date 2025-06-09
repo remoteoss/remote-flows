@@ -4,14 +4,11 @@ import {
   CreditRiskVariant,
   Employment,
 } from '@/src/flows/Onboarding/types';
-import { useState } from 'react';
 
 type CreditRiskProps = {
   render: (props: {
     variant: CreditRiskVariant;
     creditRiskStatus: CreditRiskStatus | undefined;
-    setShowReserveInvoice: (value: boolean) => void;
-    setShowInviteSuccessful: (value: boolean) => void;
   }) => React.ReactNode;
 };
 
@@ -26,10 +23,8 @@ const CREDIT_RISK_STATUSES: CreditRiskStatus[] = [
 ];
 
 export function CreditRisk({ render }: CreditRiskProps) {
-  const { onboardingBag } = useOnboardingContext();
-
-  const [showReserveInvoice, setShowReserveInvoice] = useState(false);
-  const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
+  const { onboardingBag, showInviteSuccessful, showReserveInvoice } =
+    useOnboardingContext();
 
   const showDepositRequiredSection =
     !showReserveInvoice &&
@@ -78,7 +73,5 @@ export function CreditRisk({ render }: CreditRiskProps) {
   return render({
     variant: getVariant(),
     creditRiskStatus: onboardingBag.creditRiskStatus,
-    setShowReserveInvoice,
-    setShowInviteSuccessful,
   });
 }

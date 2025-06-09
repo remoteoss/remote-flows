@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
@@ -68,11 +68,18 @@ export const OnboardingFlow = ({
     options,
   });
 
+  const [showReserveInvoice, setShowReserveInvoice] = useState(false);
+  const [showInviteSuccessful, setShowInviteSuccessful] = useState(false);
+
   return (
     <OnboardingContext.Provider
       value={{
         formId: formId,
         onboardingBag,
+        showReserveInvoice,
+        setShowReserveInvoice,
+        showInviteSuccessful,
+        setShowInviteSuccessful,
       }}
     >
       {render({
