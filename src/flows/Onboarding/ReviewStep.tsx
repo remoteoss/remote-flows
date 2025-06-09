@@ -1,13 +1,13 @@
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import {
   CreditRiskStatus,
-  CreditRiskVariant,
+  CreditRiskType,
   Employment,
 } from '@/src/flows/Onboarding/types';
 
-type CreditRiskProps = {
+type ReviewStepProps = {
   render: (props: {
-    variant: CreditRiskVariant;
+    creditRiskType: CreditRiskType;
     creditRiskStatus: CreditRiskStatus | undefined;
   }) => React.ReactNode;
 };
@@ -22,39 +22,37 @@ const CREDIT_RISK_STATUSES: CreditRiskStatus[] = [
   'referred',
 ];
 
-export function CreditRisk({ render }: CreditRiskProps) {
-  const { onboardingBag, showInviteSuccessful, showReserveInvoice } =
-    useOnboardingContext();
+export function ReviewStep({ render }: ReviewStepProps) {
+  const { onboardingBag, creditScore } = useOnboardingContext();
+
+  const isDepositRequired =
+    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    onboardingBag.employment?.status &&
+    !statusesToNotShowDeposit.includes(onboardingBag.employment?.status);
 
   const showDepositRequiredSection =
-    !showReserveInvoice &&
-    onboardingBag.creditRiskStatus === 'deposit_required' &&
-    onboardingBag.employment?.status &&
-    !statusesToNotShowDeposit.includes(onboardingBag.employment?.status);
+    !creditScore.showReserveInvoice && isDepositRequired;
 
   const showDepositRequiredSuccesfulSection =
-    onboardingBag.creditRiskStatus === 'deposit_required' &&
-    showReserveInvoice &&
-    onboardingBag.employment?.status &&
-    !statusesToNotShowDeposit.includes(onboardingBag.employment?.status);
+    creditScore.showReserveInvoice && isDepositRequired;
 
   const showInviteSection =
-    (!showInviteSuccessful &&
+    (!creditScore.showInviteSuccessful &&
       onboardingBag.creditRiskStatus &&
       !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus)) ||
-    (!showInviteSuccessful &&
+    (!creditScore.showInviteSuccessful &&
       onboardingBag.employment?.status &&
       statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
 
   const showInviteSuccesfulSection =
     (onboardingBag.creditRiskStatus &&
       !CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus) &&
-      showInviteSuccessful) ||
-    (showInviteSuccessful &&
+      creditScore.showInviteSuccessful) ||
+    (creditScore.showInviteSuccessful &&
       onboardingBag.employment?.status &&
       statusesToNotShowDeposit.includes(onboardingBag.employment?.status));
 
-  const getVariant = () => {
+  const getCreditRiskType = () => {
     if (showDepositRequiredSection) {
       return 'deposit_required';
     }
@@ -70,8 +68,14 @@ export function CreditRisk({ render }: CreditRiskProps) {
     return null;
   };
 
+  const creditRiskType = getCreditRiskType();
+
+  console.log('ReviewStep creditRiskType:', creditRiskType);
+
+  console.log('creditScore state', { creditScore });
+
   return render({
-    variant: getVariant(),
+    creditRiskType: creditRiskType,
     creditRiskStatus: onboardingBag.creditRiskStatus,
   });
 }

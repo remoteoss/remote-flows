@@ -62,7 +62,7 @@ export type Employment = EmploymentResponse & {
   termination_date?: string | null;
 };
 
-export type CreditRiskVariant =
+export type CreditRiskType =
   | 'deposit_required'
   | 'deposit_required_successful'
   | 'invite'

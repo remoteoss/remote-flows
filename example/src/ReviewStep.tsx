@@ -4,7 +4,7 @@ import {
   OnboardingRenderProps,
   OnboardingInviteProps,
   Employment,
-  CreditRiskVariant,
+  CreditRiskType,
 } from '@remoteoss/remote-flows';
 export const InviteSection = ({
   title,
@@ -25,15 +25,15 @@ export const InviteSection = ({
 };
 
 const CreditRiskSections = ({
-  variant,
+  creditRiskType,
   creditRiskStatus,
   employment,
 }: {
-  variant: CreditRiskVariant;
+  creditRiskType: CreditRiskType;
   creditRiskStatus?: CreditRiskStatus;
   employment?: Employment;
 }) => {
-  switch (variant) {
+  switch (creditRiskType) {
     case 'deposit_required':
       return (
         <InviteSection
@@ -181,7 +181,11 @@ export const ReviewStep = ({
   onboardingBag: OnboardingRenderProps['onboardingBag'];
   setApiError: (error: string | null) => void;
 }) => {
-  const { OnboardingInvite, BackButton, CreditRisk } = components;
+  const {
+    OnboardingInvite,
+    BackButton,
+    ReviewStep: ReviewStepCreditRisk,
+  } = components;
 
   return (
     <div className="onboarding-review">
@@ -221,12 +225,15 @@ export const ReviewStep = ({
           />
         </InviteSection>
       )}
-      <CreditRisk
-        render={({ variant, creditRiskStatus }) => {
+      <ReviewStepCreditRisk
+        render={({ creditRiskType, creditRiskStatus }) => {
+          console.log({
+            creditRiskType,
+          });
           return (
             <>
               <CreditRiskSections
-                variant={variant}
+                creditRiskType={creditRiskType}
                 creditRiskStatus={creditRiskStatus}
                 employment={onboardingBag.employment}
               />

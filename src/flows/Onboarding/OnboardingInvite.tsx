@@ -53,8 +53,7 @@ export function OnboardingInvite({
   onError,
   ...props
 }: OnboardingInviteProps) {
-  const { onboardingBag, setShowReserveInvoice, setShowInviteSuccessful } =
-    useOnboardingContext();
+  const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
@@ -83,7 +82,10 @@ export function OnboardingInvite({
             response.data as SuccessResponse,
             'created_awaiting_reserve',
           );
-          setShowReserveInvoice?.(true);
+          setCreditScore?.((prev) => ({
+            ...prev,
+            showReserveInvoice: true,
+          }));
           onboardingBag.refetchEmployment();
           return;
         }
@@ -97,7 +99,10 @@ export function OnboardingInvite({
         });
         if (response.data) {
           await onSuccess?.(response.data as SuccessResponse, 'invited');
-          setShowInviteSuccessful?.(true);
+          setCreditScore?.((prev) => ({
+            ...prev,
+            showInviteSuccessful: true,
+          }));
           onboardingBag.refetchEmployment();
           return;
         }
