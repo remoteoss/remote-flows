@@ -7,10 +7,13 @@ import { Employment, SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 
 export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  onSuccess?: (
-    data: SuccessResponse,
-    status: 'invited' | 'created_awaiting_reserve',
-  ) => void | Promise<void>;
+  onSuccess?: ({
+    data,
+    status,
+  }: {
+    data: SuccessResponse;
+    status: 'invited' | 'created_awaiting_reserve';
+  }) => void | Promise<void>;
   onError?: (error: unknown) => void;
   onSubmit?: () => void | Promise<void>;
   render: (props: {
@@ -56,10 +59,10 @@ export function OnboardingInvite({
           employment_slug: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(
-            response.data as SuccessResponse,
-            'created_awaiting_reserve',
-          );
+          await onSuccess?.({
+            data: response.data as SuccessResponse,
+            status: 'created_awaiting_reserve',
+          });
           setCreditScore?.((prev) => ({
             ...prev,
             showReserveInvoice: true,
@@ -76,7 +79,10 @@ export function OnboardingInvite({
           employment_id: onboardingBag.employmentId,
         });
         if (response.data) {
-          await onSuccess?.(response.data as SuccessResponse, 'invited');
+          await onSuccess?.({
+            data: response.data as SuccessResponse,
+            status: 'invited',
+          });
           setCreditScore?.((prev) => ({
             ...prev,
             showInviteSuccessful: true,

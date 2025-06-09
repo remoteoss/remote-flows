@@ -704,10 +704,10 @@ describe('OnboardingInvite', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockSuccess).toHaveBeenCalledWith(
-        { data: { status: 'ok' } },
-        'created_awaiting_reserve',
-      );
+      expect(mockSuccess).toHaveBeenCalledWith({
+        data: { data: { status: 'ok' } },
+        status: 'created_awaiting_reserve',
+      });
     });
   });
 
@@ -752,10 +752,10 @@ describe('OnboardingInvite', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockSuccess).toHaveBeenCalledWith(
-        { data: { status: 'ok' } },
-        'invited',
-      );
+      expect(mockSuccess).toHaveBeenCalledWith({
+        data: { data: { status: 'ok' } },
+        status: 'invited',
+      });
     });
   });
 
