@@ -34,7 +34,7 @@ const CreditRiskSections = ({
   employment?: Employment;
 }) => {
   switch (variant) {
-    case 'depositRequired':
+    case 'deposit_required':
       return (
         <InviteSection
           title="Confirm Details && Continue"
@@ -46,7 +46,7 @@ const CreditRiskSections = ({
           </a>
         </InviteSection>
       );
-    case 'depositRequiredSuccessful':
+    case 'deposit_required_successful':
       return (
         <div className="reserve-invoice">
           <h2>You’ll receive a reserve invoice soon</h2>
@@ -73,7 +73,7 @@ const CreditRiskSections = ({
           description="If you're ready to invite this employee to onboard with Remote, click the button below."
         />
       );
-    case 'inviteSuccessful':
+    case 'invite_successful':
       return (
         <div className="invite-successful">
           <h2>You’re all set!</h2>

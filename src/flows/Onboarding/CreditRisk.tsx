@@ -61,16 +61,16 @@ export function CreditRisk({ render }: CreditRiskProps) {
 
   const getVariant = () => {
     if (showDepositRequiredSection) {
-      return 'depositRequired';
+      return 'deposit_required';
     }
     if (showDepositRequiredSuccesfulSection) {
-      return 'depositRequiredSuccessful';
+      return 'deposit_required_successful';
     }
     if (showInviteSection) {
       return 'invite';
     }
     if (showInviteSuccesfulSection) {
-      return 'inviteSuccessful';
+      return 'invite_successful';
     }
     return null;
   };

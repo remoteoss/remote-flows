@@ -63,8 +63,8 @@ export type Employment = EmploymentResponse & {
 };
 
 export type CreditRiskVariant =
-  | 'depositRequired'
-  | 'depositRequiredSuccessful'
+  | 'deposit_required'
+  | 'deposit_required_successful'
   | 'invite'
-  | 'inviteSuccessful'
+  | 'invite_successful'
   | null;
