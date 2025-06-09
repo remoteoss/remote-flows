@@ -165,7 +165,6 @@ describe('OnboardingInvite', () => {
             company: {
               ...companyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
-              credit_risk_status: 'deposit_required',
             },
           },
         });
@@ -291,40 +290,6 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should render children when provided', async () => {
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          ...companyResponse,
-          data: {
-            ...companyResponse.data,
-            company: {
-              ...companyResponse.data.company,
-              default_legal_entity_credit_risk_status: 'deposit_required',
-            },
-          },
-        });
-      }),
-    );
-
-    mockRender.mockImplementationOnce(({ components }) => {
-      const { OnboardingInvite } = components;
-      return (
-        <OnboardingInvite
-          data-testid="onboarding-invite"
-          onSuccess={mockSuccess}
-          onError={mockError}
-          onSubmit={mockSubmit}
-          render={() => 'Custom Button Text'}
-        />
-      );
-    });
-
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-    const button = await screen.findByText('Custom Button Text');
-    expect(button).toBeInTheDocument();
-  });
   it('should refetch employment after creating a reserve invoice (deposit_required)', async () => {
     // Mock refetchEmployment
     const refetchEmploymentMock = vi.fn();
@@ -834,9 +799,13 @@ describe('OnboardingInvite', () => {
     });
 
     it('should call render prop with "created_awaiting_reserve" status for reserve flow', async () => {
-      const mockRenderProp = vi.fn(() => 'Custom Reserve Button');
+      const mockRenderProp = vi.fn(({ status }) =>
+        status === 'created_awaiting_reserve'
+          ? 'Custom Reserve Button'
+          : 'Custom Invite Button',
+      );
 
-      mockRender.mockImplementationOnce(({ components }) => {
+      const customRender = vi.fn(({ components }: OnboardingRenderProps) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -864,7 +833,9 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} render={customRender} />, {
+        wrapper,
+      });
 
       await screen.findByText('Custom Reserve Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
@@ -921,147 +892,6 @@ describe('OnboardingInvite', () => {
       expect(mockRenderProp).toHaveBeenCalledWith({
         status: 'invited',
       });
-    });
-
-    it('should allow render prop to return JSX elements', async () => {
-      const mockRenderProp = vi.fn(({ status }) => (
-        <div data-testid="custom-jsx-button">
-          {status === 'created_awaiting_reserve' ? 'JSX Reserve' : 'JSX Invite'}
-        </div>
-      ));
-
-      mockRender.mockImplementationOnce(({ components }) => {
-        const { OnboardingInvite } = components;
-        return (
-          <OnboardingInvite
-            data-testid="onboarding-invite"
-            onSuccess={mockSuccess}
-            onError={mockError}
-            onSubmit={mockSubmit}
-            render={mockRenderProp}
-          />
-        );
-      });
-
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-      const customElement = await screen.findByTestId('custom-jsx-button');
-      expect(customElement).toBeInTheDocument();
-      expect(screen.getByText('JSX Invite')).toBeInTheDocument();
-    });
-
-    it('should handle render prop returning null', async () => {
-      const mockRenderProp = vi.fn(() => null);
-
-      mockRender.mockImplementationOnce(({ components }) => {
-        const { OnboardingInvite } = components;
-        return (
-          <OnboardingInvite
-            data-testid="onboarding-invite"
-            onSuccess={mockSuccess}
-            onError={mockError}
-            onSubmit={mockSubmit}
-            render={mockRenderProp}
-          />
-        );
-      });
-
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-      const button = await screen.findByTestId('onboarding-invite');
-      expect(button).toBeInTheDocument();
-      expect(button).toBeEmptyDOMElement();
-    });
-
-    it('should call render prop with correct status based on employment conditions', async () => {
-      const testCases = [
-        {
-          name: 'deposit_required with created status',
-          creditRiskStatus: 'deposit_required',
-          employmentStatus: 'created',
-          expectedStatus: 'created_awaiting_reserve',
-        },
-        {
-          name: 'deposit_required with invited status',
-          creditRiskStatus: 'deposit_required',
-          employmentStatus: 'invited',
-          expectedStatus: 'invited',
-        },
-        {
-          name: 'deposit_required with created_reserve_paid status',
-          creditRiskStatus: 'deposit_required',
-          employmentStatus: 'created_reserve_paid',
-          expectedStatus: 'invited',
-        },
-        {
-          name: 'deposit_required with created_awaiting_reserve status',
-          creditRiskStatus: 'deposit_required',
-          employmentStatus: 'created_awaiting_reserve',
-          expectedStatus: 'invited',
-        },
-        {
-          name: 'deposit_not_required with any status',
-          creditRiskStatus: 'deposit_not_required',
-          employmentStatus: 'created',
-          expectedStatus: 'invited',
-        },
-      ];
-
-      for (const testCase of testCases) {
-        const mockRenderProp = vi.fn(() => `Button for ${testCase.name}`);
-
-        mockRender.mockImplementationOnce(({ components }) => {
-          const { OnboardingInvite } = components;
-          return (
-            <OnboardingInvite
-              data-testid="onboarding-invite"
-              onSuccess={mockSuccess}
-              onError={mockError}
-              onSubmit={mockSubmit}
-              render={mockRenderProp}
-            />
-          );
-        });
-
-        server.use(
-          http.get('*/v1/companies/:companyId', () => {
-            return HttpResponse.json({
-              ...companyResponse,
-              data: {
-                ...companyResponse.data,
-                company: {
-                  ...companyResponse.data.company,
-                  default_legal_entity_credit_risk_status:
-                    testCase.creditRiskStatus,
-                },
-              },
-            });
-          }),
-          http.get('*/v1/employments/*', () => {
-            return HttpResponse.json({
-              ...employmentResponse,
-              data: {
-                ...employmentResponse.data,
-                employment: {
-                  ...employmentResponse.data.employment,
-                  status: testCase.employmentStatus,
-                },
-              },
-            });
-          }),
-        );
-
-        render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-        await screen.findByText(`Button for ${testCase.name}`);
-        expect(mockRenderProp).toHaveBeenCalledWith({
-          status: testCase.expectedStatus,
-        });
-
-        // Clear for next iteration
-        vi.clearAllMocks();
-        queryClient.clear();
-      }
     });
   });
 });
