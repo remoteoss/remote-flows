@@ -1,13 +1,35 @@
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import {
   CreditRiskStatus,
-  CreditRiskType,
+  CreditRiskState,
   Employment,
 } from '@/src/flows/Onboarding/types';
 
 type ReviewStepProps = {
+  /**
+   * Render prop function for customizing the review step credit risk flow UI
+   *
+   * @param props - Object containing credit risk information
+   * @param props.creditRiskState - Current state of the credit risk flow
+   *   - 'deposit_required': Deposit payment is required but not yet paid
+   *   - 'deposit_required_successful': Deposit payment has been successfully processed
+   *   - 'invite': Regular invite flow is available (no deposit required)
+   *   - 'invite_successful': Invitation has been successfully sent
+   *   - null: No specific credit risk state applies
+   *
+   * @param props.creditRiskStatus - Credit risk status from the backend
+   *   - 'not_started': Credit risk assessment has not been initiated
+   *   - 'ready': Ready for credit risk assessment
+   *   - 'in_progress': Credit risk assessment is in progress
+   *   - 'referred': Company has been referred for manual review
+   *   - 'fail': Credit risk assessment failed
+   *   - 'deposit_required': Company requires a deposit payment
+   *   - 'no_deposit_required': No deposit is required for this company
+   *   - undefined: Credit risk status not yet determined
+   * @returns React.ReactNode to render for the review step
+   */
   render: (props: {
-    creditRiskType: CreditRiskType;
+    creditRiskState: CreditRiskState;
     creditRiskStatus: CreditRiskStatus | undefined;
   }) => React.ReactNode;
 };
@@ -46,7 +68,7 @@ export function ReviewStep({ render }: ReviewStepProps) {
     (onboardingBag.creditRiskStatus && !isCreditRiskStatusInExclusionList) ||
     (onboardingBag.employment?.status && hasEmploymentStatusThatHidesDeposit);
 
-  const getCreditRiskType = (): CreditRiskType => {
+  const getCreditRiskType = (): CreditRiskState => {
     // Priority 1: Deposit required flow
     if (shouldShowDepositFlow) {
       return creditScore.showReserveInvoice
@@ -66,7 +88,7 @@ export function ReviewStep({ render }: ReviewStepProps) {
   const creditRiskType = getCreditRiskType();
 
   return render({
-    creditRiskType: creditRiskType,
+    creditRiskState: creditRiskType,
     creditRiskStatus: onboardingBag.creditRiskStatus,
   });
 }

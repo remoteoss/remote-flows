@@ -38,7 +38,7 @@ describe('ReviewStep Component', () => {
   });
 
   describe('deposit_required scenarios', () => {
-    it('should render with creditRiskType "deposit_required" when deposit is required and status allows it', () => {
+    it('should render with creditRiskState "deposit_required" when deposit is required and status allows it', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
@@ -53,7 +53,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'deposit_required',
+        creditRiskState: 'deposit_required',
         creditRiskStatus: 'deposit_required',
       });
     });
@@ -73,7 +73,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite',
+        creditRiskState: 'invite',
         creditRiskStatus: 'deposit_required',
       });
     });
@@ -93,14 +93,14 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite',
+        creditRiskState: 'invite',
         creditRiskStatus: 'deposit_required',
       });
     });
   });
 
   describe('deposit_required_successful scenarios', () => {
-    it('should render with creditRiskType "deposit_required_successful" when showReserveInvoice is true', () => {
+    it('should render with creditRiskState "deposit_required_successful" when showReserveInvoice is true', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
@@ -115,14 +115,14 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'deposit_required_successful',
+        creditRiskState: 'deposit_required_successful',
         creditRiskStatus: 'deposit_required',
       });
     });
   });
 
   describe('invite scenarios', () => {
-    it('should render with creditRiskType "invite" when creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
+    it('should render with creditRiskState "invite" when creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'ready',
@@ -137,12 +137,12 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite',
+        creditRiskState: 'invite',
         creditRiskStatus: 'ready',
       });
     });
 
-    it('should render with creditRiskType "invite" when employment status is in statusesToNotShowDeposit', () => {
+    it('should render with creditRiskState "invite" when employment status is in statusesToNotShowDeposit', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
@@ -157,14 +157,14 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite',
+        creditRiskState: 'invite',
         creditRiskStatus: 'deposit_required',
       });
     });
   });
 
   describe('invite_successful scenarios', () => {
-    it('should render with creditRiskType "invite_successful" when showInviteSuccessful is true and creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
+    it('should render with creditRiskState "invite_successful" when showInviteSuccessful is true and creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'ready',
@@ -179,12 +179,12 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite_successful',
+        creditRiskState: 'invite_successful',
         creditRiskStatus: 'ready',
       });
     });
 
-    it('should render with creditRiskType "invite_successful" when showInviteSuccessful is true and employment status is in statusesToNotShowDeposit', () => {
+    it('should render with creditRiskState "invite_successful" when showInviteSuccessful is true and employment status is in statusesToNotShowDeposit', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
@@ -199,14 +199,14 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite_successful',
+        creditRiskState: 'invite_successful',
         creditRiskStatus: 'deposit_required',
       });
     });
   });
 
   describe('edge cases and null scenarios', () => {
-    it('should render with creditRiskType null when no conditions are met', () => {
+    it('should render with creditRiskState null when no conditions are met', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'referred',
@@ -221,7 +221,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: null,
+        creditRiskState: null,
         creditRiskStatus: 'referred',
       });
     });
@@ -241,7 +241,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: null,
+        creditRiskState: null,
         creditRiskStatus: 'deposit_required',
       });
     });
@@ -261,7 +261,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: null,
+        creditRiskState: null,
         creditRiskStatus: 'deposit_required',
       });
     });
@@ -281,7 +281,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: null,
+        creditRiskState: null,
         creditRiskStatus: undefined,
       });
     });
@@ -303,7 +303,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'deposit_required_successful',
+        creditRiskState: 'deposit_required_successful',
         creditRiskStatus: 'deposit_required',
       });
     });
@@ -323,7 +323,7 @@ describe('ReviewStep Component', () => {
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskType: 'invite_successful',
+        creditRiskState: 'invite_successful',
         creditRiskStatus: 'ready',
       });
     });
@@ -355,17 +355,17 @@ describe('ReviewStep Component', () => {
 
         render(<ReviewStep render={mockRender} />);
 
-        let expectedCreditRiskType;
+        let expectedcreditRiskState;
         if (status === 'deposit_required') {
-          expectedCreditRiskType = 'deposit_required';
+          expectedcreditRiskState = 'deposit_required';
         } else if (status === 'referred') {
-          expectedCreditRiskType = null;
+          expectedcreditRiskState = null;
         } else {
-          expectedCreditRiskType = 'invite';
+          expectedcreditRiskState = 'invite';
         }
 
         expect(mockRender).toHaveBeenCalledWith({
-          creditRiskType: expectedCreditRiskType,
+          creditRiskState: expectedcreditRiskState,
           creditRiskStatus: status,
         });
       });
@@ -390,7 +390,7 @@ describe('ReviewStep Component', () => {
       expect(mockRender).toHaveBeenCalledTimes(1);
       expect(mockRender).toHaveBeenCalledWith(
         expect.objectContaining({
-          creditRiskType: expect.any(String),
+          creditRiskState: expect.any(String),
           creditRiskStatus: expect.any(String),
         }),
       );
