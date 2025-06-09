@@ -1,22 +1,22 @@
-import { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { Employment, SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
-import { CreditRiskStatus } from '@/src/flows/Onboarding/types';
 
-export type OnboardingInviteProps = PropsWithChildren<
-  ButtonHTMLAttributes<HTMLButtonElement> & {
-    onSuccess?: (
-      data: SuccessResponse,
-      status: 'invited' | 'created_awaiting_reserve',
-    ) => void | Promise<void>;
-    onError?: (error: unknown) => void;
-    onSubmit?: () => void | Promise<void>;
-  }
->;
+export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  onSuccess?: (
+    data: SuccessResponse,
+    status: 'invited' | 'created_awaiting_reserve',
+  ) => void | Promise<void>;
+  onError?: (error: unknown) => void;
+  onSubmit?: () => void | Promise<void>;
+  render: (props: {
+    status: 'invited' | 'created_awaiting_reserve';
+  }) => ReactNode;
+};
 
 const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
   'invited',
@@ -24,33 +24,11 @@ const FINAL_EMPLOYMENT_STATUSES: Employment['status'][] = [
   'created_reserve_paid',
 ];
 
-const getLabel = ({
-  children,
-  creditRiskStatus,
-  employmentStatus,
-}: {
-  children: ReactNode;
-  creditRiskStatus?: CreditRiskStatus;
-  employmentStatus?: Employment['status'];
-}) => {
-  if (children) {
-    return children;
-  }
-  if (
-    creditRiskStatus === 'deposit_required' &&
-    employmentStatus &&
-    !FINAL_EMPLOYMENT_STATUSES.includes(employmentStatus)
-  ) {
-    return 'Create Reserve';
-  }
-
-  return 'Invite Employee';
-};
-
 export function OnboardingInvite({
   onSubmit,
   onSuccess,
   onError,
+  render,
   ...props
 }: OnboardingInviteProps) {
   const { onboardingBag, setCreditScore } = useOnboardingContext();
@@ -115,11 +93,10 @@ export function OnboardingInvite({
     }
   };
 
-  const label = getLabel({
-    children: props.children,
-    creditRiskStatus: onboardingBag.creditRiskStatus,
-    employmentStatus: onboardingBag.employment?.status,
-  });
+  const isReserveFlow =
+    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    onboardingBag.employment?.status !== undefined &&
+    !FINAL_EMPLOYMENT_STATUSES.includes(onboardingBag.employment.status);
 
   return (
     <Button
@@ -133,7 +110,9 @@ export function OnboardingInvite({
         handleSubmit();
       }}
     >
-      {label}
+      {render({
+        status: isReserveFlow ? 'created_awaiting_reserve' : 'invited',
+      })}
     </Button>
   );
 }

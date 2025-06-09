@@ -174,9 +174,18 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite onSuccess={mockOnSuccess}>
-              Invite Employee
-            </OnboardingInvite>
+            <OnboardingInvite
+              render={({
+                status,
+              }: {
+                status: 'invited' | 'created_awaiting_reserve';
+              }) => {
+                return status === 'created_awaiting_reserve'
+                  ? 'Create Reserve'
+                  : 'Invite Employee';
+              }}
+              onSuccess={mockOnSuccess}
+            />
           </div>
         );
     }
@@ -258,9 +267,10 @@ describe('OnboardingFlow', () => {
             <h2 className="title">Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
-            <OnboardingInvite onSuccess={mockOnSuccess}>
-              Invite Employee
-            </OnboardingInvite>
+            <OnboardingInvite
+              render={() => 'Invite Employee'}
+              onSuccess={mockOnSuccess}
+            />
           </div>
         );
     }
@@ -303,6 +313,9 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         HttpResponse.json(companyResponse);
+      }),
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json(employmentResponse);
       }),
       http.get('*/v1/countries', () => {
         return HttpResponse.json({
@@ -429,11 +442,6 @@ describe('OnboardingFlow', () => {
   }
 
   it('should skip rendering the select country step when a countryCode is provided', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -569,11 +577,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should retrieve the basic information step based on an employmentId', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
@@ -589,11 +592,6 @@ describe('OnboardingFlow', () => {
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
     const user = userEvent.setup();
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
@@ -650,11 +648,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the contract details step and go to the benefits step', async () => {
-    server.use(
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-    );
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });

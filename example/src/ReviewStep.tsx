@@ -156,6 +156,11 @@ export const MyOnboardingInviteButton = ({
             'after inviting or creating a reserve navigate to whatever place you want',
           );
         }}
+        render={({ status }) => {
+          return status === 'created_awaiting_reserve'
+            ? 'Create Reserve'
+            : 'Invite Employee';
+        }}
         onError={(error: unknown) => {
           if (error instanceof Error) {
             setApiError(error.message);
