@@ -217,42 +217,6 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should call createReserveInvoice when creditRiskStatus is deposit_required', async () => {
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          ...companyResponse,
-          data: {
-            ...companyResponse.data,
-            company: {
-              ...companyResponse.data.company,
-              default_legal_entity_credit_risk_status: 'deposit_required',
-            },
-          },
-        });
-      }),
-    );
-
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-    await screen.findByText(/Step: Select Country/);
-
-    const button = await screen.findByText(/Create Reserve/i);
-    expect(button).toBeInTheDocument();
-
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalledTimes(1);
-    });
-
-    await waitFor(() => {
-      expect(mockSuccess).toHaveBeenCalledTimes(1);
-    });
-
-    expect(mockError).not.toHaveBeenCalled();
-  });
-
   it('should call onError when creating reserve invoice fails', async () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
@@ -552,115 +516,55 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should render "Invite Employee" when employment.status is created_reserve_paid and creditRiskStatus is deposit_required', async () => {
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          ...companyResponse,
-          data: {
-            ...companyResponse.data,
-            company: {
-              ...companyResponse.data.company,
-              default_legal_entity_credit_risk_status: 'deposit_required',
+  it('should render "Invite Employee" when creditRiskStatus is deposit_required but employment status indicates deposit handling', async () => {
+    // Test with various employment statuses that should show "Invite Employee" instead of "Create Reserve"
+    const employmentStatuses = [
+      'created_reserve_paid',
+      'invited',
+      'created_awaiting_reserve',
+    ];
+
+    for (const status of employmentStatuses) {
+      mockRender.mockClear();
+
+      server.use(
+        http.get('*/v1/companies/:companyId', () => {
+          return HttpResponse.json({
+            ...companyResponse,
+            data: {
+              ...companyResponse.data,
+              company: {
+                ...companyResponse.data.company,
+                default_legal_entity_credit_risk_status: 'deposit_required',
+              },
             },
-          },
-        });
-      }),
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              status: 'created_reserve_paid',
+          });
+        }),
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                status,
+              },
             },
-          },
-        });
-      }),
-    );
+          });
+        }),
+      );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
-    const button = await screen.findByText(/Invite Employee/i);
-    expect(button).toBeInTheDocument();
+      const button = await screen.findByText(/Invite Employee/i);
+      expect(button).toBeInTheDocument();
 
-    // Ensure it's not showing "Create Reserve"
-    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
-  });
+      // Ensure it's not showing "Create Reserve"
+      expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
 
-  it('should render "Invite Employee" when employment.status is invited and creditRiskStatus is deposit_required', async () => {
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          ...companyResponse,
-          data: {
-            ...companyResponse.data,
-            company: {
-              ...companyResponse.data.company,
-              default_legal_entity_credit_risk_status: 'deposit_required',
-            },
-          },
-        });
-      }),
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              status: 'invited',
-            },
-          },
-        });
-      }),
-    );
-
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-    const button = await screen.findByText(/Invite Employee/i);
-    expect(button).toBeInTheDocument();
-
-    // Ensure it's not showing "Create Reserve"
-    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
-  });
-
-  it('should render "Invite Employee" when employment.status is created_awaiting_reserve and creditRiskStatus is deposit_required', async () => {
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          ...companyResponse,
-          data: {
-            ...companyResponse.data,
-            company: {
-              ...companyResponse.data.company,
-              default_legal_entity_credit_risk_status: 'deposit_required',
-            },
-          },
-        });
-      }),
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              status: 'created_awaiting_reserve',
-            },
-          },
-        });
-      }),
-    );
-
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
-    const button = await screen.findByText(/Invite Employee/i);
-    expect(button).toBeInTheDocument();
-
-    // Ensure it's not showing "Create Reserve"
-    expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
+      // Clean up before next iteration
+      queryClient.clear();
+    }
   });
 
   it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
@@ -760,10 +664,15 @@ describe('OnboardingInvite', () => {
   });
 
   describe('render prop functionality', () => {
-    it('should call render prop with "invited" status for normal invite flow', async () => {
-      const mockRenderProp = vi.fn(() => 'Custom Invite Button');
+    it('should call render prop with appropriate employmentStatus based on company credit risk status', async () => {
+      // Test both "invited" and "created_awaiting_reserve" statuses in one test
+      const mockRenderProp = vi.fn(({ employmentStatus }) =>
+        employmentStatus === 'created_awaiting_reserve'
+          ? 'Custom Reserve Button'
+          : 'Custom Invite Button',
+      );
 
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -776,6 +685,7 @@ describe('OnboardingInvite', () => {
         );
       });
 
+      // First test with deposit_not_required
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
@@ -791,34 +701,18 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
-
+      const { unmount } = render(<OnboardingFlow {...defaultProps} />, {
+        wrapper,
+      });
       await screen.findByText('Custom Invite Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
         employmentStatus: 'invited',
       });
-    });
 
-    it('should call render prop with "created_awaiting_reserve" status for reserve flow', async () => {
-      const mockRenderProp = vi.fn(({ employmentStatus }) =>
-        employmentStatus === 'created_awaiting_reserve'
-          ? 'Custom Reserve Button'
-          : 'Custom Invite Button',
-      );
+      unmount();
+      mockRenderProp.mockClear();
 
-      const customRender = vi.fn(({ components }: OnboardingRenderProps) => {
-        const { OnboardingInvite } = components;
-        return (
-          <OnboardingInvite
-            data-testid="onboarding-invite"
-            onSuccess={mockSuccess}
-            onError={mockError}
-            onSubmit={mockSubmit}
-            render={mockRenderProp}
-          />
-        );
-      });
-
+      // Then test with deposit_required
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
@@ -834,10 +728,7 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} render={customRender} />, {
-        wrapper,
-      });
-
+      render(<OnboardingFlow {...defaultProps} />, { wrapper });
       await screen.findByText('Custom Reserve Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
         employmentStatus: 'created_awaiting_reserve',
