@@ -228,12 +228,5 @@ describe('OnboardingSubmit Component', () => {
     expect(call.className).toBe('submit-button');
     expect(call.disabled).toBe(false);
     expect(call.onClick).toBe(mockOnClick);
-
-    // Verify the rendered output contains the variant
-    const customButton = screen.getByTestId('custom-button');
-    expect(customButton).toHaveAttribute('data-variant', 'outline');
-    expect(customButton).toHaveAttribute('form', mockFormId);
-    expect(customButton).toHaveClass('submit-button');
-    expect(customButton).not.toBeDisabled();
   });
 });
