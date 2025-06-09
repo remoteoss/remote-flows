@@ -9,10 +9,10 @@ import { useOnboardingContext } from './context';
 export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onSuccess?: ({
     data,
-    status,
+    employmentStatus,
   }: {
     data: SuccessResponse;
-    status: 'invited' | 'created_awaiting_reserve';
+    employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => void | Promise<void>;
   onError?: (error: unknown) => void;
   onSubmit?: () => void | Promise<void>;
@@ -61,7 +61,7 @@ export function OnboardingInvite({
         if (response.data) {
           await onSuccess?.({
             data: response.data as SuccessResponse,
-            status: 'created_awaiting_reserve',
+            employmentStatus: 'created_awaiting_reserve',
           });
           setCreditScore?.((prev) => ({
             ...prev,
@@ -81,7 +81,7 @@ export function OnboardingInvite({
         if (response.data) {
           await onSuccess?.({
             data: response.data as SuccessResponse,
-            status: 'invited',
+            employmentStatus: 'invited',
           });
           setCreditScore?.((prev) => ({
             ...prev,

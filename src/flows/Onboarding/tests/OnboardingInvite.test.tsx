@@ -706,7 +706,7 @@ describe('OnboardingInvite', () => {
     await waitFor(() => {
       expect(mockSuccess).toHaveBeenCalledWith({
         data: { data: { status: 'ok' } },
-        status: 'created_awaiting_reserve',
+        employmentStatus: 'created_awaiting_reserve',
       });
     });
   });
@@ -754,7 +754,7 @@ describe('OnboardingInvite', () => {
     await waitFor(() => {
       expect(mockSuccess).toHaveBeenCalledWith({
         data: { data: { status: 'ok' } },
-        status: 'invited',
+        employmentStatus: 'invited',
       });
     });
   });
