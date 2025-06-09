@@ -53,7 +53,7 @@ const stepToFormSchemaMap: Record<
   review: null,
 };
 
-const statusToGoReviewStep: Employment['status'][] = [
+const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'invited',
   'created_awaiting_reserve',
   'created_reserve_paid',
@@ -215,7 +215,7 @@ export const useOnboarding = ({
     if (
       employmentId &&
       employment &&
-      statusToGoReviewStep.includes(employment?.status) &&
+      reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
       !isLoading &&
       stepState.currentStep.name !== 'review'
     ) {
