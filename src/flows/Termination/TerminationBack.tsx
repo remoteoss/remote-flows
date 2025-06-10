@@ -32,8 +32,9 @@ export function TerminationBack({
   return (
     <Button
       {...props}
-      onClick={() => {
+      onClick={(evt) => {
         back();
+        props.onClick?.(evt);
       }}
     >
       {children}
