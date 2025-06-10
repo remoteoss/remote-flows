@@ -7,6 +7,7 @@ import type {
 import './App.css';
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
+import { components } from './Components';
 
 const STEPS = [
   'Employee Communication',
@@ -85,7 +86,7 @@ const MultiStepForm = ({
               onSubmitStep(payload, 'employee_communication')
             }
           />
-          <SubmitButton>Next Step</SubmitButton>
+          <SubmitButton className="submit-button">Next Step</SubmitButton>
         </>
       );
     case 'termination_details':
@@ -94,8 +95,10 @@ const MultiStepForm = ({
           <TerminationDetailsStep
             onSubmit={(payload) => onSubmitStep(payload, 'termination_details')}
           />
-          <Back>Back</Back>
-          <SubmitButton>Next Step</SubmitButton>
+          <div className="buttons-container">
+            <Back className="back-button">Back</Back>
+            <SubmitButton className="submit-button">Next Step</SubmitButton>
+          </div>
         </>
       );
     case 'paid_time_off':
@@ -123,8 +126,10 @@ const MultiStepForm = ({
           <PaidTimeOffStep
             onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
           />
-          <Back>Back</Back>
-          <SubmitButton>Next Step</SubmitButton>
+          <div className="buttons-container">
+            <Back className="back-button">Back</Back>
+            <SubmitButton className="submit-button">Next Step</SubmitButton>
+          </div>
         </>
       );
 
@@ -137,8 +142,10 @@ const MultiStepForm = ({
             onSuccess={onSuccess}
             onError={onError}
           />
-          <Back>Back</Back>
-          <SubmitButton>Submit</SubmitButton>
+          <div className="buttons-container">
+            <Back>Back</Back>
+            <SubmitButton className="submit-button">Submit</SubmitButton>
+          </div>
         </>
       );
   }
@@ -190,7 +197,7 @@ const TerminationForm = ({
 export const Termination = () => {
   const [open, setOpen] = useState(false);
   return (
-    <RemoteFlows auth={fetchToken}>
+    <RemoteFlows components={components} auth={fetchToken}>
       <TerminationFlow
         employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
         render={TerminationForm}
