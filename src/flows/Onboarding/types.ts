@@ -61,3 +61,10 @@ export type Employment = EmploymentResponse & {
    */
   termination_date?: string | null;
 };
+
+export type CreditRiskState =
+  | 'deposit_required'
+  | 'deposit_required_successful'
+  | 'invite'
+  | 'invite_successful'
+  | null;

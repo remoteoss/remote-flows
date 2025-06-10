@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
@@ -9,6 +9,7 @@ import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
 import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
+import { ReviewStep } from '@/src/flows/Onboarding/ReviewStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -28,6 +29,8 @@ export type OnboardingRenderProps = {
    * @see {@link BenefitsStep}
    * @see {@link OnboardingCreateReserve}
    * @see {@link InvitationSection}
+   * @see {@link SelectCountryStep}
+   * @see {@link ReviewStep}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -37,6 +40,7 @@ export type OnboardingRenderProps = {
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
     SelectCountryStep: typeof SelectCountryStep;
+    ReviewStep: typeof ReviewStep;
   };
 };
 
@@ -64,11 +68,21 @@ export const OnboardingFlow = ({
     options,
   });
 
+  const [creditScore, setCreditScore] = useState<{
+    showReserveInvoice: boolean;
+    showInviteSuccessful: boolean;
+  }>({
+    showReserveInvoice: false,
+    showInviteSuccessful: false,
+  });
+
   return (
     <OnboardingContext.Provider
       value={{
         formId: formId,
         onboardingBag,
+        creditScore,
+        setCreditScore: setCreditScore,
       }}
     >
       {render({
@@ -81,6 +95,7 @@ export const OnboardingFlow = ({
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
           SelectCountryStep: SelectCountryStep,
+          ReviewStep: ReviewStep,
         },
       })}
     </OnboardingContext.Provider>
