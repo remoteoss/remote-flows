@@ -34,7 +34,7 @@ export function OnboardingInvite({
   onError,
   render,
   ...props
-}: OnboardingInviteProps) {
+}: OnboardingInviteProps & Record<string, unknown>) {
   const { components } = useFormFields();
   const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();

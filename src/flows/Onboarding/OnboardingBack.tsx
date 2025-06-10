@@ -6,7 +6,8 @@ import { useFormFields } from '@/src/context';
 export function OnboardingBack({
   children,
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
+  Record<string, unknown>) {
   const {
     onboardingBag: { back },
   } = useOnboardingContext();

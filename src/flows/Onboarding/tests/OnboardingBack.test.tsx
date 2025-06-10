@@ -130,4 +130,53 @@ describe('OnboardingBack Component', () => {
     expect(call.type).toBe('button');
     expect(typeof call.onClick).toBe('function');
   });
+
+  it('forwards multiple custom props to custom button', () => {
+    const CustomButton = vi
+      .fn()
+      .mockImplementationOnce(
+        ({ children, size, variant, intent, ...props }) => (
+          <button
+            data-testid="custom-button"
+            data-size={size}
+            data-variant={variant}
+            data-intent={intent}
+            {...props}
+          >
+            {children}
+          </button>
+        ),
+      );
+
+    (useFormFields as any).mockReturnValue({
+      components: { button: CustomButton },
+    });
+
+    render(
+      <OnboardingBack
+        variant="outline"
+        size="lg"
+        intent="secondary"
+        data-analytics="back-button"
+      >
+        Go Back
+      </OnboardingBack>,
+    );
+
+    expect(CustomButton).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'outline',
+        size: 'lg',
+        intent: 'secondary',
+        'data-analytics': 'back-button',
+      }),
+      {},
+    );
+
+    const button = screen.getByTestId('custom-button');
+    expect(button).toHaveAttribute('data-size', 'lg');
+    expect(button).toHaveAttribute('data-variant', 'outline');
+    expect(button).toHaveAttribute('data-intent', 'secondary');
+    expect(button).toHaveAttribute('data-analytics', 'back-button');
+  });
 });

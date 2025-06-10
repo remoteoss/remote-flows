@@ -1056,5 +1056,53 @@ describe('OnboardingInvite', () => {
         {},
       );
     });
+
+    it('should pass through all props to custom button', async () => {
+      const mockRenderProp = vi.fn(() => 'Custom Props Button');
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            disabled={false}
+            render={mockRenderProp}
+            variant="outline"
+            size="lg"
+            intent="secondary"
+            data-analytics="invite-button"
+            style={{ color: 'red' }}
+            type="button"
+            id="custom-id"
+            data-testid="custom-button"
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      await screen.findByTestId('custom-button');
+
+      expect(MockCustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'data-testid': 'custom-button',
+          variant: 'outline',
+          size: 'lg',
+          intent: 'secondary',
+          'data-analytics': 'invite-button',
+          style: { color: 'red' },
+          type: 'button',
+          id: 'custom-id',
+          disabled: false,
+          onClick: expect.any(Function),
+          children: 'Custom Props Button',
+        }),
+        {},
+      );
+    });
   });
 });
