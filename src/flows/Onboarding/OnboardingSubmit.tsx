@@ -15,7 +15,7 @@ export function OnboardingSubmit({
   const CustomButton = components?.button;
   if (CustomButton) {
     return (
-      <CustomButton form={formId} {...props}>
+      <CustomButton {...props} form={formId}>
         {children}
       </CustomButton>
     );

@@ -106,15 +106,8 @@ export function OnboardingInvite({
     onboardingBag.employment?.status &&
     !employmentStatusList.includes(onboardingBag.employment.status);
 
-  console.log({
-    isReserveFlow,
-    credit: onboardingBag.creditRiskStatus,
-    status: onboardingBag.employment?.status,
-  });
-
   const CustomButton = components?.button;
   if (CustomButton) {
-    console.log('rendering button');
     return (
       <CustomButton
         {...props}
