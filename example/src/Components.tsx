@@ -1,15 +1,12 @@
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
+// you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
   children,
-  variant,
+  /* variant */
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
-  variant?: string;
-}) => {
-  console.log('Button props:', props);
-  console.log('Button variant:', variant);
-  console.log('Button children:', children);
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) => {
+  //console.log('Button component rendered with props:', props.variant); // THIS WILL WORK
   return <button {...props}>{children}</button>;
 };
 

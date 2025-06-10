@@ -99,6 +99,7 @@ describe('TerminationBack', () => {
           className="custom-class"
           data-testid="back-button"
           onClick={mockOnClick}
+          variant="custom"
         >
           Back custom button
         </TerminationBack>,
@@ -113,6 +114,7 @@ describe('TerminationBack', () => {
           'data-testid': 'back-button',
           onClick: expect.any(Function),
           children: 'Back custom button',
+          variant: 'custom',
         }),
         expect.anything(),
       );

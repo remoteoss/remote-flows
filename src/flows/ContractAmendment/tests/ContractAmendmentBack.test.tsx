@@ -101,6 +101,7 @@ describe('ContractAmendmentBack', () => {
         <ContractAmendmentBack
           disabled
           className="custom-class"
+          variant="custom"
           data-testid="back-button"
           onClick={mockOnClick}
         >
@@ -115,6 +116,7 @@ describe('ContractAmendmentBack', () => {
           disabled: true,
           className: 'custom-class',
           'data-testid': 'back-button',
+          variant: 'custom',
           onClick: expect.any(Function),
           children: 'Back custom button',
         }),

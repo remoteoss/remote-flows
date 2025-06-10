@@ -40,7 +40,7 @@ describe('CostCalculatorResetButton', () => {
   });
 
   describe('default behavior (no custom button)', () => {
-    it.only('renders the default Button component with correct attributes and functionality', () => {
+    it('renders the default Button component with correct attributes and functionality', () => {
       render(
         <CostCalculatorResetButton
           disabled
@@ -63,7 +63,7 @@ describe('CostCalculatorResetButton', () => {
       expect(screen.getByText('Reset Form')).toBeInTheDocument();
     });
 
-    it.only('calls reset functions when clicked', () => {
+    it('calls reset functions when clicked', () => {
       render(
         <CostCalculatorResetButton onClick={mockOnClick}>
           Reset
@@ -78,7 +78,7 @@ describe('CostCalculatorResetButton', () => {
       expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
 
-    it.only('calls reset functions even when onClick is not provided', () => {
+    it('calls reset functions even when onClick is not provided', () => {
       render(<CostCalculatorResetButton>Reset</CostCalculatorResetButton>);
 
       const button = screen.getByRole('button', { name: 'Reset' });
@@ -104,13 +104,14 @@ describe('CostCalculatorResetButton', () => {
       });
     });
 
-    it.only('renders the custom button component with correct props and functionality', () => {
+    it('renders the custom button component with correct props and functionality', () => {
       render(
         <CostCalculatorResetButton
           disabled
           className="custom-class"
           data-testid="reset-button"
           onClick={mockOnClick}
+          variant="custom"
         >
           Reset custom button
         </CostCalculatorResetButton>,
@@ -124,6 +125,7 @@ describe('CostCalculatorResetButton', () => {
           disabled: true,
           className: 'custom-class',
           'data-testid': 'reset-button',
+          variant: 'custom',
           type: 'reset',
           onClick: expect.any(Function),
           children: 'Reset custom button',
@@ -132,7 +134,7 @@ describe('CostCalculatorResetButton', () => {
       );
     });
 
-    it.only('calls reset functions when custom button is clicked', () => {
+    it('calls reset functions when custom button is clicked', () => {
       render(
         <CostCalculatorResetButton onClick={mockOnClick}>
           Reset
@@ -147,7 +149,7 @@ describe('CostCalculatorResetButton', () => {
       expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
 
-    it.only('calls reset functions even when onClick is not provided to custom button', () => {
+    it('calls reset functions even when onClick is not provided to custom button', () => {
       render(<CostCalculatorResetButton>Reset</CostCalculatorResetButton>);
 
       const button = screen.getByTestId('custom-button');

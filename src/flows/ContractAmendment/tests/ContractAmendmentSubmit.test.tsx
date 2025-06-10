@@ -76,6 +76,7 @@ describe('ContractAmendmentSubmit', () => {
           className="custom-class"
           data-testid="submit-button"
           aria-label="Submit form"
+          variant="custom"
           onClick={vi.fn()}
         >
           Submit custom button
@@ -91,6 +92,7 @@ describe('ContractAmendmentSubmit', () => {
           className: 'custom-class',
           'data-testid': 'submit-button',
           'aria-label': 'Submit form',
+          variant: 'custom',
           onClick: expect.any(Function),
           children: 'Submit custom button',
         }),

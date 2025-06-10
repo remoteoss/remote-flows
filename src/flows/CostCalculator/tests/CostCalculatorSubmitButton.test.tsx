@@ -78,6 +78,7 @@ describe('CostCalculatorSubmitButton', () => {
           className="custom-class"
           data-testid="submit-button"
           onClick={vi.fn()}
+          variant="custom"
         >
           Submit custom button
         </CostCalculatorSubmitButton>,
@@ -91,6 +92,7 @@ describe('CostCalculatorSubmitButton', () => {
           disabled: true,
           className: 'custom-class',
           'data-testid': 'submit-button',
+          variant: 'custom',
           onClick: expect.any(Function),
           children: 'Submit custom button',
         }),

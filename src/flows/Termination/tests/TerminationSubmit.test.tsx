@@ -77,6 +77,7 @@ describe('TerminationSubmit', () => {
           data-testid="submit-button"
           aria-label="Submit form"
           onClick={vi.fn()}
+          variant="custom"
         >
           Submit
         </TerminationSubmit>,
@@ -93,6 +94,7 @@ describe('TerminationSubmit', () => {
           'aria-label': 'Submit form',
           onClick: expect.any(Function),
           children: 'Submit',
+          variant: 'custom',
         }),
         expect.anything(),
       );
