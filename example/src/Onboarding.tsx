@@ -248,10 +248,12 @@ const Button = ({
   children,
   variant,
   ...props
-}: PropsWithChildren<
-  ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
->) => {
-  console.log('variant', variant);
+}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
+  variant?: string;
+}) => {
+  console.log('Button props:', props);
+  console.log('Button variant:', variant);
+  console.log('Button children:', children);
   return <button {...props}>{children}</button>;
 };
 

@@ -55,20 +55,19 @@ export type Components = {
   }>;
 } & {
   statement?: React.ComponentType<{ data: StatementProps }>;
-  button?: React.ComponentType<{
-    /**
-     * The form ID that the button should be associated with.
-     */
-    form?: string;
-    /**
-     * The children content of the button.
-     */
-    children?: React.ReactNode;
-    /**
-     * Additional props passed to the button component.
-     */
-    props?: React.ButtonHTMLAttributes<HTMLButtonElement>;
-  }>;
+  button?: React.ComponentType<
+    {
+      /**
+       * The form ID that the button should be associated with.
+       */
+      form?: string;
+      /**
+       * The children content of the button.
+       */
+      children?: React.ReactNode;
+    } & React.ButtonHTMLAttributes<HTMLButtonElement> &
+      Record<string, unknown>
+  >;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
