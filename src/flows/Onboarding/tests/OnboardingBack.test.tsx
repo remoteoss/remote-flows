@@ -101,43 +101,27 @@ describe('OnboardingBack Component', () => {
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
-  it('passes correct props to custom button component', () => {
-    const CustomButton = vi
-      .fn()
-      .mockImplementationOnce(({ children, ...props }) => (
-        <button data-testid="custom-button" {...props}>
-          {children}
-        </button>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { button: CustomButton },
-    });
-
-    const additionalProps = {
-      onClick: mockOnClick,
-      disabled: true,
-      className: 'custom-class',
-      type: 'button' as const,
-    };
-
-    render(<OnboardingBack {...additionalProps}>Go Back</OnboardingBack>);
-
-    const call = CustomButton.mock.calls[0][0];
-    expect(call.children).toBe('Go Back');
-    expect(call.disabled).toBe(true);
-    expect(call.className).toBe('custom-class');
-    expect(call.type).toBe('button');
-    expect(typeof call.onClick).toBe('function');
-  });
-
-  it('forwards multiple custom props to custom button', () => {
+  it('passes all props (standard and custom) to custom button component', () => {
     const CustomButton = vi
       .fn()
       .mockImplementationOnce(
-        ({ children, size, variant, intent, ...props }) => (
+        ({
+          children,
+          size,
+          variant,
+          intent,
+          onClick,
+          disabled,
+          className,
+          type,
+          ...props
+        }) => (
           <button
             data-testid="custom-button"
+            onClick={onClick}
+            disabled={disabled}
+            className={className}
+            type={type}
             data-size={size}
             data-variant={variant}
             data-intent={intent}
@@ -154,6 +138,10 @@ describe('OnboardingBack Component', () => {
 
     render(
       <OnboardingBack
+        onClick={mockOnClick}
+        disabled={false}
+        className="custom-class"
+        type="button"
         variant="outline"
         size="lg"
         intent="secondary"
@@ -163,8 +151,14 @@ describe('OnboardingBack Component', () => {
       </OnboardingBack>,
     );
 
+    // Verify all props are passed to the custom button component
     expect(CustomButton).toHaveBeenCalledWith(
       expect.objectContaining({
+        children: 'Go Back',
+        onClick: expect.any(Function),
+        disabled: false,
+        className: 'custom-class',
+        type: 'button',
         variant: 'outline',
         size: 'lg',
         intent: 'secondary',
@@ -173,10 +167,19 @@ describe('OnboardingBack Component', () => {
       {},
     );
 
+    // Verify DOM attributes are properly set
     const button = screen.getByTestId('custom-button');
+    expect(button).not.toBeDisabled();
+    expect(button).toHaveClass('custom-class');
+    expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('data-size', 'lg');
     expect(button).toHaveAttribute('data-variant', 'outline');
     expect(button).toHaveAttribute('data-intent', 'secondary');
     expect(button).toHaveAttribute('data-analytics', 'back-button');
+
+    // Verify onClick functionality works
+    fireEvent.click(button);
+    expect(mockBack).toHaveBeenCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });
