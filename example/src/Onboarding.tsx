@@ -12,13 +12,10 @@ import {
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
 import './App.css';
-import React, {
-  ButtonHTMLAttributes,
-  PropsWithChildren,
-  useState,
-} from 'react';
+import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { components } from './Components';
 
 export const InviteSection = ({
   title,
@@ -244,30 +241,12 @@ type OnboardingFormData = {
   employmentId: string;
 };
 
-const Button = ({
-  children,
-  variant,
-  ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
-  variant?: string;
-}) => {
-  console.log('Button props:', props);
-  console.log('Button variant:', variant);
-  console.log('Button children:', children);
-  return <button {...props}>{children}</button>;
-};
-
 const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows
-    components={{
-      button: Button,
-    }}
-    auth={fetchToken}
-  >
+  <RemoteFlows components={components} auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
