@@ -9,12 +9,6 @@ import {
 import { components } from './Components';
 import './App.css';
 
-const estimationOptions = {
-  title: 'Estimate for a new company',
-  includeBenefits: true,
-  includeCostBreakdowns: true,
-};
-
 const fetchToken = () => {
   return fetch('/api/token')
     .then((res) => res.json())
@@ -28,7 +22,13 @@ const fetchToken = () => {
     });
 };
 
-export function BasicCostCalculator() {
+const estimationOptions = {
+  title: 'Estimate for a new company',
+  includeBenefits: true,
+  includeCostBreakdowns: true,
+};
+
+export const CostCalculatorWithReplaceableComponents = () => {
   const onReset = () => {
     console.log('Reset button clicked');
     // Add your reset logic here
@@ -70,4 +70,4 @@ export function BasicCostCalculator() {
       <CostCalculatorDisclaimer label="Disclaimer" />
     </RemoteFlows>
   );
-}
+};

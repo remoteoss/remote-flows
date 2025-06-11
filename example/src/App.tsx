@@ -32,6 +32,7 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingForm } from './Onboarding';
 import { OnboardingForm as OnboardingFormWithoutSelectCountry } from './OnboardingWithoutSelectCountryStep';
 import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
+import { CostCalculatorWithReplaceableComponents } from './CostCalculatorWithReplaceableComponents';
 
 const sourceCode = {
   // Cost Calculator source codes
@@ -942,6 +943,13 @@ const demoStructure = [
         description: 'Cost Calculator with premium benefits',
         component: CostCalculatorWithPremiumBenefits,
         sourceCode: sourceCode.costCalculatorWithPremiumBenefits,
+      },
+      {
+        id: 'with-components-cost-calculator',
+        title: 'Replacable components',
+        description: 'Cost Calculator with replacable components',
+        component: CostCalculatorWithReplaceableComponents,
+        sourceCode: ``,
       },
     ],
   },

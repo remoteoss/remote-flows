@@ -33,41 +33,58 @@ export type JSFField = {
   multiple?: boolean;
 };
 
+/**
+ * Props for custom field components.
+ * All custom field components receive these three props from React Hook Form's Controller.
+ */
+export type FieldComponentProps = {
+  /**
+   * Field prop from React Hook Form's Controller component.
+   * Contains field state and methods for registration.
+   * You must bind these props to your HTML elements to ensure proper form state management.
+   * @see https://react-hook-form.com/docs/usecontroller/controller
+   */
+  field: ControllerRenderProps<FieldValues, string>;
+  /**
+   * Field state prop from React Hook Form's Controller component.
+   * Contains information about the field's state, such as errors, touched status, etc.
+   * @see https://react-hook-form.com/docs/usecontroller/controller
+   */
+  fieldState: ControllerFieldState;
+  /**
+   * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
+   * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
+   */
+  fieldData: Partial<JSFField>;
+};
+
+/**
+ * Props for custom button components.
+ */
+export type ButtonComponentProps = {
+  /**
+   * The form ID that the button should be associated with.
+   */
+  form?: string;
+  /**
+   * The children content of the button.
+   */
+  children?: React.ReactNode;
+} & React.ButtonHTMLAttributes<HTMLButtonElement> &
+  Record<string, unknown>;
+
+/**
+ * Props for custom statement components.
+ */
+export type StatementComponentProps = {
+  data: StatementProps;
+};
+
 export type Components = {
-  [K in SupportedTypes]?: React.ComponentType<{
-    /**
-     * Field prop from React Hook Form's Controller component.
-     * Contains field state and methods for registration.
-     * @see https://react-hook-form.com/docs/usecontroller/controller
-     */
-    field: ControllerRenderProps<FieldValues, string>;
-    /**
-     * Field state prop from React Hook Form's Controller component.
-     * Contains information about the field's state, such as errors, touched status, etc.
-     * @see https://react-hook-form.com/docs/usecontroller/controller
-     */
-    fieldState: ControllerFieldState;
-    /**
-     * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
-     * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
-     */
-    fieldData: Partial<JSFField>;
-  }>;
+  [K in SupportedTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
-  statement?: React.ComponentType<{ data: StatementProps }>;
-  button?: React.ComponentType<
-    {
-      /**
-       * The form ID that the button should be associated with.
-       */
-      form?: string;
-      /**
-       * The children content of the button.
-       */
-      children?: React.ReactNode;
-    } & React.ButtonHTMLAttributes<HTMLButtonElement> &
-      Record<string, unknown>
-  >;
+  statement?: React.ComponentType<StatementComponentProps>;
+  button?: React.ComponentType<ButtonComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

@@ -69,7 +69,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -100,7 +100,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -129,7 +129,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onError={(error: Error) => setApiError(error.message)}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
