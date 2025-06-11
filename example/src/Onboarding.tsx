@@ -11,11 +11,10 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { components } from './Components';
+import './App.css';
 
 export const InviteSection = ({
   title,
@@ -97,7 +96,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -128,7 +127,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -157,7 +156,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onError={(error: Error) => setApiError(error.message)}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="alert-error">{apiError}</p>}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -246,7 +245,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows components={components} auth={fetchToken}>
+  <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
