@@ -133,27 +133,10 @@ export const useOnboarding = ({
         Boolean(employmentId)),
   );
 
-  const {
-    data: basicInformationForm,
-    isLoading: isLoadingBasicInformationForm,
-  } = useJSONSchemaForm({
-    countryCode: internalCountryCode as string,
-    form: 'employment_basic_information',
-    fieldValues:
-      Object.keys(fieldValues).length > 0
-        ? {
-            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-            ...fieldValues,
-          }
-        : serverEmploymentData,
-    options: options,
-    enabled: isOnboardingFormEnabled,
-  });
-
-  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
-    useJSONSchemaForm({
+  const useJSONSchema = ({ form }: { form: JSONSchemaFormType }) => {
+    return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
-      form: 'contract_details',
+      form: form,
       fieldValues:
         Object.keys(fieldValues).length > 0
           ? {
@@ -163,6 +146,19 @@ export const useOnboarding = ({
           : serverEmploymentData,
       options: options,
       enabled: isOnboardingFormEnabled,
+    });
+  };
+
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useJSONSchema({
+    form: 'employment_basic_information',
+  });
+
+  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
+    useJSONSchema({
+      form: 'contract_details',
     });
 
   const {
