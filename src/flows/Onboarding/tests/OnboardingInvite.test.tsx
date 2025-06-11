@@ -786,4 +786,323 @@ describe('OnboardingInvite', () => {
       });
     });
   });
+
+  describe('custom button component support', () => {
+    const MockCustomButton = vi.fn(
+      ({ children, onClick, disabled, ...props }) => (
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          data-testid="custom-button"
+          {...props}
+        >
+          {children}
+        </button>
+      ),
+    );
+
+    beforeEach(() => {
+      MockCustomButton.mockClear();
+    });
+
+    const customWrapper = ({ children }: PropsWithChildren) => (
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider components={{ button: MockCustomButton }}>
+          {children}
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    );
+
+    it('should use custom button when provided via FormFieldsProvider', async () => {
+      const mockRenderProp = vi.fn(() => 'Custom Button Label');
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            disabled={false}
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={mockRenderProp}
+            className="test-class"
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      const customButton = await screen.findByTestId('custom-button');
+      expect(customButton).toBeInTheDocument();
+      expect(customButton).toHaveTextContent('Custom Button Label');
+
+      // Verify custom button received correct props
+      expect(MockCustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          className: 'test-class',
+          disabled: false,
+          onClick: expect.any(Function),
+          children: 'Custom Button Label',
+        }),
+        {},
+      );
+    });
+
+    it('should apply disabled state correctly to custom button', async () => {
+      mockRender.mockImplementationOnce(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            disabled={true}
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Disabled Button'}
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      const customButton = await screen.findByTestId('custom-button');
+      expect(customButton).toBeDisabled();
+
+      expect(MockCustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          disabled: true,
+        }),
+        {},
+      );
+    });
+
+    it('should handle onClick correctly with custom button', async () => {
+      const mockOnClick = vi.fn();
+
+      mockRender.mockImplementationOnce(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onClick={mockOnClick}
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Clickable Button'}
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      const customButton = await screen.findByTestId('custom-button');
+      fireEvent.click(customButton);
+
+      await waitFor(() => {
+        expect(mockOnClick).toHaveBeenCalled();
+        expect(mockSubmit).toHaveBeenCalled();
+      });
+    });
+
+    it('should disable custom button during mutation loading', async () => {
+      server.use(
+        http.post('*/v1/employments/:employmentId/invite', () => {
+          // Return a delayed response to keep the mutation pending
+          return new Promise(() => {}); // Never resolves to keep pending
+        }),
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Loading Button'}
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      const customButton = await screen.findByTestId('custom-button');
+      expect(customButton).not.toBeDisabled(); // Initially not disabled
+
+      fireEvent.click(customButton);
+
+      // Wait for the button to become disabled due to pending mutation
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            disabled: true,
+          }),
+          {},
+        );
+      });
+    });
+
+    it('should work with reserve flow using custom button', async () => {
+      const mockRenderProp = vi.fn(({ employmentStatus }) =>
+        employmentStatus === 'created_awaiting_reserve'
+          ? 'Custom Create Reserve'
+          : 'Custom Invite Employee',
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={mockRenderProp}
+          />
+        );
+      });
+
+      server.use(
+        http.get('*/v1/companies/:companyId', () => {
+          return HttpResponse.json({
+            ...companyResponse,
+            data: {
+              ...companyResponse.data,
+              company: {
+                ...companyResponse.data.company,
+                default_legal_entity_credit_risk_status: 'deposit_required',
+              },
+            },
+          });
+        }),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      const customButton = await screen.findByTestId('custom-button');
+      await waitFor(() => {
+        expect(customButton).toHaveTextContent('Custom Create Reserve');
+      });
+
+      expect(mockRenderProp).toHaveBeenCalledWith({
+        employmentStatus: 'created_awaiting_reserve',
+      });
+    });
+
+    it('should fallback to default Button when no custom button provided', async () => {
+      // Use default wrapper without custom button
+      mockRender.mockImplementationOnce(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            data-testid="onboarding-invite"
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Default Button'}
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+      const button = await screen.findByTestId('onboarding-invite');
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveTextContent('Default Button');
+
+      // Should not have called custom button
+      expect(MockCustomButton).not.toHaveBeenCalled();
+    });
+
+    it('should pass through all props to custom button', async () => {
+      mockRender.mockImplementationOnce(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            disabled={false}
+            render={() => 'Custom Props Button'}
+            style={{ color: 'red' }}
+            type="button"
+            id="custom-id"
+            data-testid="custom-button"
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      await screen.findByTestId('custom-button');
+
+      expect(MockCustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'data-testid': 'custom-button',
+          style: { color: 'red' },
+          type: 'button',
+          id: 'custom-id',
+          children: 'Custom Props Button',
+        }),
+        {},
+      );
+    });
+
+    it('should pass through all props to custom button', async () => {
+      const mockRenderProp = vi.fn(() => 'Custom Props Button');
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            disabled={false}
+            render={mockRenderProp}
+            variant="outline"
+            size="lg"
+            intent="secondary"
+            data-analytics="invite-button"
+            style={{ color: 'red' }}
+            type="button"
+            id="custom-id"
+            data-testid="custom-button"
+          />
+        );
+      });
+
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: customWrapper,
+      });
+
+      await screen.findByTestId('custom-button');
+
+      expect(MockCustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'data-testid': 'custom-button',
+          variant: 'outline',
+          size: 'lg',
+          intent: 'secondary',
+          'data-analytics': 'invite-button',
+          style: { color: 'red' },
+          type: 'button',
+          id: 'custom-id',
+          disabled: false,
+          onClick: expect.any(Function),
+          children: 'Custom Props Button',
+        }),
+        {},
+      );
+    });
+  });
 });

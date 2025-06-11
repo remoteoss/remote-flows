@@ -15,6 +15,7 @@ import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { components } from './Components';
 
 export const InviteSection = ({
   title,
@@ -74,6 +75,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
+              variant="outline"
             >
               Continue
             </SubmitButton>
@@ -244,7 +246,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows auth={fetchToken}>
+  <RemoteFlows components={components} auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
