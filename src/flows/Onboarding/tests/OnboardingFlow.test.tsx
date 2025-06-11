@@ -1164,4 +1164,92 @@ describe('OnboardingFlow', () => {
       ).toBeInTheDocument();
     },
   );
+
+  it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
+    const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
+
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              status: 'invited', // This should trigger auto-navigation to review
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        const currentStepName = steps[currentStepIndex];
+
+        // Track every step that gets rendered
+        if (!onboardingBag.isLoading && currentStepName) {
+          renderSequence.push({
+            isLoading: onboardingBag.isLoading,
+            step: onboardingBag.isLoading ? undefined : currentStepName,
+          });
+        }
+
+        // Return the current step or loading state
+        if (onboardingBag.isLoading) {
+          return <div data-testid="spinner">Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {currentStepName}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId="1234"
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    // Wait for loading to finish
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Should go directly to review step
+    await screen.findByText(/Step: Review/i);
+
+    // Filter out just the non-loading renders to see what steps were actually shown
+    const nonLoadingRenders = renderSequence
+      .filter((render) => !render.isLoading)
+      .map((render) => render.step);
+
+    // Should only show Review step, never any intermediate steps
+    expect(nonLoadingRenders).toEqual(['Review']);
+
+    // Verify the sequence: should be loading states followed by Review only
+    const hasIntermediateSteps = renderSequence.some(
+      (render) => !render.isLoading && render.step !== 'Review',
+    );
+
+    expect(hasIntermediateSteps).toBe(false);
+  });
 });

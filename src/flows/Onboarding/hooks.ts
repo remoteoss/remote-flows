@@ -230,7 +230,7 @@ export const useOnboarding = ({
     benefits: initialValuesBenefitOffers || {},
   };
 
-  const isLoading =
+  const initialLoading =
     isLoadingBasicInformationForm ||
     isLoadingContractDetailsForm ||
     isLoadingEmployment ||
@@ -239,14 +239,18 @@ export const useOnboarding = ({
     isLoadingCompany ||
     isLoadingCountries;
 
-  useEffect(() => {
-    if (
-      employmentId &&
+  const isNavigatingToReview = Boolean(
+    employmentId &&
       employment &&
       reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
-      !isLoading &&
-      stepState.currentStep.name !== 'review'
-    ) {
+      !initialLoading &&
+      stepFields['basic_information'].length > 0 &&
+      stepFields['contract_details'].length > 0 &&
+      stepState.currentStep.name !== 'review',
+  );
+
+  useEffect(() => {
+    if (isNavigatingToReview) {
       const selectCountryInitialValues = getInitialValues(
         stepFields['select_country'],
         {
@@ -300,14 +304,17 @@ export const useOnboarding = ({
   }, [
     employmentId,
     employment,
-    isLoading,
+    initialLoading,
     internalCountryCode,
     goToStep,
     initialValuesBenefitOffers,
     stepFields,
     stepState.currentStep.name,
     setStepValues,
+    isNavigatingToReview,
   ]);
+
+  const isLoading = initialLoading || isNavigatingToReview;
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
