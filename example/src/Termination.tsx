@@ -4,10 +4,9 @@ import type {
   TerminationFormValues,
   OffboardingResponse,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
-import { components } from './Components';
+import './App.css';
 
 const STEPS = [
   'Employee Communication',
@@ -197,7 +196,7 @@ const TerminationForm = ({
 export const Termination = () => {
   const [open, setOpen] = useState(false);
   return (
-    <RemoteFlows components={components} auth={fetchToken}>
+    <RemoteFlows auth={fetchToken}>
       <TerminationFlow
         employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
         render={TerminationForm}
