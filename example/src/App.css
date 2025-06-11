@@ -507,12 +507,16 @@ button.reset-button {
 .input.error {
   border-color: #dc2626;
   background-color: #fefefe;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 3px rgba(220, 38, 38, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .input.error:focus {
   border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 3px rgba(220, 38, 38, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Error message styling */
@@ -528,7 +532,7 @@ button.reset-button {
 }
 
 .error-message::before {
-  content: "⚠";
+  content: '⚠';
   font-size: 14px;
   color: #dc2626;
 }
@@ -548,7 +552,6 @@ label {
   margin-bottom: 12px;
 }
 
-
 /* Disabled state */
 .input:disabled {
   background-color: #f8fafc;
@@ -566,7 +569,7 @@ label {
 
 .input.success:focus {
   border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 3px rgba(5, 150, 105, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.05);
 }
-
-
