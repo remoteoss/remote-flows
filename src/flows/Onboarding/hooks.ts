@@ -133,10 +133,27 @@ export const useOnboarding = ({
         Boolean(employmentId)),
   );
 
-  const { data: onboardingForm, isLoading: isLoadingOnboardingForm } =
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useJSONSchemaForm({
+    countryCode: internalCountryCode as string,
+    form: 'employment_basic_information',
+    fieldValues:
+      Object.keys(fieldValues).length > 0
+        ? {
+            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+            ...fieldValues,
+          }
+        : serverEmploymentData,
+    options: options,
+    enabled: isOnboardingFormEnabled,
+  });
+
+  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchemaForm({
       countryCode: internalCountryCode as string,
-      form: formType,
+      form: 'contract_details',
       fieldValues:
         Object.keys(fieldValues).length > 0
           ? {
@@ -176,14 +193,15 @@ export const useOnboarding = ({
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
-      basic_information: onboardingForm?.fields || [],
-      contract_details: onboardingForm?.fields || [],
+      basic_information: basicInformationForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
     }),
     [
       selectCountryForm?.fields,
-      onboardingForm?.fields,
+      basicInformationForm?.fields,
+      contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
   );
@@ -204,7 +222,8 @@ export const useOnboarding = ({
   };
 
   const isLoading =
-    isLoadingOnboardingForm ||
+    isLoadingBasicInformationForm ||
+    isLoadingContractDetailsForm ||
     isLoadingEmployment ||
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
@@ -285,8 +304,20 @@ export const useOnboarding = ({
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
-    if (onboardingForm) {
-      return parseJSFToValidate(values, onboardingForm?.fields, {
+    if (
+      basicInformationForm &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      return parseJSFToValidate(values, basicInformationForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+
+    if (
+      contractDetailsForm &&
+      stepState.currentStep.name === 'contract_details'
+    ) {
+      return parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: true,
       });
     }
@@ -442,9 +473,26 @@ export const useOnboarding = ({
 
         return benefitOffersSchema?.handleValidation(parsedValues);
       }
-      if (onboardingForm) {
-        const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-        return onboardingForm?.handleValidation(parsedValues);
+      if (
+        basicInformationForm &&
+        stepState.currentStep.name === 'basic_information'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          basicInformationForm?.fields,
+        );
+        return basicInformationForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        contractDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractDetailsForm?.fields,
+        );
+        return contractDetailsForm?.handleValidation(parsedValues);
       }
 
       return null;
