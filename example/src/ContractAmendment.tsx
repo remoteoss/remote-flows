@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 import './App.css';
 import { RemoteFlows } from './RemoteFlows';
+import { components } from './Components';
 
 function AmendmentFlow({
   contractAmendmentBag,
@@ -119,7 +120,10 @@ function AmendmentFlow({
 export function ContractAmendment() {
   const EMPLOYMENT_ID = 'b98b7127-d90f-4f5b-b02d-457d65707d35'; // set another employment ID here as it will probably fail for you
   return (
-    <RemoteFlows proxy={{ url: 'http://localhost:3001/' }}>
+    <RemoteFlows
+      components={components}
+      proxy={{ url: 'http://localhost:3001/' }}
+    >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode="PRT"

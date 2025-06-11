@@ -379,6 +379,11 @@ button.submit-button {
   transition: opacity 0.2s;
 }
 
+button.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 button.back-button,
 button.reset-button {
   background-color: white;

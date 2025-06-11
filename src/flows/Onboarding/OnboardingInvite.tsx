@@ -5,6 +5,7 @@ import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { Employment, SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
+import { useFormFields } from '@/src/context';
 
 export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onSuccess?: ({
@@ -33,7 +34,8 @@ export function OnboardingInvite({
   onError,
   render,
   ...props
-}: OnboardingInviteProps) {
+}: OnboardingInviteProps & Record<string, unknown>) {
+  const { components } = useFormFields();
   const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
@@ -103,6 +105,30 @@ export function OnboardingInvite({
     onboardingBag.creditRiskStatus === 'deposit_required' &&
     onboardingBag.employment?.status &&
     !employmentStatusList.includes(onboardingBag.employment.status);
+
+  const CustomButton = components?.button;
+  if (CustomButton) {
+    return (
+      <CustomButton
+        {...props}
+        disabled={
+          employmentInviteMutation.isPending ||
+          useCreateReserveInvoiceMutation.isPending ||
+          props.disabled
+        }
+        onClick={(evt) => {
+          handleSubmit();
+          props.onClick?.(evt);
+        }}
+      >
+        {render({
+          employmentStatus: isReserveFlow
+            ? 'created_awaiting_reserve'
+            : 'invited',
+        })}
+      </CustomButton>
+    );
+  }
 
   return (
     <Button

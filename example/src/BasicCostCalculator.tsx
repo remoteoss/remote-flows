@@ -6,6 +6,7 @@ import {
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
+import { components } from './Components';
 import './App.css';
 
 const estimationOptions = {
@@ -21,7 +22,7 @@ export function BasicCostCalculator() {
   };
 
   return (
-    <RemoteFlows>
+    <RemoteFlows components={components}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

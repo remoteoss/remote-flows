@@ -10,11 +10,12 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
+import { components } from './Components';
+import './App.css';
 
 export const InviteSection = ({
   title,
@@ -74,6 +75,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
+              variant="outline"
             >
               Continue
             </SubmitButton>
@@ -231,7 +233,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows>
+  <RemoteFlows components={components}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
