@@ -80,6 +80,17 @@ export const useOnboarding = ({
     refetch: refetchEmployment,
   } = useEmployment(internalEmploymentId);
 
+  // if the employment is loaded, country code has not been set yet
+  // we set the internal country code with the employment country code
+  if (
+    employment &&
+    employment?.country?.code &&
+    !countryCode &&
+    (!internalCountryCode || internalCountryCode !== employment.country.code)
+  ) {
+    setInternalCountryCode(employment.country.code);
+  }
+
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
   const {
