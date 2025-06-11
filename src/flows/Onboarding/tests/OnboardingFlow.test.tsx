@@ -998,7 +998,7 @@ describe('OnboardingFlow', () => {
   });
 
   it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
-    'should automatically navigate to review step when employment status is %s',
+    'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
       server.use(
         http.get('*/v1/employments/*', () => {
@@ -1054,6 +1054,76 @@ describe('OnboardingFlow', () => {
 
       // Should automatically go to review step instead of starting from select country
       await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify contract details data is displayed in the Review component
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
+    'should automatically navigate to review step when employment status is %s and display employment data',
+    async (status) => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                status: status,
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Contract Details',
+            [3]: 'Benefits',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+        wrapper,
+      });
+
+      // Wait for loading to finish
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Should automatically go to review step instead of starting from select country
+      await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify contract details data is displayed in the Review component
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
     },
   );
 });

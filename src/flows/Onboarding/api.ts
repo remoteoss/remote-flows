@@ -171,13 +171,11 @@ export const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
-  enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: FlowOptions;
-  enabled?: boolean;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -211,7 +209,7 @@ export const useJSONSchemaForm = ({
 
       return response;
     },
-    enabled: enabled,
+    enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {

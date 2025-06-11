@@ -80,6 +80,15 @@ export const useOnboarding = ({
     refetch: refetchEmployment,
   } = useEmployment(internalEmploymentId);
 
+  // if the employment is loaded, country code has not been set yet
+  // we set the internal country code with the employment country code
+  if (
+    employment?.country?.code &&
+    internalCountryCode !== employment.country.code
+  ) {
+    setInternalCountryCode(employment.country.code);
+  }
+
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
   const {
@@ -133,10 +142,10 @@ export const useOnboarding = ({
         Boolean(employmentId)),
   );
 
-  const { data: onboardingForm, isLoading: isLoadingOnboardingForm } =
-    useJSONSchemaForm({
+  const useJSONSchema = ({ form }: { form: JSONSchemaFormType }) => {
+    return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
-      form: formType,
+      form: form,
       fieldValues:
         Object.keys(fieldValues).length > 0
           ? {
@@ -144,8 +153,25 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
-      options: options,
-      enabled: isOnboardingFormEnabled,
+      options: {
+        ...options,
+        queryOptions: {
+          enabled: isOnboardingFormEnabled,
+        },
+      },
+    });
+  };
+
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useJSONSchema({
+    form: 'employment_basic_information',
+  });
+
+  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
+    useJSONSchema({
+      form: 'contract_details',
     });
 
   const {
@@ -176,14 +202,15 @@ export const useOnboarding = ({
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
-      basic_information: onboardingForm?.fields || [],
-      contract_details: onboardingForm?.fields || [],
+      basic_information: basicInformationForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
     }),
     [
       selectCountryForm?.fields,
-      onboardingForm?.fields,
+      basicInformationForm?.fields,
+      contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
   );
@@ -204,7 +231,8 @@ export const useOnboarding = ({
   };
 
   const isLoading =
-    isLoadingOnboardingForm ||
+    isLoadingBasicInformationForm ||
+    isLoadingContractDetailsForm ||
     isLoadingEmployment ||
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
@@ -285,8 +313,20 @@ export const useOnboarding = ({
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
-    if (onboardingForm) {
-      return parseJSFToValidate(values, onboardingForm?.fields, {
+    if (
+      basicInformationForm &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      return parseJSFToValidate(values, basicInformationForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+
+    if (
+      contractDetailsForm &&
+      stepState.currentStep.name === 'contract_details'
+    ) {
+      return parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: true,
       });
     }
@@ -442,9 +482,26 @@ export const useOnboarding = ({
 
         return benefitOffersSchema?.handleValidation(parsedValues);
       }
-      if (onboardingForm) {
-        const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-        return onboardingForm?.handleValidation(parsedValues);
+      if (
+        basicInformationForm &&
+        stepState.currentStep.name === 'basic_information'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          basicInformationForm?.fields,
+        );
+        return basicInformationForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        contractDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractDetailsForm?.fields,
+        );
+        return contractDetailsForm?.handleValidation(parsedValues);
       }
 
       return null;
