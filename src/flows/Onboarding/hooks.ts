@@ -153,8 +153,12 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
-      options: options,
-      enabled: isOnboardingFormEnabled,
+      options: {
+        ...options,
+        queryOptions: {
+          enabled: isOnboardingFormEnabled,
+        },
+      },
     });
   };
 
