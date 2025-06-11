@@ -581,11 +581,43 @@ describe('OnboardingFlow', () => {
   });
 
   it('should submit the basic information step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-    await fillCountry('Portugal');
+        // If we have a countryCode, use the steps without country selection
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
 
-    await fillBasicInformation();
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId="1234"
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -593,23 +625,29 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockOnSubmit.mock.calls[1][0]).toEqual({
+    expect(mockOnSubmit).toHaveBeenCalledWith({
       department: {
         id: undefined,
         name: undefined,
       },
-      email: 'john.doe@gmail.com',
+      email: employmentResponse.data.employment.personal_email,
       has_seniority_date: 'no',
-      job_title: 'Software Engineer',
+      job_title: employmentResponse.data.employment.job_title,
       manager: {
         id: undefined,
       },
-      name: 'John Doe',
-      provisional_start_date: '2025-05-15',
-      work_email: 'john.doe@remote.com',
+      tax_job_category:
+        employmentResponse.data.employment.basic_information.tax_job_category,
+      tax_servicing_countries:
+        employmentResponse.data.employment.basic_information
+          .tax_servicing_countries,
+      name: employmentResponse.data.employment.basic_information.name,
+      provisional_start_date:
+        employmentResponse.data.employment.provisional_start_date,
+      work_email: employmentResponse.data.employment.work_email,
     });
 
     await screen.findByText(/Step: Contract Details/i);
