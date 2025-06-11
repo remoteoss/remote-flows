@@ -1,13 +1,14 @@
-import { TerminationFlow, RemoteFlows } from '@remoteoss/remote-flows';
+import { TerminationFlow } from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
   OffboardingResponse,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
+import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import './App.css';
 
 const STEPS = [
   'Employee Communication',
@@ -27,19 +28,6 @@ const TerminationReasonDetailsDescription = ({
     <a onClick={onClick}>Learn more termination details</a>
   </>
 );
-
-const fetchToken = () => {
-  return fetch('/api/token')
-    .then((res) => res.json())
-    .then((data) => ({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-    }))
-    .catch((error) => {
-      console.error({ error });
-      throw error;
-    });
-};
 
 type MultiStepFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
@@ -196,10 +184,11 @@ const TerminationForm = ({
 
 export const Termination = () => {
   const [open, setOpen] = useState(false);
+  const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
   return (
-    <RemoteFlows components={components} auth={fetchToken}>
+    <RemoteFlows components={components}>
       <TerminationFlow
-        employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
+        employmentId={EMPLOYMENT_ID}
         render={TerminationForm}
         options={{
           jsfModify: {

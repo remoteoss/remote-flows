@@ -6,10 +6,10 @@ import { createServer as createViteServer } from 'vite';
 dotenv.config();
 
 const getToken = async (req, res) => {
-  const { CLIENT_ID, CLIENT_SECRET, REMOTE_GATEWAY, REFRESH_TOKEN } =
+  const { CLIENT_ID, CLIENT_SECRET, VITE_REMOTE_GATEWAY, REFRESH_TOKEN } =
     process.env;
 
-  if (!CLIENT_ID || !CLIENT_SECRET || !REMOTE_GATEWAY || !REFRESH_TOKEN) {
+  if (!CLIENT_ID || !CLIENT_SECRET || !VITE_REMOTE_GATEWAY || !REFRESH_TOKEN) {
     return res
       .status(400)
       .json({ error: 'Missing clientId or clientSecret or RemoteGateway' });
@@ -22,7 +22,7 @@ const getToken = async (req, res) => {
   try {
     // to get a refresh token, you need to create a company first
     const response = await axios.post(
-      `${REMOTE_GATEWAY}/auth/oauth2/token`,
+      `${VITE_REMOTE_GATEWAY}/auth/oauth2/token`,
       new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: REFRESH_TOKEN,
@@ -61,7 +61,7 @@ const startServer = async () => {
   // Proxy middleware for all other API requests
   app.use('/v1', async (req, res) => {
     try {
-      const targetUrl = `${process.env.REMOTE_GATEWAY}${req.originalUrl}`;
+      const targetUrl = `${process.env.VITE_REMOTE_GATEWAY}${req.originalUrl}`;
 
       const response = await axios({
         method: req.method,
@@ -70,7 +70,7 @@ const startServer = async () => {
         params: req.query,
         headers: {
           ...req.headers,
-          host: new URL(process.env.REMOTE_GATEWAY).host,
+          host: new URL(process.env.VITE_REMOTE_GATEWAY).host,
         },
       });
       res.status(response.status).json(response.data);

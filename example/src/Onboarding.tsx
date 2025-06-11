@@ -1,6 +1,5 @@
 import {
   OnboardingFlow,
-  RemoteFlows,
   OnboardingRenderProps,
   SuccessResponse,
   BenefitsFormPayload,
@@ -11,11 +10,12 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import './App.css';
 
 export const InviteSection = ({
   title,
@@ -221,19 +221,6 @@ const OnBoardingRender = ({
   );
 };
 
-const fetchToken = () => {
-  return fetch('/api/token')
-    .then((res) => res.json())
-    .then((data) => ({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-    }))
-    .catch((error) => {
-      console.error({ error });
-      throw error;
-    });
-};
-
 type OnboardingFormData = {
   countryCode?: string;
   companyId: string;
@@ -246,7 +233,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows components={components} auth={fetchToken}>
+  <RemoteFlows components={components}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
@@ -260,7 +247,7 @@ export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
     employmentId: '',
-    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 

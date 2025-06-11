@@ -3,7 +3,6 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  RemoteFlows,
   useCostCalculatorEstimationPdf,
   buildCostCalculatorEstimationPayload,
 } from '@remoteoss/remote-flows';
@@ -13,6 +12,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import './App.css';
 import { useState } from 'react';
+import { RemoteFlows } from './RemoteFlows';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -91,21 +91,8 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithExportPdf() {
-  const fetchToken = () => {
-    return fetch('/api/token')
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-      }))
-      .catch((error) => {
-        console.error({ error });
-        throw error;
-      });
-  };
-
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
