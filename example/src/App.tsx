@@ -33,7 +33,15 @@ import { OnboardingForm } from './Onboarding';
 import { OnboardingForm as OnboardingFormWithoutSelectCountry } from './OnboardingWithoutSelectCountryStep';
 import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
 import { CostCalculatorWithReplaceableComponents } from './CostCalculatorWithReplaceableComponents';
-import { sourceCode } from './sourceCodeContent';
+import BasicCostCalculatorCode from './BasicCostCalculator?raw';
+import BasicCostCalculatorDefaultValuesCode from './BasicCostCalculatorDefaultValues?raw';
+import BasicCostCalculatorLabelsCode from './BasicCostCalculatorLabels?raw';
+import CostCalculatorWithResultsCode from './CostCalculatorWithResults?raw';
+import CostCalculatorWithExportPdfCode from './CostCalculatorWithExportPdf?raw';
+import CostCalculatorWithPremiumBenefitsCode from './CostCalculatorWithPremiumBenefits?raw';
+import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithReplaceableComponents?raw';
+import TerminationCode from './Termination?raw';
+import ContractAmendmentCode from './ContractAmendment?raw';
 
 const demoStructure = [
   {
@@ -47,49 +55,49 @@ const demoStructure = [
         title: 'Basic',
         description: 'The most basic cost calculator',
         component: BasicCostCalculator,
-        sourceCode: sourceCode.basicCostCalculator,
+        sourceCode: BasicCostCalculatorCode,
       },
       {
         id: 'with-default-values-cost-calculator',
         title: 'Default Values',
         description: 'Cost Calculator with default values',
         component: BasicCostCalculatorWithDefaultValues,
-        sourceCode: sourceCode.basicCostCalculatorWithDefaultValues,
+        sourceCode: BasicCostCalculatorDefaultValuesCode,
       },
       {
         id: 'with-custom-labels-cost-calculator',
         title: 'Custom Fields Labels',
         description: 'Custom Field Labels in Cost Calculator',
         component: BasicCostCalculatorLabels,
-        sourceCode: sourceCode.basicCostCalculatorLabels,
+        sourceCode: BasicCostCalculatorLabelsCode,
       },
       {
         id: 'with-results-cost-calculator',
         title: 'Estimation Results',
         description: 'Cost Calculator with an estimation component',
         component: CostCalculatorWithResults,
-        sourceCode: sourceCode.costCalculatorWithResults,
+        sourceCode: CostCalculatorWithResultsCode,
       },
       {
         id: 'with-export-pdf-cost-calculator',
         title: 'Export PDF',
         description: 'Cost Calculator with an estimation component',
         component: CostCalculatorWithExportPdf,
-        sourceCode: sourceCode.costCalculatorWithExportPdf,
+        sourceCode: CostCalculatorWithExportPdfCode,
       },
       {
         id: 'with-premium-benefits-cost-calculator',
         title: 'Premium Benefits',
         description: 'Cost Calculator with premium benefits',
         component: CostCalculatorWithPremiumBenefits,
-        sourceCode: sourceCode.costCalculatorWithPremiumBenefits,
+        sourceCode: CostCalculatorWithPremiumBenefitsCode,
       },
       {
         id: 'with-components-cost-calculator',
         title: 'Replacable components',
         description: 'Cost Calculator with replacable components',
         component: CostCalculatorWithReplaceableComponents,
-        sourceCode: sourceCode.costCalculatorWithReplaceableComponents,
+        sourceCode: CostCalculatorWithReplaceableComponentsCode,
       },
     ],
   },
@@ -98,14 +106,14 @@ const demoStructure = [
     title: 'Termination Flow',
     description: 'Process for terminating employments',
     component: Termination,
-    sourceCode: sourceCode.terminationFlow,
+    sourceCode: TerminationCode,
   },
   {
     id: 'contract-amendments',
     title: 'Contract Amendments',
     description: 'Manage changes to existing contracts',
     component: ContractAmendment,
-    sourceCode: sourceCode.contractAmendments,
+    sourceCode: ContractAmendmentCode,
   },
   {
     id: 'onboarding',
