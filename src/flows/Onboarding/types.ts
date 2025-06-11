@@ -1,4 +1,7 @@
-import { EmploymentCreateParams } from '@/src/client';
+import {
+  EmploymentCreateParams,
+  Employment as EmploymentResponse,
+} from '@/src/client';
 import { FlowOptions } from '@/src/flows/types';
 
 export type OnboardingFlowParams = {
@@ -51,3 +54,17 @@ export type CreditRiskStatus =
   | 'fail'
   | 'deposit_required'
   | 'no_deposit_required';
+
+export type Employment = EmploymentResponse & {
+  /**
+   * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
+   */
+  termination_date?: string | null;
+};
+
+export type CreditRiskState =
+  | 'deposit_required'
+  | 'deposit_required_successful'
+  | 'invite'
+  | 'invite_successful'
+  | null;

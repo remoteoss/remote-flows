@@ -1,5 +1,6 @@
 export { OnboardingFlow } from './OnboardingFlow';
 export type { OnboardingRenderProps } from './OnboardingFlow';
+export type { OnboardingInviteProps } from './OnboardingInvite';
 export type {
   BenefitsFormPayload,
   BasicInformationFormPayload,
@@ -7,4 +8,6 @@ export type {
   SelectCountryFormPayload,
   SelectCountrySuccess,
   CreditRiskStatus,
+  Employment,
+  CreditRiskState,
 } from './types';
