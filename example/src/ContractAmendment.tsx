@@ -6,7 +6,6 @@ import {
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import './App.css';
-import { components } from './Components';
 
 function AmendmentFlow({
   contractAmendmentBag,
@@ -132,7 +131,10 @@ export function ContractAmendment() {
   };
 
   return (
-    <RemoteFlows components={components} auth={() => fetchToken()}>
+    <RemoteFlows
+      proxy={{ url: 'http://localhost:3001/' }}
+      auth={() => fetchToken()}
+    >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode="PRT"

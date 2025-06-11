@@ -11,11 +11,10 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { components } from './Components';
+import './App.css';
 
 export const InviteSection = ({
   title,
@@ -246,7 +245,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
 }: OnboardingFormData) => (
-  <RemoteFlows components={components} auth={fetchToken}>
+  <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
