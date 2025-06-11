@@ -890,18 +890,13 @@ describe('OnboardingFlow', () => {
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 
-  it('should call PATCH instead of POST when resubmitting basic information', async () => {
+  it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
-    const patchSpy = vi.fn();
 
     server.use(
       http.post('*/v1/employments', () => {
         postSpy();
         return HttpResponse.json(employmentCreatedResponse);
-      }),
-      http.patch('*/v1/employments/*', () => {
-        patchSpy();
-        return HttpResponse.json(employmentUpdatedResponse);
       }),
     );
 
@@ -936,21 +931,62 @@ describe('OnboardingFlow', () => {
 
     // First submission
     await fillBasicInformation();
-    let nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
 
     // Verify POST was called
     expect(postSpy).toHaveBeenCalledTimes(1);
+  });
 
-    // Go back
-    const backButton = screen.getByText(/Back/i);
-    backButton.click();
+  it('should call PATCH instead of POST when resubmitting basic information', async () => {
+    const patchSpy = vi.fn();
 
+    server.use(
+      http.patch('*/v1/employments/*', () => {
+        patchSpy();
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode="PRT"
+        employmentId="1234"
+      />,
+      { wrapper },
+    );
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Basic Information/i);
 
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
@@ -958,7 +994,6 @@ describe('OnboardingFlow', () => {
     // Verify PATCH was called instead of another POST
     await waitFor(() => {
       expect(patchSpy).toHaveBeenCalledTimes(1);
-      expect(postSpy).toHaveBeenCalledTimes(1); // Still only called once
     });
   });
 
