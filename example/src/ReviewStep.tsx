@@ -201,6 +201,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('basic_information')}
+        disabled={onboardingBag.isEmploymentInFinalState}
       >
         Edit Basic Information
       </button>
@@ -209,6 +210,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('contract_details')}
+        disabled={onboardingBag.isEmploymentInFinalState}
       >
         Edit Contract Details
       </button>
@@ -218,6 +220,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('benefits')}
+        disabled={onboardingBag.isEmploymentInFinalState}
       >
         Edit Benefits
       </button>

@@ -397,6 +397,11 @@ button.reset-button {
   transition: opacity 0.2s;
 }
 
+.back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .alert-error {
   color: #dc2626;
   background-color: #fee2e2;
