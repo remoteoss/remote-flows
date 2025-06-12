@@ -244,6 +244,7 @@ export const ReviewStep = ({
               <div className="buttons-container">
                 <BackButton
                   className="back-button"
+                  disabled={onboardingBag.isEmploymentInFinalState}
                   onBackError={(error: Error) => {
                     setApiError(error.message);
                   }}

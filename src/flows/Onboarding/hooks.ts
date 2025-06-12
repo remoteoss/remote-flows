@@ -234,10 +234,13 @@ export const useOnboarding = ({
     isLoadingCompany ||
     isLoadingCountries;
 
+  const isEmploymentInFinalState =
+    employment &&
+    reviewStepAllowedEmploymentStatus.includes(employment?.status);
+
   const isNavigatingToReview = Boolean(
     employmentId &&
-      employment &&
-      reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
+      isEmploymentInFinalState &&
       !initialLoading &&
       stepFields['basic_information'].length > 0 &&
       stepFields['contract_details'].length > 0 &&
@@ -563,5 +566,10 @@ export const useOnboarding = ({
      * Employment data
      */
     employment,
+
+    /**
+     * is employment in a final state
+     */
+    isEmploymentInFinalState: isEmploymentInFinalState,
   };
 };

@@ -22,6 +22,7 @@ describe('OnboardingBack Component', () => {
     (useOnboardingContext as any).mockReturnValue({
       onboardingBag: {
         back: mockBack,
+        isEmploymentInFinalState: false,
       },
     });
     (useFormFields as any).mockReturnValue({ components: {} });
@@ -181,5 +182,77 @@ describe('OnboardingBack Component', () => {
     fireEvent.click(button);
     expect(mockBack).toHaveBeenCalledTimes(1);
     expect(mockOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('when employment is in final state', () => {
+    const mockBack = vi.fn();
+    const mockOnClick = vi.fn();
+    const mockOnBackError = vi.fn(); // Add this line
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      (useOnboardingContext as any).mockReturnValue({
+        onboardingBag: {
+          back: mockBack,
+          isEmploymentInFinalState: true,
+        },
+      });
+      (useFormFields as any).mockReturnValue({ components: {} });
+    });
+
+    it('calls onBackError with appropriate message when clicked', () => {
+      render(
+        <OnboardingBack onClick={mockOnClick} onBackError={mockOnBackError}>
+          Go Back
+        </OnboardingBack>,
+      );
+
+      const button = screen.getByRole('button', { name: 'Go Back' });
+      fireEvent.click(button);
+
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockOnBackError).toHaveBeenCalledWith(
+        new Error('The employment is in a final state and cannot be modified.'),
+      );
+      expect(mockOnClick).toHaveBeenCalled();
+    });
+
+    it('still calls onClick even when in final state', () => {
+      render(<OnboardingBack onClick={mockOnClick}>Go Back</OnboardingBack>);
+
+      const button = screen.getByRole('button', { name: 'Go Back' });
+      fireEvent.click(button);
+
+      expect(mockOnClick).toHaveBeenCalled();
+    });
+
+    it('works with custom button component when in final state', () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, onClick }) => (
+          <button data-testid="custom-button" onClick={onClick}>
+            {children}
+          </button>
+        ));
+
+      (useFormFields as any).mockReturnValue({
+        components: { button: CustomButton },
+      });
+
+      render(
+        <OnboardingBack onClick={mockOnClick} onBackError={mockOnBackError}>
+          Go Back
+        </OnboardingBack>,
+      );
+
+      const button = screen.getByTestId('custom-button');
+      fireEvent.click(button);
+
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockOnBackError).toHaveBeenCalledWith(
+        new Error('The employment is in a final state and cannot be modified.'),
+      );
+      expect(mockOnClick).toHaveBeenCalled();
+    });
   });
 });

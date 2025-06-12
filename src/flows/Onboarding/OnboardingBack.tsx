@@ -2,7 +2,6 @@ import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useFormFields } from '@/src/context';
-import { reviewStepAllowedEmploymentStatus } from '@/src/flows/Onboarding/utils';
 
 type OnboardingBackProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onBackError?: (error: Error) => void;
@@ -15,16 +14,13 @@ export function OnboardingBack({
   ...props
 }: PropsWithChildren<OnboardingBackProps>) {
   const {
-    onboardingBag: { back, employment },
+    onboardingBag: { back, isEmploymentInFinalState },
   } = useOnboardingContext();
 
   const { components } = useFormFields();
 
   const onBackHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    if (
-      employment &&
-      !reviewStepAllowedEmploymentStatus.includes(employment?.status)
-    ) {
+    if (!isEmploymentInFinalState) {
       back();
     } else {
       onBackError(

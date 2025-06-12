@@ -50,9 +50,7 @@ export function OnboardingInvite({
         onboardingBag.creditRiskStatus === 'deposit_required' &&
         onboardingBag.employmentId &&
         onboardingBag.employment?.status &&
-        !reviewStepAllowedEmploymentStatus.includes(
-          onboardingBag.employment?.status,
-        )
+        !onboardingBag.isEmploymentInFinalState
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
@@ -101,9 +99,7 @@ export function OnboardingInvite({
   const isReserveFlow =
     onboardingBag.creditRiskStatus === 'deposit_required' &&
     onboardingBag.employment?.status &&
-    !reviewStepAllowedEmploymentStatus.includes(
-      onboardingBag.employment.status,
-    );
+    !onboardingBag.isEmploymentInFinalState;
 
   const CustomButton = components?.button;
   if (CustomButton) {
