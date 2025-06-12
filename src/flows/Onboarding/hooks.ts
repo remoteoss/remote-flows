@@ -234,7 +234,7 @@ export const useOnboarding = ({
     isLoadingCompany ||
     isLoadingCountries;
 
-  const isEmploymentInFinalState =
+  const isEmploymentReadOnly =
     employment &&
     reviewStepAllowedEmploymentStatus.includes(employment?.status);
 
@@ -294,7 +294,7 @@ export const useOnboarding = ({
 
   const isNavigatingToReviewWhenEmploymentIsFinal = Boolean(
     employmentId &&
-      isEmploymentInFinalState &&
+      isEmploymentReadOnly &&
       !initialLoading &&
       stepFields['basic_information'].length > 0 &&
       stepFields['contract_details'].length > 0 &&
@@ -643,9 +643,9 @@ export const useOnboarding = ({
     employment,
 
     /**
-     * tells you if an employment in a final state and no more actions can be performed
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited, created_awaiting_reserve or created_reserve_paid
      * @returns {boolean}
      */
-    isEmploymentInFinalState,
+    isEmploymentReadOnly,
   };
 };
