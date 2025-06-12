@@ -457,7 +457,6 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            refetchEmployment();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
               response.data?.data?.employment?.id,
@@ -475,7 +474,6 @@ export const useOnboarding = ({
               frequency: 'monthly',
             },
           });
-          refetchEmployment();
           return response;
         }
 
@@ -492,7 +490,6 @@ export const useOnboarding = ({
           employmentId: internalEmploymentId as string,
           ...payload,
         });
-        refetchEmployment();
         return response;
       }
 
@@ -501,7 +498,6 @@ export const useOnboarding = ({
           employmentId: internalEmploymentId as string,
           ...values,
         });
-        refetchEmployment();
         return response;
       }
     }
