@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 export type Step<T extends string> = {
@@ -32,7 +32,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     values: null,
   });
 
-  function nextStep() {
+  const nextStep = useCallback(() => {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
     const nextStep = stepValues.find((step) => step.index === index + 1);
@@ -49,11 +49,11 @@ export const useStepState = <T extends string, Fields = FieldValues>(
           },
         } as { [key in T]: Fields },
       }));
-      setFieldValues({} as Fields); // Reset field values for the next step
+      setFieldValues({} as Fields);
     }
-  }
+  }, [fieldValues, stepState.currentStep, steps]);
 
-  function previousStep() {
+  const previousStep = useCallback(() => {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
     const previousStep = stepValues.find((step) => step.index === index - 1);
@@ -70,26 +70,32 @@ export const useStepState = <T extends string, Fields = FieldValues>(
           },
         } as { [key in T]: Fields },
       }));
-      setFieldValues({} as Fields); // Reset field values for the previous step
+      setFieldValues({} as Fields);
     }
-  }
+  }, [fieldValues, stepState.currentStep, steps]);
 
-  function goToStep(step: T) {
-    // to avoid going to a steps that hasn't been filled yet
-    if (stepState.values?.[step]) {
-      setStepState((previousState) => ({
-        ...previousState,
-        currentStep: steps[step],
-      }));
-    }
-  }
+  const goToStep = useCallback(
+    (step: T) => {
+      setStepState((previousState) => {
+        // Check if we have values for this step
+        if (previousState.values?.[step]) {
+          return {
+            ...previousState,
+            currentStep: steps[step],
+          };
+        }
+        return previousState;
+      });
+    },
+    [steps],
+  );
 
-  function setStepValues(values: Record<T, Fields>) {
+  const setStepValues = useCallback((values: Record<T, Fields>) => {
     setStepState((previousState) => ({
       ...previousState,
       values: values,
     }));
-  }
+  }, []);
 
   return {
     /**

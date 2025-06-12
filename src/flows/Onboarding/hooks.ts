@@ -274,7 +274,6 @@ export const useOnboarding = ({
         stepFields['benefits'],
       ),
     };
-
     setStepValues({
       select_country: initialStepValues.select_country,
       basic_information: initialStepValues.basic_information,
@@ -292,13 +291,22 @@ export const useOnboarding = ({
     stepFields,
   ]);
 
+  // Single ref to track all initial navigations
+  const initialNavigationRef = useRef({
+    review: false,
+    contractDetails: false,
+    benefits: false,
+  });
+
+  // Remove the navigation check from the conditions
   const isNavigatingToReviewWhenEmploymentIsFinal = Boolean(
     employmentId &&
       isEmploymentReadOnly &&
       !initialLoading &&
       stepFields['basic_information'].length > 0 &&
       stepFields['contract_details'].length > 0 &&
-      stepState.currentStep.name !== 'review',
+      stepState.currentStep.name !== 'review' &&
+      !initialNavigationRef.current.review,
   );
 
   const isNavigatingToReview = Boolean(
@@ -313,7 +321,8 @@ export const useOnboarding = ({
       benefitOffers &&
       Object.keys(benefitOffers).length > 0 &&
       stepState.currentStep.name !== 'review' &&
-      !isNavigatingToReviewWhenEmploymentIsFinal,
+      !isNavigatingToReviewWhenEmploymentIsFinal &&
+      !initialNavigationRef.current.review,
   );
 
   const isNavigatingToContractDetails = Boolean(
@@ -326,7 +335,8 @@ export const useOnboarding = ({
       stepFields['contract_details'].length > 0 &&
       stepState.currentStep.name !== 'contract_details' &&
       !isNavigatingToReviewWhenEmploymentIsFinal &&
-      !isNavigatingToReview,
+      !isNavigatingToReview &&
+      !initialNavigationRef.current.contractDetails,
   );
 
   const isNavigatingToBenefits = Boolean(
@@ -341,39 +351,9 @@ export const useOnboarding = ({
       stepState.currentStep.name !== 'benefits' &&
       !isNavigatingToReviewWhenEmploymentIsFinal &&
       !isNavigatingToReview &&
-      !isNavigatingToContractDetails,
+      !isNavigatingToContractDetails &&
+      !initialNavigationRef.current.benefits,
   );
-
-  useEffect(() => {
-    if (isNavigatingToBenefits) {
-      initializeStepValues();
-      goToStep('benefits');
-    }
-  }, [goToStep, initializeStepValues, isNavigatingToBenefits]);
-
-  useEffect(() => {
-    if (isNavigatingToContractDetails) {
-      initializeStepValues();
-      goToStep('contract_details');
-    }
-  }, [
-    isNavigatingToContractDetails,
-    goToStep,
-    initializeStepValues,
-    isNavigatingToReviewWhenEmploymentIsFinal,
-  ]);
-
-  useEffect(() => {
-    if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
-      initializeStepValues();
-      goToStep('review');
-    }
-  }, [
-    isNavigatingToReviewWhenEmploymentIsFinal,
-    isNavigatingToReview,
-    initializeStepValues,
-    goToStep,
-  ]);
 
   const isLoading =
     initialLoading ||
@@ -381,6 +361,43 @@ export const useOnboarding = ({
     isNavigatingToReview ||
     isNavigatingToContractDetails ||
     isNavigatingToBenefits;
+
+  // Single effect to handle all initial navigation
+  useEffect(() => {
+    if (initialLoading) {
+      return;
+    }
+
+    if (
+      !initialNavigationRef.current.review &&
+      !initialNavigationRef.current.contractDetails &&
+      !initialNavigationRef.current.benefits
+    ) {
+      if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
+        initialNavigationRef.current.review = true;
+        initializeStepValues();
+        goToStep('review');
+      } else if (isNavigatingToContractDetails) {
+        initialNavigationRef.current.contractDetails = true;
+        initializeStepValues();
+        goToStep('contract_details');
+      } else if (isNavigatingToBenefits) {
+        initialNavigationRef.current.benefits = true;
+        initializeStepValues();
+        goToStep('benefits');
+      }
+    }
+  }, [
+    initialLoading,
+    employment,
+    stepFields,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+    initializeStepValues,
+    goToStep,
+  ]);
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
