@@ -570,6 +570,6 @@ export const useOnboarding = ({
     /**
      * is employment in a final state
      */
-    isEmploymentInFinalState: isEmploymentInFinalState,
+    isEmploymentInFinalState,
   };
 };
