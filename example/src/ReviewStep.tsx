@@ -180,10 +180,12 @@ export const MyOnboardingInviteButton = ({
 export const ReviewStep = ({
   onboardingBag,
   components,
+  apiError,
   setApiError,
 }: {
   components: OnboardingRenderProps['components'];
   onboardingBag: OnboardingRenderProps['onboardingBag'];
+  apiError?: string | null;
   setApiError: (error: string | null) => void;
 }) => {
   const {
@@ -199,6 +201,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('basic_information')}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Basic Information
       </button>
@@ -207,6 +210,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('contract_details')}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Contract Details
       </button>
@@ -216,6 +220,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('benefits')}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Benefits
       </button>
@@ -242,7 +247,7 @@ export const ReviewStep = ({
               <div className="buttons-container">
                 <BackButton
                   className="back-button"
-                  onClick={() => setApiError(null)}
+                  disabled={onboardingBag.isEmploymentReadOnly}
                 >
                   Back
                 </BackButton>
@@ -253,6 +258,7 @@ export const ReviewStep = ({
                   employment={onboardingBag.employment}
                 />
               </div>
+              {apiError && <div className="error-message">{apiError}</div>}
             </>
           );
         }}

@@ -153,6 +153,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           onboardingBag={onboardingBag}
           components={components}
           setApiError={setApiError}
+          apiError={apiError}
         />
       );
   }

@@ -8,6 +8,7 @@ import { Fields } from '@remoteoss/json-schema-form';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   prettifyFormValues,
+  reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
@@ -52,12 +53,6 @@ const stepToFormSchemaMap: Record<
   benefits: null,
   review: null,
 };
-
-const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
 
 export const useOnboarding = ({
   employmentId,
@@ -239,10 +234,13 @@ export const useOnboarding = ({
     isLoadingCompany ||
     isLoadingCountries;
 
+  const isEmploymentReadOnly =
+    employment &&
+    reviewStepAllowedEmploymentStatus.includes(employment?.status);
+
   const isNavigatingToReview = Boolean(
     employmentId &&
-      employment &&
-      reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
+      isEmploymentReadOnly &&
       !initialLoading &&
       stepFields['basic_information'].length > 0 &&
       stepFields['contract_details'].length > 0 &&
@@ -568,5 +566,11 @@ export const useOnboarding = ({
      * Employment data
      */
     employment,
+
+    /**
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited, created_awaiting_reserve or created_reserve_paid
+     * @returns {boolean}
+     */
+    isEmploymentReadOnly,
   };
 };
