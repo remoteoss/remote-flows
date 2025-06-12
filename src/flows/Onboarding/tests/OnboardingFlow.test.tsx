@@ -903,29 +903,32 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Benefits/i);
   });
 
-  it.skip('should go to the third step and check that benefits are initalized correctly', async () => {
+  it('should go to the third step and check that benefits are initialized correctly', async () => {
     server.use(
       http.get('*/v1/employments/*/benefit-offers', () => {
+        // Return empty benefits so we can fill them
         return HttpResponse.json({ data: [] });
       }),
       http.get('*/v1/employments/:id', () => {
         return HttpResponse.json(employmentResponse);
       }),
     );
+
     render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
       wrapper,
     });
 
     await screen.findByText(/Step: Benefits/i);
 
+    // Fill all three benefits
     await fillRadio(
       '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
       'Meal Card Standard 2025',
     );
 
     await fillRadio(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      'Life Insurance 50K',
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
     );
 
     await fillRadio(
@@ -941,12 +944,7 @@ describe('OnboardingFlow', () => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
-    // Assert the contract details submission
     expect(mockOnSubmit).toHaveBeenCalledWith({
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
-        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
-        value: 'no',
-      },
       '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
         value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
       },
@@ -954,7 +952,14 @@ describe('OnboardingFlow', () => {
         filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
         value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
       },
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        value: 'no',
+      },
     });
+
+    // Optionally verify we moved to the next step
+    await screen.findByText(/Step: Review/i);
   });
 
   it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
