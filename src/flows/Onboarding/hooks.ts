@@ -457,7 +457,6 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            await refetchCompany();
             refetchEmployment();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
