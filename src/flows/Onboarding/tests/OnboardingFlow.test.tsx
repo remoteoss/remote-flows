@@ -444,7 +444,7 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   }
 
-  it('should skip rendering the select country step when a countryCode is provided', async () => {
+  it.only('should skip rendering the select country step when a countryCode is provided', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;

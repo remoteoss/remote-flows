@@ -19,7 +19,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -238,7 +238,61 @@ export const useOnboarding = ({
     employment &&
     reviewStepAllowedEmploymentStatus.includes(employment?.status);
 
-  const isNavigatingToReview = Boolean(
+  const initializeStepValues = useCallback(() => {
+    const initialStepValues = {
+      select_country: getInitialValues(stepFields['select_country'], {
+        country: internalCountryCode || employment?.country.code || '',
+      }),
+      basic_information: getInitialValues(
+        stepFields['basic_information'],
+        employment?.basic_information || {},
+      ),
+      contract_details: getInitialValues(
+        stepFields['contract_details'],
+        employment?.contract_details || {},
+      ),
+      benefits: getInitialValues(
+        stepFields['benefits'],
+        initialValuesBenefitOffers,
+      ),
+    };
+    fieldsMetaRef.current = {
+      select_country: prettifyFormValues(
+        initialStepValues.select_country,
+        stepFields['select_country'],
+      ),
+      basic_information: prettifyFormValues(
+        initialStepValues.basic_information,
+        stepFields['basic_information'],
+      ),
+      contract_details: prettifyFormValues(
+        initialStepValues.contract_details,
+        stepFields['contract_details'],
+      ),
+      benefits: prettifyFormValues(
+        initialStepValues.benefits,
+        stepFields['benefits'],
+      ),
+    };
+
+    setStepValues({
+      select_country: initialStepValues.select_country,
+      basic_information: initialStepValues.basic_information,
+      contract_details: initialStepValues.contract_details,
+      benefits: initialStepValues.benefits,
+      review: {},
+    });
+  }, [
+    employment?.basic_information,
+    employment?.contract_details,
+    employment?.country.code,
+    initialValuesBenefitOffers,
+    internalCountryCode,
+    setStepValues,
+    stepFields,
+  ]);
+
+  const isNavigatingToReviewWhenEmploymentIsFinal = Boolean(
     employmentId &&
       isEmploymentInFinalState &&
       !initialLoading &&
@@ -247,72 +301,86 @@ export const useOnboarding = ({
       stepState.currentStep.name !== 'review',
   );
 
+  const isNavigatingToReview = Boolean(
+    employmentId &&
+      !initialLoading &&
+      employment &&
+      Object.keys(employment.basic_information || {}).length > 0 &&
+      Object.keys(employment.contract_details || {}).length > 0 &&
+      stepFields['basic_information'].length > 0 &&
+      stepFields['contract_details'].length > 0 &&
+      stepFields['benefits'].length > 0 &&
+      benefitOffers &&
+      Object.keys(benefitOffers).length > 0 &&
+      stepState.currentStep.name !== 'review' &&
+      !isNavigatingToReviewWhenEmploymentIsFinal,
+  );
+
+  const isNavigatingToContractDetails = Boolean(
+    employmentId &&
+      !initialLoading &&
+      employment &&
+      Object.keys(employment.basic_information || {}).length > 0 &&
+      Object.keys(employment.contract_details || {}).length === 0 &&
+      stepFields['basic_information'].length > 0 &&
+      stepFields['contract_details'].length > 0 &&
+      stepState.currentStep.name !== 'contract_details' &&
+      !isNavigatingToReviewWhenEmploymentIsFinal &&
+      !isNavigatingToReview,
+  );
+
+  const isNavigatingToBenefits = Boolean(
+    employmentId &&
+      !initialLoading &&
+      employment &&
+      Object.keys(employment.basic_information || {}).length > 0 &&
+      Object.keys(employment.contract_details || {}).length > 0 &&
+      stepFields['benefits'].length > 0 &&
+      benefitOffers &&
+      Object.keys(benefitOffers).length === 0 &&
+      stepState.currentStep.name !== 'benefits' &&
+      !isNavigatingToReviewWhenEmploymentIsFinal &&
+      !isNavigatingToReview &&
+      !isNavigatingToContractDetails,
+  );
+
   useEffect(() => {
-    if (isNavigatingToReview) {
-      const selectCountryInitialValues = getInitialValues(
-        stepFields['select_country'],
-        {
-          country: internalCountryCode || employment?.country.code || '',
-        },
-      );
+    if (isNavigatingToBenefits) {
+      initializeStepValues();
+      goToStep('benefits');
+    }
+  }, [goToStep, initializeStepValues, isNavigatingToBenefits]);
 
-      const basicInformationInitialValues = getInitialValues(
-        stepFields['basic_information'],
-        employment?.basic_information || {},
-      );
+  useEffect(() => {
+    if (isNavigatingToContractDetails) {
+      initializeStepValues();
+      goToStep('contract_details');
+    }
+  }, [
+    isNavigatingToContractDetails,
+    goToStep,
+    initializeStepValues,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+  ]);
 
-      const contractDetailsInitialValues = getInitialValues(
-        stepFields['contract_details'],
-        employment?.contract_details || {},
-      );
-
-      const benefitsInitialValues = getInitialValues(
-        stepFields['benefits'],
-        initialValuesBenefitOffers || {},
-      );
-      fieldsMetaRef.current = {
-        select_country: prettifyFormValues(
-          selectCountryInitialValues,
-          stepFields['select_country'],
-        ),
-        basic_information: prettifyFormValues(
-          basicInformationInitialValues,
-          stepFields['basic_information'],
-        ),
-        contract_details: prettifyFormValues(
-          contractDetailsInitialValues,
-          stepFields['contract_details'],
-        ),
-        benefits: prettifyFormValues(
-          benefitsInitialValues,
-          stepFields['benefits'],
-        ),
-      };
-
-      setStepValues({
-        select_country: selectCountryInitialValues,
-        basic_information: basicInformationInitialValues,
-        contract_details: contractDetailsInitialValues,
-        benefits: benefitsInitialValues,
-        review: {},
-      });
-
+  useEffect(() => {
+    if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
+      initializeStepValues();
       goToStep('review');
     }
   }, [
-    employmentId,
-    employment,
-    initialLoading,
-    internalCountryCode,
-    goToStep,
-    initialValuesBenefitOffers,
-    stepFields,
-    stepState.currentStep.name,
-    setStepValues,
+    isNavigatingToReviewWhenEmploymentIsFinal,
     isNavigatingToReview,
+    initializeStepValues,
+    goToStep,
   ]);
 
-  const isLoading = initialLoading || isNavigatingToReview;
+  const isLoading =
+    initialLoading ||
+    isNavigatingToReviewWhenEmploymentIsFinal ||
+    isNavigatingToReview ||
+    isNavigatingToContractDetails ||
+    isNavigatingToBenefits;
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
@@ -370,6 +438,7 @@ export const useOnboarding = ({
           try {
             const response = await createEmploymentMutationAsync(payload);
             await refetchCompany();
+            refetchEmployment();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
               response.data?.data?.employment?.id,
@@ -380,13 +449,15 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
               frequency: 'monthly',
             },
           });
+          refetchEmployment();
+          return response;
         }
 
         return;
@@ -398,17 +469,21 @@ export const useOnboarding = ({
             frequency: 'monthly',
           },
         };
-        return updateEmploymentMutationAsync({
+        const response = await updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           ...payload,
         });
+        refetchEmployment();
+        return response;
       }
 
       case 'benefits': {
-        return updateBenefitsOffersMutationAsync({
+        const response = updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
           ...values,
         });
+        refetchEmployment();
+        return response;
       }
     }
     return;
