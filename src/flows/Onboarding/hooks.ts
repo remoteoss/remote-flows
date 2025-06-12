@@ -568,7 +568,8 @@ export const useOnboarding = ({
     employment,
 
     /**
-     * is employment in a final state
+     * tells you if an employment in a final state and no more actions can be performed
+     * @returns {boolean}
      */
     isEmploymentInFinalState,
   };
