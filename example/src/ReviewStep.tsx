@@ -248,9 +248,6 @@ export const ReviewStep = ({
                 <BackButton
                   className="back-button"
                   disabled={onboardingBag.isEmploymentReadOnly}
-                  onBackError={(error: Error) => {
-                    setApiError(error.message);
-                  }}
                 >
                   Back
                 </BackButton>
