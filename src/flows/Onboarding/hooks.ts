@@ -562,14 +562,13 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          const response = updateEmploymentMutationAsync({
+          return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
               frequency: 'monthly',
             },
           });
-          return response;
         }
 
         return;
@@ -581,19 +580,17 @@ export const useOnboarding = ({
             frequency: 'monthly',
           },
         };
-        const response = await updateEmploymentMutationAsync({
+        return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           ...payload,
         });
-        return response;
       }
 
       case 'benefits': {
-        const response = updateBenefitsOffersMutationAsync({
+        return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
           ...values,
         });
-        return response;
       }
     }
     return;
