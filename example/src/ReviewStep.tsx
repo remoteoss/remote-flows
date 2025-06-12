@@ -201,7 +201,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('basic_information')}
-        disabled={onboardingBag.isEmploymentInFinalState}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Basic Information
       </button>
@@ -210,7 +210,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('contract_details')}
-        disabled={onboardingBag.isEmploymentInFinalState}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Contract Details
       </button>
@@ -220,7 +220,7 @@ export const ReviewStep = ({
       <button
         className="back-button"
         onClick={() => onboardingBag.goTo('benefits')}
-        disabled={onboardingBag.isEmploymentInFinalState}
+        disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Benefits
       </button>
@@ -247,10 +247,7 @@ export const ReviewStep = ({
               <div className="buttons-container">
                 <BackButton
                   className="back-button"
-                  disabled={onboardingBag.isEmploymentInFinalState}
-                  onBackError={(error: Error) => {
-                    setApiError(error.message);
-                  }}
+                  disabled={onboardingBag.isEmploymentReadOnly}
                 >
                   Back
                 </BackButton>
