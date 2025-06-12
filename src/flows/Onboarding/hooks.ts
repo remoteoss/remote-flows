@@ -8,6 +8,7 @@ import { Fields } from '@remoteoss/json-schema-form';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   prettifyFormValues,
+  reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
@@ -52,12 +53,6 @@ const stepToFormSchemaMap: Record<
   benefits: null,
   review: null,
 };
-
-const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
 
 export const useOnboarding = ({
   employmentId,

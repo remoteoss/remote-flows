@@ -184,6 +184,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
         <ReviewStep
           onboardingBag={onboardingBag}
           components={components}
+          apiError={apiError}
           setApiError={setApiError}
         />
       );

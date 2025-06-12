@@ -180,10 +180,12 @@ export const MyOnboardingInviteButton = ({
 export const ReviewStep = ({
   onboardingBag,
   components,
+  apiError,
   setApiError,
 }: {
   components: OnboardingRenderProps['components'];
   onboardingBag: OnboardingRenderProps['onboardingBag'];
+  apiError?: string | null;
   setApiError: (error: string | null) => void;
 }) => {
   const {
@@ -242,7 +244,9 @@ export const ReviewStep = ({
               <div className="buttons-container">
                 <BackButton
                   className="back-button"
-                  onClick={() => setApiError(null)}
+                  onBackError={(error: Error) => {
+                    setApiError(error.message);
+                  }}
                 >
                   Back
                 </BackButton>
@@ -253,6 +257,7 @@ export const ReviewStep = ({
                   employment={onboardingBag.employment}
                 />
               </div>
+              {apiError && <div className="error-message">{apiError}</div>}
             </>
           );
         }}

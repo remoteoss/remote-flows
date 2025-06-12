@@ -3,9 +3,10 @@ import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { Employment, SuccessResponse } from '@/src/client';
+import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 import { useFormFields } from '@/src/context';
+import { reviewStepAllowedEmploymentStatus } from '@/src/flows/Onboarding/utils';
 
 export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onSuccess?: ({
@@ -20,13 +21,7 @@ export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   render: (props: {
     employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => ReactNode;
-};
-
-const employmentStatusList: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
+} & Record<string, unknown>;
 
 export function OnboardingInvite({
   onSubmit,
@@ -34,7 +29,7 @@ export function OnboardingInvite({
   onError,
   render,
   ...props
-}: OnboardingInviteProps & Record<string, unknown>) {
+}: OnboardingInviteProps) {
   const { components } = useFormFields();
   const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
@@ -55,7 +50,9 @@ export function OnboardingInvite({
         onboardingBag.creditRiskStatus === 'deposit_required' &&
         onboardingBag.employmentId &&
         onboardingBag.employment?.status &&
-        !employmentStatusList.includes(onboardingBag.employment?.status)
+        !reviewStepAllowedEmploymentStatus.includes(
+          onboardingBag.employment?.status,
+        )
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
@@ -104,7 +101,9 @@ export function OnboardingInvite({
   const isReserveFlow =
     onboardingBag.creditRiskStatus === 'deposit_required' &&
     onboardingBag.employment?.status &&
-    !employmentStatusList.includes(onboardingBag.employment.status);
+    !reviewStepAllowedEmploymentStatus.includes(
+      onboardingBag.employment.status,
+    );
 
   const CustomButton = components?.button;
   if (CustomButton) {

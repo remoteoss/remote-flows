@@ -1,3 +1,4 @@
+import { Employment } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { Fields } from '@remoteoss/json-schema-form';
 
@@ -102,3 +103,15 @@ export function prettifyFormValues(
       .filter(Boolean),
   );
 }
+
+/**
+ * Array of employment statuses that are allowed to proceed to the review step.
+ * These statuses indicate that the employment is in a final state and the employment cannot be modified further.
+ * @type {Employment['status'][]}
+ * @constant
+ */
+export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
+  'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+];
