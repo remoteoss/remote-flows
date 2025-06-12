@@ -106,7 +106,10 @@ export const useOnboarding = ({
   );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField(options);
+    useCountriesSchemaField({
+      ...options,
+      queryOptions: { enabled: !employmentId && !internalCountryCode },
+    });
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
