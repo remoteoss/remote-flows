@@ -445,20 +445,6 @@ describe('OnboardingFlow', () => {
   }
 
   it('should skip rendering the select country step when a countryCode is provided', async () => {
-    const modifiedEmploymentResponse = {
-      data: {
-        employment: {
-          ...employmentResponse.data.employment,
-          basic_information: null,
-          contract_details: null,
-        },
-      },
-    };
-    server.use(
-      http.get('*/v1/employments/:id', () => {
-        return HttpResponse.json(modifiedEmploymentResponse);
-      }),
-    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -495,6 +481,26 @@ describe('OnboardingFlow', () => {
     // Wait for loading to finish and form to be ready
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Basic Information/i);
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
+    expect(employeePersonalEmail).toHaveValue(
+      employmentResponse.data.employment.personal_email,
+    );
   });
 
   it('should select a country and advance to the next step', async () => {
