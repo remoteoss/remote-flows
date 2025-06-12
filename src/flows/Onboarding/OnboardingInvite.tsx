@@ -6,7 +6,6 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 import { useFormFields } from '@/src/context';
-import { reviewStepAllowedEmploymentStatus } from '@/src/flows/Onboarding/utils';
 
 export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   onSuccess?: ({
