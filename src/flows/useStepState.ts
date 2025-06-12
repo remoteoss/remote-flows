@@ -6,7 +6,7 @@ export type Step<T extends string> = {
   name: T;
 };
 
-type StepState<T extends string, Fields = FieldValues> = {
+export type StepState<T extends string, Fields = FieldValues> = {
   currentStep: Step<T>;
   totalSteps: number;
   values:

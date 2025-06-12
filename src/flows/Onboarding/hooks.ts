@@ -5,7 +5,7 @@ import {
 } from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
 
-import { useStepState, Step } from '@/src/flows/useStepState';
+import { useStepState, Step, StepState } from '@/src/flows/useStepState';
 import {
   prettifyFormValues,
   reviewStepAllowedEmploymentStatus,
@@ -52,6 +52,142 @@ const stepToFormSchemaMap: Record<
   contract_details: 'contract_details',
   benefits: null,
   review: null,
+};
+
+const useNavigationConditions = ({
+  employmentId,
+  employment,
+  initialLoading,
+  stepFields,
+  stepState,
+  isEmploymentReadOnly,
+  benefitOffers,
+  initialNavigationRef,
+}: {
+  employmentId?: string;
+  employment?: Employment;
+  initialLoading: boolean;
+  stepFields: Record<string, Fields>;
+  stepState: StepState<keyof typeof STEPS>;
+  isEmploymentReadOnly?: boolean;
+  benefitOffers: unknown;
+  initialNavigationRef: React.RefObject<{
+    review: boolean;
+    contractDetails: boolean;
+    benefits: boolean;
+  }>;
+}) => {
+  // Common conditions extracted as variables
+  const hasBasicInformation =
+    employment && Object.keys(employment.basic_information || {}).length > 0;
+  const hasContractDetails =
+    employment && Object.keys(employment.contract_details || {}).length > 0;
+  const areSchemasLoaded =
+    stepFields['basic_information'].length > 0 &&
+    stepFields['contract_details'].length > 0;
+  const hasBenefitsSchema = stepFields['benefits'].length > 0;
+  const hasBenefitOffers =
+    benefitOffers && Object.keys(benefitOffers).length > 0;
+  const hasEmptyBenefitOffers =
+    benefitOffers && Object.keys(benefitOffers).length === 0;
+  const hasLoadedEmployment = Boolean(
+    employmentId && !initialLoading && employment,
+  );
+
+  const isNavigatingToReviewWhenEmploymentIsFinal = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        isEmploymentReadOnly &&
+        areSchemasLoaded &&
+        stepState.currentStep.name !== 'review' &&
+        !initialNavigationRef.current.review,
+    );
+  }, [
+    hasLoadedEmployment,
+    isEmploymentReadOnly,
+    areSchemasLoaded,
+    stepState.currentStep.name,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToReview = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        hasContractDetails &&
+        areSchemasLoaded &&
+        hasBenefitsSchema &&
+        hasBenefitOffers &&
+        stepState.currentStep.name !== 'review' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !initialNavigationRef.current.review,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    areSchemasLoaded,
+    hasBenefitsSchema,
+    hasBenefitOffers,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToContractDetails = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        !hasContractDetails &&
+        areSchemasLoaded &&
+        stepState.currentStep.name !== 'contract_details' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !isNavigatingToReview &&
+        !initialNavigationRef.current.contractDetails,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    areSchemasLoaded,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToBenefits = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        hasContractDetails &&
+        hasBenefitsSchema &&
+        hasEmptyBenefitOffers &&
+        stepState.currentStep.name !== 'benefits' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !isNavigatingToReview &&
+        !isNavigatingToContractDetails &&
+        !initialNavigationRef.current.benefits,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    hasBenefitsSchema,
+    hasEmptyBenefitOffers,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    initialNavigationRef,
+  ]);
+
+  return {
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+  };
 };
 
 export const useOnboarding = ({
@@ -301,62 +437,21 @@ export const useOnboarding = ({
     benefits: false,
   });
 
-  // Remove the navigation check from the conditions
-  const isNavigatingToReviewWhenEmploymentIsFinal = Boolean(
-    employmentId &&
-      isEmploymentReadOnly &&
-      !initialLoading &&
-      stepFields['basic_information'].length > 0 &&
-      stepFields['contract_details'].length > 0 &&
-      stepState.currentStep.name !== 'review' &&
-      !initialNavigationRef.current.review,
-  );
-
-  const isNavigatingToReview = Boolean(
-    employmentId &&
-      !initialLoading &&
-      employment &&
-      Object.keys(employment.basic_information || {}).length > 0 &&
-      Object.keys(employment.contract_details || {}).length > 0 &&
-      stepFields['basic_information'].length > 0 &&
-      stepFields['contract_details'].length > 0 &&
-      stepFields['benefits'].length > 0 &&
-      benefitOffers &&
-      Object.keys(benefitOffers).length > 0 &&
-      stepState.currentStep.name !== 'review' &&
-      !isNavigatingToReviewWhenEmploymentIsFinal &&
-      !initialNavigationRef.current.review,
-  );
-
-  const isNavigatingToContractDetails = Boolean(
-    employmentId &&
-      !initialLoading &&
-      employment &&
-      Object.keys(employment.basic_information || {}).length > 0 &&
-      Object.keys(employment.contract_details || {}).length === 0 &&
-      stepFields['basic_information'].length > 0 &&
-      stepFields['contract_details'].length > 0 &&
-      stepState.currentStep.name !== 'contract_details' &&
-      !isNavigatingToReviewWhenEmploymentIsFinal &&
-      !isNavigatingToReview &&
-      !initialNavigationRef.current.contractDetails,
-  );
-
-  const isNavigatingToBenefits = Boolean(
-    employmentId &&
-      !initialLoading &&
-      employment &&
-      Object.keys(employment.basic_information || {}).length > 0 &&
-      Object.keys(employment.contract_details || {}).length > 0 &&
-      stepFields['benefits'].length > 0 &&
-      benefitOffers &&
-      Object.keys(benefitOffers).length === 0 &&
-      stepState.currentStep.name !== 'benefits' &&
-      !isNavigatingToReviewWhenEmploymentIsFinal &&
-      !isNavigatingToReview &&
-      !isNavigatingToContractDetails &&
-      !initialNavigationRef.current.benefits,
-  );
+  const {
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+  } = useNavigationConditions({
+    employmentId,
+    employment,
+    initialLoading,
+    stepFields,
+    stepState,
+    isEmploymentReadOnly,
+    benefitOffers,
+    initialNavigationRef,
+  });
 
   const isLoading =
     initialLoading ||
