@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- 13c2803: - Add property `isEmploymentReadOnly` to use it in the review step
+  - Remove reset from the SDK
+
 ## 0.4.0-alpha.9
 
 ### Minor Changes
