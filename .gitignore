@@ -15,4 +15,3 @@ dist
 .env
 coverage
 example/public/
-out/*
