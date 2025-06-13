@@ -47,7 +47,7 @@ import {
   CostCalculatorResetButton,
   RemoteFlows,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -107,7 +107,7 @@ import {
   CostCalculatorResetButton,
   RemoteFlows,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -173,7 +173,7 @@ import {
   RemoteFlows,
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -249,7 +249,7 @@ import {
 } from '@remoteoss/remote-flows';
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import './App.css';
+import './css/main.css';
 
 export function CostCalculatoWithResults() {
   const [estimations, setEstimations] =
@@ -315,7 +315,7 @@ import type {
   CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import './App.css';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -421,7 +421,7 @@ import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 import { useState } from 'react';
 
 const estimationOptions = {

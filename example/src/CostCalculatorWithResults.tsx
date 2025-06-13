@@ -8,7 +8,7 @@ import {
 } from '@remoteoss/remote-flows';
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
-import './App.css';
+import './css/main.css';
 import 'react-flagpack/dist/style.css';
 import { useState } from 'react';
 

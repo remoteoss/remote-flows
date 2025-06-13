@@ -6,7 +6,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
-import './App.css';
+import './css/main.css';
 
 const STEPS = [
   'Employee Communication',

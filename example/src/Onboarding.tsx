@@ -14,7 +14,7 @@ import {
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import './App.css';
+import './css/main.css';
 
 export const InviteSection = ({
   title,

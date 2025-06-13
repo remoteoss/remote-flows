@@ -1,4 +1,5 @@
 @import '@remoteoss/remote-flows/index.css';
+@import './reset.css';
 
 .cost-calculator__container {
   padding: 100px;
