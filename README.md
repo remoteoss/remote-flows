@@ -188,6 +188,12 @@ Import the CSS file in your application:
 @import '@remoteoss/remote-flows/index.css';
 ```
 
+In your JSX create a container with the class remote-flows
+
+```jsx
+<div className="remote-flows">{children}</div>
+```
+
 ### Theme Customization
 
 ```tsx
