@@ -2,7 +2,7 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
-.remote-flows {
+:root {
   --background: oklch(1 0 0);
   --foreground: var(--primaryForeground, #4b5865);
   --card: var(--primaryBackground, #ffffff);
@@ -75,13 +75,11 @@
   --text-2xl: calc(var(--fontBase) * 1.5);
 }
 
-.remote-flows {
-  @layer base {
-    * {
-      @apply border-border outline-ring/50;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
