@@ -5,7 +5,7 @@ import {
   ContractAmendmentRenderProps,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import './App.css';
+import './css/main.css';
 
 function AmendmentFlow({
   contractAmendmentBag,

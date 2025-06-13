@@ -21,7 +21,7 @@ import type {
   TerminationFormValues,
   OffboardingResponse,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 

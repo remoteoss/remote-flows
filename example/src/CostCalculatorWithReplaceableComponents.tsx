@@ -7,7 +7,7 @@ import {
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { components } from './Components';
-import './App.css';
+import './css/main.css';
 
 const fetchToken = () => {
   return fetch('/api/token')

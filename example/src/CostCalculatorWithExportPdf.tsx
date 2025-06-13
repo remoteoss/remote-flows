@@ -11,7 +11,7 @@ import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 import { useState } from 'react';
 
 const estimationOptions = {

@@ -9,7 +9,7 @@ import {
   EmploymentResponse,
   ContractDetailsFormPayload,
 } from '@remoteoss/remote-flows';
-import './App.css';
+import './css/main.css';
 import { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
