@@ -4,10 +4,8 @@ import {
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
-import {
-  CostCalculatorEstimationOptions,
-  JSFModify,
-} from '@/src/flows/CostCalculator/types';
+import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
+import { JSFModify } from '@/src/flows/types';
 import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 

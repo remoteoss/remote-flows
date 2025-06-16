@@ -3,7 +3,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields, JSFConfig } from '@remoteoss/json-schema-form';
 
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
@@ -33,6 +33,7 @@ import {
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { JSONSchemaFormType } from '@/src/flows/types';
+import { AnnualGrossSalary } from '@/src/flows/CostCalculator/AnnualGrossSalary';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -130,14 +131,16 @@ export const useOnboarding = ({
     unknown
   >;
 
-  const isOnboardingFormEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
-  );
-
-  const useJSONSchema = ({ form }: { form: JSONSchemaFormType }) => {
+  const useJSONSchema = ({
+    form,
+    options: jsonSchemaOptions = {},
+  }: {
+    form: JSONSchemaFormType;
+    options?: {
+      customProperties?: JSFConfig['customProperties'];
+      queryOptions?: { enabled?: boolean };
+    };
+  }) => {
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
@@ -150,24 +153,56 @@ export const useOnboarding = ({
           : serverEmploymentData,
       options: {
         ...options,
+        customProperties: jsonSchemaOptions.customProperties,
         queryOptions: {
-          enabled: isOnboardingFormEnabled,
+          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
       },
     });
   };
+
+  const isBasicInformationDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        Boolean(employmentId)),
+  );
+
+  const isContractDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
+  );
 
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'employment_basic_information',
+    options: {
+      queryOptions: {
+        enabled: isBasicInformationDetailsEnabled,
+      },
+    },
   });
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
+      options: {
+        customProperties: {
+          annual_gross_salary: {
+            Component: AnnualGrossSalary,
+          },
+        },
+        queryOptions: {
+          enabled: isContractDetailsEnabled,
+        },
+      },
     });
+
+  console.log({
+    contractDetailsForm,
+  });
 
   const {
     data: benefitOffersSchema,

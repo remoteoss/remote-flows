@@ -1,5 +1,4 @@
 import type { EmploymentTermType } from '@/src/client';
-import { modify } from '@remoteoss/json-schema-form';
 
 export type CostCalculatorEstimationSubmitValues = {
   currency: string;
@@ -41,5 +40,3 @@ export type CostCalculatorEstimationOptions = Partial<{
    */
   includePremiumBenefits: boolean;
 }>;
-
-export type JSFModify = Parameters<typeof modify>[1];

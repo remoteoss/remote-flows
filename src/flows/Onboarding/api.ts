@@ -234,6 +234,7 @@ export const useJSONSchemaForm = ({
           ...fieldValues,
           ...moneyFieldsData,
         },
+        customProperties: options?.customProperties,
       });
     },
   });
