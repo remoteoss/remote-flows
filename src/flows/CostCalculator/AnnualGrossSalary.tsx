@@ -1,9 +1,9 @@
 import { TextField } from '@/src/components/form/fields/TextField';
 import { JSFField } from '@/src/types/remoteFlows';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 type DescriptionWithConversionProps = {
-  description: string;
+  description: ReactNode;
   showConversion: boolean;
   currency: string;
   onClick: (evt: React.MouseEvent<HTMLButtonElement>) => void;
@@ -25,19 +25,19 @@ const DescriptionWithConversion = ({
   );
 };
 
-type AnnualGrossSalaryProps = Omit<JSFField, 'description'> & {
+type AnnualGrossSalaryProps = JSFField & {
   currency: string;
-  description: string;
+  desiredCurrency: string;
 };
 
 // TODO: How does the component override prop work with this?
 export const AnnualGrossSalary = ({
   currency,
+  desiredCurrency,
   description,
   ...props
 }: AnnualGrossSalaryProps) => {
   const [showConversion, setShowConversion] = useState(false);
-  const desiredCurrency = 'USD';
   const canShowConversion =
     currency && desiredCurrency && currency !== desiredCurrency;
 
@@ -66,7 +66,18 @@ export const AnnualGrossSalary = ({
         inputMode="decimal"
         pattern="^[0-9.]*$"
       />
-      {showConversion && <p>hello</p>}
+      {showConversion && (
+        <TextField
+          name="annual_gross_salary_conversion"
+          label="Conversion"
+          description={
+            'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.'
+          }
+          type="text"
+          inputMode="decimal"
+          pattern="^[0-9.]*$"
+        />
+      )}
     </>
   );
 };

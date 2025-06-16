@@ -34,6 +34,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/CostCalculator/AnnualGrossSalary';
+import { JSFField } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -185,24 +186,30 @@ export const useOnboarding = ({
     },
   });
 
+  const customProperties = useMemo(
+    () => ({
+      annual_gross_salary: {
+        Component: (props: JSFField & { currency: string }) => (
+          <AnnualGrossSalary
+            desiredCurrency={company?.desired_currency || ''}
+            {...props}
+          />
+        ),
+      },
+    }),
+    [company?.desired_currency],
+  );
+
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
       options: {
-        customProperties: {
-          annual_gross_salary: {
-            Component: AnnualGrossSalary,
-          },
-        },
+        customProperties,
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
       },
     });
-
-  console.log({
-    contractDetailsForm,
-  });
 
   const {
     data: benefitOffersSchema,
