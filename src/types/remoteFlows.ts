@@ -7,6 +7,7 @@ import {
 import { AnySchema } from 'yup';
 import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
+import { ReactNode } from 'react';
 
 type AuthResponse = {
   accessToken: string;
@@ -15,7 +16,7 @@ type AuthResponse = {
 
 export type JSFField = {
   computedAttributes: Record<string, unknown>;
-  description: string;
+  description: ReactNode;
   errorMessage: Record<string, string>;
   inputType: SupportedTypes;
   isVisible: boolean;

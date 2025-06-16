@@ -1,6 +1,5 @@
 import { TextField } from '@/src/components/form/fields/TextField';
 import { JSFField } from '@/src/types/remoteFlows';
-import { $TSFixMe } from '@remoteoss/json-schema-form';
 import { useState } from 'react';
 
 type DescriptionWithConversionProps = {
@@ -26,8 +25,9 @@ const DescriptionWithConversion = ({
   );
 };
 
-type AnnualGrossSalaryProps = JSFField & {
+type AnnualGrossSalaryProps = Omit<JSFField, 'description'> & {
   currency: string;
+  description: string;
 };
 
 // TODO: How does the component override prop work with this?
@@ -41,29 +41,32 @@ export const AnnualGrossSalary = ({
   const canShowConversion =
     currency && desiredCurrency && currency !== desiredCurrency;
 
+  const toggleConversion = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    setShowConversion((prev) => !prev);
+  };
+
   const extraDescription = canShowConversion ? (
     <DescriptionWithConversion
       currency={desiredCurrency}
       description={description}
       showConversion={showConversion}
-      onClick={(evt) => {
-        evt.preventDefault();
-        setShowConversion(!showConversion);
-      }}
+      onClick={toggleConversion}
     />
   ) : (
     description
   );
-  console.log('extraDescription', extraDescription);
-  console.log('canShowConversion', canShowConversion);
-  console.log({ showConversion });
+
   return (
-    <TextField
-      {...props}
-      description={extraDescription as $TSFixMe}
-      type="text"
-      inputMode="decimal"
-      pattern="^[0-9.]*$"
-    />
+    <>
+      <TextField
+        {...props}
+        description={extraDescription}
+        type="text"
+        inputMode="decimal"
+        pattern="^[0-9.]*$"
+      />
+      {showConversion && <p>hello</p>}
+    </>
   );
 };

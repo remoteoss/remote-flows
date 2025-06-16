@@ -21,7 +21,6 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
       onChange?: (value: any) => void;
       component?: Components['text'];
       includeErrorMessage?: boolean;
-      description?: React.ReactNode;
     }
   >;
 
