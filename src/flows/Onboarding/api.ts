@@ -1,4 +1,5 @@
 import {
+  ConvertCurrencyParams,
   EmploymentCreateParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
@@ -9,6 +10,7 @@ import {
   getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
+  postConvertCurrencyConverter,
   postCreateEmployment2,
   postCreateRiskReserve,
   postGenerateMagicLink,
@@ -431,4 +433,19 @@ export const useCountriesSchemaField = (options?: FlowOptions) => {
     isLoading,
     selectCountryForm,
   };
+};
+
+export const useConvertCurrency = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: ConvertCurrencyParams) => {
+      return postConvertCurrencyConverter({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
 };
