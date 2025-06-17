@@ -22,6 +22,19 @@ export type ListRecurringIncentivesResponse = {
 };
 
 /**
+ * Employee timeoff creation params
+ */
+export type CreateEmployeeTimeoffParams = {
+  document?: TimeoffDocumentParams;
+  end_date: _Date;
+  leave_policy_variant_id: string;
+  notes?: string;
+  start_date: _Date;
+  timeoff_days: Array<TimeoffDaysParams>;
+  timezone: Timezone;
+};
+
+/**
  * Schema for creating a currency custom field definition
  */
 export type CreateCurrencyCustomFieldDefinitionParams = {
@@ -157,6 +170,26 @@ export type EmploymentCustomFieldValueResponse = {
  */
 export type ResignationResponse = {
   data?: Resignation;
+};
+
+/**
+ * The response from the currency converter
+ */
+export type ConvertCurrency = {
+  /**
+   * The exchange rate used to convert the amount
+   */
+  exchange_rate: number;
+  /**
+   * The amount in cents in the source currency
+   */
+  source_amount: number;
+  source_currency: CurrencyDefinition;
+  /**
+   * The amount in cents in the target currency
+   */
+  target_amount: number;
+  target_currency: CurrencyDefinition;
 };
 
 /**
@@ -609,6 +642,9 @@ export type IdentityCurrentResponse =
   | IdentityCustomerAccessTokenResponse;
 
 export type EmployeeDetails = {
+  /**
+   * When payroll run is in `processing` or `preparing` status, the estimated salary may change after final payroll calculations.
+   */
   base_salary: {
     amount?: number;
     currency?: string;
@@ -625,6 +661,7 @@ export type EmployeeDetails = {
     amount?: number;
     currency?: string;
   };
+  employment_id?: string;
   expenses: {
     amount?: number;
     currency?: string;
@@ -1054,6 +1091,8 @@ export type ListLeavePoliciesDetailsResponse = {
 
 export type CreateOneTimeIncentiveParams = CommonIncentiveParams & {
   employment_id: string;
+  period_end?: string | null;
+  period_start?: string | null;
   type:
     | 'acting_up_allowance'
     | 'allowance'
@@ -1590,6 +1629,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
     | 'employment.user_status.invited'
+    | 'employment.work_email.updated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -1928,6 +1968,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
     | 'employment.user_status.invited'
+    | 'employment.work_email.updated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -2061,6 +2102,69 @@ export type CostCalculatorCosts = {
    * Monthly gross salary + monthly contributions + monthly fee
    */
   monthly_total: number;
+};
+
+/**
+ * A single expense category in the flat list structure
+ */
+export type ExpenseCategoryNode = {
+  /**
+   * Category code (e.g., 'travel.flights')
+   */
+  code?: string;
+  /**
+   * Category description
+   */
+  description?: string | null;
+  /**
+   * Instructions for using this category
+   */
+  instructions?: string | null;
+  /**
+   * Whether this category can be selected
+   */
+  is_selectable?: boolean;
+  /**
+   * Parent category information if this is a child category
+   */
+  parent?: {
+    /**
+     * Parent category code
+     */
+    code?: string;
+    /**
+     * Parent category slug
+     */
+    slug?: string;
+    /**
+     * Parent category title
+     */
+    title?: string;
+  } | null;
+  /**
+   * Prompt for user guidance
+   */
+  prompt?: string | null;
+  /**
+   * Category purpose (business, personal, etc.)
+   */
+  purpose?: string;
+  /**
+   * Category scope (global, country, company, legal_entity)
+   */
+  scope?: string;
+  /**
+   * Unique identifier for the category
+   */
+  slug?: string;
+  /**
+   * Category status (active, inactive)
+   */
+  status?: string;
+  /**
+   * Human-readable category name
+   */
+  title?: string;
 };
 
 /**
@@ -2467,6 +2571,24 @@ export type Payslip = {
 export type UpdateExpenseParams = ApproveExpenseParams | DeclineExpenseParams;
 
 /**
+ * The parameters for the currency conversion
+ */
+export type ConvertCurrencyParams = {
+  /**
+   * The amount to convert in cents
+   */
+  amount: number;
+  /**
+   * The currency code to convert from
+   */
+  source_currency: string;
+  /**
+   * The currency code to convert to
+   */
+  target_currency: string;
+};
+
+/**
  * List of pricing plan partner templates
  */
 export type ListPricingPlanPartnerTemplatesResponse = {
@@ -2529,8 +2651,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -3012,6 +3134,8 @@ export type Incentive = {
   expected_payout_date?: string | null;
   id: string;
   note?: string | null;
+  period_end?: string | null;
+  period_start?: string | null;
   recurring_incentive_id?: string | null;
   status: string;
   type: string;
@@ -3024,6 +3148,23 @@ export type CountryFormResponse = {
   data?: {
     [key: string]: unknown;
   };
+};
+
+/**
+ * Update timeoff params
+ */
+export type UpdateEmployeeTimeoffParams = {
+  document?: TimeoffDocumentParams;
+  /**
+   * The reason for the update. Required when updating the time off data but not changing the status.
+   */
+  edit_reason: string;
+  end_date?: _Date;
+  leave_policy_variant_id?: string;
+  notes?: string;
+  start_date?: _Date;
+  timeoff_days?: Array<TimeoffDaysParams>;
+  timezone?: Timezone;
 };
 
 export type HoursAndMinutes = {
@@ -3080,6 +3221,14 @@ export type CustomFieldDataEntryAccess =
   | 'everyone';
 
 export type UpdateIncentiveParams = CommonIncentiveParams & {
+  /**
+   * The end date of the incentive period (month, quarter, half-year or year)
+   */
+  period_end?: string | null;
+  /**
+   * The start date of the incentive period (month, quarter, half-year or year)
+   */
+  period_start?: string | null;
   /**
    * A valid type according to the payment frequency
    */
@@ -4079,6 +4228,7 @@ export type WebhookCallback = {
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
     | 'employment.user_status.invited'
+    | 'employment.work_email.updated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -4301,7 +4451,8 @@ export type ResignationBeforeStartDate = {
 export type DraftExpense = {
   amount: number | null;
   /**
-   * Categories allowed for an expense
+   * Categories allowed for an expense (legacy, deprecated)
+   * @deprecated
    */
   category?:
     | 'car_rental'
@@ -4335,6 +4486,23 @@ export type DraftExpense = {
   converted_tax_amount: number | null;
   currency: CurrencyDefinition | null;
   employment_id: string;
+  /**
+   * New hierarchical expense category (recommended)
+   */
+  expense_category?: {
+    /**
+     * Internal category code (e.g., 'travel.flights')
+     */
+    code?: string;
+    /**
+     * Unique identifier for the category
+     */
+    slug?: string;
+    /**
+     * Human-readable category name
+     */
+    title?: string;
+  } | null;
   expense_date: string | null;
   id: string;
   invoice_period?: string | null;
@@ -4486,17 +4654,24 @@ export type ListEmploymentCustomFieldValueResponse = {
 /**
  *   All the params needed to create an expense.
  *
- * An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object."
+ * An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object.
+ *
+ * For category selection, you can use either:
+ * - `category` (legacy enum values, deprecated but supported)
+ * - `expense_category_slug` (new hierarchical categories, recommended)
+ *
+ * If both are provided, `expense_category_slug` takes precedence.
  *
  */
 export type ParamsToCreateExpense = {
   amount: number;
   /**
-   * Categories allowed for an expense.<br/>
+   * Categories allowed for an expense (legacy, deprecated).<br/>
    * Note: `coworking`, `home_office`, `phone_utilities`, `travel` are deprecated and will be removed in the future.
    *
+   * @deprecated
    */
-  category:
+  category?:
     | 'car_rental'
     | 'coworking_office'
     | 'education_training'
@@ -4531,6 +4706,10 @@ export type ParamsToCreateExpense = {
    * The ID for the employment to which this expense relates.
    */
   employment_id: string;
+  /**
+   * Slug of the expense category from the hierarchical categories system (recommended). Takes precedence over legacy category field.
+   */
+  expense_category_slug?: string | null;
   /**
    * Date of the purchase, which must be in the past
    */
@@ -4960,6 +5139,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
     | 'employment.user_status.invited'
+    | 'employment.work_email.updated'
     | 'expense.approved'
     | 'expense.declined'
     | 'expense.deleted'
@@ -5075,6 +5255,13 @@ export type ListEmploymentContractResponse = {
 };
 
 /**
+ * Response containing a flat list of expense categories. Parent categories have is_selectable: false, while leaf categories have is_selectable: true. Child categories include parent_slug information.
+ */
+export type ListExpenseCategoriesResponse = {
+  data?: Array<ExpenseCategoryNode>;
+};
+
+/**
  * Price
  */
 export type Price = {
@@ -5177,6 +5364,15 @@ export type SalaryDecreaseDetails = {
  */
 export type JsonSchemaResponse = {
   data?: JsonSchema;
+};
+
+/**
+ * The response from the currency converter
+ */
+export type ConvertCurrencyResponse = {
+  data: {
+    conversion_data: ConvertCurrency;
+  };
 };
 
 /**
@@ -5417,7 +5613,8 @@ export type EmploymentResponse = {
 export type Expense = {
   amount: number;
   /**
-   * Categories allowed for an expense
+   * Categories allowed for an expense (legacy, deprecated)
+   * @deprecated
    */
   category?:
     | 'car_rental'
@@ -5451,6 +5648,23 @@ export type Expense = {
   converted_tax_amount: number;
   currency: CurrencyDefinition;
   employment_id: string;
+  /**
+   * New hierarchical expense category (recommended)
+   */
+  expense_category?: {
+    /**
+     * Internal category code (e.g., 'travel.flights')
+     */
+    code?: string;
+    /**
+     * Unique identifier for the category
+     */
+    slug?: string;
+    /**
+     * Human-readable category name
+     */
+    title?: string;
+  } | null;
   expense_date: string;
   id: string;
   invoice_period?: string | null;
@@ -6215,7 +6429,12 @@ export type PostCreateEmployment2Data = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/employments';
 };
 
@@ -6395,15 +6614,6 @@ export type PostCreateEstimationData = {
    * Estimate params
    */
   body: CostCalculatorEstimateParams;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
-  };
   path?: never;
   query?: never;
   url: '/v1/cost-calculator/estimation';
@@ -6545,7 +6755,12 @@ export type PutUpdateBenefitOfferData = {
      */
     employment_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
@@ -6926,6 +7141,108 @@ export type GetIndexEorPayrollCalendarResponses = {
 
 export type GetIndexEorPayrollCalendarResponse =
   GetIndexEorPayrollCalendarResponses[keyof GetIndexEorPayrollCalendarResponses];
+
+export type PatchUpdateEmployeeTimeoff2Data = {
+  /**
+   * UpdateTimeoff
+   */
+  body: UpdateEmployeeTimeoffParams;
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/employee/timeoff/{id}';
+};
+
+export type PatchUpdateEmployeeTimeoff2Errors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchUpdateEmployeeTimeoff2Error =
+  PatchUpdateEmployeeTimeoff2Errors[keyof PatchUpdateEmployeeTimeoff2Errors];
+
+export type PatchUpdateEmployeeTimeoff2Responses = {
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
+};
+
+export type PatchUpdateEmployeeTimeoff2Response =
+  PatchUpdateEmployeeTimeoff2Responses[keyof PatchUpdateEmployeeTimeoff2Responses];
+
+export type PatchUpdateEmployeeTimeoffData = {
+  /**
+   * UpdateTimeoff
+   */
+  body: UpdateEmployeeTimeoffParams;
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/employee/timeoff/{id}';
+};
+
+export type PatchUpdateEmployeeTimeoffErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchUpdateEmployeeTimeoffError =
+  PatchUpdateEmployeeTimeoffErrors[keyof PatchUpdateEmployeeTimeoffErrors];
+
+export type PatchUpdateEmployeeTimeoffResponses = {
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
+};
+
+export type PatchUpdateEmployeeTimeoffResponse =
+  PatchUpdateEmployeeTimeoffResponses[keyof PatchUpdateEmployeeTimeoffResponses];
 
 export type GetIndexRecurringIncentiveData = {
   body?: never;
@@ -8188,10 +8505,20 @@ export type PatchUpdateCompany2Data = {
   path: {
     /**
      * Company ID
+     *
      */
     company_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number;
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number;
+  };
   url: '/v1/companies/{company_id}';
 };
 
@@ -8248,10 +8575,20 @@ export type PatchUpdateCompanyData = {
   path: {
     /**
      * Company ID
+     *
      */
     company_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number;
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number;
+  };
   url: '/v1/companies/{company_id}';
 };
 
@@ -8419,7 +8756,12 @@ export type PostCreateContractAmendmentData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/contract-amendments';
 };
 
@@ -8726,6 +9068,113 @@ export type GetShowTimeoffBalanceResponses = {
 export type GetShowTimeoffBalanceResponse =
   GetShowTimeoffBalanceResponses[keyof GetShowTimeoffBalanceResponses];
 
+export type GetCategoriesExpenseData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * The employment ID for which to list categories. Required if expense_id is not provided.
+     */
+    employment_id?: string;
+    /**
+     * The expense ID for which to list categories (includes the expense's category, even if it is not selectable by default). If provided without employment_id, will use the expense's employment context.
+     */
+    expense_id?: string;
+    /**
+     * Include un-selectable intermediate categories in the response
+     */
+    include_branches?: boolean;
+  };
+  url: '/v1/expenses/categories';
+};
+
+export type GetCategoriesExpenseErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetCategoriesExpenseError =
+  GetCategoriesExpenseErrors[keyof GetCategoriesExpenseErrors];
+
+export type GetCategoriesExpenseResponses = {
+  /**
+   * Success
+   */
+  200: ListExpenseCategoriesResponse;
+};
+
+export type GetCategoriesExpenseResponse =
+  GetCategoriesExpenseResponses[keyof GetCategoriesExpenseResponses];
+
+export type PostCancelEmployeeTimeoffData = {
+  /**
+   * CancelTimeoff
+   */
+  body: CancelTimeoffParams;
+  path: {
+    /**
+     * Timeoff ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/employee/timeoff/{id}/cancel';
+};
+
+export type PostCancelEmployeeTimeoffErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostCancelEmployeeTimeoffError =
+  PostCancelEmployeeTimeoffErrors[keyof PostCancelEmployeeTimeoffErrors];
+
+export type PostCancelEmployeeTimeoffResponses = {
+  /**
+   * Success
+   */
+  200: TimeoffResponse;
+};
+
+export type PostCancelEmployeeTimeoffResponse =
+  PostCancelEmployeeTimeoffResponses[keyof PostCancelEmployeeTimeoffResponses];
+
 export type GetShowFormCountryData = {
   body?: never;
   headers: {
@@ -9026,14 +9475,6 @@ export type PostCreateCompanyManagerResponse =
 
 export type GetIndexCountryData = {
   body?: never;
-  headers: {
-    /**
-     * Authorization header with basic authentication encoded with Base64.
-     * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
-     *
-     */
-    Authorization: string;
-  };
   path?: never;
   query?: {
     /**
@@ -9862,6 +10303,42 @@ export type PatchUpdateEmployment2Data = {
   };
   query?: {
     /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number;
+    /**
+     * Version of the administrative_details form schema
+     */
+    administrative_details_json_schema_version?: number;
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number;
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number;
+    /**
+     * Version of the billing_address_details form schema
+     */
+    billing_address_details_json_schema_version?: number;
+    /**
+     * Version of the contract_details form schema
+     */
+    contract_details_json_schema_version?: number;
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number;
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number;
+    /**
+     * Version of the pricing_plan_details form schema
+     */
+    pricing_plan_details_json_schema_version?: number;
+    /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
     skip_benefits?: boolean;
@@ -9934,6 +10411,42 @@ export type PatchUpdateEmploymentData = {
     employment_id: string;
   };
   query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number;
+    /**
+     * Version of the administrative_details form schema
+     */
+    administrative_details_json_schema_version?: number;
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number;
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number;
+    /**
+     * Version of the billing_address_details form schema
+     */
+    billing_address_details_json_schema_version?: number;
+    /**
+     * Version of the contract_details form schema
+     */
+    contract_details_json_schema_version?: number;
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number;
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number;
+    /**
+     * Version of the pricing_plan_details form schema
+     */
+    pricing_plan_details_json_schema_version?: number;
     /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
@@ -10715,7 +11228,12 @@ export type PostAutomatableContractAmendmentData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/contract-amendments/automatable';
 };
 
@@ -12276,6 +12794,52 @@ export type PutCancelContractAmendmentResponses = {
 export type PutCancelContractAmendmentResponse =
   PutCancelContractAmendmentResponses[keyof PutCancelContractAmendmentResponses];
 
+export type PostCreateEmployeeTimeoffData = {
+  /**
+   * Timeoff
+   */
+  body: CreateEmployeeTimeoffParams;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/timeoff';
+};
+
+export type PostCreateEmployeeTimeoffErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostCreateEmployeeTimeoffError =
+  PostCreateEmployeeTimeoffErrors[keyof PostCreateEmployeeTimeoffErrors];
+
+export type PostCreateEmployeeTimeoffResponses = {
+  /**
+   * Created
+   */
+  201: TimeoffResponse;
+};
+
+export type PostCreateEmployeeTimeoffResponse =
+  PostCreateEmployeeTimeoffResponses[keyof PostCreateEmployeeTimeoffResponses];
+
 export type GetShowProbationExtensionData = {
   body?: never;
   path: {
@@ -12449,14 +13013,6 @@ export type PostTokenOAuth2TokenData = {
    * OAuth2Token
    */
   body?: OAuth2TokenParams;
-  headers: {
-    /**
-     * Authorization header with basic authentication encoded with Base64.
-     * Check the [Auth & Authorization](https://remote.com/resources/api/auth-and-authorization) section for more information on how to create the encoded token.
-     *
-     */
-    Authorization: string;
-  };
   path?: never;
   query?: never;
   url: '/auth/oauth2/token';
@@ -12739,6 +13295,44 @@ export type GetIndexEmploymentContractResponses = {
 export type GetIndexEmploymentContractResponse =
   GetIndexEmploymentContractResponses[keyof GetIndexEmploymentContractResponses];
 
+export type PostConvertCurrencyConverterData = {
+  /**
+   * Convert currency parameters
+   */
+  body: ConvertCurrencyParams;
+  path?: never;
+  query?: never;
+  url: '/v1/currency-converter';
+};
+
+export type PostConvertCurrencyConverterErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostConvertCurrencyConverterError =
+  PostConvertCurrencyConverterErrors[keyof PostConvertCurrencyConverterErrors];
+
+export type PostConvertCurrencyConverterResponses = {
+  /**
+   * Success
+   */
+  200: ConvertCurrencyResponse;
+};
+
+export type PostConvertCurrencyConverterResponse =
+  PostConvertCurrencyConverterResponses[keyof PostConvertCurrencyConverterResponses];
+
 export type GetIndexCompanyData = {
   body?: never;
   headers: {
@@ -12804,6 +13398,14 @@ export type PostCreateCompanyData = {
   };
   path?: never;
   query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number;
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number;
     /**
      * Complementary action(s) to perform when creating a company:
      *
