@@ -1,4 +1,4 @@
-import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { modify } from '@remoteoss/json-schema-form';
 
 type Success<T> = {
   data: T;
@@ -67,6 +67,8 @@ export type JSONSchemaFormType =
 
   // Benefits forms
   | 'benefit_renewal_request';
+
+export type JSFModify = Parameters<typeof modify>[1];
 
 export type FlowOptions = {
   jsfModify?: JSFModify;
