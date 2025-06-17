@@ -230,6 +230,7 @@ const OnboardingWithProps = ({
         jsfModify: {
           fields: {
             annual_gross_salary: {
+              title: 'Test label',
               presentation: {
                 annual_gross_salary_conversion_properties: {
                   label: 'Annual Gross Salary Conversion',

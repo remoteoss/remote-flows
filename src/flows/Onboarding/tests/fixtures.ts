@@ -5660,7 +5660,7 @@ export const companyResponse = {
       tax_number: '7984469',
       registration_number: null,
       terms_of_service_accepted_at: '2024-08-27T22:45:26Z',
-      desired_currency: 'GBP',
+      desired_currency: 'USD',
       company_owner_email: 'mohit.mahindroo+vadance@remote.com',
       company_owner_name: 'Michelll sdassPustomer',
       address_details: {

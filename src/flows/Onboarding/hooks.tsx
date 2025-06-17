@@ -213,6 +213,7 @@ export const useOnboarding = ({
     () => ({
       fields: {
         annual_gross_salary: {
+          ...annualGrossSalaryField,
           presentation: {
             annual_gross_salary_conversion_properties: {
               label:
@@ -232,7 +233,11 @@ export const useOnboarding = ({
         },
       },
     }),
-    [company?.desired_currency, annualSalaryFieldPresentation],
+    [
+      company?.desired_currency,
+      annualSalaryFieldPresentation,
+      annualGrossSalaryField,
+    ],
   );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
