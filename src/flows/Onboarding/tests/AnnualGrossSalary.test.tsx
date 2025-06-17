@@ -7,6 +7,8 @@ import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
+import { useFormFields } from '@/src/context';
+import { Mock } from 'vitest';
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,14 @@ const defaultProps: JSFField & {
   scopedJsonSchema: {},
   type: 'text',
 };
+
+// Mock useFormFields and FormFieldsContext
+vi.mock('@/src/context', () => ({
+  useFormFields: vi.fn().mockReturnValue({ components: {} }),
+  FormFieldsContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  },
+}));
 
 // Helper function to render the component with a form context
 const renderWithFormContext = (props = defaultProps) => {
@@ -58,6 +68,7 @@ const renderWithFormContext = (props = defaultProps) => {
 describe('AnnualGrossSalary', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useFormFields as Mock).mockReturnValue({ components: {} });
 
     server.use(
       http.post('*/v1/currency-converter', async ({ request }) => {
@@ -184,5 +195,23 @@ describe('AnnualGrossSalary', () => {
       const conversionInput = screen.getByLabelText('Conversion');
       expect(conversionInput).toHaveValue('850');
     });
+  });
+
+  it('uses custom button component when provided', () => {
+    const CustomButton = vi.fn().mockImplementation(({ children, onClick }) => (
+      <button data-testid="custom-button" onClick={onClick}>
+        {children}
+      </button>
+    ));
+
+    (useFormFields as Mock).mockReturnValue({
+      components: { button: CustomButton },
+    });
+
+    renderWithFormContext();
+
+    expect(CustomButton).toHaveBeenCalled();
+    expect(screen.getByTestId('custom-button')).toBeInTheDocument();
+    expect(screen.getByText('Show EUR conversion')).toBeInTheDocument();
   });
 });

@@ -4,6 +4,7 @@ import { JSFField } from '@/src/types/remoteFlows';
 import { ReactNode, useState, useCallback, useRef, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import debounce from 'lodash/debounce';
+import { useFormFields } from '@/src/context';
 
 function useDebounce(
   callback: (value: string) => Promise<void>,
@@ -42,18 +43,32 @@ const DescriptionWithConversion = ({
   currency,
   onClick,
 }: DescriptionWithConversionProps) => {
+  const { components } = useFormFields();
   const label = showConversion
     ? `Hide ${currency} conversion`
     : `Show ${currency} conversion`;
+
+  const CustomButton = components?.button;
+
   return (
     <span className="RemoteFlows-AnnualGrossSalary-description">
       {description}{' '}
-      <button
-        className="RemoteFlows-AnnualGrossSalary-button"
-        onClick={onClick}
-      >
-        {label}
-      </button>
+      {CustomButton ? (
+        <CustomButton
+          className="RemoteFlows-AnnualGrossSalary-button"
+          data-type="inline"
+          onClick={onClick}
+        >
+          {label}
+        </CustomButton>
+      ) : (
+        <button
+          className="RemoteFlows-AnnualGrossSalary-button"
+          onClick={onClick}
+        >
+          {label}
+        </button>
+      )}
     </span>
   );
 };
