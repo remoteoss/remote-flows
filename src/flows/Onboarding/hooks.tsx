@@ -194,6 +194,11 @@ export const useOnboarding = ({
       fields: {
         annual_gross_salary: {
           presentation: {
+            annual_gross_salary_conversion_properties: {
+              label: 'Conversion',
+              description:
+                'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.',
+            },
             Component: (props: JSFField & { currency: string }) => (
               <AnnualGrossSalary
                 desiredCurrency={company?.desired_currency || ''}

@@ -76,6 +76,10 @@ const DescriptionWithConversion = ({
 type AnnualGrossSalaryProps = JSFField & {
   currency: string;
   desiredCurrency: string;
+  annual_gross_salary_conversion_properties?: {
+    label?: string;
+    description?: string;
+  };
 };
 
 export const AnnualGrossSalary = ({
@@ -171,6 +175,8 @@ export const AnnualGrossSalary = ({
     description
   );
 
+  const { annual_gross_salary_conversion_properties: conversionField } = props;
+
   return (
     <>
       <TextField
@@ -185,8 +191,9 @@ export const AnnualGrossSalary = ({
       {showConversion && (
         <TextField
           name="annual_gross_salary_conversion"
-          label="Conversion"
+          label={conversionField?.label || 'Conversion'}
           description={
+            conversionField?.description ||
             'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.'
           }
           type="text"
