@@ -64,8 +64,6 @@ export const AnnualGrossSalary = ({
           amount: Number(annualGrossSalary),
         });
 
-        console.log('response', { response });
-
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
           setValue('annual_gross_salary_conversion', amount?.toString() || '');

@@ -3,7 +3,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields, JSFConfig } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
@@ -32,7 +32,7 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/CostCalculator/AnnualGrossSalary';
 import { JSFField } from '@/src/types/remoteFlows';
 
@@ -138,7 +138,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      customProperties?: JSFConfig['customProperties'];
+      jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
   }) => {
@@ -154,7 +154,10 @@ export const useOnboarding = ({
           : serverEmploymentData,
       options: {
         ...options,
-        customProperties: jsonSchemaOptions.customProperties,
+        jsfModify: {
+          ...jsonSchemaOptions.jsfModify,
+          ...options?.customProperties,
+        },
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
@@ -186,15 +189,19 @@ export const useOnboarding = ({
     },
   });
 
-  const customProperties = useMemo(
+  const customComponents = useMemo(
     () => ({
-      annual_gross_salary: {
-        Component: (props: JSFField & { currency: string }) => (
-          <AnnualGrossSalary
-            desiredCurrency={company?.desired_currency || ''}
-            {...props}
-          />
-        ),
+      fields: {
+        annual_gross_salary: {
+          presentation: {
+            Component: (props: JSFField & { currency: string }) => (
+              <AnnualGrossSalary
+                desiredCurrency={company?.desired_currency || ''}
+                {...props}
+              />
+            ),
+          },
+        },
       },
     }),
     [company?.desired_currency],
@@ -204,7 +211,7 @@ export const useOnboarding = ({
     useJSONSchema({
       form: 'contract_details',
       options: {
-        customProperties,
+        jsfModify: customComponents,
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
