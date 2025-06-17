@@ -5674,3 +5674,43 @@ export const companyResponse = {
     },
   },
 };
+
+export const conversionFromUSDToEUR = {
+  data: {
+    conversion_data: {
+      exchange_rate: '0.85',
+      target_currency: {
+        code: 'EUR',
+        name: 'Euro',
+        symbol: '€',
+      },
+      source_currency: {
+        code: 'USD',
+        name: 'US Dollar',
+        symbol: '$',
+      },
+      source_amount: 1000,
+      target_amount: 850,
+    },
+  },
+};
+
+export const conversionFromEURToUSD = {
+  data: {
+    conversion_data: {
+      exchange_rate: '1.17647',
+      target_currency: {
+        code: 'USD',
+        name: 'US Dollar',
+        symbol: '$',
+      },
+      source_currency: {
+        code: 'EUR',
+        name: 'Euro',
+        symbol: '€',
+      },
+      source_amount: 1000,
+      target_amount: 1176.47,
+    },
+  },
+};

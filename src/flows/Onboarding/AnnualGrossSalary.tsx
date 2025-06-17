@@ -1,9 +1,9 @@
-import { TextField } from '@/src/components/form/fields/TextField';
-import { useConvertCurrency } from '@/src/flows/Onboarding/api';
-import { JSFField } from '@/src/types/remoteFlows';
 import { ReactNode, useState, useCallback, useRef, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import debounce from 'lodash/debounce';
+import { TextField } from '@/src/components/form/fields/TextField';
+import { useConvertCurrency } from '@/src/flows/Onboarding/api';
+import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 
 function useDebounce(
@@ -78,7 +78,6 @@ type AnnualGrossSalaryProps = JSFField & {
   desiredCurrency: string;
 };
 
-// TODO: How does the component override prop work with this?
 export const AnnualGrossSalary = ({
   currency,
   desiredCurrency,
@@ -182,6 +181,7 @@ export const AnnualGrossSalary = ({
         pattern="^[0-9.]*$"
         onChange={handleChange}
       />
+      {/** A problem on this field is that the label, description are fixed. */}
       {showConversion && (
         <TextField
           name="annual_gross_salary_conversion"

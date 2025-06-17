@@ -1,13 +1,17 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { AnnualGrossSalary } from '../AnnualGrossSalary';
-import { JSFField } from '@/src/types/remoteFlows';
-import { string } from 'yup';
-import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { string } from 'yup';
+import { JSFField } from '@/src/types/remoteFlows';
+import { server } from '@/src/tests/server';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { ButtonComponentProps } from '@/src/types/remoteFlows';
+import { AnnualGrossSalary } from '../AnnualGrossSalary';
+import {
+  conversionFromEURToUSD,
+  conversionFromUSDToEUR,
+} from '@/src/flows/Onboarding/tests/fixtures';
 
 const queryClient = new QueryClient();
 
@@ -97,47 +101,11 @@ describe('AnnualGrossSalary', () => {
 
         // If converting from USD to EUR
         if (body.source_currency === 'USD' && body.target_currency === 'EUR') {
-          return HttpResponse.json({
-            data: {
-              conversion_data: {
-                exchange_rate: '0.85',
-                target_currency: {
-                  code: 'EUR',
-                  name: 'Euro',
-                  symbol: '€',
-                },
-                source_currency: {
-                  code: 'USD',
-                  name: 'US Dollar',
-                  symbol: '$',
-                },
-                source_amount: 1000,
-                target_amount: 850,
-              },
-            },
-          });
+          return HttpResponse.json(conversionFromUSDToEUR);
         }
 
         // If converting from EUR to USD
-        return HttpResponse.json({
-          data: {
-            conversion_data: {
-              exchange_rate: '1.17647',
-              target_currency: {
-                code: 'USD',
-                name: 'US Dollar',
-                symbol: '$',
-              },
-              source_currency: {
-                code: 'EUR',
-                name: 'Euro',
-                symbol: '€',
-              },
-              source_amount: 1000,
-              target_amount: 1176.47,
-            },
-          },
-        });
+        return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
   });
@@ -215,22 +183,6 @@ describe('AnnualGrossSalary', () => {
   });
 
   describe('with custom button component', () => {
-    it('uses custom button component when provided', () => {
-      const CustomButton = vi
-        .fn()
-        .mockImplementation(({ children, onClick }) => (
-          <button data-testid="custom-button" onClick={onClick}>
-            {children}
-          </button>
-        ));
-
-      renderWithCustomButton(CustomButton);
-
-      expect(CustomButton).toHaveBeenCalled();
-      expect(screen.getByTestId('custom-button')).toBeInTheDocument();
-      expect(screen.getByText('Show EUR conversion')).toBeInTheDocument();
-    });
-
     it('passes all props to custom button component', () => {
       const CustomButton = vi
         .fn()
