@@ -83,7 +83,6 @@ export const AnnualGrossSalary = ({
           target_currency: desiredCurrency,
           amount: Number(value),
         });
-
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
           setValue('annual_gross_salary_conversion', amount?.toString() || '');
@@ -105,7 +104,6 @@ export const AnnualGrossSalary = ({
           target_currency: currency,
           amount: Number(value),
         });
-
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
           setValue(props.name, amount?.toString() || '');

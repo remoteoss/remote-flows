@@ -33,7 +33,7 @@ import {
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
-import { AnnualGrossSalary } from '@/src/flows/CostCalculator/AnnualGrossSalary';
+import { AnnualGrossSalary } from '@/src/flows/Onboarding/AnnualGrossSalary';
 import { JSFField } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
