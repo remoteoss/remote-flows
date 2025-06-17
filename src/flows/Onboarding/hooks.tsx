@@ -155,8 +155,10 @@ export const useOnboarding = ({
       options: {
         ...options,
         jsfModify: {
-          ...jsonSchemaOptions.jsfModify,
-          ...options?.jsfModify,
+          fields: {
+            ...options?.jsfModify?.fields,
+            ...jsonSchemaOptions.jsfModify?.fields,
+          },
         },
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
@@ -189,15 +191,36 @@ export const useOnboarding = ({
     },
   });
 
+  const annualGrossSalaryField =
+    options?.jsfModify?.fields?.annual_gross_salary;
+  const annualSalaryFieldPresentation =
+    annualGrossSalaryField &&
+    typeof annualGrossSalaryField === 'object' &&
+    'presentation' in annualGrossSalaryField
+      ? (
+          annualGrossSalaryField as {
+            presentation?: {
+              annual_gross_salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
   const customComponents = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
           presentation: {
             annual_gross_salary_conversion_properties: {
-              label: 'Conversion',
+              label:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.label,
               description:
-                'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.',
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.description,
             },
             Component: (props: JSFField & { currency: string }) => (
               <AnnualGrossSalary
@@ -209,7 +232,7 @@ export const useOnboarding = ({
         },
       },
     }),
-    [company?.desired_currency],
+    [company?.desired_currency, annualSalaryFieldPresentation],
   );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =

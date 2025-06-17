@@ -226,6 +226,24 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       countryCode={countryCode}
+      options={{
+        jsfModify: {
+          fields: {
+            annual_gross_salary: {
+              presentation: {
+                annual_gross_salary_conversion_properties: {
+                  label: 'Annual Gross Salary Conversion',
+                  description:
+                    'This is the conversion of your annual gross salary to the desired currency.',
+                },
+              },
+            },
+            has_signing_bonus: {
+              title: 'Signing Bonus...',
+            },
+          },
+        },
+      }}
     />
   </RemoteFlows>
 );
