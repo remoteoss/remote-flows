@@ -1252,4 +1252,67 @@ describe('OnboardingFlow', () => {
 
     expect(hasIntermediateSteps).toBe(false);
   });
+
+  it('should override field labels using jsfModify options', async () => {
+    const customSigningBonusLabel = 'Custom Signing Bonus Label';
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId="1234"
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            fields: {
+              has_signing_bonus: {
+                title: customSigningBonusLabel,
+              },
+            },
+          },
+        }}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    // Wait for loading to finish and form to be ready
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Verify that the custom label is displayed
+    const signingBonusLabel = screen.getByText(customSigningBonusLabel);
+    expect(signingBonusLabel).toBeInTheDocument();
+  });
 });
