@@ -7,8 +7,7 @@ import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { useFormFields } from '@/src/context';
-import { Mock } from 'vitest';
+import { ButtonComponentProps } from '@/src/types/remoteFlows';
 
 const queryClient = new QueryClient();
 
@@ -31,14 +30,6 @@ const defaultProps: JSFField & {
   scopedJsonSchema: {},
   type: 'text',
 };
-
-// Mock useFormFields and FormFieldsContext
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn().mockReturnValue({ components: {} }),
-  FormFieldsContext: {
-    Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  },
-}));
 
 // Helper function to render the component with a form context
 const renderWithFormContext = (props = defaultProps) => {
@@ -65,10 +56,36 @@ const renderWithFormContext = (props = defaultProps) => {
   return render(<TestComponent />);
 };
 
+// Helper function to render with a custom button
+const renderWithCustomButton = (
+  CustomButton: React.ComponentType<ButtonComponentProps>,
+) => {
+  const TestComponent = () => {
+    const methods = useForm({
+      defaultValues: {
+        annual_gross_salary: '',
+        annual_gross_salary_conversion: '',
+      },
+      mode: 'onChange',
+    });
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider components={{ button: CustomButton }}>
+          <FormProvider {...methods}>
+            <AnnualGrossSalary {...defaultProps} />
+          </FormProvider>
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    );
+  };
+
+  return render(<TestComponent />);
+};
+
 describe('AnnualGrossSalary', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as Mock).mockReturnValue({ components: {} });
 
     server.use(
       http.post('*/v1/currency-converter', async ({ request }) => {
@@ -197,21 +214,52 @@ describe('AnnualGrossSalary', () => {
     });
   });
 
-  it('uses custom button component when provided', () => {
-    const CustomButton = vi.fn().mockImplementation(({ children, onClick }) => (
-      <button data-testid="custom-button" onClick={onClick}>
-        {children}
-      </button>
-    ));
+  describe('with custom button component', () => {
+    it('uses custom button component when provided', () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, onClick }) => (
+          <button data-testid="custom-button" onClick={onClick}>
+            {children}
+          </button>
+        ));
 
-    (useFormFields as Mock).mockReturnValue({
-      components: { button: CustomButton },
+      renderWithCustomButton(CustomButton);
+
+      expect(CustomButton).toHaveBeenCalled();
+      expect(screen.getByTestId('custom-button')).toBeInTheDocument();
+      expect(screen.getByText('Show EUR conversion')).toBeInTheDocument();
     });
 
-    renderWithFormContext();
+    it('passes all props to custom button component', () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, onClick, ...props }) => (
+          <button
+            data-testid="custom-button"
+            onClick={onClick}
+            data-type={props['data-type']}
+            className={props.className}
+          >
+            {children}
+          </button>
+        ));
 
-    expect(CustomButton).toHaveBeenCalled();
-    expect(screen.getByTestId('custom-button')).toBeInTheDocument();
-    expect(screen.getByText('Show EUR conversion')).toBeInTheDocument();
+      renderWithCustomButton(CustomButton);
+
+      expect(CustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          children: 'Show EUR conversion',
+          onClick: expect.any(Function),
+          className: 'RemoteFlows-AnnualGrossSalary-button',
+          'data-type': 'inline',
+        }),
+        {},
+      );
+
+      const button = screen.getByTestId('custom-button');
+      expect(button).toHaveClass('RemoteFlows-AnnualGrossSalary-button');
+      expect(button).toHaveAttribute('data-type', 'inline');
+    });
   });
 });
