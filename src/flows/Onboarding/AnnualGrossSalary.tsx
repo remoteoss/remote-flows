@@ -46,8 +46,14 @@ const DescriptionWithConversion = ({
     ? `Hide ${currency} conversion`
     : `Show ${currency} conversion`;
   return (
-    <span>
-      {description} <button onClick={onClick}>{label}</button>
+    <span className="RemoteFlows-AnnualGrossSalary-description">
+      {description}{' '}
+      <button
+        className="RemoteFlows-AnnualGrossSalary-button"
+        onClick={onClick}
+      >
+        {label}
+      </button>
     </span>
   );
 };

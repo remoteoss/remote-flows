@@ -13,6 +13,7 @@ import './css/main.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { components } from './Components';
 
 export const InviteSection = ({
   title,
@@ -219,7 +220,7 @@ const OnboardingWithProps = ({
   employmentId,
   countryCode,
 }: OnboardingFormData) => (
-  <RemoteFlows auth={fetchToken}>
+  <RemoteFlows components={components} auth={fetchToken}>
     <OnboardingFlow
       companyId={companyId}
       type={type}

@@ -25,6 +25,9 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         className={`input ${hasError ? 'error' : ''}`}
         {...field}
       />
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
       {fieldState.error && (
         <p className="error-message">{fieldState.error.message}</p>
       )}
