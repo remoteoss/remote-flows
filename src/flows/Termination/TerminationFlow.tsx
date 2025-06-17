@@ -1,7 +1,7 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { JSFModify } from '@/src/flows/types';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';

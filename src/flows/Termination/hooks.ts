@@ -10,7 +10,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
+import { JSFModify } from '@/src/flows/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
 import omit from 'lodash.omit';

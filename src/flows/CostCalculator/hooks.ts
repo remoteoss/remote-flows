@@ -14,8 +14,8 @@ import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
-  JSFModify,
 } from '@/src/flows/CostCalculator/types';
+import { JSFModify } from '@/src/flows/types';
 import type { Result } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
