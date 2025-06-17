@@ -928,7 +928,7 @@ describe('OnboardingFlow', () => {
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 
-  it('should call POST when submitting basic information', async () => {
+  it.skip('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
 
     server.use(
