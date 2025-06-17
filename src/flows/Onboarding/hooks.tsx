@@ -156,7 +156,7 @@ export const useOnboarding = ({
         ...options,
         jsfModify: {
           ...jsonSchemaOptions.jsfModify,
-          ...options?.customProperties,
+          ...options?.jsfModify,
         },
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
