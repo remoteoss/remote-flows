@@ -280,8 +280,8 @@ export const useBenefitOffersSchema = (
     select: ({ data }) => {
       let jsfSchema = data?.data?.schema || {};
 
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
+      if (options && options.jsfModify?.benefits) {
+        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
         jsfSchema = schema;
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
