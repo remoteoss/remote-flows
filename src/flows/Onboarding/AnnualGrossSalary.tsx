@@ -101,8 +101,6 @@ export const AnnualGrossSalary = ({
     [convertCurrency, setValue],
   );
 
-  // ... existing code ...
-
   const debouncedConvertCurrency = useDebounce(
     (value: string) =>
       convertCurrencyCallback(
