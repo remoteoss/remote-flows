@@ -113,8 +113,8 @@ export const useOnboarding = ({
       jsonSchemaVersion: options?.jsonSchemaVersion,
     });
 
-  const createEmploymentMutation = useCreateEmployment();
-  const updateEmploymentMutation = useUpdateEmployment();
+  const createEmploymentMutation = useCreateEmployment(options);
+  const updateEmploymentMutation = useUpdateEmployment(options);
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
