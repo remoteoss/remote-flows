@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.11
+
+### Minor Changes
+
+- c8a0cf3: - Add conversion feature for the annual gross salary
+  - Fix json-schema-version for onboarding && contract amendment flows
+
 ## 0.4.0-alpha.10
 
 ### Minor Changes
