@@ -157,7 +157,6 @@ export const useOnboarding = ({
           : serverEmploymentData,
       options: {
         ...jsonSchemaOptions,
-        jsfModify: jsonSchemaOptions.jsfModify,
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
