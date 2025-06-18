@@ -1268,9 +1268,11 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
         options={{
           jsfModify: {
-            fields: {
-              has_signing_bonus: {
-                title: customSigningBonusLabel,
+            contract_details: {
+              fields: {
+                has_signing_bonus: {
+                  title: customSigningBonusLabel,
+                },
               },
             },
           },
@@ -1336,13 +1338,15 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
         options={{
           jsfModify: {
-            fields: {
-              annual_gross_salary: {
-                title: customFieldLabel,
-                presentation: {
-                  annual_gross_salary_conversion_properties: {
-                    label: customConversionLabel,
-                    description: customConversionDescription,
+            contract_details: {
+              fields: {
+                annual_gross_salary: {
+                  title: customFieldLabel,
+                  presentation: {
+                    annual_gross_salary_conversion_properties: {
+                      label: customConversionLabel,
+                      description: customConversionDescription,
+                    },
                   },
                 },
               },
@@ -1386,5 +1390,65 @@ describe('OnboardingFlow', () => {
 
     expect(conversionLabel).toBeInTheDocument();
     expect(conversionDescription).toBeInTheDocument();
+  });
+
+  it('should override the name field label in basic_information using jsfModify', async () => {
+    const customNameLabel = 'Custom Full Name Label';
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        if (onboardingBag.isLoading) {
+          return <div data-testid="spinner">Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId="38d8bb00-3d78-4dd7-98f8-bd735e68d9a9"
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            basic_information: {
+              fields: {
+                name: {
+                  title: customNameLabel,
+                },
+              },
+            },
+          },
+        }}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    // Wait for loading to finish and form to be ready
+    await screen.findByText(/Step: Basic Information/i);
+
+    // Verify that the custom label is displayed
+    const nameLabel = screen.getByLabelText(customNameLabel);
+    expect(nameLabel).toBeInTheDocument();
   });
 });

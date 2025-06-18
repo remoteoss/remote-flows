@@ -2,14 +2,21 @@ import {
   EmploymentCreateParams,
   Employment as EmploymentResponse,
 } from '@/src/client';
-import { FlowOptions } from '@/src/flows/types';
+import { FlowOptions, JSFModify } from '@/src/flows/types';
 
 export type OnboardingFlowParams = {
   countryCode?: string;
   employmentId?: string;
   companyId: string;
   type?: EmploymentCreateParams['type'];
-  options?: FlowOptions;
+  options?: Omit<FlowOptions, 'jsfModify'> & {
+    jsfModify?: {
+      select_country?: JSFModify;
+      basic_information?: JSFModify;
+      contract_details?: JSFModify;
+      benefits?: JSFModify;
+    };
+  };
 };
 
 export type SelectCountryFormPayload = {

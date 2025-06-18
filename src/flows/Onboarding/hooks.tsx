@@ -108,7 +108,10 @@ export const useOnboarding = ({
   );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField(options);
+    useCountriesSchemaField({
+      jsfModify: options?.jsfModify?.select_country,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+    });
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
@@ -153,13 +156,8 @@ export const useOnboarding = ({
             }
           : serverEmploymentData,
       options: {
-        ...options,
-        jsfModify: {
-          fields: {
-            ...options?.jsfModify?.fields,
-            ...jsonSchemaOptions.jsfModify?.fields,
-          },
-        },
+        ...jsonSchemaOptions,
+        jsfModify: jsonSchemaOptions.jsfModify,
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
@@ -185,6 +183,7 @@ export const useOnboarding = ({
   } = useJSONSchema({
     form: 'employment_basic_information',
     options: {
+      jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -192,7 +191,7 @@ export const useOnboarding = ({
   });
 
   const annualGrossSalaryField =
-    options?.jsfModify?.fields?.annual_gross_salary;
+    options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
   const annualSalaryFieldPresentation =
     annualGrossSalaryField &&
     typeof annualGrossSalaryField === 'object' &&
@@ -209,7 +208,7 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
-  const customComponents = useMemo(
+  const customFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -244,7 +243,13 @@ export const useOnboarding = ({
     useJSONSchema({
       form: 'contract_details',
       options: {
-        jsfModify: customComponents,
+        jsfModify: {
+          ...options?.jsfModify?.contract_details,
+          fields: {
+            ...options?.jsfModify?.contract_details?.fields,
+            ...customFields.fields,
+          },
+        },
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
