@@ -19,7 +19,7 @@ export * from '@/src/flows/Termination';
 export * from '@/src/flows/Onboarding';
 
 export type * from '@/src/flows/CostCalculator/types';
-export * from '@/src/common/hooks';
+export * from '@/src/common/api';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 

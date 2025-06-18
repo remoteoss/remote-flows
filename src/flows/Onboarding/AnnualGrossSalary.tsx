@@ -1,34 +1,10 @@
-import { ReactNode, useState, useCallback, useRef, useEffect } from 'react';
+import { ReactNode, useState, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import debounce from 'lodash/debounce';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useConvertCurrency } from '@/src/flows/Onboarding/api';
 import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
-
-function useDebounce(
-  callback: (value: string) => Promise<void>,
-  delay: number,
-) {
-  const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const debouncedFn = useRef(
-    debounce((value: string) => {
-      callbackRef.current(value);
-    }, delay),
-  ).current;
-
-  return useCallback(
-    (value: string) => {
-      debouncedFn(value);
-    },
-    [debouncedFn],
-  );
-}
+import { useDebounce } from '@/src/common/hooks';
 
 type DescriptionWithConversionProps = {
   description: ReactNode;
@@ -109,7 +85,9 @@ export const AnnualGrossSalary = ({
         });
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
-          setValue('annual_gross_salary_conversion', amount?.toString() || '');
+          if (amount) {
+            setValue('annual_gross_salary_conversion', amount?.toString());
+          }
         }
       } catch (error) {
         console.error('Error converting currency:', error);
@@ -130,13 +108,15 @@ export const AnnualGrossSalary = ({
         });
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
-          setValue(props.name, amount?.toString() || '');
+          if (amount) {
+            setValue('annual_gross_salary_conversion', amount?.toString());
+          }
         }
       } catch (error) {
         console.error('Error converting currency:', error);
       }
     },
-    [currency, desiredCurrency, convertCurrency, setValue, props.name],
+    [currency, desiredCurrency, convertCurrency, setValue],
   );
 
   const debouncedConvertCurrency = useDebounce(convertCurrencyCallback, 500);
