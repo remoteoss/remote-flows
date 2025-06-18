@@ -32,7 +32,9 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { AnnualGrossSalary } from '@/src/flows/Onboarding/AnnualGrossSalary';
+import { JSFField } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -106,11 +108,14 @@ export const useOnboarding = ({
   );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField(options);
+    useCountriesSchemaField({
+      jsfModify: options?.jsfModify?.select_country,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+    });
 
-  const createEmploymentMutation = useCreateEmployment();
-  const updateEmploymentMutation = useUpdateEmployment();
-  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
+  const createEmploymentMutation = useCreateEmployment(options);
+  const updateEmploymentMutation = useUpdateEmployment(options);
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
@@ -130,14 +135,16 @@ export const useOnboarding = ({
     unknown
   >;
 
-  const isOnboardingFormEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
-  );
-
-  const useJSONSchema = ({ form }: { form: JSONSchemaFormType }) => {
+  const useJSONSchema = ({
+    form,
+    options: jsonSchemaOptions = {},
+  }: {
+    form: JSONSchemaFormType;
+    options?: {
+      jsfModify?: JSFModify;
+      queryOptions?: { enabled?: boolean };
+    };
+  }) => {
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
@@ -149,24 +156,103 @@ export const useOnboarding = ({
             }
           : serverEmploymentData,
       options: {
-        ...options,
+        ...jsonSchemaOptions,
         queryOptions: {
-          enabled: isOnboardingFormEnabled,
+          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
       },
     });
   };
+
+  const isBasicInformationDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        Boolean(employmentId)),
+  );
+
+  const isContractDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
+  );
 
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'employment_basic_information',
+    options: {
+      jsfModify: options?.jsfModify?.basic_information,
+      queryOptions: {
+        enabled: isBasicInformationDetailsEnabled,
+      },
+    },
   });
+
+  const annualGrossSalaryField =
+    options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
+  const annualSalaryFieldPresentation =
+    annualGrossSalaryField &&
+    typeof annualGrossSalaryField === 'object' &&
+    'presentation' in annualGrossSalaryField
+      ? (
+          annualGrossSalaryField as {
+            presentation?: {
+              annual_gross_salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const customFields = useMemo(
+    () => ({
+      fields: {
+        annual_gross_salary: {
+          ...annualGrossSalaryField,
+          presentation: {
+            annual_gross_salary_conversion_properties: {
+              label:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.label,
+              description:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.description,
+            },
+            Component: (props: JSFField & { currency: string }) => (
+              <AnnualGrossSalary
+                desiredCurrency={company?.desired_currency || ''}
+                {...props}
+              />
+            ),
+          },
+        },
+      },
+    }),
+    [
+      company?.desired_currency,
+      annualSalaryFieldPresentation,
+      annualGrossSalaryField,
+    ],
+  );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
+      options: {
+        jsfModify: {
+          ...options?.jsfModify?.contract_details,
+          fields: {
+            ...options?.jsfModify?.contract_details?.fields,
+            ...customFields.fields,
+          },
+        },
+        queryOptions: {
+          enabled: isContractDetailsEnabled,
+        },
+      },
     });
 
   const {

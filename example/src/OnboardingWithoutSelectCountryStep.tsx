@@ -226,6 +226,34 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       countryCode={countryCode}
+      options={{
+        jsfModify: {
+          basic_information: {
+            fields: {
+              name: {
+                title: 'Full Name...',
+              },
+            },
+          },
+          contract_details: {
+            fields: {
+              annual_gross_salary: {
+                title: 'Test label',
+                presentation: {
+                  annual_gross_salary_conversion_properties: {
+                    label: 'Annual Gross Salary Conversion',
+                    description:
+                      'This is the conversion of your annual gross salary to the desired currency.',
+                  },
+                },
+              },
+              has_signing_bonus: {
+                title: 'Signing Bonus...',
+              },
+            },
+          },
+        },
+      }}
     />
   </RemoteFlows>
 );
@@ -233,9 +261,9 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: '',
+    employmentId: 'afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395',
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
-    countryCode: 'PRT',
+    countryCode: 'CAN',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 

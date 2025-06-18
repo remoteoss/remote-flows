@@ -1,7 +1,6 @@
 import { TerminationContext } from '@/src/flows/Termination/context';
 import React, { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
-import { JSFModify } from '@/src/flows/types';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
@@ -9,6 +8,7 @@ import { EmployeeCommunicationForm } from '@/src/flows/Termination/EmployeeComun
 import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetailsForm';
 import { PaidTimeOffForm } from '@/src/flows/Termination/PaidTimeOffForm';
 import { AdditionalDetailsForm } from '@/src/flows/Termination/AdditionalDetailsForm';
+import { JSFModify } from '@/src/flows/types';
 
 export type TerminationRenderProps = {
   /**

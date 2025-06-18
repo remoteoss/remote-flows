@@ -163,21 +163,28 @@ function FormDescription({
 }) {
   const { formDescriptionId } = useFormField();
 
+  if (typeof children === 'string') {
+    return (
+      <p
+        data-slot="form-description"
+        id={formDescriptionId}
+        className={cn('text-base-color text-xs', className)}
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(children, { ADD_ATTR: ['target'] }),
+        }}
+        {...props}
+      />
+    );
+  }
+
   return (
     <p
       data-slot="form-description"
       id={formDescriptionId}
       className={cn('text-base-color text-xs', className)}
-      {...(typeof children === 'string'
-        ? {
-            dangerouslySetInnerHTML: {
-              __html: DOMPurify.sanitize(children, { ADD_ATTR: ['target'] }),
-            },
-          }
-        : {})} // Only add dangerouslySetInnerHTML when children is a string
       {...props}
     >
-      {typeof children === 'function' ? children() : null}
+      {typeof children === 'function' ? children() : children}
     </p>
   );
 }

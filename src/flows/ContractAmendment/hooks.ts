@@ -17,7 +17,7 @@ import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
-import { useEmploymentQuery } from '@/src/common/hooks';
+import { useEmploymentQuery } from '@/src/common/api';
 import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
