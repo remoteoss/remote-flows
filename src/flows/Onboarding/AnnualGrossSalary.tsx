@@ -74,54 +74,48 @@ export const AnnualGrossSalary = ({
   const { mutateAsync: convertCurrency } = useConvertCurrency();
 
   const convertCurrencyCallback = useCallback(
-    async (value: string) => {
+    async (
+      value: string,
+      sourceCurrency: string,
+      targetCurrency: string,
+      targetField: string,
+    ) => {
       if (!value) return;
 
       try {
         const response = await convertCurrency({
-          source_currency: currency,
-          target_currency: desiredCurrency,
+          source_currency: sourceCurrency,
+          target_currency: targetCurrency,
           amount: Number(value),
         });
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
           if (amount) {
-            setValue('annual_gross_salary_conversion', amount?.toString());
+            setValue(targetField, amount?.toString());
           }
         }
       } catch (error) {
         console.error('Error converting currency:', error);
       }
     },
-    [currency, desiredCurrency, convertCurrency, setValue],
+    [convertCurrency, setValue],
   );
 
-  const convertCurrencyReverseCallback = useCallback(
-    async (value: string) => {
-      if (!value) return;
+  // ... existing code ...
 
-      try {
-        const response = await convertCurrency({
-          source_currency: desiredCurrency,
-          target_currency: currency,
-          amount: Number(value),
-        });
-        if (response.data?.data?.conversion_data?.target_amount) {
-          const amount = response.data.data.conversion_data.target_amount;
-          if (amount) {
-            setValue('annual_gross_salary_conversion', amount?.toString());
-          }
-        }
-      } catch (error) {
-        console.error('Error converting currency:', error);
-      }
-    },
-    [currency, desiredCurrency, convertCurrency, setValue],
+  const debouncedConvertCurrency = useDebounce(
+    (value: string) =>
+      convertCurrencyCallback(
+        value,
+        currency,
+        desiredCurrency,
+        'annual_gross_salary_conversion',
+      ),
+    500,
   );
-
-  const debouncedConvertCurrency = useDebounce(convertCurrencyCallback, 500);
   const debouncedConvertCurrencyReverse = useDebounce(
-    convertCurrencyReverseCallback,
+    (value: string) =>
+      convertCurrencyCallback(value, desiredCurrency, currency, props.name),
     500,
   );
 
