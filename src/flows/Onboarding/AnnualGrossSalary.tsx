@@ -117,7 +117,9 @@ export const AnnualGrossSalary = ({
     500,
   );
 
-  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAnnualGrossSalaryChange = (
+    evt: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (showConversion) {
       debouncedConvertCurrency(evt.target.value);
     }
@@ -157,7 +159,7 @@ export const AnnualGrossSalary = ({
         type="text"
         inputMode="decimal"
         pattern="^[0-9.]*$"
-        onChange={handleChange}
+        onChange={handleAnnualGrossSalaryChange}
       />
       {/** A problem on this field is that the label, description are fixed. */}
       {showConversion && (
