@@ -338,7 +338,9 @@ export const useUpdateEmployment = () => {
   });
 };
 
-export const useUpdateBenefitsOffers = () => {
+export const useUpdateBenefitsOffers = (
+  options?: OnboardingFlowParams['options'],
+) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: ({
@@ -347,6 +349,13 @@ export const useUpdateBenefitsOffers = () => {
     }: UnifiedEmploymentUpsertBenefitOffersRequest & {
       employmentId: string;
     }) => {
+      const jsonSchemaQueryParam = options?.jsonSchemaVersion
+        ?.benefit_offers_form_schema
+        ? {
+            json_schema_version:
+              options.jsonSchemaVersion.benefit_offers_form_schema,
+          }
+        : {};
       return putUpdateBenefitOffer({
         client: client as Client,
         headers: {
@@ -355,6 +364,9 @@ export const useUpdateBenefitsOffers = () => {
         body: payload,
         path: {
           employment_id: employmentId,
+        },
+        query: {
+          ...jsonSchemaQueryParam,
         },
       });
     },

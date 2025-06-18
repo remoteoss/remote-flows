@@ -115,7 +115,7 @@ export const useOnboarding = ({
 
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment();
-  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
