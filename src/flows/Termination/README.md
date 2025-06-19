@@ -4,6 +4,21 @@ Welcome to the Termination flow docs
 
 # Table of Contents
 
+- [Getting Started](#getting-started)
+  - [Full Example](#full-example)
+- [Components API](#components-api)
+  - [TerminationFlow](#terminationflow)
+  - [EmployeeComunicationStep](#employeecomunicationstep)
+  - [TerminationDetailsStep](#terminationdetailsstep)
+  - [PaidTimeOffStep](#paidtimeoffstep)
+  - [AdditionalDetailsStep](#additionaldetailsstep)
+  - [SubmitButton](#submitbutton)
+  - [BackButton](#backbutton)
+  - [TimeOff](#timeoff)
+    - [TimeOff render prop Properties](#timeoff-render-prop-properties)
+- [Configuration Options](#configuration-options)
+  - [options.jsfModify properties](#optionsjsfmodify-properties)
+
 ## Getting Started
 
 After installation, import the main CSS file in your application:
@@ -328,6 +343,8 @@ Component that retrieves the employment and the timeoff of the employee. It uses
 | ------------ | ------------------------------------ | ----------------------------- |
 | `timeoff`    | `ListTimeoffResponse \| undefined`   | returns the timeoff result    |
 | `employment` | `EmploymentShowResponse\| undefined` | returns the employment result |
+
+## Configuration options
 
 #### options.jsfModify properties
 
