@@ -312,7 +312,7 @@ It renders the submit button for the form and supports all standard `<button>` e
 
 It renders the back button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the TerminationFlow component to ensure proper functionality
 
-### Timeoff
+### Timeoff
 
 Component that retrieves the employment and the timeoff of the employee. It uses a render prop that lets you to render the UI elements
 
