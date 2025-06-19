@@ -8,6 +8,7 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import './css/main.css';
 import React, { useState } from 'react';
@@ -52,6 +53,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
   } = components;
   const [apiError, setApiError] = useState<string | null>();
+  const [fieldErrors, setFieldErrors] = useState<NormalizedFieldError[]>([]);
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
@@ -67,9 +69,28 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentCreationResponse) =>
               console.log('data', data)
             }
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({ error, fieldErrors }) => {
+              setFieldErrors(fieldErrors || []);
+              setApiError(error.message);
+            }}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
+          {apiError && (
+            <div className="alert-error">
+              <p>{apiError}</p>
+              <ul>
+                {fieldErrors.map((fieldError) => (
+                  <li key={fieldError.field}>
+                    {fieldError.messages.map((message) => (
+                      <span key={message}>
+                        <strong>{fieldError.userFriendlyLabel}</strong>:{' '}
+                        {message}
+                      </span>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="buttons-container">
             <BackButton
               className="back-button"
@@ -226,34 +247,6 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       countryCode={countryCode}
-      options={{
-        jsfModify: {
-          basic_information: {
-            fields: {
-              name: {
-                title: 'Full Name...',
-              },
-            },
-          },
-          contract_details: {
-            fields: {
-              annual_gross_salary: {
-                title: 'Test label',
-                presentation: {
-                  annual_gross_salary_conversion_properties: {
-                    label: 'Annual Gross Salary Conversion',
-                    description:
-                      'This is the conversion of your annual gross salary to the desired currency.',
-                  },
-                },
-              },
-              has_signing_bonus: {
-                title: 'Signing Bonus...',
-              },
-            },
-          },
-        },
-      }}
     />
   </RemoteFlows>
 );
@@ -261,9 +254,9 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: 'afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395',
+    employmentId: '',
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
-    countryCode: 'CAN',
+    countryCode: 'PRT',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
