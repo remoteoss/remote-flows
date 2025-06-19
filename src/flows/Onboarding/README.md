@@ -718,7 +718,6 @@ The `onboardingBag` object returned by the `useOnboarding` hook contains the fol
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `employmentId`         | `string \| undefined`                                                                                                           | Employment ID passed useful to be used between components                                                                                           |
 | `creditRiskStatus`     | `'not_started' \| 'ready' \| 'in_progress' \| 'referred' \| 'fail' \| 'deposit_required' \| 'no_deposit_required' \| undefined` | Credit risk status of the company, useful to know what to show in the review step                                                                   |
-| `owner_id`             | `string \| undefined`                                                                                                           | Company owner user ID                                                                                                                               |
 | `stepState`            | `{ currentStep: { name: string; index: number }; totalSteps: number; values: Record<string, any> } }`                           | Current step state containing the current step and total number of steps                                                                            |
 | `fields`               | `Fields[]`                                                                                                                      | Array of form fields from the onboarding schema for the current step                                                                                |
 | `isLoading`            | `boolean`                                                                                                                       | Loading state indicating if the onboarding schema is being fetched                                                                                  |
@@ -757,9 +756,3 @@ The `stepState.currentStep.name` can have the following values:
 - **`contract_details`** - Contract details step
 - **`benefits`** - Benefits selection step
 - **`review`** - Review and invitation step
-
-## Configuration Options
-
-#### options.jsfModify properties
-
-The `options.jsfModify` object accepts keys for each step (`basic_information`, `contract_details`, `benefits`) where each value is a `JSFModify` object. The `JSFModify` type accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library accepts.
