@@ -56,10 +56,6 @@ export function BasicInformationStep({
           onboardingBag.meta?.fields?.basic_information,
         );
 
-        console.log('meta', onboardingBag.meta?.fields?.basic_information);
-
-        console.log('normalizedFieldErrors', normalizedFieldErrors);
-
         onError?.({
           error: response?.error,
           rawError: response?.rawError,

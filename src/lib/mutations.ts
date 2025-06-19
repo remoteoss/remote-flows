@@ -45,32 +45,9 @@ export function extractFieldErrors(error: any): FieldError[] {
           field,
           messages: messages.map((msg: any) => String(msg)),
         });
-      } else if (typeof messages === 'string') {
-        fieldErrors.push({
-          field,
-          messages: [messages],
-        });
       }
     });
   }
-
-  // Handle flat error structure like { field: [messages] }
-  else if (typeof error === 'object') {
-    Object.entries(error).forEach(([field, messages]) => {
-      if (Array.isArray(messages)) {
-        fieldErrors.push({
-          field,
-          messages: messages.map((msg: any) => String(msg)),
-        });
-      } else if (typeof messages === 'string') {
-        fieldErrors.push({
-          field,
-          messages: [messages],
-        });
-      }
-    });
-  }
-
   return fieldErrors;
 }
 
