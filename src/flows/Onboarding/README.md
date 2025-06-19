@@ -12,6 +12,7 @@ Welcome to the Onboarding flow docs
   - [OnboardingFlow](#onboardingflow)
     - [Props](#props)
     - [options.jsfModify properties](#optionsjsfmodify-properties)
+    - [Example](#example)
   - [SelectCountryStep](#selectcountrystep)
   - [BasicInformationStep](#basicinformationstep)
   - [ContractDetailsStep](#contractdetailsstep)
@@ -19,10 +20,15 @@ Welcome to the Onboarding flow docs
   - [SubmitButton](#submitbutton)
   - [BackButton](#backbutton)
   - [OnboardingInvite](#onboardinginvite)
+    - [Usage Example](#usage-example)
   - [ReviewStep](#reviewstep)
+    - [Credit Risk States](#credit-risk-states)
+    - [Usage Example](#usage-example-1)
 - [OnboardingBag Properties](#onboardingbag-properties)
+  - [Credit Risk Status Values](#credit-risk-status-values)
+  - [Step Names](#step-names)
 - [Configuration Options](#configuration-options)
-  - [options.jsfModify properties](#optionsjsfmodify-properties)
+  - [options.jsfModify properties](#optionsjsfmodify-properties-1)
 
 ## Getting Started
 
@@ -301,34 +307,6 @@ export const OnboardingForm = () => (
       render={OnBoardingRender}
       employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
       countryCode="CAN"
-      options={{
-        jsfModify: {
-          basic_information: {
-            fields: {
-              name: {
-                title: 'Full Name...',
-              },
-            },
-          },
-          contract_details: {
-            fields: {
-              annual_gross_salary: {
-                title: 'Test label',
-                presentation: {
-                  annual_gross_salary_conversion_properties: {
-                    label: 'Annual Gross Salary Conversion',
-                    description:
-                      'This is the conversion of your annual gross salary to the desired currency.',
-                  },
-                },
-              },
-              has_signing_bonus: {
-                title: 'Signing Bonus...',
-              },
-            },
-          },
-        },
-      }}
     />
   </RemoteFlows>
 );
@@ -466,7 +444,6 @@ export const OnboardingForm = () => (
       companyId="your-company-id"
       type="employee"
       render={MultiStepForm}
-      employmentId=""
     />
   </RemoteFlows>
 );
@@ -483,7 +460,7 @@ The component accepts the following props:
 | Prop           | Type                                                                                                                                                                                                    | Required | Description                                                                                                             |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `companyId`    | string                                                                                                                                                                                                  | Yes      | The company ID where the employee will be onboarded                                                                     |
-| `type`         | `'employee' \| 'contractor'`                                                                                                                                                                            | Yes      | The type of employment relationship                                                                                     |
+| `type`         | `'employee' \| 'contractor'`                                                                                                                                                                            | Yes      | The type of employment                                                                                                  |
 | `employmentId` | string                                                                                                                                                                                                  | No       | The employment ID if you want to update an existing employment                                                          |
 | `countryCode`  | string                                                                                                                                                                                                  | No       | The country code where the employment is based (if not provided, SelectCountryStep will be shown)                       |
 | `render`       | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow |
@@ -492,6 +469,75 @@ The component accepts the following props:
 #### options.jsfModify properties
 
 The `options.jsfModify` object accepts keys for each step (`basic_information`, `contract_details`, `benefits`) where each value is a `JSFModify` object. The `JSFModify` type accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library accepts.
+
+#### Example
+
+```tsx
+import {
+  OnboardingFlow,
+  RemoteFlows,
+  OnboardingRenderProps,
+  // ... other imports
+} from '@remoteoss/remote-flows';
+
+// Mock ReviewStep component - see full implementation at:
+// https://github.com/remoteoss/remote-flows/blob/main/example/src/ReviewStep.tsx
+const ReviewStep = ({
+  onboardingBag,
+  components,
+  apiError,
+  setApiError,
+}: any) => <div>Review Step Component</div>;
+
+const STEPS = [
+  'Basic Information',
+  'Contract Details',
+  'Benefits',
+  'Review & Invite',
+];
+
+// ... MultiStepForm component (same as above but without SelectCountryStep)
+
+export const OnboardingForm = () => (
+  <RemoteFlows auth={fetchToken}>
+    <OnboardingFlow
+      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
+      type="employee"
+      render={OnBoardingRender}
+      employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
+      countryCode="CAN"
+      options={{
+        jsfModify: {
+          basic_information: {
+            fields: {
+              name: {
+                title: 'Full Name...',
+              },
+            },
+          },
+          contract_details: {
+            fields: {
+              annual_gross_salary: {
+                title: 'Test label',
+                presentation: {
+                  annual_gross_salary_conversion_properties: {
+                    label: 'Annual Gross Salary Conversion',
+                    description:
+                      'This is the conversion of your annual gross salary to the desired currency.',
+                  },
+                },
+              },
+              has_signing_bonus: {
+                title: 'Signing Bonus...',
+              },
+            },
+          },
+        },
+      }}
+    />
+  </RemoteFlows>
+);
+```
 
 ### SelectCountryStep
 
