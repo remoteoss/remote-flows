@@ -52,6 +52,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
+    OnboardingInvite,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -139,6 +140,21 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Continue
             </SubmitButton>
+            <OnboardingInvite
+              render={({
+                employmentStatus,
+              }: {
+                employmentStatus: 'invited' | 'created_awaiting_reserve';
+              }) =>
+                employmentStatus === 'invited' ? 'Invite' : 'Create invoice'
+              }
+              onError={({ error }) => {
+                setErrors({
+                  apiError: error.message,
+                  fieldErrors: [],
+                });
+              }}
+            />
           </div>
         </>
       );
