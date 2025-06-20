@@ -217,6 +217,41 @@ describe('OnboardingInvite', () => {
     });
   });
 
+  it('should call onError with correct error structure when invite fails with 409', async () => {
+    server.use(
+      http.post('*/v1/employments/:employmentId/invite', () => {
+        return HttpResponse.json(
+          {
+            message:
+              "Can't invite employee missing contract details and pricing plan details",
+          },
+          { status: 409 },
+        );
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const button = screen.getByText(/Invite Employee/i);
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled();
+      expect(mockError).toHaveBeenCalledWith({
+        error: new Error(
+          "Can't invite employee missing contract details and pricing plan details",
+        ),
+        rawError: {
+          message:
+            "Can't invite employee missing contract details and pricing plan details",
+        },
+        fieldErrors: [],
+      });
+      expect(mockSuccess).not.toHaveBeenCalled();
+    });
+  });
+
   it('should call onError when creating reserve invoice fails', async () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {

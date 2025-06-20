@@ -1,11 +1,14 @@
-import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import {
   CreditRiskStatus,
   OnboardingRenderProps,
   OnboardingInviteProps,
   Employment,
   CreditRiskState,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
+import { AlertError } from './AlertError';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+
 export const InviteSection = ({
   title,
   description,
@@ -135,12 +138,15 @@ const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
-  setApiError,
+  setErrors,
   employment,
 }: {
   creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
-  setApiError: (error: string | null) => void;
+  setErrors: (errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
   employment?: Employment;
 }) => {
   const isDisabled =
@@ -156,19 +162,20 @@ export const MyOnboardingInviteButton = ({
             'after inviting or creating a reserve navigate to whatever place you want',
           );
         }}
-        render={({ employmentStatus }) => {
+        render={({
+          employmentStatus,
+        }: {
+          employmentStatus: 'invited' | 'created_awaiting_reserve';
+        }) => {
           return employmentStatus === 'created_awaiting_reserve'
             ? 'Create Reserve'
             : 'Invite Employee';
         }}
-        onError={(error: unknown) => {
-          if (error instanceof Error) {
-            setApiError(error.message);
-          } else if (typeof error === 'string') {
-            setApiError(error);
-          } else {
-            setApiError('An unknown error occurred');
-          }
+        onError={({ error }: { error: Error }) => {
+          setErrors({
+            apiError: error.message,
+            fieldErrors: [],
+          });
         }}
         type="submit"
       />
@@ -180,13 +187,19 @@ export const MyOnboardingInviteButton = ({
 export const ReviewStep = ({
   onboardingBag,
   components,
-  apiError,
-  setApiError,
+  errors,
+  setErrors,
 }: {
   components: OnboardingRenderProps['components'];
   onboardingBag: OnboardingRenderProps['onboardingBag'];
-  apiError?: string | null;
-  setApiError: (error: string | null) => void;
+  errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  };
+  setErrors: (errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 }) => {
   const {
     OnboardingInvite,
@@ -236,7 +249,13 @@ export const ReviewStep = ({
         </InviteSection>
       )}
       <ReviewStepCreditRisk
-        render={({ creditRiskState, creditRiskStatus }) => {
+        render={({
+          creditRiskState,
+          creditRiskStatus,
+        }: {
+          creditRiskState: CreditRiskState;
+          creditRiskStatus: CreditRiskStatus;
+        }) => {
           return (
             <>
               <CreditRiskSections
@@ -254,11 +273,11 @@ export const ReviewStep = ({
                 <MyOnboardingInviteButton
                   creditRiskStatus={onboardingBag.creditRiskStatus}
                   Component={OnboardingInvite}
-                  setApiError={setApiError}
+                  setErrors={setErrors}
                   employment={onboardingBag.employment}
                 />
               </div>
-              {apiError && <div className="error-message">{apiError}</div>}
+              <AlertError errors={errors} />
             </>
           );
         }}
