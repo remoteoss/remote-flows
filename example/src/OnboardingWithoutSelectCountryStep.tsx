@@ -84,12 +84,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           />
           <AlertError errors={errors} />
           <div className="buttons-container">
-            <BackButton
-              className="back-button"
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-            >
-              Previous Step
-            </BackButton>
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}

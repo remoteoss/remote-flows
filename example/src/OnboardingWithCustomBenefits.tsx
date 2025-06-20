@@ -61,7 +61,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             }: {
               error: Error;
               fieldErrors: NormalizedFieldError[];
-            }) => setErrors({ apiError: error.message, fieldErrors })}
+            }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
           <AlertError errors={errors} />
           <div className="buttons-container">
