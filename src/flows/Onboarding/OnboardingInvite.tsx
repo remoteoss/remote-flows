@@ -109,10 +109,10 @@ export function OnboardingInvite({
           });
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       onError?.({
-        error,
-        rawError: error,
+        error: error as Error,
+        rawError: error as Error,
         fieldErrors: [],
       });
     }
