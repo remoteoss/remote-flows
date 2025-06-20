@@ -532,7 +532,6 @@ export const useOnboarding = ({
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
 
-    owner_id: company?.company_owner_user_id,
     /**
      * Current step state containing the current step and total number of steps
      */
