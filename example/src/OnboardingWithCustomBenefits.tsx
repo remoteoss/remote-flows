@@ -10,11 +10,11 @@ import {
   ContractDetailsFormPayload,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
-import './css/main.css';
 import { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { AlertError } from './AlertError';
+import './css/main.css';
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];

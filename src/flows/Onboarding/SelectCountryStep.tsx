@@ -26,7 +26,7 @@ type SelectCountryStepProps = {
   }: {
     error: Error;
     rawError: Error;
-    fieldErrors?: NormalizedFieldError[];
+    fieldErrors: NormalizedFieldError[];
   }) => void;
 };
 
