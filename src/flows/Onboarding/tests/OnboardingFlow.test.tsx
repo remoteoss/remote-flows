@@ -1685,4 +1685,144 @@ describe('OnboardingFlow', () => {
     // Verify we stay on the same step (don't advance)
     await screen.findByText(/Step: Contract Details/i);
   });
+
+  it('should handle 422 validation errors with field errors when updating benefits', async () => {
+    const uniqueEmploymentId = 'test-employment-benefits-422-error';
+
+    // Mock the employment endpoint to return data with a non-readonly status
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      // Mock the PUT endpoint to return success first, then 422 error
+      http.put('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json(
+          {
+            errors: {
+              '0e0293ae-eec6-4d0e-9176-51c46eed435e': [
+                'Invalid meal benefit selection',
+              ],
+              'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': [
+                'Health insurance not available for this region',
+              ],
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId={uniqueEmploymentId}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the basic information step to load
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Navigate to contract details step
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for contract details step to load
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Wait for the form to be populated with existing data
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    // Submit contract details to move to benefits step
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for benefits step to load
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    // Wait for the error to be called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
+    });
+
+    // Get the error call arguments
+    const errorCall = mockOnError.mock.calls[0][0];
+
+    // Verify the error structure
+    expect(errorCall.error).toBeInstanceOf(Error);
+    expect(errorCall.rawError).toBeDefined();
+    expect(errorCall.fieldErrors.length).toBe(2);
+
+    // Verify the field errors are normalized with user-friendly labels
+    const mealBenefitError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) =>
+        error.field === '0e0293ae-eec6-4d0e-9176-51c46eed435e',
+    );
+    const healthInsuranceError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) =>
+        error.field === 'baa1ce1d-39ea-4eec-acf0-88fc8a357f54',
+    );
+
+    expect(mealBenefitError).toBeDefined();
+    expect(mealBenefitError.messages).toEqual([
+      'Invalid meal benefit selection',
+    ]);
+    expect(mealBenefitError.userFriendlyLabel).toBe('Meal Benefit');
+
+    expect(healthInsuranceError).toBeDefined();
+    expect(healthInsuranceError.messages).toEqual([
+      'Health insurance not available for this region',
+    ]);
+    expect(healthInsuranceError.userFriendlyLabel).toBe(
+      'Health Insurance 2025',
+    );
+
+    // Verify we stay on the same step (don't advance)
+    await screen.findByText(/Step: Benefits/i);
+  });
 });
