@@ -2,12 +2,15 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
-import { mutationToPromise } from '@/src/lib/mutations';
+import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 import { useFormFields } from '@/src/context';
 
-export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type OnboardingInviteProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onError'
+> & {
   onSuccess?: ({
     data,
     employmentStatus,
@@ -15,7 +18,15 @@ export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     data: SuccessResponse;
     employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => void | Promise<void>;
-  onError?: (error: unknown) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Error;
+    fieldErrors: FieldError[];
+  }) => void;
   onSubmit?: () => void | Promise<void>;
   render: (props: {
     employmentStatus: 'invited' | 'created_awaiting_reserve';
@@ -68,7 +79,11 @@ export function OnboardingInvite({
         }
 
         if (response.error) {
-          onError?.(response.error);
+          onError?.({
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: [],
+          });
         }
       } else if (onboardingBag.employmentId) {
         const response = await employmentInviteMutationAsync({
@@ -87,11 +102,19 @@ export function OnboardingInvite({
           return;
         }
         if (response.error) {
-          onError?.(response.error);
+          onError?.({
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: [],
+          });
         }
       }
     } catch (error) {
-      onError?.(error);
+      onError?.({
+        error,
+        rawError: error,
+        fieldErrors: [],
+      });
     }
   };
 

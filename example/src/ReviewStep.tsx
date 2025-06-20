@@ -161,26 +161,20 @@ export const MyOnboardingInviteButton = ({
             'after inviting or creating a reserve navigate to whatever place you want',
           );
         }}
-        render={({ employmentStatus }) => {
+        render={({
+          employmentStatus,
+        }: {
+          employmentStatus: 'invited' | 'created_awaiting_reserve';
+        }) => {
           return employmentStatus === 'created_awaiting_reserve'
             ? 'Create Reserve'
             : 'Invite Employee';
         }}
-        onError={(error: unknown) => {
+        onError={({ rawError }: { rawError: Error }) => {
           // TODO: fix later as OnboardingInvite doesn't follow the latest error handling
-          if (error instanceof Error) {
+          if (rawError instanceof Error) {
             setErrors({
-              apiError: error.message,
-              fieldErrors: [],
-            });
-          } else if (typeof error === 'string') {
-            setErrors({
-              apiError: error,
-              fieldErrors: [],
-            });
-          } else {
-            setErrors({
-              apiError: 'An unknown error occurred',
+              apiError: rawError.message,
               fieldErrors: [],
             });
           }
@@ -257,7 +251,13 @@ export const ReviewStep = ({
         </InviteSection>
       )}
       <ReviewStepCreditRisk
-        render={({ creditRiskState, creditRiskStatus }) => {
+        render={({
+          creditRiskState,
+          creditRiskStatus,
+        }: {
+          creditRiskState: CreditRiskState;
+          creditRiskStatus: CreditRiskStatus;
+        }) => {
           return (
             <>
               <CreditRiskSections

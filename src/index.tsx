@@ -44,4 +44,4 @@ export type {
 } from './client/types.gen';
 
 export type { $TSFixMe } from './types/remoteFlows';
-export type { NormalizedFieldError } from './lib/mutations';
+export type { FieldError, NormalizedFieldError } from './lib/mutations';

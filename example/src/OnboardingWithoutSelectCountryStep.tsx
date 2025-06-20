@@ -52,6 +52,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
+    OnboardingInvite,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
