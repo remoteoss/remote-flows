@@ -1,3 +1,4 @@
+import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import {
   CreditRiskStatus,
@@ -5,6 +6,7 @@ import {
   OnboardingInviteProps,
   Employment,
   CreditRiskState,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 export const InviteSection = ({
   title,
@@ -135,12 +137,15 @@ const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
-  setApiError,
+  setErrors,
   employment,
 }: {
   creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
-  setApiError: (error: string | null) => void;
+  setErrors: (errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
   employment?: Employment;
 }) => {
   const isDisabled =
@@ -162,12 +167,22 @@ export const MyOnboardingInviteButton = ({
             : 'Invite Employee';
         }}
         onError={(error: unknown) => {
+          // TODO: fix later as OnboardingInvite doesn't follow the latest error handling
           if (error instanceof Error) {
-            setApiError(error.message);
+            setErrors({
+              apiError: error.message,
+              fieldErrors: [],
+            });
           } else if (typeof error === 'string') {
-            setApiError(error);
+            setErrors({
+              apiError: error,
+              fieldErrors: [],
+            });
           } else {
-            setApiError('An unknown error occurred');
+            setErrors({
+              apiError: 'An unknown error occurred',
+              fieldErrors: [],
+            });
           }
         }}
         type="submit"
@@ -180,13 +195,19 @@ export const MyOnboardingInviteButton = ({
 export const ReviewStep = ({
   onboardingBag,
   components,
-  apiError,
-  setApiError,
+  errors,
+  setErrors,
 }: {
   components: OnboardingRenderProps['components'];
   onboardingBag: OnboardingRenderProps['onboardingBag'];
-  apiError?: string | null;
-  setApiError: (error: string | null) => void;
+  errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  };
+  setErrors: (errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 }) => {
   const {
     OnboardingInvite,
@@ -254,11 +275,11 @@ export const ReviewStep = ({
                 <MyOnboardingInviteButton
                   creditRiskStatus={onboardingBag.creditRiskStatus}
                   Component={OnboardingInvite}
-                  setApiError={setApiError}
+                  setErrors={setErrors}
                   employment={onboardingBag.employment}
                 />
               </div>
-              {apiError && <div className="error-message">{apiError}</div>}
+              <AlertError errors={errors} />
             </>
           );
         }}

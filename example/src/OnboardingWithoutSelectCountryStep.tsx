@@ -14,6 +14,7 @@ import './css/main.css';
 import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { AlertError } from './AlertError';
 
 export const InviteSection = ({
   title,
@@ -52,8 +53,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
   } = components;
-  const [apiError, setApiError] = useState<string | null>();
-  const [fieldErrors, setFieldErrors] = useState<NormalizedFieldError[]>([]);
+  const [errors, setErrors] = useState<{
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }>({
+    apiError: '',
+    fieldErrors: [],
+  });
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'basic_information':
@@ -70,38 +76,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               console.log('data', data)
             }
             onError={({ error, fieldErrors }) => {
-              setFieldErrors(fieldErrors || []);
-              setApiError(error.message);
+              setErrors({
+                apiError: error.message,
+                fieldErrors,
+              });
             }}
           />
-          {apiError && (
-            <div className="alert-error">
-              <p>{apiError}</p>
-              <ul>
-                {fieldErrors.map((fieldError) => (
-                  <li key={fieldError.field}>
-                    {fieldError.messages.map((message) => (
-                      <span key={message}>
-                        <strong>{fieldError.userFriendlyLabel}</strong>:{' '}
-                        {message}
-                      </span>
-                    ))}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <BackButton
               className="back-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Previous Step
             </BackButton>
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Create Employment & Continue
             </SubmitButton>
@@ -119,19 +111,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               console.log('payload', payload)
             }
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({ error, fieldErrors }) => {
+              setErrors({
+                apiError: error.message,
+                fieldErrors,
+              });
+            }}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <BackButton
               className="back-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Previous Step
             </BackButton>
             <SubmitButton
               className="submit-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -147,19 +144,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
             }
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({ error, fieldErrors }) => {
+              setErrors({
+                apiError: error.message,
+                fieldErrors,
+              });
+            }}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <BackButton
               className="back-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Previous Step
             </BackButton>
             <SubmitButton
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
             >
@@ -173,8 +175,8 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
         <ReviewStep
           onboardingBag={onboardingBag}
           components={components}
-          setApiError={setApiError}
-          apiError={apiError}
+          setErrors={setErrors}
+          errors={errors}
         />
       );
   }

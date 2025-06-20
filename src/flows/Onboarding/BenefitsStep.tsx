@@ -31,8 +31,8 @@ type BenefitsStepProps = {
     fieldErrors,
   }: {
     error: Error;
-    rawError?: Error;
-    fieldErrors?: NormalizedFieldError[];
+    rawError: Error;
+    fieldErrors: NormalizedFieldError[];
   }) => void;
   /**
    * Callback function to be called when benefits form is successfully submitted.

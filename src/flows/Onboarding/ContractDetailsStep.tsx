@@ -26,8 +26,8 @@ type ContractDetailsStepProps = {
     fieldErrors,
   }: {
     error: Error;
-    rawError?: Error;
-    fieldErrors?: NormalizedFieldError[];
+    rawError: Error;
+    fieldErrors: NormalizedFieldError[];
   }) => void;
 };
 
