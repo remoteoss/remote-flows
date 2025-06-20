@@ -75,7 +75,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentCreationResponse) =>
               console.log('data', data)
             }
-            onError={({ error, fieldErrors }) => {
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => {
               setErrors({
                 apiError: error.message,
                 fieldErrors,
@@ -105,7 +111,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               console.log('payload', payload)
             }
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
-            onError={({ error, fieldErrors }) => {
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => {
               setErrors({
                 apiError: error.message,
                 fieldErrors,
@@ -138,7 +150,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
             }
-            onError={({ error, fieldErrors }) => {
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => {
               setErrors({
                 apiError: error.message,
                 fieldErrors,

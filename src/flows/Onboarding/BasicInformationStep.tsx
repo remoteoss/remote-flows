@@ -50,7 +50,6 @@ export function BasicInformationStep({
         return;
       }
       if (response?.error) {
-        // Normalize field errors using the utility function
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
           onboardingBag.meta?.fields?.basic_information,

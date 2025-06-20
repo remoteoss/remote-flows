@@ -39,11 +39,25 @@ export function extractFieldErrors(error: any): FieldError[] {
 
   // Handle nested errors structure like { errors: { field: [messages] } }
   if (error.errors && typeof error.errors === 'object') {
-    Object.entries(error.errors).forEach(([field, messages]) => {
-      if (Array.isArray(messages)) {
+    Object.entries(error.errors).forEach(([key, value]) => {
+      // Case 1: Direct field errors (POST /v1/employments)
+      // { "errors": { "provisional_start_date": ["cannot be in a holiday"] } }
+      if (Array.isArray(value)) {
         fieldErrors.push({
-          field,
-          messages: messages.map((msg: any) => String(msg)),
+          field: key,
+          messages: value.map((msg: any) => String(msg)),
+        });
+      }
+      // Case 2: Nested field errors (PATCH /v1/employments/*)
+      // { "errors": { "basic_information": { "provisional_start_date": ["cannot be in a holiday"] } } }
+      else if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+          if (Array.isArray(nestedValue)) {
+            fieldErrors.push({
+              field: nestedKey,
+              messages: nestedValue.map((msg: any) => String(msg)),
+            });
+          }
         });
       }
     });
