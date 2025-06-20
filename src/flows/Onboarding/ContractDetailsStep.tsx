@@ -3,6 +3,10 @@ import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { EmploymentResponse } from '@/src/client';
 import { ContractDetailsFormPayload } from '@/src/flows/Onboarding/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
 
 type ContractDetailsStepProps = {
   /*
@@ -16,7 +20,15 @@ type ContractDetailsStepProps = {
   /*
    * The function is called when an error occurs during form submission.
    */
-  onError?: (error: Error) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError?: Error;
+    fieldErrors?: NormalizedFieldError[];
+  }) => void;
 };
 
 export function ContractDetailsStep({
@@ -37,10 +49,22 @@ export function ContractDetailsStep({
         return;
       }
       if (response?.error) {
-        onError?.(response.error);
+        const normalizedFieldErrors = normalizeFieldErrors(
+          response?.fieldErrors || [],
+          onboardingBag.meta?.fields?.contract_details,
+        );
+        onError?.({
+          error: response.error,
+          rawError: response.rawError,
+          fieldErrors: normalizedFieldErrors,
+        });
       }
     } catch (error: unknown) {
-      onError?.(error as Error);
+      onError?.({
+        error: error as Error,
+        rawError: error as Error,
+        fieldErrors: [],
+      });
     }
   };
 

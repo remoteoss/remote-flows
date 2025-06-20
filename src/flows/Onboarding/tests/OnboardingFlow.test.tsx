@@ -1546,4 +1546,143 @@ describe('OnboardingFlow', () => {
     // Verify we stay on the same step (don't advance)
     await screen.findByText(/Step: Basic Information/i);
   });
+
+  it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
+    let patchCallCount = 0;
+    const uniqueEmploymentId = 'test-employment-422-error';
+
+    // Mock the PATCH endpoint to return success first, then 422 error
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      http.patch('*/v1/employments/*', () => {
+        patchCallCount++;
+
+        if (patchCallCount === 1) {
+          // First call - return success
+          return HttpResponse.json(employmentUpdatedResponse);
+        } else {
+          // Second call - return 422 error
+          return HttpResponse.json(
+            {
+              errors: {
+                annual_gross_salary: ['must be greater than 0'],
+              },
+            },
+            { status: 422 },
+          );
+        }
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId={uniqueEmploymentId}
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            contract_details: {
+              fields: {
+                annual_gross_salary: {
+                  title: 'Test Label',
+                },
+              },
+            },
+          },
+        }}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the basic information step to load
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Navigate to contract details step
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for contract details step to load
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Wait for the form to be populated with existing data
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    // Fill in the form with data that will trigger the 422 error
+    const user = userEvent.setup();
+
+    // Modify annual gross salary to trigger the error
+    const annualGrossSalaryInput = screen.getByLabelText(/Test Label/i);
+    await user.clear(annualGrossSalaryInput);
+    await user.type(annualGrossSalaryInput, '100000'); // Invalid negative value
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    // Wait for the error to be called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
+    });
+
+    // Get the error call arguments
+    const errorCall = mockOnError.mock.calls[0][0];
+
+    // Verify the error structure
+    expect(errorCall.error).toBeInstanceOf(Error);
+    expect(errorCall.rawError).toBeDefined();
+    expect(errorCall.fieldErrors.length).toBe(1);
+
+    // Verify the field errors are normalized with user-friendly labels
+    const annualGrossSalaryError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) => error.field === 'annual_gross_salary',
+    );
+
+    expect(annualGrossSalaryError).toBeDefined();
+    expect(annualGrossSalaryError.messages).toEqual(['must be greater than 0']);
+    expect(annualGrossSalaryError.userFriendlyLabel).toBe('Test Label');
+
+    // Verify we stay on the same step (don't advance)
+    await screen.findByText(/Step: Contract Details/i);
+  });
 });

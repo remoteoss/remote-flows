@@ -5,6 +5,10 @@ import { SuccessResponse } from '@/src/client';
 import { getInitialValues } from '@/src/components/form/utils';
 import { BenefitsFormPayload } from '@/src/flows/Onboarding/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
 
 type BenefitsStepProps = {
   components?: Components;
@@ -21,7 +25,15 @@ type BenefitsStepProps = {
    * @param error
    * @returns
    */
-  onError?: (error: Error) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError?: Error;
+    fieldErrors?: NormalizedFieldError[];
+  }) => void;
   /**
    * Callback function to be called when benefits form is successfully submitted.
    * This function is called after the submitting benefits form is submitted.
@@ -54,10 +66,22 @@ export function BenefitsStep({
         return;
       }
       if (response?.error) {
-        onError?.(response.error);
+        const normalizedFieldErrors = normalizeFieldErrors(
+          response?.fieldErrors || [],
+          onboardingBag.meta?.fields?.benefits,
+        );
+        onError?.({
+          error: response.error,
+          rawError: response.rawError,
+          fieldErrors: normalizedFieldErrors,
+        });
       }
     } catch (error: unknown) {
-      onError?.(error as Error);
+      onError?.({
+        error: error as Error,
+        rawError: error as Error,
+        fieldErrors: [],
+      });
     }
   };
 
