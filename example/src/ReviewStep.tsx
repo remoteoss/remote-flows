@@ -1,5 +1,3 @@
-import { AlertError } from './AlertError';
-import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import {
   CreditRiskStatus,
   OnboardingRenderProps,
@@ -8,6 +6,9 @@ import {
   CreditRiskState,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
+import { AlertError } from './AlertError';
+import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+
 export const InviteSection = ({
   title,
   description,
@@ -171,7 +172,7 @@ export const MyOnboardingInviteButton = ({
             : 'Invite Employee';
         }}
         onError={({ rawError }: { rawError: Error }) => {
-          // TODO: fix later as OnboardingInvite doesn't follow the latest error handling
+          // TODO: We probably make something better here
           if (rawError instanceof Error) {
             setErrors({
               apiError: rawError.message,
