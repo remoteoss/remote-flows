@@ -1521,7 +1521,12 @@ describe('OnboardingFlow', () => {
 
     // Verify the error structure
     expect(errorCall.error).toBeInstanceOf(Error);
-    expect(errorCall.rawError).toBeDefined();
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        provisional_start_date: ['cannot be in a holiday'],
+        email: ['has already been taken'],
+      },
+    });
     expect(errorCall.fieldErrors.length).toBe(2);
 
     // Verify the field errors are normalized with user-friendly labels
@@ -1670,8 +1675,11 @@ describe('OnboardingFlow', () => {
 
     // Verify the error structure
     expect(errorCall.error).toBeInstanceOf(Error);
-    expect(errorCall.rawError).toBeDefined();
-    expect(errorCall.fieldErrors.length).toBe(1);
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        annual_gross_salary: ['must be greater than 0'],
+      },
+    });
 
     // Verify the field errors are normalized with user-friendly labels
     const annualGrossSalaryError = errorCall.fieldErrors.find(
@@ -1795,8 +1803,16 @@ describe('OnboardingFlow', () => {
 
     // Verify the error structure
     expect(errorCall.error).toBeInstanceOf(Error);
-    expect(errorCall.rawError).toBeDefined();
-    expect(errorCall.fieldErrors.length).toBe(2);
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        '0e0293ae-eec6-4d0e-9176-51c46eed435e': [
+          'Invalid meal benefit selection',
+        ],
+        'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': [
+          'Health insurance not available for this region',
+        ],
+      },
+    });
 
     // Verify the field errors are normalized with user-friendly labels
     const mealBenefitError = errorCall.fieldErrors.find(
