@@ -26,7 +26,7 @@ type BasicInformationStepProps = {
     fieldErrors,
   }: {
     error: Error;
-    rawError: Error;
+    rawError: Record<string, unknown>;
     fieldErrors: NormalizedFieldError[];
   }) => void;
 };
@@ -64,7 +64,7 @@ export function BasicInformationStep({
     } catch (error: unknown) {
       onError?.({
         error: error as Error,
-        rawError: error as Error,
+        rawError: error as Record<string, unknown>,
         fieldErrors: [],
       });
     }

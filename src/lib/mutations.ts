@@ -21,7 +21,7 @@ export interface FieldError {
 export interface ErrorResponse<E> {
   data: null;
   error: E;
-  rawError: E;
+  rawError: Record<string, unknown>;
   fieldErrors: FieldError[];
 }
 
@@ -110,7 +110,7 @@ export function mutationToPromise<
             reject({
               data: null,
               error: error as Error,
-              rawError: error as Error,
+              rawError: error,
               fieldErrors,
             });
           },

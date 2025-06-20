@@ -24,7 +24,7 @@ export type OnboardingInviteProps = Omit<
     fieldErrors,
   }: {
     error: Error;
-    rawError: Error;
+    rawError: Record<string, unknown>;
     fieldErrors: FieldError[];
   }) => void;
   onSubmit?: () => void | Promise<void>;
@@ -112,7 +112,7 @@ export function OnboardingInvite({
     } catch (error: unknown) {
       onError?.({
         error: error as Error,
-        rawError: error as Error,
+        rawError: error as Record<string, unknown>,
         fieldErrors: [],
       });
     }

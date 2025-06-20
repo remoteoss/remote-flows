@@ -171,14 +171,11 @@ export const MyOnboardingInviteButton = ({
             ? 'Create Reserve'
             : 'Invite Employee';
         }}
-        onError={({ rawError }: { rawError: Error }) => {
-          // TODO: We probably make something better here
-          if (rawError instanceof Error) {
-            setErrors({
-              apiError: rawError.message,
-              fieldErrors: [],
-            });
-          }
+        onError={({ error }: { error: Error }) => {
+          setErrors({
+            apiError: error.message,
+            fieldErrors: [],
+          });
         }}
         type="submit"
       />
