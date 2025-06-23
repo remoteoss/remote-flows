@@ -515,9 +515,11 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue(
-      employmentResponse.data.employment.personal_email,
-    );
+    await waitFor(() => {
+      expect(employeePersonalEmail).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
   });
 
   it('should select a country and advance to the next step', async () => {
