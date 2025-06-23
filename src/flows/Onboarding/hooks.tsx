@@ -355,6 +355,7 @@ export const useOnboarding = ({
       benefitOffersSchema?.fields,
     ],
   );
+
   const selectCountryInitialValues = useMemo(
     () =>
       getInitialValues(stepFields.select_country, {
@@ -417,17 +418,17 @@ export const useOnboarding = ({
         stepFields,
       }),
     [
-      isLoadingBasicInformationForm,
-      isLoadingContractDetailsForm,
-      isLoadingEmployment,
-      isLoadingBenefitsOffersSchema,
-      isLoadingBenefitOffers,
-      isLoadingCompany,
-      isLoadingCountries,
-      employmentId,
       employment,
-      stepState.currentStep.name,
+      employmentId,
+      isLoadingBasicInformationForm,
+      isLoadingBenefitOffers,
+      isLoadingBenefitsOffersSchema,
+      isLoadingCompany,
+      isLoadingContractDetailsForm,
+      isLoadingCountries,
+      isLoadingEmployment,
       stepFields,
+      stepState.currentStep.name,
     ],
   );
 
@@ -466,12 +467,7 @@ export const useOnboarding = ({
     basicInformationInitialValues,
     benefitsInitialValues,
     contractDetailsInitialValues,
-    employment?.basic_information,
-    employment?.contract_details,
-    employment?.country.code,
     goToStep,
-    initialValuesBenefitOffers,
-    internalCountryCode,
     isNavigatingToReview,
     selectCountryInitialValues,
     setStepValues,
