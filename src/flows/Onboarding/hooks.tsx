@@ -355,24 +355,68 @@ export const useOnboarding = ({
       benefitOffersSchema?.fields,
     ],
   );
+  const selectCountryInitialValues = useMemo(
+    () =>
+      getInitialValues(stepFields.select_country, {
+        country: internalCountryCode || employment?.country.code || '',
+      }),
+    [stepFields, internalCountryCode, employment?.country.code],
+  );
 
-  const initialValues = {
-    select_country: getInitialValues(stepFields[stepState.currentStep.name], {
-      country: internalCountryCode || employment?.country.code || '',
+  const basicInformationInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.basic_information,
+        employment?.basic_information || {},
+      ),
+    [stepFields, employment?.basic_information],
+  );
+
+  const contractDetailsInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.contract_details,
+        employment?.contract_details || {},
+      ),
+    [stepFields, employment?.contract_details],
+  );
+
+  const benefitsInitialValues = useMemo(
+    () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
+    [stepFields, initialValuesBenefitOffers],
+  );
+
+  const initialValues = useMemo(
+    () => ({
+      select_country: selectCountryInitialValues,
+      basic_information: basicInformationInitialValues,
+      contract_details: contractDetailsInitialValues,
+      benefits: initialValuesBenefitOffers || {},
     }),
-    basic_information: getInitialValues(
-      stepFields[stepState.currentStep.name],
-      employment?.basic_information || {},
-    ),
-    contract_details: getInitialValues(
-      stepFields[stepState.currentStep.name],
-      employment?.contract_details || {},
-    ),
-    benefits: initialValuesBenefitOffers || {},
-  };
+    [
+      selectCountryInitialValues,
+      basicInformationInitialValues,
+      contractDetailsInitialValues,
+      initialValuesBenefitOffers,
+    ],
+  );
 
-  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } =
-    getLoadingStates({
+  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } = useMemo(
+    () =>
+      getLoadingStates({
+        isLoadingBasicInformationForm,
+        isLoadingContractDetailsForm,
+        isLoadingEmployment,
+        isLoadingBenefitsOffersSchema,
+        isLoadingBenefitOffers,
+        isLoadingCompany,
+        isLoadingCountries,
+        employmentId,
+        employment,
+        currentStepName: stepState.currentStep.name,
+        stepFields,
+      }),
+    [
       isLoadingBasicInformationForm,
       isLoadingContractDetailsForm,
       isLoadingEmployment,
@@ -382,33 +426,13 @@ export const useOnboarding = ({
       isLoadingCountries,
       employmentId,
       employment,
-      currentStepName: stepState.currentStep.name,
+      stepState.currentStep.name,
       stepFields,
-    });
+    ],
+  );
 
   useEffect(() => {
     if (isNavigatingToReview) {
-      const selectCountryInitialValues = getInitialValues(
-        stepFields['select_country'],
-        {
-          country: internalCountryCode || employment?.country.code || '',
-        },
-      );
-
-      const basicInformationInitialValues = getInitialValues(
-        stepFields['basic_information'],
-        employment?.basic_information || {},
-      );
-
-      const contractDetailsInitialValues = getInitialValues(
-        stepFields['contract_details'],
-        employment?.contract_details || {},
-      );
-
-      const benefitsInitialValues = getInitialValues(
-        stepFields['benefits'],
-        initialValuesBenefitOffers || {},
-      );
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
           selectCountryInitialValues,
@@ -439,6 +463,9 @@ export const useOnboarding = ({
       goToStep('review');
     }
   }, [
+    basicInformationInitialValues,
+    benefitsInitialValues,
+    contractDetailsInitialValues,
     employment?.basic_information,
     employment?.contract_details,
     employment?.country.code,
@@ -446,6 +473,7 @@ export const useOnboarding = ({
     initialValuesBenefitOffers,
     internalCountryCode,
     isNavigatingToReview,
+    selectCountryInitialValues,
     setStepValues,
     stepFields,
   ]);
