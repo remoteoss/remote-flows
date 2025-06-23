@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.12
+
+### Patch Changes
+
+- 76ca70c: - Improve errors in the onboarding flow
+  - Add Onboarding readme
+  - Improve recovery of an employment
+
 ## 0.4.0-alpha.11
 
 ### Minor Changes
