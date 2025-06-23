@@ -630,6 +630,8 @@ describe('OnboardingFlow', () => {
       },
     );
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
     });
@@ -645,14 +647,14 @@ describe('OnboardingFlow', () => {
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
       department: {
-        id: '',
-        name: '',
+        id: undefined,
+        name: undefined,
       },
       email: employmentResponse.data.employment.personal_email,
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
       manager: {
-        id: '',
+        id: undefined,
       },
       tax_job_category:
         employmentResponse.data.employment.basic_information.tax_job_category,
@@ -970,6 +972,76 @@ describe('OnboardingFlow', () => {
 
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
+
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
+    'should automatically navigate to review step when employment status is %s and display employment data',
+    async (status) => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) => {
+          if (params?.id?.includes('/')) return HttpResponse.error();
+
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                id: employmentId,
+                status: status,
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Contract Details',
+            [2]: 'Benefits',
+            [3]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <OnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        {
+          wrapper,
+        },
+      );
+
+      // Should automatically go to review step instead of starting from select country
+      await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify contract details data is displayed in the Review component
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
+    },
+  );
 
   it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
     'should automatically navigate to review step when employment status is %s and display employment data',
