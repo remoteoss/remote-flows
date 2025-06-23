@@ -64,10 +64,11 @@ const getLoadingStates = ({
   isLoadingBenefitOffers,
   isLoadingCompany,
   isLoadingCountries,
-  employment,
+  employmentStatus,
   employmentId,
   currentStepName,
-  stepFields,
+  basicInformationFields,
+  contractDetailsFields,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -76,10 +77,11 @@ const getLoadingStates = ({
   isLoadingBenefitOffers: boolean;
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
-  employment?: Employment;
+  employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  stepFields: Record<keyof typeof STEPS, Fields>;
+  basicInformationFields: Fields;
+  contractDetailsFields: Fields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -91,8 +93,8 @@ const getLoadingStates = ({
     isLoadingCountries;
 
   const isEmploymentReadOnly =
-    employment &&
-    reviewStepAllowedEmploymentStatus.includes(employment?.status);
+    employmentStatus &&
+    reviewStepAllowedEmploymentStatus.includes(employmentStatus);
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
@@ -103,8 +105,8 @@ const getLoadingStates = ({
   const isNavigatingToReview = Boolean(
     shouldHandleReadOnlyEmployment &&
       !initialLoading &&
-      stepFields['basic_information'].length > 0 &&
-      stepFields['contract_details'].length > 0,
+      basicInformationFields.length > 0 &&
+      contractDetailsFields.length > 0,
   );
 
   return { isLoading, isNavigatingToReview, isEmploymentReadOnly };
@@ -356,30 +358,38 @@ export const useOnboarding = ({
     ],
   );
 
+  const {
+    country: { code: employmentCountryCode } = {},
+    basic_information: employmentBasicInformation = {},
+    contract_details: employmentContractDetails = {},
+    status: employmentStatus,
+  } = employment || {};
+  const currentStepName = stepState.currentStep.name;
+
   const selectCountryInitialValues = useMemo(
     () =>
       getInitialValues(stepFields.select_country, {
-        country: internalCountryCode || employment?.country.code || '',
+        country: internalCountryCode || employmentCountryCode || '',
       }),
-    [stepFields.select_country, internalCountryCode, employment?.country.code],
+    [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
   const basicInformationInitialValues = useMemo(
     () =>
       getInitialValues(
         stepFields.basic_information,
-        employment?.basic_information || {},
+        employmentBasicInformation || {},
       ),
-    [stepFields.basic_information, employment?.basic_information],
+    [stepFields.basic_information, employmentBasicInformation],
   );
 
   const contractDetailsInitialValues = useMemo(
     () =>
       getInitialValues(
         stepFields.contract_details,
-        employment?.contract_details || {},
+        employmentContractDetails || {},
       ),
-    [stepFields.contract_details, employment?.contract_details],
+    [stepFields.contract_details, employmentContractDetails],
   );
 
   const benefitsInitialValues = useMemo(
@@ -392,13 +402,13 @@ export const useOnboarding = ({
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_details: contractDetailsInitialValues,
-      benefits: initialValuesBenefitOffers || {},
+      benefits: benefitsInitialValues,
     }),
     [
       selectCountryInitialValues,
       basicInformationInitialValues,
       contractDetailsInitialValues,
-      initialValuesBenefitOffers,
+      benefitsInitialValues,
     ],
   );
 
@@ -413,22 +423,24 @@ export const useOnboarding = ({
         isLoadingCompany,
         isLoadingCountries,
         employmentId,
-        employment,
-        currentStepName: stepState.currentStep.name,
-        stepFields,
+        employmentStatus: employmentStatus,
+        basicInformationFields: stepFields.basic_information,
+        contractDetailsFields: stepFields.contract_details,
+        currentStepName: currentStepName,
       }),
     [
-      employment,
-      employmentId,
       isLoadingBasicInformationForm,
-      isLoadingBenefitOffers,
-      isLoadingBenefitsOffersSchema,
-      isLoadingCompany,
       isLoadingContractDetailsForm,
-      isLoadingCountries,
       isLoadingEmployment,
-      stepFields,
-      stepState.currentStep.name,
+      isLoadingBenefitsOffersSchema,
+      isLoadingBenefitOffers,
+      isLoadingCompany,
+      isLoadingCountries,
+      employmentId,
+      employmentStatus,
+      stepFields.basic_information,
+      stepFields.contract_details,
+      currentStepName,
     ],
   );
 
@@ -437,19 +449,19 @@ export const useOnboarding = ({
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
           selectCountryInitialValues,
-          stepFields['select_country'],
+          stepFields.select_country,
         ),
         basic_information: prettifyFormValues(
           basicInformationInitialValues,
-          stepFields['basic_information'],
+          stepFields.basic_information,
         ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
-          stepFields['contract_details'],
+          stepFields.contract_details,
         ),
         benefits: prettifyFormValues(
           benefitsInitialValues,
-          stepFields['benefits'],
+          stepFields.benefits,
         ),
       };
 
@@ -471,10 +483,13 @@ export const useOnboarding = ({
     isNavigatingToReview,
     selectCountryInitialValues,
     setStepValues,
-    stepFields,
+    stepFields.basic_information,
+    stepFields.benefits,
+    stepFields.contract_details,
+    stepFields.select_country,
   ]);
 
-  function parseFormValues(values: FieldValues) {
+  const parseFormValues = (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
@@ -497,7 +512,7 @@ export const useOnboarding = ({
     }
 
     return {};
-  }
+  };
 
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
