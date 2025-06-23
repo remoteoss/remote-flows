@@ -436,16 +436,15 @@ export const useOnboarding = ({
       goToStep('review');
     }
   }, [
-    employmentId,
-    employment,
-    isLoading,
-    internalCountryCode,
+    employment?.basic_information,
+    employment?.contract_details,
+    employment?.country.code,
     goToStep,
     initialValuesBenefitOffers,
-    stepFields,
-    stepState.currentStep.name,
-    setStepValues,
+    internalCountryCode,
     isNavigatingToReview,
+    setStepValues,
+    stepFields,
   ]);
 
   function parseFormValues(values: FieldValues) {
