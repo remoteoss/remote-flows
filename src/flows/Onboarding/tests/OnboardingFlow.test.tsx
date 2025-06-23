@@ -834,20 +834,7 @@ describe('OnboardingFlow', () => {
 
   it('should go to the third step and check that benefits are initalized correctly', async () => {
     const employmentId = generateUniqueEmploymentId();
-    server.use(
-      http.get('*/v1/employments/:id', ({ params }) => {
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              id: params?.id,
-            },
-          },
-        });
-      }),
-    );
+
     render(<OnboardingFlow employmentId={employmentId} {...defaultProps} />, {
       wrapper,
     });
