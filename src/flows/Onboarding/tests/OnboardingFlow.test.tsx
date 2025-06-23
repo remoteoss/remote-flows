@@ -928,20 +928,6 @@ describe('OnboardingFlow', () => {
   it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
     const employmentId = generateUniqueEmploymentId();
     server.use(
-      http.get('*/v1/employments/:id', ({ params }) => {
-        // Only match direct employment requests, not sub-resources
-        if (params?.id?.includes('/')) return HttpResponse.error();
-        return HttpResponse.json({
-          ...employmentResponse,
-          data: {
-            ...employmentResponse.data,
-            employment: {
-              ...employmentResponse.data.employment,
-              id: params?.id,
-            },
-          },
-        });
-      }),
       http.post('*/v1/employments/*/invite', () => {
         return HttpResponse.json(inviteResponse);
       }),
