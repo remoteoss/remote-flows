@@ -3,6 +3,10 @@ import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { EmploymentCreationResponse } from '@/src/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  normalizeFieldErrors,
+  NormalizedFieldError,
+} from '@/src/lib/mutations';
 
 type BasicInformationStepProps = {
   /*
@@ -16,7 +20,15 @@ type BasicInformationStepProps = {
   /*
    * The function is called when an error occurs during form submission.
    */
-  onError?: (error: Error) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 };
 
 export function BasicInformationStep({
@@ -25,6 +37,7 @@ export function BasicInformationStep({
   onError,
 }: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
+
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       await onSubmit?.(
@@ -37,10 +50,23 @@ export function BasicInformationStep({
         return;
       }
       if (response?.error) {
-        onError?.(response?.error);
+        const normalizedFieldErrors = normalizeFieldErrors(
+          response?.fieldErrors || [],
+          onboardingBag.meta?.fields?.basic_information,
+        );
+
+        onError?.({
+          error: response?.error,
+          rawError: response?.rawError,
+          fieldErrors: normalizedFieldErrors,
+        });
       }
     } catch (error: unknown) {
-      onError?.(error as Error);
+      onError?.({
+        error: error as Error,
+        rawError: error as Record<string, unknown>,
+        fieldErrors: [],
+      });
     }
   };
 

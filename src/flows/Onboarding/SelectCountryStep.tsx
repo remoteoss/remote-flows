@@ -4,6 +4,7 @@ import {
   SelectCountryFormPayload,
   SelectCountrySuccess,
 } from '@/src/flows/Onboarding/types';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type SelectCountryStepProps = {
@@ -18,7 +19,15 @@ type SelectCountryStepProps = {
   /*
    * The function is called when an error occurs during form submission.
    */
-  onError?: (error: Error) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 };
 
 export function SelectCountryStep({
@@ -37,10 +46,18 @@ export function SelectCountryStep({
         return;
       }
       if (response?.error) {
-        onError?.(response?.error);
+        onError?.({
+          error: response.error,
+          rawError: response.rawError,
+          fieldErrors: [],
+        });
       }
     } catch (error: unknown) {
-      onError?.(error as Error);
+      onError?.({
+        error: error as Error,
+        rawError: error as Record<string, unknown>,
+        fieldErrors: [],
+      });
     }
   };
 
