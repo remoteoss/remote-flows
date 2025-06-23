@@ -10,7 +10,6 @@ Welcome to the Onboarding flow docs
   - [With Custom Benefits](#with-custom-benefits)
 - [Components API](#components-api)
   - [OnboardingFlow](#onboardingflow)
-    - [Props](#props)
     - [options.jsfModify properties](#optionsjsfmodify-properties)
     - [Example](#example)
   - [SelectCountryStep](#selectcountrystep)
@@ -262,8 +261,8 @@ export const OnboardingForm = () => (
     <OnboardingFlow
       companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
       type="employee"
+      countryCode="PRT"
       render={OnBoardingRender}
-      employmentId=""
     />
   </RemoteFlows>
 );
@@ -306,7 +305,7 @@ export const OnboardingForm = () => (
       type="employee"
       render={OnBoardingRender}
       employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
-      countryCode="CAN"
+      skipSteps={['select_country']}
     />
   </RemoteFlows>
 );
@@ -443,6 +442,7 @@ export const OnboardingForm = () => (
     <OnboardingFlow
       companyId="your-company-id"
       type="employee"
+      countryCode="PRT"
       render={MultiStepForm}
     />
   </RemoteFlows>
@@ -463,6 +463,7 @@ The component accepts the following props:
 | `type`         | `'employee' \| 'contractor'`                                                                                                                                                                            | Yes      | The type of employment                                                                                                  |
 | `employmentId` | string                                                                                                                                                                                                  | No       | The employment ID if you want to update an existing employment                                                          |
 | `countryCode`  | string                                                                                                                                                                                                  | No       | The country code where the employment is based (if not provided, SelectCountryStep will be shown)                       |
+| `skipSteps`    | `['select_country']`                                                                                                                                                                                    | No       | Array of steps to skip in the onboarding flow. Currently only supports skipping the select_country step                 |
 | `render`       | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow |
 | `options`      | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}}`                                                                                                      | No       | See detailed explanation below                                                                                          |
 
@@ -505,7 +506,6 @@ export const OnboardingForm = () => (
       type="employee"
       render={OnBoardingRender}
       employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
-      countryCode="CAN"
       options={{
         jsfModify: {
           basic_information: {
