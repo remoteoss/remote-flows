@@ -208,20 +208,24 @@ type OnboardingWithCustomBenefitsProps = {
   companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
+  countryCode: string;
 };
 
 const OnboardingWithCustomBenefits = ({
   type,
   companyId,
   employmentId,
+  countryCode,
 }: OnboardingWithCustomBenefitsProps) => {
   return (
     <RemoteFlows auth={fetchToken}>
       <OnboardingFlow
         companyId={companyId}
+        countryCode={countryCode}
         type={type}
         render={MultiStepForm}
         employmentId={employmentId}
+        skipSteps={['select_country']}
       />
     </RemoteFlows>
   );
@@ -231,12 +235,14 @@ type OnboardingFormData = {
   companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
+  countryCode: string;
 };
 
 export const OnboardingCustomBenefitsForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    companyId: '',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
     type: 'employee',
+    countryCode: 'PRT',
     employmentId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -265,6 +271,23 @@ export const OnboardingCustomBenefitsForm = () => {
           }
           required
           placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
+
+      <div className="onboarding-form-group">
+        <label htmlFor="countryCode" className="onboarding-form-label">
+          Country Code:
+        </label>
+        <input
+          id="countryCode"
+          type="text"
+          value={formData.countryCode}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+          }
+          required
+          placeholder="e.g. PRT"
           className="onboarding-form-input"
         />
       </div>

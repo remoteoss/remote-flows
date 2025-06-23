@@ -522,6 +522,8 @@ describe('OnboardingFlow', () => {
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillCountry('Portugal');
   });
 

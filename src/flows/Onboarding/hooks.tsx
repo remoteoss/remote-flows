@@ -168,6 +168,9 @@ export const useOnboarding = ({
     useCountriesSchemaField({
       jsfModify: options?.jsfModify?.select_country,
       jsonSchemaVersion: options?.jsonSchemaVersion,
+      queryOptions: {
+        enabled: stepState.currentStep.name === 'select_country',
+      },
     });
 
   const createEmploymentMutation = useCreateEmployment(options);
