@@ -361,7 +361,7 @@ export const useOnboarding = ({
       getInitialValues(stepFields.select_country, {
         country: internalCountryCode || employment?.country.code || '',
       }),
-    [stepFields, internalCountryCode, employment?.country.code],
+    [stepFields.select_country, internalCountryCode, employment?.country.code],
   );
 
   const basicInformationInitialValues = useMemo(
@@ -370,7 +370,7 @@ export const useOnboarding = ({
         stepFields.basic_information,
         employment?.basic_information || {},
       ),
-    [stepFields, employment?.basic_information],
+    [stepFields.basic_information, employment?.basic_information],
   );
 
   const contractDetailsInitialValues = useMemo(
@@ -379,12 +379,12 @@ export const useOnboarding = ({
         stepFields.contract_details,
         employment?.contract_details || {},
       ),
-    [stepFields, employment?.contract_details],
+    [stepFields.contract_details, employment?.contract_details],
   );
 
   const benefitsInitialValues = useMemo(
     () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
-    [stepFields, initialValuesBenefitOffers],
+    [stepFields.benefits, initialValuesBenefitOffers],
   );
 
   const initialValues = useMemo(
