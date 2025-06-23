@@ -37,7 +37,6 @@ import {
 } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { NormalizedFieldError } from '@/src/lib/mutations';
-import { wait } from '@testing-library/user-event/dist/cjs/utils/index.js';
 
 // Helper function to generate unique employment IDs for each test
 let employmentIdCounter = 0;
