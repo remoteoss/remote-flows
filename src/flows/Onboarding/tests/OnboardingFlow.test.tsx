@@ -36,6 +36,7 @@ import {
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 
 const queryClient = new QueryClient();
 
@@ -1450,5 +1451,394 @@ describe('OnboardingFlow', () => {
     // Verify that the custom label is displayed
     const nameLabel = screen.getByLabelText(customNameLabel);
     expect(nameLabel).toBeInTheDocument();
+  });
+
+  it('should handle 422 validation errors with field errors when creating employment', async () => {
+    // Mock the POST endpoint to return a 422 error with field errors
+    server.use(
+      http.post('*/v1/employments', () => {
+        return HttpResponse.json(
+          {
+            errors: {
+              provisional_start_date: ['cannot be in a holiday'],
+              email: ['has already been taken'],
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(<OnboardingFlow countryCode="PRT" {...defaultProps} />, { wrapper });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    // Fill in the form with data that will trigger the 422 error
+    await fillBasicInformation({
+      fullName: 'John Doe',
+      personalEmail: 'existing@email.com', // This will trigger "has already been taken"
+      workEmail: 'john.doe@remote.com',
+      jobTitle: 'Software Engineer',
+      provisionalStartDate: '25', // This will trigger "cannot be in a holiday"
+      hasSeniorityDate: 'No',
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    // Wait for the error to be called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
+    });
+
+    // Get the error call arguments
+    const errorCall = mockOnError.mock.calls[0][0];
+
+    // Verify the error structure
+    expect(errorCall.error).toBeInstanceOf(Error);
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        provisional_start_date: ['cannot be in a holiday'],
+        email: ['has already been taken'],
+      },
+    });
+    expect(errorCall.fieldErrors.length).toBe(2);
+
+    // Verify the field errors are normalized with user-friendly labels
+    const provisionalStartDateError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) => error.field === 'provisional_start_date',
+    );
+    const personalEmailError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) => error.field === 'email',
+    );
+
+    expect(provisionalStartDateError.messages).toEqual([
+      'cannot be in a holiday',
+    ]);
+    expect(provisionalStartDateError.userFriendlyLabel).toBe(
+      'Provisional start date',
+    );
+
+    expect(personalEmailError).toBeDefined();
+    expect(personalEmailError.messages).toEqual(['has already been taken']);
+    expect(personalEmailError.userFriendlyLabel).toBe('Personal email');
+
+    // Verify we stay on the same step (don't advance)
+    await screen.findByText(/Step: Basic Information/i);
+  });
+
+  it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
+    let patchCallCount = 0;
+    const uniqueEmploymentId = 'test-employment-422-error';
+
+    // Mock the PATCH endpoint to return success first, then 422 error
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      http.patch('*/v1/employments/*', () => {
+        patchCallCount++;
+
+        if (patchCallCount === 1) {
+          // First call - return success
+          return HttpResponse.json(employmentUpdatedResponse);
+        } else {
+          // Second call - return 422 error
+          return HttpResponse.json(
+            {
+              errors: {
+                annual_gross_salary: ['must be greater than 0'],
+              },
+            },
+            { status: 422 },
+          );
+        }
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId={uniqueEmploymentId}
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            contract_details: {
+              fields: {
+                annual_gross_salary: {
+                  title: 'Test Label',
+                },
+              },
+            },
+          },
+        }}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the basic information step to load
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Navigate to contract details step
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for contract details step to load
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Wait for the form to be populated with existing data
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    // Fill in the form with data that will trigger the 422 error
+    const user = userEvent.setup();
+
+    // Modify annual gross salary to trigger the error
+    const annualGrossSalaryInput = screen.getByLabelText(/Test Label/i);
+    await user.clear(annualGrossSalaryInput);
+    await user.type(annualGrossSalaryInput, '100000'); // Invalid negative value
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    // Wait for the error to be called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
+    });
+
+    // Get the error call arguments
+    const errorCall = mockOnError.mock.calls[0][0];
+
+    // Verify the error structure
+    expect(errorCall.error).toBeInstanceOf(Error);
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        annual_gross_salary: ['must be greater than 0'],
+      },
+    });
+
+    // Verify the field errors are normalized with user-friendly labels
+    const annualGrossSalaryError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) => error.field === 'annual_gross_salary',
+    );
+
+    expect(annualGrossSalaryError).toBeDefined();
+    expect(annualGrossSalaryError.messages).toEqual(['must be greater than 0']);
+    expect(annualGrossSalaryError.userFriendlyLabel).toBe('Test Label');
+
+    // Verify we stay on the same step (don't advance)
+    await screen.findByText(/Step: Contract Details/i);
+  });
+
+  it('should handle 422 validation errors with field errors when updating benefits', async () => {
+    const uniqueEmploymentId = 'test-employment-benefits-422-error';
+
+    // Mock the employment endpoint to return data with a non-readonly status
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      // Mock the PUT endpoint to return success first, then 422 error
+      http.put('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json(
+          {
+            errors: {
+              '0e0293ae-eec6-4d0e-9176-51c46eed435e': [
+                'Invalid meal benefit selection',
+              ],
+              'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': [
+                'Health insurance not available for this region',
+              ],
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        countryCode="PRT"
+        employmentId={uniqueEmploymentId}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the basic information step to load
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Navigate to contract details step
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for contract details step to load
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Wait for the form to be populated with existing data
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    // Submit contract details to move to benefits step
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    // Wait for benefits step to load
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    // Wait for the error to be called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalledTimes(1);
+    });
+
+    // Get the error call arguments
+    const errorCall = mockOnError.mock.calls[0][0];
+
+    // Verify the error structure
+    expect(errorCall.error).toBeInstanceOf(Error);
+    expect(errorCall.rawError).toEqual({
+      errors: {
+        '0e0293ae-eec6-4d0e-9176-51c46eed435e': [
+          'Invalid meal benefit selection',
+        ],
+        'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': [
+          'Health insurance not available for this region',
+        ],
+      },
+    });
+
+    // Verify the field errors are normalized with user-friendly labels
+    const mealBenefitError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) =>
+        error.field === '0e0293ae-eec6-4d0e-9176-51c46eed435e',
+    );
+    const healthInsuranceError = errorCall.fieldErrors.find(
+      (error: NormalizedFieldError) =>
+        error.field === 'baa1ce1d-39ea-4eec-acf0-88fc8a357f54',
+    );
+
+    expect(mealBenefitError).toBeDefined();
+    expect(mealBenefitError.messages).toEqual([
+      'Invalid meal benefit selection',
+    ]);
+    expect(mealBenefitError.userFriendlyLabel).toBe('Meal Benefit');
+
+    expect(healthInsuranceError).toBeDefined();
+    expect(healthInsuranceError.messages).toEqual([
+      'Health insurance not available for this region',
+    ]);
+    expect(healthInsuranceError.userFriendlyLabel).toBe(
+      'Health Insurance 2025',
+    );
+
+    // Verify we stay on the same step (don't advance)
+    await screen.findByText(/Step: Benefits/i);
   });
 });
