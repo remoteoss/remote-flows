@@ -226,6 +226,7 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       countryCode={countryCode}
+      skipSteps={['select_country']}
       options={{
         jsfModify: {
           basic_information: {

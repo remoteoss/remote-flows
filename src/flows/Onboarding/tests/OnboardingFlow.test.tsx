@@ -39,6 +39,13 @@ import userEvent from '@testing-library/user-event';
 
 const queryClient = new QueryClient();
 
+// Helper function to generate unique employment IDs for each test
+let employmentIdCounter = 0;
+const generateUniqueEmploymentId = () => {
+  employmentIdCounter++;
+  return `test-employment-${employmentIdCounter}-${Date.now()}`;
+};
+
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
     <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
@@ -315,8 +322,19 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json(companyResponse);
       }),
-      http.get('*/v1/employments/:id', () => {
-        return HttpResponse.json(employmentResponse);
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+            },
+          },
+        });
       }),
       http.get('*/v1/countries', () => {
         return HttpResponse.json({
@@ -331,9 +349,6 @@ describe('OnboardingFlow', () => {
             },
           ],
         });
-      }),
-      http.get('*/v1/employments/:id', () => {
-        return HttpResponse.json(employmentResponse);
       }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
@@ -447,7 +462,7 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   }
 
-  it('should skip rendering the select country step when a countryCode is provided', async () => {
+  it('should skip rendering the select country step when a countryCode is provided and skipSteps is provided', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -474,9 +489,9 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        employmentId="1234"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
-        countryCode="PRT"
       />,
       { wrapper },
     );
@@ -506,6 +521,7 @@ describe('OnboardingFlow', () => {
 
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
     await fillCountry('Portugal');
   });
 
@@ -547,8 +563,8 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        employmentId="1234"
-        countryCode="PRT"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
       />,
       {
@@ -556,6 +572,8 @@ describe('OnboardingFlow', () => {
       },
     );
     await screen.findByText(/Step: Basic Information/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -603,8 +621,8 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        countryCode="PRT"
-        employmentId="1234"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
       />,
       {
@@ -627,14 +645,14 @@ describe('OnboardingFlow', () => {
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
       department: {
-        id: undefined,
-        name: undefined,
+        id: '',
+        name: '',
       },
       email: employmentResponse.data.employment.personal_email,
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
       manager: {
-        id: undefined,
+        id: '',
       },
       tax_job_category:
         employmentResponse.data.employment.basic_information.tax_job_category,
@@ -651,9 +669,17 @@ describe('OnboardingFlow', () => {
   });
 
   it('should retrieve the basic information step based on an employmentId', async () => {
-    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
-      wrapper,
-    });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillCountry('Portugal');
 
@@ -666,9 +692,17 @@ describe('OnboardingFlow', () => {
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
     const user = userEvent.setup();
-    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
-      wrapper,
-    });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillCountry('Portugal');
 
@@ -722,9 +756,17 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the contract details step and go to the benefits step', async () => {
-    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
-      wrapper,
-    });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      {
+        wrapper,
+      },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillCountry('Portugal');
 
@@ -789,16 +831,28 @@ describe('OnboardingFlow', () => {
   });
 
   it('should go to the third step and check that benefits are initalized correctly', async () => {
+    const employmentId = generateUniqueEmploymentId();
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
         // Only match direct employment requests, not sub-resources
         if (params?.id?.includes('/')) return HttpResponse.error();
-        return HttpResponse.json(employmentResponse);
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: params?.id,
+            },
+          },
+        });
       }),
     );
-    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+    render(<OnboardingFlow employmentId={employmentId} {...defaultProps} />, {
       wrapper,
     });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillCountry('Portugal');
 
@@ -872,19 +926,31 @@ describe('OnboardingFlow', () => {
   });
 
   it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+    const employmentId = generateUniqueEmploymentId();
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
         // Only match direct employment requests, not sub-resources
         if (params?.id?.includes('/')) return HttpResponse.error();
-        return HttpResponse.json(employmentResponse);
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: params?.id,
+            },
+          },
+        });
       }),
       http.post('*/v1/employments/*/invite', () => {
         return HttpResponse.json(inviteResponse);
       }),
     );
-    render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+    render(<OnboardingFlow employmentId={employmentId} {...defaultProps} />, {
       wrapper,
     });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillCountry('Portugal');
 
     let nextButton = screen.getByText(/Next Step/i);
@@ -919,112 +985,10 @@ describe('OnboardingFlow', () => {
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 
-  it.skip('should call POST when submitting basic information', async () => {
-    const postSpy = vi.fn();
-
-    server.use(
-      http.post('*/v1/employments', () => {
-        postSpy();
-        return HttpResponse.json(employmentCreatedResponse);
-      }),
-    );
-
-    mockRender.mockImplementation(
-      ({ onboardingBag, components }: OnboardingRenderProps) => {
-        const currentStepIndex = onboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Benefits',
-          [3]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              onboardingBag={onboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
-
-    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    // First submission
-    await fillBasicInformation();
-    const nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    // Verify POST was called
-    expect(postSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('should call PATCH instead of POST when resubmitting basic information', async () => {
-    const patchSpy = vi.fn();
-
-    server.use(
-      http.patch('*/v1/employments/*', () => {
-        patchSpy();
-        return HttpResponse.json(employmentUpdatedResponse);
-      }),
-    );
-
-    mockRender.mockImplementation(
-      ({ onboardingBag, components }: OnboardingRenderProps) => {
-        const currentStepIndex = onboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Benefits',
-          [3]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              onboardingBag={onboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
-
-    render(
-      <OnboardingFlow
-        {...defaultProps}
-        countryCode="PRT"
-        employmentId="1234"
-      />,
-      { wrapper },
-    );
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    const nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    // Verify PATCH was called instead of another POST
-    await waitFor(() => {
-      expect(patchSpy).toHaveBeenCalledTimes(1);
-    });
-  });
-
   it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
     'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
+      const employmentId = generateUniqueEmploymentId();
       server.use(
         http.get('*/v1/employments/*', () => {
           return HttpResponse.json({
@@ -1033,71 +997,7 @@ describe('OnboardingFlow', () => {
               ...employmentResponse.data,
               employment: {
                 ...employmentResponse.data.employment,
-                status: status,
-              },
-            },
-          });
-        }),
-      );
-
-      mockRender.mockImplementation(
-        ({ onboardingBag, components }: OnboardingRenderProps) => {
-          const currentStepIndex = onboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Contract Details',
-            [2]: 'Benefits',
-            [3]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                onboardingBag={onboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
-      );
-
-      render(
-        <OnboardingFlow
-          countryCode="PRT"
-          employmentId="1234"
-          {...defaultProps}
-        />,
-        {
-          wrapper,
-        },
-      );
-
-      // Should automatically go to review step instead of starting from select country
-      await screen.findByText(/Step: Review/i);
-
-      // Verify basic information data is displayed in the Review component
-      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
-
-      // Verify contract details data is displayed in the Review component
-      expect(
-        screen.getByText('annual_gross_salary: 20000'),
-      ).toBeInTheDocument();
-    },
-  );
-
-  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
-    'should automatically navigate to review step when employment status is %s and display employment data',
-    async (status) => {
-      server.use(
-        http.get('*/v1/employments/*', () => {
-          return HttpResponse.json({
-            ...employmentResponse,
-            data: {
-              ...employmentResponse.data,
-              employment: {
-                ...employmentResponse.data.employment,
+                id: employmentId,
                 status: status,
               },
             },
@@ -1129,7 +1029,7 @@ describe('OnboardingFlow', () => {
         },
       );
 
-      render(<OnboardingFlow employmentId="1234" {...defaultProps} />, {
+      render(<OnboardingFlow employmentId={employmentId} {...defaultProps} />, {
         wrapper,
       });
 
@@ -1148,6 +1048,7 @@ describe('OnboardingFlow', () => {
 
   it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
     const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
+    const employmentId = generateUniqueEmploymentId();
 
     server.use(
       http.get('*/v1/employments/*', () => {
@@ -1157,6 +1058,7 @@ describe('OnboardingFlow', () => {
             ...employmentResponse.data,
             employment: {
               ...employmentResponse.data.employment,
+              id: employmentId,
               status: 'invited', // This should trigger auto-navigation to review
             },
           },
@@ -1203,8 +1105,8 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        countryCode="PRT"
-        employmentId="1234"
+        employmentId={employmentId}
+        skipSteps={['select_country']}
         {...defaultProps}
       />,
       {
@@ -1263,8 +1165,8 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        countryCode="PRT"
-        employmentId="38d8bb00-3d78-4dd7-98f8-bd735e68d9a9"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
         options={{
           jsfModify: {
@@ -1333,8 +1235,8 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        countryCode="PRT"
-        employmentId="38d8bb00-3d78-4dd7-98f8-bd735e68d9a9"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
         options={{
           jsfModify: {
@@ -1424,8 +1326,8 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        countryCode="PRT"
-        employmentId="38d8bb00-3d78-4dd7-98f8-bd735e68d9a9"
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
         {...defaultProps}
         options={{
           jsfModify: {
@@ -1451,4 +1353,184 @@ describe('OnboardingFlow', () => {
     const nameLabel = screen.getByLabelText(customNameLabel);
     expect(nameLabel).toBeInTheDocument();
   });
+
+  it.skip('should call POST when submitting basic information', async () => {
+    const postSpy = vi.fn();
+
+    server.use(
+      http.post('*/v1/employments', () => {
+        postSpy();
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode="PRT"
+        skipSteps={['select_country']}
+      />,
+      { wrapper },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    // First submission
+    await fillBasicInformation();
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify POST was called
+    expect(postSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call PATCH instead of POST when resubmitting basic information', async () => {
+    const patchSpy = vi.fn();
+    const employmentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.patch('*/v1/employments/*', () => {
+        patchSpy();
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify PATCH was called instead of another POST
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
+    'should automatically navigate to review step when employment status is %s and display employment data',
+    async (status) => {
+      const employmentId = generateUniqueEmploymentId();
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...employmentResponse,
+            data: {
+              ...employmentResponse.data,
+              employment: {
+                ...employmentResponse.data.employment,
+                id: employmentId,
+                status: status,
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Contract Details',
+            [2]: 'Benefits',
+            [3]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <OnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        {
+          wrapper,
+        },
+      );
+
+      // Should automatically go to review step instead of starting from select country
+      await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify contract details data is displayed in the Review component
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
+    },
+  );
 });

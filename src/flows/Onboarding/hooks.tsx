@@ -56,12 +56,67 @@ const stepToFormSchemaMap: Record<
   review: null,
 };
 
+const getLoadingStates = ({
+  isLoadingBasicInformationForm,
+  isLoadingContractDetailsForm,
+  isLoadingEmployment,
+  isLoadingBenefitsOffersSchema,
+  isLoadingBenefitOffers,
+  isLoadingCompany,
+  isLoadingCountries,
+  employment,
+  employmentId,
+  currentStepName,
+  stepFields,
+}: {
+  isLoadingBasicInformationForm: boolean;
+  isLoadingContractDetailsForm: boolean;
+  isLoadingEmployment: boolean;
+  isLoadingBenefitsOffersSchema: boolean;
+  isLoadingBenefitOffers: boolean;
+  isLoadingCompany: boolean;
+  isLoadingCountries: boolean;
+  employment?: Employment;
+  employmentId?: string;
+  currentStepName: string;
+  stepFields: Record<keyof typeof STEPS, Fields>;
+}) => {
+  const initialLoading =
+    isLoadingBasicInformationForm ||
+    isLoadingContractDetailsForm ||
+    isLoadingEmployment ||
+    isLoadingBenefitsOffersSchema ||
+    isLoadingBenefitOffers ||
+    isLoadingCompany ||
+    isLoadingCountries;
+
+  const isEmploymentReadOnly =
+    employment &&
+    reviewStepAllowedEmploymentStatus.includes(employment?.status);
+
+  const shouldHandleReadOnlyEmployment = Boolean(
+    employmentId && isEmploymentReadOnly && currentStepName !== 'review',
+  );
+
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+
+  const isNavigatingToReview = Boolean(
+    shouldHandleReadOnlyEmployment &&
+      !initialLoading &&
+      stepFields['basic_information'].length > 0 &&
+      stepFields['contract_details'].length > 0,
+  );
+
+  return { isLoading, isNavigatingToReview, isEmploymentReadOnly };
+};
+
 export const useOnboarding = ({
   employmentId,
   companyId,
   countryCode,
   type,
   options,
+  skipSteps,
 }: OnboardingHookProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fieldsMetaRef = useRef<Record<string, any>>({});
@@ -93,7 +148,9 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
-  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
+  const stepsToUse = skipSteps?.includes('select_country')
+    ? STEPS_WITHOUT_SELECT_COUNTRY
+    : STEPS;
 
   const {
     fieldValues,
@@ -311,27 +368,20 @@ export const useOnboarding = ({
     benefits: initialValuesBenefitOffers || {},
   };
 
-  const initialLoading =
-    isLoadingBasicInformationForm ||
-    isLoadingContractDetailsForm ||
-    isLoadingEmployment ||
-    isLoadingBenefitsOffersSchema ||
-    isLoadingBenefitOffers ||
-    isLoadingCompany ||
-    isLoadingCountries;
-
-  const isEmploymentReadOnly =
-    employment &&
-    reviewStepAllowedEmploymentStatus.includes(employment?.status);
-
-  const isNavigatingToReview = Boolean(
-    employmentId &&
-      isEmploymentReadOnly &&
-      !initialLoading &&
-      stepFields['basic_information'].length > 0 &&
-      stepFields['contract_details'].length > 0 &&
-      stepState.currentStep.name !== 'review',
-  );
+  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } =
+    getLoadingStates({
+      isLoadingBasicInformationForm,
+      isLoadingContractDetailsForm,
+      isLoadingEmployment,
+      isLoadingBenefitsOffersSchema,
+      isLoadingBenefitOffers,
+      isLoadingCompany,
+      isLoadingCountries,
+      employmentId,
+      employment,
+      currentStepName: stepState.currentStep.name,
+      stepFields,
+    });
 
   useEffect(() => {
     if (isNavigatingToReview) {
@@ -388,7 +438,7 @@ export const useOnboarding = ({
   }, [
     employmentId,
     employment,
-    initialLoading,
+    isLoading,
     internalCountryCode,
     goToStep,
     initialValuesBenefitOffers,
@@ -397,8 +447,6 @@ export const useOnboarding = ({
     setStepValues,
     isNavigatingToReview,
   ]);
-
-  const isLoading = initialLoading || isNavigatingToReview;
 
   function parseFormValues(values: FieldValues) {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {

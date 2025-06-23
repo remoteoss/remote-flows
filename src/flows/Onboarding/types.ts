@@ -8,6 +8,7 @@ export type OnboardingFlowParams = {
   countryCode?: string;
   employmentId?: string;
   companyId: string;
+  skipSteps?: ['select_country'];
   type?: EmploymentCreateParams['type'];
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
