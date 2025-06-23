@@ -836,8 +836,6 @@ describe('OnboardingFlow', () => {
     const employmentId = generateUniqueEmploymentId();
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
-        // Only match direct employment requests, not sub-resources
-        if (params?.id?.includes('/')) return HttpResponse.error();
         return HttpResponse.json({
           ...employmentResponse,
           data: {
@@ -979,9 +977,7 @@ describe('OnboardingFlow', () => {
       const employmentId = generateUniqueEmploymentId();
 
       server.use(
-        http.get('*/v1/employments/:id', ({ params }) => {
-          if (params?.id?.includes('/')) return HttpResponse.error();
-
+        http.get('*/v1/employments/:id', () => {
           return HttpResponse.json({
             ...employmentResponse,
             data: {
