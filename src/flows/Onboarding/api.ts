@@ -416,9 +416,10 @@ export const useMagicLink = () => {
   });
 };
 
-const useCountries = () => {
+const useCountries = (queryOptions?: { enabled?: boolean }) => {
   const { client } = useClient();
   return useQuery({
+    ...queryOptions,
     queryKey: ['countries'],
     retry: false,
     queryFn: async () => {
@@ -449,8 +450,10 @@ const useCountries = () => {
   });
 };
 
-export const useCountriesSchemaField = (options?: FlowOptions) => {
-  const { data: countries, isLoading } = useCountries();
+export const useCountriesSchemaField = (
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+) => {
+  const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
   const { schema: selectCountrySchema } = modify(
     selectCountryStepSchema.data.schema,

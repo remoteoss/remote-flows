@@ -56,6 +56,7 @@ export const OnboardingFlow = ({
   companyId,
   countryCode,
   type = 'employee',
+  skipSteps,
   render,
   options,
 }: OnboardingFlowProps) => {
@@ -66,6 +67,7 @@ export const OnboardingFlow = ({
     employmentId,
     type,
     options,
+    skipSteps,
   });
 
   const [creditScore, setCreditScore] = useState<{

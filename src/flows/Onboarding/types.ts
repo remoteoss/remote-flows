@@ -5,10 +5,29 @@ import {
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 
 export type OnboardingFlowParams = {
+  /**
+   * The country code to use for the onboarding.
+   */
   countryCode?: string;
+  /**
+   * The employment id to use for the onboarding.
+   */
   employmentId?: string;
+  /**
+   * The company id to use for the onboarding.
+   */
   companyId: string;
+  /**
+   * The steps to skip for the onboarding. We only support skipping the select_country step for now.
+   */
+  skipSteps?: ['select_country'];
+  /**
+   * The type of employment to use for the onboarding. Employee or contractor.
+   */
   type?: EmploymentCreateParams['type'];
+  /**
+   * The options to use for the onboarding.
+   */
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
       select_country?: JSFModify;

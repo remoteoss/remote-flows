@@ -261,6 +261,7 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       countryCode={countryCode}
+      skipSteps={['select_country']}
     />
   </RemoteFlows>
 );
