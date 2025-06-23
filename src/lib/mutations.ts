@@ -33,38 +33,31 @@ type PromiseResult<D, E> = SuccessResponse<D> | ErrorResponse<E>;
  * @returns Array of field errors with field name and messages
  */
 export function extractFieldErrors(error: any): FieldError[] {
+  if (!error || !error.errors || typeof error.errors !== 'object') return [];
+
   const fieldErrors: FieldError[] = [];
 
-  if (!error) return fieldErrors;
-
-  // Handle nested errors structure like { errors: { field: [messages] } }
-  if (error.errors && typeof error.errors === 'object') {
-    Object.entries(error.errors).forEach(([key, value]) => {
-      // Case 1: Direct field errors (POST /v1/employments)
-      // { "errors": { "provisional_start_date": ["cannot be in a holiday"] } }
-      if (Array.isArray(value)) {
-        fieldErrors.push({
-          field: key,
-          messages: value.map((msg: any) => String(msg)),
-        });
-      }
-      // Case 2: Nested field errors (PATCH /v1/employments/*)
-      // { "errors": { "basic_information": { "provisional_start_date": ["cannot be in a holiday"] } } }
-      else if (typeof value === 'object' && value !== null) {
-        Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-          if (Array.isArray(nestedValue)) {
-            fieldErrors.push({
-              field: nestedKey,
-              messages: nestedValue.map((msg: any) => String(msg)),
-            });
-          }
-        });
-      }
-    });
-  }
+  Object.entries(error.errors).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      fieldErrors.push({
+        field: key,
+        messages: value.map((msg: any) => String(msg)),
+      });
+      return;
+    }
+    if (value && typeof value === 'object') {
+      Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+        if (Array.isArray(nestedValue)) {
+          fieldErrors.push({
+            field: nestedKey,
+            messages: nestedValue.map((msg: any) => String(msg)),
+          });
+        }
+      });
+    }
+  });
   return fieldErrors;
 }
-
 /**
  * Converts a mutation to a promise-based API. We avoid using the
  * `mutateAsync` method from react-query for 2 reasons:
