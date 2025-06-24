@@ -570,22 +570,6 @@ export const useOnboarding = ({
     isNavigatingToContractDetails ||
     isNavigatingToBenefits;
 
-  console.log({
-    isLoading,
-    isNavigatingToReviewWhenEmploymentIsFinal,
-    isNavigatingToReview,
-    isNavigatingToContractDetails,
-    isNavigatingToBenefits,
-    initialLoading,
-    isLoadingBasicInformationForm,
-    isLoadingContractDetailsForm,
-    isLoadingEmployment,
-    isLoadingBenefitsOffersSchema,
-    isLoadingBenefitOffers,
-    isLoadingCompany,
-    isLoadingCountries,
-  });
-
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
       select_country: prettifyFormValues(
