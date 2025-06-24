@@ -35,7 +35,6 @@ import {
   fillSelect,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
-import userEvent from '@testing-library/user-event';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
 
@@ -596,9 +595,11 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue(
-      employmentResponse.data.employment.personal_email,
-    );
+    await waitFor(() => {
+      expect(employeePersonalEmail).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
   });
 
   it('should submit the basic information step', async () => {
@@ -699,7 +700,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
-    const user = userEvent.setup();
     render(
       <OnboardingFlow
         employmentId={generateUniqueEmploymentId()}
@@ -722,10 +722,10 @@ describe('OnboardingFlow', () => {
     const personalEmailInput = screen.getByLabelText(/Personal email/i);
 
     // Clear the existing value
-    await user.clear(personalEmailInput);
-
-    // Then type the new value
-    await user.type(personalEmailInput, 'gabriel@gmail.com');
+    fireEvent.change(personalEmailInput, { target: { value: '' } });
+    fireEvent.change(personalEmailInput, {
+      target: { value: 'gabriel@gmail.com' },
+    });
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -1442,7 +1442,7 @@ describe('OnboardingFlow', () => {
       screen.getByRole('button', { name: /Show USD conversion/i }),
     );
     expect(toggleButton).toBeInTheDocument();
-    await userEvent.click(toggleButton);
+    fireEvent.click(toggleButton);
 
     // Wait for and verify the custom conversion label and description are displayed
     const conversionLabel = await waitFor(() =>
@@ -1722,13 +1722,10 @@ describe('OnboardingFlow', () => {
       expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
     });
 
-    // Fill in the form with data that will trigger the 422 error
-    const user = userEvent.setup();
-
     // Modify annual gross salary to trigger the error
     const annualGrossSalaryInput = screen.getByLabelText(/Test Label/i);
-    await user.clear(annualGrossSalaryInput);
-    await user.type(annualGrossSalaryInput, '100000'); // Invalid negative value
+    fireEvent.change(annualGrossSalaryInput, { target: { value: '' } });
+    fireEvent.change(annualGrossSalaryInput, { target: { value: '100000' } });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
