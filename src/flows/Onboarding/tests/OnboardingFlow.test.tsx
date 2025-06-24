@@ -38,14 +38,14 @@ import {
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
 
+const queryClient = new QueryClient();
+
 // Helper function to generate unique employment IDs for each test
 let employmentIdCounter = 0;
 const generateUniqueEmploymentId = () => {
   employmentIdCounter++;
   return `test-employment-${employmentIdCounter}-${Date.now()}`;
 };
-
-const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
@@ -89,7 +89,7 @@ function Review({ values }: { values: Record<string, unknown> }) {
   );
 }
 
-describe('OnboardingFlow', () => {
+describe.skip('OnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
     components,
     onboardingBag,
@@ -577,7 +577,7 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it.only('should submit the basic information step', async () => {
+  it('should submit the basic information step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;

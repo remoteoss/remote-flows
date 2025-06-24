@@ -351,18 +351,6 @@ export const useOnboarding = ({
     });
   };
 
-  const isBasicInformationDetailsEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        Boolean(employmentId)),
-  );
-
-  const isContractDetailsEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
-  );
-
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -371,7 +359,7 @@ export const useOnboarding = ({
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
-        enabled: isBasicInformationDetailsEnabled,
+        enabled: stepState.currentStep.name === 'basic_information',
       },
     },
   });
@@ -437,7 +425,7 @@ export const useOnboarding = ({
           },
         },
         queryOptions: {
-          enabled: isContractDetailsEnabled,
+          enabled: stepState.currentStep.name === 'contract_details',
         },
       },
     });
@@ -594,6 +582,15 @@ export const useOnboarding = ({
     isNavigatingToReview ||
     isNavigatingToContractDetails ||
     isNavigatingToBenefits;
+
+  console.log({
+    isLoading,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+    initialLoading,
+  });
 
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
