@@ -516,9 +516,8 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     await waitFor(() => {
-      expect(employeePersonalEmail).toHaveValue(
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
         employmentResponse.data.employment.personal_email,
       );
     });
@@ -594,9 +593,8 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     await waitFor(() => {
-      expect(employeePersonalEmail).toHaveValue(
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
         employmentResponse.data.employment.personal_email,
       );
     });
