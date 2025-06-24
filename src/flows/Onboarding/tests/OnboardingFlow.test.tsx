@@ -37,6 +37,7 @@ import {
 } from '@/src/tests/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { NormalizedFieldError } from '@/src/lib/mutations';
+import { fireEvent } from '@testing-library/react';
 
 // Helper function to generate unique employment IDs for each test
 let employmentIdCounter = 0;
@@ -409,30 +410,32 @@ describe('OnboardingFlow', () => {
       ...values,
     };
 
-    const user = userEvent.setup();
-
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
     });
+
     if (newValues?.fullName) {
-      await user.type(screen.getByLabelText(/Full name/i), newValues?.fullName);
+      fireEvent.change(screen.getByLabelText(/Full name/i), {
+        target: { value: newValues?.fullName },
+      });
     }
+
     if (newValues?.personalEmail) {
-      await user.type(
-        screen.getByLabelText(/Personal email/i),
-        newValues?.personalEmail,
-      );
+      fireEvent.change(screen.getByLabelText(/Personal email/i), {
+        target: { value: newValues?.personalEmail },
+      });
     }
 
     if (newValues?.workEmail) {
-      await user.type(
-        screen.getByLabelText(/Work email/i),
-        newValues?.workEmail,
-      );
+      fireEvent.change(screen.getByLabelText(/Work email/i), {
+        target: { value: newValues?.workEmail },
+      });
     }
 
     if (newValues?.jobTitle) {
-      await user.type(screen.getByLabelText(/Job title/i), newValues?.jobTitle);
+      fireEvent.change(screen.getByLabelText(/Job title/i), {
+        target: { value: newValues?.jobTitle },
+      });
     }
 
     if (newValues?.provisionalStartDate) {
@@ -540,7 +543,7 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it.skip('should fill the first step, go to the second step and go back to the first step', async () => {
+  it('should fill the first step, go to the second step and go back to the first step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -967,7 +970,7 @@ describe('OnboardingFlow', () => {
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 
-  it.skip('should call POST when submitting basic information', async () => {
+  it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
 
     server.use(
@@ -1000,7 +1003,14 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode="PRT"
+        skipSteps={['select_country']}
+      />,
+      { wrapper },
+    );
 
     await screen.findByText(/Step: Basic Information/i);
 
