@@ -22,6 +22,7 @@ describe('OnboardingBack Component', () => {
     (useOnboardingContext as any).mockReturnValue({
       onboardingBag: {
         back: mockBack,
+        isEmploymentReadOnly: false,
       },
     });
     (useFormFields as any).mockReturnValue({ components: {} });
@@ -181,5 +182,53 @@ describe('OnboardingBack Component', () => {
     fireEvent.click(button);
     expect(mockBack).toHaveBeenCalledTimes(1);
     expect(mockOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  describe('when employment is readonly', () => {
+    const mockBack = vi.fn();
+    const mockOnClick = vi.fn();
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      (useOnboardingContext as any).mockReturnValue({
+        onboardingBag: {
+          back: mockBack,
+          isEmploymentReadOnly: true,
+        },
+      });
+      (useFormFields as any).mockReturnValue({ components: {} });
+    });
+
+    it('should not call mockBack', () => {
+      render(<OnboardingBack onClick={mockOnClick}>Go Back</OnboardingBack>);
+
+      const button = screen.getByRole('button', { name: 'Go Back' });
+      fireEvent.click(button);
+
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockOnClick).toHaveBeenCalled();
+    });
+
+    it('works with custom button component when employment is readonly', () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, onClick }) => (
+          <button data-testid="custom-button" onClick={onClick}>
+            {children}
+          </button>
+        ));
+
+      (useFormFields as any).mockReturnValue({
+        components: { button: CustomButton },
+      });
+
+      render(<OnboardingBack onClick={mockOnClick}>Go Back</OnboardingBack>);
+
+      const button = screen.getByTestId('custom-button');
+      fireEvent.click(button);
+
+      expect(mockBack).not.toHaveBeenCalled();
+      expect(mockOnClick).toHaveBeenCalled();
+    });
   });
 });

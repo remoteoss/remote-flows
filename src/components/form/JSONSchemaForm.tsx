@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fields } from '@remoteoss/json-schema-form';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
@@ -46,6 +46,13 @@ export const JSONSchemaFormFields = ({
               statement={field.statement as any}
             />
           );
+        }
+
+        if (field.Component) {
+          const { Component } = field as {
+            Component: React.ComponentType<any>;
+          };
+          return <Component key={field.name as string} {...field} />;
         }
 
         const FieldComponent = fieldsMap[field.inputType as SupportedTypes];

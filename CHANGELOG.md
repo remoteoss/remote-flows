@@ -1,5 +1,37 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.12
+
+### Patch Changes
+
+- 76ca70c: - Improve errors in the onboarding flow
+  - Add Onboarding readme
+  - Improve recovery of an employment
+
+## 0.4.0-alpha.11
+
+### Minor Changes
+
+- c8a0cf3: - Add conversion feature for the annual gross salary
+  - Fix json-schema-version for onboarding && contract amendment flows
+
+## 0.4.0-alpha.10
+
+### Minor Changes
+
+- 13c2803: - Add property `isEmploymentReadOnly` to use it in the review step
+  - Remove reset from the SDK
+
+## 0.4.0-alpha.9
+
+### Minor Changes
+
+- c360410: - Buttons can be replaced with the components prop
+  - Fix flickering state when an employment is invited and we're moving the user to the review step
+  - Fix skip to review when a countryCode is not passed
+  - Fix meta property to be properly set when we move the user to the review step
+  - Create FieldComponentProps, ButtonComponentProps and StatementComponentProps types for custom components
+
 ## 0.4.0-alpha.8
 
 ### Minor Changes

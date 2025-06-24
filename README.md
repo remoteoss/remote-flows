@@ -81,15 +81,40 @@ The `components` prop allows you to override the default form field components w
 
 > **Important**: All custom components are wrapped with React Hook Form's `Controller` component. You must bind the `field` props to your HTML elements to ensure proper form state management and validation.
 
+For TypeScript users, we export component prop types to make it easier to create properly typed custom components:
+
+```tsx
+import {
+  FieldComponentProps,
+  ButtonComponentProps,
+} from '@remoteoss/remote-flows';
+
+const CustomInput = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  return (
+    <div>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <input {...field} />
+      {fieldState.error && <p>{fieldState.error.message}</p>}
+    </div>
+  );
+};
+
+const CustomButton = ({ children, ...props }: ButtonComponentProps) => {
+  return <button {...props}>{children}</button>;
+};
+```
+
 Here's an example of custom field components implementation:
 
 ```tsx
 <RemoteFlows
   components={{
+    text: CustomInput,
+    button: CustomButton,
     number: ({ field, fieldState, fieldData }) => (
       <div>
         <label>{fieldData.label}</label>
-        <input {...field} />
+        <input {...field} type="number" />
         {fieldState.error && (
           <span className="text-red-500">{fieldState.error.message}</span>
         )}
@@ -116,6 +141,12 @@ Here's an example of custom field components implementation:
 </RemoteFlows>
 ```
 
+### Available Component Prop Types
+
+- `FieldComponentProps`: For all form field components (text, number, select, etc.)
+- `ButtonComponentProps`: For custom button components
+- `StatementComponentProps`: For custom statement components
+
 Supported field types:
 
 - `text`: Text input fields
@@ -129,6 +160,7 @@ Visit the different different docs for each flow
 - [Cost Calculator Flow](./src/flows/CostCalculator/README.md)
 - [Termination Flow](./src/flows/Termination/README.md)
 - [Contract Amendments](./src/flows/ContractAmendment/README.md)
+- [Onboarding Flow](./src/flows/Onboarding/README.md)
 
 ## Authentication
 

@@ -86,6 +86,12 @@ import type {
   GetIndexEorPayrollCalendarData,
   GetIndexEorPayrollCalendarResponse,
   GetIndexEorPayrollCalendarError,
+  PatchUpdateEmployeeTimeoff2Data,
+  PatchUpdateEmployeeTimeoff2Response,
+  PatchUpdateEmployeeTimeoff2Error,
+  PatchUpdateEmployeeTimeoffData,
+  PatchUpdateEmployeeTimeoffResponse,
+  PatchUpdateEmployeeTimeoffError,
   GetIndexRecurringIncentiveData,
   GetIndexRecurringIncentiveResponse,
   GetIndexRecurringIncentiveError,
@@ -194,6 +200,12 @@ import type {
   GetShowTimeoffBalanceData,
   GetShowTimeoffBalanceResponse,
   GetShowTimeoffBalanceError,
+  GetCategoriesExpenseData,
+  GetCategoriesExpenseResponse,
+  GetCategoriesExpenseError,
+  PostCancelEmployeeTimeoffData,
+  PostCancelEmployeeTimeoffResponse,
+  PostCancelEmployeeTimeoffError,
   GetShowFormCountryData,
   GetShowFormCountryResponse,
   GetShowFormCountryError,
@@ -400,6 +412,9 @@ import type {
   PutCancelContractAmendmentData,
   PutCancelContractAmendmentResponse,
   PutCancelContractAmendmentError,
+  PostCreateEmployeeTimeoffData,
+  PostCreateEmployeeTimeoffResponse,
+  PostCreateEmployeeTimeoffError,
   GetShowProbationExtensionData,
   GetShowProbationExtensionResponse,
   GetShowProbationExtensionError,
@@ -424,6 +439,9 @@ import type {
   GetIndexEmploymentContractData,
   GetIndexEmploymentContractResponse,
   GetIndexEmploymentContractError,
+  PostConvertCurrencyConverterData,
+  PostConvertCurrencyConverterResponse,
+  PostConvertCurrencyConverterError,
   GetIndexCompanyData,
   GetIndexCompanyResponse,
   GetIndexCompanyError,
@@ -920,6 +938,18 @@ export const postCreateEstimation = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/estimation',
     ...options,
@@ -1205,6 +1235,64 @@ export const getIndexEorPayrollCalendar = <
     ],
     url: '/v1/payroll-calendars',
     ...options,
+  });
+};
+
+/**
+ * Update Time Off as Employee
+ * Updates a Time Off record as Employee
+ */
+export const patchUpdateEmployeeTimeoff2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateEmployeeTimeoff2Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    PatchUpdateEmployeeTimeoff2Response,
+    PatchUpdateEmployeeTimeoff2Error,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Update Time Off as Employee
+ * Updates a Time Off record as Employee
+ */
+export const patchUpdateEmployeeTimeoff = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateEmployeeTimeoffData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    PatchUpdateEmployeeTimeoffResponse,
+    PatchUpdateEmployeeTimeoffError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };
 
@@ -1728,6 +1816,18 @@ export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/estimation-pdf',
     ...options,
@@ -2244,6 +2344,56 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * List expense categories
+ * Lists the effective hierarchy of expense categories. Either employment_id or expense_id (or both) must be provided.
+ */
+export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
+  options?: Options<GetCategoriesExpenseData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetCategoriesExpenseResponse,
+    GetCategoriesExpenseError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/expenses/categories',
+    ...options,
+  });
+};
+
+/**
+ * Cancel Time Off as Employee
+ * Cancels a Time Off record as Employee
+ */
+export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostCancelEmployeeTimeoffData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCancelEmployeeTimeoffResponse,
+    PostCancelEmployeeTimeoffError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/timeoff/{id}/cancel',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Show form schema
  * Returns the json schema of a supported form. Possible form names are:
  * ```
@@ -2388,18 +2538,30 @@ export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * List countries
+ * List countries for Cost Calculator
  * Lists active and processing countries
  */
 export const getIndexCountry = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCountryData, ThrowOnError>,
+  options?: Options<GetIndexCountryData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).get<
+  return (options?.client ?? _heyApiClient).get<
     GetIndexCountryResponse,
     unknown,
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3317,6 +3479,10 @@ export const postCreateDecline = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/decline',
     ...options,
@@ -4204,6 +4370,33 @@ export const putCancelContractAmendment = <
 };
 
 /**
+ * Create a Pending Time Off
+ * Creates a pending Time Off record
+ */
+export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateEmployeeTimeoffData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateEmployeeTimeoffResponse,
+    PostCreateEmployeeTimeoffError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/timeoff',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Show Probation Extension
  * Shows a Probation Extension Request.
  *
@@ -4282,9 +4475,9 @@ export const getDownloadByIdExpenseReceipt = <
  * Endpoint to exchange tokens in the Authorization Code, Client Credentials and Refresh Token flows
  */
 export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
-  options: Options<PostTokenOAuth2TokenData, ThrowOnError>,
+  options?: Options<PostTokenOAuth2TokenData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
+  return (options?.client ?? _heyApiClient).post<
     PostTokenOAuth2TokenResponse,
     PostTokenOAuth2TokenError,
     ThrowOnError
@@ -4399,6 +4592,35 @@ export const getIndexEmploymentContract = <
     ],
     url: '/v1/employment-contracts',
     ...options,
+  });
+};
+
+/**
+ * Convert currency
+ * Convert currency
+ */
+export const postConvertCurrencyConverter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostConvertCurrencyConverterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostConvertCurrencyConverterResponse,
+    PostConvertCurrencyConverterError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/currency-converter',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };
 

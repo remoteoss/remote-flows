@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
-import './App.css';
+import './css/main.css';
 
 const STEPS = [
   'Employee Communication',
@@ -186,7 +186,7 @@ export const Termination = () => {
   const [open, setOpen] = useState(false);
   const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
   return (
-    <RemoteFlows components={components}>
+    <RemoteFlows>
       <TerminationFlow
         employmentId={EMPLOYMENT_ID}
         render={TerminationForm}

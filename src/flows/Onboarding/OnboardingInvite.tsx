@@ -2,12 +2,15 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from './api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
-import { mutationToPromise } from '@/src/lib/mutations';
-import { Employment, SuccessResponse } from '@/src/client';
+import { FieldError, mutationToPromise } from '@/src/lib/mutations';
+import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from './context';
 import { useFormFields } from '@/src/context';
 
-export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type OnboardingInviteProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onError'
+> & {
   onSuccess?: ({
     data,
     employmentStatus,
@@ -15,18 +18,20 @@ export type OnboardingInviteProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     data: SuccessResponse;
     employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => void | Promise<void>;
-  onError?: (error: unknown) => void;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: FieldError[];
+  }) => void;
   onSubmit?: () => void | Promise<void>;
   render: (props: {
     employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => ReactNode;
-};
-
-const employmentStatusList: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
+} & Record<string, unknown>;
 
 export function OnboardingInvite({
   onSubmit,
@@ -34,7 +39,7 @@ export function OnboardingInvite({
   onError,
   render,
   ...props
-}: OnboardingInviteProps & Record<string, unknown>) {
+}: OnboardingInviteProps) {
   const { components } = useFormFields();
   const { onboardingBag, setCreditScore } = useOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
@@ -55,7 +60,7 @@ export function OnboardingInvite({
         onboardingBag.creditRiskStatus === 'deposit_required' &&
         onboardingBag.employmentId &&
         onboardingBag.employment?.status &&
-        !employmentStatusList.includes(onboardingBag.employment?.status)
+        !onboardingBag.isEmploymentReadOnly
       ) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
@@ -74,7 +79,11 @@ export function OnboardingInvite({
         }
 
         if (response.error) {
-          onError?.(response.error);
+          onError?.({
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: [],
+          });
         }
       } else if (onboardingBag.employmentId) {
         const response = await employmentInviteMutationAsync({
@@ -93,18 +102,26 @@ export function OnboardingInvite({
           return;
         }
         if (response.error) {
-          onError?.(response.error);
+          onError?.({
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: [],
+          });
         }
       }
-    } catch (error) {
-      onError?.(error);
+    } catch (error: unknown) {
+      onError?.({
+        error: error as Error,
+        rawError: error as Record<string, unknown>,
+        fieldErrors: [],
+      });
     }
   };
 
   const isReserveFlow =
     onboardingBag.creditRiskStatus === 'deposit_required' &&
     onboardingBag.employment?.status &&
-    !employmentStatusList.includes(onboardingBag.employment.status);
+    !onboardingBag.isEmploymentReadOnly;
 
   const CustomButton = components?.button;
   if (CustomButton) {

@@ -7,12 +7,14 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
-import './App.css';
 import { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
+import { AlertError } from './AlertError';
+import './css/main.css';
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -20,7 +22,13 @@ type MultiStepFormProps = {
 };
 
 const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
-  const [apiError, setApiError] = useState<string | null>();
+  const [errors, setErrors] = useState<{
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }>({
+    apiError: '',
+    fieldErrors: [],
+  });
   const {
     BasicInformationStep,
     ContractDetailsStep,
@@ -47,14 +55,22 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentCreationResponse) =>
               console.log('data', data)
             }
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Create Employment & Continue
             </SubmitButton>
@@ -72,19 +88,25 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
               console.log('payload', payload)
             }
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => setErrors({ apiError: error.message, fieldErrors })}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <BackButton
               className="back-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Previous Step
             </BackButton>
             <SubmitButton
               className="submit-button"
-              onClick={() => setApiError(null)}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -164,10 +186,16 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
             }
-            onError={(error: Error) => setApiError(error.message)}
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => setErrors({ apiError: error.message, fieldErrors })}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="error">{apiError}</p>}
+          <AlertError errors={errors} />
           <div className="buttons-container">
             <BackButton className="back-button">Previous Step</BackButton>
             <SubmitButton
@@ -184,7 +212,8 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
         <ReviewStep
           onboardingBag={onboardingBag}
           components={components}
-          setApiError={setApiError}
+          errors={errors}
+          setErrors={setErrors}
         />
       );
   }
@@ -194,20 +223,24 @@ type OnboardingWithCustomBenefitsProps = {
   companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
+  countryCode: string;
 };
 
 const OnboardingWithCustomBenefits = ({
   type,
   companyId,
   employmentId,
+  countryCode,
 }: OnboardingWithCustomBenefitsProps) => {
   return (
     <RemoteFlows>
       <OnboardingFlow
         companyId={companyId}
+        countryCode={countryCode}
         type={type}
         render={MultiStepForm}
         employmentId={employmentId}
+        skipSteps={['select_country']}
       />
     </RemoteFlows>
   );
@@ -217,12 +250,14 @@ type OnboardingFormData = {
   companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
+  countryCode: string;
 };
 
 export const OnboardingCustomBenefitsForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     type: 'employee',
+    countryCode: 'PRT',
     employmentId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -251,6 +286,23 @@ export const OnboardingCustomBenefitsForm = () => {
           }
           required
           placeholder="e.g. Your Company ID"
+          className="onboarding-form-input"
+        />
+      </div>
+
+      <div className="onboarding-form-group">
+        <label htmlFor="countryCode" className="onboarding-form-label">
+          Country Code:
+        </label>
+        <input
+          id="countryCode"
+          type="text"
+          value={formData.countryCode}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+          }
+          required
+          placeholder="e.g. PRT"
           className="onboarding-form-input"
         />
       </div>

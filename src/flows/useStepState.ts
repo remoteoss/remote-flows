@@ -75,7 +75,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   function goToStep(step: T) {
-    // to avoid going to a steps that hasn't been filled yetç
+    // to avoid going to a steps that hasn't been filled yet
     if (stepState.values?.[step]) {
       setStepState((previousState) => ({
         ...previousState,

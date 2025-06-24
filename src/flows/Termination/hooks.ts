@@ -10,7 +10,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { JSFModify } from '@/src/flows/CostCalculator/types';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useClient } from '@/src/context';
 import omit from 'lodash.omit';
@@ -20,6 +19,7 @@ import { STEPS } from '@/src/flows/Termination/utils';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
+import { JSFModify } from '@/src/flows/types';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,

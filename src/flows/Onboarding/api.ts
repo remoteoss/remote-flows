@@ -1,4 +1,5 @@
 import {
+  ConvertCurrencyParams,
   EmploymentCreateParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
@@ -9,6 +10,7 @@ import {
   getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
+  postConvertCurrencyConverter,
   postCreateEmployment2,
   postCreateRiskReserve,
   postGenerateMagicLink,
@@ -171,13 +173,11 @@ export const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
-  enabled,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: FlowOptions;
-  enabled?: boolean;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -211,7 +211,7 @@ export const useJSONSchemaForm = ({
 
       return response;
     },
-    enabled: enabled,
+    enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {
@@ -280,8 +280,8 @@ export const useBenefitOffersSchema = (
     select: ({ data }) => {
       let jsfSchema = data?.data?.schema || {};
 
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
+      if (options && options.jsfModify?.benefits) {
+        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
         jsfSchema = schema;
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
@@ -299,8 +299,17 @@ export const useBenefitOffersSchema = (
  * Use this hook to create an employment
  * @returns
  */
-export const useCreateEmployment = () => {
+export const useCreateEmployment = (
+  options?: OnboardingFlowParams['options'],
+) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema
+    ?.employment_basic_information
+    ? {
+        json_schema_version:
+          options.jsonSchemaVersion.form_schema.employment_basic_information,
+      }
+    : {};
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
       return postCreateEmployment2({
@@ -309,13 +318,31 @@ export const useCreateEmployment = () => {
           Authorization: ``,
         },
         body: payload,
+        query: {
+          ...jsonSchemaQueryParam,
+        },
       });
     },
   });
 };
 
-export const useUpdateEmployment = () => {
+export const useUpdateEmployment = (
+  options?: OnboardingFlowParams['options'],
+) => {
   const { client } = useClient();
+  const jsonSchemaQueryParams = {
+    employment_basic_information_json_schema_version:
+      options?.jsonSchemaVersion?.form_schema?.employment_basic_information,
+    employment_contract_details_json_schema_version:
+      options?.jsonSchemaVersion?.form_schema?.contract_details,
+  };
+
+  const filteredQueryParams = Object.fromEntries(
+    Object.entries(jsonSchemaQueryParams).filter(
+      ([, value]) => value !== undefined,
+    ),
+  );
+
   return useMutation({
     mutationFn: ({
       employmentId,
@@ -332,13 +359,16 @@ export const useUpdateEmployment = () => {
         },
         query: {
           skip_benefits: true,
+          ...filteredQueryParams,
         },
       });
     },
   });
 };
 
-export const useUpdateBenefitsOffers = () => {
+export const useUpdateBenefitsOffers = (
+  options?: OnboardingFlowParams['options'],
+) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: ({
@@ -347,6 +377,13 @@ export const useUpdateBenefitsOffers = () => {
     }: UnifiedEmploymentUpsertBenefitOffersRequest & {
       employmentId: string;
     }) => {
+      const jsonSchemaQueryParam = options?.jsonSchemaVersion
+        ?.benefit_offers_form_schema
+        ? {
+            json_schema_version:
+              options.jsonSchemaVersion.benefit_offers_form_schema,
+          }
+        : {};
       return putUpdateBenefitOffer({
         client: client as Client,
         headers: {
@@ -355,6 +392,9 @@ export const useUpdateBenefitsOffers = () => {
         body: payload,
         path: {
           employment_id: employmentId,
+        },
+        query: {
+          ...jsonSchemaQueryParam,
         },
       });
     },
@@ -376,9 +416,10 @@ export const useMagicLink = () => {
   });
 };
 
-const useCountries = () => {
+const useCountries = (queryOptions?: { enabled?: boolean }) => {
   const { client } = useClient();
   return useQuery({
+    ...queryOptions,
     queryKey: ['countries'],
     retry: false,
     queryFn: async () => {
@@ -409,8 +450,10 @@ const useCountries = () => {
   });
 };
 
-export const useCountriesSchemaField = (options?: FlowOptions) => {
-  const { data: countries, isLoading } = useCountries();
+export const useCountriesSchemaField = (
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+) => {
+  const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
   const { schema: selectCountrySchema } = modify(
     selectCountryStepSchema.data.schema,
@@ -432,4 +475,19 @@ export const useCountriesSchemaField = (options?: FlowOptions) => {
     isLoading,
     selectCountryForm,
   };
+};
+
+export const useConvertCurrency = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: ConvertCurrencyParams) => {
+      return postConvertCurrencyConverter({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
 };

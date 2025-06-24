@@ -17,11 +17,12 @@ import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
-import { useEmploymentQuery } from '@/src/common/hooks';
+import { useEmploymentQuery } from '@/src/common/api';
 import { useClient } from '@/src/context';
 import { FieldValues } from 'react-hook-form';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
+import { FlowOptions } from '@/src/flows/types';
 
 type ContractAmendmentSchemaParams = {
   countryCode: string;
@@ -93,8 +94,13 @@ const useContractAmendmentSchemaQuery = ({
   });
 };
 
-const useCreateContractAmendmentMutation = () => {
+const useCreateContractAmendmentMutation = (options?: FlowOptions) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.contract_amendments
+    ? {
+        json_schema_version: options.jsonSchemaVersion.contract_amendments,
+      }
+    : {};
   return useMutation({
     mutationFn: (payload: CreateContractAmendmentParams) => {
       return postCreateContractAmendment({
@@ -103,13 +109,21 @@ const useCreateContractAmendmentMutation = () => {
           Authorization: ``,
         },
         body: payload,
+        query: {
+          ...jsonSchemaQueryParam,
+        },
       });
     },
   });
 };
 
-const useAutomatableContractAmendmentMutation = () => {
+const useAutomatableContractAmendmentMutation = (options?: FlowOptions) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.contract_amendments
+    ? {
+        json_schema_version: options.jsonSchemaVersion.contract_amendments,
+      }
+    : {};
   return useMutation({
     mutationFn: (payload: CreateContractAmendmentParams) => {
       return postAutomatableContractAmendment({
@@ -118,6 +132,9 @@ const useAutomatableContractAmendmentMutation = () => {
           Authorization: ``,
         },
         body: payload,
+        query: {
+          ...jsonSchemaQueryParam,
+        },
       });
     },
   });
@@ -163,9 +180,10 @@ export const useContractAmendment = ({
     contractAmendmentHeadlessForm?.fields,
   );
 
-  const createContractAmendmentMutation = useCreateContractAmendmentMutation();
+  const createContractAmendmentMutation =
+    useCreateContractAmendmentMutation(options);
   const automatableContractAmendmentMutation =
-    useAutomatableContractAmendmentMutation();
+    useAutomatableContractAmendmentMutation(options);
 
   async function onSubmit(values: FieldValues) {
     const parsedValues = parseJSFToValidate(

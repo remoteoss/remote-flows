@@ -8,6 +8,7 @@ import { Fields } from '@remoteoss/json-schema-form';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   prettifyFormValues,
+  reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
@@ -31,7 +32,9 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { AnnualGrossSalary } from '@/src/flows/Onboarding/AnnualGrossSalary';
+import { JSFField } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -53,11 +56,61 @@ const stepToFormSchemaMap: Record<
   review: null,
 };
 
-const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
-  'invited',
-  'created_awaiting_reserve',
-  'created_reserve_paid',
-];
+const getLoadingStates = ({
+  isLoadingBasicInformationForm,
+  isLoadingContractDetailsForm,
+  isLoadingEmployment,
+  isLoadingBenefitsOffersSchema,
+  isLoadingBenefitOffers,
+  isLoadingCompany,
+  isLoadingCountries,
+  employmentStatus,
+  employmentId,
+  currentStepName,
+  basicInformationFields,
+  contractDetailsFields,
+}: {
+  isLoadingBasicInformationForm: boolean;
+  isLoadingContractDetailsForm: boolean;
+  isLoadingEmployment: boolean;
+  isLoadingBenefitsOffersSchema: boolean;
+  isLoadingBenefitOffers: boolean;
+  isLoadingCompany: boolean;
+  isLoadingCountries: boolean;
+  employmentStatus?: Employment['status'];
+  employmentId?: string;
+  currentStepName: string;
+  basicInformationFields: Fields;
+  contractDetailsFields: Fields;
+}) => {
+  const initialLoading =
+    isLoadingBasicInformationForm ||
+    isLoadingContractDetailsForm ||
+    isLoadingEmployment ||
+    isLoadingBenefitsOffersSchema ||
+    isLoadingBenefitOffers ||
+    isLoadingCompany ||
+    isLoadingCountries;
+
+  const isEmploymentReadOnly =
+    employmentStatus &&
+    reviewStepAllowedEmploymentStatus.includes(employmentStatus);
+
+  const shouldHandleReadOnlyEmployment = Boolean(
+    employmentId && isEmploymentReadOnly && currentStepName !== 'review',
+  );
+
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+
+  const isNavigatingToReview = Boolean(
+    shouldHandleReadOnlyEmployment &&
+      !initialLoading &&
+      basicInformationFields.length > 0 &&
+      contractDetailsFields.length > 0,
+  );
+
+  return { isLoading, isNavigatingToReview, isEmploymentReadOnly };
+};
 
 export const useOnboarding = ({
   employmentId,
@@ -65,6 +118,7 @@ export const useOnboarding = ({
   countryCode,
   type,
   options,
+  skipSteps,
 }: OnboardingHookProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fieldsMetaRef = useRef<Record<string, any>>({});
@@ -80,6 +134,15 @@ export const useOnboarding = ({
     refetch: refetchEmployment,
   } = useEmployment(internalEmploymentId);
 
+  // if the employment is loaded, country code has not been set yet
+  // we set the internal country code with the employment country code
+  if (
+    employment?.country?.code &&
+    internalCountryCode !== employment.country.code
+  ) {
+    setInternalCountryCode(employment.country.code);
+  }
+
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
   const {
@@ -87,7 +150,9 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
-  const stepsToUse = countryCode ? STEPS_WITHOUT_SELECT_COUNTRY : STEPS;
+  const stepsToUse = skipSteps?.includes('select_country')
+    ? STEPS_WITHOUT_SELECT_COUNTRY
+    : STEPS;
 
   const {
     fieldValues,
@@ -102,11 +167,17 @@ export const useOnboarding = ({
   );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField(options);
+    useCountriesSchemaField({
+      jsfModify: options?.jsfModify?.select_country,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+      queryOptions: {
+        enabled: stepState.currentStep.name === 'select_country',
+      },
+    });
 
-  const createEmploymentMutation = useCreateEmployment();
-  const updateEmploymentMutation = useUpdateEmployment();
-  const updateBenefitsOffersMutation = useUpdateBenefitsOffers();
+  const createEmploymentMutation = useCreateEmployment(options);
+  const updateEmploymentMutation = useUpdateEmployment(options);
+  const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
@@ -126,17 +197,19 @@ export const useOnboarding = ({
     unknown
   >;
 
-  const isOnboardingFormEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
-  );
-
-  const { data: onboardingForm, isLoading: isLoadingOnboardingForm } =
-    useJSONSchemaForm({
+  const useJSONSchema = ({
+    form,
+    options: jsonSchemaOptions = {},
+  }: {
+    form: JSONSchemaFormType;
+    options?: {
+      jsfModify?: JSFModify;
+      queryOptions?: { enabled?: boolean };
+    };
+  }) => {
+    return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
-      form: formType,
+      form: form,
       fieldValues:
         Object.keys(fieldValues).length > 0
           ? {
@@ -144,8 +217,104 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
-      options: options,
-      enabled: isOnboardingFormEnabled,
+      options: {
+        ...jsonSchemaOptions,
+        queryOptions: {
+          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
+        },
+      },
+    });
+  };
+
+  const isBasicInformationDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        Boolean(employmentId)),
+  );
+
+  const isContractDetailsEnabled = Boolean(
+    internalCountryCode &&
+      (stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
+  );
+
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useJSONSchema({
+    form: 'employment_basic_information',
+    options: {
+      jsfModify: options?.jsfModify?.basic_information,
+      queryOptions: {
+        enabled: isBasicInformationDetailsEnabled,
+      },
+    },
+  });
+
+  const annualGrossSalaryField =
+    options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
+  const annualSalaryFieldPresentation =
+    annualGrossSalaryField &&
+    typeof annualGrossSalaryField === 'object' &&
+    'presentation' in annualGrossSalaryField
+      ? (
+          annualGrossSalaryField as {
+            presentation?: {
+              annual_gross_salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const customFields = useMemo(
+    () => ({
+      fields: {
+        annual_gross_salary: {
+          ...annualGrossSalaryField,
+          presentation: {
+            annual_gross_salary_conversion_properties: {
+              label:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.label,
+              description:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.description,
+            },
+            Component: (props: JSFField & { currency: string }) => (
+              <AnnualGrossSalary
+                desiredCurrency={company?.desired_currency || ''}
+                {...props}
+              />
+            ),
+          },
+        },
+      },
+    }),
+    [
+      company?.desired_currency,
+      annualSalaryFieldPresentation,
+      annualGrossSalaryField,
+    ],
+  );
+
+  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
+    useJSONSchema({
+      form: 'contract_details',
+      options: {
+        jsfModify: {
+          ...options?.jsfModify?.contract_details,
+          fields: {
+            ...options?.jsfModify?.contract_details?.fields,
+            ...customFields.fields,
+          },
+        },
+        queryOptions: {
+          enabled: isContractDetailsEnabled,
+        },
+      },
     });
 
   const {
@@ -176,86 +345,123 @@ export const useOnboarding = ({
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
-      basic_information: onboardingForm?.fields || [],
-      contract_details: onboardingForm?.fields || [],
+      basic_information: basicInformationForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
     }),
     [
       selectCountryForm?.fields,
-      onboardingForm?.fields,
+      basicInformationForm?.fields,
+      contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
   );
 
-  const initialValues = {
-    select_country: getInitialValues(stepFields[stepState.currentStep.name], {
-      country: internalCountryCode || employment?.country.code || '',
-    }),
-    basic_information: getInitialValues(
-      stepFields[stepState.currentStep.name],
-      employment?.basic_information || {},
-    ),
-    contract_details: getInitialValues(
-      stepFields[stepState.currentStep.name],
-      employment?.contract_details || {},
-    ),
-    benefits: initialValuesBenefitOffers || {},
-  };
+  const {
+    country: { code: employmentCountryCode } = {},
+    basic_information: employmentBasicInformation = {},
+    contract_details: employmentContractDetails = {},
+    status: employmentStatus,
+  } = employment || {};
+  const currentStepName = stepState.currentStep.name;
 
-  const isLoading =
-    isLoadingOnboardingForm ||
-    isLoadingEmployment ||
-    isLoadingBenefitsOffersSchema ||
-    isLoadingBenefitOffers ||
-    isLoadingCompany ||
-    isLoadingCountries;
+  const selectCountryInitialValues = useMemo(
+    () =>
+      getInitialValues(stepFields.select_country, {
+        country: internalCountryCode || employmentCountryCode || '',
+      }),
+    [stepFields.select_country, internalCountryCode, employmentCountryCode],
+  );
+
+  const basicInformationInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.basic_information,
+        employmentBasicInformation || {},
+      ),
+    [stepFields.basic_information, employmentBasicInformation],
+  );
+
+  const contractDetailsInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.contract_details,
+        employmentContractDetails || {},
+      ),
+    [stepFields.contract_details, employmentContractDetails],
+  );
+
+  const benefitsInitialValues = useMemo(
+    () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
+    [stepFields.benefits, initialValuesBenefitOffers],
+  );
+
+  const initialValues = useMemo(
+    () => ({
+      select_country: selectCountryInitialValues,
+      basic_information: basicInformationInitialValues,
+      contract_details: contractDetailsInitialValues,
+      benefits: benefitsInitialValues,
+    }),
+    [
+      selectCountryInitialValues,
+      basicInformationInitialValues,
+      contractDetailsInitialValues,
+      benefitsInitialValues,
+    ],
+  );
+
+  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } = useMemo(
+    () =>
+      getLoadingStates({
+        isLoadingBasicInformationForm,
+        isLoadingContractDetailsForm,
+        isLoadingEmployment,
+        isLoadingBenefitsOffersSchema,
+        isLoadingBenefitOffers,
+        isLoadingCompany,
+        isLoadingCountries,
+        employmentId,
+        employmentStatus: employmentStatus,
+        basicInformationFields: stepFields.basic_information,
+        contractDetailsFields: stepFields.contract_details,
+        currentStepName: currentStepName,
+      }),
+    [
+      isLoadingBasicInformationForm,
+      isLoadingContractDetailsForm,
+      isLoadingEmployment,
+      isLoadingBenefitsOffersSchema,
+      isLoadingBenefitOffers,
+      isLoadingCompany,
+      isLoadingCountries,
+      employmentId,
+      employmentStatus,
+      stepFields.basic_information,
+      stepFields.contract_details,
+      currentStepName,
+    ],
+  );
 
   useEffect(() => {
-    if (
-      employmentId &&
-      employment &&
-      reviewStepAllowedEmploymentStatus.includes(employment?.status) &&
-      !isLoading &&
-      stepState.currentStep.name !== 'review'
-    ) {
-      const selectCountryInitialValues = getInitialValues(
-        stepFields['select_country'],
-        {
-          country: internalCountryCode || employment?.country.code || '',
-        },
-      );
-
-      const basicInformationInitialValues = getInitialValues(
-        stepFields['basic_information'],
-        employment?.basic_information || {},
-      );
-
-      const contractDetailsInitialValues = getInitialValues(
-        stepFields['contract_details'],
-        employment?.contract_details || {},
-      );
-
-      const benefitsInitialValues = getInitialValues(
-        stepFields['benefits'],
-        initialValuesBenefitOffers || {},
-      );
+    if (isNavigatingToReview) {
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
           selectCountryInitialValues,
-          stepFields['select_country'],
+          stepFields.select_country,
         ),
         basic_information: prettifyFormValues(
           basicInformationInitialValues,
-          stepFields['basic_information'],
+          stepFields.basic_information,
         ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
-          stepFields['contract_details'],
+          stepFields.contract_details,
         ),
         benefits: prettifyFormValues(
           benefitsInitialValues,
-          stepFields['benefits'],
+          stepFields.benefits,
         ),
       };
 
@@ -270,29 +476,43 @@ export const useOnboarding = ({
       goToStep('review');
     }
   }, [
-    employmentId,
-    employment,
-    isLoading,
-    internalCountryCode,
+    basicInformationInitialValues,
+    benefitsInitialValues,
+    contractDetailsInitialValues,
     goToStep,
-    initialValuesBenefitOffers,
-    stepFields,
-    stepState.currentStep.name,
+    isNavigatingToReview,
+    selectCountryInitialValues,
     setStepValues,
+    stepFields.basic_information,
+    stepFields.benefits,
+    stepFields.contract_details,
+    stepFields.select_country,
   ]);
 
-  function parseFormValues(values: FieldValues) {
+  const parseFormValues = (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
-    if (onboardingForm) {
-      return parseJSFToValidate(values, onboardingForm?.fields, {
+    if (
+      basicInformationForm &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      return parseJSFToValidate(values, basicInformationForm?.fields, {
+        isPartialValidation: true,
+      });
+    }
+
+    if (
+      contractDetailsForm &&
+      stepState.currentStep.name === 'contract_details'
+    ) {
+      return parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: true,
       });
     }
 
     return {};
-  }
+  };
 
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
@@ -401,7 +621,6 @@ export const useOnboarding = ({
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
 
-    owner_id: company?.company_owner_user_id,
     /**
      * Current step state containing the current step and total number of steps
      */
@@ -442,9 +661,26 @@ export const useOnboarding = ({
 
         return benefitOffersSchema?.handleValidation(parsedValues);
       }
-      if (onboardingForm) {
-        const parsedValues = parseJSFToValidate(values, onboardingForm?.fields);
-        return onboardingForm?.handleValidation(parsedValues);
+      if (
+        basicInformationForm &&
+        stepState.currentStep.name === 'basic_information'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          basicInformationForm?.fields,
+        );
+        return basicInformationForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        contractDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractDetailsForm?.fields,
+        );
+        return contractDetailsForm?.handleValidation(parsedValues);
       }
 
       return null;
@@ -504,5 +740,11 @@ export const useOnboarding = ({
      * Employment data
      */
     employment,
+
+    /**
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited, created_awaiting_reserve or created_reserve_paid
+     * @returns {boolean}
+     */
+    isEmploymentReadOnly,
   };
 };

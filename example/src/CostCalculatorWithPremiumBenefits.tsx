@@ -13,8 +13,8 @@ import {
 } from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
 import { useState } from 'react';
-import './App.css';
 import { RemoteFlows } from './RemoteFlows';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',

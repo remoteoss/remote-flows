@@ -3,39 +3,38 @@ import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useFormFields } from '@/src/context';
 
+type OnboardingBackProps = ButtonHTMLAttributes<HTMLButtonElement> &
+  Record<string, unknown>;
+
 export function OnboardingBack({
   children,
+  onClick,
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
-  Record<string, unknown>) {
+}: PropsWithChildren<OnboardingBackProps>) {
   const {
-    onboardingBag: { back },
+    onboardingBag: { back, isEmploymentReadOnly },
   } = useOnboardingContext();
 
   const { components } = useFormFields();
 
+  const onBackHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isEmploymentReadOnly) {
+      back();
+    }
+    onClick?.(evt);
+  };
+
   const CustomButton = components?.button;
   if (CustomButton) {
     return (
-      <CustomButton
-        {...props}
-        onClick={(evt) => {
-          back();
-          props.onClick?.(evt);
-        }}
-      >
+      <CustomButton {...props} onClick={onBackHandler}>
         {children}
       </CustomButton>
     );
   }
 
   return (
-    <Button
-      {...props}
-      onClick={() => {
-        back();
-      }}
-    >
+    <Button {...props} onClick={onBackHandler}>
       {children}
     </Button>
   );

@@ -1,5 +1,5 @@
 import { EmploymentShowResponse, ListTimeoffResponse } from '@/src/client';
-import { useEmploymentQuery, useTimeOffQuery } from '@/src/common/hooks';
+import { useEmploymentQuery, useTimeOffQuery } from '@/src/common/api';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import React from 'react';
 

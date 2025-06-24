@@ -4,6 +4,17 @@ Welcome to the Contract Amendment flow docs
 
 # Table of Contents
 
+- [Getting Started](#getting-started)
+  - [Full Example](#full-example)
+- [Components API](#components-api)
+  - [ContractAmendmentFlow](#contractamendmentflow)
+    - [options.jsfModify properties](#optionsjsfmodify-properties)
+    - [options.jsonSchemaVersion](#optionsjsonschemaversion)
+  - [Form](#form)
+  - [SubmitButton](#submitbutton)
+  - [BackButton](#backbutton)
+  - [ConfirmationForm](#confirmationform)
+
 ## Getting Started
 
 After installation, import the main CSS file in your application:
@@ -22,7 +33,7 @@ import {
   ContractAmendmentRenderProps,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import './App.css';
+import './css/main.css';
 
 function AmendmentFlow({
   contractAmendmentBag,
@@ -179,7 +190,7 @@ The component accepts the following props:
 
 The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
 
-#### options.jsonSchemaVersion
+#### options.jsonSchemaVersion
 
 Allows to point to a certain version of the contract amendment json schema form
 

@@ -6,8 +6,7 @@ import {
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
-
-import './App.css';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',

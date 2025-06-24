@@ -19,12 +19,19 @@ export * from '@/src/flows/Termination';
 export * from '@/src/flows/Onboarding';
 
 export type * from '@/src/flows/CostCalculator/types';
-export * from '@/src/common/hooks';
+export * from '@/src/common/api';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
-export type { Components, RemoteFlowsSDKProps } from '@/src/types/remoteFlows';
+
+export type {
+  Components,
+  RemoteFlowsSDKProps,
+  FieldComponentProps,
+  ButtonComponentProps,
+  StatementComponentProps,
+} from '@/src/types/remoteFlows';
 
 export type {
   ContractAmendmentAutomatableResponse,
@@ -39,3 +46,4 @@ export type {
 } from './client/types.gen';
 
 export type { $TSFixMe } from './types/remoteFlows';
+export type { FieldError, NormalizedFieldError } from './lib/mutations';
