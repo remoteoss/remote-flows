@@ -5,7 +5,7 @@ import {
 } from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
 
-import { useStepState, Step } from '@/src/flows/useStepState';
+import { useStepState, Step, StepState } from '@/src/flows/useStepState';
 import {
   prettifyFormValues,
   reviewStepAllowedEmploymentStatus,
@@ -19,7 +19,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -67,8 +67,6 @@ const getLoadingStates = ({
   employmentStatus,
   employmentId,
   currentStepName,
-  basicInformationFields,
-  contractDetailsFields,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -80,8 +78,6 @@ const getLoadingStates = ({
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  basicInformationFields: Fields;
-  contractDetailsFields: Fields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -102,14 +98,143 @@ const getLoadingStates = ({
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
-  const isNavigatingToReview = Boolean(
-    shouldHandleReadOnlyEmployment &&
-      !initialLoading &&
-      basicInformationFields.length > 0 &&
-      contractDetailsFields.length > 0,
+  return { isLoading, isEmploymentReadOnly };
+};
+
+const useNavigationConditions = ({
+  employmentId,
+  employment,
+  initialLoading,
+  stepFields,
+  stepState,
+  isEmploymentReadOnly,
+  benefitOffers,
+  initialNavigationRef,
+}: {
+  employmentId?: string;
+  employment?: Employment;
+  initialLoading: boolean;
+  stepFields: Record<string, Fields>;
+  stepState: StepState<keyof typeof STEPS>;
+  isEmploymentReadOnly?: boolean;
+  benefitOffers: unknown;
+  initialNavigationRef: React.RefObject<{
+    review: boolean;
+    contractDetails: boolean;
+    benefits: boolean;
+  }>;
+}) => {
+  // Common conditions extracted as variables
+  const hasBasicInformation =
+    employment && Object.keys(employment.basic_information || {}).length > 0;
+  const hasContractDetails =
+    employment && Object.keys(employment.contract_details || {}).length > 0;
+  const areSchemasLoaded =
+    stepFields['basic_information'].length > 0 &&
+    stepFields['contract_details'].length > 0;
+  const hasBenefitsSchema = stepFields['benefits'].length > 0;
+  const hasBenefitOffers =
+    benefitOffers && Object.keys(benefitOffers).length > 0;
+  const hasEmptyBenefitOffers =
+    benefitOffers && Object.keys(benefitOffers).length === 0;
+  const hasLoadedEmployment = Boolean(
+    employmentId && !initialLoading && employment,
   );
 
-  return { isLoading, isNavigatingToReview, isEmploymentReadOnly };
+  const isNavigatingToReviewWhenEmploymentIsFinal = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        isEmploymentReadOnly &&
+        areSchemasLoaded &&
+        stepState.currentStep.name !== 'review' &&
+        !initialNavigationRef.current.review,
+    );
+  }, [
+    hasLoadedEmployment,
+    isEmploymentReadOnly,
+    areSchemasLoaded,
+    stepState.currentStep.name,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToReview = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        hasContractDetails &&
+        areSchemasLoaded &&
+        hasBenefitsSchema &&
+        hasBenefitOffers &&
+        stepState.currentStep.name !== 'review' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !initialNavigationRef.current.review,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    areSchemasLoaded,
+    hasBenefitsSchema,
+    hasBenefitOffers,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToContractDetails = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        !hasContractDetails &&
+        areSchemasLoaded &&
+        stepState.currentStep.name !== 'contract_details' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !isNavigatingToReview &&
+        !initialNavigationRef.current.contractDetails,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    areSchemasLoaded,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    initialNavigationRef,
+  ]);
+
+  const isNavigatingToBenefits = useMemo(() => {
+    return Boolean(
+      hasLoadedEmployment &&
+        hasBasicInformation &&
+        hasContractDetails &&
+        hasBenefitsSchema &&
+        hasEmptyBenefitOffers &&
+        stepState.currentStep.name !== 'benefits' &&
+        !isNavigatingToReviewWhenEmploymentIsFinal &&
+        !isNavigatingToReview &&
+        !isNavigatingToContractDetails &&
+        !initialNavigationRef.current.benefits,
+    );
+  }, [
+    hasLoadedEmployment,
+    hasBasicInformation,
+    hasContractDetails,
+    hasBenefitsSchema,
+    hasEmptyBenefitOffers,
+    stepState.currentStep.name,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    initialNavigationRef,
+  ]);
+
+  return {
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+  };
 };
 
 export const useOnboarding = ({
@@ -412,7 +537,7 @@ export const useOnboarding = ({
     ],
   );
 
-  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } = useMemo(
+  const { isLoading: initialLoading, isEmploymentReadOnly } = useMemo(
     () =>
       getLoadingStates({
         isLoadingBasicInformationForm,
@@ -424,8 +549,6 @@ export const useOnboarding = ({
         isLoadingCountries,
         employmentId,
         employmentStatus: employmentStatus,
-        basicInformationFields: stepFields.basic_information,
-        contractDetailsFields: stepFields.contract_details,
         currentStepName: currentStepName,
       }),
     [
@@ -438,55 +561,108 @@ export const useOnboarding = ({
       isLoadingCountries,
       employmentId,
       employmentStatus,
-      stepFields.basic_information,
-      stepFields.contract_details,
       currentStepName,
     ],
   );
 
+  // Single ref to track all initial navigations
+  const initialNavigationRef = useRef({
+    review: false,
+    contractDetails: false,
+    benefits: false,
+  });
+
+  const {
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+  } = useNavigationConditions({
+    employmentId: internalEmploymentId,
+    employment,
+    initialLoading,
+    stepFields,
+    stepState,
+    isEmploymentReadOnly,
+    benefitOffers,
+    initialNavigationRef,
+  });
+
+  const isLoading =
+    initialLoading ||
+    isNavigatingToReviewWhenEmploymentIsFinal ||
+    isNavigatingToReview ||
+    isNavigatingToContractDetails ||
+    isNavigatingToBenefits;
+
+  const initializeStepValues = useCallback(() => {
+    fieldsMetaRef.current = {
+      select_country: prettifyFormValues(
+        selectCountryInitialValues,
+        stepFields.select_country,
+      ),
+      basic_information: prettifyFormValues(
+        basicInformationInitialValues,
+        stepFields.basic_information,
+      ),
+      contract_details: prettifyFormValues(
+        contractDetailsInitialValues,
+        stepFields.contract_details,
+      ),
+      benefits: prettifyFormValues(benefitsInitialValues, stepFields.benefits),
+    };
+
+    setStepValues({
+      select_country: selectCountryInitialValues,
+      basic_information: basicInformationInitialValues,
+      contract_details: contractDetailsInitialValues,
+      benefits: benefitsInitialValues,
+      review: {},
+    });
+  }, [
+    selectCountryInitialValues,
+    stepFields.select_country,
+    stepFields.basic_information,
+    stepFields.contract_details,
+    stepFields.benefits,
+    basicInformationInitialValues,
+    contractDetailsInitialValues,
+    benefitsInitialValues,
+    setStepValues,
+  ]);
+
   useEffect(() => {
-    if (isNavigatingToReview) {
-      fieldsMetaRef.current = {
-        select_country: prettifyFormValues(
-          selectCountryInitialValues,
-          stepFields.select_country,
-        ),
-        basic_information: prettifyFormValues(
-          basicInformationInitialValues,
-          stepFields.basic_information,
-        ),
-        contract_details: prettifyFormValues(
-          contractDetailsInitialValues,
-          stepFields.contract_details,
-        ),
-        benefits: prettifyFormValues(
-          benefitsInitialValues,
-          stepFields.benefits,
-        ),
-      };
+    if (isLoading) {
+      return;
+    }
 
-      setStepValues({
-        select_country: selectCountryInitialValues,
-        basic_information: basicInformationInitialValues,
-        contract_details: contractDetailsInitialValues,
-        benefits: benefitsInitialValues,
-        review: {},
-      });
-
-      goToStep('review');
+    if (
+      !initialNavigationRef.current.review &&
+      !initialNavigationRef.current.contractDetails &&
+      !initialNavigationRef.current.benefits
+    ) {
+      if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
+        initialNavigationRef.current.review = true;
+        initializeStepValues();
+        goToStep('review');
+      } else if (isNavigatingToContractDetails) {
+        initialNavigationRef.current.contractDetails = true;
+        initializeStepValues();
+        goToStep('contract_details');
+      } else if (isNavigatingToBenefits) {
+        initialNavigationRef.current.benefits = true;
+        initializeStepValues();
+        goToStep('benefits');
+      }
     }
   }, [
-    basicInformationInitialValues,
-    benefitsInitialValues,
-    contractDetailsInitialValues,
     goToStep,
+    initializeStepValues,
+    isLoading,
+    isNavigatingToBenefits,
+    isNavigatingToContractDetails,
     isNavigatingToReview,
-    selectCountryInitialValues,
-    setStepValues,
-    stepFields.basic_information,
-    stepFields.benefits,
-    stepFields.contract_details,
-    stepFields.select_country,
+    isNavigatingToReviewWhenEmploymentIsFinal,
   ]);
 
   const parseFormValues = (values: FieldValues) => {
