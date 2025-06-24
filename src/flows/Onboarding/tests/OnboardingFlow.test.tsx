@@ -89,7 +89,7 @@ function Review({ values }: { values: Record<string, unknown> }) {
   );
 }
 
-describe.skip('OnboardingFlow', () => {
+describe('OnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
     components,
     onboardingBag,

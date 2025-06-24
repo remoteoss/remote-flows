@@ -65,8 +65,6 @@ const getLoadingStates = ({
   isLoadingCompany,
   isLoadingCountries,
   employmentStatus,
-  employmentId,
-  currentStepName,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -76,8 +74,6 @@ const getLoadingStates = ({
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
   employmentStatus?: Employment['status'];
-  employmentId?: string;
-  currentStepName: string;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -92,13 +88,7 @@ const getLoadingStates = ({
     employmentStatus &&
     reviewStepAllowedEmploymentStatus.includes(employmentStatus);
 
-  const shouldHandleReadOnlyEmployment = Boolean(
-    employmentId && isEmploymentReadOnly && currentStepName !== 'review',
-  );
-
-  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
-
-  return { isLoading, isEmploymentReadOnly };
+  return { isLoading: initialLoading, isEmploymentReadOnly };
 };
 
 const useNavigationConditions = ({
@@ -477,7 +467,6 @@ export const useOnboarding = ({
     contract_details: employmentContractDetails = {},
     status: employmentStatus,
   } = employment || {};
-  const currentStepName = stepState.currentStep.name;
 
   const selectCountryInitialValues = useMemo(
     () =>
@@ -535,9 +524,7 @@ export const useOnboarding = ({
         isLoadingBenefitOffers,
         isLoadingCompany,
         isLoadingCountries,
-        employmentId,
         employmentStatus: employmentStatus,
-        currentStepName: currentStepName,
       }),
     [
       isLoadingBasicInformationForm,
@@ -547,9 +534,7 @@ export const useOnboarding = ({
       isLoadingBenefitOffers,
       isLoadingCompany,
       isLoadingCountries,
-      employmentId,
       employmentStatus,
-      currentStepName,
     ],
   );
 
@@ -582,15 +567,6 @@ export const useOnboarding = ({
     isNavigatingToReview ||
     isNavigatingToContractDetails ||
     isNavigatingToBenefits;
-
-  console.log({
-    isLoading,
-    isNavigatingToReviewWhenEmploymentIsFinal,
-    isNavigatingToReview,
-    isNavigatingToContractDetails,
-    isNavigatingToBenefits,
-    initialLoading,
-  });
 
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
