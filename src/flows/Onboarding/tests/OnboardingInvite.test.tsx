@@ -652,15 +652,9 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should render "Invite Employee" when creditRiskStatus is deposit_required but employment status indicates deposit handling', async () => {
-    // Test with various employment statuses that should show "Invite Employee" instead of "Create Reserve"
-    const employmentStatuses = [
-      'created_reserve_paid',
-      'invited',
-      'created_awaiting_reserve',
-    ];
-
-    for (const status of employmentStatuses) {
+  it.each(['created_reserve_paid', 'invited', 'created_awaiting_reserve'])(
+    'should render "Invite Employee" when employment status is %s',
+    async (status) => {
       mockRender.mockClear();
 
       server.use(
@@ -707,11 +701,8 @@ describe('OnboardingInvite', () => {
 
       // Ensure it's not showing "Create Reserve"
       expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
-
-      // Clean up before next iteration
-      queryClient.clear();
-    }
-  });
+    },
+  );
 
   it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
     server.use(

@@ -88,7 +88,9 @@ const getLoadingStates = ({
     employmentStatus &&
     reviewStepAllowedEmploymentStatus.includes(employmentStatus);
 
-  return { isLoading: initialLoading, isEmploymentReadOnly };
+  const isLoading = initialLoading;
+
+  return { isLoading, isEmploymentReadOnly };
 };
 
 const useNavigationConditions = ({
@@ -567,6 +569,22 @@ export const useOnboarding = ({
     isNavigatingToReview ||
     isNavigatingToContractDetails ||
     isNavigatingToBenefits;
+
+  console.log({
+    isLoading,
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+    initialLoading,
+    isLoadingBasicInformationForm,
+    isLoadingContractDetailsForm,
+    isLoadingEmployment,
+    isLoadingBenefitsOffersSchema,
+    isLoadingBenefitOffers,
+    isLoadingCompany,
+    isLoadingCountries,
+  });
 
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
