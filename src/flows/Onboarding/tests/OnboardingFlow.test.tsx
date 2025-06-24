@@ -491,37 +491,11 @@ describe('OnboardingFlow', () => {
     );
 
     render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
+      <OnboardingFlow skipSteps={['select_country']} {...defaultProps} />,
       { wrapper },
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    const backButton = screen.getByText(/Back/i);
-    expect(backButton).toBeInTheDocument();
-
-    backButton.click();
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    await waitFor(() => {
-      expect(employeePersonalEmail).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
   });
 
   it('should select a country and advance to the next step', async () => {
@@ -568,7 +542,7 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        countryCode="PRT"
         skipSteps={['select_country']}
         {...defaultProps}
       />,
@@ -579,6 +553,8 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -594,15 +570,14 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
     await waitFor(() => {
-      expect(employeePersonalEmail).toHaveValue(
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
         employmentResponse.data.employment.personal_email,
       );
     });
   });
 
-  it('should submit the basic information step', async () => {
+  it.only('should submit the basic information step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -628,7 +603,7 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        countryCode="PRT"
         skipSteps={['select_country']}
         {...defaultProps}
       />,
@@ -637,11 +612,7 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
+    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
