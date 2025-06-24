@@ -15,7 +15,6 @@ import React, { useState } from 'react';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
-import { components } from './Components';
 import { AlertError } from './AlertError';
 import './css/main.css';
 

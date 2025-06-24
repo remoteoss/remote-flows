@@ -7,7 +7,6 @@ import type {
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 import { RemoteFlows } from './RemoteFlows';
-import { components } from './Components';
 import './css/main.css';
 
 const STEPS = [
