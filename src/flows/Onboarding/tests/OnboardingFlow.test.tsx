@@ -35,8 +35,8 @@ import {
   fillSelect,
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
-import userEvent from '@testing-library/user-event';
 import { NormalizedFieldError } from '@/src/lib/mutations';
+import { fireEvent } from '@testing-library/react';
 
 // Helper function to generate unique employment IDs for each test
 let employmentIdCounter = 0;
@@ -409,30 +409,32 @@ describe('OnboardingFlow', () => {
       ...values,
     };
 
-    const user = userEvent.setup();
-
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
     });
+
     if (newValues?.fullName) {
-      await user.type(screen.getByLabelText(/Full name/i), newValues?.fullName);
+      fireEvent.change(screen.getByLabelText(/Full name/i), {
+        target: { value: newValues?.fullName },
+      });
     }
+
     if (newValues?.personalEmail) {
-      await user.type(
-        screen.getByLabelText(/Personal email/i),
-        newValues?.personalEmail,
-      );
+      fireEvent.change(screen.getByLabelText(/Personal email/i), {
+        target: { value: newValues?.personalEmail },
+      });
     }
 
     if (newValues?.workEmail) {
-      await user.type(
-        screen.getByLabelText(/Work email/i),
-        newValues?.workEmail,
-      );
+      fireEvent.change(screen.getByLabelText(/Work email/i), {
+        target: { value: newValues?.workEmail },
+      });
     }
 
     if (newValues?.jobTitle) {
-      await user.type(screen.getByLabelText(/Job title/i), newValues?.jobTitle);
+      fireEvent.change(screen.getByLabelText(/Job title/i), {
+        target: { value: newValues?.jobTitle },
+      });
     }
 
     if (newValues?.provisionalStartDate) {
@@ -540,7 +542,7 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it.skip('should fill the first step, go to the second step and go back to the first step', async () => {
+  it('should fill the first step, go to the second step and go back to the first step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -593,9 +595,11 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
 
     const employeePersonalEmail = screen.getByLabelText(/Personal email/i);
-    expect(employeePersonalEmail).toHaveValue(
-      employmentResponse.data.employment.personal_email,
-    );
+    await waitFor(() => {
+      expect(employeePersonalEmail).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
   });
 
   it('should submit the basic information step', async () => {
@@ -696,7 +700,6 @@ describe('OnboardingFlow', () => {
   });
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
-    const user = userEvent.setup();
     render(
       <OnboardingFlow
         employmentId={generateUniqueEmploymentId()}
@@ -719,10 +722,10 @@ describe('OnboardingFlow', () => {
     const personalEmailInput = screen.getByLabelText(/Personal email/i);
 
     // Clear the existing value
-    await user.clear(personalEmailInput);
-
-    // Then type the new value
-    await user.type(personalEmailInput, 'gabriel@gmail.com');
+    fireEvent.change(personalEmailInput, { target: { value: '' } });
+    fireEvent.change(personalEmailInput, {
+      target: { value: 'gabriel@gmail.com' },
+    });
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -967,7 +970,7 @@ describe('OnboardingFlow', () => {
     expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
   });
 
-  it.skip('should call POST when submitting basic information', async () => {
+  it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
 
     server.use(
@@ -1000,7 +1003,14 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    render(<OnboardingFlow {...defaultProps} countryCode="PRT" />, { wrapper });
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode="PRT"
+        skipSteps={['select_country']}
+      />,
+      { wrapper },
+    );
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -1432,7 +1442,7 @@ describe('OnboardingFlow', () => {
       screen.getByRole('button', { name: /Show USD conversion/i }),
     );
     expect(toggleButton).toBeInTheDocument();
-    await userEvent.click(toggleButton);
+    fireEvent.click(toggleButton);
 
     // Wait for and verify the custom conversion label and description are displayed
     const conversionLabel = await waitFor(() =>
@@ -1712,13 +1722,10 @@ describe('OnboardingFlow', () => {
       expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
     });
 
-    // Fill in the form with data that will trigger the 422 error
-    const user = userEvent.setup();
-
     // Modify annual gross salary to trigger the error
     const annualGrossSalaryInput = screen.getByLabelText(/Test Label/i);
-    await user.clear(annualGrossSalaryInput);
-    await user.type(annualGrossSalaryInput, '100000'); // Invalid negative value
+    fireEvent.change(annualGrossSalaryInput, { target: { value: '' } });
+    fireEvent.change(annualGrossSalaryInput, { target: { value: '100000' } });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
