@@ -1698,6 +1698,9 @@ describe('OnboardingFlow', () => {
 
     // Mock the employment endpoint to return data with a non-readonly status
     server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
           ...employmentResponse,
@@ -1762,32 +1765,27 @@ describe('OnboardingFlow', () => {
     );
 
     // Wait for the basic information step to load
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Benefits/i);
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    // Navigate to contract details step
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+    // Fill all three benefits to make the form valid
+    await fillRadio(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
 
-    // Wait for contract details step to load
-    await screen.findByText(/Step: Contract Details/i);
+    await fillRadio(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
 
-    // Wait for the form to be populated with existing data
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
 
-    // Submit contract details to move to benefits step
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    // Wait for benefits step to load
-    await screen.findByText(/Step: Benefits/i);
-
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();

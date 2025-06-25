@@ -349,9 +349,7 @@ export const useOnboarding = ({
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
-        enabled:
-          Boolean(!!internalEmploymentId && internalCountryCode) ||
-          stepState.currentStep.name === 'basic_information',
+        enabled: Boolean(internalCountryCode),
       },
     },
   });
