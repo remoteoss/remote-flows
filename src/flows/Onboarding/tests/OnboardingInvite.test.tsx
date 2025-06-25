@@ -173,7 +173,7 @@ describe('OnboardingInvite', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -204,7 +204,7 @@ describe('OnboardingInvite', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -330,7 +330,7 @@ describe('OnboardingInvite', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
