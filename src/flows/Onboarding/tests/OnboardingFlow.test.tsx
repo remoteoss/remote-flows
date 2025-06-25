@@ -740,7 +740,7 @@ describe('OnboardingFlow', () => {
         id: undefined,
         name: undefined,
       },
-      email: 'gabriel@gmail.com',
+      emails: 'gabriel@gmail.com',
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
       manager: {
