@@ -762,7 +762,7 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Contract Details/i);
   });
 
-  it.only('should fill the contract details step and go to the benefits step', async () => {
+  it('should fill the contract details step and go to the benefits step', async () => {
     server.use(
       http.get('*/v1/employments/*/benefit-offers', () => {
         return HttpResponse.json({ data: [] });
@@ -780,12 +780,16 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Benefits/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
     backButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();

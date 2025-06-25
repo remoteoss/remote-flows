@@ -258,7 +258,7 @@ export const useBenefitOffersSchema = (
   return useQuery({
     queryKey: ['benefit-offers-schema', stepName],
     retry: false,
-    enabled: stepName === 'benefits',
+    enabled: !!employmentId || stepName === 'benefits',
     queryFn: async () => {
       const response = await getShowSchema({
         client: client as Client,
