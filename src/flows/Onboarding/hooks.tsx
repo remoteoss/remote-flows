@@ -84,17 +84,6 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries;
 
-  console.log({
-    isLoadingBasicInformationForm,
-    isLoadingContractDetailsForm,
-    isLoadingEmployment,
-    isLoadingBenefitsOffersSchema,
-    isLoadingBenefitOffers,
-    isLoadingCompany,
-    isLoadingCountries,
-    initialLoading,
-  });
-
   const isEmploymentReadOnly =
     employmentStatus &&
     reviewStepAllowedEmploymentStatus.includes(employmentStatus);
@@ -439,8 +428,8 @@ export const useOnboarding = ({
     data: benefitOffersSchema,
     isLoading: isLoadingBenefitsOffersSchema,
   } = useBenefitOffersSchema(
-    stepState.currentStep.name,
     internalEmploymentId as string,
+    stepState.currentStep.name,
     fieldValues,
     options,
   );
@@ -647,7 +636,7 @@ export const useOnboarding = ({
   }, [
     goToStep,
     initializeStepValues,
-    isLoading,
+    initialLoading,
     isNavigatingToBenefits,
     isNavigatingToContractDetails,
     isNavigatingToReview,
