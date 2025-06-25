@@ -9,11 +9,11 @@ import {
   CostCalculatorResetButton,
   CostCalculatorResults,
   CostCalculatorSubmitButton,
-  RemoteFlows,
   useCostCalculatorEstimationPdf,
 } from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
 import { useState } from 'react';
+import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
 const estimationOptions = {
@@ -105,21 +105,8 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithPremiumBenefits() {
-  const fetchToken = () => {
-    return fetch('/api/token')
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-      }))
-      .catch((error) => {
-        console.error({ error });
-        throw error;
-      });
-  };
-
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
