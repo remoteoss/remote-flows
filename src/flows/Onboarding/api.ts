@@ -256,7 +256,7 @@ export const useBenefitOffersSchema = (
     : {};
   const { client } = useClient();
   return useQuery({
-    queryKey: ['benefit-offers-schema', stepName],
+    queryKey: ['benefit-offers-schema', employmentId, stepName],
     retry: false,
     enabled: !!employmentId || stepName === 'benefits',
     queryFn: async () => {
