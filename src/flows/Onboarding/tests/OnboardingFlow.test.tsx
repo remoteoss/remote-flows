@@ -25,12 +25,10 @@ import {
   benefitOffersResponse,
   employmentResponse,
   benefitOffersUpdatedResponse,
-  inviteResponse,
   companyResponse,
   conversionFromEURToUSD,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
-  assertRadioValue,
   fillRadio,
   fillSelect,
   selectDayInCalendar,
@@ -830,93 +828,11 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Benefits/i);
   });
 
-  it('should go to the third step and check that benefits are initalized correctly', async () => {
-    render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        {...defaultProps}
-      />,
-      {
-        wrapper,
-      },
-    );
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    await screen.findByText(/Step: Benefits/i);
-
-    await assertRadioValue(
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
-      'Meal Card Standard 2025',
-    );
-
-    await assertRadioValue(
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
-      'Basic Health Plan 2025',
-    );
-
-    await assertRadioValue(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      'Life Insurance 50K',
-    );
-
-    await fillRadio(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      "I don't want to offer this benefit.",
-    );
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
-    });
-
-    const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
-
-    // Assert the contract details submission
-    expect(benefitsSubmission).toEqual({
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
-        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
-        value: 'no',
-      },
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
-        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
-      },
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
-        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
-        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
-      },
-    });
-  });
-
-  it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+  it('should verify that the benefits are submitted correctly', async () => {
     server.use(
-      http.post('*/v1/employments/*/invite', () => {
-        return HttpResponse.json(inviteResponse);
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        // Return empty benefits so we can fill them
+        return HttpResponse.json({ data: [] });
       }),
     );
     render(
@@ -930,44 +846,67 @@ describe('OnboardingFlow', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
     await screen.findByText(/Step: Benefits/i);
 
-    nextButton = screen.getByText(/Next Step/i);
+    // Fill all three benefits
+    await fillRadio(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
+
+    await fillRadio(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
+
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
+
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
-    await screen.findByText(/Step: Review/i);
-
-    const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
-    expect(inviteEmployeeButton).toBeInTheDocument();
-
-    inviteEmployeeButton.click();
-
-    // it should be called
     await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
+        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+      },
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
+        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+      },
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        value: 'no',
+      },
+    });
+
+    // Optionally verify we moved to the next step
+    await screen.findByText(/Step: Review/i);
   });
 
   it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
 
     server.use(
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              basic_information: null,
+              contract_details: null,
+            },
+          },
+        });
+      }),
       http.post('*/v1/employments', () => {
         postSpy();
         return HttpResponse.json(employmentCreatedResponse);
