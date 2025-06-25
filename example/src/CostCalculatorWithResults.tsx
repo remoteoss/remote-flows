@@ -3,7 +3,6 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  RemoteFlows,
   CostCalculatorResults,
 } from '@remoteoss/remote-flows';
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
@@ -11,6 +10,7 @@ import Flag from 'react-flagpack';
 import './css/main.css';
 import 'react-flagpack/dist/style.css';
 import { useState } from 'react';
+import { RemoteFlows } from './RemoteFlows';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -21,21 +21,9 @@ const estimationOptions = {
 export function CostCalculatorWithResults() {
   const [estimations, setEstimations] =
     useState<CostCalculatorEstimateResponse | null>(null);
-  const fetchToken = () => {
-    return fetch('/api/token')
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-      }))
-      .catch((error) => {
-        console.error({ error });
-        throw error;
-      });
-  };
 
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

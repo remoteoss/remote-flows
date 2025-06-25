@@ -3,9 +3,9 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  RemoteFlows,
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
+import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
 const estimationOptions = {
@@ -15,21 +15,8 @@ const estimationOptions = {
 };
 
 export function BasicCostCalculatorWithDefaultValues() {
-  const fetchToken = () => {
-    return fetch('/api/token')
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-      }))
-      .catch((error) => {
-        console.error({ error });
-        throw error;
-      });
-  };
-
   return (
-    <RemoteFlows auth={() => fetchToken()}>
+    <RemoteFlows>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{

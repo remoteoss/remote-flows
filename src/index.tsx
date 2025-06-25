@@ -24,8 +24,10 @@ export * from '@/src/common/api';
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
+
 export type {
   Components,
+  RemoteFlowsSDKProps,
   FieldComponentProps,
   ButtonComponentProps,
   StatementComponentProps,

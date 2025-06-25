@@ -1,6 +1,5 @@
 import {
   OnboardingFlow,
-  RemoteFlows,
   OnboardingRenderProps,
   SuccessResponse,
   BenefitsFormPayload,
@@ -11,6 +10,7 @@ import {
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
+import { RemoteFlows } from './RemoteFlows';
 import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { AlertError } from './AlertError';
@@ -228,19 +228,6 @@ const OnBoardingRender = ({
   );
 };
 
-const fetchToken = () => {
-  return fetch('/api/token')
-    .then((res) => res.json())
-    .then((data) => ({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-    }))
-    .catch((error) => {
-      console.error({ error });
-      throw error;
-    });
-};
-
 type OnboardingFormData = {
   companyId: string;
   countryCode: string;
@@ -254,7 +241,7 @@ const OnboardingWithProps = ({
   employmentId,
   countryCode,
 }: OnboardingFormData) => (
-  <RemoteFlows auth={fetchToken}>
+  <RemoteFlows>
     <OnboardingFlow
       companyId={companyId}
       type={type}
@@ -270,7 +257,7 @@ export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
     employmentId: '',
-    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8',
+    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     countryCode: 'PRT',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
