@@ -84,13 +84,22 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries;
 
+  console.log({
+    isLoadingBasicInformationForm,
+    isLoadingContractDetailsForm,
+    isLoadingEmployment,
+    isLoadingBenefitsOffersSchema,
+    isLoadingBenefitOffers,
+    isLoadingCompany,
+    isLoadingCountries,
+    initialLoading,
+  });
+
   const isEmploymentReadOnly =
     employmentStatus &&
     reviewStepAllowedEmploymentStatus.includes(employmentStatus);
 
-  const isLoading = initialLoading;
-
-  return { isLoading, isEmploymentReadOnly };
+  return { isLoading: initialLoading, isEmploymentReadOnly };
 };
 
 const useNavigationConditions = ({
@@ -351,7 +360,9 @@ export const useOnboarding = ({
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
-        enabled: stepState.currentStep.name === 'basic_information',
+        enabled:
+          Boolean(!!internalEmploymentId && internalCountryCode) ||
+          stepState.currentStep.name === 'basic_information',
       },
     },
   });
@@ -417,7 +428,9 @@ export const useOnboarding = ({
           },
         },
         queryOptions: {
-          enabled: stepState.currentStep.name === 'contract_details',
+          enabled:
+            Boolean(!!internalEmploymentId && internalCountryCode) ||
+            stepState.currentStep.name === 'contract_details',
         },
       },
     });
@@ -426,6 +439,7 @@ export const useOnboarding = ({
     data: benefitOffersSchema,
     isLoading: isLoadingBenefitsOffersSchema,
   } = useBenefitOffersSchema(
+    stepState.currentStep.name,
     internalEmploymentId as string,
     fieldValues,
     options,
@@ -607,7 +621,7 @@ export const useOnboarding = ({
   ]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (initialLoading) {
       return;
     }
 
