@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "1.1.2",
-    "@remoteoss/remote-flows": "v0.4.0-alpha.12",
+    "@remoteoss/remote-flows": "0.4.0-alpha.12",
     "axios": "^1.8.3",
     "express": "^4.21.2",
     "react": "^18.0.0",
