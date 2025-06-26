@@ -249,6 +249,7 @@ export const ReviewStep = ({
         </InviteSection>
       )}
       <ReviewStepCreditRisk
+        // @ts-expect-error - TODO: fix this
         render={({
           creditRiskState,
           creditRiskStatus,
