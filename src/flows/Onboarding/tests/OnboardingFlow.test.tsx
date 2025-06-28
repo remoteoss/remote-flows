@@ -1228,6 +1228,23 @@ describe('OnboardingFlow', () => {
   });
 
   it('should override field labels using jsfModify options', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              contract_details: null,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+    );
     const customSigningBonusLabel = 'Custom Signing Bonus Label';
 
     mockRender.mockImplementation(
@@ -1259,7 +1276,7 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        employmentId={uniqueEmploymentId}
         skipSteps={['select_country']}
         {...defaultProps}
         options={{
@@ -1278,14 +1295,6 @@ describe('OnboardingFlow', () => {
         wrapper,
       },
     );
-
-    // Wait for loading to finish and form to be ready
-    await screen.findByText(/Step: Basic Information/i);
-
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
 
