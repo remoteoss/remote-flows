@@ -1555,11 +1555,13 @@ describe('OnboardingFlow', () => {
   });
 
   it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
-    let patchCallCount = 0;
     const uniqueEmploymentId = generateUniqueEmploymentId();
 
     // Mock the PATCH endpoint to return success first, then 422 error
     server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
           ...employmentResponse,
@@ -1574,22 +1576,14 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.patch('*/v1/employments/*', () => {
-        patchCallCount++;
-
-        if (patchCallCount === 1) {
-          // First call - return success
-          return HttpResponse.json(employmentUpdatedResponse);
-        } else {
-          // Second call - return 422 error
-          return HttpResponse.json(
-            {
-              errors: {
-                annual_gross_salary: ['must be greater than 0'],
-              },
+        return HttpResponse.json(
+          {
+            errors: {
+              annual_gross_salary: ['must be greater than 0'],
             },
-            { status: 422 },
-          );
-        }
+          },
+          { status: 422 },
+        );
       }),
     );
 
@@ -1637,14 +1631,14 @@ describe('OnboardingFlow', () => {
     );
 
     // Wait for the basic information step to load
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Benefits/i);
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Navigate to contract details step
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
 
     // Wait for contract details step to load
     await screen.findByText(/Step: Contract Details/i);
@@ -1659,7 +1653,7 @@ describe('OnboardingFlow', () => {
     fireEvent.change(annualGrossSalaryInput, { target: { value: '' } });
     fireEvent.change(annualGrossSalaryInput, { target: { value: '100000' } });
 
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
