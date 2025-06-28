@@ -452,8 +452,6 @@ describe('OnboardingFlow', () => {
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillSelect('Country', country);
 
     const nextButton = screen.getByText(/Continue/i);
@@ -504,6 +502,24 @@ describe('OnboardingFlow', () => {
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+              basic_information: null,
+            },
+          },
+        });
+      }),
+    );
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
     await fillCountry('Portugal');
@@ -516,6 +532,24 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+              basic_information: null,
+            },
+          },
+        });
+      }),
+    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -550,8 +584,6 @@ describe('OnboardingFlow', () => {
       },
     );
     await screen.findByText(/Step: Basic Information/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
