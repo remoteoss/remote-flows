@@ -1131,6 +1131,8 @@ describe('OnboardingFlow', () => {
       // Should automatically go to review step instead of starting from select country
       await screen.findByText(/Step: Review/i);
 
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
       // Verify basic information data is displayed in the Review component
       expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
 
