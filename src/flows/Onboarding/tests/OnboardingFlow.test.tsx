@@ -739,7 +739,7 @@ describe('OnboardingFlow', () => {
         id: undefined,
         name: undefined,
       },
-      emails: 'gabriel@gmail.com',
+      email: 'gabriel@gmail.com',
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
       manager: {
@@ -961,6 +961,18 @@ describe('OnboardingFlow', () => {
     const patchSpy = vi.fn();
 
     server.use(
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              contract_details: null,
+            },
+          },
+        });
+      }),
       http.patch('*/v1/employments/*', () => {
         patchSpy();
         return HttpResponse.json(employmentUpdatedResponse);
@@ -999,8 +1011,14 @@ describe('OnboardingFlow', () => {
       { wrapper },
     );
 
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Contract Details/i);
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
 
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -1069,6 +1087,8 @@ describe('OnboardingFlow', () => {
 
       // Should automatically go to review step instead of starting from select country
       await screen.findByText(/Step: Review/i);
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       // Verify basic information data is displayed in the Review component
       expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
