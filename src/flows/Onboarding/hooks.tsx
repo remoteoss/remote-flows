@@ -564,6 +564,8 @@ export const useOnboarding = ({
     initialNavigationRef,
   });
 
+  const hasCompletedInitialNavigation = useRef(false);
+
   const shouldNavigateToReview = useMemo(() => {
     return Boolean(
       employment?.status &&
@@ -573,13 +575,27 @@ export const useOnboarding = ({
     );
   }, [employment?.status, initialLoading, stepState.currentStep.name]);
 
-  const isLoading =
-    initialLoading ||
-    isNavigatingToReviewWhenEmploymentIsFinal ||
-    isNavigatingToReview ||
-    isNavigatingToContractDetails ||
-    isNavigatingToBenefits ||
-    shouldNavigateToReview;
+  const isNavigationLoading = useMemo(() => {
+    if (hasCompletedInitialNavigation.current) {
+      return false;
+    }
+
+    return (
+      isNavigatingToReviewWhenEmploymentIsFinal ||
+      isNavigatingToReview ||
+      isNavigatingToContractDetails ||
+      isNavigatingToBenefits ||
+      shouldNavigateToReview
+    );
+  }, [
+    isNavigatingToReviewWhenEmploymentIsFinal,
+    isNavigatingToReview,
+    isNavigatingToContractDetails,
+    isNavigatingToBenefits,
+    shouldNavigateToReview,
+  ]);
+
+  const isLoading = initialLoading || isNavigationLoading;
 
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
@@ -618,28 +634,25 @@ export const useOnboarding = ({
   ]);
 
   useEffect(() => {
-    if (initialLoading) {
+    if (initialLoading || hasCompletedInitialNavigation.current) {
       return;
     }
 
-    if (
-      !initialNavigationRef.current.review &&
-      !initialNavigationRef.current.contractDetails &&
-      !initialNavigationRef.current.benefits
-    ) {
-      if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
-        initialNavigationRef.current.review = true;
-        initializeStepValues();
-        goToStep('review');
-      } else if (isNavigatingToContractDetails) {
-        initialNavigationRef.current.contractDetails = true;
-        initializeStepValues();
-        goToStep('contract_details');
-      } else if (isNavigatingToBenefits) {
-        initialNavigationRef.current.benefits = true;
-        initializeStepValues();
-        goToStep('benefits');
-      }
+    if (isNavigatingToReviewWhenEmploymentIsFinal || isNavigatingToReview) {
+      hasCompletedInitialNavigation.current = true;
+      initializeStepValues();
+      goToStep('review');
+    } else if (isNavigatingToContractDetails) {
+      hasCompletedInitialNavigation.current = true;
+      initializeStepValues();
+      goToStep('contract_details');
+    } else if (isNavigatingToBenefits) {
+      hasCompletedInitialNavigation.current = true;
+      initializeStepValues();
+      goToStep('benefits');
+    } else {
+      // No navigation needed, but mark as completed
+      hasCompletedInitialNavigation.current = true;
     }
   }, [
     goToStep,
@@ -706,7 +719,6 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            await refetchCompany();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
               response.data?.data?.employment?.id,
@@ -735,6 +747,7 @@ export const useOnboarding = ({
             frequency: 'monthly',
           },
         };
+
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           ...payload,
