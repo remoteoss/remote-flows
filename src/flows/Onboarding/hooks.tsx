@@ -564,12 +564,22 @@ export const useOnboarding = ({
     initialNavigationRef,
   });
 
+  const shouldNavigateToReview = useMemo(() => {
+    return Boolean(
+      employment?.status &&
+        reviewStepAllowedEmploymentStatus.includes(employment.status) &&
+        !initialLoading &&
+        stepState.currentStep.name !== 'review',
+    );
+  }, [employment?.status, initialLoading, stepState.currentStep.name]);
+
   const isLoading =
     initialLoading ||
     isNavigatingToReviewWhenEmploymentIsFinal ||
     isNavigatingToReview ||
     isNavigatingToContractDetails ||
-    isNavigatingToBenefits;
+    isNavigatingToBenefits ||
+    shouldNavigateToReview;
 
   const initializeStepValues = useCallback(() => {
     fieldsMetaRef.current = {
