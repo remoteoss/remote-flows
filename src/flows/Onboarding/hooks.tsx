@@ -99,7 +99,6 @@ const useNavigationConditions = ({
   stepState,
   isEmploymentReadOnly,
   benefitOffers,
-  initialNavigationRef,
 }: {
   employmentId?: string;
   employment?: Employment;
@@ -108,11 +107,6 @@ const useNavigationConditions = ({
   stepState: StepState<keyof typeof STEPS>;
   isEmploymentReadOnly?: boolean;
   benefitOffers: unknown;
-  initialNavigationRef: React.RefObject<{
-    review: boolean;
-    contractDetails: boolean;
-    benefits: boolean;
-  }>;
 }) => {
   // Common conditions extracted as variables
   const hasBasicInformation =
@@ -136,15 +130,13 @@ const useNavigationConditions = ({
       hasLoadedEmployment &&
         isEmploymentReadOnly &&
         areSchemasLoaded &&
-        stepState.currentStep.name !== 'review' &&
-        !initialNavigationRef.current.review,
+        stepState.currentStep.name !== 'review',
     );
   }, [
     hasLoadedEmployment,
     isEmploymentReadOnly,
     areSchemasLoaded,
     stepState.currentStep.name,
-    initialNavigationRef,
   ]);
 
   const isNavigatingToReview = useMemo(() => {
@@ -156,8 +148,7 @@ const useNavigationConditions = ({
         hasBenefitsSchema &&
         hasBenefitOffers &&
         stepState.currentStep.name !== 'review' &&
-        !isNavigatingToReviewWhenEmploymentIsFinal &&
-        !initialNavigationRef.current.review,
+        !isNavigatingToReviewWhenEmploymentIsFinal,
     );
   }, [
     hasLoadedEmployment,
@@ -168,7 +159,6 @@ const useNavigationConditions = ({
     hasBenefitOffers,
     stepState.currentStep.name,
     isNavigatingToReviewWhenEmploymentIsFinal,
-    initialNavigationRef,
   ]);
 
   const isNavigatingToContractDetails = useMemo(() => {
@@ -179,8 +169,7 @@ const useNavigationConditions = ({
         areSchemasLoaded &&
         stepState.currentStep.name !== 'contract_details' &&
         !isNavigatingToReviewWhenEmploymentIsFinal &&
-        !isNavigatingToReview &&
-        !initialNavigationRef.current.contractDetails,
+        !isNavigatingToReview,
     );
   }, [
     hasLoadedEmployment,
@@ -190,7 +179,6 @@ const useNavigationConditions = ({
     stepState.currentStep.name,
     isNavigatingToReviewWhenEmploymentIsFinal,
     isNavigatingToReview,
-    initialNavigationRef,
   ]);
 
   const isNavigatingToBenefits = useMemo(() => {
@@ -203,8 +191,7 @@ const useNavigationConditions = ({
         stepState.currentStep.name !== 'benefits' &&
         !isNavigatingToReviewWhenEmploymentIsFinal &&
         !isNavigatingToReview &&
-        !isNavigatingToContractDetails &&
-        !initialNavigationRef.current.benefits,
+        !isNavigatingToContractDetails,
     );
   }, [
     hasLoadedEmployment,
@@ -216,7 +203,6 @@ const useNavigationConditions = ({
     isNavigatingToReviewWhenEmploymentIsFinal,
     isNavigatingToReview,
     isNavigatingToContractDetails,
-    initialNavigationRef,
   ]);
 
   return {
@@ -541,13 +527,6 @@ export const useOnboarding = ({
     ],
   );
 
-  // Single ref to track all initial navigations
-  const initialNavigationRef = useRef({
-    review: false,
-    contractDetails: false,
-    benefits: false,
-  });
-
   const {
     isNavigatingToReviewWhenEmploymentIsFinal,
     isNavigatingToReview,
@@ -561,7 +540,6 @@ export const useOnboarding = ({
     stepState,
     isEmploymentReadOnly,
     benefitOffers,
-    initialNavigationRef,
   });
 
   const hasCompletedInitialNavigation = useRef(false);
