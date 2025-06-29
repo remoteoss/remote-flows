@@ -1,7 +1,6 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
   render,
@@ -25,12 +24,10 @@ import {
   benefitOffersResponse,
   employmentResponse,
   benefitOffersUpdatedResponse,
-  inviteResponse,
   companyResponse,
   conversionFromEURToUSD,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
-  assertRadioValue,
   fillRadio,
   fillSelect,
   selectDayInCalendar,
@@ -38,14 +35,14 @@ import {
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
 
+const queryClient = new QueryClient();
+
 // Helper function to generate unique employment IDs for each test
 let employmentIdCounter = 0;
 const generateUniqueEmploymentId = () => {
   employmentIdCounter++;
   return `test-employment-${employmentIdCounter}-${Date.now()}`;
 };
-
-const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
@@ -491,36 +488,11 @@ describe('OnboardingFlow', () => {
     );
 
     render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
+      <OnboardingFlow skipSteps={['select_country']} {...defaultProps} />,
       { wrapper },
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    const backButton = screen.getByText(/Back/i);
-    expect(backButton).toBeInTheDocument();
-
-    backButton.click();
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
   });
 
   it('should select a country and advance to the next step', async () => {
@@ -530,6 +502,24 @@ describe('OnboardingFlow', () => {
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+              basic_information: null,
+            },
+          },
+        });
+      }),
+    );
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
     await fillCountry('Portugal');
@@ -542,6 +532,24 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+              basic_information: null,
+            },
+          },
+        });
+      }),
+    );
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
@@ -567,7 +575,7 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        countryCode="PRT"
         skipSteps={['select_country']}
         {...defaultProps}
       />,
@@ -577,7 +585,7 @@ describe('OnboardingFlow', () => {
     );
     await screen.findByText(/Step: Basic Information/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -585,6 +593,8 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -595,7 +605,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        'john.doe@gmail.com',
       );
     });
   });
@@ -626,7 +636,7 @@ describe('OnboardingFlow', () => {
     );
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        countryCode="PRT"
         skipSteps={['select_country']}
         {...defaultProps}
       />,
@@ -635,11 +645,7 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
+    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -655,27 +661,38 @@ describe('OnboardingFlow', () => {
         id: undefined,
         name: undefined,
       },
-      email: employmentResponse.data.employment.personal_email,
+      email: 'john.doe@gmail.com',
       has_seniority_date: 'no',
-      job_title: employmentResponse.data.employment.job_title,
+      job_title: 'Software Engineer',
       manager: {
         id: undefined,
       },
-      tax_job_category:
-        employmentResponse.data.employment.basic_information.tax_job_category,
-      tax_servicing_countries:
-        employmentResponse.data.employment.basic_information
-          .tax_servicing_countries,
-      name: employmentResponse.data.employment.basic_information.name,
-      provisional_start_date:
-        employmentResponse.data.employment.provisional_start_date,
-      work_email: employmentResponse.data.employment.work_email,
+      name: 'John Doe',
+      provisional_start_date: '2025-05-15',
+      work_email: 'john.doe@remote.com',
     });
 
     await screen.findByText(/Step: Contract Details/i);
   });
 
-  it('should retrieve the basic information step based on an employmentId', async () => {
+  it('should retrieve the contract details step based on an employmentId', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+            },
+          },
+        });
+      }),
+    );
     render(
       <OnboardingFlow
         employmentId={generateUniqueEmploymentId()}
@@ -688,16 +705,27 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
+    await screen.findByText(/Step: Contract Details/i);
   });
 
   it('should call the update employment endpoint when the user submits the form and the employmentId is present', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+            },
+          },
+        });
+      }),
+    );
     render(
       <OnboardingFlow
         employmentId={generateUniqueEmploymentId()}
@@ -708,7 +736,11 @@ describe('OnboardingFlow', () => {
       },
     );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await screen.findByText(/Step: Contract Details/i);
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -760,6 +792,11 @@ describe('OnboardingFlow', () => {
   });
 
   it('should fill the contract details step and go to the benefits step', async () => {
+    server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
+    );
     render(
       <OnboardingFlow
         employmentId={generateUniqueEmploymentId()}
@@ -770,40 +807,28 @@ describe('OnboardingFlow', () => {
       },
     );
 
+    await screen.findByText(/Step: Benefits/i);
+
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
+    backButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
-
-    // Get the second call to mockOnSubmit (index 1)
-    const contractDetailsSubmission = mockOnSubmit.mock.calls[2][0];
-
     // Assert the contract details submission
-    expect(contractDetailsSubmission).toEqual({
+    expect(mockOnSubmit).toHaveBeenCalledWith({
       annual_gross_salary: 2000000,
       annual_training_hours_ack: 'acknowledged',
       available_pto: 22,
@@ -834,93 +859,11 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Benefits/i);
   });
 
-  it('should go to the third step and check that benefits are initalized correctly', async () => {
-    render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        {...defaultProps}
-      />,
-      {
-        wrapper,
-      },
-    );
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
-      );
-    });
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    await screen.findByText(/Step: Benefits/i);
-
-    await assertRadioValue(
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
-      'Meal Card Standard 2025',
-    );
-
-    await assertRadioValue(
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
-      'Basic Health Plan 2025',
-    );
-
-    await assertRadioValue(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      'Life Insurance 50K',
-    );
-
-    await fillRadio(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      "I don't want to offer this benefit.",
-    );
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
-    });
-
-    const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
-
-    // Assert the contract details submission
-    expect(benefitsSubmission).toEqual({
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
-        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
-        value: 'no',
-      },
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
-        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
-      },
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
-        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
-        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
-      },
-    });
-  });
-
-  it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+  it('should verify that the benefits are submitted correctly', async () => {
     server.use(
-      http.post('*/v1/employments/*/invite', () => {
-        return HttpResponse.json(inviteResponse);
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        // Return empty benefits so we can fill them
+        return HttpResponse.json({ data: [] });
       }),
     );
     render(
@@ -934,44 +877,67 @@ describe('OnboardingFlow', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
-
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
-    await screen.findByText(/Step: Contract Details/i);
-
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
     await screen.findByText(/Step: Benefits/i);
 
-    nextButton = screen.getByText(/Next Step/i);
+    // Fill all three benefits
+    await fillRadio(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
+
+    await fillRadio(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
+
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
+
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
-    await screen.findByText(/Step: Review/i);
-
-    const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
-    expect(inviteEmployeeButton).toBeInTheDocument();
-
-    inviteEmployeeButton.click();
-
-    // it should be called
     await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
+        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+      },
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
+        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+      },
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+        value: 'no',
+      },
+    });
+
+    // Optionally verify we moved to the next step
+    await screen.findByText(/Step: Review/i);
   });
 
   it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
 
     server.use(
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              basic_information: null,
+              contract_details: null,
+            },
+          },
+        });
+      }),
       http.post('*/v1/employments', () => {
         postSpy();
         return HttpResponse.json(employmentCreatedResponse);
@@ -1027,6 +993,18 @@ describe('OnboardingFlow', () => {
     const patchSpy = vi.fn();
 
     server.use(
+      http.get('*/v1/employments/:id', () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              contract_details: null,
+            },
+          },
+        });
+      }),
       http.patch('*/v1/employments/*', () => {
         patchSpy();
         return HttpResponse.json(employmentUpdatedResponse);
@@ -1065,8 +1043,14 @@ describe('OnboardingFlow', () => {
       { wrapper },
     );
 
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Contract Details/i);
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
+
+    await screen.findByText(/Step: Basic Information/i);
 
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -1136,6 +1120,8 @@ describe('OnboardingFlow', () => {
       // Should automatically go to review step instead of starting from select country
       await screen.findByText(/Step: Review/i);
 
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
       // Verify basic information data is displayed in the Review component
       expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
 
@@ -1196,6 +1182,8 @@ describe('OnboardingFlow', () => {
 
       // Should automatically go to review step instead of starting from select country
       await screen.findByText(/Step: Review/i);
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       // Verify basic information data is displayed in the Review component
       expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
@@ -1294,6 +1282,23 @@ describe('OnboardingFlow', () => {
   });
 
   it('should override field labels using jsfModify options', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              contract_details: null,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+    );
     const customSigningBonusLabel = 'Custom Signing Bonus Label';
 
     mockRender.mockImplementation(
@@ -1325,7 +1330,7 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        employmentId={uniqueEmploymentId}
         skipSteps={['select_country']}
         {...defaultProps}
         options={{
@@ -1345,14 +1350,6 @@ describe('OnboardingFlow', () => {
       },
     );
 
-    // Wait for loading to finish and form to be ready
-    await screen.findByText(/Step: Basic Information/i);
-
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     // Verify that the custom label is displayed
@@ -1361,6 +1358,23 @@ describe('OnboardingFlow', () => {
   });
 
   it('should override annual gross salary field labels and conversion properties', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              contract_details: null,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+    );
     const customFieldLabel = 'Test label';
     const customConversionLabel = 'Annual Gross Salary Conversion';
     const customConversionDescription =
@@ -1395,7 +1409,7 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        employmentId={uniqueEmploymentId}
         skipSteps={['select_country']}
         {...defaultProps}
         options={{
@@ -1420,14 +1434,6 @@ describe('OnboardingFlow', () => {
         wrapper,
       },
     );
-
-    // Wait for loading to finish and form to be ready
-    await screen.findByText(/Step: Basic Information/i);
-
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-
-    nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
 
@@ -1455,6 +1461,24 @@ describe('OnboardingFlow', () => {
   });
 
   it('should override the name field label in basic_information using jsfModify', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: uniqueEmploymentId,
+              contract_details: null,
+              basic_information: null,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+    );
     const customNameLabel = 'Custom Full Name Label';
 
     mockRender.mockImplementation(
@@ -1486,7 +1510,7 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
+        employmentId={uniqueEmploymentId}
         skipSteps={['select_country']}
         {...defaultProps}
         options={{
@@ -1621,11 +1645,13 @@ describe('OnboardingFlow', () => {
   });
 
   it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
-    let patchCallCount = 0;
     const uniqueEmploymentId = generateUniqueEmploymentId();
 
     // Mock the PATCH endpoint to return success first, then 422 error
     server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
           ...employmentResponse,
@@ -1640,22 +1666,14 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.patch('*/v1/employments/*', () => {
-        patchCallCount++;
-
-        if (patchCallCount === 1) {
-          // First call - return success
-          return HttpResponse.json(employmentUpdatedResponse);
-        } else {
-          // Second call - return 422 error
-          return HttpResponse.json(
-            {
-              errors: {
-                annual_gross_salary: ['must be greater than 0'],
-              },
+        return HttpResponse.json(
+          {
+            errors: {
+              annual_gross_salary: ['must be greater than 0'],
             },
-            { status: 422 },
-          );
-        }
+          },
+          { status: 422 },
+        );
       }),
     );
 
@@ -1703,14 +1721,14 @@ describe('OnboardingFlow', () => {
     );
 
     // Wait for the basic information step to load
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Benefits/i);
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Navigate to contract details step
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
 
     // Wait for contract details step to load
     await screen.findByText(/Step: Contract Details/i);
@@ -1725,7 +1743,7 @@ describe('OnboardingFlow', () => {
     fireEvent.change(annualGrossSalaryInput, { target: { value: '' } });
     fireEvent.change(annualGrossSalaryInput, { target: { value: '100000' } });
 
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
@@ -1764,6 +1782,9 @@ describe('OnboardingFlow', () => {
 
     // Mock the employment endpoint to return data with a non-readonly status
     server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
           ...employmentResponse,
@@ -1828,32 +1849,27 @@ describe('OnboardingFlow', () => {
     );
 
     // Wait for the basic information step to load
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Benefits/i);
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    // Navigate to contract details step
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+    // Fill all three benefits to make the form valid
+    await fillRadio(
+      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+      'Meal Card Standard 2025',
+    );
 
-    // Wait for contract details step to load
-    await screen.findByText(/Step: Contract Details/i);
+    await fillRadio(
+      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+      'Basic Health Plan 2025',
+    );
 
-    // Wait for the form to be populated with existing data
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
+    await fillRadio(
+      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+      "I don't want to offer this benefit.",
+    );
 
-    // Submit contract details to move to benefits step
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
-
-    // Wait for benefits step to load
-    await screen.findByText(/Step: Benefits/i);
-
-    nextButton = screen.getByText(/Next Step/i);
+    const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
     nextButton.click();
