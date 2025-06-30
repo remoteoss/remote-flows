@@ -28,6 +28,7 @@ import {
   conversionFromEURToUSD,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
+  fillCheckbox,
   fillRadio,
   fillSelect,
   selectDayInCalendar,
@@ -449,6 +450,106 @@ describe('OnboardingFlow', () => {
     }
   }
 
+  async function fillContractDetails() {
+    const newValues = {
+      hasSigningBonus: 'No',
+      offerOtherBonuses: 'No',
+      offerCommision: 'No',
+      offerEquityCompensation: 'No',
+      workingHoursExemption: 'No',
+      typeOfEmployment: 'Full-time',
+      experienceLevel: 'Level 2 - Entry Level',
+      paidTimeOff: 'Unlimited paid time off',
+      workAddress: "Same as the employee's residential address",
+      contractDuration: true,
+      salaryInstallmentsConfirmation: true,
+      workFromHomeAllowanceAck: true,
+      annualTrainingHoursAck: true,
+      annualGrossSalary: '20000',
+      probationLength: '40',
+      roleDescription:
+        'A Product Manager is responsible for guiding the development and success of a product from concept to launch. They act as the bridge between business, design, and engineering teams, ensuring alignment with user needs and company goals. Product Managers conduct market research, define product requirements, prioritize features, and manage the product roadmap. They communicate clearly with stakeholders, analyze performance data, and make decisions to optimize user experience and business outcomes. Strategic thinking, problem-solving, and leadership are key traits. A Product Manager must balance customer desires, technical feasibility, and business viability to deliver valuable, innovative products in a competitive market.',
+    };
+
+    if (newValues?.annualGrossSalary) {
+      fireEvent.change(screen.getByLabelText(/Test Label/i), {
+        target: { value: newValues?.annualGrossSalary },
+      });
+    }
+
+    if (newValues?.probationLength) {
+      fireEvent.change(screen.getByLabelText(/Probation period, in days/i), {
+        target: { value: newValues?.probationLength },
+      });
+    }
+
+    if (newValues?.roleDescription) {
+      fireEvent.change(screen.getByLabelText(/Role description/i), {
+        target: { value: newValues?.roleDescription },
+      });
+    }
+
+    if (newValues?.contractDuration) {
+      fillCheckbox('Contract duration');
+    }
+
+    if (newValues?.salaryInstallmentsConfirmation) {
+      fillCheckbox(
+        'I confirm the annual gross salary includes 13th and 14th salaries',
+      );
+    }
+
+    if (newValues?.workFromHomeAllowanceAck) {
+      fillCheckbox("I acknowledge Portugal's work-from-home allowance");
+    }
+
+    if (newValues?.annualTrainingHoursAck) {
+      fillCheckbox("I acknowledge Portugal's annual training requirement");
+    }
+
+    if (newValues?.workAddress) {
+      await fillRadio('Local', newValues?.workAddress);
+    }
+
+    if (newValues?.hasSigningBonus) {
+      await fillRadio('Offer a signing bonus?', newValues?.hasSigningBonus);
+    }
+
+    if (newValues?.offerOtherBonuses) {
+      await fillRadio('Offer other bonuses?', newValues?.offerOtherBonuses);
+    }
+
+    if (newValues?.paidTimeOff) {
+      await fillRadio('Paid time off policy', newValues?.paidTimeOff);
+    }
+
+    if (newValues?.offerCommision) {
+      await fillRadio('Offer commission?', newValues?.offerCommision);
+    }
+
+    if (newValues?.offerEquityCompensation) {
+      await fillRadio(
+        'Will this employee receive equity?',
+        newValues?.offerEquityCompensation,
+      );
+    }
+
+    if (newValues?.workingHoursExemption) {
+      await fillRadio(
+        'Will this employee need to work outside regular work hours?',
+        newValues?.workingHoursExemption,
+      );
+    }
+
+    if (newValues?.typeOfEmployment) {
+      await fillRadio('Type of employee', newValues?.typeOfEmployment);
+    }
+
+    if (newValues?.experienceLevel) {
+      await fillRadio('Experience level', newValues?.experienceLevel);
+    }
+  }
+
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 
@@ -806,28 +907,87 @@ describe('OnboardingFlow', () => {
         wrapper,
       },
     );
+  });
 
-    await screen.findByText(/Step: Benefits/i);
+  it('should arrive in the benefits step if contract details are filled', async () => {
+    server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({ data: [] });
+      }),
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+              contract_details: null,
+            },
+          },
+        });
+      }),
+    );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-    const backButton = screen.getByText(/Back/i);
-    expect(backButton).toBeInTheDocument();
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
 
-    backButton.click();
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            contract_details: {
+              fields: {
+                annual_gross_salary: {
+                  title: 'Test Label',
+                },
+              },
+            },
+          },
+        }}
+      />,
+      {
+        wrapper,
+      },
+    );
 
     await screen.findByText(/Step: Contract Details/i);
-
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractDetails();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
+
     nextButton.click();
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
-    // Assert the contract details submission
+
     expect(mockOnSubmit).toHaveBeenCalledWith({
       annual_gross_salary: 2000000,
       annual_training_hours_ack: 'acknowledged',
@@ -855,7 +1015,6 @@ describe('OnboardingFlow', () => {
       working_hours_exemption: 'no',
     });
 
-    // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
   });
 
