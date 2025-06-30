@@ -10,6 +10,7 @@ import {
   contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
+import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/utils';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -23,13 +24,6 @@ import {
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
-
-// Helper function to generate unique employment IDs for each test
-let employmentIdCounter = 0;
-const generateUniqueEmploymentId = () => {
-  employmentIdCounter++;
-  return `test-employment-${employmentIdCounter}-${Date.now()}`;
-};
 
 const queryClient = new QueryClient();
 

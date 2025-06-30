@@ -35,15 +35,9 @@ import {
 } from '@/src/tests/testHelpers';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
+import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/utils';
 
 const queryClient = new QueryClient();
-
-// Helper function to generate unique employment IDs for each test
-let employmentIdCounter = 0;
-const generateUniqueEmploymentId = () => {
-  employmentIdCounter++;
-  return `test-employment-${employmentIdCounter}-${Date.now()}`;
-};
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
