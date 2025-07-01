@@ -12,21 +12,21 @@ const queryClient = new QueryClient();
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
-  isTestingMode?: RemoteFlowsSDKProps['isTestingMode'];
+  environment?: RemoteFlowsSDKProps['environment'];
   proxy?: RemoteFlowsSDKProps['proxy'];
 };
 
 function RemoteFlowContextWrapper({
   children,
   auth,
-  isTestingMode,
   proxy,
+  environment,
 }: RemoteFlowContextWrapperProps) {
   const remoteApiClient = useAuth({
     auth,
     options: {
-      isTestingMode: !!isTestingMode,
       proxy,
+      environment,
     },
   });
   return (
@@ -55,17 +55,17 @@ export function RemoteFlows({
   auth,
   children,
   components,
-  isTestingMode = false,
   theme,
   proxy,
+  environment,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <QueryClientProvider client={queryClient}>
       <FormFieldsProvider components={components}>
         <RemoteFlowContextWrapper
-          isTestingMode={isTestingMode}
           auth={auth}
           proxy={proxy}
+          environment={environment}
         >
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
         </RemoteFlowContextWrapper>

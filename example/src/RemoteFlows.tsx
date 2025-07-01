@@ -23,11 +23,12 @@ type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
 };
 
 export const RemoteFlows = ({ children, ...props }: RemoteFlowsProps) => {
-  const isTestingMode =
-    import.meta.env.VITE_REMOTE_GATEWAY ===
-    'https://gateway.partners.remote-sandbox.com';
   return (
-    <RemoteFlowsAuth isTestingMode={isTestingMode} auth={fetchToken} {...props}>
+    <RemoteFlowsAuth
+      environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
+      auth={fetchToken}
+      {...props}
+    >
       {children}
     </RemoteFlowsAuth>
   );
