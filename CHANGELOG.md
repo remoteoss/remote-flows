@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Minor Changes
+
+- 9a85609: Remove isTestingMode and support new environment prop
+
 ## 0.4.0-alpha.12
 
 ### Patch Changes
