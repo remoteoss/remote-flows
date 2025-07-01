@@ -44,8 +44,8 @@ npm install
 CLIENT_ID=your_client_id
 CLIENT_SECRET=your_client_secret
 REFRESH_TOKEN=your_refresh_token
-VITE_REMOTE_GATEWAY=https://gateway.partners.remote-sandbox.com # for sandbox
-# VITE_REMOTE_GATEWAY=https://gateway.remote.com # for production
+VITE_REMOTE_GATEWAY=partners # for sandbox
+# VITE_REMOTE_GATEWAY=production # for production
 ```
 
 3. Start the development server:
