@@ -1,57 +1,10 @@
-import axios from 'axios';
-import dotenv from 'dotenv';
-import express from 'express';
-import { createServer as createViteServer } from 'vite';
+const axios = require('axios');
+const dotenv = require('dotenv');
+const express = require('express');
+const { getToken } = require('./api/get_token.js');
+const { createServer: createViteServer } = require('vite');
 
 dotenv.config();
-
-const ENVIRONMENTS = {
-  partners: 'https://gateway.partners.remote-sandbox.com',
-  production: 'https://gateway.remote.com',
-  sandbox: 'https://gateway.remote-sandbox.com',
-  staging: 'https://gateway.niceremote.com',
-};
-
-const getToken = async (req, res) => {
-  const { CLIENT_ID, CLIENT_SECRET, VITE_REMOTE_GATEWAY, REFRESH_TOKEN } =
-    process.env;
-
-  if (!CLIENT_ID || !CLIENT_SECRET || !VITE_REMOTE_GATEWAY || !REFRESH_TOKEN) {
-    return res
-      .status(400)
-      .json({ error: 'Missing clientId or clientSecret or RemoteGateway' });
-  }
-
-  const gatewayUrl = ENVIRONMENTS[VITE_REMOTE_GATEWAY];
-
-  const encodedCredentials = Buffer.from(
-    `${CLIENT_ID}:${CLIENT_SECRET}`,
-  ).toString('base64');
-
-  try {
-    // to get a refresh token, you need to create a company first
-    const response = await axios.post(
-      `${gatewayUrl}/auth/oauth2/token`,
-      new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: REFRESH_TOKEN,
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${encodedCredentials}`,
-        },
-      },
-    );
-    return res.status(200).json({
-      access_token: response.data.access_token,
-      expires_in: response.data.expires_in,
-    });
-  } catch (error) {
-    console.error('Error fetching access token:', error);
-    return res.status(500).json({ error: 'Failed to retrieve access token' });
-  }
-};
 
 const startServer = async () => {
   const app = express();
