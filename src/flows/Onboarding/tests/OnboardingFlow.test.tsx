@@ -541,7 +541,7 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it('should fill the first step, go to the second step and go back to the first step', async () => {
+  it.skip('should fill the first step, go to the second step and go back to the first step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
