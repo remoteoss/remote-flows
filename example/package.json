@@ -2,9 +2,9 @@
   "name": "react-ts",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "dev": "nodemon ./server.js",
+    "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -12,13 +12,15 @@
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "1.1.2",
-    "@remoteoss/remote-flows": "file:../",
+    "@remoteoss/remote-flows": "github:remoteoss/remote-flows#main",
     "axios": "^1.8.3",
+    "dotenv": "^17.0.0",
     "express": "^4.21.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-flagpack": "^2.0.6",
-    "react-syntax-highlighter": "^15.6.1"
+    "react-syntax-highlighter": "^15.6.1",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

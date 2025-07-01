@@ -44,8 +44,8 @@ npm install
 CLIENT_ID=your_client_id
 CLIENT_SECRET=your_client_secret
 REFRESH_TOKEN=your_refresh_token
-VITE_REMOTE_GATEWAY=https://gateway.partners.remote-sandbox.com # for sandbox
-# VITE_REMOTE_GATEWAY=https://gateway.remote.com # for production
+VITE_REMOTE_GATEWAY=partners # for sandbox
+# VITE_REMOTE_GATEWAY=production # for production
 ```
 
 3. Start the development server:
@@ -63,13 +63,13 @@ The example app will be available at `http://localhost:3001`. The server handles
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop            | Type                                                        | Required | Description                                                        |
-| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                             |
-| `isTestingMode` | `boolean`                                                   | No       | When `true`, connects to sandbox environment instead of production |
-| `theme`         | `ThemeOptions`                                              | No       | Custom theme configuration                                         |
-| `components`    | `Components`                                                | No       | Custom field components for form rendering                         |
-| `proxy`         | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers          |
+| Prop          | Type                                                        | Required | Description                                               |
+| ------------- | ----------------------------------------------------------- | -------- | --------------------------------------------------------- |
+| `auth`        | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                    |
+| `environment` | `'partners' \| 'production' \| 'sandbox' \| 'staging'`      | No       | Environment to use for API calls (defaults to production) |
+| `theme`       | `ThemeOptions`                                              | No       | Custom theme configuration                                |
+| `components`  | `Components`                                                | No       | Custom field components for form rendering                |
+| `proxy`       | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers |
 
 ### Custom Field Components
 
