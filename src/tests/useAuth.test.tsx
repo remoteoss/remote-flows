@@ -65,7 +65,7 @@ describe('useAuth', () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
     renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
+      () => useAuth({ auth: mockAuth, options: { environment: 'partners' } }),
       { wrapper },
     );
 
@@ -82,10 +82,7 @@ describe('useAuth', () => {
 
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
-    renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: false } }),
-      { wrapper },
-    );
+    renderHook(() => useAuth({ auth: mockAuth }), { wrapper });
 
     expect(createClient).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -108,10 +105,9 @@ describe('useAuth', () => {
       }),
     });
 
-    const { result } = renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
 
     // Wait for the query to be ready
     await act(async () => {
@@ -144,10 +140,9 @@ describe('useAuth', () => {
       }),
     });
 
-    const { result } = renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
 
     // Wait for the query to be ready
     await act(async () => {
@@ -201,10 +196,9 @@ describe('useAuth', () => {
       }),
     });
 
-    const { result } = renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
 
     // Wait for the first query to be ready
     await act(async () => {
@@ -252,10 +246,7 @@ describe('useAuth', () => {
       },
     });
 
-    renderHook(
-      () => useAuth({ auth: mockAuth, options: { isTestingMode: true } }),
-      { wrapper },
-    );
+    renderHook(() => useAuth({ auth: mockAuth }), { wrapper });
 
     expect(createClient).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -276,7 +267,7 @@ describe('useAuth', () => {
       () =>
         useAuth({
           auth: mockAuth,
-          options: { isTestingMode: true, proxy: { url: proxyUrl } },
+          options: { proxy: { url: proxyUrl } },
         }),
       { wrapper },
     );
@@ -296,7 +287,7 @@ describe('useAuth', () => {
       () =>
         useAuth({
           auth: mockAuth,
-          options: { isTestingMode: true, proxy: { url: invalidProxyUrl } },
+          options: { environment: 'partners', proxy: { url: invalidProxyUrl } },
         }),
       { wrapper },
     );
@@ -329,7 +320,6 @@ describe('useAuth', () => {
         useAuth({
           auth: mockAuth,
           options: {
-            isTestingMode: true,
             proxy: { url: proxyUrl, headers: proxyHeaders },
           },
         }),

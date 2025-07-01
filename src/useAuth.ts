@@ -10,10 +10,10 @@ type AuthResponse = {
   expiresIn: number;
 };
 
-type Options = {
-  isTestingMode: boolean;
-  proxy?: RemoteFlowsSDKProps['proxy'];
-};
+type Options = Partial<{
+  environment: keyof typeof ENVIRONMENTS;
+  proxy: RemoteFlowsSDKProps['proxy'];
+}>;
 
 function isValidUrl(url: string) {
   try {
@@ -29,7 +29,7 @@ export const useAuth = ({
   options,
 }: {
   auth: () => Promise<AuthResponse>;
-  options: Options;
+  options?: Options;
 }) => {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
@@ -40,15 +40,15 @@ export const useAuth = ({
     enabled: false,
   });
 
-  const baseUrl = options.isTestingMode
-    ? ENVIRONMENTS.partners
+  const baseUrl = options?.environment
+    ? ENVIRONMENTS[options?.environment]
     : process.env.REMOTE_GATEWAY_URL;
 
   const clientConfig = client.getConfig();
   const npmPackageVersion = process.env.VERSION;
-  const isValidProxy = !!options.proxy && isValidUrl(options.proxy.url);
+  const isValidProxy = !!options?.proxy && isValidUrl(options.proxy.url);
 
-  if (options.proxy && !isValidProxy) {
+  if (options?.proxy && !isValidProxy) {
     console.error('Invalid proxy URL provided. Using default base URL.');
   }
 
@@ -57,7 +57,7 @@ export const useAuth = ({
       ...clientConfig,
       headers: {
         ...clientConfig.headers,
-        ...(isValidProxy ? options.proxy?.headers : {}),
+        ...(isValidProxy ? options?.proxy?.headers : {}),
         'X-Client-Name': 'remote-flows-sdk',
         'X-Client-Version': npmPackageVersion,
       },

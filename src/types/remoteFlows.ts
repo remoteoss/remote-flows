@@ -8,6 +8,7 @@ import { AnySchema } from 'yup';
 import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
 import { ReactNode } from 'react';
+import { ENVIRONMENTS } from '../environments';
 
 type AuthResponse = {
   accessToken: string;
@@ -99,10 +100,10 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    */
   components?: Components;
   /**
-   * Flag to indicate if the SDK is in testing mode and use the testing environment.
-   * If true, the SDK will use the testing environment for all API calls.
+   * Environment to use for API calls.
+   * If not provided, the SDK will use production environment.
    */
-  isTestingMode?: boolean;
+  environment?: keyof typeof ENVIRONMENTS;
   proxy?: {
     /**
      * URL of the proxy server to use for API calls.
