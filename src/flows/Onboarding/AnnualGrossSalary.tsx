@@ -151,10 +151,19 @@ export const AnnualGrossSalary = ({
 
   const { annual_gross_salary_conversion_properties: conversionField } = props;
 
+  const annualGrossSalaryProps = {
+    ...props,
+    ...{ currency: currency },
+  };
+
+  const conversionFieldProps = {
+    ...{ currency: desiredCurrency },
+  };
+
   return (
     <>
       <TextField
-        {...props}
+        {...annualGrossSalaryProps}
         description={extraDescription}
         type="text"
         inputMode="decimal"
@@ -164,6 +173,7 @@ export const AnnualGrossSalary = ({
       {/** A problem on this field is that the label, description are fixed. */}
       {showConversion && (
         <TextField
+          {...conversionFieldProps}
           name="annual_gross_salary_conversion"
           label={conversionField?.label || 'Conversion'}
           description={
