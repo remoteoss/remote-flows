@@ -87,7 +87,7 @@ describe('prettifyFormValues', () => {
         name: 'salary',
         type: 'money',
         label: 'Salary',
-        desiredCurrency: 'USD',
+        currency: 'USD',
       },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
@@ -95,7 +95,7 @@ describe('prettifyFormValues', () => {
         prettyValue: 100000,
         label: 'Salary',
         inputType: 'money',
-        desiredCurrency: 'USD',
+        currency: 'USD',
       },
     });
   });
