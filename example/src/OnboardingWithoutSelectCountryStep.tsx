@@ -52,6 +52,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
+    SaveDraftButton,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -93,7 +94,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             <SubmitButton
               className="submit-button"
               disabled={onboardingBag.isSubmitting}
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+              onSuccess={() => console.log('navigate')}
             >
               Create Employment & Continue
             </SubmitButton>
@@ -139,6 +140,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Continue
             </SubmitButton>
+            <SaveDraftButton
+              className="save-draft-button"
+              onClick={() => console.log('saving draft')}
+              disabled={onboardingBag.isSubmitting}
+            >
+              Save Draft
+            </SaveDraftButton>
           </div>
         </>
       );
