@@ -526,10 +526,12 @@ export const useOnboarding = ({
 
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
-    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
-      values,
-      stepFields[stepState.currentStep.name],
-    );
+    const currentStepName = stepState.currentStep.name;
+    if (currentStepName in fieldsMetaRef.current) {
+      fieldsMetaRef.current[
+        currentStepName as keyof typeof fieldsMetaRef.current
+      ] = prettifyFormValues(values, stepFields[currentStepName]);
+    }
 
     const parsedValues = parseFormValues(values);
     refetchCompany();
