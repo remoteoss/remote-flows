@@ -80,6 +80,26 @@ describe('prettifyFormValues', () => {
     });
   });
 
+  it('handles money field', () => {
+    const values = { salary: 100000 };
+    const fields: Fields = [
+      {
+        name: 'salary',
+        type: 'money',
+        label: 'Salary',
+        desiredCurrency: 'USD',
+      },
+    ];
+    expect(prettifyFormValues(values, fields)).toEqual({
+      salary: {
+        prettyValue: 100000,
+        label: 'Salary',
+        inputType: 'money',
+        desiredCurrency: 'USD',
+      },
+    });
+  });
+
   it('handles fieldset field', () => {
     const values = {
       address: {

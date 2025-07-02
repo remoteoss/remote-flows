@@ -283,6 +283,7 @@ export const useOnboarding = ({
                 annualSalaryFieldPresentation
                   ?.annual_gross_salary_conversion_properties?.description,
             },
+            desiredCurrency: company?.desired_currency,
             Component: (props: JSFField & { currency: string }) => (
               <AnnualGrossSalary
                 desiredCurrency={company?.desired_currency || ''}

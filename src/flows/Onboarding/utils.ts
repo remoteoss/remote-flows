@@ -114,6 +114,18 @@ export function prettifyFormValues(
           return [key, prettiedFieldset];
         }
 
+        if (field?.type === 'money') {
+          return [
+            key,
+            {
+              prettyValue: value,
+              label: field.label,
+              inputType: field?.type,
+              desiredCurrency: field?.desiredCurrency,
+            },
+          ];
+        }
+
         if (field) {
           return [
             key,
