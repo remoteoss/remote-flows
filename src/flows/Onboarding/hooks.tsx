@@ -613,10 +613,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  console.log({
-    meta: fieldsMetaRef.current,
-  });
-
   return {
     /**
      * Employment id passed useful to be used between components
