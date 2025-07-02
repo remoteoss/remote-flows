@@ -15,6 +15,7 @@ const Button = ({
 };
 
 const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  console.log({ fieldData, field: field.name });
   const hasError = !!fieldState.error;
 
   return (

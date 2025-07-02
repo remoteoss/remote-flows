@@ -122,7 +122,7 @@ describe('TextField Component', () => {
     const call = CustomTextField.mock.calls[0][0];
     expect(call.fieldData).toMatchObject({
       ...defaultProps,
-      additionalProps: { customProp: 'customValue' },
+      customProp: 'customValue',
     });
     expect(call.field).toBeDefined();
     expect(call.fieldState).toBeDefined();
