@@ -155,6 +155,7 @@ export const AnnualGrossSalary = ({
     <>
       <TextField
         {...props}
+        additionalProps={{ currency: currency }}
         description={extraDescription}
         type="text"
         inputMode="decimal"
@@ -164,6 +165,7 @@ export const AnnualGrossSalary = ({
       {/** A problem on this field is that the label, description are fixed. */}
       {showConversion && (
         <TextField
+          additionalProps={{ currency: desiredCurrency }}
           name="annual_gross_salary_conversion"
           label={conversionField?.label || 'Conversion'}
           description={
