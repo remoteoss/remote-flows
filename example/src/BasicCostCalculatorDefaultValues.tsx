@@ -6,6 +6,7 @@ import {
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
+import { proxyUrl } from './utils';
 import './css/main.css';
 
 const estimationOptions = {
@@ -16,7 +17,11 @@ const estimationOptions = {
 
 export function BasicCostCalculatorWithDefaultValues() {
   return (
-    <RemoteFlows>
+    <RemoteFlows
+      proxy={{
+        url: proxyUrl,
+      }}
+    >
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{

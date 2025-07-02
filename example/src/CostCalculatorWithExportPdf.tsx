@@ -10,9 +10,10 @@ import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
 } from '@remoteoss/remote-flows';
-import './css/main.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { proxyUrl } from './utils';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -92,7 +93,11 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithExportPdf() {
   return (
-    <RemoteFlows>
+    <RemoteFlows
+      proxy={{
+        url: proxyUrl,
+      }}
+    >
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );

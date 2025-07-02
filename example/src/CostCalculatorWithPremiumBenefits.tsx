@@ -14,6 +14,7 @@ import {
 import Flag from 'react-flagpack';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { proxyUrl } from './utils';
 import './css/main.css';
 
 const estimationOptions = {
@@ -106,7 +107,11 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   return (
-    <RemoteFlows>
+    <RemoteFlows
+      proxy={{
+        url: proxyUrl,
+      }}
+    >
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );

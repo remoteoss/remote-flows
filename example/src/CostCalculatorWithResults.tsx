@@ -11,6 +11,7 @@ import './css/main.css';
 import 'react-flagpack/dist/style.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { proxyUrl } from './utils';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -23,7 +24,11 @@ export function CostCalculatorWithResults() {
     useState<CostCalculatorEstimateResponse | null>(null);
 
   return (
-    <RemoteFlows>
+    <RemoteFlows
+      proxy={{
+        url: proxyUrl,
+      }}
+    >
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

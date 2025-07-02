@@ -7,6 +7,7 @@ import {
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { components } from './Components';
+import { proxyUrl } from './utils';
 import './css/main.css';
 
 const fetchToken = () => {
@@ -35,7 +36,13 @@ export const CostCalculatorWithReplaceableComponents = () => {
   };
 
   return (
-    <RemoteFlows components={components} auth={fetchToken}>
+    <RemoteFlows
+      proxy={{
+        url: proxyUrl,
+      }}
+      components={components}
+      auth={fetchToken}
+    >
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

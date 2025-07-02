@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import { proxyUrl } from './utils';
 import './css/main.css';
 
 function AmendmentFlow({
@@ -122,7 +123,9 @@ export function ContractAmendment() {
   return (
     <RemoteFlows
       components={components}
-      proxy={{ url: 'http://localhost:3001/' }}
+      proxy={{
+        url: proxyUrl,
+      }}
     >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
