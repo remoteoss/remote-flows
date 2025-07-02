@@ -10,4 +10,5 @@ export type {
   CreditRiskStatus,
   Employment,
   CreditRiskState,
+  Meta,
 } from './types';

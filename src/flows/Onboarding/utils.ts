@@ -64,17 +64,34 @@ export function prettifyFormValues(
           ).find((option) => option.value === value);
 
           if (option) {
-            return [key, { prettyValue: option?.label, label: field?.label }];
+            return [
+              key,
+              {
+                prettyValue: option?.label,
+                label: field?.label,
+                inputType: field?.type,
+              },
+            ];
           }
           return;
         }
 
         if (field?.type === 'checkbox' && field?.const) {
-          return [key, { prettyValue: true, label: field.label }];
+          return [
+            key,
+            { prettyValue: true, label: field.label, inputType: field?.type },
+          ];
         }
 
         if (field?.type === 'countries' && Array.isArray(value)) {
-          return [key, { prettyValue: value.join(), label: field.label }];
+          return [
+            key,
+            {
+              prettyValue: value.join(),
+              label: field.label,
+              inputType: field?.type,
+            },
+          ];
         }
 
         if (field?.type === 'fieldset') {
@@ -89,6 +106,7 @@ export function prettifyFormValues(
             const prettyValue: Record<string, unknown> = {
               ...prettiedFieldset.value,
               label: field.label,
+              inputType: field?.type,
             };
             return [key, prettyValue];
           }
@@ -96,8 +114,23 @@ export function prettifyFormValues(
           return [key, prettiedFieldset];
         }
 
+        if (field?.type === 'money') {
+          return [
+            key,
+            {
+              prettyValue: value,
+              label: field.label,
+              inputType: field?.type,
+              desiredCurrency: field?.desiredCurrency,
+            },
+          ];
+        }
+
         if (field) {
-          return [key, { prettyValue: value, label: field.label }];
+          return [
+            key,
+            { prettyValue: value, label: field.label, inputType: field?.type },
+          ];
         }
       })
       .filter(Boolean),
