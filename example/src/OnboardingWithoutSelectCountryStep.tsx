@@ -15,7 +15,6 @@ import ReviewStep from './ReviewStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { AlertError } from './AlertError';
 import './css/main.css';
-import { components } from './Components';
 
 export const InviteSection = ({
   title,
@@ -242,7 +241,7 @@ const OnboardingWithProps = ({
   employmentId,
   countryCode,
 }: OnboardingFormData) => (
-  <RemoteFlows components={components}>
+  <RemoteFlows>
     <OnboardingFlow
       companyId={companyId}
       type={type}
