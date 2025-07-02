@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Patch Changes
+
+- 601baa4: Improve meta fields and annual gross salary
+
 ## 0.4.0-alpha.13
 
 ### Minor Changes
