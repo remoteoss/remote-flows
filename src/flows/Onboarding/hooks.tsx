@@ -175,8 +175,6 @@ export const useOnboarding = ({
     stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
 
-  const currentFormValuesRef = useRef<Record<string, unknown>>({});
-
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
       jsfModify: options?.jsfModify?.select_country,
@@ -615,24 +613,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  const checkFieldUpdates = (values: FieldValues) => {
-    setFieldValues(values);
-    // We store the values of the form in a ref as the save draft button doesn't have access to formik's context
-    currentFormValuesRef.current = {
-      ...currentFormValuesRef.current,
-      ...values,
-    };
-  };
-
-  const getCurrentFormValues = () => {
-    const stepName = stepState.currentStep.name;
-    const stepValues = stepState.values?.[stepName] || {};
-    return {
-      ...stepValues,
-      ...currentFormValuesRef.current,
-    };
-  };
-
   return {
     /**
      * Employment id passed useful to be used between components
@@ -652,7 +632,10 @@ export const useOnboarding = ({
      */
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
-
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
     /**
      * Current step state containing the current step and total number of steps
      */
@@ -721,13 +704,7 @@ export const useOnboarding = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: checkFieldUpdates,
-
-    /**
-     * Function to get current form values (for SaveDraftButton)
-     * @returns Current form values
-     */
-    getCurrentFormValues,
+    checkFieldUpdates: setFieldValues,
 
     /**
      * Function to parse form values before submission

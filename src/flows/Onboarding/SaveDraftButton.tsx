@@ -24,13 +24,7 @@ export const SaveDraftButton = ({
 
   const handleSaveDraft = async () => {
     try {
-      // Get current form values
-      const currentValues = onboardingBag.getCurrentFormValues();
-
-      // Submit without moving to next step
-      console.log('submitting draft with current values', currentValues);
-      const response = await onboardingBag.onSubmit(currentValues);
-
+      const response = await onboardingBag.onSubmit(onboardingBag.fieldValues);
       if (response?.data) {
         onSuccess?.();
       } else if (response?.error) {
