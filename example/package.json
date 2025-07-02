@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
+    "preinstall": "cd ../ && npm run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "postinstall": "react-flagpack"
