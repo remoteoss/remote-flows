@@ -50,8 +50,19 @@ VITE_REMOTE_GATEWAY=partners # for sandbox
 
 3. Start the development server:
 
-```sh
+First run the root package with
+
+```
+npm link
+npm run dev
+```
+
+then
+
+```
 cd example
+npm install
+npm link @remoteoss/remote-flows
 npm run dev
 ```
 
