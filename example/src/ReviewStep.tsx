@@ -5,6 +5,7 @@ import {
   Employment,
   CreditRiskState,
   NormalizedFieldError,
+  Meta,
 } from '@remoteoss/remote-flows';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
@@ -96,11 +97,7 @@ const CreditRiskSections = ({
   }
 };
 
-function Review({
-  meta,
-}: {
-  meta: Record<string, { label?: string; prettyValue?: string | boolean }>;
-}) {
+function Review({ meta }: { meta: Meta }) {
   return (
     <div className="onboarding-values">
       {Object.entries(meta).map(([key, value]) => {

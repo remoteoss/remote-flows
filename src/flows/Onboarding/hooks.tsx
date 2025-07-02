@@ -18,7 +18,7 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { Meta, OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
@@ -120,8 +120,17 @@ export const useOnboarding = ({
   options,
   skipSteps,
 }: OnboardingHookProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fieldsMetaRef = useRef<Record<string, any>>({});
+  const fieldsMetaRef = useRef<{
+    select_country: Meta;
+    basic_information: Meta;
+    contract_details: Meta;
+    benefits: Meta;
+  }>({
+    select_country: {},
+    basic_information: {},
+    contract_details: {},
+    benefits: {},
+  });
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -601,6 +610,10 @@ export const useOnboarding = ({
   function goTo(step: keyof typeof STEPS) {
     goToStep(step);
   }
+
+  console.log({
+    meta: fieldsMetaRef.current,
+  });
 
   return {
     /**
