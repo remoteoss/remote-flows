@@ -1,26 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormField } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
+import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TextField, TextFieldProps } from './TextField';
-import { Components } from '@/src/types/remoteFlows';
 
-type NumberFieldProps = TextFieldProps & {
-  component?: Components['number'];
-};
-
-export function NumberField(props: NumberFieldProps) {
+export function MoneyField(props: TextFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
-
-  const CustomNumberField = props.component || components?.number;
-
-  if (CustomNumberField) {
+  console.log('MoneyField', props);
+  if (components?.money) {
     return (
       <FormField
         control={control}
         name={props.name}
         render={({ field, fieldState }) => {
+          const CustomNumberField =
+            components.money as React.ComponentType<any>;
           return (
             <CustomNumberField
               field={{
