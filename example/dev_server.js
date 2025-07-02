@@ -6,6 +6,13 @@ const { createServer: createViteServer } = require('vite');
 
 dotenv.config();
 
+const ENVIRONMENTS = {
+  partners: 'https://gateway.partners.remote-sandbox.com',
+  production: 'https://gateway.remote.com',
+  sandbox: 'https://gateway.remote-sandbox.com',
+  staging: 'https://gateway.niceremote.com',
+};
+
 const startServer = async () => {
   const app = express();
   const port = 3001;
@@ -23,6 +30,9 @@ const startServer = async () => {
   // Proxy middleware for all other API requests
   app.use('/v1', async (req, res) => {
     try {
+      const { VITE_REMOTE_GATEWAY } = process.env;
+      const gatewayUrl = ENVIRONMENTS[VITE_REMOTE_GATEWAY];
+
       const targetUrl = `${gatewayUrl}${req.originalUrl}`;
 
       const response = await axios({
