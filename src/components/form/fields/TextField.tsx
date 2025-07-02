@@ -21,6 +21,7 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
       onChange?: (value: any) => void;
       component?: Components['text'];
       includeErrorMessage?: boolean;
+      additionalProps?: Record<string, unknown>;
     }
   >;
 
@@ -32,6 +33,7 @@ export function TextField({
   onChange,
   component,
   includeErrorMessage = true,
+  additionalProps = {},
   ...rest
 }: TextFieldProps) {
   const { components } = useFormFields();
@@ -50,6 +52,7 @@ export function TextField({
             label,
             type,
             onChange,
+            additionalProps,
             ...rest,
           };
           return (

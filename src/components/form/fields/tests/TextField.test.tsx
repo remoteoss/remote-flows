@@ -102,6 +102,32 @@ describe('TextField Component', () => {
     expect(call.fieldState).toBeDefined();
   });
 
+  it('should pass additionalProps to custom component', () => {
+    const CustomTextField = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid="custom-text-field">Custom Text Field</div>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { text: CustomTextField },
+    });
+
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      additionalProps: { customProp: 'customValue' },
+    });
+
+    const call = CustomTextField.mock.calls[0][0];
+    expect(call.fieldData).toMatchObject({
+      ...defaultProps,
+      additionalProps: { customProp: 'customValue' },
+    });
+    expect(call.field).toBeDefined();
+    expect(call.fieldState).toBeDefined();
+  });
+
   it('handles onChange in custom text component', () => {
     const CustomTextField = vi.fn().mockImplementation(({ field }) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
