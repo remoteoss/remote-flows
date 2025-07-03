@@ -21,7 +21,7 @@ async function getToken(req, res) {
   ) {
     return res.status(400).json({
       error:
-        'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or REFRESH_TOKEN',
+        'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
     });
   }
 
