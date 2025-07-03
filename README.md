@@ -41,9 +41,9 @@ npm install
 2. Create a `.env` file in the example directory with your Remote credentials:
 
 ```env
-CLIENT_ID=your_client_id
-CLIENT_SECRET=your_client_secret
-REFRESH_TOKEN=your_refresh_token
+VITE_CLIENT_ID=your_client_id
+VITE_CLIENT_SECRET=your_client_secret
+VITE_REFRESH_TOKEN=your_refresh_token
 VITE_REMOTE_GATEWAY=partners # for sandbox
 # VITE_REMOTE_GATEWAY=production # for production
 ```
