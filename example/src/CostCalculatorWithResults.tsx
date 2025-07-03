@@ -23,7 +23,7 @@ export function CostCalculatorWithResults() {
     useState<CostCalculatorEstimateResponse | null>(null);
 
   return (
-    <RemoteFlows>
+    <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

@@ -6,20 +6,29 @@ const ENVIRONMENTS = {
 };
 
 async function getToken(req, res) {
-  const { CLIENT_ID, CLIENT_SECRET, VITE_REMOTE_GATEWAY, REFRESH_TOKEN } =
-    process.env;
+  const {
+    VITE_CLIENT_ID,
+    VITE_CLIENT_SECRET,
+    VITE_REMOTE_GATEWAY,
+    VITE_REFRESH_TOKEN,
+  } = process.env;
 
-  if (!CLIENT_ID || !CLIENT_SECRET || !VITE_REMOTE_GATEWAY || !REFRESH_TOKEN) {
+  if (
+    !VITE_CLIENT_ID ||
+    !VITE_CLIENT_SECRET ||
+    !VITE_REMOTE_GATEWAY ||
+    !VITE_REFRESH_TOKEN
+  ) {
     return res.status(400).json({
       error:
-        'Missing CLIENT_ID, CLIENT_SECRET, VITE_REMOTE_GATEWAY, or REFRESH_TOKEN',
+        'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or REFRESH_TOKEN',
     });
   }
 
   const gatewayUrl = ENVIRONMENTS[VITE_REMOTE_GATEWAY];
 
   const encodedCredentials = Buffer.from(
-    `${CLIENT_ID}:${CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
   ).toString('base64');
 
   try {
@@ -31,7 +40,7 @@ async function getToken(req, res) {
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: REFRESH_TOKEN,
+        refresh_token: VITE_REFRESH_TOKEN,
       }),
     });
 

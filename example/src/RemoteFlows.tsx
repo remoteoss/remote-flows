@@ -18,8 +18,11 @@ const fetchToken = () => {
 };
 
 const fetchClientToken = () => {
+  const accessToken = btoa(
+    `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_TOKEN}`,
+  );
   return Promise.resolve({
-    accessToken: import.meta.env.VITE_CLIENT_TOKEN || '',
+    accessToken: accessToken || '',
     expiresIn: 3600, // Default expiration time in seconds
   });
 };
