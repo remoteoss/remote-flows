@@ -36,6 +36,11 @@ export const SaveDraftButton = ({
 
   const handleSaveDraft = async () => {
     try {
+      const isValid = await onboardingBag.triggerFormValidation();
+      if (!isValid) {
+        return;
+      }
+
       const response = await onboardingBag.onSubmit(onboardingBag.fieldValues);
 
       if (response?.data) {

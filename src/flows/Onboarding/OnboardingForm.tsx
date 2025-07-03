@@ -44,6 +44,10 @@ export function OnboardingForm({
   });
 
   useEffect(() => {
+    onboardingBag.setValidationTrigger(form.trigger);
+  }, [form, onboardingBag]);
+
+  useEffect(() => {
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (onboardingBag.employmentId) {
