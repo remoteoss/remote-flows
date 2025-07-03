@@ -556,7 +556,6 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            await refetchCompany();
             setInternalEmploymentId(
               // @ts-expect-error the types from the response are not matching
               response.data?.data?.employment?.id,
@@ -632,7 +631,10 @@ export const useOnboarding = ({
      */
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
-
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
     /**
      * Current step state containing the current step and total number of steps
      */
