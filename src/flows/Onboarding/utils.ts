@@ -121,7 +121,7 @@ export function prettifyFormValues(
               prettyValue: value,
               label: field.label,
               inputType: field?.type,
-              desiredCurrency: field?.desiredCurrency,
+              currency: field?.currency,
             },
           ];
         }
