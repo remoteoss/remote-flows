@@ -198,6 +198,19 @@ describe('SaveDraftButton', () => {
     expect(button).toBeInTheDocument();
   });
 
+  it('should trigger the form validation when save draft is clicked', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    const saveDraftButton = screen.getByText(/Save Draft/i);
+    fireEvent.click(saveDraftButton);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(5);
+    });
+  });
+
   it('should call onSuccess when save draft is successful for basic information step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper });
 
