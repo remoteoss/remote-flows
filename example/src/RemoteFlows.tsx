@@ -17,16 +17,28 @@ const fetchToken = () => {
     });
 };
 
+const fetchClientToken = () => {
+  return Promise.resolve({
+    accessToken: import.meta.env.VITE_CLIENT_TOKEN || '',
+    expiresIn: 3600, // Default expiration time in seconds
+  });
+};
+
 type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
   children: ReactNode;
   auth?: RemoteFlowsSDKProps['auth'];
+  isClientToken?: boolean;
 };
 
-export const RemoteFlows = ({ children, ...props }: RemoteFlowsProps) => {
+export const RemoteFlows = ({
+  children,
+  isClientToken,
+  ...props
+}: RemoteFlowsProps) => {
   return (
     <RemoteFlowsAuth
       environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
-      auth={fetchToken}
+      auth={!isClientToken ? fetchToken : fetchClientToken}
       {...props}
     >
       {children}
