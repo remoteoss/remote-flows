@@ -1,13 +1,25 @@
 import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from './context';
 import { ButtonHTMLAttributes } from 'react';
+import {
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
 
 type SaveDraftButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'onError'
 > & {
   onSuccess?: () => void | Promise<void>;
-  onError?: (error: Error) => void | Promise<void>;
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 };
 
 export const SaveDraftButton = ({
@@ -25,13 +37,36 @@ export const SaveDraftButton = ({
   const handleSaveDraft = async () => {
     try {
       const response = await onboardingBag.onSubmit(onboardingBag.fieldValues);
+      console.log('response', response);
+
       if (response?.data) {
         onSuccess?.();
       } else if (response?.error) {
-        onError?.(response.error);
+        const currentStepName = onboardingBag.stepState.currentStep.name;
+
+        // Get the appropriate fields based on current step
+        const currentStepFields =
+          onboardingBag.meta?.fields?.[
+            currentStepName as keyof typeof onboardingBag.meta.fields
+          ];
+
+        const normalizedFieldErrors = normalizeFieldErrors(
+          response?.fieldErrors || [],
+          currentStepFields,
+        );
+
+        onError?.({
+          error: response?.error,
+          rawError: response?.rawError,
+          fieldErrors: normalizedFieldErrors,
+        });
       }
     } catch (error) {
-      onError?.(error as Error);
+      onError?.({
+        error: error as Error,
+        rawError: error as Record<string, unknown>,
+        fieldErrors: [],
+      });
     }
   };
 
