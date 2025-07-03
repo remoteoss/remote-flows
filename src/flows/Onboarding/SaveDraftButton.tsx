@@ -37,7 +37,6 @@ export const SaveDraftButton = ({
   const handleSaveDraft = async () => {
     try {
       const response = await onboardingBag.onSubmit(onboardingBag.fieldValues);
-      console.log('response', response);
 
       if (response?.data) {
         onSuccess?.();
