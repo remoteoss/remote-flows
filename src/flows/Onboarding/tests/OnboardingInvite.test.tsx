@@ -10,7 +10,7 @@ import {
   contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/utils';
+import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/helpers';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
