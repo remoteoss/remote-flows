@@ -1,7 +1,7 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
 const express = require('express');
-const { getToken } = require('./api/get_token.js');
+const { getToken, buildGatewayURL } = require('./api/get_token.js');
 const { createServer: createViteServer } = require('vite');
 
 dotenv.config();
@@ -23,6 +23,7 @@ const startServer = async () => {
   // Proxy middleware for all other API requests
   app.use('/v1', async (req, res) => {
     try {
+      const gatewayUrl = buildGatewayURL();
       const targetUrl = `${gatewayUrl}${req.originalUrl}`;
 
       const response = await axios({
