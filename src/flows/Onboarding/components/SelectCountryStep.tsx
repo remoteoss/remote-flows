@@ -1,5 +1,5 @@
-import { useOnboardingContext } from './context';
-import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
+import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { OnboardingForm } from '@/src/flows/Onboarding/components/OnboardingForm';
 import {
   SelectCountryFormPayload,
   SelectCountrySuccess,

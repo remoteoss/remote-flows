@@ -7,7 +7,7 @@ import { JSFField } from '@/src/types/remoteFlows';
 import { server } from '@/src/tests/server';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { ButtonComponentProps } from '@/src/types/remoteFlows';
-import { AnnualGrossSalary } from '../AnnualGrossSalary';
+import { AnnualGrossSalary } from '../components/AnnualGrossSalary';
 import {
   conversionFromEURToUSD,
   conversionFromUSDToEUR,

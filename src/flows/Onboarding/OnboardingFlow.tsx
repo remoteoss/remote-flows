@@ -1,16 +1,16 @@
 import React, { useId, useState } from 'react';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
-import { BasicInformationStep } from '@/src/flows/Onboarding/BasicInformationStep';
+import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
-import { OnboardingSubmit } from '@/src/flows/Onboarding/OnboardingSubmit';
-import { OnboardingBack } from '@/src/flows/Onboarding/OnboardingBack';
+import { OnboardingSubmit } from '@/src/flows/Onboarding/components/OnboardingSubmit';
+import { OnboardingBack } from '@/src/flows/Onboarding/components/OnboardingBack';
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
-import { OnboardingInvite } from '@/src/flows/Onboarding/OnboardingInvite';
-import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep';
-import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
-import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
-import { ReviewStep } from '@/src/flows/Onboarding/ReviewStep';
-import { SaveDraftButton } from '@/src/flows/Onboarding/SaveDraftButton';
+import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
+import { ContractDetailsStep } from '@/src/flows/Onboarding/components/ContractDetailsStep';
+import { BenefitsStep } from '@/src/flows/Onboarding/components/BenefitsStep';
+import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
+import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
+import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 
 export type OnboardingRenderProps = {
   /**
