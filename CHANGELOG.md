@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Patch Changes
+
+- b2b7fac: Trigger validation from the save draft button
+
 ## 0.4.0-alpha.15
 
 ### Patch Changes
