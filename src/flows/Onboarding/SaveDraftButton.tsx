@@ -1,10 +1,8 @@
 import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from './context';
 import { ButtonHTMLAttributes } from 'react';
-import {
-  NormalizedFieldError,
-  normalizeFieldErrors,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type SaveDraftButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -30,42 +28,20 @@ export const SaveDraftButton = ({
   disabled = false,
   ...props
 }: SaveDraftButtonProps) => {
-  const { onboardingBag } = useOnboardingContext();
+  const { onboardingBag, formId } = useOnboardingContext();
 
   const { components } = useFormFields();
 
   const handleSaveDraft = async () => {
-    try {
-      const response = await onboardingBag.onSubmit(onboardingBag.fieldValues);
-
-      if (response?.data) {
-        onSuccess?.();
-      } else if (response?.error) {
-        const currentStepName = onboardingBag.stepState.currentStep.name;
-
-        // Get the appropriate fields based on current step
-        const currentStepFields =
-          onboardingBag.meta?.fields?.[
-            currentStepName as keyof typeof onboardingBag.meta.fields
-          ];
-
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          currentStepFields,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
-    } catch (error) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
+    const form = document.getElementById(formId);
+    if (form) {
+      const submitEvent = new Event('submit', {
+        bubbles: true,
+        cancelable: true,
       });
+      (submitEvent as $TSFixMe).isDraftSubmission = true;
+      (submitEvent as $TSFixMe).draftCallbacks = { onSuccess, onError };
+      form.dispatchEvent(submitEvent);
     }
   };
 
