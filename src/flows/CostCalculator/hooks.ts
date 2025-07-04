@@ -1,13 +1,7 @@
 import {
-  CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
-  getIndexCompanyCurrency,
-  getIndexCountry,
-  getShowRegionField,
   MinimalRegion,
-  postCreateEstimation,
   PostCreateEstimationError,
-  postCreateEstimationPdf,
 } from '@/src/client';
 import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
@@ -19,13 +13,16 @@ import type { JSFModify, Result } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
-import { useClient } from '@/src/context';
-import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
+import {
+  useCompanyCurrencies,
+  useCostCalculatorCountries,
+  useCostCalculatorEstimation,
+  useRegionFields,
+} from '@/src/flows/CostCalculator/api';
 
 type CostCalculatorCountry = {
   value: string;
@@ -44,151 +41,6 @@ type JSFValidationError = {
     }
   >;
   yupError: ValidationError;
-};
-
-/**
- * Hook to fetch the countries for the cost calculator.
- * @returns
- */
-const useCostCalculatorCountries = ({
-  includePremiumBenefits,
-}: {
-  includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['cost-calculator-countries', includePremiumBenefits],
-    queryFn: () => {
-      return getIndexCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        query: {
-          include_premium_benefits: includePremiumBenefits,
-        },
-      });
-    },
-    select: (data) =>
-      data.data?.data.map((country) => ({
-        value: country.region_slug,
-        label: country.name,
-        childRegions: country.child_regions,
-        hasAdditionalFields: country.has_additional_fields,
-        regionSlug: country.region_slug,
-      })),
-  });
-};
-
-/**
- * Hook to fetch the company currencies.
- * @returns
- */
-const useCompanyCurrencies = () => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['company-currencies'],
-    queryFn: () => {
-      return getIndexCompanyCurrency({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-    },
-    select: (data) =>
-      data.data?.data?.company_currencies.map((currency) => ({
-        value: currency.slug,
-        label: currency.code,
-      })),
-  });
-};
-
-/**
- * Hook to create an estimation.
- * @returns
- */
-const useCostCalculatorEstimation = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimation({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Custom hook to create a PDF estimation.
- *
- * @returns
- */
-export const useCostCalculatorEstimationPdf = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimationPdf({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Hook to fetch the region fields.
- * @param region
- * @returns
- */
-const useRegionFields = (
-  region: string | undefined,
-  {
-    includePremiumBenefits,
-    options,
-  }: {
-    includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-    options?: {
-      jsfModify?: JSFModify;
-    };
-  },
-) => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['cost-calculator-region-fields', region, includePremiumBenefits],
-    queryFn: () => {
-      return getShowRegionField({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { slug: region as string },
-        query: {
-          include_premium_benefits: includePremiumBenefits,
-        },
-      });
-    },
-    enabled: !!region,
-    select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      return createHeadlessForm(jsfSchema);
-    },
-  });
 };
 
 export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
