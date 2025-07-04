@@ -3,24 +3,11 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  RemoteFlows,
   CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { components } from './Components';
+import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
-
-const fetchToken = () => {
-  return fetch('/api/token')
-    .then((res) => res.json())
-    .then((data) => ({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-    }))
-    .catch((error) => {
-      console.error({ error });
-      throw error;
-    });
-};
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -35,7 +22,7 @@ export const CostCalculatorWithReplaceableComponents = () => {
   };
 
   return (
-    <RemoteFlows components={components} auth={fetchToken}>
+    <RemoteFlows isClientToken components={components}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

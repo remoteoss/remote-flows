@@ -16,7 +16,7 @@ const estimationOptions = {
 
 export function BasicCostCalculatorWithDefaultValues() {
   return (
-    <RemoteFlows>
+    <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{
