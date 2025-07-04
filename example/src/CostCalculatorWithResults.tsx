@@ -26,6 +26,15 @@ export function CostCalculatorWithResults() {
     <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={{
+          jsfModify: {
+            fields: {
+              currency: {
+                title: 'Employer billing currency',
+              },
+            },
+          },
+        }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;
