@@ -163,8 +163,6 @@ export const useOnboarding = ({
     ? STEPS_WITHOUT_SELECT_COUNTRY
     : STEPS;
 
-  const validationTriggerRef = useRef<(() => Promise<boolean>) | null>(null);
-
   const {
     fieldValues,
     stepState,
@@ -614,17 +612,6 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
-  const setValidationTrigger = (trigger: () => Promise<boolean>) => {
-    validationTriggerRef.current = trigger;
-  };
-
-  const triggerFormValidation = async () => {
-    if (validationTriggerRef.current) {
-      return await validationTriggerRef.current();
-    }
-    return true;
-  };
-
   return {
     /**
      * Employment id passed useful to be used between components
@@ -773,18 +760,5 @@ export const useOnboarding = ({
      * @returns {boolean}
      */
     isEmploymentReadOnly,
-
-    /**
-     * Function to set a validation trigger
-     * @param trigger - The trigger function to set
-     * @returns {void}
-     */
-    setValidationTrigger,
-
-    /**
-     * Function to trigger form validation
-     * @returns {Promise<boolean>}
-     */
-    triggerFormValidation,
   };
 };
