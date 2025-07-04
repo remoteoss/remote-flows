@@ -19,6 +19,7 @@ function buildGatewayURL() {
 async function getToken(req, res) {
   const {
     VITE_CLIENT_ID,
+    VITE_CLIENT_TOKEN,
     VITE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
     VITE_REFRESH_TOKEN,
@@ -26,8 +27,13 @@ async function getToken(req, res) {
   } = process.env;
 
   if (NODE_ENV === 'production') {
-    return res.status(403).json({
-      error: 'This endpoint is not available in production mode',
+    const encodedClientToken = Buffer.from(
+      `${VITE_CLIENT_ID}:${VITE_CLIENT_TOKEN}`,
+    ).toString('base64');
+
+    return res.status(200).json({
+      access_token: encodedClientToken,
+      expires_in: 3600,
     });
   }
 
