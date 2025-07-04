@@ -243,6 +243,7 @@ export const useJSONSchemaForm = ({
 
 export const useBenefitOffersSchema = (
   employmentId: string,
+  stepName: string,
   fieldValues: FieldValues,
   options: OnboardingFlowParams['options'],
 ) => {
@@ -255,9 +256,9 @@ export const useBenefitOffersSchema = (
     : {};
   const { client } = useClient();
   return useQuery({
-    queryKey: ['benefit-offers-schema', employmentId],
+    queryKey: ['benefit-offers-schema', employmentId, stepName],
     retry: false,
-    enabled: !!employmentId,
+    enabled: !!employmentId || stepName === 'benefits',
     queryFn: async () => {
       const response = await getShowSchema({
         client: client as Client,

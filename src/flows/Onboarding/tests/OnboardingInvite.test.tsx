@@ -10,6 +10,7 @@ import {
   contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
+import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/helpers';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -75,7 +76,6 @@ const mockRender = vi.fn(
 
 const defaultProps = {
   companyId: '1234',
-  employmentId: '1234',
   countryCode: 'PRT',
   options: {},
   render: mockRender,
@@ -113,8 +113,19 @@ describe('OnboardingInvite', () => {
         return HttpResponse.json(contractDetailsSchema);
       }),
 
-      http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
+      http.get('*/v1/employments/:id', ({ params }) => {
+        // Create a response with the actual employment ID from the request
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...employmentResponse,
+          data: {
+            ...employmentResponse.data,
+            employment: {
+              ...employmentResponse.data.employment,
+              id: employmentId,
+            },
+          },
+        });
       }),
 
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
@@ -147,10 +158,16 @@ describe('OnboardingInvite', () => {
   });
 
   it('should render the OnboardingInvite component with default "Invite Employee" text', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -172,17 +189,29 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
   });
 
   it('should call onSubmit and onSuccess when invite is successful', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     const button = screen.getByText(/Invite Employee/i);
     fireEvent.click(button);
@@ -204,7 +233,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Employee/i);
@@ -230,7 +265,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Employee/i);
@@ -274,10 +315,16 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await screen.findByText(/Step: Select Country/);
+    await screen.findByText(/Step: Review/);
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -326,7 +373,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
     const button = await screen.findByTestId('onboarding-invite');
     fireEvent.click(button);
     await waitFor(() => {
@@ -370,7 +423,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
     const button = await screen.findByTestId('onboarding-invite');
     fireEvent.click(button);
     await waitFor(() => {
@@ -392,13 +451,15 @@ describe('OnboardingInvite', () => {
           },
         });
       }),
-      http.get('*/v1/employments/*', () => {
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
         return HttpResponse.json({
           ...employmentResponse,
           data: {
             ...employmentResponse.data,
             employment: {
               ...employmentResponse.data.employment,
+              id: employmentId,
               status: 'created_reserve_paid',
             },
           },
@@ -406,7 +467,15 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -429,13 +498,15 @@ describe('OnboardingInvite', () => {
           },
         });
       }),
-      http.get('*/v1/employments/*', () => {
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
         return HttpResponse.json({
           ...employmentResponse,
           data: {
             ...employmentResponse.data,
             employment: {
               ...employmentResponse.data.employment,
+              id: employmentId,
               status: 'created_reserve_paid',
             },
           },
@@ -455,7 +526,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -491,7 +568,13 @@ describe('OnboardingInvite', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByTestId('onboarding-invite');
     expect(button).toBeDisabled();
@@ -505,7 +588,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -538,7 +627,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -551,15 +646,9 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should render "Invite Employee" when creditRiskStatus is deposit_required but employment status indicates deposit handling', async () => {
-    // Test with various employment statuses that should show "Invite Employee" instead of "Create Reserve"
-    const employmentStatuses = [
-      'created_reserve_paid',
-      'invited',
-      'created_awaiting_reserve',
-    ];
-
-    for (const status of employmentStatuses) {
+  it.each(['created_reserve_paid', 'invited', 'created_awaiting_reserve'])(
+    'should render "Invite Employee" when employment status is %s',
+    async (status) => {
       mockRender.mockClear();
 
       server.use(
@@ -575,13 +664,15 @@ describe('OnboardingInvite', () => {
             },
           });
         }),
-        http.get('*/v1/employments/*', () => {
+        http.get('*/v1/employments/:id', ({ params }) => {
+          const employmentId = params?.id;
           return HttpResponse.json({
             ...employmentResponse,
             data: {
               ...employmentResponse.data,
               employment: {
                 ...employmentResponse.data.employment,
+                id: employmentId,
                 status,
               },
             },
@@ -589,18 +680,23 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        { wrapper },
+      );
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       const button = await screen.findByText(/Invite Employee/i);
       expect(button).toBeInTheDocument();
 
       // Ensure it's not showing "Create Reserve"
       expect(screen.queryByText(/Create Reserve/i)).not.toBeInTheDocument();
-
-      // Clean up before next iteration
-      queryClient.clear();
-    }
-  });
+    },
+  );
 
   it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
     server.use(
@@ -616,13 +712,15 @@ describe('OnboardingInvite', () => {
           },
         });
       }),
-      http.get('*/v1/employments/*', () => {
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
         return HttpResponse.json({
           ...employmentResponse,
           data: {
             ...employmentResponse.data,
             employment: {
               ...employmentResponse.data.employment,
+              id: employmentId,
               status: 'created',
             },
           },
@@ -635,7 +733,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -664,13 +768,15 @@ describe('OnboardingInvite', () => {
           },
         });
       }),
-      http.get('*/v1/employments/*', () => {
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
         return HttpResponse.json({
           ...employmentResponse,
           data: {
             ...employmentResponse.data,
             employment: {
               ...employmentResponse.data.employment,
+              id: employmentId,
               status: 'created',
             },
           },
@@ -683,7 +789,13 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      { wrapper },
+    );
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -736,9 +848,15 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      const { unmount } = render(<OnboardingFlow {...defaultProps} />, {
-        wrapper,
-      });
+      const { unmount } = render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper,
+        },
+      );
       await screen.findByText('Custom Invite Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
         employmentStatus: 'invited',
@@ -763,7 +881,13 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        { wrapper },
+      );
       await screen.findByText('Custom Reserve Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
         employmentStatus: 'created_awaiting_reserve',
@@ -799,13 +923,15 @@ describe('OnboardingInvite', () => {
             },
           });
         }),
-        http.get('*/v1/employments/*', () => {
+        http.get('*/v1/employments/:id', ({ params }) => {
+          const employmentId = params?.id;
           return HttpResponse.json({
             ...employmentResponse,
             data: {
               ...employmentResponse.data,
               employment: {
                 ...employmentResponse.data.employment,
+                id: employmentId,
                 status: 'created_reserve_paid',
               },
             },
@@ -813,7 +939,13 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        { wrapper },
+      );
 
       await screen.findByText('Hidden Deposit Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
@@ -865,9 +997,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       const customButton = await screen.findByTestId('custom-button');
       expect(customButton).toBeInTheDocument();
@@ -899,9 +1037,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       const customButton = await screen.findByTestId('custom-button');
       expect(customButton).toBeDisabled();
@@ -930,9 +1074,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       const customButton = await screen.findByTestId('custom-button');
       fireEvent.click(customButton);
@@ -963,9 +1113,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       const customButton = await screen.findByTestId('custom-button');
       expect(customButton).not.toBeDisabled(); // Initially not disabled
@@ -1017,9 +1173,15 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       const customButton = await screen.findByTestId('custom-button');
       await waitFor(() => {
@@ -1046,7 +1208,13 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        { wrapper },
+      );
 
       const button = await screen.findByTestId('onboarding-invite');
       expect(button).toBeInTheDocument();
@@ -1074,9 +1242,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       await screen.findByTestId('custom-button');
 
@@ -1116,9 +1290,15 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
-      });
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: customWrapper,
+        },
+      );
 
       await screen.findByTestId('custom-button');
 
