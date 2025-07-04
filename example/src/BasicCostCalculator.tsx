@@ -21,7 +21,7 @@ export function BasicCostCalculator() {
   };
 
   return (
-    <RemoteFlows>
+    <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

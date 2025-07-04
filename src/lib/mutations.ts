@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Meta } from '@/src/flows/Onboarding/types';
 import { UseMutationResult } from '@tanstack/react-query';
 
 type MutationData<T> =
@@ -128,7 +129,7 @@ export interface NormalizedFieldError extends FieldError {
  */
 export function normalizeFieldErrors(
   fieldErrors: FieldError[],
-  meta?: Record<string, { label?: string; prettyValue?: string | boolean }>,
+  meta?: Meta,
 ): NormalizedFieldError[] {
   if (!fieldErrors || fieldErrors.length === 0) {
     return [];

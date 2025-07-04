@@ -1,5 +1,23 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.16
+
+### Patch Changes
+
+- b2b7fac: Trigger validation from the save draft button
+
+## 0.4.0-alpha.15
+
+### Patch Changes
+
+- 7824696: Add SaveDraftButton and fix meta currency
+
+## 0.4.0-alpha.14
+
+### Patch Changes
+
+- 601baa4: Improve meta fields and annual gross salary
+
 ## 0.4.0-alpha.13
 
 ### Minor Changes

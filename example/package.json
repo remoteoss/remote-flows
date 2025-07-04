@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "1.1.2",
-    "@remoteoss/remote-flows": "github:remoteoss/remote-flows#main",
+    "@remoteoss/remote-flows": ">=0.4.0-alpha.0 <0.4.0-alpha.100",
     "axios": "^1.8.3",
     "dotenv": "^17.0.0",
     "express": "^4.21.2",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/node": "^22.13.4",
     "@types/react-dom": "^19.0.4",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react-swc": "^3.8.0",

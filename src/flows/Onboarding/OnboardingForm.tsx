@@ -10,7 +10,8 @@ import {
   BenefitsFormPayload,
   ContractDetailsFormPayload,
 } from '@/src/flows/Onboarding/types';
-import { Components } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { normalizeFieldErrors } from '@/src/lib/mutations';
 
 type OnboardingFormProps = {
   onSubmit: (
@@ -66,11 +67,65 @@ export function OnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleSubmit = async (
+    values: Record<string, unknown>,
+    event?: React.BaseSyntheticEvent,
+  ) => {
+    const nativeEvent = event?.nativeEvent as $TSFixMe;
+
+    if (nativeEvent?.isDraftSubmission) {
+      // Handle draft submission
+      const { onSuccess, onError } = nativeEvent.draftCallbacks;
+
+      try {
+        // Trigger validation
+        const isValid = await form.trigger();
+        if (!isValid) {
+          return; // Don't submit if validation fails
+        }
+
+        // Submit the form
+        const response = await onboardingBag.onSubmit(values);
+
+        if (response?.data) {
+          onSuccess?.();
+        } else if (response?.error) {
+          const currentStepName = onboardingBag.stepState.currentStep.name;
+
+          // Get the appropriate fields based on current step
+          const currentStepFields =
+            onboardingBag.meta?.fields?.[
+              currentStepName as keyof typeof onboardingBag.meta.fields
+            ];
+
+          const normalizedFieldErrors = normalizeFieldErrors(
+            response?.fieldErrors || [],
+            currentStepFields,
+          );
+          onError?.({
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: normalizedFieldErrors,
+          });
+        }
+      } catch (error) {
+        onError?.({
+          error: error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: [],
+        });
+      }
+    } else {
+      // Handle normal form submission
+      onSubmit(values);
+    }
+  };
+
   return (
     <Form {...form}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__OnboardingForm"
       >
         <JSONSchemaFormFields

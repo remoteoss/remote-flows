@@ -18,7 +18,7 @@ describe('prettifyFormValues', () => {
     const values = { name: 'John' };
     const fields: Fields = [{ name: 'name', type: 'text', label: 'Name' }];
     expect(prettifyFormValues(values, fields)).toEqual({
-      name: { prettyValue: 'John', label: 'Name' },
+      name: { prettyValue: 'John', label: 'Name', inputType: 'text' },
     });
   });
 
@@ -36,7 +36,7 @@ describe('prettifyFormValues', () => {
       },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
-      gender: { prettyValue: 'Male', label: 'Gender' },
+      gender: { prettyValue: 'Male', label: 'Gender', inputType: 'radio' },
     });
   });
 
@@ -54,7 +54,11 @@ describe('prettifyFormValues', () => {
       },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
-      country: { prettyValue: 'United States', label: 'Country' },
+      country: {
+        prettyValue: 'United States',
+        label: 'Country',
+        inputType: 'select',
+      },
     });
   });
 
@@ -68,7 +72,31 @@ describe('prettifyFormValues', () => {
       },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
-      countries: { prettyValue: 'us,uk', label: 'Countries' },
+      countries: {
+        prettyValue: 'us,uk',
+        label: 'Countries',
+        inputType: 'countries',
+      },
+    });
+  });
+
+  it('handles money field', () => {
+    const values = { salary: 100000 };
+    const fields: Fields = [
+      {
+        name: 'salary',
+        type: 'money',
+        label: 'Salary',
+        currency: 'USD',
+      },
+    ];
+    expect(prettifyFormValues(values, fields)).toEqual({
+      salary: {
+        prettyValue: 100000,
+        label: 'Salary',
+        inputType: 'money',
+        currency: 'USD',
+      },
     });
   });
 
@@ -92,8 +120,12 @@ describe('prettifyFormValues', () => {
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
       address: {
-        street: { prettyValue: '123 Main St', label: 'Street' },
-        city: { prettyValue: 'Boston', label: 'City' },
+        street: {
+          prettyValue: '123 Main St',
+          label: 'Street',
+          inputType: 'text',
+        },
+        city: { prettyValue: 'Boston', label: 'City', inputType: 'text' },
       },
     });
   });
@@ -130,10 +162,18 @@ describe('prettifyFormValues', () => {
     expect(prettifyFormValues(values, fields)).toEqual({
       contact: {
         address: {
-          street: { prettyValue: '123 Main St', label: 'Street' },
-          city: { prettyValue: 'Boston', label: 'City' },
+          street: {
+            prettyValue: '123 Main St',
+            label: 'Street',
+            inputType: 'text',
+          },
+          city: { prettyValue: 'Boston', label: 'City', inputType: 'text' },
         },
-        phone: { prettyValue: '123-456-7890', label: 'Phone' },
+        phone: {
+          prettyValue: '123-456-7890',
+          label: 'Phone',
+          inputType: 'text',
+        },
       },
     });
   });
@@ -144,7 +184,7 @@ describe('prettifyFormValues', () => {
       { name: 'custom', type: 'unknown', label: 'Custom' },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
-      custom: { prettyValue: 'value', label: 'Custom' },
+      custom: { prettyValue: 'value', label: 'Custom', inputType: 'unknown' },
     });
   });
 
@@ -185,12 +225,20 @@ describe('prettifyFormValues', () => {
       },
     ];
     expect(prettifyFormValues(values, fields)).toEqual({
-      name: { prettyValue: 'John', label: 'Name' },
-      gender: { prettyValue: 'Male', label: 'Gender' },
-      countries: { prettyValue: 'us,uk', label: 'Countries' },
+      name: { prettyValue: 'John', label: 'Name', inputType: 'text' },
+      gender: { prettyValue: 'Male', label: 'Gender', inputType: 'radio' },
+      countries: {
+        prettyValue: 'us,uk',
+        label: 'Countries',
+        inputType: 'countries',
+      },
       address: {
-        street: { prettyValue: '123 Main St', label: 'Street' },
-        city: { prettyValue: 'Boston', label: 'City' },
+        street: {
+          prettyValue: '123 Main St',
+          label: 'Street',
+          inputType: 'text',
+        },
+        city: { prettyValue: 'Boston', label: 'City', inputType: 'text' },
       },
     });
   });

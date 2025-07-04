@@ -31,11 +31,17 @@ import {
   fillCheckbox,
   fillRadio,
   fillSelect,
-  selectDayInCalendar,
 } from '@/src/tests/testHelpers';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
+<<<<<<< HEAD
 import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/utils';
+=======
+import {
+  fillBasicInformation,
+  generateUniqueEmploymentId,
+} from '@/src/flows/Onboarding/tests/helpers';
+>>>>>>> main
 
 const queryClient = new QueryClient();
 
@@ -375,6 +381,7 @@ describe('OnboardingFlow', () => {
     mockRender.mockReset();
   });
 
+<<<<<<< HEAD
   async function fillBasicInformation(
     values?: Partial<{
       fullName: string;
@@ -544,6 +551,8 @@ describe('OnboardingFlow', () => {
     }
   }
 
+=======
+>>>>>>> main
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 

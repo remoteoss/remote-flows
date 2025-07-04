@@ -10,6 +10,7 @@ import { ContractDetailsStep } from '@/src/flows/Onboarding/ContractDetailsStep'
 import { BenefitsStep } from '@/src/flows/Onboarding/BenefitsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/ReviewStep';
+import { SaveDraftButton } from '@/src/flows/Onboarding/SaveDraftButton';
 
 export type OnboardingRenderProps = {
   /**
@@ -31,6 +32,7 @@ export type OnboardingRenderProps = {
    * @see {@link InvitationSection}
    * @see {@link SelectCountryStep}
    * @see {@link ReviewStep}
+   * @see {@link SaveDraftButton}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -41,6 +43,7 @@ export type OnboardingRenderProps = {
     BenefitsStep: typeof BenefitsStep;
     SelectCountryStep: typeof SelectCountryStep;
     ReviewStep: typeof ReviewStep;
+    SaveDraftButton: typeof SaveDraftButton;
   };
 };
 
@@ -94,6 +97,7 @@ export const OnboardingFlow = ({
           ContractDetailsStep: ContractDetailsStep,
           BenefitsStep: BenefitsStep,
           SubmitButton: OnboardingSubmit,
+          SaveDraftButton: SaveDraftButton,
           BackButton: OnboardingBack,
           OnboardingInvite: OnboardingInvite,
           SelectCountryStep: SelectCountryStep,

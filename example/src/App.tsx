@@ -43,6 +43,53 @@ import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithRep
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 
+const additionalDemos = [
+  {
+    id: 'termination',
+    title: 'Termination Flow',
+    description: 'Process for terminating employments',
+    component: Termination,
+    sourceCode: TerminationCode,
+  },
+  {
+    id: 'contract-amendments',
+    title: 'Contract Amendments',
+    description: 'Manage changes to existing contracts',
+    component: ContractAmendment,
+    sourceCode: ContractAmendmentCode,
+  },
+  {
+    id: 'onboarding',
+    title: 'Onboarding',
+    description: 'Onboarding flow of a new employee',
+    children: [
+      {
+        id: 'onboarding-basic',
+        title: 'Basic',
+        description: 'Standard onboarding flow',
+        component: OnboardingForm,
+        sourceCode: '',
+      },
+      {
+        id: 'onboarding-without-select-country',
+        title: 'Without Select Country',
+        description: 'Standard onboarding flow without select country step',
+        component: OnboardingFormWithoutSelectCountry,
+        sourceCode: '',
+      },
+      {
+        id: 'onboarding-custom-benefits',
+        title: 'Custom Benefits',
+        description: 'Onboarding flow with custom benefits step UI',
+        component: OnboardingCustomBenefitsForm,
+        sourceCode: '',
+      },
+    ],
+  },
+];
+
+const isDev = import.meta.env.DEV;
+
 const demoStructure = [
   {
     id: 'cost-calculator',
@@ -101,48 +148,7 @@ const demoStructure = [
       },
     ],
   },
-  {
-    id: 'termination',
-    title: 'Termination Flow',
-    description: 'Process for terminating employments',
-    component: Termination,
-    sourceCode: TerminationCode,
-  },
-  {
-    id: 'contract-amendments',
-    title: 'Contract Amendments',
-    description: 'Manage changes to existing contracts',
-    component: ContractAmendment,
-    sourceCode: ContractAmendmentCode,
-  },
-  {
-    id: 'onboarding',
-    title: 'Onboarding',
-    description: 'Onboarding flow of a new employee',
-    children: [
-      {
-        id: 'onboarding-basic',
-        title: 'Basic',
-        description: 'Standard onboarding flow',
-        component: OnboardingForm,
-        sourceCode: '',
-      },
-      {
-        id: 'onboarding-without-select-country',
-        title: 'Without Select Country',
-        description: 'Standard onboarding flow without select country step',
-        component: OnboardingFormWithoutSelectCountry,
-        sourceCode: '',
-      },
-      {
-        id: 'onboarding-custom-benefits',
-        title: 'Custom Benefits',
-        description: 'Onboarding flow with custom benefits step UI',
-        component: OnboardingCustomBenefitsForm,
-        sourceCode: '',
-      },
-    ],
-  },
+  ...(isDev ? additionalDemos : []),
 ];
 
 const flattenedDemos = demoStructure.reduce(

@@ -18,7 +18,6 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
@@ -35,6 +34,7 @@ import {
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/AnnualGrossSalary';
 import { JSFField } from '@/src/types/remoteFlows';
+import { Meta, OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -221,8 +221,17 @@ export const useOnboarding = ({
   options,
   skipSteps,
 }: OnboardingHookProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fieldsMetaRef = useRef<Record<string, any>>({});
+  const fieldsMetaRef = useRef<{
+    select_country: Meta;
+    basic_information: Meta;
+    contract_details: Meta;
+    benefits: Meta;
+  }>({
+    select_country: {},
+    basic_information: {},
+    contract_details: {},
+    benefits: {},
+  });
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -372,6 +381,7 @@ export const useOnboarding = ({
                 annualSalaryFieldPresentation
                   ?.annual_gross_salary_conversion_properties?.description,
             },
+            desiredCurrency: company?.desired_currency,
             Component: (props: JSFField & { currency: string }) => (
               <AnnualGrossSalary
                 desiredCurrency={company?.desired_currency || ''}
@@ -669,10 +679,12 @@ export const useOnboarding = ({
 
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
-    fieldsMetaRef.current[stepState.currentStep.name] = prettifyFormValues(
-      values,
-      stepFields[stepState.currentStep.name],
-    );
+    const currentStepName = stepState.currentStep.name;
+    if (currentStepName in fieldsMetaRef.current) {
+      fieldsMetaRef.current[
+        currentStepName as keyof typeof fieldsMetaRef.current
+      ] = prettifyFormValues(values, stepFields[currentStepName]);
+    }
 
     const parsedValues = parseFormValues(values);
     refetchCompany();
@@ -773,7 +785,10 @@ export const useOnboarding = ({
      */
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
-
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
     /**
      * Current step state containing the current step and total number of steps
      */
