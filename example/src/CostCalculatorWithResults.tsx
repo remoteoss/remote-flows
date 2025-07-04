@@ -31,6 +31,8 @@ export function CostCalculatorWithResults() {
             fields: {
               currency: {
                 title: 'Employer billing currency',
+                description:
+                  'What currency would you like to be invoiced in? You can choose from 12 currencies.',
               },
             },
           },

@@ -30,6 +30,7 @@ type CostCalculatorCountry = {
   childRegions: MinimalRegion[];
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
+  currency: string;
 };
 
 type JSFValidationError = {
@@ -86,6 +87,9 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
+  const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
+    string | undefined
+  >();
   const { data: countries, isLoading: isLoadingCountries } =
     useCostCalculatorCountries({
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
@@ -176,6 +180,13 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
+  function onChangeCurrency(currency: string) {
+    const selectedCurrency = currencies?.find(
+      (c) => c.value === currency,
+    )?.label;
+    setEmployerBillingCurrency(selectedCurrency);
+  }
+
   const regionField = fieldsJSONSchema.fields.find(
     (field) => field.name === 'region',
   );
@@ -204,6 +215,7 @@ export const useCostCalculator = (
     );
     if (currencyField) {
       currencyField.options = currencies;
+      currencyField.onChange = onChangeCurrency;
     }
   }
 
@@ -221,6 +233,10 @@ export const useCostCalculator = (
     setSelectedCountry(undefined);
     setSelectedRegion(defaultRegion);
   };
+
+  const employeeBillingCurrency = selectedCountry?.currency;
+
+  console.log({ employeeBillingCurrency, employerBillingCurrency });
 
   const allFields = [
     ...fieldsJSONSchema.fields,

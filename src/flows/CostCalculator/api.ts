@@ -43,6 +43,7 @@ export const useCostCalculatorCountries = ({
         childRegions: country.child_regions,
         hasAdditionalFields: country.has_additional_fields,
         regionSlug: country.region_slug,
+        currency: country.currency.code,
       })),
   });
 };
