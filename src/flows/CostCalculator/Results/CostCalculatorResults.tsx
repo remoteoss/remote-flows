@@ -1,4 +1,3 @@
-import { Euro } from 'lucide-react';
 import { lazy, useState } from 'react';
 
 import { CostCalculatorEstimateResponse } from '@/src/client';
@@ -101,7 +100,6 @@ export function CostCalculatorResults({
         <div className="RemoteFlows__CostCalculatorResults__Header">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <span className="flex items-center gap-1">
-              <Euro className="h-5 w-5 text-gray-600" />
               {options?.title ?? 'Cost Calculator'}
             </span>
             <Badge className="ml-2">{employment.country.name}</Badge>

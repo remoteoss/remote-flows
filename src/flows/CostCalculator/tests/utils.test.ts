@@ -25,7 +25,6 @@ describe('buildPayload', () => {
           annual_gross_salary_in_employer_currency: 100_000,
           employment_term: 'fixed',
           title: defaultEstimationOptions.title,
-          regional_to_employer_exchange_rate: '1',
         },
       ],
     });
