@@ -1,22 +1,22 @@
-import { useOnboardingContext } from './context';
-import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
-import { EmploymentResponse } from '@/src/client';
-import { ContractDetailsFormPayload } from '@/src/flows/Onboarding/types';
+import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { OnboardingForm } from '@/src/flows/Onboarding/components/OnboardingForm';
+import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
+import { EmploymentCreationResponse } from '@/src/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
-  NormalizedFieldError,
   normalizeFieldErrors,
+  NormalizedFieldError,
 } from '@/src/lib/mutations';
 
-type ContractDetailsStepProps = {
+type BasicInformationStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: ContractDetailsFormPayload) => void | Promise<void>;
+  onSubmit?: (payload: BasicInformationFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (response: EmploymentResponse) => void | Promise<void>;
+  onSuccess?: (data: EmploymentCreationResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -31,31 +31,33 @@ type ContractDetailsStepProps = {
   }) => void;
 };
 
-export function ContractDetailsStep({
+export function BasicInformationStep({
   onSubmit,
-  onError,
   onSuccess,
-}: ContractDetailsStepProps) {
+  onError,
+}: BasicInformationStepProps) {
   const { onboardingBag } = useOnboardingContext();
+
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       await onSubmit?.(
-        onboardingBag.parseFormValues(payload) as ContractDetailsFormPayload,
+        onboardingBag.parseFormValues(payload) as BasicInformationFormPayload,
       );
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        await onSuccess?.(response.data as EmploymentResponse);
+        await onSuccess?.(response?.data as EmploymentCreationResponse);
         onboardingBag?.next();
         return;
       }
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          onboardingBag.meta?.fields?.contract_details,
+          onboardingBag.meta?.fields?.basic_information,
         );
+
         onError?.({
-          error: response.error,
-          rawError: response.rawError,
+          error: response?.error,
+          rawError: response?.rawError,
           fieldErrors: normalizedFieldErrors,
         });
       }
@@ -68,13 +70,11 @@ export function ContractDetailsStep({
     }
   };
 
+  const initialValues =
+    onboardingBag.stepState.values?.basic_information ||
+    onboardingBag.initialValues.basic_information;
+
   return (
-    <OnboardingForm
-      defaultValues={
-        onboardingBag.stepState.values?.contract_details ||
-        onboardingBag.initialValues.contract_details
-      }
-      onSubmit={handleSubmit}
-    />
+    <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
   );
 }
