@@ -1,5 +1,5 @@
 import { Components } from '@/src/types/remoteFlows';
-import { OnboardingForm } from '@/src/flows/Onboarding/OnboardingForm';
+import { OnboardingForm } from '@/src/flows/Onboarding/components/OnboardingForm';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { SuccessResponse } from '@/src/client';
 import { getInitialValues } from '@/src/components/form/utils';

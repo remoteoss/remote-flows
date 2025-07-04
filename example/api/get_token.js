@@ -5,6 +5,17 @@ const ENVIRONMENTS = {
   staging: 'https://gateway.niceremote.com',
 };
 
+function buildGatewayURL() {
+  const {
+    VITE_CLIENT_ID,
+    VITE_CLIENT_SECRET,
+    VITE_REMOTE_GATEWAY,
+    VITE_REFRESH_TOKEN,
+  } = process.env;
+
+  return ENVIRONMENTS[VITE_REMOTE_GATEWAY];
+}
+
 async function getToken(req, res) {
   const {
     VITE_CLIENT_ID,
@@ -32,7 +43,7 @@ async function getToken(req, res) {
     });
   }
 
-  const gatewayUrl = ENVIRONMENTS[VITE_REMOTE_GATEWAY];
+  const gatewayUrl = buildGatewayURL();
 
   const encodedCredentials = Buffer.from(
     `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
@@ -68,4 +79,4 @@ async function getToken(req, res) {
   }
 }
 
-module.exports = { getToken };
+module.exports = { getToken, buildGatewayURL };

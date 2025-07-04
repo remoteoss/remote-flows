@@ -2,7 +2,7 @@
 import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { OnboardingBack } from '../OnboardingBack';
+import { OnboardingBack } from '../components/OnboardingBack';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({

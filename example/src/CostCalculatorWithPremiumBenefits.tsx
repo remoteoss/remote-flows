@@ -33,22 +33,25 @@ function CostCalculatorFormDemo() {
 
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
-        onSuccess: (response) => {
-          if (response?.data?.data?.content !== undefined) {
-            const a = document.createElement('a');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a.href = response.data.data.content as any;
-            a.download = 'estimation.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          }
+      exportPdfMutation.mutate(
+        buildCostCalculatorEstimationPayload(payload, estimationOptions),
+        {
+          onSuccess: (response) => {
+            if (response?.data?.data?.content !== undefined) {
+              const a = document.createElement('a');
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              a.href = response.data.data.content as any;
+              a.download = 'estimation.pdf';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }
+          },
+          onError: (error) => {
+            console.error({ error });
+          },
         },
-        onError: (error) => {
-          console.error({ error });
-        },
-      });
+      );
     }
   };
   return (

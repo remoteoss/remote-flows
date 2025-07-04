@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
-import { ReviewStep } from '@/src/flows/Onboarding/ReviewStep';
+import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { CreditRiskStatus, Employment } from '@/src/flows/Onboarding/types';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';

@@ -1,10 +1,10 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { useEmploymentInvite } from './api';
+import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
 import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
-import { useOnboardingContext } from './context';
+import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useFormFields } from '@/src/context';
 
 export type OnboardingInviteProps = Omit<
