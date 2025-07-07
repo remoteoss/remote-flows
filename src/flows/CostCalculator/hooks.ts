@@ -236,7 +236,11 @@ export const useCostCalculator = (
 
   const employeeBillingCurrency = selectedCountry?.currency;
 
-  console.log({ employeeBillingCurrency, employerBillingCurrency });
+  console.log({
+    employeeBillingCurrency,
+    employerBillingCurrency,
+    fields: fieldsJSONSchema.fields,
+  });
 
   const allFields = [
     ...fieldsJSONSchema.fields,
