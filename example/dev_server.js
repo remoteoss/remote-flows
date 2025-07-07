@@ -23,31 +23,6 @@ const startServer = async () => {
 
   app.post('/api/convert-currency', convertCurrency);
 
-  // Custom currency conversion endpoint
-  app.post('/api/convert-currency', async (req, res) => {
-    try {
-      const gatewayUrl = buildGatewayURL();
-      const targetUrl = `${gatewayUrl}/v1/converter/convert_currency`;
-
-      const response = await axios({
-        method: 'POST',
-        url: targetUrl,
-        data: req.body,
-        headers: {
-          ...req.headers,
-          host: new URL(gatewayUrl).host,
-        },
-      });
-
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      console.error('Currency conversion error:', error.message);
-      res.status(error.response?.status || 500).json({
-        error: error.response?.data || 'Currency conversion failed',
-      });
-    }
-  });
-
   // Proxy middleware for all other API requests
   app.use('/v1', async (req, res) => {
     try {

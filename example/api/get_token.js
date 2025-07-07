@@ -16,7 +16,6 @@ function buildGatewayURL() {
   return ENVIRONMENTS[VITE_REMOTE_GATEWAY];
 }
 
-// Utility function to fetch access token (reusable)
 async function fetchAccessToken() {
   const {
     VITE_CLIENT_ID,
