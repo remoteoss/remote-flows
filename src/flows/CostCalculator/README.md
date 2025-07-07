@@ -530,11 +530,13 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 
 #### estimationParams Properties
 
-| Property                | Type      | Description                                                  |
-| ----------------------- | --------- | ------------------------------------------------------------ |
-| `title`                 | `string`  | Custom title for the estimation report                       |
-| `includeBenefits`       | `boolean` | If `true`, includes benefits information in the response     |
-| `includeCostBreakdowns` | `boolean` | If `true`, includes detailed cost breakdowns in the response |
+| Property                   | Type      | Description                                                   |
+| -------------------------- | --------- | ------------------------------------------------------------- |
+| `title`                    | `string`  | Custom title for the estimation report                        |
+| `includeBenefits`          | `boolean` | If `true`, includes benefits information in the response      |
+| `includeCostBreakdowns`    | `boolean` | If `true`, includes detailed cost breakdowns in the response  |
+| `includePremiumBenefits`   | `boolean` | If `true`, includes detailed premium benefits in the response |
+| `enableCurrencyConversion` | `boolean` | If `true`, enables currency conversion in the salary field    |
 
 #### defaultValues Properties
 
