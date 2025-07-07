@@ -28,7 +28,6 @@ export const AnnualGrossSalary = ({
           annual_gross_salary_conversion_properties?.description ||
           'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.',
       }}
-      useProxy={false}
       classNamePrefix="RemoteFlows-AnnualGrossSalary"
     />
   );

@@ -2,7 +2,7 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 const express = require('express');
 const { getToken, buildGatewayURL } = require('./api/get_token.js');
-const { convertCurrency } = require('./api/convert_currency.js');
+const { createProxyMiddleware } = require('./api/proxy.js');
 const { createServer: createViteServer } = require('vite');
 
 dotenv.config();
@@ -20,33 +20,7 @@ const startServer = async () => {
 
   // API route example
   app.get('/api/token', getToken);
-
-  app.post('/api/convert-currency', convertCurrency);
-
-  // Proxy middleware for all other API requests
-  app.use('/v1', async (req, res) => {
-    try {
-      const gatewayUrl = buildGatewayURL();
-      const targetUrl = `${gatewayUrl}${req.originalUrl}`;
-
-      const response = await axios({
-        method: req.method,
-        url: targetUrl,
-        data: req.method !== 'GET' ? req.body : undefined,
-        params: req.query,
-        headers: {
-          ...req.headers,
-          host: new URL(gatewayUrl).host,
-        },
-      });
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      console.error('Proxy error:', error.message);
-      res.status(error.response?.status || 500).json({
-        error: error.response?.data || 'Proxy request failed',
-      });
-    }
-  });
+  app.use('/v1', createProxyMiddleware());
 
   app.use(vite.middlewares);
 

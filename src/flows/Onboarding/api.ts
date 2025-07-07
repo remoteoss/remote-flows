@@ -477,38 +477,11 @@ export const useCountriesSchemaField = (
   };
 };
 
-export const useConvertCurrency = (options?: { useProxy?: boolean }) => {
+export const useConvertCurrency = () => {
   const { client } = useClient();
 
   return useMutation({
     mutationFn: async (payload: ConvertCurrencyParams) => {
-      if (options?.useProxy && client) {
-        // Use the existing client's proxy configuration
-        const clientConfig = client.getConfig();
-        console.log({ clientConfig });
-        const proxyUrl = clientConfig.baseUrl;
-
-        // Construct the endpoint using the proxy URL
-        const endpoint = `${proxyUrl}/api/convert-currency`;
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...clientConfig.headers, // Include any proxy headers
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return { data };
-      }
-
-      // Use the regular client for production
       return postConvertCurrencyConverter({
         client: client as Client,
         headers: {

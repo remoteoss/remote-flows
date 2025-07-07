@@ -46,6 +46,7 @@ VITE_CLIENT_SECRET=your_client_secret
 VITE_REFRESH_TOKEN=your_refresh_token
 VITE_REMOTE_GATEWAY=partners # for sandbox
 # VITE_REMOTE_GATEWAY=production # for production
+# VITE_API_URL=http://localhost:3001
 ```
 
 3. Start the development server:

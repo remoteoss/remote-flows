@@ -67,7 +67,6 @@ export const CurrencyFieldWithConversion = ({
   targetCurrency,
   conversionFieldName,
   conversionProperties,
-  useProxy = false,
   classNamePrefix,
   description,
   ...props
@@ -79,9 +78,7 @@ export const CurrencyFieldWithConversion = ({
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
-  const { mutateAsync: convertCurrency } = useConvertCurrency({
-    useProxy,
-  });
+  const { mutateAsync: convertCurrency } = useConvertCurrency();
 
   const convertCurrencyCallback = useCallback(
     async (

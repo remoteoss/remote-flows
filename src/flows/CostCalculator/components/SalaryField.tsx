@@ -24,7 +24,6 @@ export const SalaryField = ({
       targetCurrency={to}
       conversionFieldName="salary_conversion"
       conversionProperties={salary_conversion_properties}
-      useProxy={true}
       classNamePrefix="RemoteFlows-Salary"
     />
   );

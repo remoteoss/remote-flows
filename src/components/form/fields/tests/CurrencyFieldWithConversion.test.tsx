@@ -110,25 +110,6 @@ describe('CurrencyFieldWithConversion', () => {
         return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
-
-    // Mock proxy endpoint for useProxy=true
-    server.use(
-      http.post('*/api/convert-currency', async ({ request }) => {
-        const body = (await request.json()) as {
-          source_currency: string;
-          target_currency: string;
-          amount: number;
-        };
-
-        // If converting from USD to EUR
-        if (body.source_currency === 'USD' && body.target_currency === 'EUR') {
-          return HttpResponse.json(conversionFromUSDToEUR);
-        }
-
-        // If converting from EUR to USD
-        return HttpResponse.json(conversionFromEURToUSD);
-      }),
-    );
   });
 
   it('renders the initial state correctly', () => {
@@ -195,29 +176,6 @@ describe('CurrencyFieldWithConversion', () => {
     // Then toggle the conversion field
     const toggleButton = screen.getByText('Show EUR conversion');
     fireEvent.click(toggleButton);
-
-    // Wait for the conversion to happen
-    await waitFor(() => {
-      const conversionInput = screen.getByLabelText('Conversion');
-      expect(conversionInput).toHaveValue('850');
-    });
-  });
-
-  it('uses proxy when useProxy is true', async () => {
-    const propsWithProxy = {
-      ...defaultProps,
-      useProxy: true,
-    };
-
-    renderWithFormContext(propsWithProxy);
-
-    // Enable conversion
-    const toggleButton = screen.getByText('Show EUR conversion');
-    fireEvent.click(toggleButton);
-
-    // Type in the main field
-    const input = screen.getByLabelText('Test Salary');
-    fireEvent.change(input, { target: { value: '1000' } });
 
     // Wait for the conversion to happen
     await waitFor(() => {
