@@ -67,7 +67,9 @@ export const SalaryField = ({
 
   const canShowConversion = from && to && from !== to;
 
-  const { mutateAsync: convertCurrency } = useConvertCurrency();
+  const { mutateAsync: convertCurrency } = useConvertCurrency({
+    useProxy: true,
+  });
 
   const convertCurrencyCallback = useCallback(
     async (
