@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Patch Changes
+
+- a987085: add some logging
+
 ## 0.4.0-alpha.18
 
 ### Patch Changes
