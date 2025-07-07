@@ -109,7 +109,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   return (
-    <RemoteFlows>
+    <RemoteFlows isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );

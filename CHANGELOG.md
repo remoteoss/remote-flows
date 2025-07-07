@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.17
+
+### Patch Changes
+
+- 3d31c2a: Use currency conversion from the backend
+
 ## 0.4.0-alpha.16
 
 ### Patch Changes

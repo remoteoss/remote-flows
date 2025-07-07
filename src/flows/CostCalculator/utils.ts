@@ -64,7 +64,6 @@ export function buildPayload(
         annual_gross_salary_in_employer_currency: values.salary,
         employment_term: values.contract_duration_type ?? 'fixed',
         title: estimationOptions.title,
-        regional_to_employer_exchange_rate: '1',
         age: values.age ?? undefined,
         ...(values.benefits && { benefits: formatBenefits(values.benefits) }),
       },
