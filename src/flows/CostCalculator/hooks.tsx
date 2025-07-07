@@ -1,13 +1,7 @@
 import {
-  CostCalculatorEstimateParams,
   CostCalculatorEstimateResponse,
-  getIndexCompanyCurrency,
-  getIndexCountry,
-  getShowRegionField,
   MinimalRegion,
-  postCreateEstimation,
   PostCreateEstimationError,
-  postCreateEstimationPdf,
 } from '@/src/client';
 import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
@@ -19,13 +13,18 @@ import type { JSFModify, Result } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
-import { useClient } from '@/src/context';
-import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
+import {
+  useCompanyCurrencies,
+  useCostCalculatorCountries,
+  useCostCalculatorEstimation,
+  useRegionFields,
+} from '@/src/flows/CostCalculator/api';
+import { JSFField } from '@/src/types/remoteFlows';
+import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 
 type CostCalculatorCountry = {
   value: string;
@@ -33,6 +32,7 @@ type CostCalculatorCountry = {
   childRegions: MinimalRegion[];
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
+  currency: string;
 };
 
 type JSFValidationError = {
@@ -46,156 +46,12 @@ type JSFValidationError = {
   yupError: ValidationError;
 };
 
-/**
- * Hook to fetch the countries for the cost calculator.
- * @returns
- */
-const useCostCalculatorCountries = ({
-  includePremiumBenefits,
-}: {
-  includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['cost-calculator-countries', includePremiumBenefits],
-    queryFn: () => {
-      return getIndexCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        query: {
-          include_premium_benefits: includePremiumBenefits,
-        },
-      });
-    },
-    select: (data) =>
-      data.data?.data.map((country) => ({
-        value: country.region_slug,
-        label: country.name,
-        childRegions: country.child_regions,
-        hasAdditionalFields: country.has_additional_fields,
-        regionSlug: country.region_slug,
-      })),
-  });
-};
-
-/**
- * Hook to fetch the company currencies.
- * @returns
- */
-const useCompanyCurrencies = () => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['company-currencies'],
-    queryFn: () => {
-      return getIndexCompanyCurrency({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-    },
-    select: (data) =>
-      data.data?.data?.company_currencies.map((currency) => ({
-        value: currency.slug,
-        label: currency.code,
-      })),
-  });
-};
-
-/**
- * Hook to create an estimation.
- * @returns
- */
-const useCostCalculatorEstimation = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimation({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Custom hook to create a PDF estimation.
- *
- * @returns
- */
-export const useCostCalculatorEstimationPdf = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimationPdf({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Hook to fetch the region fields.
- * @param region
- * @returns
- */
-const useRegionFields = (
-  region: string | undefined,
-  {
-    includePremiumBenefits,
-    options,
-  }: {
-    includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-    options?: {
-      jsfModify?: JSFModify;
-    };
-  },
-) => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['cost-calculator-region-fields', region, includePremiumBenefits],
-    queryFn: () => {
-      return getShowRegionField({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { slug: region as string },
-        query: {
-          include_premium_benefits: includePremiumBenefits,
-        },
-      });
-    },
-    enabled: !!region,
-    select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      return createHeadlessForm(jsfSchema);
-    },
-  });
-};
-
 export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimation',
   includeBenefits: false,
   includeCostBreakdowns: false,
   includePremiumBenefits: false,
+  enableCurrencyConversion: false,
 };
 
 type UseCostCalculatorParams = {
@@ -214,6 +70,15 @@ type UseCostCalculatorParams = {
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
 
+const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
+  const { schema: jsonSchemaModified } = modify(
+    jsonSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  return createHeadlessForm(jsonSchemaModified);
+};
+
 /**
  * Hook to use the cost calculator.
  */
@@ -222,18 +87,14 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
-  const { schema: jsonSchemaModified } = modify(
-    jsonSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  const fieldsJSONSchema = createHeadlessForm(jsonSchemaModified);
-
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
+  const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
+    string | undefined
+  >();
   const { data: countries, isLoading: isLoadingCountries } =
     useCostCalculatorCountries({
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
@@ -249,6 +110,78 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  const employeeBillingCurrency = selectedCountry?.currency;
+
+  const salaryField = options?.jsfModify?.fields?.salary;
+  const salaryFieldPresentation =
+    salaryField &&
+    typeof salaryField === 'object' &&
+    'presentation' in salaryField
+      ? (
+          salaryField as {
+            presentation?: {
+              salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const customFields = useMemo(() => {
+    const shouldUseCurrencyConversion =
+      estimationOptions.enableCurrencyConversion &&
+      employeeBillingCurrency &&
+      employerBillingCurrency &&
+      employeeBillingCurrency !== employerBillingCurrency;
+
+    if (shouldUseCurrencyConversion) {
+      return {
+        fields: {
+          salary: {
+            ...salaryField,
+            presentation: {
+              salary_conversion_properties: {
+                label:
+                  salaryFieldPresentation?.salary_conversion_properties?.label,
+                description:
+                  salaryFieldPresentation?.salary_conversion_properties
+                    ?.description,
+              },
+              currencies: {
+                from: employeeBillingCurrency,
+                to: employerBillingCurrency,
+              },
+              Component: (
+                props: JSFField & { currencies: { from: string; to: string } },
+              ) => {
+                return <SalaryField {...props} />;
+              },
+            },
+          },
+        },
+      };
+    }
+
+    return undefined;
+  }, [
+    employeeBillingCurrency,
+    employerBillingCurrency,
+    estimationOptions.enableCurrencyConversion,
+    salaryField,
+    salaryFieldPresentation?.salary_conversion_properties?.description,
+    salaryFieldPresentation?.salary_conversion_properties?.label,
+  ]);
+
+  const fieldsJSONSchema = useStaticSchema({
+    jsfModify: {
+      fields: {
+        ...options?.jsfModify?.fields,
+        ...customFields?.fields,
+      },
+    },
+  });
 
   /**
    * Submit the estimation form with the given values.
@@ -324,6 +257,13 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
+  function onChangeCurrency(currency: string) {
+    const selectedCurrency = currencies?.find(
+      (c) => c.value === currency,
+    )?.label;
+    setEmployerBillingCurrency(selectedCurrency);
+  }
+
   const regionField = fieldsJSONSchema.fields.find(
     (field) => field.name === 'region',
   );
@@ -352,6 +292,7 @@ export const useCostCalculator = (
     );
     if (currencyField) {
       currencyField.options = currencies;
+      currencyField.onChange = onChangeCurrency;
     }
   }
 

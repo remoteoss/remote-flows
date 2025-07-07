@@ -16,20 +16,13 @@ function buildGatewayURL() {
   return ENVIRONMENTS[VITE_REMOTE_GATEWAY];
 }
 
-async function getToken(req, res) {
+async function fetchAccessToken() {
   const {
     VITE_CLIENT_ID,
     VITE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
     VITE_REFRESH_TOKEN,
-    NODE_ENV,
   } = process.env;
-
-  if (NODE_ENV === 'production') {
-    return res.status(403).json({
-      error: 'This endpoint is not available in production mode',
-    });
-  }
 
   if (
     !VITE_CLIENT_ID ||
@@ -37,10 +30,9 @@ async function getToken(req, res) {
     !VITE_REMOTE_GATEWAY ||
     !VITE_REFRESH_TOKEN
   ) {
-    return res.status(400).json({
-      error:
-        'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
-    });
+    throw new Error(
+      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
+    );
   }
 
   const gatewayUrl = buildGatewayURL();
@@ -49,29 +41,43 @@ async function getToken(req, res) {
     `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
   ).toString('base64');
 
-  try {
-    const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${encodedCredentials}`,
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: VITE_REFRESH_TOKEN,
-      }),
+  const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${encodedCredentials}`,
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: VITE_REFRESH_TOKEN,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return { accessToken: data.access_token, expiresIn: data.expires_in };
+}
+
+// Express route handler
+async function getToken(req, res) {
+  const { NODE_ENV } = process.env;
+
+  if (NODE_ENV === 'production') {
+    return res.status(403).json({
+      error: 'This endpoint is not available in production mode',
     });
+  }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
-
-    const data = await response.json();
+  try {
+    const { accessToken, expiresIn } = await fetchAccessToken();
 
     return res.status(200).json({
-      access_token: data.access_token,
-      expires_in: data.expires_in,
+      access_token: accessToken,
+      expires_in: expiresIn,
     });
   } catch (error) {
     console.error('Error fetching access token:', error);
@@ -79,4 +85,4 @@ async function getToken(req, res) {
   }
 }
 
-module.exports = { getToken, buildGatewayURL };
+module.exports = { getToken, buildGatewayURL, fetchAccessToken };

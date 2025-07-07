@@ -11,7 +11,7 @@ create an .env file
 
 ```sh
 cd example
-echo "VITE_CLIENT_ID=\nVITE_CLIENT_SECRET=\nVITE_REMOTE_GATEWAY=\nVITE_REFRESH_TOKEN=\n" >> .env
+echo "VITE_CLIENT_ID=\nVITE_CLIENT_SECRET=\nVITE_REMOTE_GATEWAY=\nVITE_REFRESH_TOKEN=\nVITE_API_URL=\n" >> .env
 ```
 
 Complete the env file with your env variables and you should be able to run the next step

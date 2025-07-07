@@ -21,6 +21,7 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
+  enableCurrencyConversion: true,
 };
 
 function CostCalculatorFormDemo() {
@@ -58,6 +59,18 @@ function CostCalculatorFormDemo() {
     <>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={{
+          jsfModify: {
+            fields: {
+              currency: {
+                title: 'Employer billing currency',
+              },
+              salary: {
+                title: "Employee's annual salary",
+              },
+            },
+          },
+        }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;
@@ -108,8 +121,9 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithPremiumBenefits() {
+  const proxyURL = import.meta.env.VITE_API_URL;
   return (
-    <RemoteFlows isClientToken>
+    <RemoteFlows proxy={{ url: proxyURL }} isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
