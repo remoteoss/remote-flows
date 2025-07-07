@@ -141,7 +141,7 @@ export const useCostCalculator = (
       shouldUseCurrencyConversion,
       employeeBillingCurrency,
       employerBillingCurrency,
-      estimationOptions,
+      enableCurrencyConversion: estimationOptions.enableCurrencyConversion,
     });
 
     if (shouldUseCurrencyConversion) {
