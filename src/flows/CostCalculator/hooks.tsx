@@ -14,7 +14,7 @@ import type { JSFModify, Result } from '@/src/flows/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -23,6 +23,7 @@ import {
   useCostCalculatorEstimation,
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
+import { JSFField } from '@/src/types/remoteFlows';
 
 type CostCalculatorCountry = {
   value: string;
@@ -67,6 +68,15 @@ type UseCostCalculatorParams = {
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
 
+const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
+  const { schema: jsonSchemaModified } = modify(
+    jsonSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  return createHeadlessForm(jsonSchemaModified);
+};
+
 /**
  * Hook to use the cost calculator.
  */
@@ -75,13 +85,6 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
-  const { schema: jsonSchemaModified } = modify(
-    jsonSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  const fieldsJSONSchema = createHeadlessForm(jsonSchemaModified);
-
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -105,6 +108,65 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  const employeeBillingCurrency = selectedCountry?.currency;
+
+  const salaryField = options?.jsfModify?.fields?.salary;
+  const salaryFieldPresentation =
+    salaryField &&
+    typeof salaryField === 'object' &&
+    'presentation' in salaryField
+      ? (
+          salaryField as {
+            presentation?: {
+              salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const customFields = useMemo(
+    () => ({
+      fields: {
+        salary: {
+          ...salaryField,
+          presentation: {
+            salary_conversion_properties: {
+              label:
+                salaryFieldPresentation?.salary_conversion_properties?.label,
+              description:
+                salaryFieldPresentation?.salary_conversion_properties
+                  ?.description,
+            },
+            fromCurrency: employeeBillingCurrency,
+            targetCurrency: employerBillingCurrency,
+            Component: (props: JSFField & { currency: string }) => {
+              console.log({ props });
+              return <input {...props} type="text" />;
+            },
+          },
+        },
+      },
+    }),
+    [
+      employeeBillingCurrency,
+      employerBillingCurrency,
+      salaryField,
+      salaryFieldPresentation?.salary_conversion_properties?.description,
+      salaryFieldPresentation?.salary_conversion_properties?.label,
+    ],
+  );
+
+  const fieldsJSONSchema = useStaticSchema({
+    jsfModify: {
+      fields: {
+        ...options?.jsfModify?.fields,
+        ...customFields.fields,
+      },
+    },
+  });
 
   /**
    * Submit the estimation form with the given values.
@@ -233,14 +295,6 @@ export const useCostCalculator = (
     setSelectedCountry(undefined);
     setSelectedRegion(defaultRegion);
   };
-
-  const employeeBillingCurrency = selectedCountry?.currency;
-
-  console.log({
-    employeeBillingCurrency,
-    employerBillingCurrency,
-    fields: fieldsJSONSchema.fields,
-  });
 
   const allFields = [
     ...fieldsJSONSchema.fields,
