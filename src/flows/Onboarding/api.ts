@@ -481,7 +481,7 @@ export const useConvertCurrency = () => {
   const { client } = useClient();
 
   return useMutation({
-    mutationFn: async (payload: ConvertCurrencyParams) => {
+    mutationFn: (payload: ConvertCurrencyParams) => {
       return postConvertCurrencyConverter({
         client: client as Client,
         headers: {
