@@ -39,4 +39,8 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include premium benefits in the estimation. Default is false.
    */
   includePremiumBenefits: boolean;
+  /**
+   * Enable currency conversion. Default is false.
+   */
+  enableCurrencyConversion: boolean;
 }>;

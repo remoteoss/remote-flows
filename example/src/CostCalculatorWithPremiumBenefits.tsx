@@ -21,6 +21,7 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
+  enableCurrencyConversion: true,
 };
 
 function CostCalculatorFormDemo() {

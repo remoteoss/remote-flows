@@ -51,6 +51,7 @@ export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: false,
   includeCostBreakdowns: false,
   includePremiumBenefits: false,
+  enableCurrencyConversion: false,
 };
 
 type UseCostCalculatorParams = {
@@ -128,46 +129,56 @@ export const useCostCalculator = (
         ).presentation
       : undefined;
 
-  const customFields = useMemo(
-    () => ({
-      fields: {
-        salary: {
-          ...salaryField,
-          presentation: {
-            salary_conversion_properties: {
-              label:
-                salaryFieldPresentation?.salary_conversion_properties?.label,
-              description:
-                salaryFieldPresentation?.salary_conversion_properties
-                  ?.description,
-            },
-            currencies: {
-              from: employeeBillingCurrency,
-              to: employerBillingCurrency,
-            },
-            Component: (
-              props: JSFField & { currencies: { from: string; to: string } },
-            ) => {
-              return <SalaryField {...props} />;
+  const customFields = useMemo(() => {
+    const shouldUseCurrencyConversion =
+      estimationOptions.enableCurrencyConversion &&
+      employeeBillingCurrency &&
+      employerBillingCurrency &&
+      employeeBillingCurrency !== employerBillingCurrency;
+
+    if (shouldUseCurrencyConversion) {
+      return {
+        fields: {
+          salary: {
+            ...salaryField,
+            presentation: {
+              salary_conversion_properties: {
+                label:
+                  salaryFieldPresentation?.salary_conversion_properties?.label,
+                description:
+                  salaryFieldPresentation?.salary_conversion_properties
+                    ?.description,
+              },
+              currencies: {
+                from: employeeBillingCurrency,
+                to: employerBillingCurrency,
+              },
+              Component: (
+                props: JSFField & { currencies: { from: string; to: string } },
+              ) => {
+                return <SalaryField {...props} />;
+              },
             },
           },
         },
-      },
-    }),
-    [
-      employeeBillingCurrency,
-      employerBillingCurrency,
-      salaryField,
-      salaryFieldPresentation?.salary_conversion_properties?.description,
-      salaryFieldPresentation?.salary_conversion_properties?.label,
-    ],
-  );
+      };
+    }
+
+    return undefined;
+  }, [
+    employeeBillingCurrency,
+    employerBillingCurrency,
+    estimationOptions.enableCurrencyConversion,
+    salaryField,
+    salaryFieldPresentation?.salary_conversion_properties?.description,
+    salaryFieldPresentation?.salary_conversion_properties?.label,
+  ]);
 
   const fieldsJSONSchema = useStaticSchema({
     jsfModify: {
       fields: {
         ...options?.jsfModify?.fields,
-        ...customFields.fields,
+        ...customFields?.fields,
       },
     },
   });
