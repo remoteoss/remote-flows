@@ -137,13 +137,6 @@ export const useCostCalculator = (
         employeeBillingCurrency !== employerBillingCurrency,
     );
 
-    console.log({
-      shouldUseCurrencyConversion,
-      employeeBillingCurrency,
-      employerBillingCurrency,
-      enableCurrencyConversion: estimationOptions.enableCurrencyConversion,
-    });
-
     if (shouldUseCurrencyConversion) {
       return {
         fields: {

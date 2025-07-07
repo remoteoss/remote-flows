@@ -121,7 +121,7 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithPremiumBenefits() {
-  const proxyURL = import.meta.env.VITE_API_URL;
+  const proxyURL = window.location.origin;
   return (
     <RemoteFlows proxy={{ url: proxyURL }} isClientToken>
       <CostCalculatorFormDemo />
