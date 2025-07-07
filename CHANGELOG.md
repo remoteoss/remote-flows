@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.20
+
+### Patch Changes
+
+- 2d93892: Drop VITE_API_URL in favor of location.origin
+
 ## 0.4.0-alpha.19
 
 ### Patch Changes
