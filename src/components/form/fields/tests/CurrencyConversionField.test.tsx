@@ -7,8 +7,8 @@ import { server } from '@/src/tests/server';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { ButtonComponentProps } from '@/src/types/remoteFlows';
 import {
-  CurrencyFieldWithConversion,
-  CurrencyFieldWithConversionProps,
+  CurrencyConversionField,
+  CurrencyConversionFieldProps,
 } from '../CurrencyConversionField';
 import {
   conversionFromEURToUSD,
@@ -17,7 +17,7 @@ import {
 
 const queryClient = new QueryClient();
 
-const defaultProps: CurrencyFieldWithConversionProps = {
+const defaultProps: CurrencyConversionFieldProps = {
   name: 'test_salary',
   label: 'Test Salary',
   description: 'Enter your test salary',
@@ -51,7 +51,7 @@ const renderWithFormContext = (props = defaultProps) => {
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider components={{}}>
           <FormProvider {...methods}>
-            <CurrencyFieldWithConversion {...props} />
+            <CurrencyConversionField {...props} />
           </FormProvider>
         </FormFieldsProvider>
       </QueryClientProvider>
@@ -79,7 +79,7 @@ const renderWithCustomButton = (
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider components={{ button: CustomButton }}>
           <FormProvider {...methods}>
-            <CurrencyFieldWithConversion {...props} />
+            <CurrencyConversionField {...props} />
           </FormProvider>
         </FormFieldsProvider>
       </QueryClientProvider>
