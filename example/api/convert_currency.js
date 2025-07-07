@@ -9,8 +9,6 @@ async function convertCurrency(req, res) {
     const gatewayUrl = buildGatewayURL();
     const targetUrl = `${gatewayUrl}/v1/currency-converter`;
 
-    console.log('Converting currency with URL:', targetUrl);
-
     const response = await axios({
       method: 'POST',
       url: targetUrl,
