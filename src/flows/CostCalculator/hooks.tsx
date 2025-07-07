@@ -24,6 +24,7 @@ import {
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
 import { JSFField } from '@/src/types/remoteFlows';
+import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 
 type CostCalculatorCountry = {
   value: string;
@@ -140,11 +141,14 @@ export const useCostCalculator = (
                 salaryFieldPresentation?.salary_conversion_properties
                   ?.description,
             },
-            fromCurrency: employeeBillingCurrency,
-            targetCurrency: employerBillingCurrency,
-            Component: (props: JSFField & { currency: string }) => {
-              console.log({ props });
-              return <input {...props} type="text" />;
+            currencies: {
+              from: employeeBillingCurrency,
+              to: employerBillingCurrency,
+            },
+            Component: (
+              props: JSFField & { currencies: { from: string; to: string } },
+            ) => {
+              return <SalaryField {...props} />;
             },
           },
         },
