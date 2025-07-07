@@ -130,11 +130,19 @@ export const useCostCalculator = (
       : undefined;
 
   const customFields = useMemo(() => {
-    const shouldUseCurrencyConversion =
+    const shouldUseCurrencyConversion = Boolean(
       estimationOptions.enableCurrencyConversion &&
-      employeeBillingCurrency &&
-      employerBillingCurrency &&
-      employeeBillingCurrency !== employerBillingCurrency;
+        employeeBillingCurrency &&
+        employerBillingCurrency &&
+        employeeBillingCurrency !== employerBillingCurrency,
+    );
+
+    console.log({
+      shouldUseCurrencyConversion,
+      employeeBillingCurrency,
+      employerBillingCurrency,
+      estimationOptions,
+    });
 
     if (shouldUseCurrencyConversion) {
       return {
