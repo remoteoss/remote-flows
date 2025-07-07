@@ -63,33 +63,6 @@ function createProxyMiddleware(requiresAuth = true) {
   };
 }
 
-/**
- * Helper function for specific API endpoints
- * @param {string} path - The API path
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {boolean} requiresAuth - Whether authentication is required (default: true)
- */
-async function proxyRequest(path, req, res, requiresAuth = true) {
-  try {
-    const response = await createProxyRequest(path, req.method, {
-      body: req.method !== 'GET' ? req.body : undefined,
-      params: req.query,
-      headers: req.headers,
-      requiresAuth,
-    });
-
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error('Proxy error:', error.message);
-    res.status(error.response?.status || 500).json({
-      error: error.response?.data || 'Proxy request failed',
-    });
-  }
-}
-
 module.exports = {
-  createProxyRequest,
   createProxyMiddleware,
-  proxyRequest,
 };
