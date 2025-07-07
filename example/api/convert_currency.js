@@ -4,7 +4,7 @@ const { buildGatewayURL, fetchAccessToken } = require('./get_token.js');
 async function convertCurrency(req, res) {
   try {
     // Get a valid access token using the existing utility
-    const accessToken = await fetchAccessToken();
+    const { accessToken } = await fetchAccessToken();
 
     const gatewayUrl = buildGatewayURL();
     const targetUrl = `${gatewayUrl}/v1/currency-converter`;

@@ -60,7 +60,7 @@ async function fetchAccessToken() {
   }
 
   const data = await response.json();
-  return data.access_token;
+  return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
 
 // Express route handler
@@ -74,11 +74,11 @@ async function getToken(req, res) {
   }
 
   try {
-    const accessToken = await fetchAccessToken();
+    const { accessToken, expiresIn } = await fetchAccessToken();
 
     return res.status(200).json({
       access_token: accessToken,
-      expires_in: 3600, // Default expiry
+      expires_in: expiresIn,
     });
   } catch (error) {
     console.error('Error fetching access token:', error);
