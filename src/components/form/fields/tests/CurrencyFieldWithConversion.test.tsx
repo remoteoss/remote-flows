@@ -9,7 +9,7 @@ import { ButtonComponentProps } from '@/src/types/remoteFlows';
 import {
   CurrencyFieldWithConversion,
   CurrencyFieldWithConversionProps,
-} from '../CurrencyFieldWithConversion';
+} from '../CurrencyConversionField';
 import {
   conversionFromEURToUSD,
   conversionFromUSDToEUR,

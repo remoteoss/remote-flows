@@ -50,7 +50,7 @@ const DescriptionWithConversion = ({
   );
 };
 
-export type CurrencyFieldWithConversionProps = JSFField & {
+export type CurrencyConversionFieldProps = JSFField & {
   sourceCurrency: string;
   targetCurrency: string;
   conversionFieldName: string;
@@ -62,7 +62,7 @@ export type CurrencyFieldWithConversionProps = JSFField & {
   classNamePrefix: string;
 };
 
-export const CurrencyFieldWithConversion = ({
+export const CurrencyConversionField = ({
   sourceCurrency,
   targetCurrency,
   conversionFieldName,
@@ -70,7 +70,7 @@ export const CurrencyFieldWithConversion = ({
   classNamePrefix,
   description,
   ...props
-}: CurrencyFieldWithConversionProps) => {
+}: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
   const { setValue, watch } = useFormContext();
   const fieldValue = watch(props.name);

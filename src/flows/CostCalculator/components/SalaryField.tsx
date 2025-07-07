@@ -1,4 +1,4 @@
-import { CurrencyFieldWithConversion } from '@/src/components/form/fields/CurrencyFieldWithConversion';
+import { CurrencyConversionField } from '@/src/components/form/fields/CurrencyConversionField';
 import { JSFField } from '@/src/types/remoteFlows';
 
 type SalaryFieldProps = JSFField & {
@@ -18,7 +18,7 @@ export const SalaryField = ({
   ...props
 }: SalaryFieldProps) => {
   return (
-    <CurrencyFieldWithConversion
+    <CurrencyConversionField
       {...props}
       sourceCurrency={from}
       targetCurrency={to}
