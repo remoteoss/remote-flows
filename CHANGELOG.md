@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.18
+
+### Patch Changes
+
+- ce47040: Add conversion functionality to the salary field
+
 ## 0.4.0-alpha.17
 
 ### Patch Changes
