@@ -58,6 +58,18 @@ function CostCalculatorFormDemo() {
     <>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={{
+          jsfModify: {
+            fields: {
+              currency: {
+                title: 'Employer billing currency',
+              },
+              salary: {
+                title: "Employee's annual salary",
+              },
+            },
+          },
+        }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

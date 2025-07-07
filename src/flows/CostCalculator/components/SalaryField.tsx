@@ -25,7 +25,6 @@ const DescriptionWithConversion = ({
     : `Show ${currency} conversion`;
 
   const CustomButton = components?.button;
-
   return (
     <span className="RemoteFlows-Salary-description">
       {description}{' '}
@@ -100,12 +99,7 @@ export const SalaryField = ({
 
   const debouncedConvertCurrency = useDebounce(
     (value: string) =>
-      convertCurrencyCallback(
-        value,
-        from,
-        to,
-        'annual_gross_salary_conversion',
-      ),
+      convertCurrencyCallback(value, from, to, 'salary_conversion'),
     500,
   );
   const debouncedConvertCurrencyReverse = useDebounce(
@@ -158,16 +152,12 @@ export const SalaryField = ({
         pattern="^[0-9.]*$"
         onChange={handleAnnualGrossSalaryChange}
       />
-      {/** A problem on this field is that the label, description are fixed. */}
       {showConversion && (
         <TextField
           additionalProps={{ currency: to }}
-          name="annual_gross_salary_conversion"
+          name="salary_conversion"
           label={conversionField?.label || 'Conversion'}
-          description={
-            conversionField?.description ||
-            'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.'
-          }
+          description={conversionField?.description}
           type="text"
           inputMode="decimal"
           pattern="^[0-9.]*$"
