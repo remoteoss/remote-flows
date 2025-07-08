@@ -130,46 +130,34 @@ export const useCostCalculator = (
       : undefined;
 
   const customFields = useMemo(() => {
-    const shouldUseCurrencyConversion = Boolean(
-      estimationOptions.enableCurrencyConversion &&
-        employeeBillingCurrency &&
-        employerBillingCurrency &&
-        employeeBillingCurrency !== employerBillingCurrency,
-    );
-
-    if (shouldUseCurrencyConversion) {
-      return {
-        fields: {
-          salary: {
-            ...salaryField,
-            presentation: {
-              salary_conversion_properties: {
-                label:
-                  salaryFieldPresentation?.salary_conversion_properties?.label,
-                description:
-                  salaryFieldPresentation?.salary_conversion_properties
-                    ?.description,
-              },
-              currencies: {
-                from: employeeBillingCurrency,
-                to: employerBillingCurrency,
-              },
-              Component: (
-                props: JSFField & { currencies: { from: string; to: string } },
-              ) => {
-                return <SalaryField {...props} />;
-              },
+    return {
+      fields: {
+        salary: {
+          ...salaryField,
+          presentation: {
+            salary_conversion_properties: {
+              label:
+                salaryFieldPresentation?.salary_conversion_properties?.label,
+              description:
+                salaryFieldPresentation?.salary_conversion_properties
+                  ?.description,
+            },
+            currencies: {
+              from: employeeBillingCurrency,
+              to: employerBillingCurrency,
+            },
+            Component: (
+              props: JSFField & { currencies: { from: string; to: string } },
+            ) => {
+              return <SalaryField {...props} />;
             },
           },
         },
-      };
-    }
-
-    return undefined;
+      },
+    };
   }, [
     employeeBillingCurrency,
     employerBillingCurrency,
-    estimationOptions.enableCurrencyConversion,
     salaryField,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     salaryFieldPresentation?.salary_conversion_properties?.label,
@@ -236,6 +224,7 @@ export const useCostCalculator = (
    * @param country
    */
   function onCountryChange(country: string) {
+    console.log('onCountryChange', country);
     const currentCountry = countries?.find(({ value }) => value === country);
 
     if (
@@ -255,10 +244,12 @@ export const useCostCalculator = (
    * @param region
    */
   function onRegionChange(region: string) {
+    console.log('onRegionChange', region);
     setSelectedRegion(region);
   }
 
   function onChangeCurrency(currency: string) {
+    console.log('onChangeCurrency', currency);
     const selectedCurrency = currencies?.find(
       (c) => c.value === currency,
     )?.label;

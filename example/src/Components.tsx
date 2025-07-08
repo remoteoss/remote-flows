@@ -16,15 +16,29 @@ const Button = ({
 
 const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasError = !!fieldState.error;
+  const hasCurrency = fieldData.currency;
 
   return (
     <div className="input-container">
       <label htmlFor={field.name}>{fieldData.label}</label>
-      <input
-        id={field.name}
-        className={`input ${hasError ? 'error' : ''}`}
-        {...field}
-      />
+
+      {hasCurrency ? (
+        <div className="input-with-currency">
+          <input
+            id={field.name}
+            className={`input input-with-currency-field ${hasError ? 'error' : ''}`}
+            {...field}
+          />
+          <span className="currency-symbol">{fieldData.currency}</span>
+        </div>
+      ) : (
+        <input
+          id={field.name}
+          className={`input ${hasError ? 'error' : ''}`}
+          {...field}
+        />
+      )}
+
       {fieldData.description && (
         <p className="input-description">{fieldData.description}</p>
       )}
@@ -37,6 +51,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
 
 const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasError = !!fieldState.error;
+  const { onChange, ...fieldProps } = field;
 
   return (
     <div className="input-container">
@@ -44,7 +59,8 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       <select
         id={field.name}
         className={`input ${hasError ? 'error' : ''}`}
-        {...field}
+        onChange={(e) => onChange(e.target.value)}
+        {...fieldProps}
       >
         <option value="">Select an option</option>
         {fieldData.options?.map((option) => {
