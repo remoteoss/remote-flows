@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0
+
+### Patch Changes
+
+- fe8a323: Add property metadata to fieldData and fix types
+
 ## 0.4.0-alpha.20
 
 ### Patch Changes
