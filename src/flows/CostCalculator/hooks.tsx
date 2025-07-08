@@ -224,7 +224,6 @@ export const useCostCalculator = (
    * @param country
    */
   function onCountryChange(country: string) {
-    console.log('onCountryChange', country);
     const currentCountry = countries?.find(({ value }) => value === country);
 
     if (
@@ -244,12 +243,10 @@ export const useCostCalculator = (
    * @param region
    */
   function onRegionChange(region: string) {
-    console.log('onRegionChange', region);
     setSelectedRegion(region);
   }
 
   function onChangeCurrency(currency: string) {
-    console.log('onChangeCurrency', currency);
     const selectedCurrency = currencies?.find(
       (c) => c.value === currency,
     )?.label;
