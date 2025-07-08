@@ -579,3 +579,237 @@ button.reset-button {
     0 0 0 3px rgba(5, 150, 105, 0.08),
     0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
+/* ===== INPUT WITH CURRENCY STYLES ===== */
+.input-with-currency {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.input-with-currency:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.input-with-currency:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-with-currency.error {
+  border-color: #dc2626;
+  background-color: #fefefe;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+.input-with-currency.error:focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.input-with-currency.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.input-with-currency-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: transparent;
+  color: #1e293b;
+  min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.input-with-currency-field::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.input-with-currency-field:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.currency-symbol {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8fafc;
+  border-left: 1px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  user-select: none;
+  min-width: fit-content;
+}
+
+/* Enhanced error state for currency inputs */
+.input-with-currency.error .currency-symbol {
+  background-color: #fef2f2;
+  border-left-color: #fecaca;
+  color: #7f1d1d;
+}
+
+/* Focus management improvements */
+.input-with-currency:focus-within .currency-symbol {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.input-with-currency.error:focus-within .currency-symbol {
+  background-color: #fef2f2;
+  color: #7f1d1d;
+}
+
+.input-with-currency.disabled .currency-symbol {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .input-with-currency-field {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .currency-symbol {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* ===== SELECT COMPONENT ===== */
+.select-wrapper {
+  position: relative;
+  display: block;
+}
+
+.select {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.select:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select:disabled {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.select-wrapper.error .select {
+  border-color: #dc2626;
+  background-color: #fefefe;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+.select-wrapper.error .select:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.select-wrapper:hover .select-arrow {
+  color: #374151;
+}
+
+.select-wrapper.error .select-arrow {
+  color: #dc2626;
+}
+
+.select-wrapper.disabled .select-arrow {
+  color: #94a3b8;
+}
+
+/* ===== INLINE BUTTON STYLES ===== */
+.button-inline {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  text-decoration: underline;
+  text-decoration-color: #3b82f6;
+  text-underline-offset: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+}
+
+.button-inline:hover {
+  color: #2563eb;
+  text-decoration-color: #2563eb;
+  text-decoration-thickness: 2px;
+}
+
+.button-inline:focus {
+  color: #1d4ed8;
+  text-decoration-color: #1d4ed8;
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.button-inline:active {
+  color: #1e40af;
+  text-decoration-color: #1e40af;
+}
+
+.button-inline:disabled {
+  color: #9ca3af;
+  text-decoration-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.RemoteFlows-Salary-description {
+  display: block;
+  margin-top: 8px;
+}

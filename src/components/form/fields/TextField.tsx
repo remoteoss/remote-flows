@@ -52,7 +52,7 @@ export function TextField({
             label,
             type,
             onChange,
-            ...additionalProps,
+            metadata: additionalProps,
             ...rest,
           };
           return (
