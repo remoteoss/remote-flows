@@ -57,7 +57,7 @@ export type FieldComponentProps = {
    * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
    * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
    */
-  fieldData: Partial<JSFField> & { currency?: string };
+  fieldData: Partial<JSFField> & { metadata?: Record<string, unknown> };
 };
 
 /**

@@ -25,7 +25,7 @@ const Button = ({
 
 const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasError = !!fieldState.error;
-  const hasCurrency = fieldData.currency;
+  const hasCurrency = fieldData.metadata?.currency;
 
   return (
     <div className="input-container">
@@ -38,7 +38,9 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
             className={`input input-with-currency-field ${hasError ? 'error' : ''}`}
             {...field}
           />
-          <span className="currency-symbol">{fieldData.currency}</span>
+          <span className="currency-symbol">
+            {fieldData.metadata?.currency as string}
+          </span>
         </div>
       ) : (
         <input
