@@ -51,26 +51,44 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
 
 const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasError = !!fieldState.error;
-  const { onChange, ...fieldProps } = field;
+  const { onChange, value, ...fieldProps } = field;
 
   return (
     <div className="input-container">
       <label htmlFor={field.name}>{fieldData.label}</label>
-      <select
-        id={field.name}
-        className={`input ${hasError ? 'error' : ''}`}
-        onChange={(e) => onChange(e.target.value)}
-        {...fieldProps}
-      >
-        <option value="">Select an option</option>
-        {fieldData.options?.map((option) => {
-          return (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          );
-        })}
-      </select>
+
+      <div className={`select-wrapper ${hasError ? 'error' : ''}`}>
+        <select
+          id={field.name}
+          className="select"
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          {...fieldProps}
+        >
+          <option value="" disabled>
+            Select an option
+          </option>
+          {fieldData.options?.map((option) => {
+            return (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            );
+          })}
+        </select>
+        <div className="select-arrow" aria-hidden="true">
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+            <path
+              d="M1 1.5L6 6.5L11 1.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+
       {fieldState.error && (
         <p className="error-message">{fieldState.error.message}</p>
       )}
