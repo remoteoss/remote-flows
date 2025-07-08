@@ -43,6 +43,58 @@ import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithRep
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 
+const costCalculatorDemos = [
+  {
+    id: 'basic-cost-calculator',
+    title: 'Basic',
+    description: 'The most basic cost calculator',
+    component: BasicCostCalculator,
+    sourceCode: BasicCostCalculatorCode,
+  },
+  {
+    id: 'with-default-values-cost-calculator',
+    title: 'Default Values',
+    description: 'Cost Calculator with default values',
+    component: BasicCostCalculatorWithDefaultValues,
+    sourceCode: BasicCostCalculatorDefaultValuesCode,
+  },
+  {
+    id: 'with-custom-labels-cost-calculator',
+    title: 'Custom Fields Labels',
+    description: 'Custom Field Labels in Cost Calculator',
+    component: BasicCostCalculatorLabels,
+    sourceCode: BasicCostCalculatorLabelsCode,
+  },
+  {
+    id: 'with-results-cost-calculator',
+    title: 'Estimation Results',
+    description: 'Cost Calculator with an estimation component',
+    component: CostCalculatorWithResults,
+    sourceCode: CostCalculatorWithResultsCode,
+  },
+  {
+    id: 'with-export-pdf-cost-calculator',
+    title: 'Export PDF',
+    description: 'Cost Calculator with an estimation component',
+    component: CostCalculatorWithExportPdf,
+    sourceCode: CostCalculatorWithExportPdfCode,
+  },
+  {
+    id: 'with-premium-benefits-cost-calculator',
+    title: 'Premium Benefits',
+    description: 'Cost Calculator with premium benefits',
+    component: CostCalculatorWithPremiumBenefits,
+    sourceCode: CostCalculatorWithPremiumBenefitsCode,
+  },
+  {
+    id: 'with-components-cost-calculator',
+    title: 'Replacable components',
+    description: 'Cost Calculator with replacable components',
+    component: CostCalculatorWithReplaceableComponents,
+    sourceCode: CostCalculatorWithReplaceableComponentsCode,
+  },
+];
+
 const additionalDemos = [
   {
     id: 'termination',
@@ -96,57 +148,11 @@ const demoStructure = [
     title: 'Cost Calculator',
     description:
       'Calculate the total cost of your employee in different countries',
-    children: [
-      {
-        id: 'basic-cost-calculator',
-        title: 'Basic',
-        description: 'The most basic cost calculator',
-        component: BasicCostCalculator,
-        sourceCode: BasicCostCalculatorCode,
-      },
-      {
-        id: 'with-default-values-cost-calculator',
-        title: 'Default Values',
-        description: 'Cost Calculator with default values',
-        component: BasicCostCalculatorWithDefaultValues,
-        sourceCode: BasicCostCalculatorDefaultValuesCode,
-      },
-      {
-        id: 'with-custom-labels-cost-calculator',
-        title: 'Custom Fields Labels',
-        description: 'Custom Field Labels in Cost Calculator',
-        component: BasicCostCalculatorLabels,
-        sourceCode: BasicCostCalculatorLabelsCode,
-      },
-      {
-        id: 'with-results-cost-calculator',
-        title: 'Estimation Results',
-        description: 'Cost Calculator with an estimation component',
-        component: CostCalculatorWithResults,
-        sourceCode: CostCalculatorWithResultsCode,
-      },
-      {
-        id: 'with-export-pdf-cost-calculator',
-        title: 'Export PDF',
-        description: 'Cost Calculator with an estimation component',
-        component: CostCalculatorWithExportPdf,
-        sourceCode: CostCalculatorWithExportPdfCode,
-      },
-      {
-        id: 'with-premium-benefits-cost-calculator',
-        title: 'Premium Benefits',
-        description: 'Cost Calculator with premium benefits',
-        component: CostCalculatorWithPremiumBenefits,
-        sourceCode: CostCalculatorWithPremiumBenefitsCode,
-      },
-      {
-        id: 'with-components-cost-calculator',
-        title: 'Replacable components',
-        description: 'Cost Calculator with replacable components',
-        component: CostCalculatorWithReplaceableComponents,
-        sourceCode: CostCalculatorWithReplaceableComponentsCode,
-      },
-    ],
+    children: isDev
+      ? costCalculatorDemos
+      : costCalculatorDemos.filter(
+          (demo) => demo.id === 'with-premium-benefits-cost-calculator',
+        ),
   },
   ...(isDev ? additionalDemos : []),
 ];
@@ -199,6 +205,10 @@ const flattenedDemos = demoStructure.reduce(
   >,
 );
 
+const defaultDemoId = isDev
+  ? 'basic-cost-calculator'
+  : 'with-premium-benefits-cost-calculator';
+
 function App() {
   const [expandedCategories, setExpandedCategories] = useState<
     Record<string, boolean>
@@ -208,7 +218,7 @@ function App() {
   const [activeDemo, setActiveDemo] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const demoId = urlParams.get('demo');
-    return demoId && flattenedDemos[demoId] ? demoId : 'basic-cost-calculator';
+    return demoId && flattenedDemos[demoId] ? demoId : defaultDemoId;
   });
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -246,76 +256,77 @@ function App() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">SDK Demos</h1>
+      {isDev && <h1 className="text-3xl font-bold mb-6">SDK Demos</h1>}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Nested Navigation Sidebar */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Demos</CardTitle>
-              <CardDescription>Browse all available demos</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-1">
-                {demoStructure.map((category) => (
-                  <div key={category.id} className="space-y-1">
-                    {category.children ? (
-                      // Category with children
-                      <Collapsible
-                        open={expandedCategories[category.id]}
-                        onOpenChange={() => toggleCategory(category.id)}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-between"
-                          >
-                            {category.title}
-                            {expandedCategories[category.id] ? (
-                              <ChevronDown className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <div className="pl-4 space-y-1 mt-1">
-                            {category.children.map((child) => (
-                              <Button
-                                key={child.id}
-                                variant={
-                                  activeDemo === child.id ? 'accent' : 'ghost'
-                                }
-                                size="sm"
-                                className="w-full justify-start"
-                                onClick={() => selectDemo(child.id)}
-                              >
-                                {child.title}
-                              </Button>
-                            ))}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      // Standalone item
-                      <Button
-                        variant={
-                          activeDemo === category.id ? 'accent' : 'ghost'
-                        }
-                        className="w-full justify-start"
-                        onClick={() => selectDemo(category.id)}
-                      >
-                        {category.title}
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
+        {isDev && (
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Demos</CardTitle>
+                <CardDescription>Browse all available demos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col space-y-1">
+                  {demoStructure.map((category) => (
+                    <div key={category.id} className="space-y-1">
+                      {category.children ? (
+                        // Category with children
+                        <Collapsible
+                          open={expandedCategories[category.id]}
+                          onOpenChange={() => toggleCategory(category.id)}
+                        >
+                          <CollapsibleTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-between"
+                            >
+                              {category.title}
+                              {expandedCategories[category.id] ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="pl-4 space-y-1 mt-1">
+                              {category.children.map((child) => (
+                                <Button
+                                  key={child.id}
+                                  variant={
+                                    activeDemo === child.id ? 'accent' : 'ghost'
+                                  }
+                                  size="sm"
+                                  className="w-full justify-start"
+                                  onClick={() => selectDemo(child.id)}
+                                >
+                                  {child.title}
+                                </Button>
+                              ))}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ) : (
+                        // Standalone item
+                        <Button
+                          variant={
+                            activeDemo === category.id ? 'accent' : 'ghost'
+                          }
+                          className="w-full justify-start"
+                          onClick={() => selectDemo(category.id)}
+                        >
+                          {category.title}
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
         {/* Main Content */}
         <div className="lg:col-span-3">
           <Card>
@@ -325,10 +336,12 @@ function App() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="demo" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="demo">Demo</TabsTrigger>
-                  <TabsTrigger value="code">Code</TabsTrigger>
-                </TabsList>
+                {isDev && (
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="demo">Demo</TabsTrigger>
+                    <TabsTrigger value="code">Code</TabsTrigger>
+                  </TabsList>
+                )}
                 <TabsContent value="demo" className="mt-4">
                   {React.createElement(currentDemo.component as $TSFixMe)}
                 </TabsContent>

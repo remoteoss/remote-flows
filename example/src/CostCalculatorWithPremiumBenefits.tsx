@@ -30,6 +30,10 @@ function CostCalculatorFormDemo() {
   const [payload, setPayload] =
     useState<CostCalculatorEstimationSubmitValues | null>(null);
 
+  const onReset = () => {
+    setEstimations(null);
+  };
+
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   const handleExportPdf = () => {
@@ -62,6 +66,9 @@ function CostCalculatorFormDemo() {
         options={{
           jsfModify: {
             fields: {
+              country: {
+                title: 'Employee country',
+              },
               currency: {
                 title: 'Employer billing currency',
               },
@@ -86,7 +93,10 @@ function CostCalculatorFormDemo() {
                 }}
               />
               <div className="buttons-container">
-                <CostCalculatorResetButton className="reset-button">
+                <CostCalculatorResetButton
+                  onClick={onReset}
+                  className="reset-button"
+                >
                   Reset
                 </CostCalculatorResetButton>
                 <CostCalculatorSubmitButton
@@ -111,9 +121,11 @@ function CostCalculatorFormDemo() {
             </label>
           </div>
           <CostCalculatorResults employmentData={estimations.data} />
-          <button className="submit-button" onClick={handleExportPdf}>
-            Export as PDF
-          </button>
+          <div className="mt-2">
+            <button className="submit-button" onClick={handleExportPdf}>
+              Export as PDF
+            </button>
+          </div>
         </div>
       )}
     </>
