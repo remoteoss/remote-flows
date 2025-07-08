@@ -10,8 +10,17 @@ const Button = ({
   /* variant */
   ...props
 }: ButtonComponentProps) => {
-  //console.log('Button component rendered with props:', props.variant); // THIS WILL WORK
-  return <button {...props}>{children}</button>;
+  const { 'data-type': dataType, className, ...buttonProps } = props;
+  const isInline = dataType === 'inline';
+
+  return (
+    <button
+      className={isInline ? `button-inline ${className}` : className}
+      {...buttonProps}
+    >
+      {children}
+    </button>
+  );
 };
 
 const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {

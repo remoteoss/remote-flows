@@ -766,3 +766,50 @@ button.reset-button {
 .select-wrapper.disabled .select-arrow {
   color: #94a3b8;
 }
+
+/* ===== INLINE BUTTON STYLES ===== */
+.button-inline {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  text-decoration: underline;
+  text-decoration-color: #3b82f6;
+  text-underline-offset: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+}
+
+.button-inline:hover {
+  color: #2563eb;
+  text-decoration-color: #2563eb;
+  text-decoration-thickness: 2px;
+}
+
+.button-inline:focus {
+  color: #1d4ed8;
+  text-decoration-color: #1d4ed8;
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.button-inline:active {
+  color: #1e40af;
+  text-decoration-color: #1e40af;
+}
+
+.button-inline:disabled {
+  color: #9ca3af;
+  text-decoration-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.RemoteFlows-Salary-description {
+  display: block;
+  margin-top: 8px;
+}
