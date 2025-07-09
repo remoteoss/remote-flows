@@ -509,7 +509,6 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
-// Add this utility function
 export const groupFlatDataIntoFieldsets = (
   flatData: Record<string, unknown>,
   fields: Fields,

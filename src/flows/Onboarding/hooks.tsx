@@ -396,9 +396,8 @@ export const useOnboarding = ({
   );
 
   const contractDetailsInitialValues = useMemo(() => {
-    const flatData = flattenFieldsetValues(employmentContractDetails);
     const groupedData = groupFlatDataIntoFieldsets(
-      flatData,
+      employmentContractDetails,
       stepFields.contract_details,
     );
     return getInitialValues(stepFields.contract_details, groupedData);
