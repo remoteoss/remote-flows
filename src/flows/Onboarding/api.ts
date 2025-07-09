@@ -25,12 +25,9 @@ import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/sel
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { Client } from '@hey-api/client-fetch';
-import {
-  createHeadlessForm,
-  JSONSchemaObjectType,
-  modify,
-} from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 
@@ -173,19 +170,23 @@ const modifySchemaAndCreateFieldsets = (schema: {
     string,
     { propertiesByName: string[]; title: string }
   >;
+  'x-jsf-order'?: string[];
+  required: string[];
 }) => {
-  console.log('schema', schema);
-  const { 'x-jsf-fieldsets': fieldsets } = schema;
-  const fieldsetsObject = fieldsets as Record<
-    string,
-    { propertiesByName: string[]; title: string }
-  >;
-  const propertiesToRemove = Object.keys(fieldsetsObject || {}).reduce(
+  const {
+    'x-jsf-fieldsets': fieldsets,
+    properties,
+    required,
+    'x-jsf-order': order,
+  } = schema;
+
+  if (!fieldsets || Object.keys(fieldsets).length === 0) {
+    return schema;
+  }
+
+  const propertiesToRemove = Object.keys(fieldsets || {}).reduce(
     (acc, fieldset) => {
-      return [
-        ...acc,
-        ...(fieldsetsObject[fieldset].propertiesByName as string[]),
-      ];
+      return [...acc, ...(fieldsets[fieldset].propertiesByName as string[])];
     },
     [] as string[],
   );
@@ -196,17 +197,79 @@ const modifySchemaAndCreateFieldsets = (schema: {
     ),
   );
 
-  const propertiesFieldset = Object.fromEntries(
-    Object.entries(schema.properties).filter(([key]) =>
-      propertiesToRemove.includes(key),
-    ),
+  // Create fieldset properties
+  const fieldsetProperties = Object.keys(fieldsets).reduce(
+    (acc, fieldsetKey) => {
+      const fieldsetConfig = fieldsets[fieldsetKey];
+
+      // Extract properties for this fieldset
+      const fieldsetPropertiesObj = Object.fromEntries(
+        fieldsetConfig.propertiesByName
+          .map((fieldName) => [fieldName, properties[fieldName]])
+          .filter(([, fieldValue]) => fieldValue !== undefined),
+      );
+
+      // Get required fields for this fieldset
+      const fieldsetRequired = fieldsetConfig.propertiesByName.filter(
+        (propName) => required.includes(propName),
+      );
+
+      // Create the fieldset object
+      acc[fieldsetKey] = {
+        title: fieldsetConfig.title,
+        type: 'object',
+        properties: fieldsetPropertiesObj,
+        ...(fieldsetRequired.length > 0 && { required: fieldsetRequired }),
+        'x-jsf-presentation': {
+          inputType: 'fieldset',
+        },
+      };
+
+      return acc;
+    },
+    {} as Record<string, unknown>,
   );
 
-  console.log('propertiesFieldset', propertiesFieldset);
+  const updatedRequired = [
+    ...required.filter((req) => !propertiesToRemove.includes(req)),
+    ...Object.keys(fieldsetProperties),
+  ];
+
+  let updatedOrder = order;
+  if (order && order.length > 0) {
+    updatedOrder = [...order];
+
+    Object.keys(fieldsets).forEach((fieldsetKey) => {
+      const fieldsetConfig = fieldsets[fieldsetKey];
+
+      // Find the position of the first property in this fieldset
+      const firstPropertyIndex = updatedOrder?.findIndex((item) =>
+        fieldsetConfig.propertiesByName.includes(item),
+      );
+
+      if (firstPropertyIndex !== -1 && firstPropertyIndex !== undefined) {
+        // Replace the first property with the fieldset key
+        updatedOrder![firstPropertyIndex] = fieldsetKey;
+
+        // Remove all other properties from this fieldset from the order
+        updatedOrder = updatedOrder?.filter(
+          (item) =>
+            item === fieldsetKey ||
+            !fieldsetConfig.propertiesByName.includes(item),
+        );
+      }
+    });
+  }
 
   return {
     ...schema,
-    properties: filteredProperties,
+    properties: {
+      ...filteredProperties,
+      ...fieldsetProperties,
+    },
+    required: updatedRequired,
+    ...(updatedOrder && { 'x-jsf-order': updatedOrder }),
+    'x-jsf-fieldsets': undefined,
   };
 };
 
@@ -260,11 +323,12 @@ export const useJSONSchemaForm = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      let jsfSchema = modifySchemaAndCreateFieldsets(data?.data || {});
-
+      let jsfSchema = modifySchemaAndCreateFieldsets(
+        data?.data || ({} as $TSFixMe),
+      );
       if (options && options.jsfModify) {
         const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
+        jsfSchema = schema as $TSFixMe;
       }
 
       // Contract details contains x-jsf-logic that need to be calculated every time a form value changes

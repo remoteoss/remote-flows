@@ -509,6 +509,27 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
+export function flattenFieldsetValues(values: Record<string, any>) {
+  const flattenedValues = { ...values };
+  const fieldsetKeys = Object.keys(flattenedValues).filter((key) =>
+    key.endsWith('_fieldset'),
+  );
+
+  fieldsetKeys.forEach((fieldsetKey) => {
+    const fieldsetValue = flattenedValues[fieldsetKey];
+
+    if (fieldsetValue && typeof fieldsetValue === 'object') {
+      // Spread the fieldset properties into the main object
+      Object.assign(flattenedValues, fieldsetValue);
+    }
+
+    // Remove the original fieldset object
+    delete flattenedValues[fieldsetKey];
+  });
+
+  return flattenedValues;
+}
+
 export function parseJSFToValidate(
   formValues: Record<string, any>,
   fields: Fields,
@@ -521,6 +542,7 @@ export function parseJSFToValidate(
         they are needed for conditional fields validations */
     keepInvisibleValues: config?.isPartialValidation,
   });
+
   return valuesParsed;
 }
 

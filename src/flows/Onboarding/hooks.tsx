@@ -13,6 +13,7 @@ import {
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
 import {
+  flattenFieldsetValues,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
@@ -500,14 +501,15 @@ export const useOnboarding = ({
   ]);
 
   const parseFormValues = (values: FieldValues) => {
+    let parsedValues: FieldValues = {};
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
-      return values;
+      parsedValues = values;
     }
     if (
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return parseJSFToValidate(values, basicInformationForm?.fields, {
+      parsedValues = parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: true,
       });
     }
@@ -516,12 +518,12 @@ export const useOnboarding = ({
       contractDetailsForm &&
       stepState.currentStep.name === 'contract_details'
     ) {
-      return parseJSFToValidate(values, contractDetailsForm?.fields, {
+      parsedValues = parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: true,
       });
     }
 
-    return {};
+    return flattenFieldsetValues(parsedValues);
   };
 
   async function onSubmit(values: FieldValues) {
