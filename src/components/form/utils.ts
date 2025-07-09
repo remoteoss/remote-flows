@@ -509,6 +509,12 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
+/**
+ * Takes the flat data and groups it into the created _fieldset fields
+ * @param flatData - The flat data to group
+ * @param fields - The fields to group
+ * @returns The grouped data
+ */
 export const groupFlatDataIntoFieldsets = (
   flatData: Record<string, unknown>,
   fields: Fields,
@@ -544,6 +550,11 @@ export const groupFlatDataIntoFieldsets = (
   return result;
 };
 
+/**
+ * Flatten fieldset values that have been created with suffix _fieldset
+ * @param values - The values to flatten
+ * @returns The flattened values
+ */
 export function flattenFieldsetValues(values: Record<string, any>) {
   const flattenedValues = { ...values };
   const fieldsetKeys = Object.keys(flattenedValues).filter((key) =>
