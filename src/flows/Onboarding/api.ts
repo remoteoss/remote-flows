@@ -26,7 +26,11 @@ import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  createHeadlessForm,
+  JSONSchemaObjectType,
+  modify,
+} from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 
@@ -163,6 +167,49 @@ export const useCreateReserveInvoice = () => {
   });
 };
 
+const modifySchemaAndCreateFieldsets = (schema: {
+  properties: Record<string, unknown>;
+  'x-jsf-fieldsets': Record<
+    string,
+    { propertiesByName: string[]; title: string }
+  >;
+}) => {
+  console.log('schema', schema);
+  const { 'x-jsf-fieldsets': fieldsets } = schema;
+  const fieldsetsObject = fieldsets as Record<
+    string,
+    { propertiesByName: string[]; title: string }
+  >;
+  const propertiesToRemove = Object.keys(fieldsetsObject || {}).reduce(
+    (acc, fieldset) => {
+      return [
+        ...acc,
+        ...(fieldsetsObject[fieldset].propertiesByName as string[]),
+      ];
+    },
+    [] as string[],
+  );
+
+  const filteredProperties = Object.fromEntries(
+    Object.entries(schema.properties).filter(
+      ([key]) => !propertiesToRemove.includes(key),
+    ),
+  );
+
+  const propertiesFieldset = Object.fromEntries(
+    Object.entries(schema.properties).filter(([key]) =>
+      propertiesToRemove.includes(key),
+    ),
+  );
+
+  console.log('propertiesFieldset', propertiesFieldset);
+
+  return {
+    ...schema,
+    properties: filteredProperties,
+  };
+};
+
 /**
  * Use this hook to get the JSON schema form for the onboarding flow
  * @param param0
@@ -213,7 +260,8 @@ export const useJSONSchemaForm = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      let jsfSchema = data?.data || {};
+      let jsfSchema = modifySchemaAndCreateFieldsets(data?.data || {});
+
       if (options && options.jsfModify) {
         const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
