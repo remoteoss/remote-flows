@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.22
+
+### Patch Changes
+
+- 5b6c71e: Fix estimation payload when selecting benefits as none
+
 ## 0.4.0-alpha.21
 
 ### Patch Changes
