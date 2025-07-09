@@ -509,6 +509,42 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
+// Add this utility function
+export const groupFlatDataIntoFieldsets = (
+  flatData: Record<string, unknown>,
+  fields: Fields,
+): Record<string, unknown> => {
+  const result = { ...flatData };
+
+  // Find all fieldset fields
+  const fieldsetFields = fields.filter((field) =>
+    (field as $TSFixMe).name?.endsWith('_fieldset'),
+  );
+
+  fieldsetFields.forEach((fieldsetField: $TSFixMe) => {
+    if (fieldsetField.fields) {
+      const fieldsetData: Record<string, unknown> = {};
+      let hasData = false;
+
+      // Extract properties that belong to this fieldset
+      (fieldsetField.fields as $TSFixMe).forEach((subField: $TSFixMe) => {
+        if (subField.name && subField.name in result) {
+          fieldsetData[subField.name] = result[subField.name];
+          delete result[subField.name]; // Remove from flat structure
+          hasData = true;
+        }
+      });
+
+      // Only create fieldset if it has data
+      if (hasData && fieldsetField.name) {
+        result[fieldsetField.name] = fieldsetData as $TSFixMe;
+      }
+    }
+  });
+
+  return result;
+};
+
 export function flattenFieldsetValues(values: Record<string, any>) {
   const flattenedValues = { ...values };
   const fieldsetKeys = Object.keys(flattenedValues).filter((key) =>

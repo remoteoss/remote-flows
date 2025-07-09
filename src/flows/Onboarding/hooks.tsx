@@ -15,6 +15,7 @@ import {
 import {
   flattenFieldsetValues,
   getInitialValues,
+  groupFlatDataIntoFieldsets,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -394,14 +395,14 @@ export const useOnboarding = ({
     [stepFields.basic_information, employmentBasicInformation],
   );
 
-  const contractDetailsInitialValues = useMemo(
-    () =>
-      getInitialValues(
-        stepFields.contract_details,
-        employmentContractDetails || {},
-      ),
-    [stepFields.contract_details, employmentContractDetails],
-  );
+  const contractDetailsInitialValues = useMemo(() => {
+    const flatData = flattenFieldsetValues(employmentContractDetails);
+    const groupedData = groupFlatDataIntoFieldsets(
+      flatData,
+      stepFields.contract_details,
+    );
+    return getInitialValues(stepFields.contract_details, groupedData);
+  }, [stepFields.contract_details, employmentContractDetails]);
 
   const benefitsInitialValues = useMemo(
     () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
