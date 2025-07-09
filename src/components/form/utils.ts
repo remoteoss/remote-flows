@@ -577,7 +577,6 @@ export function parseJSFToValidate(
         they are needed for conditional fields validations */
     keepInvisibleValues: config?.isPartialValidation,
   });
-
   return valuesParsed;
 }
 
