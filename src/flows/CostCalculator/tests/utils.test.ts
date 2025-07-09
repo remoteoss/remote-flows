@@ -107,4 +107,25 @@ describe('buildPayload', () => {
     expect(payload.include_cost_breakdowns).toBe(false);
     expect(payload.employments[0].title).toBe('Custom Title');
   });
+
+  it('should not include some of the benefits if none is selected', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary: 100_000,
+      benefits: {
+        'benefit-health': 'whatever',
+        'benefit-dental': 'none',
+      },
+    };
+
+    const payload = buildPayload(values);
+
+    expect(payload.employments[0].benefits).toEqual([
+      {
+        benefit_group_slug: 'health',
+        benefit_tier_slug: 'whatever',
+      },
+    ]);
+  });
 });

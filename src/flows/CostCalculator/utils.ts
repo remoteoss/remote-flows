@@ -33,10 +33,14 @@ function formatBenefits(benefits: Record<string, string>) {
   return Object.keys(benefits).reduce<
     Array<{ benefit_group_slug: string; benefit_tier_slug: string }>
   >((acc, key) => {
+    const benefitTierSlug = benefits[key];
+    if (benefitTierSlug === 'none') {
+      return acc;
+    }
     const benefitGroupSlug = key.replace(needle, '');
     const benefitEntry = {
       benefit_group_slug: benefitGroupSlug,
-      benefit_tier_slug: benefits[key],
+      benefit_tier_slug: benefitTierSlug,
     };
     return [...acc, benefitEntry];
   }, []);
