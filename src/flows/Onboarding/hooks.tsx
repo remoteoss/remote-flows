@@ -13,7 +13,9 @@ import {
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
 import {
+  flattenFieldsetValues,
   getInitialValues,
+  groupFlatDataIntoFieldsets,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -395,14 +397,13 @@ export const useOnboarding = ({
     [stepFields.basic_information, employmentBasicInformation],
   );
 
-  const contractDetailsInitialValues = useMemo(
-    () =>
-      getInitialValues(
-        stepFields.contract_details,
-        employmentContractDetails || {},
-      ),
-    [stepFields.contract_details, employmentContractDetails],
-  );
+  const contractDetailsInitialValues = useMemo(() => {
+    const groupedData = groupFlatDataIntoFieldsets(
+      employmentContractDetails,
+      stepFields.contract_details,
+    );
+    return getInitialValues(stepFields.contract_details, groupedData);
+  }, [stepFields.contract_details, employmentContractDetails]);
 
   const benefitsInitialValues = useMemo(
     () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
@@ -502,14 +503,15 @@ export const useOnboarding = ({
   ]);
 
   const parseFormValues = (values: FieldValues) => {
+    let parsedValues: FieldValues = {};
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
-      return values;
+      parsedValues = values;
     }
     if (
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return parseJSFToValidate(values, basicInformationForm?.fields, {
+      parsedValues = parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: true,
       });
     }
@@ -518,12 +520,12 @@ export const useOnboarding = ({
       contractDetailsForm &&
       stepState.currentStep.name === 'contract_details'
     ) {
-      return parseJSFToValidate(values, contractDetailsForm?.fields, {
+      parsedValues = parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: true,
       });
     }
 
-    return {};
+    return flattenFieldsetValues(parsedValues);
   };
 
   async function onSubmit(values: FieldValues) {

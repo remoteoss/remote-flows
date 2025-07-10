@@ -509,6 +509,73 @@ export function parseSubmitValues(
   return valuesWithReadOnly;
 }
 
+/**
+ * Takes the flat data and groups it into the created _fieldset fields
+ * @param flatData - The flat data to group
+ * @param fields - The fields to group
+ * @returns The grouped data
+ */
+export const groupFlatDataIntoFieldsets = (
+  flatData: Record<string, unknown>,
+  fields: Fields,
+): Record<string, unknown> => {
+  const result = { ...flatData };
+
+  // Find all fieldset fields
+  const fieldsetFields = fields.filter((field) =>
+    (field as $TSFixMe).name?.endsWith('_fieldset'),
+  );
+
+  fieldsetFields.forEach((fieldsetField: $TSFixMe) => {
+    if (fieldsetField.fields) {
+      const fieldsetData: Record<string, unknown> = {};
+      let hasData = false;
+
+      // Extract properties that belong to this fieldset
+      (fieldsetField.fields as $TSFixMe).forEach((subField: $TSFixMe) => {
+        if (subField.name && subField.name in result) {
+          fieldsetData[subField.name] = result[subField.name];
+          delete result[subField.name]; // Remove from flat structure
+          hasData = true;
+        }
+      });
+
+      // Only create fieldset if it has data
+      if (hasData && fieldsetField.name) {
+        result[fieldsetField.name] = fieldsetData as $TSFixMe;
+      }
+    }
+  });
+
+  return result;
+};
+
+/**
+ * Flatten fieldset values that have been created with suffix _fieldset
+ * @param values - The values to flatten
+ * @returns The flattened values
+ */
+export function flattenFieldsetValues(values: Record<string, any>) {
+  const flattenedValues = { ...values };
+  const fieldsetKeys = Object.keys(flattenedValues).filter((key) =>
+    key.endsWith('_fieldset'),
+  );
+
+  fieldsetKeys.forEach((fieldsetKey) => {
+    const fieldsetValue = flattenedValues[fieldsetKey];
+
+    if (fieldsetValue && typeof fieldsetValue === 'object') {
+      // Spread the fieldset properties into the main object
+      Object.assign(flattenedValues, fieldsetValue);
+    }
+
+    // Remove the original fieldset object
+    delete flattenedValues[fieldsetKey];
+  });
+
+  return flattenedValues;
+}
+
 export function parseJSFToValidate(
   formValues: Record<string, any>,
   fields: Fields,
