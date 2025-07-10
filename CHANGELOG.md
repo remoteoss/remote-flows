@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.23
+
+### Patch Changes
+
+- b6c568c: Update contract eligibility after creating an employment
+
 ## 0.4.0-alpha.22
 
 ### Patch Changes
