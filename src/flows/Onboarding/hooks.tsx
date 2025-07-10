@@ -22,6 +22,7 @@ import { Meta, OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
+  JSFFieldset,
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
@@ -262,6 +263,8 @@ export const useOnboarding = ({
     },
   });
 
+  console.log('####### basicInformation meta', basicInformationForm?.meta);
+
   const annualGrossSalaryField =
     options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
   const annualSalaryFieldPresentation =
@@ -329,6 +332,8 @@ export const useOnboarding = ({
       },
     });
 
+  console.log('####### contractDetails meta', contractDetailsForm?.meta);
+
   const {
     data: benefitOffersSchema,
     isLoading: isLoadingBenefitsOffersSchema,
@@ -369,6 +374,17 @@ export const useOnboarding = ({
       benefitOffersSchema?.fields,
     ],
   );
+
+  const stepFieldsWithFlatFieldsets: Record<
+    keyof typeof STEPS,
+    JSFFieldset | null | undefined
+  > = {
+    select_country: null,
+    basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
+    benefits: null,
+    review: null,
+  };
 
   const {
     country: { code: employmentCountryCode } = {},
@@ -750,6 +766,7 @@ export const useOnboarding = ({
      */
     meta: {
       fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
     },
 
     /**

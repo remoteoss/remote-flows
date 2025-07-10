@@ -32,6 +32,13 @@ import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 
+export type JSFFieldset = {
+  [x: string]: {
+    propertiesByName: string[];
+    title: string;
+  };
+};
+
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
 
@@ -233,12 +240,17 @@ export const useJSONSchemaForm = ({
         {},
       );
 
-      return createHeadlessForm(jsfSchema, {
-        initialValues: {
-          ...fieldValues,
-          ...moneyFieldsData,
+      return {
+        meta: {
+          'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
         },
-      });
+        ...createHeadlessForm(jsfSchema, {
+          initialValues: {
+            ...fieldValues,
+            ...moneyFieldsData,
+          },
+        }),
+      };
     },
   });
 };

@@ -29,6 +29,7 @@ type FieldSetProps = {
   fields: Field[];
   components: Components;
   statement?: StatementProps;
+  isFlatFieldset: boolean;
 };
 
 export function FieldSetField({
@@ -38,6 +39,7 @@ export function FieldSetField({
   description,
   components,
   statement,
+  isFlatFieldset,
 }: FieldSetProps) {
   return (
     <fieldset
@@ -66,7 +68,7 @@ export function FieldSetField({
             <FieldComponent
               {...field}
               key={field.name}
-              name={`${name}.${field.name}`}
+              name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
               component={components?.[field.type]}
             />
           );
