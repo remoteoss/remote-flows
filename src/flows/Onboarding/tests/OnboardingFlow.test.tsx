@@ -362,6 +362,9 @@ describe('OnboardingFlow', () => {
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
+      http.post('*/v1/employments/*/contract-eligibility', () => {
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
       http.put('*/v1/employments/*/benefit-offers', () => {
         return HttpResponse.json(benefitOffersUpdatedResponse);
       }),

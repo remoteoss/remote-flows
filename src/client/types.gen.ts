@@ -250,6 +250,15 @@ export type CompanyDepartmentCreatedResponse = {
   company_department?: CompanyDepartment;
 };
 
+export type WebhookEvent = {
+  company_id: string;
+  event_type: string;
+  first_triggered_at: string;
+  id: string;
+  last_triggered_at: string;
+  successfully_delivered: boolean;
+};
+
 export type CreateDataSyncParams = {
   /**
    * The types of data to synchronize.
@@ -1046,6 +1055,10 @@ export type CreateOffboardingParams = {
  */
 export type CreatePricingPlanParams = {
   pricing_plan_partner_template_id: string;
+  /**
+   * Start date of the pricing plan this will always be the first of the month, for example 2025-01-01 will be used if the user provided 2025-01-02
+   */
+  start_date?: string;
 };
 
 /**
@@ -1596,11 +1609,13 @@ export type CreateWebhookCallbackParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
     | 'contract_amendment.done'
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
+    | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
@@ -1783,6 +1798,13 @@ export type BenefitRenewalRequestsBenefitRenewalRequestResponse = {
 export type EmploymentTermType = 'fixed' | 'indefinite';
 
 /**
+ * Replay webhook events params
+ */
+export type ReplayWebhookEventsParams =
+  | IdsRequiredParams
+  | BeforeAfterRequiredParams;
+
+/**
  * Paginated response schema listing all Contractor Invoice Schedules.
  */
 export type ListContractorInvoiceSchedulesResponse = {
@@ -1854,9 +1876,17 @@ export type JsonSchema = {
  */
 export type PricingPlan = {
   base_price: Price;
+  /**
+   * End date of the pricing plan this will be nil if the pricing plan is unlimited otherwise it will be the last day of the month
+   */
+  end_date: string | null;
   id: string;
   price: Price;
   product: Product;
+  /**
+   * Start date of the pricing plan this will always be the first of the month, for example 2025-01-01 will be used if the user provided 2025-01-02
+   */
+  start_date: string;
   type: string;
 };
 
@@ -1935,11 +1965,13 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
     | 'contract_amendment.done'
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
+    | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
@@ -2145,10 +2177,6 @@ export type ExpenseCategoryNode = {
    * Prompt for user guidance
    */
   prompt?: string | null;
-  /**
-   * Category purpose (business, personal, etc.)
-   */
-  purpose?: string;
   /**
    * Category scope (global, country, company, legal_entity)
    */
@@ -2638,6 +2666,14 @@ export type MinimalEmployment = {
  */
 export type ProvisionalStartDate = string;
 
+export type BeforeAfterRequiredParams = {
+  after: string;
+  before: string;
+  company_id?: string;
+  event_type?: string;
+  successfully_delivered?: boolean;
+};
+
 export type ResourceErrorResponse = {
   message: {
     code?:
@@ -2646,13 +2682,13 @@ export type ResourceErrorResponse = {
       | 'action_unrecognized'
       | 'action_invalid'
       | 'parameter_invalid_date'
-      | 'resource_invalid_state'
       | 'parameter_value_invalid'
+      | 'resource_invalid_state'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -2742,8 +2778,16 @@ export type AmountTaxType = 'gross' | 'net';
 export type PricingPlanPartnerTemplate = {
   base_price: Price;
   id: string;
+  /**
+   * The period in months for the template, 0 means unlimited
+   */
+  period?: number;
   price: Price;
   product: Product;
+  /**
+   * Whether the template is unlimited in time (do not expire)
+   */
+  unlimited?: boolean;
 };
 
 /**
@@ -4195,11 +4239,13 @@ export type WebhookCallback = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
     | 'contract_amendment.done'
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
+    | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
@@ -4597,6 +4643,10 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
   start_date: string;
 };
 
+export type IdsRequiredParams = {
+  ids: Array<string>;
+};
+
 export type CompanyStructureNodesResponse = {
   data: {
     company_structure_nodes: Array<CompanyStructureNode>;
@@ -4807,6 +4857,27 @@ export type ListTimeoffTypesResponse = {
   data?: {
     description?: string | null;
     name?: TimeoffType;
+  };
+};
+
+/**
+ * Response schema listing many webhook_events
+ */
+export type ListWebhookEventsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+    webhook_events?: Array<WebhookEvent>;
   };
 };
 
@@ -5089,6 +5160,20 @@ export type ProbationCompletionLetterFile = {
 
 export type GenericFile = Blob | File;
 
+export type CreateContractEligibilityParams = {
+  /**
+   * type of employment eligibility to work in residing country
+   */
+  eligible_to_work_in_residing_country:
+    | 'citizen'
+    | 'permanent_resident'
+    | 'temporary_resident';
+  /**
+   * whether the employer or work restrictions apply
+   */
+  employer_or_work_restrictions: boolean;
+};
+
 /**
  * Webhook callback update params
  */
@@ -5106,11 +5191,13 @@ export type UpdateWebhookCallbackParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
     | 'contract_amendment.done'
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
+    | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
@@ -6836,6 +6923,78 @@ export type GetGetIdentityVerificationDataIdentityVerificationResponses = {
 export type GetGetIdentityVerificationDataIdentityVerificationResponse =
   GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
 
+export type GetIndexWebhookEventData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by webhook event type
+     */
+    event_type?: string;
+    /**
+     * Filter by delivery status (true = 200, false = 4xx/5xx)
+     */
+    successfully_delivered?: boolean;
+    /**
+     * Filter by company ID
+     */
+    company_id?: string;
+    /**
+     * Filter by date before (ISO 8601 format)
+     */
+    before?: string;
+    /**
+     * Filter by date after (ISO 8601 format)
+     */
+    after?: string;
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+    /**
+     * Field to sort by
+     */
+    sort_by?: 'first_triggered_at';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/webhook-events';
+};
+
+export type GetIndexWebhookEventErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexWebhookEventError =
+  GetIndexWebhookEventErrors[keyof GetIndexWebhookEventErrors];
+
+export type GetIndexWebhookEventResponses = {
+  /**
+   * Success
+   */
+  200: ListWebhookEventsResponse;
+};
+
+export type GetIndexWebhookEventResponse =
+  GetIndexWebhookEventResponses[keyof GetIndexWebhookEventResponses];
+
 export type PostBypassEligibilityChecksCompanyData = {
   body?: never;
   path: {
@@ -7675,6 +7834,44 @@ export type PutApproveContractAmendmentResponses = {
 
 export type PutApproveContractAmendmentResponse =
   PutApproveContractAmendmentResponses[keyof PutApproveContractAmendmentResponses];
+
+export type PostReplayWebhookEventData = {
+  /**
+   * WebhookEvent
+   */
+  body: ReplayWebhookEventsParams;
+  path?: never;
+  query?: never;
+  url: '/v1/webhook-events/replay';
+};
+
+export type PostReplayWebhookEventErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostReplayWebhookEventError =
+  PostReplayWebhookEventErrors[keyof PostReplayWebhookEventErrors];
+
+export type PostReplayWebhookEventResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostReplayWebhookEventResponse =
+  PostReplayWebhookEventResponses[keyof PostReplayWebhookEventResponses];
 
 export type GetSchemaBenefitRenewalRequestData = {
   body?: never;
@@ -9083,7 +9280,7 @@ export type GetCategoriesExpenseData = {
     /**
      * Include un-selectable intermediate categories in the response
      */
-    include_branches?: boolean;
+    include_parents?: boolean;
   };
   url: '/v1/expenses/categories';
 };
@@ -10691,6 +10888,49 @@ export type PostCreateEmploymentResponses = {
 
 export type PostCreateEmploymentResponse =
   PostCreateEmploymentResponses[keyof PostCreateEmploymentResponses];
+
+export type PostCreateContractEligibilityData = {
+  /**
+   * Contract Eligibility Create Parameters
+   */
+  body: CreateContractEligibilityParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/contract-eligibility';
+};
+
+export type PostCreateContractEligibilityErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostCreateContractEligibilityError =
+  PostCreateContractEligibilityErrors[keyof PostCreateContractEligibilityErrors];
+
+export type PostCreateContractEligibilityResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostCreateContractEligibilityResponse =
+  PostCreateContractEligibilityResponses[keyof PostCreateContractEligibilityResponses];
 
 export type GetSupportedCountryData = {
   body?: never;

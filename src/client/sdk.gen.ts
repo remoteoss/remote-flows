@@ -66,6 +66,9 @@ import type {
   GetGetIdentityVerificationDataIdentityVerificationData,
   GetGetIdentityVerificationDataIdentityVerificationResponse,
   GetGetIdentityVerificationDataIdentityVerificationError,
+  GetIndexWebhookEventData,
+  GetIndexWebhookEventResponse,
+  GetIndexWebhookEventError,
   PostBypassEligibilityChecksCompanyData,
   PostBypassEligibilityChecksCompanyResponse,
   PostBypassEligibilityChecksCompanyError,
@@ -116,6 +119,9 @@ import type {
   PutApproveContractAmendmentData,
   PutApproveContractAmendmentResponse,
   PutApproveContractAmendmentError,
+  PostReplayWebhookEventData,
+  PostReplayWebhookEventResponse,
+  PostReplayWebhookEventError,
   GetSchemaBenefitRenewalRequestData,
   GetSchemaBenefitRenewalRequestResponse,
   GetSchemaBenefitRenewalRequestError,
@@ -289,6 +295,9 @@ import type {
   PostCreateEmploymentData,
   PostCreateEmploymentResponse,
   PostCreateEmploymentError,
+  PostCreateContractEligibilityData,
+  PostCreateContractEligibilityResponse,
+  PostCreateContractEligibilityError,
   GetSupportedCountryData,
   GetSupportedCountryResponse,
   GetSupportedCountryError,
@@ -563,6 +572,10 @@ export const getShowTimesheet = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets/{id}',
     ...options,
@@ -590,6 +603,10 @@ export const postUpdateCancelOnboarding = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -622,6 +639,10 @@ export const getShowContractAmendmentSchema = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments/schema',
     ...options,
@@ -629,6 +650,7 @@ export const getShowContractAmendmentSchema = <
 };
 
 /**
+ * @deprecated
  * Get latest data sync events
  * Get the latest data sync events for each data type that have passed
  *
@@ -653,6 +675,7 @@ export const getIndexDataSync = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * @deprecated
  * Create test data sync job
  * Create Test Data Synchronization job that will sync test data to the database from production
  * The job will be handled asynchronously and the response will be a 202 status code.
@@ -759,6 +782,10 @@ export const getShowProbationCompletionLetter = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-completion-letter/{id}',
     ...options,
@@ -778,6 +805,10 @@ export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -891,6 +922,10 @@ export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoices',
     ...options,
@@ -912,6 +947,10 @@ export const getDetailsSsoConfiguration = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1001,6 +1040,10 @@ export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/benefit-offers',
     ...options,
@@ -1056,8 +1099,35 @@ export const getGetIdentityVerificationDataIdentityVerification = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}',
+    ...options,
+  });
+};
+
+/**
+ * List Webhook Events
+ * List all webhook events
+ */
+export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexWebhookEventData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexWebhookEventResponse,
+    GetIndexWebhookEventError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/webhook-events',
     ...options,
   });
 };
@@ -1130,6 +1200,14 @@ export const getIndexHoliday = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/holidays/{year}',
     ...options,
@@ -1149,6 +1227,10 @@ export const postCreateCancellation = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1177,6 +1259,10 @@ export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1375,6 +1461,10 @@ export const postCreateBenefitRenewalRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/benefit-renewal-requests',
     ...options,
@@ -1452,6 +1542,10 @@ export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sso-configuration',
     ...options,
@@ -1473,6 +1567,10 @@ export const postCreateSsoConfiguration = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1518,6 +1616,33 @@ export const putApproveContractAmendment = <
 };
 
 /**
+ * Replay Webhook Events
+ * Replay webhook events
+ */
+export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
+  options: Options<PostReplayWebhookEventData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostReplayWebhookEventResponse,
+    PostReplayWebhookEventError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/webhook-events/replay',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Show benefit renewal request schema
  * Returns the json schema of the `benefit_renewal_request` form for a specific request.
  * This endpoint requires a company access token, as forms are dependent on certain
@@ -1535,6 +1660,10 @@ export const getSchemaBenefitRenewalRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1680,6 +1809,10 @@ export const postCreateProbationCompletionLetter = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-completion-letter',
     ...options,
@@ -1709,6 +1842,10 @@ export const getShowScheduledContractorInvoice = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
@@ -1730,6 +1867,10 @@ export const patchUpdateScheduledContractorInvoice2 = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1763,6 +1904,10 @@ export const patchUpdateScheduledContractorInvoice = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
@@ -1789,6 +1934,10 @@ export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1857,6 +2006,10 @@ export const getShowWorkAuthorizationRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests/{id}',
     ...options,
@@ -1878,6 +2031,10 @@ export const patchUpdateWorkAuthorizationRequest2 = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1911,6 +2068,10 @@ export const patchUpdateWorkAuthorizationRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests/{id}',
     ...options,
@@ -1936,6 +2097,10 @@ export const postCreateProbationExtension = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1967,6 +2132,10 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/risk-reserve',
     ...options,
@@ -1979,7 +2148,11 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
 
 /**
  * Show a company
- * Given an ID, shows a company
+ * Given an ID, shows a company.
+ *
+ * If the used access token was issued by the OAuth 2.0 Authorization Code flow,
+ * then only the associated company can be accessed through the endpoint.
+ *
  */
 export const getShowCompany = <ThrowOnError extends boolean = false>(
   options: Options<GetShowCompanyData, ThrowOnError>,
@@ -2107,6 +2280,10 @@ export const getDownloadResignationLetter = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/resignations/{offboarding_request_id}/resignation-letter',
     ...options,
@@ -2126,6 +2303,10 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2173,6 +2354,10 @@ export const postCreateContractAmendment = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments',
     ...options,
@@ -2196,6 +2381,10 @@ export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2227,6 +2416,10 @@ export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{expense_id}/receipt',
     ...options,
@@ -2248,6 +2441,10 @@ export const getShowTravelLetterRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2277,6 +2474,10 @@ export const patchUpdateTravelLetterRequest2 = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests/{id}',
     ...options,
@@ -2302,6 +2503,10 @@ export const patchUpdateTravelLetterRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2432,6 +2637,10 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/{form}',
     ...options,
@@ -2456,6 +2665,10 @@ export const getShowFile = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/files/{id}',
     ...options,
@@ -2475,6 +2688,10 @@ export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2592,6 +2809,10 @@ export const postDeclineIdentityVerification = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}/decline',
     ...options,
@@ -2611,6 +2832,10 @@ export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2640,6 +2865,10 @@ export const deleteDeleteWebhookCallback = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/webhook-callbacks/{id}',
     ...options,
@@ -2661,6 +2890,10 @@ export const patchUpdateWebhookCallback = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2694,6 +2927,10 @@ export const getIndexTravelLetterRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests',
     ...options,
@@ -2715,6 +2952,10 @@ export const getIndexBenefitRenewalRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2742,6 +2983,10 @@ export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/webhook-callbacks',
     ...options,
@@ -2765,6 +3010,10 @@ export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2820,6 +3069,10 @@ export const getIndexLeavePoliciesSummary = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/leave-policies/summary/{employment_id}',
     ...options,
@@ -2840,6 +3093,10 @@ export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2865,6 +3122,10 @@ export const postCreateCompanyDepartment = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -2899,6 +3160,10 @@ export const postDeclineCancellationRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
     ...options,
@@ -2925,6 +3190,10 @@ export const getShowSchema = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/benefit-offers/schema',
     ...options,
@@ -2944,6 +3213,10 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3128,6 +3401,10 @@ export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-calendars/{cycle}',
     ...options,
@@ -3222,6 +3499,42 @@ export const postCreateEmployment = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Create contract eligibility
+ * Create contract eligibility for an employment.
+ *
+ * This will create a new contract eligibility for the employment.
+ *
+ */
+export const postCreateContractEligibility = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateContractEligibilityData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateContractEligibilityResponse,
+    PostCreateContractEligibilityError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employments/{employment_id}/contract-eligibility',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * List countries
  * Returns a list of all countries that are supported by Remote API alphabetically ordered. The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
  *
@@ -3246,6 +3559,7 @@ export const getSupportedCountry = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * @deprecated
  * Complete onboarding
  * Completes the employee onboarding. When all tasks are completed, the employee is marked as in `review` status
  */
@@ -3293,6 +3607,10 @@ export const getIndexLeavePoliciesDetails = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/leave-policies/details/{employment_id}',
     ...options,
@@ -3312,6 +3630,10 @@ export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3340,6 +3662,10 @@ export const postTriggerWebhookCallback = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3396,6 +3722,10 @@ export const getShowTimeoff = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{id}',
     ...options,
@@ -3418,6 +3748,10 @@ export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3448,6 +3782,10 @@ export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3532,6 +3870,10 @@ export const postAutomatableContractAmendment = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments/automatable',
     ...options,
@@ -3555,6 +3897,10 @@ export const postCreateApproval = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3588,6 +3934,10 @@ export const getIndexEmploymentCustomField = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields',
     ...options,
@@ -3609,6 +3959,10 @@ export const postCreateEmploymentCustomField = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3636,6 +3990,10 @@ export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3731,6 +4089,10 @@ export const getPendingChangesEmploymentContract = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employment-contracts/{employment_id}/pending-changes',
     ...options,
@@ -3750,6 +4112,10 @@ export const getShowResignation = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3779,6 +4145,10 @@ export const postUploadEmployeeFileFile = <
   >({
     ...formDataBodySerializer,
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3823,6 +4193,10 @@ export const postInviteEmploymentInvitation = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3929,6 +4303,10 @@ export const getShowBenefitRenewalRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
@@ -3950,6 +4328,10 @@ export const postUpdateBenefitRenewalRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -3984,6 +4366,10 @@ export const getIndexEmploymentCompanyStructureNode = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/company-structure-nodes',
     ...options,
@@ -4009,6 +4395,10 @@ export const getIndexEmploymentCustomFieldValue = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/custom-fields',
     ...options,
@@ -4028,6 +4418,10 @@ export const putValidateResignation = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4061,6 +4455,10 @@ export const getShowEmploymentCustomFieldValue = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
@@ -4082,6 +4480,10 @@ export const patchUpdateEmploymentCustomFieldValue2 = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4111,6 +4513,10 @@ export const patchUpdateEmploymentCustomFieldValue = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4283,6 +4689,10 @@ export const getIndexWorkAuthorizationRequest = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests',
     ...options,
@@ -4309,6 +4719,10 @@ export const getIndexBenefitOffersCountrySummary = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-offers/country-summaries',
     ...options,
@@ -4331,6 +4745,10 @@ export const getIndexBenefitOffersByEmployment = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4414,6 +4832,10 @@ export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-extensions/{id}',
     ...options,
@@ -4460,6 +4882,10 @@ export const getDownloadByIdExpenseReceipt = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4514,6 +4940,10 @@ export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff',
     ...options,
@@ -4533,6 +4963,10 @@ export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4564,6 +4998,10 @@ export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs',
     ...options,
@@ -4585,6 +5023,10 @@ export const getIndexEmploymentContract = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4723,6 +5165,10 @@ export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets/{timesheet_id}/send-back',
     ...options,
@@ -4800,6 +5246,10 @@ export const getIndexScheduledContractorInvoice = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules',
     ...options,
@@ -4823,6 +5273,10 @@ export const postBulkCreateScheduledContractorInvoice = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4856,6 +5310,10 @@ export const getGetBreakdownBillingDocument = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/billing-documents/{billing_document_id}/breakdown',
     ...options,
@@ -4879,6 +5337,10 @@ export const postApproveCancellationRequest = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4909,6 +5371,10 @@ export const postVerifyIdentityVerification = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}/verify',
     ...options,
@@ -4930,6 +5396,10 @@ export const getDownloadPdfBillingDocument = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
