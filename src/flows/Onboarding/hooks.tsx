@@ -31,6 +31,7 @@ import {
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
+  useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
@@ -187,6 +188,7 @@ export const useOnboarding = ({
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(options);
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
+  const updateContractEligibilityMutation = useUpsertContractEligibility();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
@@ -556,10 +558,15 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            setInternalEmploymentId(
-              // @ts-expect-error the types from the response are not matching
-              response.data?.data?.employment?.id,
-            );
+            // @ts-expect-error the types from the response are not matching
+            const employmentId = response.data?.data?.employment?.id;
+            setInternalEmploymentId(employmentId);
+            await updateContractEligibilityMutation.mutateAsync({
+              employmentId: employmentId,
+              eligible_to_work_in_residing_country: 'citizen',
+              employer_or_work_restrictions: false,
+            });
+
             return response;
           } catch (error) {
             console.error('Error creating onboarding:', error);

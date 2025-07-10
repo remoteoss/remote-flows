@@ -1,5 +1,6 @@
 import {
   ConvertCurrencyParams,
+  CreateContractEligibilityParams,
   EmploymentCreateParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
@@ -11,6 +12,7 @@ import {
   MagicLinkParams,
   patchUpdateEmployment2,
   postConvertCurrencyConverter,
+  postCreateContractEligibility,
   postCreateEmployment2,
   postCreateRiskReserve,
   postGenerateMagicLink,
@@ -485,6 +487,27 @@ export const useConvertCurrency = () => {
         client: client as Client,
         headers: {
           Authorization: ``,
+        },
+        body: payload,
+      });
+    },
+  });
+};
+
+export const useUpsertContractEligibility = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: { employmentId: string } & CreateContractEligibilityParams) => {
+      return postCreateContractEligibility({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId,
         },
         body: payload,
       });

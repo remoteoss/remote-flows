@@ -171,6 +171,9 @@ describe('SaveDraftButton', () => {
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
+      http.post('*/v1/employments/*/contract-eligibility', () => {
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
       http.patch('*/v1/employments/*', () => {
         return HttpResponse.json({
           data: { status: 'ok' },
