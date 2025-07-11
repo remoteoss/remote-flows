@@ -5,6 +5,7 @@ export type SupportedTypes =
   | 'select'
   | 'radio'
   | 'fieldset'
+  | 'fieldset-flat'
   | 'date'
   | 'checkbox'
   | 'textarea'

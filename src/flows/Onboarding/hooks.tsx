@@ -35,7 +35,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -369,6 +369,17 @@ export const useOnboarding = ({
       benefitOffersSchema?.fields,
     ],
   );
+
+  const stepFieldsWithFlatFieldsets: Record<
+    keyof typeof STEPS,
+    JSFFieldset | null | undefined
+  > = {
+    select_country: null,
+    basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
+    benefits: null,
+    review: null,
+  };
 
   const {
     country: { code: employmentCountryCode } = {},
@@ -750,6 +761,7 @@ export const useOnboarding = ({
      */
     meta: {
       fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
     },
 
     /**

@@ -673,3 +673,75 @@ export function getInitialValues(
 
   return initialValues;
 }
+
+export function getFieldsWithFlatFieldsets({
+  fields = [],
+  fieldsets = {},
+  values,
+}: {
+  fields: any[];
+  fieldsets: Record<string, { propertiesByName: string[]; title: string }>;
+  values: Record<string, unknown>;
+}) {
+  const flatFieldsetsKeys = Object.keys(fieldsets);
+
+  if (!flatFieldsetsKeys?.length) {
+    return fields;
+  }
+
+  const flatFieldsetsFieldNames = new Set(
+    flatFieldsetsKeys.flatMap(
+      (flatFieldsetKey) => fieldsets[flatFieldsetKey]?.propertiesByName ?? [],
+    ),
+  );
+
+  const flatFieldsetsWithFields = flatFieldsetsKeys.map((flatFieldsetKey) => {
+    const { propertiesByName: flatFieldsetFields = [], ...rest } =
+      fieldsets[flatFieldsetKey];
+
+    const childFields = flatFieldsetFields
+      .map((name) => fields.find((f) => f.name === name))
+      .filter((field): field is any => !!field);
+
+    return {
+      ...rest,
+      id: flatFieldsetKey,
+      type: 'fieldset-flat',
+      inputType: 'fieldset-flat',
+      fields: childFields,
+      label: fieldsets[flatFieldsetKey].title,
+      // Hide the fieldset if none of the children fields are visible.
+      isVisible: childFields
+        .map((childField) => applyFieldDynamicProperties(childField, values))
+        .some((childField) => isFieldVisible(childField, values)),
+    };
+  });
+
+  const sortedFields = flatFieldsetsWithFields.reduce((accumulator, field) => {
+    const accumulatedFieldsSorted = [...accumulator];
+
+    /**
+     * We place the flat fieldset at the original position of its first field.
+     * If no field is found, we move it to the end.
+     */
+    const fieldsetPosition = field.fields[0]
+      ? accumulator.findIndex(
+          (accumulatorItem) => accumulatorItem.name === field.fields[0].name,
+        )
+      : accumulator.length;
+
+    accumulatedFieldsSorted.splice(
+      fieldsetPosition,
+      0,
+      field as unknown as any,
+    );
+
+    return accumulatedFieldsSorted;
+  }, fields);
+
+  const filteredFields = sortedFields.filter(
+    (field) => !flatFieldsetsFieldNames.has(field.name!),
+  );
+
+  return filteredFields;
+}

@@ -31,6 +31,7 @@ type FieldSetProps = {
   fields: Field[];
   components: Components;
   statement?: StatementProps;
+  isFlatFieldset: boolean;
 };
 
 export function FieldSetField({
@@ -40,6 +41,7 @@ export function FieldSetField({
   description,
   components,
   statement,
+  isFlatFieldset,
 }: FieldSetProps) {
   const { watch, trigger } = useFormContext();
   const fieldNames = fields.map(
@@ -112,7 +114,7 @@ export function FieldSetField({
             <FieldComponent
               {...field}
               key={field.name}
-              name={`${name}.${field.name}`}
+              name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
               component={components?.[field.type]}
             />
           );
