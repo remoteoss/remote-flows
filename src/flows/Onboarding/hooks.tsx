@@ -22,7 +22,6 @@ import { Meta, OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
-  JSFFieldset,
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
@@ -36,7 +35,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -263,8 +262,6 @@ export const useOnboarding = ({
     },
   });
 
-  console.log('####### basicInformation meta', basicInformationForm?.meta);
-
   const annualGrossSalaryField =
     options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
   const annualSalaryFieldPresentation =
@@ -331,8 +328,6 @@ export const useOnboarding = ({
         },
       },
     });
-
-  console.log('####### contractDetails meta', contractDetailsForm?.meta);
 
   const {
     data: benefitOffersSchema,
