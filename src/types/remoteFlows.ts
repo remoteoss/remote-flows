@@ -15,6 +15,13 @@ type AuthResponse = {
   expiresIn: number;
 };
 
+export type JSFFieldset = {
+  [x: string]: {
+    propertiesByName: string[];
+    title: string;
+  };
+};
+
 export type JSFField = {
   computedAttributes: Record<string, unknown>;
   description: ReactNode;
