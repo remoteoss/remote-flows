@@ -74,9 +74,8 @@ export function FieldSetField({
       triggerTimeoutRef.current = setTimeout(() => {
         trigger();
       }, 50);
-
-      return;
     }
+
     prevValuesRef.current = [...currentValues];
 
     return () => {
