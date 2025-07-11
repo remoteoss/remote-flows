@@ -3,6 +3,8 @@ import { cn } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
 import { Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
+import { useFormContext } from 'react-hook-form';
+import { useEffect, useRef } from 'react';
 
 type FieldBase = {
   label: string;
@@ -39,6 +41,50 @@ export function FieldSetField({
   components,
   statement,
 }: FieldSetProps) {
+  const { watch, trigger } = useFormContext();
+  const fieldNames = fields.map(
+    ({ name: fieldName }) => `${name}.${fieldName}`,
+  );
+  const watchedValues = watch(fieldNames);
+  const prevValuesRef = useRef<string[]>(watchedValues);
+  const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const currentValues = watchedValues;
+    const previousValues = prevValuesRef.current;
+
+    // Check if any value has changed
+    let hasChanged = false;
+    for (let i = 0; i < currentValues.length; i++) {
+      if (
+        currentValues[i] !== undefined &&
+        previousValues[i] !== currentValues[i]
+      ) {
+        hasChanged = true;
+        // This is to prevent the form from triggering validation too many times
+        break;
+      }
+    }
+    // If changes detected and we haven't triggered yet, run trigger
+    if (hasChanged) {
+      // We need to debounce the validation trigger so that tests don't freeze
+      if (triggerTimeoutRef.current) {
+        clearTimeout(triggerTimeoutRef.current);
+      }
+      triggerTimeoutRef.current = setTimeout(() => {
+        trigger();
+      }, 50);
+    }
+
+    prevValuesRef.current = [...currentValues];
+
+    return () => {
+      if (triggerTimeoutRef.current) {
+        clearTimeout(triggerTimeoutRef.current);
+      }
+    };
+  }, [watchedValues, trigger]);
+
   return (
     <fieldset
       className={cn(
