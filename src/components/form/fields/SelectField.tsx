@@ -87,6 +87,8 @@ export function SelectField({
                 <Select
                   value={field.value || ''}
                   onValueChange={(value: string) => {
+                    // For some reason react-hook-form converts option values from numbers to strings.
+                    // If a value can be cast to a number, the field in the form state should use the numeric type instead.
                     const maybeCastValue =
                       !isNaN(Number(value)) && typeof value !== 'boolean'
                         ? Number(value)
