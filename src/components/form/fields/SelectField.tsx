@@ -87,12 +87,10 @@ export function SelectField({
                 <Select
                   value={field.value || ''}
                   onValueChange={(value: string) => {
-                    // const maybeCastValue =
-                    //   typeof value !== 'number' ? +value : value;
-                    // field.onChange(maybeCastValue);
-                    // onChange?.(maybeCastValue);
-                    field.onChange(value);
-                    onChange?.(value);
+                    const maybeCastValue =
+                      typeof value !== 'number' ? +value : value;
+                    field.onChange(maybeCastValue);
+                    onChange?.(maybeCastValue);
                   }}
                 >
                   <SelectTrigger
