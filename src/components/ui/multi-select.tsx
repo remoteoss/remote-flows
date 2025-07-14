@@ -43,6 +43,8 @@ export function MultiSelect({
     onChange(selected.filter((item) => item.value !== option.value));
   };
 
+  const hasCategories = options.some((option) => option.category);
+
   const groupedOptions = options.reduce(
     (groups, option) => {
       const category = option.category || 'Uncategorized';
@@ -111,7 +113,7 @@ export function MultiSelect({
               ([category, categoryOptions], index) => (
                 <Fragment key={category}>
                   {index > 0 && <CommandSeparator />}
-                  <CommandGroup heading={category}>
+                  <CommandGroup heading={hasCategories ? category : undefined}>
                     {categoryOptions.map((option) => {
                       const isSelected = selected.some(
                         (item) => item.value === option.value,

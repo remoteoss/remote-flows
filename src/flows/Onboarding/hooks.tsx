@@ -510,7 +510,7 @@ export const useOnboarding = ({
       stepState.currentStep.name === 'basic_information'
     ) {
       return parseJSFToValidate(values, basicInformationForm?.fields, {
-        isPartialValidation: true,
+        isPartialValidation: false,
       });
     }
 
@@ -519,7 +519,7 @@ export const useOnboarding = ({
       stepState.currentStep.name === 'contract_details'
     ) {
       return parseJSFToValidate(values, contractDetailsForm?.fields, {
-        isPartialValidation: true,
+        isPartialValidation: false,
       });
     }
 
@@ -678,6 +678,7 @@ export const useOnboarding = ({
         const parsedValues = parseJSFToValidate(
           values,
           benefitOffersSchema?.fields,
+          { isPartialValidation: false },
         );
 
         return benefitOffersSchema?.handleValidation(parsedValues);
@@ -689,6 +690,7 @@ export const useOnboarding = ({
         const parsedValues = parseJSFToValidate(
           values,
           basicInformationForm?.fields,
+          { isPartialValidation: false },
         );
         return basicInformationForm?.handleValidation(parsedValues);
       }
@@ -700,6 +702,7 @@ export const useOnboarding = ({
         const parsedValues = parseJSFToValidate(
           values,
           contractDetailsForm?.fields,
+          { isPartialValidation: false },
         );
         return contractDetailsForm?.handleValidation(parsedValues);
       }
