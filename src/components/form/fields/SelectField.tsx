@@ -21,7 +21,7 @@ import {
 
 type SelectFieldProps = JSFField & {
   placeholder?: string;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: string | number; label: string }>;
   className?: string;
   onChange?: (value: any) => void;
   component?: Components['select'];
@@ -61,9 +61,9 @@ export function SelectField({
             <CustomSelectField
               field={{
                 ...field,
-                onChange: (value: any) => {
+                onChange: (value: string | number) => {
                   const maybeCastValue =
-                    typeof value !== 'number' ? +value : value;
+                    !isNaN(Number(value)) && typeof value !== 'boolean';
                   field.onChange(maybeCastValue);
                   onChange?.(maybeCastValue);
                 },
@@ -88,7 +88,9 @@ export function SelectField({
                   value={field.value || ''}
                   onValueChange={(value: string) => {
                     const maybeCastValue =
-                      typeof value !== 'number' ? +value : value;
+                      !isNaN(Number(value)) && typeof value !== 'boolean'
+                        ? Number(value)
+                        : value;
                     field.onChange(maybeCastValue);
                     onChange?.(maybeCastValue);
                   }}
