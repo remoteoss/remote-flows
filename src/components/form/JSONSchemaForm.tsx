@@ -6,11 +6,14 @@ import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { Components } from '@/src/types/remoteFlows';
+import { Components, JSFFieldset } from '@/src/types/remoteFlows';
+import { getFieldsWithFlatFieldsets } from './utils';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
   components?: Components;
+  fieldsets: JSFFieldset | null | undefined;
+  fieldValues: Record<string, unknown>;
 };
 
 function checkFieldHasForcedValue(field: any) {
@@ -25,13 +28,23 @@ function checkFieldHasForcedValue(field: any) {
 
 export const JSONSchemaFormFields = ({
   fields,
+  fieldsets,
+  fieldValues,
   components,
 }: JSONSchemaFormFieldsProps) => {
   if (!fields || fields.length === 0) return null;
 
+  const maybeFieldWithFlatFieldsets = fieldsets
+    ? getFieldsWithFlatFieldsets({
+        fields: fields,
+        fieldsets: fieldsets,
+        values: fieldValues,
+      })
+    : fields;
+
   return (
     <>
-      {fields.map((field) => {
+      {maybeFieldWithFlatFieldsets.map((field) => {
         if (field.isVisible === false || field.deprecated) {
           return null; // Skip hidden or deprecated fields
         }

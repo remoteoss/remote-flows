@@ -12,7 +12,6 @@ import {
 } from '@/src/flows/Onboarding/types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
-import { getFieldsWithFlatFieldsets } from '@/src/components/form/utils';
 
 type OnboardingFormProps = {
   onSubmit: (
@@ -122,14 +121,6 @@ export function OnboardingForm({
     }
   };
 
-  const fields = onboardingBag.meta.fieldsets
-    ? getFieldsWithFlatFieldsets({
-        fields: onboardingBag.fields,
-        fieldsets: onboardingBag.meta.fieldsets,
-        values: onboardingBag.fieldValues,
-      })
-    : onboardingBag.fields;
-
   return (
     <Form {...form}>
       <form
@@ -137,7 +128,12 @@ export function OnboardingForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__OnboardingForm"
       >
-        <JSONSchemaFormFields components={components} fields={fields} />
+        <JSONSchemaFormFields
+          components={components}
+          fields={onboardingBag.fields}
+          fieldsets={onboardingBag.meta.fieldsets}
+          fieldValues={onboardingBag.fieldValues}
+        />
       </form>
     </Form>
   );

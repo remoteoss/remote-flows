@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { cn } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
@@ -8,6 +9,7 @@ type FieldBase = {
   label: string;
   name: string;
   description: string;
+  Component?: React.ComponentType<any>;
 };
 
 type FieldWithOptions = FieldBase & {
@@ -62,6 +64,13 @@ export function FieldSetField({
           // @ts-expect-error - TODO: use types from json-schema-form v1
           if (field.isVisible === false || field.deprecated) {
             return null; // Skip hidden or deprecated fields
+          }
+
+          if (field.Component) {
+            const { Component } = field as {
+              Component: React.ComponentType<any>;
+            };
+            return <Component key={field.name} {...field} />;
           }
 
           return (

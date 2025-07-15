@@ -280,37 +280,32 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
-  const customFields = useMemo(
-    () => ({
-      fields: {
-        annual_gross_salary: {
-          ...annualGrossSalaryField,
-          presentation: {
-            annual_gross_salary_conversion_properties: {
-              label:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.label,
-              description:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.description,
-            },
-            desiredCurrency: company?.desired_currency,
-            Component: (props: JSFField & { currency: string }) => (
+  const customFields = {
+    fields: {
+      annual_gross_salary: {
+        ...annualGrossSalaryField,
+        presentation: {
+          annual_gross_salary_conversion_properties: {
+            label:
+              annualSalaryFieldPresentation
+                ?.annual_gross_salary_conversion_properties?.label,
+            description:
+              annualSalaryFieldPresentation
+                ?.annual_gross_salary_conversion_properties?.description,
+          },
+          desiredCurrency: company?.desired_currency,
+          Component: (props: JSFField & { currency: string }) => {
+            return (
               <AnnualGrossSalary
                 desiredCurrency={company?.desired_currency || ''}
                 {...props}
               />
-            ),
+            );
           },
         },
       },
-    }),
-    [
-      company?.desired_currency,
-      annualSalaryFieldPresentation,
-      annualGrossSalaryField,
-    ],
-  );
+    },
+  };
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
@@ -354,21 +349,13 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
-    () => ({
-      select_country: selectCountryForm?.fields || [],
-      basic_information: basicInformationForm?.fields || [],
-      contract_details: contractDetailsForm?.fields || [],
-      benefits: benefitOffersSchema?.fields || [],
-      review: [],
-    }),
-    [
-      selectCountryForm?.fields,
-      basicInformationForm?.fields,
-      contractDetailsForm?.fields,
-      benefitOffersSchema?.fields,
-    ],
-  );
+  const stepFields: Record<keyof typeof STEPS, Fields> = {
+    select_country: selectCountryForm?.fields || [],
+    basic_information: basicInformationForm?.fields || [],
+    contract_details: contractDetailsForm?.fields || [],
+    benefits: benefitOffersSchema?.fields || [],
+    review: [],
+  };
 
   const stepFieldsWithFlatFieldsets: Record<
     keyof typeof STEPS,
