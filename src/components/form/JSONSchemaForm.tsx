@@ -12,8 +12,8 @@ import { getFieldsWithFlatFieldsets } from './utils';
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
   components?: Components;
-  fieldsets: JSFFieldset | null | undefined;
-  fieldValues: Record<string, unknown>;
+  fieldsets?: JSFFieldset | null | undefined;
+  fieldValues?: Record<string, unknown>;
 };
 
 function checkFieldHasForcedValue(field: any) {
@@ -34,13 +34,14 @@ export const JSONSchemaFormFields = ({
 }: JSONSchemaFormFieldsProps) => {
   if (!fields || fields.length === 0) return null;
 
-  const maybeFieldWithFlatFieldsets = fieldsets
-    ? getFieldsWithFlatFieldsets({
-        fields: fields,
-        fieldsets: fieldsets,
-        values: fieldValues,
-      })
-    : fields;
+  const maybeFieldWithFlatFieldsets =
+    fieldsets && fieldValues
+      ? getFieldsWithFlatFieldsets({
+          fields: fields,
+          fieldsets: fieldsets,
+          values: fieldValues,
+        })
+      : fields;
 
   return (
     <>
