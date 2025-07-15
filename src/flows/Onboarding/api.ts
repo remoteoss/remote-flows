@@ -122,7 +122,10 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
           return {
             ...acc,
             [item.benefit_group.slug]: {
-              value: item.benefit_tier?.slug ?? '',
+              value: item.benefit_tier?.slug ?? 'no',
+              ...(item.benefit_group?.filter?.slug
+                ? { filter: item.benefit_group?.filter?.slug }
+                : {}),
             },
           };
         },
