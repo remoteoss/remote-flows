@@ -2,7 +2,7 @@ import type { CostCalculatorEstimateParams } from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AnyObjectSchema, object } from 'yup';
-import { defaultEstimationOptions } from './hooks';
+import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
@@ -55,6 +55,7 @@ function formatBenefits(benefits: Record<string, string>) {
 export function buildPayload(
   values: CostCalculatorEstimationSubmitValues,
   estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
+  version: CostCalculatorVersion = 'standard',
 ): CostCalculatorEstimateParams {
   return {
     employer_currency_slug: values.currency,
@@ -64,12 +65,14 @@ export function buildPayload(
     employments: [
       {
         region_slug: values.region || values.country,
-        annual_gross_salary: values.salary,
         annual_gross_salary_in_employer_currency: values.salary,
         employment_term: values.contract_duration_type ?? 'fixed',
         title: estimationOptions.title,
         age: values.age ?? undefined,
         ...(values.benefits && { benefits: formatBenefits(values.benefits) }),
+        ...(version === 'standard' && {
+          annual_gross_salary: values.salary,
+        }),
       },
     ],
   };
