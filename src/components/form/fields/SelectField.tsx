@@ -21,7 +21,7 @@ import {
 
 type SelectFieldProps = JSFField & {
   placeholder?: string;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: string | number; label: string }>;
   className?: string;
   onChange?: (value: any) => void;
   component?: Components['select'];
@@ -61,9 +61,11 @@ export function SelectField({
             <CustomSelectField
               field={{
                 ...field,
-                onChange: (value: any) => {
-                  field.onChange(value);
-                  onChange?.(value);
+                onChange: (value: string | number) => {
+                  const maybeCastValue =
+                    !isNaN(Number(value)) && typeof value !== 'boolean';
+                  field.onChange(maybeCastValue);
+                  onChange?.(maybeCastValue);
                 },
               }}
               fieldState={fieldState}
@@ -85,8 +87,14 @@ export function SelectField({
                 <Select
                   value={field.value || ''}
                   onValueChange={(value: string) => {
-                    field.onChange(value);
-                    onChange?.(value);
+                    // For some reason react-hook-form converts option values from numbers to strings.
+                    // If a value can be cast to a number, the field in the form state should use the numeric type instead.
+                    const maybeCastValue =
+                      !isNaN(Number(value)) && typeof value !== 'boolean'
+                        ? Number(value)
+                        : value;
+                    field.onChange(maybeCastValue);
+                    onChange?.(maybeCastValue);
                   }}
                 >
                   <SelectTrigger

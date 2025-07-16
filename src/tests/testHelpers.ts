@@ -73,7 +73,7 @@ export async function fillRadio(radioName: string, radioValue: string) {
 
 export async function fillSelect(selectName: string, selectValue: string) {
   const user = userEvent.setup();
-  const select = screen.getByRole('combobox', {
+  const select = await screen.findByRole('combobox', {
     name: new RegExp(selectName, 'i'),
   });
   expect(select).toBeInTheDocument();

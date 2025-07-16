@@ -55,7 +55,11 @@ export const JSONSchemaFormFields = ({
           return <Component key={field.name as string} {...field} />;
         }
 
-        const FieldComponent = fieldsMap[field.inputType as SupportedTypes];
+        let FieldComponent = fieldsMap[field.inputType as SupportedTypes];
+
+        if (field.inputType === 'select' && field.multiple) {
+          FieldComponent = fieldsMap['multi-select'];
+        }
 
         if (field.inputType === 'fieldset') {
           return <FieldComponent {...field} components={components} />;

@@ -3,6 +3,7 @@ export type SupportedTypes =
   | 'number'
   | 'email'
   | 'select'
+  | 'multi-select'
   | 'radio'
   | 'fieldset'
   | 'date'

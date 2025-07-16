@@ -13,6 +13,7 @@ import { SupportedTypes } from '@/src/components/form/fields/types';
 import { HiddenField } from '@/src/components/form/fields/HiddenField';
 import { WorkScheduleField } from '@/src/components/form/fields/WorkScheduleField';
 import React from 'react';
+import { MultiSelectField } from './MultiSelectField';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
@@ -21,6 +22,7 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   email: EmailField,
   money: NumberField,
   select: SelectField,
+  'multi-select': MultiSelectField,
   radio: RadioGroupField,
   number: NumberField,
   file: FileUploadField,
