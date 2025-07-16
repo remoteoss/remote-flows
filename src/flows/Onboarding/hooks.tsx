@@ -35,7 +35,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -280,37 +280,32 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
-  const customFields = useMemo(
-    () => ({
-      fields: {
-        annual_gross_salary: {
-          ...annualGrossSalaryField,
-          presentation: {
-            annual_gross_salary_conversion_properties: {
-              label:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.label,
-              description:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.description,
-            },
-            desiredCurrency: company?.desired_currency,
-            Component: (props: JSFField & { currency: string }) => (
+  const customFields = {
+    fields: {
+      annual_gross_salary: {
+        ...annualGrossSalaryField,
+        presentation: {
+          annual_gross_salary_conversion_properties: {
+            label:
+              annualSalaryFieldPresentation
+                ?.annual_gross_salary_conversion_properties?.label,
+            description:
+              annualSalaryFieldPresentation
+                ?.annual_gross_salary_conversion_properties?.description,
+          },
+          desiredCurrency: company?.desired_currency,
+          Component: (props: JSFField & { currency: string }) => {
+            return (
               <AnnualGrossSalary
                 desiredCurrency={company?.desired_currency || ''}
                 {...props}
               />
-            ),
+            );
           },
         },
       },
-    }),
-    [
-      company?.desired_currency,
-      annualSalaryFieldPresentation,
-      annualGrossSalaryField,
-    ],
-  );
+    },
+  };
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
@@ -354,21 +349,24 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
-    () => ({
-      select_country: selectCountryForm?.fields || [],
-      basic_information: basicInformationForm?.fields || [],
-      contract_details: contractDetailsForm?.fields || [],
-      benefits: benefitOffersSchema?.fields || [],
-      review: [],
-    }),
-    [
-      selectCountryForm?.fields,
-      basicInformationForm?.fields,
-      contractDetailsForm?.fields,
-      benefitOffersSchema?.fields,
-    ],
-  );
+  const stepFields: Record<keyof typeof STEPS, Fields> = {
+    select_country: selectCountryForm?.fields || [],
+    basic_information: basicInformationForm?.fields || [],
+    contract_details: contractDetailsForm?.fields || [],
+    benefits: benefitOffersSchema?.fields || [],
+    review: [],
+  };
+
+  const stepFieldsWithFlatFieldsets: Record<
+    keyof typeof STEPS,
+    JSFFieldset | null | undefined
+  > = {
+    select_country: null,
+    basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
+    benefits: null,
+    review: null,
+  };
 
   const {
     country: { code: employmentCountryCode } = {},
@@ -753,6 +751,7 @@ export const useOnboarding = ({
      */
     meta: {
       fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
     },
 
     /**

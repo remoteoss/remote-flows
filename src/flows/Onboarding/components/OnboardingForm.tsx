@@ -131,6 +131,8 @@ export function OnboardingForm({
         <JSONSchemaFormFields
           components={components}
           fields={onboardingBag.fields}
+          fieldsets={onboardingBag.meta.fieldsets}
+          fieldValues={onboardingBag.fieldValues}
         />
       </form>
     </Form>

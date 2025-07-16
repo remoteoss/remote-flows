@@ -27,6 +27,7 @@ import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/sel
 import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
+import { JSFFieldset } from '@/src/types/remoteFlows';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -236,12 +237,17 @@ export const useJSONSchemaForm = ({
         {},
       );
 
-      return createHeadlessForm(jsfSchema, {
-        initialValues: {
-          ...fieldValues,
-          ...moneyFieldsData,
+      return {
+        meta: {
+          'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
         },
-      });
+        ...createHeadlessForm(jsfSchema, {
+          initialValues: {
+            ...fieldValues,
+            ...moneyFieldsData,
+          },
+        }),
+      };
     },
   });
 };

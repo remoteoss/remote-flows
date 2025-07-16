@@ -27,6 +27,7 @@ export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   number: NumberField,
   file: FileUploadField,
   fieldset: FieldSetField,
+  'fieldset-flat': FieldSetField,
   date: DatePickerField,
   textarea: TextAreaField,
   countries: CountryField,

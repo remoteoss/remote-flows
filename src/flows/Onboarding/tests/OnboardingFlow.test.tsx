@@ -40,6 +40,7 @@ import {
   fillBasicInformation,
   generateUniqueEmploymentId,
 } from '@/src/flows/Onboarding/tests/helpers';
+import userEvent from '@testing-library/user-event';
 
 const queryClient = new QueryClient();
 
@@ -214,6 +215,7 @@ describe('OnboardingFlow', () => {
     if (onboardingBag.isLoading) {
       return <div data-testid="spinner">Loading...</div>;
     }
+
     switch (onboardingBag.stepState.currentStep.name) {
       case 'basic_information':
         return (
@@ -1551,6 +1553,7 @@ describe('OnboardingFlow', () => {
   });
 
   it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
+    const user = userEvent.setup();
     let patchCallCount = 0;
     const uniqueEmploymentId = generateUniqueEmploymentId();
 
@@ -1652,8 +1655,8 @@ describe('OnboardingFlow', () => {
 
     // Modify annual gross salary to trigger the error
     const annualGrossSalaryInput = screen.getByLabelText(/Test Label/i);
-    fireEvent.change(annualGrossSalaryInput, { target: { value: '' } });
-    fireEvent.change(annualGrossSalaryInput, { target: { value: '100000' } });
+
+    await user.type(annualGrossSalaryInput, '100000');
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();

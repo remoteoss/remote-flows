@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { cn } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
@@ -10,6 +11,7 @@ type FieldBase = {
   label: string;
   name: string;
   description: string;
+  Component?: React.ComponentType<any>;
 };
 
 type FieldWithOptions = FieldBase & {
@@ -31,6 +33,7 @@ type FieldSetProps = {
   fields: Field[];
   components: Components;
   statement?: StatementProps;
+  isFlatFieldset: boolean;
 };
 
 export function FieldSetField({
@@ -40,6 +43,7 @@ export function FieldSetField({
   description,
   components,
   statement,
+  isFlatFieldset,
 }: FieldSetProps) {
   const { watch, trigger } = useFormContext();
   const fieldNames = fields.map(
@@ -108,11 +112,18 @@ export function FieldSetField({
             return null; // Skip hidden or deprecated fields
           }
 
+          if (field.Component) {
+            const { Component } = field as {
+              Component: React.ComponentType<any>;
+            };
+            return <Component key={field.name} {...field} />;
+          }
+
           return (
             <FieldComponent
               {...field}
               key={field.name}
-              name={`${name}.${field.name}`}
+              name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
               component={components?.[field.type]}
             />
           );
