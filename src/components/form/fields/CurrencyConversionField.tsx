@@ -1,4 +1,4 @@
-import { ReactNode, useState, useCallback } from 'react';
+import { ReactNode, useState, useCallback, useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useConvertCurrency } from '@/src/flows/Onboarding/api';
@@ -74,11 +74,22 @@ export const CurrencyConversionField = ({
   const [showConversion, setShowConversion] = useState(false);
   const { setValue, watch } = useFormContext();
   const fieldValue = watch(props.name);
+  const isFirstRender = useRef(true);
 
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
   const { mutateAsync: convertCurrency } = useConvertCurrency();
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // when source currency changes, reset the conversion field
+    setValue(conversionFieldName, '');
+  }, [sourceCurrency, conversionFieldName, setValue]);
 
   const convertCurrencyCallback = useCallback(
     async (

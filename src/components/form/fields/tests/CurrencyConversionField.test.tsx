@@ -14,6 +14,7 @@ import {
   conversionFromEURToUSD,
   conversionFromUSDToEUR,
 } from '@/src/flows/Onboarding/tests/fixtures';
+import { useState } from 'react';
 
 const queryClient = new QueryClient();
 
@@ -250,6 +251,54 @@ describe('CurrencyFieldWithConversion', () => {
     // Check that the custom class name is applied
     const descriptionElement = screen.getByText(/Enter your test salary/i);
     expect(descriptionElement).toHaveClass('CustomPrefix-description');
+  });
+
+  it('resets conversion field when source currency changes', async () => {
+    const TestComponent = () => {
+      const [sourceCurrency, setSourceCurrency] = useState('USD');
+      const methods = useForm({
+        defaultValues: {
+          test_salary: '',
+          test_salary_conversion: 'existing_value',
+        },
+        mode: 'onChange',
+      });
+
+      return (
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={{}}>
+            <FormProvider {...methods}>
+              <CurrencyConversionField
+                {...defaultProps}
+                sourceCurrency={sourceCurrency}
+              />
+              <button
+                data-testid="change-currency"
+                onClick={() => setSourceCurrency('GBP')}
+              >
+                Change Currency
+              </button>
+            </FormProvider>
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      );
+    };
+
+    render(<TestComponent />);
+
+    // Initially, the conversion field should have the existing value
+    const toggleButton = screen.getByText('Show EUR conversion');
+    fireEvent.click(toggleButton);
+
+    const conversionInput = screen.getByLabelText('Conversion');
+    expect(conversionInput).toHaveValue('existing_value');
+
+    // Change the source currency
+    const changeCurrencyButton = screen.getByTestId('change-currency');
+    fireEvent.click(changeCurrencyButton);
+
+    // The conversion field should be reset to empty
+    expect(conversionInput).toHaveValue('');
   });
 
   describe('with custom button component', () => {
