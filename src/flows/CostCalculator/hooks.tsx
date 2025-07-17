@@ -26,6 +26,8 @@ import {
 import { JSFField } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 
+export type CostCalculatorVersion = 'standard' | 'marketing';
+
 type CostCalculatorCountry = {
   value: string;
   label: string;
@@ -66,6 +68,7 @@ type UseCostCalculatorParams = {
   options?: {
     jsfModify?: JSFModify;
   };
+  version?: CostCalculatorVersion;
 };
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
@@ -83,7 +86,12 @@ const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
  * Hook to use the cost calculator.
  */
 export const useCostCalculator = (
-  { defaultRegion, estimationOptions, options }: UseCostCalculatorParams = {
+  {
+    defaultRegion,
+    estimationOptions,
+    options,
+    version,
+  }: UseCostCalculatorParams = {
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
@@ -190,7 +198,7 @@ export const useCostCalculator = (
 
     return new Promise((resolve, reject) => {
       costCalculatorEstimationMutation.mutate(
-        buildPayload(values, estimationOptions),
+        buildPayload(values, estimationOptions, version),
         {
           onSuccess: (response) => {
             if (response.data) {

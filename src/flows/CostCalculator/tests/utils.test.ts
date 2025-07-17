@@ -128,4 +128,65 @@ describe('buildPayload', () => {
       },
     ]);
   });
+
+  describe('version parameter', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary: 100_000,
+    };
+
+    it('should include annual_gross_salary when version is "standard"', () => {
+      const payload = buildPayload(
+        values,
+        defaultEstimationOptions,
+        'standard',
+      );
+
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+      expect(payload.employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
+      expect(
+        payload.employments[0].annual_gross_salary_in_employer_currency,
+      ).toBe(100_000);
+    });
+
+    it('should NOT include annual_gross_salary when version is "marketing"', () => {
+      const payload = buildPayload(
+        values,
+        defaultEstimationOptions,
+        'marketing',
+      );
+
+      expect(payload.employments[0]).not.toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
+      expect(
+        payload.employments[0].annual_gross_salary_in_employer_currency,
+      ).toBe(100_000);
+    });
+
+    it('should default to "standard" behavior when version is not provided', () => {
+      const payload = buildPayload(values, defaultEstimationOptions);
+
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+      expect(payload.employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
+      expect(
+        payload.employments[0].annual_gross_salary_in_employer_currency,
+      ).toBe(100_000);
+    });
+
+    it('should default to "standard" behavior when only values parameter is provided', () => {
+      const payload = buildPayload(values);
+
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+    });
+  });
 });

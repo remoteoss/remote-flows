@@ -1,6 +1,7 @@
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
+  CostCalculatorVersion,
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
@@ -37,6 +38,10 @@ export type CostCalculatorFlowProps = {
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
   ) => React.ReactNode;
+  /**
+   * Whether to include annual_gross_salary in the estimation payload
+   */
+  version?: CostCalculatorVersion;
 };
 
 export const CostCalculatorFlow = ({
@@ -48,11 +53,13 @@ export const CostCalculatorFlow = ({
   },
   options,
   render,
+  version = 'standard',
 }: CostCalculatorFlowProps) => {
   const formId = useId();
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     estimationOptions,
+    version,
     options,
   });
   const resolver = useJsonSchemasValidationFormResolver(

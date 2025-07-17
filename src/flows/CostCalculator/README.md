@@ -521,12 +521,13 @@ export function CostCalculatorFlowWithPremiumBenefits() {
 
 The `CostCalculatorFlow` component lets you render different components like `CostCalculatorForm`, `CostCalculatorSubmitButton`, `CostCalculatorResetButton`
 
-| Prop               | Type                                                         | Required | Description                                                                             |
-| ------------------ | ------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------- |
-| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                             |
-| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                |
-| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | Yes      | render prop function with the params passed by the useCostCalculator hook               |
-| `options`          | `{jsfModify: JSFModify}`                                     | No       | JSFModify options lets you modify properties from the form, such as changing the labels |
+| Prop               | Type                                                         | Required | Description                                                                                                               |
+| ------------------ | ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `estimationParams` | object                                                       | No       | Customization for the estimation response (see table below)                                                               |
+| `defaultValues`    | object                                                       | No       | Predefined form values (see table below)                                                                                  |
+| `render`           | `(costCalculatorBag:  ReturnType<typeof useCostCalculator>)` | Yes      | render prop function with the params passed by the useCostCalculator hook                                                 |
+| `options`          | `{jsfModify: JSFModify}`                                     | No       | JSFModify options lets you modify properties from the form, such as changing the labels                                   |
+| `version`          | `'standard' \| 'marketing'`                                  | No       | Controls payload structure. `'standard'` includes `annual_gross_salary`, `'marketing'` excludes it. Default: `'standard'` |
 
 #### estimationParams Properties
 
