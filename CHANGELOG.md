@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.24
+
+### Patch Changes
+
+- 0d13274: - feat(flat fieldsets): Support to flat fieldsets
+  - fix(fieldsets): Trigger manual validation
+  - fix(onboarding): Support to multi select and bug fixing
+  - fix(onboarding): Fix selected benefits
+  - feat(cost-calculator): Add version parameter to CostCalculatorFlow
+  - fix(currency-conversion): Reset conversion field on source currency changes
+
 ## 0.4.0-alpha.23
 
 ### Patch Changes
