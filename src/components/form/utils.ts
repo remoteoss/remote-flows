@@ -745,3 +745,25 @@ export function getFieldsWithFlatFieldsets({
 
   return filteredFields;
 }
+
+export function enableAckFields(
+  fields: Fields,
+  values: Record<string, unknown>,
+) {
+  let result = values;
+  Object.keys(fields).forEach((key) => {
+    const field = fields[key as keyof Fields];
+
+    if (typeof field === 'object' && field !== null && 'const' in field) {
+      result = Object.fromEntries(
+        Object.entries(values).map(([k, v]) => {
+          if (k === field.name) {
+            return [k, field.const];
+          }
+          return [k, v];
+        }),
+      );
+    }
+  });
+  return result;
+}
