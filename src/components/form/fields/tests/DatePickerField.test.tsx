@@ -177,7 +177,7 @@ describe('DatePickerField Component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it.only('calculates minDateValue using addBusinessDays when rest.meta.mot is provided', () => {
+  it('calculates minDateValue using addBusinessDays when rest.meta.mot is provided', () => {
     const propsWithMot = {
       ...defaultProps,
       meta: { mot: 20 },
