@@ -14,6 +14,7 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import {
   getInitialValues,
+  enableAckFields,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -356,13 +357,21 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = {
-    select_country: selectCountryForm?.fields || [],
-    basic_information: basicInformationForm?.fields || [],
-    contract_details: contractDetailsForm?.fields || [],
-    benefits: benefitOffersSchema?.fields || [],
-    review: [],
-  };
+  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+    () => ({
+      select_country: selectCountryForm?.fields || [],
+      basic_information: basicInformationForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
+      benefits: benefitOffersSchema?.fields || [],
+      review: [],
+    }),
+    [
+      selectCountryForm?.fields,
+      basicInformationForm?.fields,
+      contractDetailsForm?.fields,
+      benefitOffersSchema?.fields,
+    ],
+  );
 
   const stepFieldsWithFlatFieldsets: Record<
     keyof typeof STEPS,
@@ -414,20 +423,41 @@ export const useOnboarding = ({
     [stepFields.benefits, initialValuesBenefitOffers],
   );
 
-  const initialValues = useMemo(
-    () => ({
+  const initialValues = useMemo(() => {
+    if (employment) {
+      return {
+        select_country: selectCountryInitialValues,
+        // We don't store ack fields in the db, eg "ack_start_date_ammendment" for Argentina, and therefore is not returned in the employment response
+        // So when an employmentId exists, it means that the user has already started the onboarding process, and we need to enable the ack fields
+        basic_information: enableAckFields(
+          stepFields['basic_information'],
+          basicInformationInitialValues,
+        ),
+        contract_details:
+          // if contract details is null, it means it has not been filled yet, so we can't enable the ack fields
+          employment?.contract_details !== null
+            ? enableAckFields(
+                stepFields['contract_details'],
+                contractDetailsInitialValues,
+              )
+            : contractDetailsInitialValues,
+        benefits: benefitsInitialValues,
+      };
+    }
+    return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_details: contractDetailsInitialValues,
       benefits: benefitsInitialValues,
-    }),
-    [
-      selectCountryInitialValues,
-      basicInformationInitialValues,
-      contractDetailsInitialValues,
-      benefitsInitialValues,
-    ],
-  );
+    };
+  }, [
+    selectCountryInitialValues,
+    basicInformationInitialValues,
+    contractDetailsInitialValues,
+    benefitsInitialValues,
+    employment,
+    stepFields,
+  ]);
 
   const { isLoading, isNavigatingToReview, isEmploymentReadOnly } = useMemo(
     () =>

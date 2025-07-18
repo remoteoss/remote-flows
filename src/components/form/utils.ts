@@ -754,6 +754,26 @@ export function getFieldsWithFlatFieldsets({
   return filteredFields;
 }
 
+export function enableAckFields(
+  fields: Fields,
+  values: Record<string, unknown>,
+) {
+  let result = values;
+  fields.forEach((field) => {
+    if ('const' in field) {
+      result = Object.fromEntries(
+        Object.entries(values).map(([k, v]) => {
+          if (k === field.name) {
+            return [k, field.const];
+          }
+          return [k, v];
+        }),
+      );
+    }
+  });
+  return result;
+}
+
 /**
  * Get the minimum start date for the onboarding process.
  * @param minOnBoardingTime
