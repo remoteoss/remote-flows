@@ -2,4 +2,5 @@
 '@remoteoss/remote-flows': patch
 ---
 
-Stable release for the onboarding
+- Fix infinity loop in contract details related to the annual gross salary
+- Fix money fields only allowing 15 characters of length
