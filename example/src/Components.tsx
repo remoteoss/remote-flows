@@ -36,6 +36,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
           <input
             id={field.name}
             className={`input input-with-currency-field ${hasError ? 'error' : ''}`}
+            maxLength={fieldData.maxLength}
             {...field}
           />
           <span className="currency-symbol">
@@ -46,6 +47,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         <input
           id={field.name}
           className={`input ${hasError ? 'error' : ''}`}
+          maxLength={fieldData.maxLength}
           {...field}
         />
       )}

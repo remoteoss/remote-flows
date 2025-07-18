@@ -54,6 +54,7 @@ export function TextField({
             type,
             onChange,
             metadata: additionalProps,
+            maxLength,
             ...rest,
           };
           return (
