@@ -63,7 +63,9 @@ export function SelectField({
                 ...field,
                 onChange: (value: string | number) => {
                   const maybeCastValue =
-                    !isNaN(Number(value)) && typeof value !== 'boolean';
+                    !isNaN(Number(value)) && typeof value !== 'boolean'
+                      ? Number(value)
+                      : value;
                   field.onChange(maybeCastValue);
                   onChange?.(maybeCastValue);
                 },

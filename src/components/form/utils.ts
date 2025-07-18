@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
 import { $TSFixMe, Fields } from '@remoteoss/json-schema-form';
+import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
 import get from 'lodash.get';
 
 const textInputTypes = {
@@ -674,6 +675,13 @@ export function getInitialValues(
   return initialValues;
 }
 
+/**
+ * Wraps fields listed in fieldsets with a fieldset field.
+ * @param fields - Complete fields list.
+ * @param fieldsets - fields list to be wrapped in a fieldset field.
+ * @param values - Values for each field.
+ * @returns The fields with the fieldsets wrapped.
+ */
 export function getFieldsWithFlatFieldsets({
   fields = [],
   fieldsets = {},
@@ -766,4 +774,22 @@ export function enableAckFields(
     }
   });
   return result;
+}
+
+/**
+ * Get the minimum start date for the onboarding process.
+ * @param minOnBoardingTime
+ * @returns Date
+ */
+export function getMinStartDate(minOnBoardingTime: number) {
+  const today = new Date();
+
+  // Make sure our base date is UTC and set the time to 00:00:00
+  today.setDate(today.getUTCDate());
+  today.setHours(0, 0, 0, 0);
+
+  // The + 1 ensures you get the full preparation time before the employee can actually start working.
+  // It's the difference between "preparation completes on this day" vs "earliest possible start date after preparation".
+  const minDate = addBusinessDays(today, minOnBoardingTime + 1);
+  return isWeekend(minDate) ? nextMonday(minDate) : minDate;
 }

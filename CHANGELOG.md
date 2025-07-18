@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.0-alpha.25
+
+### Patch Changes
+
+- 7f18e50: fix(select): Fix onchange value in a custom select
+
 ## 0.4.0-alpha.24
 
 ### Patch Changes

@@ -281,32 +281,39 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
-  const customFields = {
-    fields: {
-      annual_gross_salary: {
-        ...annualGrossSalaryField,
-        presentation: {
-          annual_gross_salary_conversion_properties: {
-            label:
-              annualSalaryFieldPresentation
-                ?.annual_gross_salary_conversion_properties?.label,
-            description:
-              annualSalaryFieldPresentation
-                ?.annual_gross_salary_conversion_properties?.description,
-          },
-          desiredCurrency: company?.desired_currency,
-          Component: (props: JSFField & { currency: string }) => {
-            return (
-              <AnnualGrossSalary
-                desiredCurrency={company?.desired_currency || ''}
-                {...props}
-              />
-            );
+  const customFields = useMemo(
+    () => ({
+      fields: {
+        annual_gross_salary: {
+          ...annualGrossSalaryField,
+          presentation: {
+            annual_gross_salary_conversion_properties: {
+              label:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.label,
+              description:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.description,
+            },
+            desiredCurrency: company?.desired_currency,
+            Component: (props: JSFField & { currency: string }) => {
+              return (
+                <AnnualGrossSalary
+                  desiredCurrency={company?.desired_currency || ''}
+                  {...props}
+                />
+              );
+            },
           },
         },
       },
-    },
-  };
+    }),
+    [
+      annualGrossSalaryField,
+      annualSalaryFieldPresentation,
+      company?.desired_currency,
+    ],
+  );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({

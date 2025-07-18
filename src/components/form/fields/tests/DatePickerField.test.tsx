@@ -3,12 +3,21 @@ import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
+import { addBusinessDays } from 'date-fns';
 import { DatePickerField, DatePickerFieldProps } from '../DatePickerField';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
 }));
+
+vi.mock('date-fns', async () => {
+  const actual = await vi.importActual('date-fns');
+  return {
+    ...actual,
+    addBusinessDays: vi.fn(),
+  };
+});
 
 describe('DatePickerField Component', () => {
   const mockOnChange = vi.fn();
@@ -46,6 +55,7 @@ describe('DatePickerField Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({ components: {} });
+    (addBusinessDays as any).mockClear();
   });
 
   it('renders the default implementation correctly', () => {
@@ -165,5 +175,53 @@ describe('DatePickerField Component', () => {
     expect(
       screen.queryByTestId('context-date-picker-field'),
     ).not.toBeInTheDocument();
+  });
+
+  it('calculates minDateValue using addBusinessDays when rest.meta.mot is provided', () => {
+    const propsWithMot = {
+      ...defaultProps,
+      meta: { mot: 20 },
+    };
+
+    renderWithFormContext(propsWithMot);
+
+    // Verify addBusinessDays was called with a date and mot value
+    expect(addBusinessDays).toHaveBeenCalledWith(expect.any(Date), 21);
+    expect(addBusinessDays).toHaveBeenCalledTimes(1);
+
+    // Verify the component renders without errors
+    expect(screen.getByText('Test Field')).toBeInTheDocument();
+  });
+
+  it('falls back to minDate when rest.meta.mot is not a number', () => {
+    const propsWithMinDate = {
+      ...defaultProps,
+      minDate: '2024-01-10',
+      meta: { mot: 'invalid' },
+    };
+
+    renderWithFormContext(propsWithMinDate);
+
+    // Verify addBusinessDays was not called
+    expect(addBusinessDays).not.toHaveBeenCalled();
+
+    // Verify the component renders without errors
+    expect(screen.getByText('Test Field')).toBeInTheDocument();
+  });
+
+  it('handles undefined meta.mot gracefully', () => {
+    const propsWithoutMot = {
+      ...defaultProps,
+      minDate: '2024-01-10',
+      meta: {},
+    };
+
+    renderWithFormContext(propsWithoutMot);
+
+    // Verify addBusinessDays was not called
+    expect(addBusinessDays).not.toHaveBeenCalled();
+
+    // The component should still render correctly
+    expect(screen.getByText('Test Field')).toBeInTheDocument();
   });
 });
