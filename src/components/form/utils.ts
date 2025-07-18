@@ -760,7 +760,7 @@ export function enableAckFields(
 ) {
   let result = values;
   fields.forEach((field) => {
-    if (typeof field === 'object' && field !== null && 'const' in field) {
+    if ('const' in field) {
       result = Object.fromEntries(
         Object.entries(values).map(([k, v]) => {
           if (k === field.name) {
