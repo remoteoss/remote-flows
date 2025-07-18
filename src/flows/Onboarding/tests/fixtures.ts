@@ -256,7 +256,7 @@ export const basicInformationSchema = {
           blockedDates: [],
           inputType: 'date',
           meta: {
-            mot: 5,
+            mot: 0,
           },
           minDate: '2025-05-01',
           softBlockedDates: [],

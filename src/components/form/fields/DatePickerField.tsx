@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CalendarIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
+import { PopoverClose } from '@radix-ui/react-popover';
 
 import { Button } from '@/src/components/ui/button';
 import { Calendar } from '@/src/components/ui/calendar';
@@ -20,7 +21,7 @@ import {
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
-import { PopoverClose } from '@radix-ui/react-popover';
+import { getMinStartDate } from '@/src/components/form/utils';
 import { format } from 'date-fns';
 
 export type DatePickerFieldProps = JSFField & {
@@ -39,6 +40,14 @@ export function DatePickerField({
 }: DatePickerFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+
+  let minDateValue: Date;
+  if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
+    minDateValue = getMinStartDate(rest.meta.mot);
+  } else if (minDate) {
+    minDateValue = new Date(minDate);
+  }
+
   return (
     <FormField
       control={control}
@@ -51,8 +60,8 @@ export function DatePickerField({
             description,
             label,
             name,
-            minDate,
             onChange,
+            ...(minDateValue && { minDate: minDateValue.toISOString() }),
             ...rest,
           };
           return (
@@ -108,7 +117,7 @@ export function DatePickerField({
                     field.onChange(date ? format(date, 'yyyy-MM-dd') : null);
                     onChange?.(date);
                   }}
-                  defaultMonth={minDate ? new Date(minDate) : undefined}
+                  defaultMonth={minDateValue}
                   components={{
                     DayContent: (props) => {
                       return (
@@ -116,8 +125,8 @@ export function DatePickerField({
                       );
                     },
                   }}
-                  {...(minDate && {
-                    disabled: (date: Date) => date < new Date(minDate),
+                  {...(minDateValue && {
+                    disabled: (date: Date) => date < minDateValue,
                   })}
                 />
               </PopoverContent>
