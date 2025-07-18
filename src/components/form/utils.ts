@@ -759,9 +759,7 @@ export function enableAckFields(
   values: Record<string, unknown>,
 ) {
   let result = values;
-  Object.keys(fields).forEach((key) => {
-    const field = fields[key as keyof Fields];
-
+  fields.forEach((field) => {
     if (typeof field === 'object' && field !== null && 'const' in field) {
       result = Object.fromEntries(
         Object.entries(values).map(([k, v]) => {
