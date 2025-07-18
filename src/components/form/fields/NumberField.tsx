@@ -5,7 +5,7 @@ import { FormField } from '../../ui/form';
 import { TextField, TextFieldProps } from './TextField';
 import { Components } from '@/src/types/remoteFlows';
 
-type NumberFieldProps = TextFieldProps & {
+export type NumberFieldProps = TextFieldProps & {
   component?: Components['number'];
 };
 

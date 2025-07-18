@@ -34,6 +34,7 @@ export function TextField({
   component,
   includeErrorMessage = true,
   additionalProps = {},
+  maxLength,
   ...rest
 }: TextFieldProps) {
   const { components } = useFormFields();
@@ -90,6 +91,7 @@ export function TextField({
                 }}
                 className="RemoteFlows__TextField__Input"
                 placeholder={label}
+                maxLength={maxLength}
               />
             </FormControl>
             {description && (

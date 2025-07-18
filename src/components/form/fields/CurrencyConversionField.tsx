@@ -182,6 +182,7 @@ export const CurrencyConversionField = ({
         type="text"
         inputMode="decimal"
         pattern="^[0-9.]*$"
+        maxLength={15}
         onChange={handleMainFieldChange}
       />
       {showConversion && (
@@ -193,6 +194,7 @@ export const CurrencyConversionField = ({
           type="text"
           inputMode="decimal"
           pattern="^[0-9.]*$"
+          maxLength={15}
           onChange={handleConversionFieldChange}
         />
       )}
