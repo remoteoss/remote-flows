@@ -12,15 +12,16 @@ import { EmailField } from '@/src/components/form/fields/EmailField';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { HiddenField } from '@/src/components/form/fields/HiddenField';
 import { WorkScheduleField } from '@/src/components/form/fields/WorkScheduleField';
+import { MultiSelectField } from '@/src/components/form/fields/MultiSelectField';
+import { MoneyField } from '@/src/components/form/fields/MoneyField';
 import React from 'react';
-import { MultiSelectField } from './MultiSelectField';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fieldsMap: Record<SupportedTypes, React.ComponentType<any>> = {
   checkbox: CheckBoxField,
   text: TextField,
   email: EmailField,
-  money: NumberField,
+  money: MoneyField,
   select: SelectField,
   'multi-select': MultiSelectField,
   radio: RadioGroupField,
