@@ -34,6 +34,7 @@ type FieldSetProps = {
   components: Components;
   statement?: StatementProps;
   isFlatFieldset: boolean;
+  extra?: React.ReactNode;
 };
 
 export function FieldSetField({
@@ -44,6 +45,7 @@ export function FieldSetField({
   components,
   statement,
   isFlatFieldset,
+  extra,
 }: FieldSetProps) {
   const { watch, trigger } = useFormContext();
   const fieldNames = fields.map(
@@ -52,6 +54,8 @@ export function FieldSetField({
   const watchedValues = watch(fieldNames);
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  console.log('fields', fields);
 
   useEffect(() => {
     const currentValues = watchedValues;
@@ -128,6 +132,7 @@ export function FieldSetField({
             />
           );
         })}
+        {extra ? extra : null}
         {statement ? <Statement {...statement} /> : null}
       </div>
     </fieldset>

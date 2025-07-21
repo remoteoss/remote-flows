@@ -281,6 +281,9 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
+  const equityCompensationField =
+    options?.jsfModify?.contract_details?.fields?.equity_compensation;
+
   const customFields = useMemo(
     () => ({
       fields: {
@@ -306,12 +309,50 @@ export const useOnboarding = ({
             },
           },
         },
+        equity_compensation: {
+          ...equityCompensationField,
+          presentation: {
+            calculateDynamicProperties: (
+              values: FieldValues,
+              field: JSFField,
+            ) => {
+              const offerEquity =
+                values.equity_compensation?.offer_equity_compensation;
+              const equityCost = field?.meta?.cost as {
+                original: string;
+                discount: string;
+                calculated: string;
+              };
+
+              return {
+                extra: (
+                  <div>
+                    <div>offerEquity: {offerEquity}</div>
+                    <div>
+                      equityCost original:{' '}
+                      {JSON.stringify(equityCost?.original)}
+                    </div>
+                    <div>
+                      equityCost discount:{' '}
+                      {JSON.stringify(equityCost?.discount)}
+                    </div>
+                    <div>
+                      equityCost calculated:{' '}
+                      {JSON.stringify(equityCost?.calculated)}
+                    </div>
+                  </div>
+                ),
+              };
+            },
+          },
+        },
       },
     }),
     [
       annualGrossSalaryField,
       annualSalaryFieldPresentation,
       company?.desired_currency,
+      equityCompensationField,
     ],
   );
 
