@@ -35,7 +35,12 @@ export type JSFField = {
   schema: AnySchema;
   scopedJsonSchema: Record<string, unknown>;
   type: string;
-  options?: Array<{ value: string; label: string; description?: string }>;
+  options?: Array<{
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+  }>;
   defaultValue?: string | number;
   minDate?: string;
   maxLength?: number;
