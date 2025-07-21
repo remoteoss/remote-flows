@@ -38,7 +38,7 @@ export const EquityPriceDetails = ({
         )
       : null;
 
-  if (!offersEquity) {
+  if (!offersEquity || !equityCost) {
     return null;
   }
 
