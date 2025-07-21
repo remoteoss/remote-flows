@@ -103,6 +103,7 @@ export const JSONSchemaFormFields = ({
             {field.statement ? (
               <Statement {...(field.statement as StatementProps)} />
             ) : null}
+            {field.extra ? <div>{field.extra}</div> : null}
           </Fragment>
         ) : (
           <p className="error">
