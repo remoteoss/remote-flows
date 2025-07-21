@@ -55,8 +55,6 @@ export function FieldSetField({
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  console.log('fields', fields);
-
   useEffect(() => {
     const currentValues = watchedValues;
     const previousValues = prevValuesRef.current;
