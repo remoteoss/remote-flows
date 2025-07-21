@@ -12,6 +12,8 @@ type FieldBase = {
   name: string;
   description: string;
   Component?: React.ComponentType<any>;
+  inputType: SupportedTypes;
+  multiple?: boolean;
 };
 
 type FieldWithOptions = FieldBase & {
@@ -105,7 +107,7 @@ export function FieldSetField({
       ) : null}
       <div className="grid gap-4">
         {fields.map((field) => {
-          const FieldComponent = fieldsMap[field.type];
+          let FieldComponent = fieldsMap[field.type];
 
           // @ts-expect-error - TODO: use types from json-schema-form v1
           if (field.isVisible === false || field.deprecated) {
@@ -117,6 +119,10 @@ export function FieldSetField({
               Component: React.ComponentType<any>;
             };
             return <Component key={field.name} {...field} />;
+          }
+
+          if (field.inputType === 'select' && field.multiple) {
+            FieldComponent = fieldsMap['multi-select'];
           }
 
           return (
