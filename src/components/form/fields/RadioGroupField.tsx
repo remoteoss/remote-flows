@@ -91,6 +91,7 @@ export function RadioGroupField({
                         <RadioGroupItem
                           value={option.value}
                           className="RemoteFlows__RadioField__Input"
+                          disabled={option.disabled}
                         />
                       </FormControl>
                       <div>

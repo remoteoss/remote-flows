@@ -9,7 +9,12 @@ import { JSFField } from '@/src/types/remoteFlows';
 
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string | React.ChangeEvent<HTMLInputElement>) => void;
-  options: { value: string; label: string }[];
+  options: {
+    value: string;
+    label: string;
+    disabled?: boolean;
+    description?: string;
+  }[];
   component?: any;
 };
 
@@ -173,5 +178,50 @@ describe('RadioGroupField Component', () => {
     expect(CustomRadioGroupFieldProp).toHaveBeenCalled();
     expect(screen.getByTestId('prop-radio-field')).toBeInTheDocument();
     expect(screen.queryByTestId('context-radio-field')).not.toBeInTheDocument();
+  });
+
+  it('disables radio buttons when option.disabled is true', () => {
+    const propsWithDisabledOption: RadioGroupFieldProps = {
+      ...defaultProps,
+      options: [
+        { value: 'option1', label: 'Option 1', disabled: true },
+        { value: 'option2', label: 'Option 2', disabled: false },
+        { value: 'option3', label: 'Option 3' }, // no disabled property
+      ],
+    };
+
+    renderWithFormContext(propsWithDisabledOption);
+
+    const option1Radio = screen.getByLabelText('Option 1');
+    const option2Radio = screen.getByLabelText('Option 2');
+    const option3Radio = screen.getByLabelText('Option 3');
+
+    expect(option1Radio).toBeDisabled();
+    expect(option2Radio).not.toBeDisabled();
+    expect(option3Radio).not.toBeDisabled();
+  });
+
+  it('prevents disabled radio buttons from being selected', () => {
+    const propsWithDisabledOption: RadioGroupFieldProps = {
+      ...defaultProps,
+      onChange: mockOnChange,
+      options: [
+        { value: 'option1', label: 'Option 1', disabled: true },
+        { value: 'option2', label: 'Option 2' },
+      ],
+    };
+
+    renderWithFormContext(propsWithDisabledOption);
+
+    const disabledRadio = screen.getByLabelText('Option 1');
+    const enabledRadio = screen.getByLabelText('Option 2');
+
+    // Try to click disabled radio button
+    fireEvent.click(disabledRadio);
+    expect(mockOnChange).not.toHaveBeenCalled();
+
+    // Click enabled radio button
+    fireEvent.click(enabledRadio);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 });
