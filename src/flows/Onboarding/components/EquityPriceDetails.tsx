@@ -2,21 +2,18 @@ const formatMoney = (amount: number, currency: string) => {
   return `${amount} ${currency}`;
 };
 
+type Cost = {
+  currency: string;
+  amount: number;
+};
+
 type EquityPriceDetailsProps = {
   offerEquity: 'yes' | 'no' | null;
   equityCost?: {
-    original: {
-      currency: string;
-      amount: number;
-    };
-    discount?: {
-      currency: string;
-      amount: number;
-    };
-    calculated?: {
-      currency: string;
-      amount: number;
-    };
+    original: Cost;
+    discount?: Cost;
+
+    calculated?: Cost;
   };
 };
 
