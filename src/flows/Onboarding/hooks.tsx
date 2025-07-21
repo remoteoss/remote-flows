@@ -36,7 +36,8 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
+import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -318,29 +319,14 @@ export const useOnboarding = ({
             ) => {
               const offerEquity =
                 values.equity_compensation?.offer_equity_compensation;
-              const equityCost = field?.meta?.cost as {
-                original: string;
-                discount: string;
-                calculated: string;
-              };
+              const equityCost = field?.meta?.cost;
 
               return {
                 extra: (
-                  <div>
-                    <div>offerEquity: {offerEquity}</div>
-                    <div>
-                      equityCost original:{' '}
-                      {JSON.stringify(equityCost?.original)}
-                    </div>
-                    <div>
-                      equityCost discount:{' '}
-                      {JSON.stringify(equityCost?.discount)}
-                    </div>
-                    <div>
-                      equityCost calculated:{' '}
-                      {JSON.stringify(equityCost?.calculated)}
-                    </div>
-                  </div>
+                  <EquityPriceDetails
+                    offerEquity={offerEquity}
+                    equityCost={equityCost as $TSFixMe}
+                  />
                 ),
               };
             },
