@@ -90,7 +90,7 @@ export function FieldSetField({
         clearTimeout(triggerTimeoutRef.current);
       }
     };
-  }, [watchedValues, trigger]);
+  }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
   return (
     <fieldset
