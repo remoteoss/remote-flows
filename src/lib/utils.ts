@@ -55,3 +55,13 @@ export const transformYupErrorsIntoObject = (errors: ValidationError) => {
 
   return validationErrors;
 };
+
+/**
+ * Debug utility to add version to window object
+ * @param version - The version of the SDK
+ */
+export function debug(version: string) {
+  window.RemoteFlowsSDK = {
+    version,
+  };
+}

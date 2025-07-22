@@ -133,3 +133,12 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type $TSFixMe = any;
+
+// Extend the global Window interface to include RemoteFlowsSDK
+declare global {
+  interface Window {
+    RemoteFlowsSDK?: {
+      version: string;
+    };
+  }
+}
