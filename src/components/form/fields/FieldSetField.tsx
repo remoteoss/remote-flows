@@ -47,7 +47,7 @@ export function FieldSetField({
   statement,
   isFlatFieldset,
 }: FieldSetProps) {
-  const { watch, trigger } = useFormContext();
+  const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
@@ -58,6 +58,7 @@ export function FieldSetField({
   useEffect(() => {
     const currentValues = watchedValues;
     const previousValues = prevValuesRef.current;
+    const hasBeenSubmitted = formState.isSubmitted || formState.submitCount > 0;
 
     // Check if any value has changed
     let hasChanged = false;
@@ -72,7 +73,7 @@ export function FieldSetField({
       }
     }
     // If changes detected and we haven't triggered yet, run trigger
-    if (hasChanged) {
+    if (hasChanged && hasBeenSubmitted) {
       // We need to debounce the validation trigger so that tests don't freeze
       if (triggerTimeoutRef.current) {
         clearTimeout(triggerTimeoutRef.current);
