@@ -165,9 +165,11 @@ const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasError = !!fieldState.error;
 
   return (
-    <div className="input-container">
-      <label htmlFor={field.name}>{fieldData.label}</label>
-      <input type="checkbox" id={field.name} {...field} />
+    <div>
+      <div className="checkbox-container">
+        <input type="checkbox" id={field.name} {...field} />
+        <label htmlFor={field.name}>{fieldData.label}</label>
+      </div>
       {fieldData.description && (
         <p className="input-description">{fieldData.description}</p>
       )}

@@ -858,3 +858,22 @@ button.reset-button {
 .radio-option label {
   margin-bottom: 0;
 }
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.checkbox-container label {
+  line-height: 1.4;
+  font-weight: bold;
+  color: #1e293b;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
