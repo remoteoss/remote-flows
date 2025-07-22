@@ -124,6 +124,7 @@ export function OnboardingForm({
   return (
     <Form {...form}>
       <form
+        noValidate
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 RemoteFlows__OnboardingForm"
