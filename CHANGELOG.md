@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.4.2-alpha.0
+
+### Patch Changes
+
+- dc9405a: - bundle react-hook-form dependencies to fix behavior of the fieldsets when you download the package [#339](https://github.com/remoteoss/remote-flows/pull/339)
+
 ## 0.4.1
 
 ### Patch Changes
