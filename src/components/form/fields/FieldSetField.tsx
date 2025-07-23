@@ -12,6 +12,8 @@ type FieldBase = {
   name: string;
   description: string;
   Component?: React.ComponentType<any>;
+  inputType: SupportedTypes;
+  multiple?: boolean;
 };
 
 type FieldWithOptions = FieldBase & {
@@ -47,7 +49,7 @@ export function FieldSetField({
   isFlatFieldset,
   extra,
 }: FieldSetProps) {
-  const { watch, trigger } = useFormContext();
+  const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
@@ -58,6 +60,7 @@ export function FieldSetField({
   useEffect(() => {
     const currentValues = watchedValues;
     const previousValues = prevValuesRef.current;
+    const hasBeenSubmitted = formState.isSubmitted || formState.submitCount > 0;
 
     // Check if any value has changed
     let hasChanged = false;
@@ -72,7 +75,7 @@ export function FieldSetField({
       }
     }
     // If changes detected and we haven't triggered yet, run trigger
-    if (hasChanged) {
+    if (hasChanged && hasBeenSubmitted) {
       // We need to debounce the validation trigger so that tests don't freeze
       if (triggerTimeoutRef.current) {
         clearTimeout(triggerTimeoutRef.current);
@@ -89,7 +92,7 @@ export function FieldSetField({
         clearTimeout(triggerTimeoutRef.current);
       }
     };
-  }, [watchedValues, trigger]);
+  }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
   return (
     <fieldset
@@ -113,7 +116,7 @@ export function FieldSetField({
               ...(field.calculateDynamicProperties(watchedValues, field) || {}),
             };
           }
-          const FieldComponent = fieldsMap[field.type as SupportedTypes];
+          let FieldComponent = fieldsMap[field.type as SupportedTypes];
 
           if (field.isVisible === false || field.deprecated) {
             return null; // Skip hidden or deprecated fields
@@ -124,6 +127,10 @@ export function FieldSetField({
               Component: React.ComponentType<any>;
             };
             return <Component key={field.name} {...field} />;
+          }
+
+          if (field.inputType === 'select' && field.multiple) {
+            FieldComponent = fieldsMap['multi-select'];
           }
 
           return (

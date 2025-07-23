@@ -4,6 +4,7 @@ import { createClient } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
+import { debug } from './lib/utils';
 
 type AuthResponse = {
   accessToken: string;
@@ -45,7 +46,12 @@ export const useAuth = ({
     : process.env.REMOTE_GATEWAY_URL;
 
   const clientConfig = client.getConfig();
-  const npmPackageVersion = process.env.VERSION;
+  const npmPackageVersion = process.env.VERSION || 'unknown';
+
+  if (options?.environment && options?.environment !== 'production') {
+    debug(npmPackageVersion);
+  }
+
   const isValidProxy = !!options?.proxy && isValidUrl(options.proxy.url);
 
   if (options?.proxy && !isValidProxy) {

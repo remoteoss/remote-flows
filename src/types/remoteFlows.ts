@@ -35,7 +35,12 @@ export type JSFField = {
   schema: AnySchema;
   scopedJsonSchema: Record<string, unknown>;
   type: string;
-  options?: Array<{ value: string; label: string; description?: string }>;
+  options?: Array<{
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+  }>;
   defaultValue?: string | number;
   minDate?: string;
   maxLength?: number;
@@ -128,3 +133,12 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type $TSFixMe = any;
+
+// Extend the global Window interface to include RemoteFlowsSDK
+declare global {
+  interface Window {
+    RemoteFlowsSDK?: {
+      version: string;
+    };
+  }
+}

@@ -109,8 +109,80 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   );
 };
 
+const Textarea = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  const hasError = !!fieldState.error;
+
+  return (
+    <div className="input-container">
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <textarea
+        id={field.name}
+        className={`textarea ${hasError ? 'error' : ''}`}
+        maxLength={fieldData.maxLength}
+        {...field}
+      />
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
+      {fieldState.error && (
+        <p className="error-message">{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
+const Radio = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  const hasError = !!fieldState.error;
+
+  return (
+    <div className="input-container">
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <div className="radio-container">
+        {fieldData.options?.map((option) => {
+          return (
+            <div key={option.value} className="radio-option">
+              <input
+                type="radio"
+                id={option.value}
+                value={option.value}
+                onChange={field.onChange}
+                checked={field.value === option.value}
+              />
+              <label htmlFor={option.value}>{option.label}</label>
+            </div>
+          );
+        })}
+      </div>
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
+      {hasError && <p className="error-message">{fieldState.error?.message}</p>}
+    </div>
+  );
+};
+
+const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  const hasError = !!fieldState.error;
+
+  return (
+    <div>
+      <div className="checkbox-container">
+        <input type="checkbox" id={field.name} {...field} />
+        <label htmlFor={field.name}>{fieldData.label}</label>
+      </div>
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
+      {hasError && <p className="error-message">{fieldState.error?.message}</p>}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
   select: Select,
+  textarea: Textarea,
+  radio: Radio,
+  checkbox: Checkbox,
 };
