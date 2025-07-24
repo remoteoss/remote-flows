@@ -7,6 +7,7 @@ import { Fields } from '@remoteoss/json-schema-form';
 
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
+  disabledInviteButtonEmploymentStatus,
   prettifyFormValues,
   reviewStepAllowedEmploymentStatus,
   STEPS,
@@ -99,6 +100,10 @@ const getLoadingStates = ({
     employmentStatus &&
     reviewStepAllowedEmploymentStatus.includes(employmentStatus);
 
+  const canInvite =
+    employmentStatus &&
+    !disabledInviteButtonEmploymentStatus.includes(employmentStatus);
+
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
   );
@@ -112,7 +117,12 @@ const getLoadingStates = ({
       contractDetailsFields.length > 0,
   );
 
-  return { isLoading, isNavigatingToReview, isEmploymentReadOnly };
+  return {
+    isLoading,
+    isNavigatingToReview,
+    isEmploymentReadOnly,
+    canInvite,
+  };
 };
 
 export const useOnboarding = ({
@@ -486,9 +496,24 @@ export const useOnboarding = ({
     stepFields,
   ]);
 
-  const { isLoading, isNavigatingToReview, isEmploymentReadOnly } = useMemo(
-    () =>
-      getLoadingStates({
+  const { isLoading, isNavigatingToReview, isEmploymentReadOnly, canInvite } =
+    useMemo(
+      () =>
+        getLoadingStates({
+          isLoadingBasicInformationForm,
+          isLoadingContractDetailsForm,
+          isLoadingEmployment,
+          isLoadingBenefitsOffersSchema,
+          isLoadingBenefitOffers,
+          isLoadingCompany,
+          isLoadingCountries,
+          employmentId,
+          employmentStatus: employmentStatus,
+          basicInformationFields: stepFields.basic_information,
+          contractDetailsFields: stepFields.contract_details,
+          currentStepName: currentStepName,
+        }),
+      [
         isLoadingBasicInformationForm,
         isLoadingContractDetailsForm,
         isLoadingEmployment,
@@ -497,26 +522,12 @@ export const useOnboarding = ({
         isLoadingCompany,
         isLoadingCountries,
         employmentId,
-        employmentStatus: employmentStatus,
-        basicInformationFields: stepFields.basic_information,
-        contractDetailsFields: stepFields.contract_details,
-        currentStepName: currentStepName,
-      }),
-    [
-      isLoadingBasicInformationForm,
-      isLoadingContractDetailsForm,
-      isLoadingEmployment,
-      isLoadingBenefitsOffersSchema,
-      isLoadingBenefitOffers,
-      isLoadingCompany,
-      isLoadingCountries,
-      employmentId,
-      employmentStatus,
-      stepFields.basic_information,
-      stepFields.contract_details,
-      currentStepName,
-    ],
-  );
+        employmentStatus,
+        stepFields.basic_information,
+        stepFields.contract_details,
+        currentStepName,
+      ],
+    );
 
   useEffect(() => {
     if (isNavigatingToReview) {
@@ -833,5 +844,11 @@ export const useOnboarding = ({
      * @returns {boolean}
      */
     isEmploymentReadOnly,
+
+    /**
+     * let's the user know if the company can invite employees
+     * @returns {boolean}
+     */
+    canInvite,
   };
 };

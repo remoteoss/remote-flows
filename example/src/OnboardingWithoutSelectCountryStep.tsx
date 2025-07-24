@@ -179,7 +179,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </div>
         </>
       );
-
     case 'benefits':
       return (
         <div className="benefits-container">

@@ -143,27 +143,22 @@ describe('ReviewStep Component', () => {
     });
   });
 
-  describe('edge cases and null scenarios', () => {
-    it('should render with creditRiskState null when no conditions are met', () => {
+  describe('referred scenarios', () => {
+    it('should render with creditRiskState "referred" when creditRiskStatus is "referred"', () => {
       (useOnboardingContext as any).mockReturnValue({
-        onboardingBag: {
-          creditRiskStatus: 'referred',
-          employment: { status: 'created' },
-        },
-        creditScore: {
-          showReserveInvoice: false,
-          showInviteSuccessful: false,
-        },
+        onboardingBag: { creditRiskStatus: 'referred' },
       });
 
       render(<ReviewStep render={mockRender} />);
 
       expect(mockRender).toHaveBeenCalledWith({
-        creditRiskState: null,
+        creditRiskState: 'referred',
         creditRiskStatus: 'referred',
       });
     });
+  });
 
+  describe('edge cases and null scenarios', () => {
     it('should handle missing employment gracefully', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
@@ -297,7 +292,7 @@ describe('ReviewStep Component', () => {
         if (status === 'deposit_required') {
           expectedcreditRiskState = 'deposit_required';
         } else if (status === 'referred') {
-          expectedcreditRiskState = null;
+          expectedcreditRiskState = 'referred';
         } else {
           expectedcreditRiskState = 'invite';
         }
