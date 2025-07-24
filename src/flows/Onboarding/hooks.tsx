@@ -223,12 +223,14 @@ export const useOnboarding = ({
   const useJSONSchema = ({
     form,
     options: jsonSchemaOptions = {},
+    query = {},
   }: {
     form: JSONSchemaFormType;
     options?: {
       jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
+    query?: Record<string, string>;
   }) => {
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
@@ -240,6 +242,7 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
+      query,
       options: {
         ...jsonSchemaOptions,
         queryOptions: {
@@ -355,6 +358,9 @@ export const useOnboarding = ({
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
+      query: {
+        employment_id: internalEmploymentId as string,
+      },
       options: {
         jsfModify: {
           ...options?.jsfModify?.contract_details,
