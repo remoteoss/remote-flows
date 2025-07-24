@@ -95,8 +95,6 @@ export function ReviewStep({ render }: ReviewStepProps) {
 
   const creditRiskState = getCreditRiskState();
 
-  console.log('review step credit risk state:', creditRiskState);
-
   return render({
     creditRiskState,
     creditRiskStatus: onboardingBag.creditRiskStatus,
