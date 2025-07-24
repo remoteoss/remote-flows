@@ -153,7 +153,10 @@ function WorkScheduleSelectionForm({
           </DialogHeader>
 
           <Form {...form}>
-            <form className="space-y-4 RemoteFlows__WorkScheduleSelectionForm__Form">
+            <form
+              noValidate
+              className="space-y-4 RemoteFlows__WorkScheduleSelectionForm__Form"
+            >
               <div className="rounded-lg">
                 <p className="text-gray-600 text-sm mb-4 RemoteFlows__WorkScheduleSelectionForm__Description">
                   The times displayed are in the employee's time zone in the

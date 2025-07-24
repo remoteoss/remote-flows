@@ -47,6 +47,7 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
   return (
     <Form {...form}>
       <form
+        noValidate
         id={formId}
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 RemoteFlows__TerminationForm"

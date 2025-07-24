@@ -137,6 +137,7 @@ export function ContractAmendmentForm({
   return (
     <Form {...form}>
       <form
+        noValidate
         id={formId}
         data-testid="contract-amendment-form"
         onSubmit={form.handleSubmit(handleSubmit)}
