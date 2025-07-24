@@ -11,6 +11,7 @@ type ReviewStepProps = {
    *
    * @param props - Object containing credit risk information
    * @param props.creditRiskState - Current state of the credit risk flow
+   *   - 'referred': Company has been referred for manual review
    *   - 'deposit_required': Deposit payment is required but not yet paid
    *   - 'deposit_required_successful': Deposit payment has been successfully processed
    *   - 'invite': Regular invite flow is available (no deposit required)
@@ -51,6 +52,8 @@ export function ReviewStep({ render }: ReviewStepProps) {
   const isDepositRequiredCreditRisk =
     onboardingBag.creditRiskStatus === 'deposit_required';
 
+  const isReferred = onboardingBag.creditRiskStatus === 'referred';
+
   const hasEmploymentStatusThatHidesDeposit =
     onboardingBag.employment?.status &&
     statusesToNotShowDeposit.includes(onboardingBag.employment.status);
@@ -69,14 +72,19 @@ export function ReviewStep({ render }: ReviewStepProps) {
     (onboardingBag.employment?.status && hasEmploymentStatusThatHidesDeposit);
 
   const getCreditRiskState = (): CreditRiskState => {
-    // Priority 1: Deposit required flow
+    // check if the company is referred
+    if (isReferred) {
+      return 'referred';
+    }
+
+    // Deposit required flow
     if (shouldShowDepositFlow) {
       return creditScore.showReserveInvoice
         ? 'deposit_required_successful'
         : 'deposit_required';
     }
 
-    // Priority 2: Invite flow
+    // Invite flow
     if (shouldShowInviteFlow) {
       return creditScore.showInviteSuccessful ? 'invite_successful' : 'invite';
     }
