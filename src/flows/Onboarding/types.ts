@@ -93,6 +93,7 @@ export type CreditRiskState =
   | 'deposit_required_successful'
   | 'invite'
   | 'invite_successful'
+  | 'referred'
   | null;
 
 type MetaValues = {

@@ -38,6 +38,15 @@ const CreditRiskSections = ({
   employment?: Employment;
 }) => {
   switch (creditRiskState) {
+    case 'referred':
+      return (
+        <InviteSection
+          title={`Confirm ${employment?.basic_information?.name} Profile`}
+          description="Once your account is approved, you can invite your employees to Remote."
+        >
+          <OnboardingAlertStatuses creditRiskStatus={creditRiskStatus} />
+        </InviteSection>
+      );
     case 'deposit_required':
       return (
         <InviteSection
@@ -127,16 +136,11 @@ function Review({ meta }: { meta: Meta }) {
   );
 }
 
-const DISABLED_BUTTON_EMPLOYMENT_STATUS: Employment['status'][] = [
-  'created_awaiting_reserve',
-  'invited',
-];
-
 export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
   setErrors,
-  employment,
+  canInvite,
 }: {
   creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
@@ -144,15 +148,12 @@ export const MyOnboardingInviteButton = ({
     apiError: string;
     fieldErrors: NormalizedFieldError[];
   }) => void;
-  employment?: Employment;
+  canInvite?: boolean;
 }) => {
-  const isDisabled =
-    employment &&
-    DISABLED_BUTTON_EMPLOYMENT_STATUS.includes(employment?.status);
   if (creditRiskStatus !== 'referred') {
     return (
       <Component
-        disabled={isDisabled}
+        disabled={!canInvite}
         className="submit-button"
         onSuccess={() => {
           console.log(
@@ -235,24 +236,13 @@ export const ReviewStep = ({
         Edit Benefits
       </button>
       <h2 className="title">Review</h2>
-      {onboardingBag.creditRiskStatus === 'referred' && (
-        <InviteSection
-          title={`Confirm ${onboardingBag.employment?.basic_information?.name} Profile`}
-          description="Once your account is approved, you can invite your employees to Remote."
-        >
-          <OnboardingAlertStatuses
-            creditRiskStatus={onboardingBag.creditRiskStatus}
-          />
-        </InviteSection>
-      )}
       <ReviewStepCreditRisk
-        // @ts-expect-error - TODO: fix this
         render={({
           creditRiskState,
           creditRiskStatus,
         }: {
           creditRiskState: CreditRiskState;
-          creditRiskStatus: CreditRiskStatus;
+          creditRiskStatus?: CreditRiskStatus;
         }) => {
           return (
             <>
@@ -269,10 +259,10 @@ export const ReviewStep = ({
                   Back
                 </BackButton>
                 <MyOnboardingInviteButton
-                  creditRiskStatus={onboardingBag.creditRiskStatus}
+                  creditRiskStatus={creditRiskStatus}
                   Component={OnboardingInvite}
                   setErrors={setErrors}
-                  employment={onboardingBag.employment}
+                  canInvite={onboardingBag.canInvite}
                 />
               </div>
               <AlertError errors={errors} />
