@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.5.0
+
+### Minor Changes
+
+- a1ab9a9: - Add canInvite property to the onboardingBag [#342](https://github.com/remoteoss/remote-flows/pull/342)
+
 ## 0.4.2-alpha.0
 
 ### Patch Changes
