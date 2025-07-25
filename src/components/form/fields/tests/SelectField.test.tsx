@@ -174,4 +174,114 @@ describe('SelectField Component', () => {
       screen.queryByTestId('context-select-field'),
     ).not.toBeInTheDocument();
   });
+
+  describe('jsonType value conversion', () => {
+    it('converts value to number when jsonType is "number" in default implementation', () => {
+      const numericOptions = [
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+      ];
+
+      renderWithFormContext({
+        ...defaultProps,
+        jsonType: 'number',
+        options: numericOptions,
+        onChange: mockOnChange,
+      });
+
+      const select = screen.getByRole('combobox');
+      fireEvent.click(select);
+      const option = screen.getByText('One');
+      fireEvent.click(option);
+
+      expect(mockOnChange).toHaveBeenCalledWith(1);
+    });
+
+    it('keeps value as string when jsonType is "string" in default implementation', () => {
+      renderWithFormContext({
+        ...defaultProps,
+        jsonType: 'string',
+        onChange: mockOnChange,
+      });
+
+      const select = screen.getByRole('combobox');
+      fireEvent.click(select);
+      const option = screen.getByText('Option 1');
+      fireEvent.click(option);
+
+      expect(mockOnChange).toHaveBeenCalledWith('option1');
+    });
+
+    it('converts value to number when jsonType is "number" in custom component', () => {
+      const CustomSelectField = vi.fn().mockImplementation(({ field }) => {
+        const handleChange = (value: string) => {
+          field.onChange(value);
+        };
+
+        return (
+          <select
+            data-testid="custom-select"
+            onChange={(e) => handleChange(e.target.value)}
+          >
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+        );
+      });
+
+      (useFormFields as any).mockReturnValue({
+        components: { select: CustomSelectField },
+      });
+
+      const numericOptions = [
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+      ];
+
+      renderWithFormContext({
+        ...defaultProps,
+        jsonType: 'number',
+        options: numericOptions,
+        onChange: mockOnChange,
+      });
+
+      const customSelect = screen.getByTestId('custom-select');
+      fireEvent.change(customSelect, { target: { value: '1' } });
+
+      expect(mockOnChange).toHaveBeenCalledWith(1);
+    });
+
+    it('keeps value as string when jsonType is "string" in custom component', () => {
+      const CustomSelectField = vi.fn().mockImplementation(({ field }) => {
+        const handleChange = (value: string) => {
+          field.onChange(value);
+        };
+
+        return (
+          <select
+            data-testid="custom-select"
+            onChange={(e) => handleChange(e.target.value)}
+          >
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+          </select>
+        );
+      });
+
+      (useFormFields as any).mockReturnValue({
+        components: { select: CustomSelectField },
+      });
+
+      renderWithFormContext({
+        ...defaultProps,
+        jsonType: 'string',
+        onChange: mockOnChange,
+      });
+
+      const customSelect = screen.getByTestId('custom-select');
+      fireEvent.change(customSelect, { target: { value: 'option1' } });
+
+      expect(mockOnChange).toHaveBeenCalledWith('option1');
+    });
+  });
 });
