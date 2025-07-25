@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.6.0
+
+### Minor Changes
+
+- fe82ce1: Add equity banner under the equity_compensation field [#331](https://github.com/remoteoss/remote-flows/pull/331)
+
 ## 0.5.1
 
 ### Patch Changes
