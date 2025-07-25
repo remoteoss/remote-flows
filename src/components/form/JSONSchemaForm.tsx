@@ -46,6 +46,13 @@ export const JSONSchemaFormFields = ({
   return (
     <>
       {maybeFieldWithFlatFieldsets.map((field) => {
+        if (field.calculateDynamicProperties) {
+          field = {
+            ...field,
+            ...(field.calculateDynamicProperties(fieldValues, field) || {}),
+          };
+        }
+
         if (field.isVisible === false || field.deprecated) {
           return null; // Skip hidden or deprecated fields
         }
@@ -96,6 +103,7 @@ export const JSONSchemaFormFields = ({
             {field.statement ? (
               <Statement {...(field.statement as StatementProps)} />
             ) : null}
+            {field.extra ? field.extra : null}
           </Fragment>
         ) : (
           <p className="error">

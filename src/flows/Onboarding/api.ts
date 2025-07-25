@@ -179,11 +179,13 @@ export const useJSONSchemaForm = ({
   form,
   fieldValues,
   options,
+  query = {},
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  query?: Record<string, unknown>;
 }) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
@@ -206,6 +208,7 @@ export const useJSONSchemaForm = ({
         },
         query: {
           skip_benefits: true,
+          ...query,
           ...jsonSchemaQueryParam,
         },
       });

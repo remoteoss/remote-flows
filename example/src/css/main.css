@@ -814,6 +814,30 @@ button.reset-button {
   margin-top: 8px;
 }
 
+.RemoteFlows__EquityPriceDetails {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: 10px;
+  gap: 24px;
+  border-color: #e3e9ef;
+  background-color: #fafcff;
+}
+
+.RemoteFlows__Equity__Price {
+  font-size: 16px;
+}
+
+.RemoteFlows__Equity__Fee {
+  font-size: 14px;
+  color: #364452;
+}
+
+.RemoteFlows__Equity__Reporting {
+  font-size: 12px;
+  color: #697786;
+}
+
 .textarea {
   width: 100%;
   padding: 12px 16px;

@@ -2,7 +2,7 @@
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { cn } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
-import { Components } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
@@ -36,6 +36,7 @@ type FieldSetProps = {
   components: Components;
   statement?: StatementProps;
   isFlatFieldset: boolean;
+  extra?: React.ReactNode;
 };
 
 export function FieldSetField({
@@ -46,6 +47,7 @@ export function FieldSetField({
   components,
   statement,
   isFlatFieldset,
+  extra,
 }: FieldSetProps) {
   const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
@@ -107,10 +109,15 @@ export function FieldSetField({
         />
       ) : null}
       <div className="grid gap-4">
-        {fields.map((field) => {
-          let FieldComponent = fieldsMap[field.type];
+        {fields.map((field: $TSFixMe) => {
+          if (field.calculateDynamicProperties) {
+            field = {
+              ...field,
+              ...(field.calculateDynamicProperties(watchedValues, field) || {}),
+            };
+          }
+          let FieldComponent = fieldsMap[field.type as SupportedTypes];
 
-          // @ts-expect-error - TODO: use types from json-schema-form v1
           if (field.isVisible === false || field.deprecated) {
             return null; // Skip hidden or deprecated fields
           }
@@ -127,14 +134,18 @@ export function FieldSetField({
           }
 
           return (
-            <FieldComponent
-              {...field}
-              key={field.name}
-              name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-              component={components?.[field.type]}
-            />
+            <>
+              <FieldComponent
+                {...field}
+                key={field.name}
+                name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                component={components?.[field.type as SupportedTypes]}
+              />
+              {field.extra ? field.extra : null}
+            </>
           );
         })}
+        {extra ? extra : null}
         {statement ? <Statement {...statement} /> : null}
       </div>
     </fieldset>

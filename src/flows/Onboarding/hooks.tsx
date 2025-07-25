@@ -37,7 +37,8 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
+import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -222,12 +223,14 @@ export const useOnboarding = ({
   const useJSONSchema = ({
     form,
     options: jsonSchemaOptions = {},
+    query = {},
   }: {
     form: JSONSchemaFormType;
     options?: {
       jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
+    query?: Record<string, string>;
   }) => {
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
@@ -239,6 +242,7 @@ export const useOnboarding = ({
               ...fieldValues,
             }
           : serverEmploymentData,
+      query,
       options: {
         ...jsonSchemaOptions,
         queryOptions: {
@@ -291,6 +295,9 @@ export const useOnboarding = ({
         ).presentation
       : undefined;
 
+  const equityCompensationField =
+    options?.jsfModify?.contract_details?.fields?.equity_compensation;
+
   const customFields = useMemo(
     () => ({
       fields: {
@@ -316,18 +323,44 @@ export const useOnboarding = ({
             },
           },
         },
+        equity_compensation: {
+          ...equityCompensationField,
+          presentation: {
+            calculateDynamicProperties: (
+              values: FieldValues,
+              field: JSFField,
+            ) => {
+              const offerEquity =
+                values.equity_compensation?.offer_equity_compensation;
+              const equityCost = field?.meta?.cost;
+
+              return {
+                extra: (
+                  <EquityPriceDetails
+                    offerEquity={offerEquity}
+                    equityCost={equityCost as $TSFixMe}
+                  />
+                ),
+              };
+            },
+          },
+        },
       },
     }),
     [
       annualGrossSalaryField,
       annualSalaryFieldPresentation,
       company?.desired_currency,
+      equityCompensationField,
     ],
   );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
+      query: {
+        employment_id: internalEmploymentId as string,
+      },
       options: {
         jsfModify: {
           ...options?.jsfModify?.contract_details,
