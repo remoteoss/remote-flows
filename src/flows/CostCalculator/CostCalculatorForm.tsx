@@ -30,6 +30,11 @@ type CostCalculatorFormProps = Partial<{
    * Whether to reset the form when the form is successfully submitted.
    */
   shouldResetForm?: boolean;
+
+  /**
+   * Fields to reset when the form is successfully submitted.
+   */
+  shouldResetFormFields?: string[];
 }>;
 
 export function CostCalculatorForm({
@@ -37,6 +42,7 @@ export function CostCalculatorForm({
   onError,
   onSuccess,
   shouldResetForm,
+  shouldResetFormFields,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
@@ -54,9 +60,23 @@ export function CostCalculatorForm({
     } else {
       if (costCalculatorResults?.data) {
         await onSuccess?.(costCalculatorResults?.data);
+        // Reset the form completely
         if (shouldResetForm) {
           costCalculatorBag?.resetForm();
           form.reset();
+          return;
+        }
+
+        // Reset only the form fields
+        if (shouldResetFormFields) {
+          const currentValues = form.getValues();
+          const resetValues = { ...currentValues };
+          shouldResetFormFields.forEach((field) => {
+            resetValues[field] = '';
+          });
+
+          costCalculatorBag?.resetForm();
+          form.reset(resetValues);
         }
       }
     }

@@ -436,4 +436,103 @@ describe('CostCalculatorFlow', () => {
       ).toHaveValue('');
     });
   });
+
+  it("should reset form the country and region when the 'shouldResetFormFields' is passed", async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    render(
+      <CostCalculatorFlow
+        defaultValues={defaultProps.defaultValues}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div data-testid="loading">Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSubmit={mockOnSubmit}
+                onError={mockOnError}
+                onSuccess={mockOnSuccess}
+                shouldResetFormFields={['country']}
+              />
+              <CostCalculatorSubmitButton>
+                Get estimate
+              </CostCalculatorSubmitButton>
+            </div>
+          );
+        }}
+      />,
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    // Fill in the age field
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /age/i,
+      }),
+      '30',
+    );
+
+    // select benefits
+    const [, , lifeInsurance, healthInsurance] =
+      screen.getAllByRole('combobox');
+
+    // select life insurance
+    await user.click(lifeInsurance);
+    const [, healthInsuranceOption] = screen.getAllByText(
+      'Option 1 - 5.64 USD/mo',
+    );
+    await user.click(healthInsuranceOption);
+
+    // select health insurance
+    await user.click(healthInsurance);
+    const [, lifeInsuranceOption] = screen.getAllByText(
+      'Option 1 - 113 USD/mo',
+    );
+    await user.click(lifeInsuranceOption);
+
+    // Submit the form
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    // Wait for success callback
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
+
+    // Verify form was reset
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', {
+          name: /country/i,
+        }),
+      ).toHaveTextContent('Country');
+    });
+
+    expect(
+      screen.queryByRole('combobox', {
+        name: /region/i,
+      }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole('textbox', {
+        name: /salary/i,
+      }),
+    ).toHaveValue('50000');
+
+    expect(
+      screen.getByRole('combobox', {
+        name: /currency/i,
+      }),
+    ).toHaveTextContent(/USD/i);
+  });
 });

@@ -555,12 +555,13 @@ The options.jsfModify props accepts the same props that the [modify](https://jso
 
 It renders the form and the fields of the cost calculator
 
-| Prop              | Type                                                 | Required | Description                                                                                  |
-| ----------------- | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `onSubmit`        | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
-| `onSuccess`       | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                                                 |
-| `onError`         | `(error: Error) => void`                             | No       | Error handling callback                                                                      |
-| `shouldResetForm` | `boolean`                                            | No       | If true, the form will be reset after a successful submission. Default is `false`.           |
+| Prop                    | Type                                                 | Required | Description                                                                                  |
+| ----------------------- | ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `onSubmit`              | `(payload: CostCalculatorEstimateParams) => void`    | No       | Callback with the form payload sent to Remote API. Runs before submitting the form to Remote |
+| `onSuccess`             | `(response: CostCalculatorEstimateResponse) => void` | No       | Callback with the successful estimation data                                                 |
+| `onError`               | `(error: Error) => void`                             | No       | Error handling callback                                                                      |
+| `shouldResetForm`       | `boolean`                                            | No       | If true, the form will be reset after a successful submission. Default is `false`.           |
+| `shouldResetFormFields` | `string[]`                                           | No       | You can pass an array like ['country'] and only country and the region will be cleared       |
 
 ### CostCalculatorSubmitButton
 
