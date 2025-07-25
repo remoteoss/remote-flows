@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.5.1
+
+### Patch Changes
+
+- e8171aa: Fix select onChange casting, we'll only cast when jsonType is `number` [#345](https://github.com/remoteoss/remote-flows/pull/345)
+
 ## 0.5.0
 
 ### Minor Changes
