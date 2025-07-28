@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { CostCalculatorEstimateResponse } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
@@ -30,6 +31,11 @@ type CostCalculatorFormProps = Partial<{
    * Whether to reset the form when the form is successfully submitted.
    */
   shouldResetForm?: boolean;
+
+  /**
+   * Fields to reset when the form is successfully submitted.
+   */
+  resetFields?: ('country' | 'currency' | 'salary')[];
 }>;
 
 export function CostCalculatorForm({
@@ -37,8 +43,51 @@ export function CostCalculatorForm({
   onError,
   onSuccess,
   shouldResetForm,
+  resetFields,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
+
+  if (
+    process.env.NODE_ENV === 'development' &&
+    shouldResetForm &&
+    resetFields
+  ) {
+    console.warn(
+      'CostCalculatorForm: Both "shouldResetForm" and "resetFields" were provided. Using "shouldResetForm" and ignoring "resetFields".',
+    );
+    resetFields = undefined;
+  }
+
+  const {
+    formState: { isSubmitSuccessful },
+  } = form;
+
+  useEffect(() => {
+    // resets the entire form if the form is successfully submitted and the shouldResetForm prop is true
+    if (isSubmitSuccessful && shouldResetForm) {
+      costCalculatorBag?.resetForm();
+      form.reset();
+    }
+
+    // resets the specified fields if the form is successfully submitted and the resetFields prop is provided
+    if (isSubmitSuccessful && resetFields) {
+      // Reset only the specified fields
+      const currentValues = form.getValues();
+      const resetValues = { ...currentValues };
+      resetFields.forEach((field) => {
+        resetValues[field] = '';
+      });
+
+      costCalculatorBag?.resetForm();
+      form.reset(resetValues);
+    }
+  }, [
+    isSubmitSuccessful,
+    form,
+    shouldResetForm,
+    costCalculatorBag,
+    resetFields,
+  ]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     const cleanedValues = costCalculatorBag?.parseFormValues(
@@ -51,14 +100,8 @@ export function CostCalculatorForm({
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
-    } else {
-      if (costCalculatorResults?.data) {
-        await onSuccess?.(costCalculatorResults?.data);
-        if (shouldResetForm) {
-          costCalculatorBag?.resetForm();
-          form.reset();
-        }
-      }
+    } else if (costCalculatorResults?.data) {
+      await onSuccess?.(costCalculatorResults?.data);
     }
   };
 
