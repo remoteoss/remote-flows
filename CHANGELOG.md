@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.7.0
+
+### Minor Changes
+
+- 94fd723: - Add resetFields property to reset determined fields in the CostCalculator [#350](https://github.com/remoteoss/remote-flows/pull/350)
+
 ## 0.6.0
 
 ### Minor Changes
