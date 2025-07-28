@@ -286,11 +286,23 @@ export function parseFormValuesToAPI(
   formValues: Record<string, any> = {},
   fields: any[],
 ) {
-  const filteredFields = fields.filter(
-    (field) =>
-      formValues[field.name!] ||
-      (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled),
-  );
+  const filteredFields = fields.filter((field) => {
+    const fieldValue = formValues[field.name!];
+
+    // Always include fieldsets with valueGroupingDisabled
+    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+      return true;
+    }
+
+    // For number fields, include them even if the value is 0 or empty string
+    // The transformation will handle converting empty strings to appropriate values
+    if (field.type === supportedTypes.NUMBER) {
+      return fieldValue !== undefined && fieldValue !== null;
+    }
+
+    // For all other fields, use the original truthy check
+    return !!fieldValue;
+  });
 
   const parsedFormValues = filteredFields.reduce(
     (acc, field) => {
