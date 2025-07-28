@@ -4,3 +4,11 @@ node_modules
 public
 dist
 .env
+
+
+ Yarn 3 (when not using zero-installs)
+.yarn/cache
+.yarn/unplugged
+.yarn/__virtual__
+.yarn/build-state.yml
+.yarn/install-state.gz
