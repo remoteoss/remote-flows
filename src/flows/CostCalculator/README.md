@@ -563,6 +563,10 @@ It renders the form and the fields of the cost calculator
 | `shouldResetForm` | `boolean`                                            | No         | If true, the form will be reset after a successful submission. Default is `false`.           |
 | `resetFields`     | `'country'                                           | 'currency' | 'salary'[]`                                                                                  | No  | You can pass an array like ['country'] and only country and the region will be cleared |
 
+#### About `shouldResetForm` and `resetFields`
+
+If used both at the same time, shouldResetForm will take precedence
+
 ### CostCalculatorSubmitButton
 
 It renders the submit button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the CostCalculatorFlow component to ensure proper functionality
