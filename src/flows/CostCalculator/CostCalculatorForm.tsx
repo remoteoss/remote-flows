@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { CostCalculatorEstimateResponse } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
@@ -34,7 +35,7 @@ type CostCalculatorFormProps = Partial<{
   /**
    * Fields to reset when the form is successfully submitted.
    */
-  shouldResetFormFields?: string[];
+  resetFields?: ('country' | 'currency' | 'salary')[];
 }>;
 
 export function CostCalculatorForm({
@@ -42,9 +43,39 @@ export function CostCalculatorForm({
   onError,
   onSuccess,
   shouldResetForm,
-  shouldResetFormFields,
+  resetFields,
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
+
+  const {
+    formState: { isSubmitSuccessful },
+  } = form;
+
+  useEffect(() => {
+    if (isSubmitSuccessful && shouldResetForm) {
+      // Reset the form state after a successful submission
+      costCalculatorBag?.resetForm();
+      form.reset();
+    }
+
+    if (isSubmitSuccessful && resetFields) {
+      // Reset only the specified fields
+      const currentValues = form.getValues();
+      const resetValues = { ...currentValues };
+      resetFields.forEach((field) => {
+        resetValues[field] = '';
+      });
+
+      costCalculatorBag?.resetForm();
+      form.reset(resetValues);
+    }
+  }, [
+    isSubmitSuccessful,
+    form,
+    shouldResetForm,
+    costCalculatorBag,
+    resetFields,
+  ]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     const cleanedValues = costCalculatorBag?.parseFormValues(
@@ -57,28 +88,8 @@ export function CostCalculatorForm({
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
-    } else {
-      if (costCalculatorResults?.data) {
-        await onSuccess?.(costCalculatorResults?.data);
-        // Reset the form completely
-        if (shouldResetForm) {
-          costCalculatorBag?.resetForm();
-          form.reset();
-          return;
-        }
-
-        // Reset only the form fields
-        if (shouldResetFormFields) {
-          const currentValues = form.getValues();
-          const resetValues = { ...currentValues };
-          shouldResetFormFields.forEach((field) => {
-            resetValues[field] = '';
-          });
-
-          costCalculatorBag?.resetForm();
-          form.reset(resetValues);
-        }
-      }
+    } else if (costCalculatorResults?.data) {
+      await onSuccess?.(costCalculatorResults?.data);
     }
   };
 

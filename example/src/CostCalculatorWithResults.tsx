@@ -35,7 +35,7 @@ export function CostCalculatorWithResults() {
               <CostCalculatorForm
                 onSubmit={(payload) => console.log(payload)}
                 onError={(error) => console.error({ error })}
-                shouldResetFormFields={['country']}
+                resetFields={['country']}
                 onSuccess={(response) => {
                   setEstimations(response);
                 }}

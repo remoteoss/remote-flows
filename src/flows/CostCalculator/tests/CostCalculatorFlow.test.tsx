@@ -437,7 +437,7 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  it("should reset form the country and region when the 'shouldResetFormFields' is passed", async () => {
+  it("should reset form the country and region when the 'resetFields' is passed", async () => {
     const user = userEvent.setup();
     server.use(
       http.get('*/v1/cost-calculator/regions/*/fields', () => {
@@ -458,7 +458,7 @@ describe('CostCalculatorFlow', () => {
                 onSubmit={mockOnSubmit}
                 onError={mockOnError}
                 onSuccess={mockOnSuccess}
-                shouldResetFormFields={['country']}
+                resetFields={['country']}
               />
               <CostCalculatorSubmitButton>
                 Get estimate
