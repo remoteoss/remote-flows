@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.7.3
+
+### Patch Changes
+
+- 79a67e3: - fix fieldset field key fragment [#361](https://github.com/remoteoss/remote-flows/pull/361)
+
 ## 0.7.2
 
 ### Patch Changes
