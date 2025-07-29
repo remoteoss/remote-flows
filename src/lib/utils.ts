@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(
-  amount: number | undefined,
+  amount: number | undefined | null,
   symbol = '€',
 ): string {
   if (!amount) {
