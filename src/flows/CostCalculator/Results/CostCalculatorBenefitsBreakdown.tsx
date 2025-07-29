@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
-import { SimpleTooltip } from '@/src/components/ui/simple-tooltip';
+import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 
 type CostCalculatorBenefitsBreakdownProps = {
   benefitsTotal: number | undefined;
@@ -36,12 +36,12 @@ export function CostCalculatorBenefitsBreakdown({
             <div className="flex items-start gap-2">
               <span>{benefit.name}</span>
               {benefit.description && (
-                <SimpleTooltip content={benefit.description}>
+                <BasicTooltip content={benefit.description}>
                   <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
                     <Info className="h-3 w-3 text-gray-400" />
                     <span className="sr-only">Info</span>
                   </Button>
-                </SimpleTooltip>
+                </BasicTooltip>
               )}
             </div>
             <span>{formatCurrency(benefit.amount, currency)}</span>

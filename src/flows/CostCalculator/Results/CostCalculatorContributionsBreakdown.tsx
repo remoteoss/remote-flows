@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
 
-import { SimpleTooltip } from '@/src/components/ui/simple-tooltip';
+import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
@@ -45,7 +45,7 @@ export function CostCalculatorContributionsBreakdown({
               >
                 <div className="flex items-start gap-2">
                   <span>{contribution.name}</span>
-                  <SimpleTooltip
+                  <BasicTooltip
                     content={
                       <>
                         <span>{contribution.description}</span>
@@ -66,7 +66,7 @@ export function CostCalculatorContributionsBreakdown({
                       <Info className="h-3 w-3 text-gray-400" />
                       <span className="sr-only">Info</span>
                     </Button>
-                  </SimpleTooltip>
+                  </BasicTooltip>
                 </div>
                 <span>{formatCurrency(contribution.amount, currency)}</span>
               </div>

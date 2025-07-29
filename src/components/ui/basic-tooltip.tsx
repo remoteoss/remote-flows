@@ -1,4 +1,4 @@
-export const SimpleTooltip = ({
+export const BasicTooltip = ({
   children,
   content,
 }: {
