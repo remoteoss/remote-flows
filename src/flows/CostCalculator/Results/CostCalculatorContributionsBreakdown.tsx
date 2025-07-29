@@ -1,11 +1,6 @@
 import { Info } from 'lucide-react';
 
-import {
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Tooltip as UITooltip,
-} from '@/src/components/ui/tooltip';
+import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
@@ -50,20 +45,10 @@ export function CostCalculatorContributionsBreakdown({
               >
                 <div className="flex items-start gap-2">
                   <span>{contribution.name}</span>
-                  <TooltipProvider>
-                    <UITooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-4 w-4 p-0"
-                        >
-                          <Info className="h-3 w-3 text-gray-400" />
-                          <span className="sr-only">Info</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="max-w-xs">{contribution.description}</p>
+                  <BasicTooltip
+                    content={
+                      <>
+                        <span>{contribution.description}</span>
                         {contribution.zendesk_article_url && (
                           <a
                             href={contribution.zendesk_article_url}
@@ -74,9 +59,14 @@ export function CostCalculatorContributionsBreakdown({
                             Learn more
                           </a>
                         )}
-                      </TooltipContent>
-                    </UITooltip>
-                  </TooltipProvider>
+                      </>
+                    }
+                  >
+                    <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                      <Info className="h-3 w-3 text-gray-400" />
+                      <span className="sr-only">Info</span>
+                    </Button>
+                  </BasicTooltip>
                 </div>
                 <span>{formatCurrency(contribution.amount, currency)}</span>
               </div>
