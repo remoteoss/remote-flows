@@ -52,8 +52,6 @@ export function CostCalculatorResults({
       ? employment.employer_currency_costs
       : employment.employer_currency_costs;
 
-  console.log({ costs });
-
   const currency = costs.currency.symbol;
   const grossSalary =
     view === 'monthly' ? costs.monthly_gross_salary : costs.annual_gross_salary;
@@ -76,12 +74,6 @@ export function CostCalculatorResults({
 
   const indirectTax =
     view === 'monthly' ? costs.monthly_indirect_tax : costs.annual_indirect_tax;
-
-  console.log({
-    extraStatutoryPaymentsTotal,
-    extraStatutoryPaymentsBreakdown,
-    indirectTax,
-  });
 
   const benefitsBreakdown =
     view === 'monthly'
