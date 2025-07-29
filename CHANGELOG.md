@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.7.1
+
+### Patch Changes
+
+- 1a4d461: - Fix tooltips in the cost calculator results [#354](https://github.com/remoteoss/remote-flows/pull/354)
+  - Add extra statuory payments and local indirect tax section [#353](https://github.com/remoteoss/remote-flows/pull/353)
+
 ## 0.7.0
 
 ### Minor Changes
