@@ -5,7 +5,7 @@ import { SupportedTypes } from './types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 
 type FieldBase = {
   label: string;
@@ -134,15 +134,14 @@ export function FieldSetField({
           }
 
           return (
-            <>
+            <Fragment key={field.name}>
               <FieldComponent
                 {...field}
-                key={field.name}
                 name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
                 component={components?.[field.type as SupportedTypes]}
               />
               {field.extra ? field.extra : null}
-            </>
+            </Fragment>
           );
         })}
         {extra ? extra : null}
