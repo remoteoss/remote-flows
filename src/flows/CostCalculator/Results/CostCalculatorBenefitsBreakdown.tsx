@@ -2,13 +2,8 @@ import { Info } from 'lucide-react';
 
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
-import {
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Tooltip as UITooltip,
-} from '@/src/components/ui/tooltip';
 import { formatCurrency } from '@/src/lib/utils';
+import { SimpleTooltip } from '@/src/components/ui/simple-tooltip';
 
 type CostCalculatorBenefitsBreakdownProps = {
   benefitsTotal: number | undefined;
@@ -40,19 +35,14 @@ export function CostCalculatorBenefitsBreakdown({
           <div key={index} className="flex justify-between items-start text-sm">
             <div className="flex items-start gap-2">
               <span>{benefit.name}</span>
-              <TooltipProvider>
-                <UITooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
-                      <Info className="h-3 w-3 text-gray-400" />
-                      <span className="sr-only">Info</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">{benefit.description}</p>
-                  </TooltipContent>
-                </UITooltip>
-              </TooltipProvider>
+              {benefit.description && (
+                <SimpleTooltip content={benefit.description}>
+                  <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                    <Info className="h-3 w-3 text-gray-400" />
+                    <span className="sr-only">Info</span>
+                  </Button>
+                </SimpleTooltip>
+              )}
             </div>
             <span>{formatCurrency(benefit.amount, currency)}</span>
           </div>

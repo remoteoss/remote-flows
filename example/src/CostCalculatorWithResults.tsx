@@ -32,6 +32,7 @@ export function CostCalculatorWithResults() {
           }
           return (
             <div>
+              <TooltipDemo />
               <CostCalculatorForm
                 onSubmit={(payload) => console.log(payload)}
                 onError={(error) => console.error({ error })}
