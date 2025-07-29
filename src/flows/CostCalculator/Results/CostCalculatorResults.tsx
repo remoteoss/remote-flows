@@ -15,6 +15,8 @@ import { CostCalculatorBenefitsBreakdown } from './CostCalculatorBenefitsBreakdo
 import { CostCalculatorContributionsBreakdown } from './CostCalculatorContributionsBreakdown';
 import { CostCalculatorGrossSalary } from './CostCalculatorGrossSalary';
 import { CostCalculatorTotalCost } from './CostCalculatorTotalCost';
+import { CostCalculatorExtraStatutoryPaymentsBreakdown } from '@/src/flows/CostCalculator/Results/CostCalculatorExtraStatutoryPaymentsBreakdown';
+import { CostCalculatorIndirectTax } from '@/src/flows/CostCalculator/Results/CostCalculatorIndirectTax';
 
 const CostCalculatorResultsChart = lazy(
   () => import('./CostCalculatorResultsChart'),
@@ -63,6 +65,15 @@ export function CostCalculatorResults({
       : costs.annual_contributions_total;
   const totalCost =
     view === 'monthly' ? costs.monthly_total : costs.annual_total;
+
+  const extraStatutoryPaymentsBreakdown =
+    view === 'monthly' ? null : costs.extra_statutory_payments_breakdown;
+
+  const extraStatutoryPaymentsTotal =
+    view === 'monthly' ? null : costs.extra_statutory_payments_total;
+
+  const indirectTax =
+    view === 'monthly' ? costs.monthly_indirect_tax : costs.annual_indirect_tax;
 
   const benefitsBreakdown =
     view === 'monthly'
@@ -157,6 +168,23 @@ export function CostCalculatorResults({
                 contributionsTotal={contributionsTotal}
                 currency={currency}
               />
+              {/* Extra Statutory Payments Section */}
+              {extraStatutoryPaymentsBreakdown ? (
+                <CostCalculatorExtraStatutoryPaymentsBreakdown
+                  extraStatutoryPaymentsBreakdown={
+                    extraStatutoryPaymentsBreakdown
+                  }
+                  extraStatutoryPaymentsTotal={extraStatutoryPaymentsTotal}
+                  currency={currency}
+                />
+              ) : null}
+              {/* Indirect Tax Section */}
+              {indirectTax ? (
+                <CostCalculatorIndirectTax
+                  indirectTax={indirectTax}
+                  currency={currency}
+                />
+              ) : null}
               {/* Total */}
               <CostCalculatorTotalCost
                 totalCost={totalCost}
