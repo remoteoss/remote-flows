@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.7.2
+
+### Patch Changes
+
+- 7ea2eac: - Remove suspicious code that it's breaking the onboarding [#358](https://github.com/remoteoss/remote-flows/pull/358)
+
 ## 0.7.1
 
 ### Patch Changes
