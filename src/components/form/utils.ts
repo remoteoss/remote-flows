@@ -296,7 +296,7 @@ export function parseFormValuesToAPI(
 
     // For number fields, include them even if the value is 0 or empty string
     // The transformation will handle converting empty strings to appropriate values
-    if (field.type === supportedTypes.NUMBER) {
+    if (field.type === supportedTypes.NUMBER && !field.isVisible) {
       return fieldValue !== undefined && fieldValue !== null;
     }
 
