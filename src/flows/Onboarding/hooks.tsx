@@ -446,8 +446,6 @@ export const useOnboarding = ({
     countryCode: internalCountryCode,
   });
 
-  console.log({ customFields });
-
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
