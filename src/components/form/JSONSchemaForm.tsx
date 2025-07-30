@@ -83,12 +83,23 @@ export const JSONSchemaFormFields = ({
         }
 
         if (field.inputType === 'fieldset') {
-          return <FieldComponent {...field} components={components} />;
+          return (
+            <FieldComponent
+              key={field.name}
+              {...field}
+              components={components}
+            />
+          );
         }
 
         if (field.inputType === 'fieldset-flat') {
           return (
-            <FieldComponent {...field} components={components} isFlatFieldset />
+            <FieldComponent
+              key={field.name}
+              {...field}
+              components={components}
+              isFlatFieldset
+            />
           );
         }
 
