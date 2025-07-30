@@ -47,17 +47,6 @@ export function CostCalculatorForm({
 }: CostCalculatorFormProps) {
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
 
-  if (
-    process.env.NODE_ENV === 'development' &&
-    shouldResetForm &&
-    resetFields
-  ) {
-    console.warn(
-      'CostCalculatorForm: Both "shouldResetForm" and "resetFields" were provided. Using "shouldResetForm" and ignoring "resetFields".',
-    );
-    resetFields = undefined;
-  }
-
   const {
     formState: { isSubmitSuccessful },
   } = form;
@@ -67,6 +56,7 @@ export function CostCalculatorForm({
     if (isSubmitSuccessful && shouldResetForm) {
       costCalculatorBag?.resetForm();
       form.reset();
+      return;
     }
 
     // resets the specified fields if the form is successfully submitted and the resetFields prop is provided

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Fragment } from 'react';
 import {
   FormControl,
   FormDescription,
@@ -81,9 +82,8 @@ export function RadioGroupField({
                 className="flex flex-col space-y-3"
               >
                 {options?.map((option) => (
-                  <>
+                  <Fragment key={option.value}>
                     <FormItem
-                      key={option.value}
                       data-field={name}
                       className="flex items-start space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item"
                     >
@@ -105,7 +105,7 @@ export function RadioGroupField({
                         )}
                       </div>
                     </FormItem>
-                  </>
+                  </Fragment>
                 ))}
               </RadioGroup>
             </FormControl>

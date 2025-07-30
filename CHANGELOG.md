@@ -1,5 +1,24 @@
 # @remoteoss/remote-flows
 
+## 0.7.3
+
+### Patch Changes
+
+- 79a67e3: - fix fieldset field key fragment [#361](https://github.com/remoteoss/remote-flows/pull/361)
+
+## 0.7.2
+
+### Patch Changes
+
+- 7ea2eac: - Remove suspicious code that it's breaking the onboarding [#358](https://github.com/remoteoss/remote-flows/pull/358)
+
+## 0.7.1
+
+### Patch Changes
+
+- 1a4d461: - Fix tooltips in the cost calculator results [#354](https://github.com/remoteoss/remote-flows/pull/354)
+  - Add extra statuory payments and local indirect tax section [#353](https://github.com/remoteoss/remote-flows/pull/353)
+
 ## 0.7.0
 
 ### Minor Changes
