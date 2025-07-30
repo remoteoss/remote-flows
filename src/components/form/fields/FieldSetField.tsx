@@ -134,7 +134,9 @@ export function FieldSetField({
           }
 
           return (
-            <Fragment key={field.name}>
+            <Fragment
+              key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+            >
               <FieldComponent
                 {...field}
                 name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}

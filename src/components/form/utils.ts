@@ -713,7 +713,7 @@ export function getFieldsWithFlatFieldsets({
 
     return {
       ...rest,
-      id: flatFieldsetKey,
+      name: flatFieldsetKey,
       type: 'fieldset-flat',
       inputType: 'fieldset-flat',
       fields: childFields,
