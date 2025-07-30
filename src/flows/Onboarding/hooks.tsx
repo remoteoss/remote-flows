@@ -1,9 +1,10 @@
 import {
+  Company,
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields, ModifyConfig } from '@remoteoss/json-schema-form';
 
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
@@ -58,6 +59,168 @@ const stepToFormSchemaMap: Record<
   contract_details: 'contract_details',
   benefits: null,
   review: null,
+};
+
+const jsfByCountry = (
+  fields: ModifyConfig['fields'],
+): { [key: string]: Record<string, unknown> } => {
+  const workHoursPerWeekField = fields?.work_hours_per_week;
+  return {
+    DOM: {
+      work_hours_per_week: {
+        ...workHoursPerWeekField,
+        presentation: {
+          calculateDynamicProperties: () => {
+            return {
+              value: 0,
+            };
+          },
+        },
+      },
+    },
+    HND: {
+      work_hours_per_week: {
+        ...workHoursPerWeekField,
+        presentation: {
+          calculateDynamicProperties: () => {
+            return {
+              value: 0,
+            };
+          },
+        },
+      },
+    },
+    KOR: {
+      work_hours_per_week: {
+        ...workHoursPerWeekField,
+        presentation: {
+          calculateDynamicProperties: () => {
+            return {
+              value: 0,
+            };
+          },
+        },
+      },
+    },
+    MUS: {
+      work_hours_per_week: {
+        ...workHoursPerWeekField,
+        presentation: {
+          calculateDynamicProperties: () => {
+            return {
+              value: 0,
+            };
+          },
+        },
+      },
+    },
+    VNM: {
+      work_hours_per_week: {
+        ...workHoursPerWeekField,
+        presentation: {
+          calculateDynamicProperties: () => {
+            return {
+              value: 0,
+            };
+          },
+        },
+      },
+    },
+  };
+};
+
+const useCustomFields = ({
+  options,
+  company,
+  countryCode,
+}: {
+  options: OnboardingHookProps['options'];
+  company?: Company;
+  countryCode: string | null;
+}) => {
+  const fields = options?.jsfModify?.contract_details?.fields;
+  const jsfModifyByCountry = useMemo(() => {
+    return countryCode ? jsfByCountry(fields)[countryCode] || {} : {};
+  }, [countryCode, fields]);
+  const annualGrossSalaryField = fields?.annual_gross_salary;
+  const annualSalaryFieldPresentation =
+    annualGrossSalaryField &&
+    typeof annualGrossSalaryField === 'object' &&
+    'presentation' in annualGrossSalaryField
+      ? (
+          annualGrossSalaryField as {
+            presentation?: {
+              annual_gross_salary_conversion_properties?: {
+                label?: string;
+                description?: string;
+              };
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const equityCompensationField = fields?.equity_compensation;
+
+  const customFields = useMemo(
+    () => ({
+      fields: {
+        ...jsfModifyByCountry,
+        annual_gross_salary: {
+          ...annualGrossSalaryField,
+          presentation: {
+            annual_gross_salary_conversion_properties: {
+              label:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.label,
+              description:
+                annualSalaryFieldPresentation
+                  ?.annual_gross_salary_conversion_properties?.description,
+            },
+            desiredCurrency: company?.desired_currency,
+            Component: (props: JSFField & { currency: string }) => {
+              return (
+                <AnnualGrossSalary
+                  desiredCurrency={company?.desired_currency || ''}
+                  {...props}
+                />
+              );
+            },
+          },
+        },
+        equity_compensation: {
+          ...equityCompensationField,
+          presentation: {
+            calculateDynamicProperties: (
+              values: FieldValues,
+              field: JSFField,
+            ) => {
+              const offerEquity =
+                values.equity_compensation?.offer_equity_compensation;
+              const equityCost = field?.meta?.cost;
+
+              return {
+                extra: (
+                  <EquityPriceDetails
+                    offerEquity={offerEquity}
+                    equityCost={equityCost as $TSFixMe}
+                  />
+                ),
+              };
+            },
+          },
+        },
+      },
+    }),
+    [
+      annualGrossSalaryField,
+      annualSalaryFieldPresentation,
+      company?.desired_currency,
+      equityCompensationField,
+      jsfModifyByCountry,
+    ],
+  );
+
+  return customFields;
 };
 
 const getLoadingStates = ({
@@ -277,83 +440,13 @@ export const useOnboarding = ({
     },
   });
 
-  const annualGrossSalaryField =
-    options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
-  const annualSalaryFieldPresentation =
-    annualGrossSalaryField &&
-    typeof annualGrossSalaryField === 'object' &&
-    'presentation' in annualGrossSalaryField
-      ? (
-          annualGrossSalaryField as {
-            presentation?: {
-              annual_gross_salary_conversion_properties?: {
-                label?: string;
-                description?: string;
-              };
-            };
-          }
-        ).presentation
-      : undefined;
+  const customFields = useCustomFields({
+    options,
+    company,
+    countryCode: internalCountryCode,
+  });
 
-  const equityCompensationField =
-    options?.jsfModify?.contract_details?.fields?.equity_compensation;
-
-  const customFields = useMemo(
-    () => ({
-      fields: {
-        annual_gross_salary: {
-          ...annualGrossSalaryField,
-          presentation: {
-            annual_gross_salary_conversion_properties: {
-              label:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.label,
-              description:
-                annualSalaryFieldPresentation
-                  ?.annual_gross_salary_conversion_properties?.description,
-            },
-            desiredCurrency: company?.desired_currency,
-            Component: (props: JSFField & { currency: string }) => {
-              return (
-                <AnnualGrossSalary
-                  desiredCurrency={company?.desired_currency || ''}
-                  {...props}
-                />
-              );
-            },
-          },
-        },
-        equity_compensation: {
-          ...equityCompensationField,
-          presentation: {
-            calculateDynamicProperties: (
-              values: FieldValues,
-              field: JSFField,
-            ) => {
-              const offerEquity =
-                values.equity_compensation?.offer_equity_compensation;
-              const equityCost = field?.meta?.cost;
-
-              return {
-                extra: (
-                  <EquityPriceDetails
-                    offerEquity={offerEquity}
-                    equityCost={equityCost as $TSFixMe}
-                  />
-                ),
-              };
-            },
-          },
-        },
-      },
-    }),
-    [
-      annualGrossSalaryField,
-      annualSalaryFieldPresentation,
-      company?.desired_currency,
-      equityCompensationField,
-    ],
-  );
+  console.log({ customFields });
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
