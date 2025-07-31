@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.7.4
+
+### Patch Changes
+
+- 3a6e99b: - Fix react keys warnings [#364](https://github.com/remoteoss/remote-flows/pull/364)
+
 ## 0.7.3
 
 ### Patch Changes
