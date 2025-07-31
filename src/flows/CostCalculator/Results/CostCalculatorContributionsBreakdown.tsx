@@ -6,6 +6,7 @@ import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
 import { ZendeskDrawer } from '@/src/flows/CostCalculator/components/ZendeskDrawer';
+import { useRouter } from '@/src/lib/router';
 
 type CostCalculatorContributionsBreakdownProps = {
   contributionsTotal: number;
@@ -25,6 +26,7 @@ export function CostCalculatorContributionsBreakdown({
   currency,
   contributionsBreakdown,
 }: CostCalculatorContributionsBreakdownProps) {
+  const router = useRouter();
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -55,28 +57,17 @@ export function CostCalculatorContributionsBreakdown({
                             zendeskId={contribution.zendesk_article_url
                               ?.split('/')
                               .pop()}
+                            zendeskURL={contribution.zendesk_article_url}
                             Trigger={
                               <button
                                 onClick={() => {
-                                  const url = new URL(window.location.href);
                                   const articleId =
                                     contribution.zendesk_article_url
                                       ?.split('/')
                                       .pop();
-                                  url.searchParams.set(
-                                    'articleId',
-                                    articleId || '',
-                                  );
-                                  window.history.pushState(
-                                    {},
-                                    '',
-                                    url.toString(),
-                                  );
-
-                                  // This is REQUIRED - tells React the URL changed
-                                  window.dispatchEvent(
-                                    new CustomEvent('urlChanged'),
-                                  );
+                                  router.setSearchParams({
+                                    articleId: articleId || '',
+                                  });
                                 }}
                                 className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
                               >

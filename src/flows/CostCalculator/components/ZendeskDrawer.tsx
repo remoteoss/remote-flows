@@ -15,9 +15,14 @@ import { useEffect, useState } from 'react';
 export type ZendeskDrawerProps = {
   Trigger: React.ReactNode;
   zendeskId?: string;
+  zendeskURL?: string;
 };
 
-export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
+export const ZendeskDrawer = ({
+  Trigger,
+  zendeskId,
+  zendeskURL,
+}: ZendeskDrawerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -48,12 +53,19 @@ export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
         <div className="h-full flex flex-col">
           <DrawerHeader>
             <DrawerTitle>{data?.data?.title}</DrawerTitle>
-            <DrawerDescription
-              dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(data?.data?.body || ''),
-              }}
-            />
+            <DrawerDescription>
+              For more details see our{' '}
+              <a href={zendeskURL} target="_blank" rel="noopener noreferrer">
+                help article
+              </a>{' '}
+            </DrawerDescription>
           </DrawerHeader>
+          <div
+            className="flex-1 overflow-y-auto p-4"
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(data?.data?.body || ''),
+            }}
+          ></div>
         </div>
       </DrawerContent>
     </Drawer>
