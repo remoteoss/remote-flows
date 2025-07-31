@@ -7,6 +7,8 @@ import {
   DrawerTitle,
 } from '@/src/components/ui/drawer';
 import { useZendeskArticle } from '@/src/flows/Onboarding/api';
+import { useRouter } from '@/src/lib/router';
+import { useSearchParams } from '@/src/lib/useSearchParams';
 import { useEffect, useState } from 'react';
 
 export type ZendeskDrawerProps = {
@@ -16,40 +18,17 @@ export type ZendeskDrawerProps = {
 
 export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    const checkUrlParams = () => {
-      const searchParams = new URLSearchParams(window.location.search);
-      const articleParam = searchParams.get('articleId');
-      setIsOpen(articleParam === zendeskId);
-    };
-
-    // Check initial state
-    checkUrlParams();
-
-    // Listen for URL changes
-    const handleUrlChange = () => {
-      checkUrlParams();
-    };
-
-    // Listen for browser back/forward
-    window.addEventListener('popstate', handleUrlChange);
-
-    // Listen for programmatic URL changes (your pushState calls)
-    window.addEventListener('urlChanged', handleUrlChange);
-
-    return () => {
-      window.removeEventListener('popstate', handleUrlChange);
-      window.removeEventListener('urlChanged', handleUrlChange);
-    };
-  }, [zendeskId]);
+    const articleId = searchParams.get('articleId');
+    setIsOpen(articleId === zendeskId);
+  }, [searchParams, zendeskId]);
 
   const handleClose = () => {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('articleId');
-    window.history.pushState({}, '', url.toString());
+    router.setSearchParams({ articleId: null });
     setIsOpen(false);
-    window.dispatchEvent(new CustomEvent('urlChanged'));
   };
 
   const { data, isLoading } = useZendeskArticle(zendeskId, {
