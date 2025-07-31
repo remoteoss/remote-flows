@@ -9,6 +9,7 @@ import {
 import { useZendeskArticle } from '@/src/flows/Onboarding/api';
 import { useRouter } from '@/src/lib/router';
 import { useSearchParams } from '@/src/lib/useSearchParams';
+import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
 
 export type ZendeskDrawerProps = {
@@ -48,7 +49,9 @@ export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
           <DrawerHeader>
             <DrawerTitle>{data?.data?.title}</DrawerTitle>
             <DrawerDescription
-              dangerouslySetInnerHTML={{ __html: data?.data?.body || '' }}
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(data?.data?.body || ''),
+              }}
             />
           </DrawerHeader>
         </div>
