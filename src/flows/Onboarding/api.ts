@@ -527,9 +527,13 @@ export const useUpsertContractEligibility = () => {
   });
 };
 
-export const useZendeskArticle = () => {
-  return useMutation({
-    mutationFn: (zendeskId?: string) => {
+export const useZendeskArticle = (
+  zendeskId?: string,
+  queryOptions?: { enabled?: boolean },
+) => {
+  return useQuery({
+    queryKey: ['zendesk-article', zendeskId],
+    queryFn: async () => {
       if (!zendeskId) {
         return Promise.reject(new Error('Zendesk ID is required'));
       }
@@ -543,5 +547,6 @@ export const useZendeskArticle = () => {
         },
       });
     },
+    ...queryOptions,
   });
 };

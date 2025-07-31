@@ -5,7 +5,7 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
-import { useZendeskArticle } from '@/src/flows/Onboarding/api';
+import { ZendeskDrawer } from '@/src/flows/CostCalculator/components/ZendeskDrawer';
 
 type CostCalculatorContributionsBreakdownProps = {
   contributionsTotal: number;
@@ -25,19 +25,6 @@ export function CostCalculatorContributionsBreakdown({
   currency,
   contributionsBreakdown,
 }: CostCalculatorContributionsBreakdownProps) {
-  const mutation = useZendeskArticle();
-
-  const onClickLearnMore = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const url = e.currentTarget.href;
-    const zendeskId = url.split('/').pop();
-    try {
-      const article = await mutation.mutateAsync(zendeskId);
-      console.log('Article:', article.data);
-    } catch (error) {
-      console.error('Error fetching Zendesk article:', error);
-    }
-  };
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -64,15 +51,39 @@ export function CostCalculatorContributionsBreakdown({
                       <>
                         <span>{contribution.description}</span>
                         {contribution.zendesk_article_url && (
-                          <a
-                            onClick={onClickLearnMore}
-                            href={contribution.zendesk_article_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline block mt-1 text-xs"
-                          >
-                            Learn more
-                          </a>
+                          <ZendeskDrawer
+                            zendeskId={contribution.zendesk_article_url
+                              ?.split('/')
+                              .pop()}
+                            Trigger={
+                              <button
+                                onClick={() => {
+                                  const url = new URL(window.location.href);
+                                  const articleId =
+                                    contribution.zendesk_article_url
+                                      ?.split('/')
+                                      .pop();
+                                  url.searchParams.set(
+                                    'articleId',
+                                    articleId || '',
+                                  );
+                                  window.history.pushState(
+                                    {},
+                                    '',
+                                    url.toString(),
+                                  );
+
+                                  // This is REQUIRED - tells React the URL changed
+                                  window.dispatchEvent(
+                                    new CustomEvent('urlChanged'),
+                                  );
+                                }}
+                                className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
+                              >
+                                Learn more
+                              </button>
+                            }
+                          />
                         )}
                       </>
                     }
