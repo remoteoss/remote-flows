@@ -5,6 +5,7 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
+import { useZendeskArticle } from '@/src/flows/Onboarding/api';
 
 type CostCalculatorContributionsBreakdownProps = {
   contributionsTotal: number;
@@ -24,6 +25,19 @@ export function CostCalculatorContributionsBreakdown({
   currency,
   contributionsBreakdown,
 }: CostCalculatorContributionsBreakdownProps) {
+  const mutation = useZendeskArticle();
+
+  const onClickLearnMore = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const url = e.currentTarget.href;
+    const zendeskId = url.split('/').pop();
+    try {
+      const article = await mutation.mutateAsync(zendeskId);
+      console.log('Article:', article.data);
+    } catch (error) {
+      console.error('Error fetching Zendesk article:', error);
+    }
+  };
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -51,6 +65,7 @@ export function CostCalculatorContributionsBreakdown({
                         <span>{contribution.description}</span>
                         {contribution.zendesk_article_url && (
                           <a
+                            onClick={onClickLearnMore}
                             href={contribution.zendesk_article_url}
                             target="_blank"
                             rel="noopener noreferrer"

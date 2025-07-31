@@ -169,7 +169,8 @@ export function CostCalculatorResults({
                 currency={currency}
               />
               {/* Extra Statutory Payments Section */}
-              {extraStatutoryPaymentsBreakdown ? (
+              {Array.isArray(extraStatutoryPaymentsBreakdown) &&
+              extraStatutoryPaymentsBreakdown.length > 0 ? (
                 <CostCalculatorExtraStatutoryPaymentsBreakdown
                   extraStatutoryPaymentsBreakdown={
                     extraStatutoryPaymentsBreakdown
