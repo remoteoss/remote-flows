@@ -39,7 +39,7 @@ export function findFieldsByType(
 ) {
   const fieldsNames = [];
   for (const [key, value] of Object.entries(fields)) {
-    if (value['x-jsf-presentation'].inputType === type) {
+    if (value['x-jsf-presentation'].type === type) {
       fieldsNames.push(key);
     }
   }
