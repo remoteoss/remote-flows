@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.7.5
+
+### Patch Changes
+
+- c5b0466: - Fix hidden fields that were rendering by mistake [#368](https://github.com/remoteoss/remote-flows/pull/368)
+
 ## 0.7.4
 
 ### Patch Changes
