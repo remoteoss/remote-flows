@@ -129,7 +129,7 @@ export function FieldSetField({
             return <Component key={field.name} {...field} />;
           }
 
-          if (field.inputType === 'select' && field.multiple) {
+          if (field.type === 'select' && field.multiple) {
             FieldComponent = fieldsMap['multi-select'];
           }
 
