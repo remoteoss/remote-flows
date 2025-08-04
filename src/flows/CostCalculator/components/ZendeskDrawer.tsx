@@ -49,7 +49,7 @@ export const ZendeskDrawer = ({
       direction="right"
     >
       <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
-      <DrawerContent className="h-full w-[320px] mt-0 ml-auto">
+      <DrawerContent className="h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer">
         <div className="h-full flex flex-col">
           <DrawerHeader>
             <DrawerTitle>{data?.data?.title}</DrawerTitle>
@@ -61,7 +61,7 @@ export const ZendeskDrawer = ({
             </DrawerDescription>
           </DrawerHeader>
           <div
-            className="flex-1 overflow-y-auto p-4"
+            className="flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content"
             dangerouslySetInnerHTML={{
               __html: sanitizeHtml(data?.data?.body || ''),
             }}
