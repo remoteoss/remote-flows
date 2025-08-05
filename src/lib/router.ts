@@ -19,7 +19,6 @@ export const useRouter = () => {
     window.history.forward();
   }, []);
 
-  // Utility method for updating search params
   const setSearchParams = useCallback(
     (params: Record<string, string | null>) => {
       const url = new URL(window.location.href);

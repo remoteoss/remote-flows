@@ -19,7 +19,6 @@ export const useSearchParams = () => {
     };
   }, []);
 
-  // Next.js-like API
   const get = useCallback(
     (key: string) => {
       return searchParams.get(key);
