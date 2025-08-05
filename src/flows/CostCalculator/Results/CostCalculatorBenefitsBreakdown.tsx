@@ -4,6 +4,8 @@ import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
+import { useRouter } from '@/src/lib/router';
+import { ZendeskDrawer } from '@/src/flows/CostCalculator/components/ZendeskDrawer';
 
 type CostCalculatorBenefitsBreakdownProps = {
   benefitsTotal: number | undefined;
@@ -11,6 +13,7 @@ type CostCalculatorBenefitsBreakdownProps = {
     name: string;
     description: string | null;
     amount: number;
+    zendesk_article_url: string | null;
   }[];
   currency: string;
 };
@@ -20,6 +23,7 @@ export function CostCalculatorBenefitsBreakdown({
   benefitsBreakdown,
   currency,
 }: CostCalculatorBenefitsBreakdownProps) {
+  const router = useRouter();
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -35,14 +39,41 @@ export function CostCalculatorBenefitsBreakdown({
           <div key={index} className="flex justify-between items-start text-sm">
             <div className="flex items-start gap-2">
               <span>{benefit.name}</span>
-              {benefit.description && (
-                <BasicTooltip content={benefit.description}>
-                  <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
-                    <Info className="h-3 w-3 text-gray-400" />
-                    <span className="sr-only">Info</span>
-                  </Button>
-                </BasicTooltip>
-              )}
+              <BasicTooltip
+                content={
+                  <>
+                    <span>{benefit.description}</span>
+                    {benefit.zendesk_article_url && (
+                      <ZendeskDrawer
+                        zendeskId={benefit.zendesk_article_url
+                          ?.split('/')
+                          .pop()}
+                        zendeskURL={benefit.zendesk_article_url}
+                        Trigger={
+                          <button
+                            onClick={() => {
+                              const articleId = benefit.zendesk_article_url
+                                ?.split('/')
+                                .pop();
+                              router.setSearchParams({
+                                articleId: articleId || '',
+                              });
+                            }}
+                            className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
+                          >
+                            Learn more
+                          </button>
+                        }
+                      />
+                    )}
+                  </>
+                }
+              >
+                <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                  <Info className="h-3 w-3 text-gray-400" />
+                  <span className="sr-only">Info</span>
+                </Button>
+              </BasicTooltip>
             </div>
             <span>{formatCurrency(benefit.amount, currency)}</span>
           </div>
