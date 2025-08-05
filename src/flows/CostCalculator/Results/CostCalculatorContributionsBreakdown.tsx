@@ -17,6 +17,7 @@ type CostCalculatorContributionsBreakdownProps = {
         description: string | null;
         amount: number;
         zendesk_article_url: string | null;
+        zendesk_article_id: string | null;
       }[]
     | undefined;
 };
@@ -55,17 +56,18 @@ export function CostCalculatorContributionsBreakdown({
                           <span>{contribution.description}</span>
                           {contribution.zendesk_article_url && (
                             <ZendeskDrawer
-                              zendeskId={contribution.zendesk_article_url
-                                ?.split('/')
-                                .pop()}
-                              zendeskURL={contribution.zendesk_article_url}
+                              zendeskId={
+                                contribution.zendesk_article_id as string
+                              }
+                              zendeskURL={
+                                contribution.zendesk_article_url as string
+                              }
                               Trigger={
                                 <button
                                   onClick={() => {
                                     const articleId =
-                                      contribution.zendesk_article_url
-                                        ?.split('/')
-                                        .pop();
+                                      contribution.zendesk_article_id;
+
                                     router.setSearchParams({
                                       articleId: articleId || '',
                                     });

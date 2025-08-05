@@ -13,6 +13,7 @@ type CostCalculatorExtraStatutoryPaymentsBreakdownProps = {
     name: string;
     description: string | null;
     zendesk_article_url: string | null;
+    zendesk_article_id: string | null;
     amount: number;
   }[];
   currency: string;
@@ -49,16 +50,12 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
                       <span>{payment.description}</span>
                       {payment.zendesk_article_url && (
                         <ZendeskDrawer
-                          zendeskId={payment.zendesk_article_url
-                            ?.split('/')
-                            .pop()}
-                          zendeskURL={payment.zendesk_article_url}
+                          zendeskId={payment.zendesk_article_id as string}
+                          zendeskURL={payment.zendesk_article_url as string}
                           Trigger={
                             <button
                               onClick={() => {
-                                const articleId = payment.zendesk_article_url
-                                  ?.split('/')
-                                  .pop();
+                                const articleId = payment.zendesk_article_id;
                                 router.setSearchParams({
                                   articleId: articleId || '',
                                 });

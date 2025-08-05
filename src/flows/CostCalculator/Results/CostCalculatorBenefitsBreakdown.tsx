@@ -14,6 +14,7 @@ type CostCalculatorBenefitsBreakdownProps = {
     description: string | null;
     amount: number;
     zendesk_article_url: string | null;
+    zendesk_article_id: string | null;
   }[];
   currency: string;
 };
@@ -46,16 +47,12 @@ export function CostCalculatorBenefitsBreakdown({
                       <span>{benefit.description}</span>
                       {benefit.zendesk_article_url && (
                         <ZendeskDrawer
-                          zendeskId={benefit.zendesk_article_url
-                            ?.split('/')
-                            .pop()}
-                          zendeskURL={benefit.zendesk_article_url}
+                          zendeskId={benefit.zendesk_article_id as string}
+                          zendeskURL={benefit.zendesk_article_url as string}
                           Trigger={
                             <button
                               onClick={() => {
-                                const articleId = benefit.zendesk_article_url
-                                  ?.split('/')
-                                  .pop();
+                                const articleId = benefit.zendesk_article_id;
                                 router.setSearchParams({
                                   articleId: articleId || '',
                                 });

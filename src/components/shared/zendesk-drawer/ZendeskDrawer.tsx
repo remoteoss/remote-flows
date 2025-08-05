@@ -14,8 +14,8 @@ import { useEffect, useState } from 'react';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactNode;
-  zendeskId?: string;
-  zendeskURL?: string;
+  zendeskId: string;
+  zendeskURL: string;
 };
 
 export const ZendeskDrawer = ({
@@ -40,6 +40,7 @@ export const ZendeskDrawer = ({
   const { data, isLoading } = useZendeskArticle(zendeskId, {
     enabled: isOpen,
   });
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -52,7 +53,7 @@ export const ZendeskDrawer = ({
       <DrawerContent className="h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer">
         <div className="h-full flex flex-col">
           <DrawerHeader>
-            <DrawerTitle>{data?.data?.title}</DrawerTitle>
+            <DrawerTitle>{data?.title}</DrawerTitle>
             <DrawerDescription>
               For more details see our{' '}
               <a href={zendeskURL} target="_blank" rel="noopener noreferrer">
@@ -63,7 +64,7 @@ export const ZendeskDrawer = ({
           <div
             className="flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content"
             dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(data?.data?.body || ''),
+              __html: sanitizeHtml(data?.body || ''),
             }}
           ></div>
         </div>
