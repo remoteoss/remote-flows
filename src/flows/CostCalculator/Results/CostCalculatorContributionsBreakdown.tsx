@@ -5,7 +5,7 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
-import { ZendeskDrawer } from '@/src/flows/CostCalculator/components/ZendeskDrawer';
+import { ZendeskDrawer } from '@/src/components/shared/zendesk-drawer/ZendeskDrawer';
 import { useRouter } from '@/src/lib/router';
 
 type CostCalculatorContributionsBreakdownProps = {
