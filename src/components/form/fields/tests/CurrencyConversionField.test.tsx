@@ -167,6 +167,76 @@ describe('CurrencyFieldWithConversion', () => {
     });
   });
 
+  it('caches conversions in both directions', async () => {
+    const mockHandler = vi.fn(async ({ request }) => {
+      const body = await request.json();
+      if (body.source_currency === 'EUR' && body.target_currency === 'USD') {
+        return HttpResponse.json({
+          data: {
+            conversion_data: {
+              exchange_rate: '1.1',
+              target_currency: { code: 'USD', name: 'US Dollar', symbol: '$' },
+              source_currency: { code: 'EUR', name: 'Euro', symbol: '€' },
+              source_amount: body.amount,
+              target_amount: (body.amount * 1.1).toFixed(2),
+            },
+          },
+        });
+      }
+      if (body.source_currency === 'USD' && body.target_currency === 'EUR') {
+        return HttpResponse.json({
+          data: {
+            conversion_data: {
+              exchange_rate: '0.91',
+              target_currency: { code: 'EUR', name: 'Euro', symbol: '€' },
+              source_currency: { code: 'USD', name: 'US Dollar', symbol: '$' },
+              source_amount: body.amount,
+              target_amount: (body.amount * 0.91).toFixed(2),
+            },
+          },
+        });
+      }
+      return HttpResponse.json({});
+    });
+
+    server.use(http.post('*/v1/currency-converter', mockHandler));
+
+    const props = {
+      ...defaultProps,
+      sourceCurrency: 'EUR',
+      targetCurrency: 'USD',
+    };
+
+    renderWithFormContext(props);
+
+    // Enable conversion
+    const toggleButton = screen.getByText('Show USD conversion');
+    fireEvent.click(toggleButton);
+
+    // Type in the main field (EUR)
+    const input = screen.getByLabelText('Test Salary');
+    fireEvent.change(input, { target: { value: '100' } });
+
+    // Wait for the conversion to happen (EUR -> USD)
+    await waitFor(() => {
+      const conversionInput = screen.getByLabelText('Conversion');
+      expect(conversionInput).toHaveValue('110.00');
+    });
+
+    // Now type the cached USD value in the conversion field (USD -> EUR)
+    const conversionInput = screen.getByLabelText('Conversion');
+    fireEvent.change(conversionInput, { target: { value: '110.00' } });
+
+    // Wait for the main field to be updated using the cache (should be '100')
+    await waitFor(() => {
+      const mainInput = screen.getByLabelText('Test Salary');
+      expect(mainInput).toHaveValue('100');
+    });
+
+    // The backend should only be called once for each direction
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
   it('converts initial value when toggling conversion field', async () => {
     renderWithFormContext();
 
