@@ -42,41 +42,43 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
           <div key={index} className="flex justify-between items-start text-sm">
             <div className="flex items-start gap-2">
               <span>{payment.name}</span>
-              <BasicTooltip
-                content={
-                  <>
-                    <span>{payment.description}</span>
-                    {payment.zendesk_article_url && (
-                      <ZendeskDrawer
-                        zendeskId={payment.zendesk_article_url
-                          ?.split('/')
-                          .pop()}
-                        zendeskURL={payment.zendesk_article_url}
-                        Trigger={
-                          <button
-                            onClick={() => {
-                              const articleId = payment.zendesk_article_url
-                                ?.split('/')
-                                .pop();
-                              router.setSearchParams({
-                                articleId: articleId || '',
-                              });
-                            }}
-                            className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
-                          >
-                            Learn more
-                          </button>
-                        }
-                      />
-                    )}
-                  </>
-                }
-              >
-                <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
-                  <Info className="h-3 w-3 text-gray-400" />
-                  <span className="sr-only">Info</span>
-                </Button>
-              </BasicTooltip>
+              {payment.description && (
+                <BasicTooltip
+                  content={
+                    <>
+                      <span>{payment.description}</span>
+                      {payment.zendesk_article_url && (
+                        <ZendeskDrawer
+                          zendeskId={payment.zendesk_article_url
+                            ?.split('/')
+                            .pop()}
+                          zendeskURL={payment.zendesk_article_url}
+                          Trigger={
+                            <button
+                              onClick={() => {
+                                const articleId = payment.zendesk_article_url
+                                  ?.split('/')
+                                  .pop();
+                                router.setSearchParams({
+                                  articleId: articleId || '',
+                                });
+                              }}
+                              className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
+                            >
+                              Learn more
+                            </button>
+                          }
+                        />
+                      )}
+                    </>
+                  }
+                >
+                  <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
+                    <Info className="h-3 w-3 text-gray-400" />
+                    <span className="sr-only">Info</span>
+                  </Button>
+                </BasicTooltip>
+              )}
             </div>
             <span>{formatCurrency(payment.amount, currency)}</span>
           </div>

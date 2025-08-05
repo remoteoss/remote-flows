@@ -526,27 +526,3 @@ export const useUpsertContractEligibility = () => {
     },
   });
 };
-
-export const useZendeskArticle = (
-  zendeskId?: string,
-  queryOptions?: { enabled?: boolean },
-) => {
-  return useQuery({
-    queryKey: ['zendesk-article', zendeskId],
-    queryFn: async () => {
-      if (!zendeskId) {
-        return Promise.reject(new Error('Zendesk ID is required'));
-      }
-      return Promise.resolve({
-        data: {
-          id: zendeskId,
-          title: 'What countries offer 13th/14th month salary payments?',
-          body: '<p>It\'s common practice in many countries around the world to pay a holiday bonus which is either extra amount on top of the base salary or is the employee\'s annual salary divided over extra repayments. This can often be as much as the full monthly salary payment and is often referred to as the 13th (or 14th in the case of two extra payments) payment.</p>\n<p>Depending on the country, the amount and reference will vary. You can read more about this in each country\'s explorer page: <a href="https://remote.com/country-explorer">https://remote.com/country-explorer.</a></p>\n<p dir="auto" data-sourcepos="9:1-9:33"><strong>Countries with 13th month salary:</strong></p>\n<ul dir="auto" data-sourcepos="11:1-20:0">\n<li data-sourcepos="15:1-15:147">\n<a href="https://remote.com/country-explorer/argentina#employing" target="_blank" rel="noopener noreferrer">Argentina</a> 🇦🇷 </li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/belgium#employing" target="_blank" rel="noopener noreferrer">Belgium</a> 🇧🇪 </li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/bolivia#employing" target="_blank" rel="noopener noreferrer">Bolivia</a> 🇧🇴 </li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/brazil#employing" target="_blank" rel="noopener noreferrer">Brazil</a> 🇧🇷 </li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/colombia#employing" target="_blank" rel="noopener noreferrer">Colombia</a> 🇨🇴 </li>\n<li>\n<a href="https://remote.com/country-explorer/costa-rica#employing" target="_blank" rel="noopener noreferrer">Costa Rica</a> 🇨🇷</li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/dominican-republic#employing" target="_blank" rel="noopener noreferrer">Dominican Republic</a> 🇩🇴 </li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/el-salvador">El Salvador</a> 🇸🇻</li>\n<li data-sourcepos="11:1-11:154">\n<a href="https://remote.com/country-explorer/guatemala">Guatamala</a> 🇬🇹</li>\n<li>\n<a href="https://remote.com/country-explorer/mexico#employing" target="_blank" rel="noopener noreferrer">Mexico</a> 🇲🇽 </li>\n<li data-sourcepos="19:1-20:0">\n<a href="https://remote.com/country-explorer/panama#employing" target="_blank" rel="noopener noreferrer">Panama</a> 🇵🇦 </li>\n<li data-sourcepos="19:1-20:0">\n<a href="https://remote.com/country-explorer/paraguay#employing" target="_blank" rel="noopener noreferrer">Paraguay</a> 🇵🇾 </li>\n<li data-sourcepos="19:1-20:0">\n<a href="https://remote.com/country-explorer/philippines#employing" target="_blank" rel="noopener noreferrer">Philippines</a> 🇵🇭 </li>\n<li data-sourcepos="12:1-12:197">\n<a href="https://remote.com/country-explorer/slovenia#employing" target="_blank" rel="noopener noreferrer">Slovenia</a> 🇸🇮</li>\n<li data-sourcepos="12:1-12:197">\n<a href="https://remote.com/country-explorer/uruguay#employing" target="_blank" rel="noopener noreferrer">Uruguay</a> 🇺🇾 </li>\n</ul>\n<p dir="auto" data-sourcepos="21:1-21:42"><strong>Countries with 13th and 14th month salary:</strong></p>\n<ul dir="auto" data-sourcepos="23:1-29:0">\n<li data-sourcepos="23:1-23:154">\n<a href="https://remote.com/country-explorer/austria#employing" target="_blank" rel="noopener noreferrer">Austria</a> 🇦🇹 </li>\n<li data-sourcepos="23:1-23:154">\n<a href="https://remote.com/country-explorer/ecuador#employing" target="_blank" rel="noopener noreferrer">Ecuador</a> 🇪🇨 </li>\n<li data-sourcepos="23:1-23:154">\n<a href="https://remote.com/country-explorer/greece#employing" target="_blank" rel="noopener noreferrer">Greece</a> 🇬🇷 </li>\n<li data-sourcepos="23:1-23:154">\n<a href="https://remote.com/country-explorer/honduras#employing" target="_blank" rel="noopener noreferrer">Honduras</a> 🇭🇳 </li>\n<li data-sourcepos="25:1-25:143">\n<a href="https://remote.com/country-explorer/italy#employing" target="_blank" rel="noopener noreferrer">Italy</a> 🇮🇹 </li>\n<li data-sourcepos="23:1-23:154">\n<a href="https://remote.com/country-explorer/peru#employing" target="_blank" rel="noopener noreferrer">Peru</a> 🇵🇪 </li>\n<li data-sourcepos="26:1-26:174">\n<a href="https://remote.com/country-explorer/portugal#employing" target="_blank" rel="noopener noreferrer">Portugal</a> 🇵🇹 </li>\n<li data-sourcepos="27:1-29:0">\n<a href="https://remote.com/country-explorer/spain#employing" target="_blank" rel="noopener noreferrer">Spain</a> 🇪🇸 </li>\n</ul>',
-          html_url:
-            'https://support.remote.com/hc/en-us/articles/4466822781709-What-countries-offer-13th-14th-month-salary-payments',
-        },
-      });
-    },
-    ...queryOptions,
-  });
-};

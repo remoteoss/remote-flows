@@ -1,3 +1,4 @@
+import { useZendeskArticle } from '@/src/components/shared/zendesk-drawer/api';
 import {
   Drawer,
   DrawerTrigger,
@@ -6,7 +7,6 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/src/components/ui/drawer';
-import { useZendeskArticle } from '@/src/flows/Onboarding/api';
 import { useRouter } from '@/src/lib/router';
 import { useSearchParams } from '@/src/lib/useSearchParams';
 import { sanitizeHtml } from '@/src/lib/utils';
