@@ -12,7 +12,6 @@ Object.defineProperty(window, 'location', {
   writable: true,
 });
 
-// Mock event listeners
 const mockAddEventListener = vi.fn();
 const mockRemoveEventListener = vi.fn();
 
@@ -29,7 +28,6 @@ Object.defineProperty(window, 'removeEventListener', {
 describe('useSearchParams', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset location search for each test
     mockLocation.search = '?initial=value&test=123';
   });
 
