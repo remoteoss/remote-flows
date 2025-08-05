@@ -11,7 +11,7 @@ export const useZendeskArticle = (
   return useQuery({
     queryKey: ['zendesk-article', zendeskId],
     queryFn: async () => {
-      return getShowHelpCenterArticle({
+      const response = await getShowHelpCenterArticle({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -20,8 +20,15 @@ export const useZendeskArticle = (
           id: Number(zendeskId),
         },
       });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to fetch article');
+      }
+
+      return response;
     },
     select: (data) => data.data?.data.help_center_article,
+    retry: false,
     ...queryOptions,
   });
 };

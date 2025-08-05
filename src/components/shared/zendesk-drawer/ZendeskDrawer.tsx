@@ -37,11 +37,9 @@ export const ZendeskDrawer = ({
     setIsOpen(false);
   };
 
-  const { data, isLoading } = useZendeskArticle(zendeskId, {
+  const { data, isLoading, error } = useZendeskArticle(zendeskId, {
     enabled: isOpen,
   });
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <Drawer
@@ -61,6 +59,12 @@ export const ZendeskDrawer = ({
               </a>{' '}
             </DrawerDescription>
           </DrawerHeader>
+          {isLoading && <div>Loading...</div>}
+          {error && (
+            <div className="text-sm p-4 text-red-500">
+              Error loading article
+            </div>
+          )}
           <div
             className="flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content"
             dangerouslySetInnerHTML={{
