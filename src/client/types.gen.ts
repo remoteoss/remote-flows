@@ -1980,6 +1980,7 @@ export type CostCalculatorCost = {
   amount: number;
   description: string | null;
   name: string;
+  zendesk_article_id: string | null;
   zendesk_article_url: string | null;
 };
 
@@ -2765,8 +2766,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
