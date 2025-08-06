@@ -14,16 +14,19 @@ type RemoteFlowContextWrapperProps = {
   children: React.ReactNode;
   environment?: RemoteFlowsSDKProps['environment'];
   proxy?: RemoteFlowsSDKProps['proxy'];
+  authId?: RemoteFlowsSDKProps['authId'];
 };
 
 function RemoteFlowContextWrapper({
   children,
   auth,
+  authId,
   proxy,
   environment,
 }: RemoteFlowContextWrapperProps) {
   const remoteApiClient = useAuth({
     auth,
+    authId,
     options: {
       proxy,
       environment,
@@ -53,6 +56,7 @@ export function FormFieldsProvider({
 
 export function RemoteFlows({
   auth,
+  authId,
   children,
   components,
   theme,
@@ -64,6 +68,7 @@ export function RemoteFlows({
       <FormFieldsProvider components={components}>
         <RemoteFlowContextWrapper
           auth={auth}
+          authId={authId}
           proxy={proxy}
           environment={environment}
         >

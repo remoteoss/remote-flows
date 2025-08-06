@@ -129,6 +129,12 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
       [key: string]: string;
     };
   };
+  /**
+   * ID to use for the auth query.
+   * If we navigate from one page to another with a different authentication method,
+   * we need to use a different authId.
+   */
+  authId?: 'default' | 'client';
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

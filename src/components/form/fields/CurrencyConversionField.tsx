@@ -76,6 +76,10 @@ export const CurrencyConversionField = ({
   const fieldValue = watch(props.name);
   const isFirstRender = useRef(true);
 
+  const conversionCache = useRef<Map<string, { targetAmount: string }>>(
+    new Map(),
+  );
+
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
@@ -100,6 +104,14 @@ export const CurrencyConversionField = ({
     ) => {
       if (!value) return;
 
+      const cacheKey = `${fromCurrency}_${toCurrency}_${value}`;
+      const cached = conversionCache.current.get(cacheKey);
+
+      if (cached) {
+        setValue(targetField, cached.targetAmount);
+        return;
+      }
+
       try {
         const response = await convertCurrency({
           source_currency: fromCurrency,
@@ -110,6 +122,14 @@ export const CurrencyConversionField = ({
           const amount = response.data.data.conversion_data.target_amount;
           if (amount) {
             setValue(targetField, amount?.toString());
+            // Cache both directions
+            conversionCache.current.set(cacheKey, {
+              targetAmount: amount.toString(),
+            });
+            const reverseKey = `${toCurrency}_${fromCurrency}_${amount}`;
+            conversionCache.current.set(reverseKey, {
+              targetAmount: value.toString(),
+            });
           }
         }
       } catch (error) {

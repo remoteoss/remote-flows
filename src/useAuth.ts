@@ -28,15 +28,17 @@ function isValidUrl(url: string) {
 export const useAuth = ({
   auth,
   options,
+  authId = 'default',
 }: {
   auth: () => Promise<AuthResponse>;
   options?: Options;
+  authId?: 'default' | 'client';
 }) => {
   const session = useRef<{ accessToken: string; expiresAt: number } | null>(
     null,
   );
   const { refetch } = useQuery({
-    queryKey: ['auth'],
+    queryKey: ['auth', authId],
     queryFn: auth,
     enabled: false,
   });
