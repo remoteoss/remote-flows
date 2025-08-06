@@ -42,6 +42,7 @@ export const RemoteFlows = ({
     <RemoteFlowsAuth
       environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
       auth={!isClientToken ? fetchToken : fetchClientToken}
+      authId={!isClientToken ? 'default' : 'client'}
       {...props}
     >
       {children}
