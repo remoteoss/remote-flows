@@ -339,4 +339,146 @@ describe('useAuth', () => {
       }),
     );
   });
+
+  it('should not share cached tokens between different authId values', async () => {
+    const clientAuthResponse = {
+      accessToken: 'client-token',
+      expiresIn: 3600,
+    };
+
+    const serverAuthResponse = {
+      accessToken: 'server-token',
+      expiresIn: 3600,
+    };
+
+    const mockClientAuth = vi.fn().mockResolvedValue(clientAuthResponse);
+    const mockServerAuth = vi.fn().mockResolvedValue(serverAuthResponse);
+
+    const mockClientAuthFn = vi.fn().mockResolvedValue('client-token');
+    const mockServerAuthFn = vi.fn().mockResolvedValue('server-token');
+
+    // Mock createClient to return different auth functions for different calls
+    (createClient as Mock)
+      .mockReturnValueOnce({
+        getConfig: () => ({
+          auth: mockClientAuthFn,
+          baseUrl: '',
+          headers: {},
+        }),
+      })
+      .mockReturnValueOnce({
+        getConfig: () => ({
+          auth: mockServerAuthFn,
+          baseUrl: '',
+          headers: {},
+        }),
+      });
+
+    // Render first hook with 'client' authId
+    const { result: clientResult } = renderHook(
+      () => useAuth({ auth: mockClientAuth, authId: 'client' }),
+      { wrapper },
+    );
+
+    // Render second hook with 'default' authId (server auth)
+    const { result: serverResult } = renderHook(
+      () => useAuth({ auth: mockServerAuth, authId: 'default' }),
+      { wrapper },
+    );
+
+    // Prefetch queries for both auth types with their respective query keys
+    await act(async () => {
+      await queryClient.prefetchQuery({
+        queryKey: ['auth', 'client'],
+        queryFn: mockClientAuth,
+      });
+      await queryClient.prefetchQuery({
+        queryKey: ['auth', 'default'],
+        queryFn: mockServerAuth,
+      });
+    });
+
+    // Get token from client auth
+    let clientToken: string | undefined;
+    await act(async () => {
+      const authFn = clientResult.current.current.getConfig()
+        .auth as () => Promise<string>;
+      clientToken = await authFn();
+    });
+
+    // Get token from server auth
+    let serverToken: string | undefined;
+    await act(async () => {
+      const authFn = serverResult.current.current.getConfig()
+        .auth as () => Promise<string>;
+      serverToken = await authFn();
+    });
+
+    // Verify both auth functions were called (no cache sharing)
+    expect(mockClientAuth).toHaveBeenCalledOnce();
+    expect(mockServerAuth).toHaveBeenCalledOnce();
+
+    // Verify different tokens are returned
+    expect(clientToken).toBe('client-token');
+    expect(serverToken).toBe('server-token');
+
+    // Verify tokens are different (not sharing cache)
+    expect(clientToken).not.toBe(serverToken);
+  });
+
+  it('should share cached tokens within the same authId', async () => {
+    const authResponse = {
+      accessToken: 'shared-token',
+      expiresIn: 3600,
+    };
+
+    const mockAuth = vi.fn().mockResolvedValue(authResponse);
+    const mockAuthFn = vi.fn().mockResolvedValue('shared-token');
+
+    (createClient as Mock).mockReturnValue({
+      getConfig: () => ({
+        auth: mockAuthFn,
+        baseUrl: '',
+        headers: {},
+      }),
+    });
+
+    // Render two hooks with the same authId
+    const { result: firstResult } = renderHook(
+      () => useAuth({ auth: mockAuth, authId: 'client' }),
+      { wrapper },
+    );
+
+    const { result: secondResult } = renderHook(
+      () => useAuth({ auth: mockAuth, authId: 'client' }),
+      { wrapper },
+    );
+
+    // Prefetch query once
+    await act(async () => {
+      await queryClient.prefetchQuery({
+        queryKey: ['auth', 'client'],
+        queryFn: mockAuth,
+      });
+    });
+
+    // Get token from first hook
+    await act(async () => {
+      const authFn = firstResult.current.current.getConfig()
+        .auth as () => Promise<string>;
+      await authFn();
+    });
+
+    // Get token from second hook (should use cache)
+    let secondToken: string | undefined;
+    await act(async () => {
+      const authFn = secondResult.current.current.getConfig()
+        .auth as () => Promise<string>;
+      secondToken = await authFn();
+    });
+
+    // Auth function should only be called once (cache sharing within same authId)
+    expect(mockAuth).toHaveBeenCalledOnce();
+    expect(secondToken).toBe('shared-token');
+  });
 });
