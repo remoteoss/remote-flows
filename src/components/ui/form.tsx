@@ -1,7 +1,6 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
-import DOMPurify from 'dompurify';
 import {
   Controller,
   ControllerProps,
@@ -13,7 +12,7 @@ import {
 } from 'react-hook-form';
 
 import { Label } from '@/src/components/ui/label';
-import { cn } from '@/src/lib/utils';
+import { cn, sanitizeHtml } from '@/src/lib/utils';
 
 const Form = FormProvider;
 
@@ -131,29 +130,6 @@ const FormControl = React.forwardRef<
 
 FormControl.displayName = 'FormControl';
 
-// Deduplicates rel values if necessary and appends noopener and noreferrer
-const appendSecureRelValue = (rel: string | null) => {
-  const attributes = new Set(rel ? rel.toLowerCase().split(' ') : []);
-
-  attributes.add('noopener');
-  attributes.add('noreferrer');
-
-  return Array.from(attributes).join(' ');
-};
-
-if (DOMPurify.isSupported) {
-  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
-    const target = node.getAttribute('target');
-
-    // set value of target to be _blank with rel, or keep as _self if already set
-    if (node.tagName === 'A' && (!target || target !== '_self')) {
-      node.setAttribute('target', '_blank');
-      const rel = node.getAttribute('rel');
-      node.setAttribute('rel', appendSecureRelValue(rel));
-    }
-  });
-}
-
 function FormDescription({
   className,
   children,
@@ -170,7 +146,7 @@ function FormDescription({
         id={formDescriptionId}
         className={cn('text-base-color text-xs', className)}
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(children, { ADD_ATTR: ['target'] }),
+          __html: sanitizeHtml(children),
         }}
         {...props}
       />

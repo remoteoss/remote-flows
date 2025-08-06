@@ -45,6 +45,12 @@ import type {
   PostCreateEmployment2Data,
   PostCreateEmployment2Response,
   PostCreateEmployment2Error,
+  GetShowHelpCenterArticleData,
+  GetShowHelpCenterArticleResponse,
+  GetShowHelpCenterArticleError,
+  GetShowEmployeeDocumentData,
+  GetShowEmployeeDocumentResponse,
+  GetShowEmployeeDocumentError,
   GetIndexContractorInvoiceData,
   GetIndexContractorInvoiceResponse,
   GetIndexContractorInvoiceError,
@@ -475,6 +481,9 @@ import type {
   GetGetBreakdownBillingDocumentData,
   GetGetBreakdownBillingDocumentResponse,
   GetGetBreakdownBillingDocumentError,
+  GetIndexEmployeeDocumentData,
+  GetIndexEmployeeDocumentResponse,
+  GetIndexEmployeeDocumentError,
   PostApproveCancellationRequestData,
   PostApproveCancellationRequestResponse,
   PostApproveCancellationRequestError,
@@ -902,6 +911,55 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+/**
+ * Get Help Center Article
+ * Get a help center article by its ID
+ */
+export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowHelpCenterArticleData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetShowHelpCenterArticleResponse,
+    GetShowHelpCenterArticleError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/help-center-articles/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Download a document for the employee
+ */
+export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowEmployeeDocumentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetShowEmployeeDocumentResponse,
+    GetShowEmployeeDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/documents/{id}',
+    ...options,
   });
 };
 
@@ -5316,6 +5374,28 @@ export const getGetBreakdownBillingDocument = <
       },
     ],
     url: '/v1/billing-documents/{billing_document_id}/breakdown',
+    ...options,
+  });
+};
+
+/**
+ * Indexes all the documents for the employee
+ */
+export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexEmployeeDocumentData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetIndexEmployeeDocumentResponse,
+    GetIndexEmployeeDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/documents',
     ...options,
   });
 };

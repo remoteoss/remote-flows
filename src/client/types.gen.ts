@@ -86,8 +86,8 @@ export type MinimalRegion = {
 export type CountryCode = string;
 
 export type TerminationOffboarding = {
-  additional_comments: string;
-  agrees_to_pto_amount?: string;
+  additional_comments: string | null;
+  agrees_to_pto_amount?: boolean;
   confidential: boolean;
   employee_awareness?: {
     date?: string | null;
@@ -95,6 +95,12 @@ export type TerminationOffboarding = {
   };
   employment_id: string;
   id: string;
+  /**
+   * Remote will use this email address for post-termination communication.
+   * If it is not provided, this field will be derived from the employment record. Therefore, it is important to ensure that it is not a company email.
+   *
+   */
+  personal_email?: string;
   proposed_termination_date: string;
   reason_description: string;
   requested_by: string;
@@ -250,6 +256,27 @@ export type CompanyDepartmentCreatedResponse = {
   company_department?: CompanyDepartment;
 };
 
+/**
+ * Response schema listing many documents
+ */
+export type ListDocumentsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    documents?: Array<File>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
 export type WebhookEvent = {
   company_id: string;
   event_type: string;
@@ -263,8 +290,12 @@ export type CreateDataSyncParams = {
   /**
    * The types of data to synchronize.
    */
-  data_types: Array<'benefits' | 'kdb' | 'countries'>;
+  data_types: Array<'benefits' | 'kdb' | 'countries' | 'help-center-articles'>;
 };
+
+export type ResignationOrTerminationOffboarding =
+  | ResignationOffboarding
+  | TerminationOffboarding;
 
 export type EmploymentContract = {
   activated_at: DateTimeIso8601;
@@ -699,6 +730,29 @@ export type EmployeeDetails = {
   };
 };
 
+export type CostCalculatorDiscountResponse = {
+  annual_amount: number;
+  monthly_amount: number;
+  months: number;
+  text: string;
+};
+
+/**
+ * Download a supported document
+ */
+export type DownloadDocumentResponse = {
+  data: {
+    document?: {
+      content?: Blob | File;
+      id?: string;
+      inserted_at?: DateTimeIso8601;
+      name?: string;
+      sub_type?: string | null;
+      type?: string;
+    };
+  };
+};
+
 /**
  * Approve an expense
  */
@@ -887,6 +941,7 @@ export type ContractorInvoiceStatus =
 export type Compensation = {
   amount: number | null;
   currency_code: string | null;
+  wage_type: 'hourly' | 'salary';
 };
 
 export type AuthorizationCodeResponse = BaseTokenResponse & {
@@ -942,7 +997,10 @@ export type CostCalculatorEmploymentParam = {
   age?: number;
   annual_gross_salary?: number;
   annual_gross_salary_in_employer_currency?: number;
+  annual_total_cost?: number;
+  annual_total_cost_in_employer_currency?: number;
   benefits?: Array<CostCalculatorBenefitParam>;
+  discount?: CostCalculatorDiscount;
   employment_term?: EmploymentTermType;
   region_slug: string;
   regional_to_employer_exchange_rate?: string;
@@ -1162,12 +1220,18 @@ export type InternalServerErrorResponse = ValidationError | MessageResponse;
 
 export type CostCalculatorEstimateParams = {
   /**
+   * Company name
+   */
+  company_name?: string;
+  /**
    * Currency Slug
    */
   employer_currency_slug: string;
   employments: Array<CostCalculatorEmploymentParam>;
+  global_discount?: CostCalculatorDiscount;
   include_benefits?: boolean;
   include_cost_breakdowns?: boolean;
+  include_management_fee?: boolean;
   include_premium_benefits?: boolean;
 };
 
@@ -1197,7 +1261,7 @@ export type CustomFieldSimpleDataType =
  * Offboarding
  */
 export type Offboarding = {
-  offboarding?: ResignationOffboarding | TerminationOffboarding;
+  offboarding?: ResignationOrTerminationOffboarding;
 };
 
 export type CompanyManagerData = {
@@ -1257,7 +1321,8 @@ export type CountrySummary = {
 };
 
 export type ResignationOffboarding = {
-  additional_comments?: string;
+  additional_comments?: string | null;
+  agrees_to_pto_amount?: boolean;
   employer_awareness?: string;
   employment_id: string;
   id: string;
@@ -1617,15 +1682,18 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
+    | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
+    | 'employment.basic_information.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
     | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -1764,7 +1832,7 @@ export type CountriesResponse = {
 };
 
 export type DataSyncEvent = {
-  data_type: 'benefits' | 'kdb' | 'countries';
+  data_type: 'benefits' | 'kdb' | 'countries' | 'help-center-articles';
   inserted_at: string;
   status: 'pass' | 'fail';
 };
@@ -1912,6 +1980,7 @@ export type CostCalculatorCost = {
   amount: number;
   description: string | null;
   name: string;
+  zendesk_article_id: string | null;
   zendesk_article_url: string | null;
 };
 
@@ -1973,15 +2042,18 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
+    | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
+    | 'employment.basic_information.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
     | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -2091,12 +2163,16 @@ export type CostCalculatorCosts = {
    * The annual gross salary that the employee is going to earn
    */
   annual_gross_salary: number;
+  /**
+   * The annual indirect tax that a company must pay for this employment
+   */
   annual_indirect_tax?: number;
   /**
    * The annual gross salary + annual contributions + annual fee (monthly fee * 12) + extra statutory payments if applicable
    */
   annual_total: number;
   currency: Currency;
+  discount?: CostCalculatorDiscountResponse;
   /**
    * The list of all annual extra statutory payment costs
    */
@@ -2125,6 +2201,9 @@ export type CostCalculatorCosts = {
    * The gross monthly salary for the Employee
    */
   monthly_gross_salary: number;
+  /**
+   * The monthly indirect tax that a company must pay for this employment
+   */
   monthly_indirect_tax?: number;
   /**
    * Monthly gross salary + monthly contributions  (doesn't include fee)
@@ -2330,7 +2409,7 @@ export type ListOffboardingResponse = {
      * The current page among all of the total_pages
      */
     current_page?: number;
-    offboardings?: Array<Offboarding>;
+    offboardings?: Array<ResignationOrTerminationOffboarding>;
     /**
      * The total number of records in the result
      */
@@ -2682,8 +2761,8 @@ export type ResourceErrorResponse = {
       | 'action_unrecognized'
       | 'action_invalid'
       | 'parameter_invalid_date'
-      | 'parameter_value_invalid'
       | 'resource_invalid_state'
+      | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
@@ -3264,6 +3343,15 @@ export type CustomFieldDataEntryAccess =
   | 'employee_only'
   | 'everyone';
 
+/**
+ * Help Center Article Response
+ */
+export type HelpCenterArticleResponse = {
+  data: {
+    help_center_article: HelpCenterArticle;
+  };
+};
+
 export type UpdateIncentiveParams = CommonIncentiveParams & {
   /**
    * The end date of the incentive period (month, quarter, half-year or year)
@@ -3389,8 +3477,11 @@ export type EmploymentStatus =
 
 export type CostCalculatorEmployment = {
   country: MinimalCountry;
+  country_benefits_details_url: string | null;
+  country_guide_url: string | null;
   employer_currency_costs: CostCalculatorCosts;
   has_extra_statutory_payment: boolean;
+  minimum_onboarding_time: number | null;
   region: MinimalRegion;
   regional_currency_costs: CostCalculatorCosts;
 };
@@ -3905,6 +3996,17 @@ export type ListWorkAuthorizationRequestsResponse = {
 };
 
 /**
+ * Allows to apply discounts to estimates
+ */
+export type CostCalculatorDiscount = {
+  amount?: number;
+  months?: number;
+  percent?: number;
+  quoted_amount?: number;
+  text: string;
+};
+
+/**
  * CreateEmploymentCustomFieldResponse
  */
 export type CreateEmploymentCustomFieldResponse = {
@@ -4247,15 +4349,18 @@ export type WebhookCallback = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
+    | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
+    | 'employment.basic_information.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
     | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -4928,7 +5033,7 @@ export type TerminationDetailsParams = {
   /**
    * Additional details regarding the termination process.
    */
-  additional_comments?: string;
+  additional_comments?: string | null;
   agrees_to_pto_amount?: boolean | null;
   agrees_to_pto_amount_notes?: string | null;
   /**
@@ -5199,15 +5304,18 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'custom_field.value_updated'
+    | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
     | 'employment_contract.active_contract_updated'
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
+    | 'employment.basic_information.updated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
     | 'employment.eor_hiring.proof_of_payment_accepted'
+    | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -5668,6 +5776,28 @@ export type ResignationAfterStartDate = {
    */
   resignation_date: string;
   resignation_reason_label: string;
+};
+
+/**
+ * Help Center Article
+ */
+export type HelpCenterArticle = {
+  /**
+   * Body of the article
+   */
+  body: string;
+  /**
+   * HTML URL of the article
+   */
+  html_url: string;
+  /**
+   * Title of the article
+   */
+  title: string;
+  /**
+   * Zendesk ID of the article
+   */
+  zendesk_id: number;
 };
 
 export type CompanyCreationConflictErrorResponse = {
@@ -6560,6 +6690,78 @@ export type PostCreateEmployment2Responses = {
 
 export type PostCreateEmployment2Response =
   PostCreateEmployment2Responses[keyof PostCreateEmployment2Responses];
+
+export type GetShowHelpCenterArticleData = {
+  body?: never;
+  path: {
+    /**
+     * Help Center Article Zendesk ID
+     */
+    id: number;
+  };
+  query?: never;
+  url: '/v1/help-center-articles/{id}';
+};
+
+export type GetShowHelpCenterArticleErrors = {
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowHelpCenterArticleError =
+  GetShowHelpCenterArticleErrors[keyof GetShowHelpCenterArticleErrors];
+
+export type GetShowHelpCenterArticleResponses = {
+  /**
+   * Success
+   */
+  200: HelpCenterArticleResponse;
+};
+
+export type GetShowHelpCenterArticleResponse =
+  GetShowHelpCenterArticleResponses[keyof GetShowHelpCenterArticleResponses];
+
+export type GetShowEmployeeDocumentData = {
+  body?: never;
+  path: {
+    /**
+     * Document ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/employee/documents/{id}';
+};
+
+export type GetShowEmployeeDocumentErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetShowEmployeeDocumentError =
+  GetShowEmployeeDocumentErrors[keyof GetShowEmployeeDocumentErrors];
+
+export type GetShowEmployeeDocumentResponses = {
+  /**
+   * Success
+   */
+  200: DownloadDocumentResponse;
+};
+
+export type GetShowEmployeeDocumentResponse =
+  GetShowEmployeeDocumentResponses[keyof GetShowEmployeeDocumentResponses];
 
 export type GetIndexContractorInvoiceData = {
   body?: never;
@@ -9402,10 +9604,6 @@ export type GetShowFormCountryData = {
      * FOR TESTING PURPOSES ONLY: Include scheduled benefit groups.
      */
     only_for_testing_include_scheduled_benefit_groups?: boolean;
-    /**
-     * TEMPORARY: Includes new EOR fields for Neo Canada.
-     */
-    include_neo_eor_fields?: boolean;
     /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
@@ -14047,6 +14245,75 @@ export type GetGetBreakdownBillingDocumentResponses = {
 
 export type GetGetBreakdownBillingDocumentResponse =
   GetGetBreakdownBillingDocumentResponses[keyof GetGetBreakdownBillingDocumentResponses];
+
+export type GetIndexEmployeeDocumentData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+    /**
+     * Filter documents by their description or file name, accepts full and partial case insensitive matches
+     */
+    name?: string;
+    /**
+     * Filters the results that were uploaded on or after a given date
+     */
+    inserted_after?: _Date;
+    /**
+     * Filters the results that were uploaded before a given date
+     */
+    inserted_before?: _Date;
+    /**
+     * Field to sort by
+     */
+    sort_by?:
+      | 'description'
+      | 'document_source'
+      | 'inserted_at'
+      | 'name'
+      | 'type'
+      | 'uploaded_by_role'
+      | 'related_to'
+      | 'sub_type'
+      | 'uploaded_by';
+    /**
+     * Sort order
+     */
+    order?: 'asc' | 'desc';
+  };
+  url: '/v1/employee/documents';
+};
+
+export type GetIndexEmployeeDocumentErrors = {
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetIndexEmployeeDocumentError =
+  GetIndexEmployeeDocumentErrors[keyof GetIndexEmployeeDocumentErrors];
+
+export type GetIndexEmployeeDocumentResponses = {
+  /**
+   * Success
+   */
+  200: ListDocumentsResponse;
+};
+
+export type GetIndexEmployeeDocumentResponse =
+  GetIndexEmployeeDocumentResponses[keyof GetIndexEmployeeDocumentResponses];
 
 export type PostApproveCancellationRequestData = {
   body?: never;

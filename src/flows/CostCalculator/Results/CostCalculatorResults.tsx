@@ -153,6 +153,9 @@ export function CostCalculatorResults({
               <CostCalculatorGrossSalary
                 grossSalary={grossSalary}
                 currency={currency}
+                hasExtraStatutoryPayment={
+                  employment.has_extra_statutory_payment
+                }
               />
               {/* Benefits Section */}
               {benefitsBreakdown ? (
@@ -169,7 +172,8 @@ export function CostCalculatorResults({
                 currency={currency}
               />
               {/* Extra Statutory Payments Section */}
-              {extraStatutoryPaymentsBreakdown ? (
+              {Array.isArray(extraStatutoryPaymentsBreakdown) &&
+              extraStatutoryPaymentsBreakdown.length > 0 ? (
                 <CostCalculatorExtraStatutoryPaymentsBreakdown
                   extraStatutoryPaymentsBreakdown={
                     extraStatutoryPaymentsBreakdown

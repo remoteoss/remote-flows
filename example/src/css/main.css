@@ -877,3 +877,25 @@ button.reset-button {
   font-size: 14px;
   letter-spacing: 0.01em;
 }
+
+.RemoteFlows_ZendeskDrawer__Content {
+  p {
+    margin-bottom: 8px;
+  }
+
+  ul {
+    padding-left: 8px;
+    list-style-type: disc;
+    margin-left: 24px;
+    margin-bottom: 8px;
+  }
+
+  li {
+    padding-left: 8px;
+    margin-bottom: 4px;
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+}

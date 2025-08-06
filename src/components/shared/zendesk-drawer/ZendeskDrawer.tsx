@@ -1,0 +1,78 @@
+import { useZendeskArticle } from '@/src/components/shared/zendesk-drawer/api';
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/src/components/ui/drawer';
+import { useRouter } from '@/src/lib/router';
+import { useSearchParams } from '@/src/lib/useSearchParams';
+import { sanitizeHtml } from '@/src/lib/utils';
+import { useEffect, useState } from 'react';
+
+export type ZendeskDrawerProps = {
+  Trigger: React.ReactNode;
+  zendeskId: string;
+  zendeskURL: string;
+};
+
+export const ZendeskDrawer = ({
+  Trigger,
+  zendeskId,
+  zendeskURL,
+}: ZendeskDrawerProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const articleId = searchParams.get('articleId');
+    setIsOpen(articleId === zendeskId);
+  }, [searchParams, zendeskId]);
+
+  const handleClose = () => {
+    router.setSearchParams({ articleId: null });
+    setIsOpen(false);
+  };
+
+  const { data, isLoading, error } = useZendeskArticle(zendeskId, {
+    enabled: isOpen,
+  });
+
+  return (
+    <Drawer
+      open={isOpen}
+      onOpenChange={(open) => !open && handleClose()}
+      direction="right"
+    >
+      <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
+      <DrawerContent className="h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer">
+        <div className="h-full flex flex-col">
+          <DrawerHeader>
+            <DrawerTitle>{data?.title}</DrawerTitle>
+            <DrawerDescription>
+              For more details see our{' '}
+              <a href={zendeskURL} target="_blank" rel="noopener noreferrer">
+                help article
+              </a>{' '}
+            </DrawerDescription>
+          </DrawerHeader>
+          {isLoading && <div>Loading...</div>}
+          {error && (
+            <div className="text-sm p-4 text-red-500">
+              Error loading article
+            </div>
+          )}
+          <div
+            className="flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content"
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(data?.body || ''),
+            }}
+          ></div>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
