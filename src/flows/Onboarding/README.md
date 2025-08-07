@@ -8,6 +8,7 @@ Welcome to the Onboarding flow docs
   - [Full Example](#full-example)
   - [Without Select Country Step](#without-select-country-step)
   - [With Custom Benefits](#with-custom-benefits)
+  - [With Initial Values](#with-initial-values)
 - [Components API](#components-api)
   - [OnboardingFlow](#onboardingflow)
     - [options.jsfModify properties](#optionsjsfmodify-properties)
