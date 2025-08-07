@@ -288,6 +288,7 @@ const OnboardingWithProps = ({
       countryCode={countryCode}
       skipSteps={['select_country']}
       externalId={externalId}
+<<<<<<< HEAD
       initialValues={{
         name: 'John Doe',
         email: 'john.doe@example.com',
@@ -305,6 +306,8 @@ const OnboardingWithProps = ({
           id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
         },
       }}
+=======
+>>>>>>> main
     />
   </RemoteFlows>
 );

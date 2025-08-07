@@ -17,13 +17,11 @@ export type OnboardingFlowParams = {
    * The company id to use for the onboarding.
    */
   companyId: string;
-
   /**
    * Unique reference code for the employment record in a non-Remote system. This optional field links to external data sources.
    * If not provided, it defaults to null. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   externalId?: string;
-
   /**
    * Initial values to pre-populate the form fields.
    * These are flat field values that will be automatically mapped to the correct step.
