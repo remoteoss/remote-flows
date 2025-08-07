@@ -23,6 +23,13 @@ export type OnboardingFlowParams = {
    * If not provided, it defaults to null. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   externalId?: string;
+
+  /**
+   * Initial values to pre-populate the form fields.
+   * These are flat field values that will be automatically mapped to the correct step.
+   * Initial values can override server data. Be careful if you use both employmentId and initialValues together.
+   */
+  initialValues?: Record<string, unknown>;
   /**
    * The steps to skip for the onboarding. We only support skipping the select_country step for now.
    */

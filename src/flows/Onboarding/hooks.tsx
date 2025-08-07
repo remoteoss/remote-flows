@@ -39,6 +39,7 @@ import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
+import { on } from 'events';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -133,6 +134,7 @@ export const useOnboarding = ({
   options,
   skipSteps,
   externalId,
+  initialValues: onboardingInitialValues,
 }: OnboardingHookProps) => {
   const fieldsMetaRef = useRef<{
     select_country: Meta;
@@ -233,16 +235,25 @@ export const useOnboarding = ({
     };
     query?: Record<string, string>;
   }) => {
+    // when you write on the fields, the values are stored in the fieldValues state
+    // when values are stored in the stepState is when the user has navigated to the step
+    // and then we have the values from the server and the onboardingInitialValues that the user can inject,
+    const memoizedFieldValues =
+      Object.keys(fieldValues).length > 0
+        ? {
+            ...onboardingInitialValues,
+            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+            ...fieldValues,
+          }
+        : {
+            ...serverEmploymentData,
+            ...onboardingInitialValues,
+          };
+
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues:
-        Object.keys(fieldValues).length > 0
-          ? {
-              ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-              ...fieldValues,
-            }
-          : serverEmploymentData,
+      fieldValues: memoizedFieldValues,
       query,
       options: {
         ...jsonSchemaOptions,
@@ -444,28 +455,44 @@ export const useOnboarding = ({
     [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
-  const basicInformationInitialValues = useMemo(
-    () =>
-      getInitialValues(
-        stepFields.basic_information,
-        employmentBasicInformation || {},
-      ),
-    [stepFields.basic_information, employmentBasicInformation],
-  );
+  const basicInformationInitialValues = useMemo(() => {
+    const initialValues = {
+      ...employmentBasicInformation,
+      ...onboardingInitialValues,
+    };
 
-  const contractDetailsInitialValues = useMemo(
-    () =>
-      getInitialValues(
-        stepFields.contract_details,
-        employmentContractDetails || {},
-      ),
-    [stepFields.contract_details, employmentContractDetails],
-  );
+    return getInitialValues(stepFields.basic_information, initialValues);
+  }, [
+    stepFields.basic_information,
+    employmentBasicInformation,
+    onboardingInitialValues,
+  ]);
 
-  const benefitsInitialValues = useMemo(
-    () => getInitialValues(stepFields.benefits, initialValuesBenefitOffers),
-    [stepFields.benefits, initialValuesBenefitOffers],
-  );
+  const contractDetailsInitialValues = useMemo(() => {
+    const initialValues = {
+      ...employmentContractDetails,
+      ...onboardingInitialValues,
+    };
+
+    return getInitialValues(stepFields.contract_details, initialValues);
+  }, [
+    stepFields.contract_details,
+    employmentContractDetails,
+    onboardingInitialValues,
+  ]);
+
+  const benefitsInitialValues = useMemo(() => {
+    const initialValues = {
+      ...initialValuesBenefitOffers,
+      ...onboardingInitialValues,
+    };
+
+    return getInitialValues(stepFields.benefits, initialValues);
+  }, [
+    stepFields.benefits,
+    initialValuesBenefitOffers,
+    onboardingInitialValues,
+  ]);
 
   const initialValues = useMemo(() => {
     if (employment) {
