@@ -449,6 +449,59 @@ export const OnboardingForm = () => (
 );
 ```
 
+### With Initial Values
+
+Pre-populate form fields with initial values. This is useful when you want to provide default values or when integrating with your existing data:
+
+```tsx
+import {
+  OnboardingFlow,
+  RemoteFlows,
+  OnboardingRenderProps,
+  // ... other imports
+} from '@remoteoss/remote-flows';
+
+// Mock ReviewStep component - see full implementation at:
+// https://github.com/remoteoss/remote-flows/blob/main/example/src/ReviewStep.tsx
+const ReviewStep = ({
+  onboardingBag,
+  components,
+  apiError,
+  setApiError,
+}: any) => <div>Review Step Component</div>;
+
+// ... MultiStepForm component (same as above)
+
+export const OnboardingForm = () => (
+  <RemoteFlows auth={fetchToken}>
+    <OnboardingFlow
+      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
+      type="employee"
+      countryCode="PRT"
+      externalId="EMP-12345" // Your internal employee ID
+      initialValues={{
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        work_email: 'john.doe@company.com',
+        job_title: 'Software Engineer',
+        annual_gross_salary: 4000000, // Amount in cents
+        provisional_start_date: '2025-01-15',
+        tax_servicing_countries: ['Bahrain'],
+        tax_job_category: 'legal',
+        has_seniority_date: 'no',
+      }}
+      skipSteps={['select_country']}
+      render={OnBoardingRender}
+    />
+  </RemoteFlows>
+);
+```
+
+**Note about Initial Values:**
+
+- `initialValues` are designed to work without passing an `employmentId`
+- `money` field values should be pass down in cents
+
 ## Components API
 
 ### OnboardingFlow
@@ -457,15 +510,17 @@ The `OnboardingFlow` component lets you render different components like `Select
 
 The component accepts the following props:
 
-| Prop           | Type                                                                                                                                                                                                    | Required | Description                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `companyId`    | string                                                                                                                                                                                                  | Yes      | The company ID where the employee will be onboarded                                                                     |
-| `type`         | `'employee' \| 'contractor'`                                                                                                                                                                            | Yes      | The type of employment                                                                                                  |
-| `employmentId` | string                                                                                                                                                                                                  | No       | The employment ID if you want to update an existing employment                                                          |
-| `countryCode`  | string                                                                                                                                                                                                  | No       | The country code where the employment is based (if not provided, SelectCountryStep will be shown)                       |
-| `skipSteps`    | `['select_country']`                                                                                                                                                                                    | No       | Array of steps to skip in the onboarding flow. Currently only supports skipping the select_country step                 |
-| `render`       | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow |
-| `options`      | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}}`                                                                                                      | No       | See detailed explanation below                                                                                          |
+| Prop            | Type                                                                                                                                                                                                    | Required | Description                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `companyId`     | string                                                                                                                                                                                                  | Yes      | The company ID where the employee will be onboarded                                                                             |
+| `type`          | `'employee' \| 'contractor'`                                                                                                                                                                            | Yes      | The type of employment                                                                                                          |
+| `employmentId`  | string                                                                                                                                                                                                  | No       | The employment ID if you want to update an existing employment                                                                  |
+| `countryCode`   | string                                                                                                                                                                                                  | No       | The country code where the employment is based (if not provided, SelectCountryStep will be shown)                               |
+| `skipSteps`     | `['select_country']`                                                                                                                                                                                    | No       | Array of steps to skip in the onboarding flow. Currently only supports skipping the select_country step                         |
+| `externalId`    | string                                                                                                                                                                                                  | No       | External identifier for the employment, useful for tracking in your own system                                                  |
+| `initialValues` | Record<string, any>                                                                                                                                                                                     | No       | Initial values to pre-populate form fields. When editing an existing employment, server data takes precedence over these values |
+| `render`        | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow         |
+| `options`       | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}}`                                                                                                      | No       | See detailed explanation below                                                                                                  |
 
 #### options.jsfModify properties
 
