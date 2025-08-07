@@ -245,8 +245,8 @@ export const useOnboarding = ({
             ...fieldValues,
           }
         : {
-            ...serverEmploymentData,
             ...onboardingInitialValues,
+            ...serverEmploymentData,
           };
 
     return useJSONSchemaForm({
@@ -456,8 +456,8 @@ export const useOnboarding = ({
 
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
-      ...employmentBasicInformation,
       ...onboardingInitialValues,
+      ...employmentBasicInformation,
     };
 
     return getInitialValues(stepFields.basic_information, initialValues);
@@ -469,8 +469,8 @@ export const useOnboarding = ({
 
   const contractDetailsInitialValues = useMemo(() => {
     const initialValues = {
-      ...employmentContractDetails,
       ...onboardingInitialValues,
+      ...employmentContractDetails,
     };
 
     return getInitialValues(stepFields.contract_details, initialValues);
@@ -482,8 +482,8 @@ export const useOnboarding = ({
 
   const benefitsInitialValues = useMemo(() => {
     const initialValues = {
-      ...initialValuesBenefitOffers,
       ...onboardingInitialValues,
+      ...initialValuesBenefitOffers,
     };
 
     return getInitialValues(stepFields.benefits, initialValues);
