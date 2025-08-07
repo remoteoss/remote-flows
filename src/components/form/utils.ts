@@ -311,8 +311,7 @@ export function parseFormValuesToAPI(
             const fieldsetValue = formValues[field.name!];
 
             // Filter out empty properties from fieldset objects
-            // this code avoids sending department: {id: '1234', name: ''} to the handleValidation
-            // and make the validation fail
+            // this code avoids sending department: {id: '1234', name: ''} or even department: {id: undefined, name: undefined}
             if (
               fieldsetValue &&
               typeof fieldsetValue === 'object' &&

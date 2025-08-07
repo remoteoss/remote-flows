@@ -2077,4 +2077,80 @@ describe('OnboardingFlow', () => {
       external_id: testExternalId, // ✅ Verify external_id is sent
     });
   });
+
+  it('should properly set initialValues in the form fields', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    const initialValues = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      work_email: 'john.doe@remote.com',
+      job_title: 'Software Engineer',
+      tax_servicing_countries: ['Bahrain'],
+      tax_job_category: 'legal',
+      has_seniority_date: 'no',
+      provisional_start_date: '2025-08-27',
+      annual_gross_salary: 4000000,
+      department: {
+        id: '4b771740-2db0-4e7d-a32f-78afd42c2b3a',
+      },
+      manager: {
+        id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
+      },
+    };
+
+    // Use the correct render function for skipped select_country tests
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        initialValues={initialValues}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the basic information step to load
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
+    });
+
+    // Navigate to contract details
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Check annual gross salary (converted from cents)
+    await waitFor(() => {
+      const salaryInput = screen.getByDisplayValue('40000');
+      expect(salaryInput).toBeInTheDocument();
+    });
+  });
 });
