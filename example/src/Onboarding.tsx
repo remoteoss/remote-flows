@@ -254,14 +254,12 @@ type OnboardingFormData = {
   companyId: string;
   type: 'employee' | 'contractor';
   employmentId: string;
-  externalId?: string;
 };
 
 const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
-  externalId,
 }: OnboardingFormData) => (
   <RemoteFlows>
     <OnboardingFlow
@@ -269,7 +267,6 @@ const OnboardingWithProps = ({
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
-      externalId={externalId}
     />
   </RemoteFlows>
 );
@@ -279,7 +276,6 @@ export const OnboardingForm = () => {
     type: 'employee',
     employmentId: '',
     companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
-    externalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -342,21 +338,6 @@ export const OnboardingForm = () => {
             setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
           }
           placeholder="Enter employment ID"
-          className="onboarding-form-input"
-        />
-      </div>
-      <div className="onboarding-form-group">
-        <label htmlFor="externalId" className="onboarding-form-label">
-          External ID:
-        </label>
-        <input
-          id="externalId"
-          type="text"
-          value={formData.externalId}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, externalId: e.target.value }))
-          }
-          placeholder="Enter External ID"
           className="onboarding-form-input"
         />
       </div>
