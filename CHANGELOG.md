@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.8.1
+
+### Patch Changes
+
+- d7acc29: - fixes title in ForceValueField when `statement?.title` is undefined [#377](https://github.com/remoteoss/remote-flows/pull/377)
+
 ## 0.8.0
 
 ### Minor Changes
