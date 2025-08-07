@@ -6,9 +6,10 @@ type ForcedValueFieldProps = {
   value: string;
   description: string;
   statement?: {
-    title: string;
+    title: string /** I am not sure but I believe title isn't getting ouput correctly by json-schema-form */;
     description: string;
   };
+  label: string;
 };
 
 export function ForcedValueField({
@@ -16,6 +17,7 @@ export function ForcedValueField({
   value,
   description,
   statement,
+  label,
 }: ForcedValueFieldProps) {
   const { setValue } = useFormContext();
 
@@ -30,7 +32,7 @@ export function ForcedValueField({
         <>
           <p
             className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
-            dangerouslySetInnerHTML={{ __html: statement?.title }}
+            dangerouslySetInnerHTML={{ __html: statement?.title || label }}
           />
           <p
             className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}

@@ -65,6 +65,7 @@ export const JSONSchemaFormFields = ({
               description={field.description as string}
               value={field.const as string}
               statement={field.statement as any}
+              label={field.label as string}
             />
           );
         }
