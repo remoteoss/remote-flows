@@ -39,7 +39,6 @@ import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
-import { on } from 'events';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
