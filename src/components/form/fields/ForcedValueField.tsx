@@ -6,7 +6,7 @@ type ForcedValueFieldProps = {
   value: string;
   description: string;
   statement?: {
-    title: string /** I am not sure but I believe title isn't getting ouput correctly by json-schema-form */;
+    title: string;
     description: string;
   };
   label: string;
