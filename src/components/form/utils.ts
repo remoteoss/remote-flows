@@ -592,7 +592,7 @@ function getInitialSubFieldValues(
   defaultValues: Record<string, unknown>,
   parentFieldKeyPath?: string,
 ) {
-  const initialValue: Record<string, Record<string, unknown>> = {};
+  const initialValue: Record<string, Record<string, unknown> | undefined> = {};
 
   let fieldKeyPath = field.name;
 
@@ -620,12 +620,20 @@ function getInitialSubFieldValues(
       initialValue[field.name!] = subFieldValues;
     }
   } else {
-    initialValue[field.name!] = getInitialDefaultValue(defaultValues, {
-      ...field,
-      // NOTE: To utilize the `get` function from `lodash` in `getInitialDefaultValue` correctly
-      // we need to use the field path instead of just its name.
-      name: fieldKeyPath,
-    });
+    const parentPath = fieldKeyPath.split('.').slice(0, -1).join('.');
+    const parentExists = parentPath
+      ? get(defaultValues, parentPath) !== undefined
+      : true;
+
+    if (parentExists) {
+      initialValue[field.name!] = getInitialDefaultValue(defaultValues, {
+        ...field,
+        name: fieldKeyPath,
+      });
+    } else {
+      // If parent doesn't exist, use undefined for sub-fields
+      initialValue[field.name!] = undefined;
+    }
   }
 
   return initialValue;
