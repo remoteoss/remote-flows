@@ -30,6 +30,7 @@ export function ForcedValueField({
     <div>
       {statement ? (
         <>
+          {/* if statement?.title is undefined which could be for example belgium contract details form, we need to use the label attribute */}
           <p
             className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
             dangerouslySetInnerHTML={{ __html: statement?.title || label }}
