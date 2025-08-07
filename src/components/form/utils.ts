@@ -308,10 +308,33 @@ export function parseFormValuesToAPI(
               parseFormValuesToAPI(nestedFormValues, fieldset.fields),
             );
           } else {
-            acc[field.name!] = parseFormValuesToAPI(
-              formValues[field.name!],
-              fieldset.fields,
-            );
+            const fieldsetValue = formValues[field.name!];
+
+            // Filter out empty properties from fieldset objects
+            // this code avoids sending department: {id: '1234', name: ''} to the handleValidation
+            // and make the validation fail
+            if (
+              fieldsetValue &&
+              typeof fieldsetValue === 'object' &&
+              !Array.isArray(fieldsetValue)
+            ) {
+              const cleanedValue = Object.fromEntries(
+                Object.entries(fieldsetValue).filter(([, value]) => {
+                  // Keep the property if it has a meaningful value
+                  return value !== '' && value !== null && value !== undefined;
+                }),
+              );
+
+              acc[field.name!] =
+                Object.keys(cleanedValue).length > 0
+                  ? parseFormValuesToAPI(cleanedValue, fieldset.fields)
+                  : undefined;
+            } else {
+              acc[field.name!] = parseFormValuesToAPI(
+                fieldsetValue,
+                fieldset.fields,
+              );
+            }
           }
           break;
         }
