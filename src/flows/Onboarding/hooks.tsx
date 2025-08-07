@@ -132,7 +132,6 @@ export const useOnboarding = ({
   type,
   options,
   skipSteps,
-  externalId,
 }: OnboardingHookProps) => {
   const fieldsMetaRef = useRef<{
     select_country: Meta;
@@ -635,7 +634,6 @@ export const useOnboarding = ({
             basic_information: parsedValues,
             type: type,
             country_code: internalCountryCode,
-            external_id: externalId,
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
@@ -660,7 +658,6 @@ export const useOnboarding = ({
             pricing_plan_details: {
               frequency: 'monthly',
             },
-            external_id: externalId,
           });
         }
 
@@ -675,7 +672,6 @@ export const useOnboarding = ({
         };
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
-          external_id: externalId,
           ...payload,
         });
       }
