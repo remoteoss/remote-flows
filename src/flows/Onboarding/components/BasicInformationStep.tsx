@@ -74,12 +74,6 @@ export function BasicInformationStep({
     onboardingBag.stepState.values?.basic_information ||
     onboardingBag.initialValues.basic_information;
 
-  console.log({
-    onboardingBag: initialValues,
-    stepState: onboardingBag.stepState.values?.basic_information,
-    initialValues: onboardingBag.initialValues.basic_information,
-  });
-
   return (
     <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
   );

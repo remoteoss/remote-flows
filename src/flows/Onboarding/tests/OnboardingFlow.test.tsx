@@ -583,16 +583,9 @@ describe('OnboardingFlow', () => {
     });
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
-      department: {
-        id: undefined,
-        name: undefined,
-      },
       email: employmentResponse.data.employment.personal_email,
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
-      manager: {
-        id: undefined,
-      },
       tax_job_category:
         employmentResponse.data.employment.basic_information.tax_job_category,
       tax_servicing_countries:
@@ -667,16 +660,9 @@ describe('OnboardingFlow', () => {
     });
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
-      department: {
-        id: undefined,
-        name: undefined,
-      },
       email: 'gabriel@gmail.com',
       has_seniority_date: 'no',
       job_title: employmentResponse.data.employment.job_title,
-      manager: {
-        id: undefined,
-      },
       name: employmentResponse.data.employment.basic_information.name,
       provisional_start_date:
         employmentResponse.data.employment.provisional_start_date,

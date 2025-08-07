@@ -245,8 +245,6 @@ export const useJSONSchemaForm = ({
         ...moneyFieldsData,
       };
 
-      console.log('initialValues', initialValues);
-
       return {
         meta: {
           'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
