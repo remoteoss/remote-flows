@@ -61,6 +61,7 @@ export const OnboardingFlow = ({
   type = 'employee',
   externalId,
   skipSteps,
+  initialValues,
   render,
   options,
 }: OnboardingFlowProps) => {
@@ -73,6 +74,7 @@ export const OnboardingFlow = ({
     options,
     skipSteps,
     externalId,
+    initialValues,
   });
 
   const [creditScore, setCreditScore] = useState<{

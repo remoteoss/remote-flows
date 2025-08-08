@@ -240,15 +240,17 @@ export const useJSONSchemaForm = ({
         {},
       );
 
+      const initialValues = {
+        ...fieldValues,
+        ...moneyFieldsData,
+      };
+
       return {
         meta: {
           'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
         },
         ...createHeadlessForm(jsfSchema, {
-          initialValues: {
-            ...fieldValues,
-            ...moneyFieldsData,
-          },
+          initialValues,
         }),
       };
     },

@@ -288,6 +288,23 @@ const OnboardingWithProps = ({
       countryCode={countryCode}
       skipSteps={['select_country']}
       externalId={externalId}
+      initialValues={{
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        work_email: 'john.doe@remote.com',
+        job_title: 'Software Engineer',
+        tax_servicing_countries: ['Bahrain'],
+        tax_job_category: 'legal',
+        has_seniority_date: 'no',
+        provisional_start_date: '2025-08-27',
+        annual_gross_salary: 4000000,
+        department: {
+          id: '4b771740-2db0-4e7d-a32f-78afd42c2b3a',
+        },
+        manager: {
+          id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
+        },
+      }}
     />
   </RemoteFlows>
 );
