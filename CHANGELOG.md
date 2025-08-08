@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 0.9.0
+
+### Minor Changes
+
+- 7d18549: add external_id as an option [#378](https://github.com/remoteoss/remote-flows/pull/378)
+
+### Patch Changes
+
+- dce7a84: Added support for initialValues [#382](https://github.com/remoteoss/remote-flows/pull/382)
+
 ## 0.8.1
 
 ### Patch Changes
