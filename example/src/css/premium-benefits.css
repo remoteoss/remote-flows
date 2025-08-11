@@ -1,0 +1,50 @@
+/*
+* There are some styles that are hardcoded, like font-size in pixels, line-height, font-weight, colors, etc..
+* Doing this now to go fast
+*/
+
+/* 
+Setting a wrapper for now to avoid affecting the other demos.
+It should be done in the body to affect all pages && demos
+*/
+.premium-benefits-wrapper {
+  padding: 40px 0;
+  background-color: #fafafa;
+  min-height: 100vh;
+}
+
+.premium-benefits-container {
+  max-width: 642px;
+  margin: 0 auto;
+}
+
+.premium-benefits-header {
+  max-width: 400px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 32px;
+}
+
+.premium-benefits-header h1 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  color: #0a0a0a;
+  margin-bottom: 4px;
+}
+
+.premium-benefits-header p {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #4b5865;
+}
+
+.premium-benefits-form-container {
+  background-color: #ffffff;
+  padding: 40px 56px;
+  border-radius: 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 68%, 0.051);
+}

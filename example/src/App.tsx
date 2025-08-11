@@ -140,21 +140,15 @@ const additionalDemos = [
   },
 ];
 
-const isDev = import.meta.env.DEV;
-
 const demoStructure = [
   {
     id: 'cost-calculator',
     title: 'Cost Calculator',
     description:
       'Calculate the total cost of your employee in different countries',
-    children: isDev
-      ? costCalculatorDemos
-      : costCalculatorDemos.filter(
-          (demo) => demo.id === 'with-premium-benefits-cost-calculator',
-        ),
+    children: costCalculatorDemos,
   },
-  ...(isDev ? additionalDemos : []),
+  ...additionalDemos,
 ];
 
 const flattenedDemos = demoStructure.reduce(
@@ -205,9 +199,7 @@ const flattenedDemos = demoStructure.reduce(
   >,
 );
 
-const defaultDemoId = isDev
-  ? 'basic-cost-calculator'
-  : 'with-premium-benefits-cost-calculator';
+const defaultDemoId = 'basic-cost-calculator';
 
 function App() {
   const [expandedCategories, setExpandedCategories] = useState<
@@ -256,77 +248,75 @@ function App() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {isDev && <h1 className="text-3xl font-bold mb-6">SDK Demos</h1>}
+      <h1 className="text-3xl font-bold mb-6">SDK Demos</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Nested Navigation Sidebar */}
-        {isDev && (
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Demos</CardTitle>
-                <CardDescription>Browse all available demos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col space-y-1">
-                  {demoStructure.map((category) => (
-                    <div key={category.id} className="space-y-1">
-                      {category.children ? (
-                        // Category with children
-                        <Collapsible
-                          open={expandedCategories[category.id]}
-                          onOpenChange={() => toggleCategory(category.id)}
-                        >
-                          <CollapsibleTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="w-full justify-between"
-                            >
-                              {category.title}
-                              {expandedCategories[category.id] ? (
-                                <ChevronDown className="h-4 w-4" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent>
-                            <div className="pl-4 space-y-1 mt-1">
-                              {category.children.map((child) => (
-                                <Button
-                                  key={child.id}
-                                  variant={
-                                    activeDemo === child.id ? 'accent' : 'ghost'
-                                  }
-                                  size="sm"
-                                  className="w-full justify-start"
-                                  onClick={() => selectDemo(child.id)}
-                                >
-                                  {child.title}
-                                </Button>
-                              ))}
-                            </div>
-                          </CollapsibleContent>
-                        </Collapsible>
-                      ) : (
-                        // Standalone item
-                        <Button
-                          variant={
-                            activeDemo === category.id ? 'accent' : 'ghost'
-                          }
-                          className="w-full justify-start"
-                          onClick={() => selectDemo(category.id)}
-                        >
-                          {category.title}
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Demos</CardTitle>
+              <CardDescription>Browse all available demos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col space-y-1">
+                {demoStructure.map((category) => (
+                  <div key={category.id} className="space-y-1">
+                    {category.children ? (
+                      // Category with children
+                      <Collapsible
+                        open={expandedCategories[category.id]}
+                        onOpenChange={() => toggleCategory(category.id)}
+                      >
+                        <CollapsibleTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-between"
+                          >
+                            {category.title}
+                            {expandedCategories[category.id] ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="pl-4 space-y-1 mt-1">
+                            {category.children.map((child) => (
+                              <Button
+                                key={child.id}
+                                variant={
+                                  activeDemo === child.id ? 'accent' : 'ghost'
+                                }
+                                size="sm"
+                                className="w-full justify-start"
+                                onClick={() => selectDemo(child.id)}
+                              >
+                                {child.title}
+                              </Button>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ) : (
+                      // Standalone item
+                      <Button
+                        variant={
+                          activeDemo === category.id ? 'accent' : 'ghost'
+                        }
+                        className="w-full justify-start"
+                        onClick={() => selectDemo(category.id)}
+                      >
+                        {category.title}
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         {/* Main Content */}
         <div className="lg:col-span-3">
           <Card>
@@ -336,12 +326,10 @@ function App() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="demo" className="w-full">
-                {isDev && (
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="demo">Demo</TabsTrigger>
-                    <TabsTrigger value="code">Code</TabsTrigger>
-                  </TabsList>
-                )}
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="demo">Demo</TabsTrigger>
+                  <TabsTrigger value="code">Code</TabsTrigger>
+                </TabsList>
                 <TabsContent value="demo" className="mt-4">
                   {React.createElement(currentDemo.component as $TSFixMe)}
                 </TabsContent>

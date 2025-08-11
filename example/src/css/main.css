@@ -485,6 +485,13 @@ button.reset-button {
   padding: 16px 0;
 }
 
+.input-description {
+  font-size: 14px;
+  color: #71717a;
+  line-height: 20px;
+  margin-top: 4px;
+}
+
 /* Input field styling */
 .input {
   width: 100%;
