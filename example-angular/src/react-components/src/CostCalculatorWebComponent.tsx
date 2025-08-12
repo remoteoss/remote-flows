@@ -120,6 +120,7 @@ class CostCalculatorWebComponent extends HTMLElement {
 
     try {
       config = JSON.parse(configStr);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e: $TSFixMe) {
       console.error("Invalid config JSON:", configStr);
       config = {
