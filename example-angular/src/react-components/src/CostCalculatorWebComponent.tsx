@@ -9,6 +9,8 @@ import {
   RemoteFlows,
 } from "@remoteoss/remote-flows";
 
+import { environment } from "../../environments/environment";
+
 // React wrapper component that uses Remote Flows components unchanged
 const CostCalculatorWrapper: React.FC<any> = ({
   config,
@@ -25,12 +27,17 @@ const CostCalculatorWrapper: React.FC<any> = ({
   return (
     <RemoteFlows
       authId={"client"}
-      auth={() =>
-        Promise.resolve({
-          accessToken: "123",
-          expiresIn: 1000,
-        })
-      }
+      environment={environment.remoteFlows.gateway || "partners"}
+      auth={() => {
+        const accessToken = btoa(
+          `${environment.remoteFlows.clientId}:${environment.remoteFlows.clientToken}`,
+        );
+
+        return Promise.resolve({
+          accessToken: accessToken || "",
+          expiresIn: 3600, // Default expiration time in seconds
+        });
+      }}
     >
       <CostCalculatorFlow
         estimationOptions={config.estimationOptions}
@@ -138,7 +145,7 @@ class CostCalculatorWebComponent extends HTMLElement {
             detail: payload,
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       },
       onSuccess: (response: any) => {
@@ -147,7 +154,7 @@ class CostCalculatorWebComponent extends HTMLElement {
             detail: response,
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       },
       onError: (error: any) => {
@@ -156,7 +163,7 @@ class CostCalculatorWebComponent extends HTMLElement {
             detail: error,
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       },
       onReset: () => {
@@ -164,7 +171,7 @@ class CostCalculatorWebComponent extends HTMLElement {
           new CustomEvent("resetEvent", {
             bubbles: true,
             composed: true,
-          })
+          }),
         );
       },
     };
