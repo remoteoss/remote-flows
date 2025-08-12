@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { CostCalculatorComponent } from './components/cost-calculator/cost-calculator.component';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterOutlet } from "@angular/router";
+import { CostCalculatorComponent } from "./components/cost-calculator/cost-calculator.component";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   template: `
     <div class="app">
       <app-cost-calculator></app-cost-calculator>
@@ -23,5 +23,5 @@ import { CostCalculatorComponent } from './components/cost-calculator/cost-calcu
   standalone: true,
 })
 export class App {
-  title = 'remote-flows-angular';
+  title = "remote-flows-angular";
 }
