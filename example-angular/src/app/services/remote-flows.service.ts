@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { $TSFixMe } from "@remoteoss/remote-flows";
+import { BehaviorSubject } from "rxjs";
 
 export interface CostCalculatorConfig {
   estimationOptions: {
@@ -16,31 +17,31 @@ export interface CostCalculatorConfig {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class RemoteFlowsService {
-  private resultsSubject = new BehaviorSubject<any>(null);
-  private payloadSubject = new BehaviorSubject<any>(null);
+  private resultsSubject = new BehaviorSubject<$TSFixMe>(null);
+  private payloadSubject = new BehaviorSubject<$TSFixMe>(null);
 
   public results$ = this.resultsSubject.asObservable();
   public payload$ = this.payloadSubject.asObservable();
 
-  handleSubmit(payload: any) {
-    console.log('Angular service - submit:', payload);
+  handleSubmit(payload: $TSFixMe) {
+    console.log("Angular service - submit:", payload);
     this.payloadSubject.next(payload);
   }
 
-  handleSuccess(response: any) {
-    console.log('Angular service - success:', response);
+  handleSuccess(response: $TSFixMe) {
+    console.log("Angular service - success:", response);
     this.resultsSubject.next(response);
   }
 
-  handleError(error: any) {
-    console.error('Angular service - error:', error);
+  handleError(error: $TSFixMe) {
+    console.error("Angular service - error:", error);
   }
 
   handleReset() {
-    console.log('Angular service - reset');
+    console.log("Angular service - reset");
     this.resultsSubject.next(null);
     this.payloadSubject.next(null);
   }

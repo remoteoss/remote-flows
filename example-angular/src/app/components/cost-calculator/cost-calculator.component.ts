@@ -5,17 +5,18 @@ import {
   ViewChild,
   ElementRef,
   CUSTOM_ELEMENTS_SCHEMA,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Subject, takeUntil } from "rxjs";
 import {
   RemoteFlowsService,
   CostCalculatorConfig,
-} from '../../services/remote-flows.service';
+} from "../../services/remote-flows.service";
+import { $TSFixMe } from "@remoteoss/remote-flows";
 
 @Component({
-  selector: 'app-cost-calculator',
+  selector: "app-cost-calculator",
   template: `
     <div class="cost-calculator-container">
       <div class="header">
@@ -58,12 +59,12 @@ import {
           <div class="status-item">
             <span class="label">Web Component:</span>
             <span class="value" [class.loaded]="isWebComponentLoaded">
-              {{ isWebComponentLoaded ? 'Loaded' : 'Loading...' }}
+              {{ isWebComponentLoaded ? "Loaded" : "Loading..." }}
             </span>
           </div>
           <div class="status-item">
             <span class="label">Last Event:</span>
-            <span class="value">{{ lastEventType || 'None' }}</span>
+            <span class="value">{{ lastEventType || "None" }}</span>
           </div>
         </div>
       </div>
@@ -91,7 +92,9 @@ import {
               <strong>{{ results.data.employments[0]?.country?.name }}</strong>
             </div>
           </div>
-
+          <div class="result-body">
+            <pre>{{ results | json }}</pre>
+          </div>
           <div class="result-actions">
             <button
               class="btn-primary"
@@ -104,7 +107,7 @@ import {
               Clear Results
             </button>
             <button class="btn-toggle" (click)="toggleDebug()">
-              {{ showDebug ? 'Hide' : 'Show' }} Debug
+              {{ showDebug ? "Hide" : "Show" }} Debug
             </button>
           </div>
         </div>
@@ -143,7 +146,7 @@ import {
       </div>
     </div>
   `,
-  styleUrls: ['./cost-calculator.component.css'],
+  styleUrls: ["./cost-calculator.component.css"],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, FormsModule],
   standalone: true,
@@ -151,23 +154,21 @@ import {
 export class CostCalculatorComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  @ViewChild('calculator') calculator!: ElementRef;
+  @ViewChild("calculator") calculator!: ElementRef;
 
   config: CostCalculatorConfig = {
     estimationOptions: {
-      title: 'Estimate for a new company',
+      title: "Estimate for a new company",
       includeBenefits: true,
       includeCostBreakdowns: true,
     },
-    isClientToken: true,
-    proxy: { url: window.location.origin },
   };
 
-  results: any = null;
-  lastPayload: any = null;
-  lastEventType: string = '';
+  results: $TSFixMe = null;
+  lastPayload: $TSFixMe = null;
+  lastEventType: string = "";
   showDebug = false;
-  activeDebugTab: 'config' | 'payload' | 'results' = 'config';
+  activeDebugTab: "config" | "payload" | "results" = "config";
   isWebComponentLoaded = false;
 
   constructor(private remoteFlowsService: RemoteFlowsService) {}
@@ -184,20 +185,20 @@ export class CostCalculatorComponent implements OnInit, OnDestroy {
 
   private loadWebComponent() {
     // Check if already loaded
-    if (customElements.get('cost-calculator-widget')) {
+    if (customElements.get("cost-calculator-widget")) {
       this.isWebComponentLoaded = true;
       return;
     }
 
     // Load the web component script
-    const script = document.createElement('script');
-    script.src = '/assets/js/remote-flows-widgets.js';
+    const script = document.createElement("script");
+    script.src = "/assets/js/remote-flows-widgets.js";
     script.onload = () => {
-      console.log('Web component script loaded');
+      console.log("Web component script loaded");
       this.isWebComponentLoaded = true;
     };
     script.onerror = (error) => {
-      console.error('Failed to load web component script:', error);
+      console.error("Failed to load web component script:", error);
     };
     document.head.appendChild(script);
   }
@@ -225,7 +226,7 @@ export class CostCalculatorComponent implements OnInit, OnDestroy {
   }
 
   updateConfig() {
-    console.log('Config updated:', this.config);
+    console.log("Config updated:", this.config);
     // The web component will automatically pick up the new config
     // via the observed attributes
   }
@@ -233,39 +234,39 @@ export class CostCalculatorComponent implements OnInit, OnDestroy {
   // Event handlers for web component events
   // Event handlers for web component events
   onSubmit(event: Event) {
-    this.lastEventType = 'submit';
+    this.lastEventType = "submit";
     const customEvent = event as CustomEvent;
-    console.log('Angular received submit event:', customEvent.detail);
+    console.log("Angular received submit event:", customEvent.detail);
     this.remoteFlowsService.handleSubmit(customEvent.detail);
   }
 
   onSuccess(event: Event) {
-    this.lastEventType = 'success';
+    this.lastEventType = "success";
     const customEvent = event as CustomEvent;
-    console.log('Angular received success event:', customEvent.detail);
+    console.log("Angular received success event:", customEvent.detail);
     this.remoteFlowsService.handleSuccess(customEvent.detail);
   }
 
   onError(event: Event) {
-    this.lastEventType = 'error';
+    this.lastEventType = "error";
     const customEvent = event as CustomEvent;
-    console.log('Angular received error event:', customEvent.detail);
+    console.log("Angular received error event:", customEvent.detail);
     this.remoteFlowsService.handleError(customEvent.detail);
   }
 
   onReset(event: Event) {
-    this.lastEventType = 'reset';
+    this.lastEventType = "reset";
     const customEvent = event as CustomEvent;
-    console.log('Angular received reset event');
+    console.log("Angular received reset event", customEvent);
     this.remoteFlowsService.handleReset();
   }
 
   exportResults() {
     if (this.canExport) {
-      console.log('Exporting PDF with payload:', this.lastPayload);
+      console.log("Exporting PDF with payload:", this.lastPayload);
       // Here you would implement the actual PDF export
       // You could call the Remote Flows PDF export functionality
-      alert('PDF export functionality would be implemented here');
+      alert("PDF export functionality would be implemented here");
     }
   }
 
