@@ -7,12 +7,13 @@ import {
   CostCalculatorResetButton,
   CostCalculatorDisclaimer,
   RemoteFlows,
+  $TSFixMe,
 } from "@remoteoss/remote-flows";
 
 import { environment } from "../../environments/environment";
 
 // React wrapper component that uses Remote Flows components unchanged
-const CostCalculatorWrapper: React.FC<any> = ({
+const CostCalculatorWrapper: React.FC<$TSFixMe> = ({
   config,
   onSuccess,
   onError,
@@ -86,7 +87,7 @@ const CostCalculatorWrapper: React.FC<any> = ({
 
 // Web Component class that bridges Angular and React
 class CostCalculatorWebComponent extends HTMLElement {
-  private root: any;
+  private root: $TSFixMe;
   private mountPoint: HTMLDivElement;
 
   static get observedAttributes() {
@@ -119,7 +120,7 @@ class CostCalculatorWebComponent extends HTMLElement {
 
     try {
       config = JSON.parse(configStr);
-    } catch (e) {
+    } catch (e: $TSFixMe) {
       console.error("Invalid config JSON:", configStr);
       config = {
         estimationOptions: {
@@ -139,7 +140,7 @@ class CostCalculatorWebComponent extends HTMLElement {
     // Event handlers that dispatch custom events to Angular
     const props = {
       config,
-      onSubmit: (payload: any) => {
+      onSubmit: (payload: $TSFixMe) => {
         this.dispatchEvent(
           new CustomEvent("submitEvent", {
             detail: payload,
@@ -148,7 +149,7 @@ class CostCalculatorWebComponent extends HTMLElement {
           }),
         );
       },
-      onSuccess: (response: any) => {
+      onSuccess: (response: $TSFixMe) => {
         this.dispatchEvent(
           new CustomEvent("successEvent", {
             detail: response,
@@ -157,7 +158,7 @@ class CostCalculatorWebComponent extends HTMLElement {
           }),
         );
       },
-      onError: (error: any) => {
+      onError: (error: $TSFixMe) => {
         this.dispatchEvent(
           new CustomEvent("errorEvent", {
             detail: error,
