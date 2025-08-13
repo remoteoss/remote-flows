@@ -4,18 +4,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from './components/card';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
-import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
-
-import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './components/collapsible';
+  Button,
+} from '@remoteoss/remote-flows/internal';
+
+import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
+
 import { useState } from 'react';
-import { Button } from './components/button';
 import { cn } from './utils';
 import React from 'react';
 import type { $TSFixMe } from '@remoteoss/remote-flows';
