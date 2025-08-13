@@ -102,6 +102,10 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         </div>
       </div>
 
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
+
       {fieldState.error && (
         <p className="error-message">{fieldState.error.message}</p>
       )}

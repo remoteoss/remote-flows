@@ -1,0 +1,49 @@
+/* Margin utilities added as a workaround. Tailwind utilities stopped working at mt-4 */
+
+.mt-5 {
+  margin-top: calc(var(--spacing) * 5);
+}
+
+.mt-6 {
+  margin-top: calc(var(--spacing) * 6);
+}
+
+.mt-7 {
+  margin-top: calc(var(--spacing) * 7);
+}
+
+.mt-8 {
+  margin-top: calc(var(--spacing) * 8);
+}
+
+.mt-9 {
+  margin-top: calc(var(--spacing) * 9);
+}
+
+.mt-10 {
+  margin-top: calc(var(--spacing) * 10);
+}
+
+.mb-5 {
+  margin-bottom: calc(var(--spacing) * 5);
+}
+
+.mb-6 {
+  margin-bottom: calc(var(--spacing) * 6);
+}
+
+.mb-7 {
+  margin-bottom: calc(var(--spacing) * 7);
+}
+
+.mb-8 {
+  margin-bottom: calc(var(--spacing) * 8);
+}
+
+.mb-9 {
+  margin-bottom: calc(var(--spacing) * 9);
+}
+
+.mb-10 {
+  margin-bottom: calc(var(--spacing) * 10);
+}
