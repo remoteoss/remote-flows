@@ -4,7 +4,11 @@ import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBe
 import App from './App.tsx';
 
 const RenderPremiumBenefits = () => {
+<<<<<<< HEAD
   if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS === 'true') {
+=======
+  if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS) {
+>>>>>>> main
     return <CostCalculatorWithPremiumBenefits />;
   }
   return <App />;
