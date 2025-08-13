@@ -115,12 +115,12 @@ const InitialForm = ({
               currency: {
                 title: 'Employer billing currency',
                 description:
-                  'Select the currency you want to be invoiced in for this employee’s services.',
+                  "Select the currency you want to be invoiced in for this employee's services.",
               },
               salary: {
                 title: "Employee's annual salary",
                 description:
-                  'We will use your selected billing currency, but you can also convert it to the employee’s local currency.',
+                  "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
               },
             },
           },
@@ -166,6 +166,10 @@ const ResultsView = ({
     return null;
   }
 
+  const primaryEmployment = estimations.data.employments?.[0];
+
+  const country = primaryEmployment?.country;
+
   return (
     <>
       <Header />
@@ -176,12 +180,14 @@ const ResultsView = ({
           onCSVExport={() => {}}
         />
       </div>
-      <div className="mt-4 mb-2 flex gap-2">
-        <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
-        <label className="text-md font-bold">
-          {estimations.data.employments?.[0].country.name}
-        </label>
-      </div>
+      {country && (
+        <div className="mt-4 mb-2 flex gap-2">
+          <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
+          <label className="text-md font-bold">
+            {estimations.data.employments?.[0].country.name}
+          </label>
+        </div>
+      )}
       <CostCalculatorResults employmentData={estimations.data} />
     </>
   );
