@@ -57,28 +57,35 @@ const ActionToolbar = ({
 }) => {
   return (
     <div className="premium-benefits-action-toolbar">
-      <button
-        className="premium-benefits-action-toolbar__button"
-        onClick={onReset}
-      >
-        Reset
-      </button>
-      <button
-        className="premium-benefits-action-toolbar__button"
-        onClick={onCSVExport}
-        disabled
-      >
-        Export as CSV
-      </button>
-      <button
-        className="premium-benefits-action-toolbar__button"
-        onClick={onExportPdf}
-      >
-        Export as PDF
-      </button>
-      <button className="premium-benefits-action-toolbar__button">
-        Add estimate
-      </button>
+      <div>
+        <button
+          className="premium-benefits-action-toolbar__button"
+          onClick={onReset}
+        >
+          Reset estimate
+        </button>
+      </div>
+      <div className="flex gap-2">
+        <button
+          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary"
+          onClick={onCSVExport}
+          disabled
+        >
+          Export as CSV
+        </button>
+        <button
+          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary"
+          onClick={onExportPdf}
+        >
+          Export as PDF
+        </button>
+        <button
+          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
+          disabled
+        >
+          Add estimate
+        </button>
+      </div>
     </div>
   );
 };
@@ -162,11 +169,13 @@ const ResultsView = ({
   return (
     <>
       <Header />
-      <ActionToolbar
-        onReset={onReset}
-        onExportPdf={onExportPdf}
-        onCSVExport={() => {}}
-      />
+      <div className="mb-8">
+        <ActionToolbar
+          onReset={onReset}
+          onExportPdf={onExportPdf}
+          onCSVExport={() => {}}
+        />
+      </div>
       <div className="mt-4 mb-2 flex gap-2">
         <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
         <label className="text-md font-bold">
