@@ -12,12 +12,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Button,
+  cn,
 } from '@remoteoss/remote-flows/internal';
 
 import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
 
 import { useState } from 'react';
-import { cn } from './utils';
 import React from 'react';
 import type { $TSFixMe } from '@remoteoss/remote-flows';
 import { BasicCostCalculator } from './BasicCostCalculator';
@@ -288,7 +288,7 @@ function App() {
                               <Button
                                 key={child.id}
                                 variant={
-                                  activeDemo === child.id ? 'accent' : 'ghost'
+                                  activeDemo === child.id ? 'default' : 'ghost'
                                 }
                                 size="sm"
                                 className="w-full justify-start"
@@ -304,7 +304,7 @@ function App() {
                       // Standalone item
                       <Button
                         variant={
-                          activeDemo === category.id ? 'accent' : 'ghost'
+                          activeDemo === category.id ? 'default' : 'ghost'
                         }
                         className="w-full justify-start"
                         onClick={() => selectDemo(category.id)}
