@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { defaultEstimationOptions } from '../hooks';
 import type { CostCalculatorEstimationSubmitValues } from '../types';
 import { buildPayload } from '../utils';
-import { CostCalculatorEstimateParams } from '@/src/client';
 
 describe('buildPayload', () => {
   it('should build a payload with minimal values', () => {
