@@ -19,6 +19,7 @@ Welcome to the `@remoteoss/remote-flows` package, a React library that provides 
 - [Advanced Usage](#advanced-usage)
   - [Custom Implementation](#custom-implementation)
 - [Example](#example)
+- [Release Process](#release-process)
 
 ## Installation
 
@@ -305,3 +306,24 @@ function CustomCostCalculator() {
 ## Example
 
 For a complete implementation example, refer to our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
+
+## Release Process
+
+1. **Create a changeset**
+   Run the following command and fill in the required fields:
+
+   ```bash
+   npm changeset:add
+   ```
+
+2. **Open a Pull Request**
+   Commit the changeset and open a PR with your changes.
+
+3. **Merge the PR**
+   Once your PR is merged, GitHub will automatically open a new PR containing the release changes.
+
+4. **Review the Release PR**
+   Review the generated release PR, edit it if necessary (e.g., adjust changelog or version), and then merge it.
+
+5. **Publish**
+   After the release PR is merged, the npm package will be published automatically.
