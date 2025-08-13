@@ -7,7 +7,6 @@ import {
   buildCostCalculatorEstimationPayload,
   CostCalculatorFlow,
   CostCalculatorForm,
-  CostCalculatorResetButton,
   CostCalculatorResults,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
@@ -28,6 +27,62 @@ const estimationOptions = {
   enableCurrencyConversion: true,
 };
 
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="premium-benefits-wrapper">
+      <div className="premium-benefits-container">{children}</div>
+    </div>
+  );
+};
+
+const Header = () => {
+  return (
+    <div className="premium-benefits-header">
+      <h1>Cost calculator</h1>
+      <p>Estimate the cost to hire someone through Remote</p>
+      {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
+      {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
+    </div>
+  );
+};
+
+const ActionToolbar = ({
+  onReset,
+  onExportPdf,
+  onCSVExport,
+}: {
+  onReset: () => void;
+  onExportPdf: () => void;
+  onCSVExport: () => void;
+}) => {
+  return (
+    <div className="premium-benefits-action-toolbar">
+      <button
+        className="premium-benefits-action-toolbar__button"
+        onClick={onReset}
+      >
+        Reset
+      </button>
+      <button
+        className="premium-benefits-action-toolbar__button"
+        onClick={onCSVExport}
+        disabled
+      >
+        Export as CSV
+      </button>
+      <button
+        className="premium-benefits-action-toolbar__button"
+        onClick={onExportPdf}
+      >
+        Export as PDF
+      </button>
+      <button className="premium-benefits-action-toolbar__button">
+        Add estimate
+      </button>
+    </div>
+  );
+};
+
 const InitialForm = ({
   onSubmit,
   onError,
@@ -38,63 +93,56 @@ const InitialForm = ({
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
 }) => {
   return (
-    <div className="premium-benefits-wrapper">
-      <div className="premium-benefits-container">
-        <div className="premium-benefits-header">
-          <h1>Cost calculator</h1>
-          <p>Estimate the cost to hire someone through Remote</p>
-          {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
-          {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
-        </div>
-        <CostCalculatorFlow
-          estimationOptions={estimationOptions}
-          options={{
-            jsfModify: {
-              fields: {
-                country: {
-                  title: 'Employee country',
-                  description:
-                    'Select the country where the employee will primarily live and work',
-                },
-                currency: {
-                  title: 'Employer billing currency',
-                  description:
-                    'Select the currency you want to be invoiced in for this employee’s services.',
-                },
-                salary: {
-                  title: "Employee's annual salary",
-                  description:
-                    'We will use your selected billing currency, but you can also convert it to the employee’s local currency.',
-                },
+    <>
+      <Header />
+      <CostCalculatorFlow
+        estimationOptions={estimationOptions}
+        options={{
+          jsfModify: {
+            fields: {
+              country: {
+                title: 'Employee country',
+                description:
+                  'Select the country where the employee will primarily live and work',
+              },
+              currency: {
+                title: 'Employer billing currency',
+                description:
+                  'Select the currency you want to be invoiced in for this employee’s services.',
+              },
+              salary: {
+                title: "Employee's annual salary",
+                description:
+                  'We will use your selected billing currency, but you can also convert it to the employee’s local currency.',
               },
             },
-          }}
-          render={(props) => {
-            if (props.isLoading) {
-              return <div>Loading...</div>;
-            }
+          },
+        }}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
 
-            return (
-              <div className="premium-benefits-form-container">
-                <CostCalculatorForm
-                  onSubmit={onSubmit}
-                  onError={onError}
-                  onSuccess={onSuccess}
-                />
-                <div className="flex justify-center mt-10">
-                  <CostCalculatorSubmitButton
-                    className="submit-button"
-                    disabled={props.isSubmitting}
-                  >
-                    Get estimate
-                  </CostCalculatorSubmitButton>
-                </div>
+          return (
+            <div className="premium-benefits-form-container">
+              <CostCalculatorForm
+                onSubmit={onSubmit}
+                onError={onError}
+                onSuccess={onSuccess}
+              />
+              <div className="flex justify-center mt-10">
+                <CostCalculatorSubmitButton
+                  className="submit-button"
+                  disabled={props.isSubmitting}
+                >
+                  Get estimate
+                </CostCalculatorSubmitButton>
               </div>
-            );
-          }}
-        />
-      </div>
-    </div>
+            </div>
+          );
+        }}
+      />
+    </>
   );
 };
 
@@ -112,7 +160,13 @@ const ResultsView = ({
   }
 
   return (
-    <div>
+    <>
+      <Header />
+      <ActionToolbar
+        onReset={onReset}
+        onExportPdf={onExportPdf}
+        onCSVExport={() => {}}
+      />
       <div className="mt-4 mb-2 flex gap-2">
         <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
         <label className="text-md font-bold">
@@ -120,12 +174,7 @@ const ResultsView = ({
         </label>
       </div>
       <CostCalculatorResults employmentData={estimations.data} />
-      <div className="mt-2">
-        <button className="submit-button" onClick={onExportPdf}>
-          Export as PDF
-        </button>
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -165,10 +214,12 @@ function CostCalculatorFormDemo() {
     }
   };
   return (
-    <>
+    <Layout>
       {!estimations ? (
         <InitialForm
-          onSubmit={(payload) => console.log({ payload })}
+          onSubmit={(payload) => {
+            setPayload(payload);
+          }}
           onError={(error) => console.error({ error })}
           onSuccess={(response) => {
             setEstimations(response);
@@ -181,7 +232,7 @@ function CostCalculatorFormDemo() {
           onReset={onReset}
         />
       )}
-    </>
+    </Layout>
   );
 }
 
