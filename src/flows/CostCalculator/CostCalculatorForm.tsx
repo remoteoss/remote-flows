@@ -3,10 +3,10 @@ import { CostCalculatorEstimateResponse } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
-import { EstimationError } from '@/src/flows/CostCalculator/hooks';
 import {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationSubmitValues,
+  EstimationError,
 } from '@/src/flows/CostCalculator/types';
 
 type CostCalculatorFormProps = Partial<{
