@@ -14,12 +14,10 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from '@remoteoss/remote-flows/internal';
 import Flag from 'react-flagpack';
-import { useState } from 'react';
+import { ButtonHTMLAttributes, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import './css/main.css';
@@ -42,36 +40,56 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const Header = () => {
+const Header = ({
+  title = 'Cost calculator',
+  description = 'Estimate the cost to hire someone through Remote',
+}: {
+  title?: string;
+  description?: string;
+}) => {
   return (
     <div className="premium-benefits-header">
-      <h1>Cost calculator</h1>
-      <p>Estimate the cost to hire someone through Remote</p>
+      <h1>{title}</h1>
+      <p>{description}</p>
       {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
       {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
     </div>
   );
 };
 
-const AddEstimateButton = (props: { disabled: boolean }) => {
+const AddEstimateButton = ({
+  buttonProps,
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+}) => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <button
           className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
-          {...props}
+          {...buttonProps}
         >
           Add estimate
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Add estimate</DrawerTitle>
-        </DrawerHeader>
-        <p>
-          Add a new estimate to your account. This will be saved and you can
-          access it later.
-        </p>
+        <div className="mt-10 mb-8">
+          <Header
+            title="Add estimate"
+            description="Estimate the cost of another hire through Remote"
+          />
+        </div>
+        <AddEstimateForm
+          onSubmit={onSubmit}
+          onError={onError}
+          onSuccess={onSuccess}
+        />
       </DrawerContent>
     </Drawer>
   );
@@ -110,9 +128,73 @@ const ActionToolbar = ({
         >
           Export as PDF
         </button>
-        <AddEstimateButton disabled={false} />
+        <AddEstimateButton
+          onSubmit={() => {}}
+          onError={() => {}}
+          onSuccess={() => {}}
+        />
       </div>
     </div>
+  );
+};
+
+const AddEstimateForm = ({
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+}) => {
+  return (
+    <CostCalculatorFlow
+      estimationOptions={estimationOptions}
+      options={{
+        jsfModify: {
+          fields: {
+            country: {
+              title: 'Employee country',
+              description:
+                'Select the country where the employee will primarily live and work',
+            },
+            currency: {
+              title: 'Employer billing currency',
+              description:
+                "Select the currency you want to be invoiced in for this employee's services.",
+            },
+            salary: {
+              title: "Employee's annual salary",
+              description:
+                "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
+            },
+          },
+        },
+      }}
+      render={(props) => {
+        if (props.isLoading) {
+          return <div>Loading...</div>;
+        }
+
+        return (
+          <div className="premium-benefits-form-container">
+            <CostCalculatorForm
+              onSubmit={onSubmit}
+              onError={onError}
+              onSuccess={onSuccess}
+            />
+            <div className="flex justify-center mt-10">
+              <CostCalculatorSubmitButton
+                className="submit-button"
+                disabled={props.isSubmitting}
+              >
+                Get estimate
+              </CostCalculatorSubmitButton>
+            </div>
+          </div>
+        );
+      }}
+    />
   );
 };
 
@@ -128,52 +210,10 @@ const InitialForm = ({
   return (
     <>
       <Header />
-      <CostCalculatorFlow
-        estimationOptions={estimationOptions}
-        options={{
-          jsfModify: {
-            fields: {
-              country: {
-                title: 'Employee country',
-                description:
-                  'Select the country where the employee will primarily live and work',
-              },
-              currency: {
-                title: 'Employer billing currency',
-                description:
-                  "Select the currency you want to be invoiced in for this employee's services.",
-              },
-              salary: {
-                title: "Employee's annual salary",
-                description:
-                  "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
-              },
-            },
-          },
-        }}
-        render={(props) => {
-          if (props.isLoading) {
-            return <div>Loading...</div>;
-          }
-
-          return (
-            <div className="premium-benefits-form-container">
-              <CostCalculatorForm
-                onSubmit={onSubmit}
-                onError={onError}
-                onSuccess={onSuccess}
-              />
-              <div className="flex justify-center mt-10">
-                <CostCalculatorSubmitButton
-                  className="submit-button"
-                  disabled={props.isSubmitting}
-                >
-                  Get estimate
-                </CostCalculatorSubmitButton>
-              </div>
-            </div>
-          );
-        }}
+      <AddEstimateForm
+        onSubmit={onSubmit}
+        onError={onError}
+        onSuccess={onSuccess}
       />
     </>
   );
