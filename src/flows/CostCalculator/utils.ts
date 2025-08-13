@@ -46,6 +46,24 @@ function formatBenefits(benefits: Record<string, string>) {
   }, []);
 }
 
+function mapValueToEmployment(
+  value: CostCalculatorEstimationSubmitValues,
+  estimationOptions: CostCalculatorEstimationOptions,
+  version: CostCalculatorVersion,
+) {
+  return {
+    region_slug: value.region || value.country,
+    annual_gross_salary_in_employer_currency: value.salary,
+    employment_term: value.contract_duration_type ?? 'fixed',
+    title: estimationOptions.title,
+    age: value.age ?? undefined,
+    ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
+    ...(version === 'standard' && {
+      annual_gross_salary: value.salary,
+    }),
+  };
+}
+
 /**
  * Build the payload for the cost calculator estimation.
  * @param values
@@ -53,27 +71,34 @@ function formatBenefits(benefits: Record<string, string>) {
  * @returns
  */
 export function buildPayload(
-  values: CostCalculatorEstimationSubmitValues,
+  values:
+    | CostCalculatorEstimationSubmitValues
+    | CostCalculatorEstimationSubmitValues[],
   estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
   version: CostCalculatorVersion = 'standard',
-): CostCalculatorEstimateParams {
+): CostCalculatorEstimateParams | CostCalculatorEstimateParams[] {
+  const employments = Array.isArray(values) ? values : [values];
+
+  if (employments.length === 0) {
+    throw new Error('At least one employment value is required');
+  }
+
+  if (employments.length > 1) {
+    const currencies = new Set(employments.map((v) => v.currency));
+    if (currencies.size > 1) {
+      console.warn(
+        'Multiple currencies detected in array. Using currency from first employment.',
+      );
+    }
+  }
+
   return {
-    employer_currency_slug: values.currency,
+    employer_currency_slug: employments[0].currency,
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
-    employments: [
-      {
-        region_slug: values.region || values.country,
-        annual_gross_salary_in_employer_currency: values.salary,
-        employment_term: values.contract_duration_type ?? 'fixed',
-        title: estimationOptions.title,
-        age: values.age ?? undefined,
-        ...(values.benefits && { benefits: formatBenefits(values.benefits) }),
-        ...(version === 'standard' && {
-          annual_gross_salary: values.salary,
-        }),
-      },
-    ],
+    employments: employments.map((value) =>
+      mapValueToEmployment(value, estimationOptions, version),
+    ),
   };
 }

@@ -19,7 +19,7 @@ import {
   DrawerTrigger,
 } from '@remoteoss/remote-flows/internal';
 import Flag from 'react-flagpack';
-import { ButtonHTMLAttributes, useState } from 'react';
+import { ButtonHTMLAttributes, Fragment, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import './css/main.css';
@@ -111,11 +111,13 @@ const ActionToolbar = ({
   onExportPdf,
   onCSVExport,
   onAddEstimate,
+  onSavePayload,
 }: {
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -145,7 +147,9 @@ const ActionToolbar = ({
         <AddEstimateButton
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
-          onSubmit={() => {}}
+          onSubmit={(payload) => {
+            onSavePayload(payload);
+          }}
           onError={() => {}}
           onSuccess={(estimation) => {
             onAddEstimate(estimation);
@@ -243,11 +247,13 @@ const ResultsView = ({
   onExportPdf,
   onReset,
   onAddEstimate,
+  onSavePayload,
 }: {
   estimations: CostCalculatorEstimateResponse[];
   onExportPdf: () => void;
   onReset: () => void;
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
   if (!estimations) {
     return null;
@@ -262,14 +268,15 @@ const ResultsView = ({
           onExportPdf={onExportPdf}
           onCSVExport={() => {}}
           onAddEstimate={onAddEstimate}
+          onSavePayload={onSavePayload}
         />
       </div>
-      {estimations.map((estimation) => {
+      {estimations.map((estimation, index) => {
         const primaryEmployment = estimation.data.employments?.[0];
         const country = primaryEmployment?.country;
 
         return (
-          <>
+          <Fragment key={index}>
             {country && (
               <div className="mt-4 mb-2 flex gap-2">
                 <Flag
@@ -281,7 +288,7 @@ const ResultsView = ({
               </div>
             )}
             <CostCalculatorResults employmentData={estimation.data} />
-          </>
+          </Fragment>
         );
       })}
     </>
@@ -292,8 +299,9 @@ function CostCalculatorFormDemo() {
   const [estimations, setEstimations] = useState<
     CostCalculatorEstimateResponse[]
   >([]);
-  const [payload, setPayload] =
-    useState<CostCalculatorEstimationSubmitValues | null>(null);
+  const [payload, setPayload] = useState<
+    CostCalculatorEstimationSubmitValues[]
+  >([]);
 
   const onReset = () => {
     setEstimations([]);
@@ -301,6 +309,12 @@ function CostCalculatorFormDemo() {
 
   const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
     setEstimations([...estimations, estimation]);
+  };
+
+  const onSavePayload = (
+    estimation: CostCalculatorEstimationSubmitValues[],
+  ) => {
+    setPayload([...payload, estimation]);
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
@@ -333,7 +347,7 @@ function CostCalculatorFormDemo() {
       {estimations.length === 0 ? (
         <InitialForm
           onSubmit={(payload) => {
-            setPayload(payload);
+            setPayload([payload]);
           }}
           onError={(error) => console.error({ error })}
           onSuccess={(response) => {
@@ -346,6 +360,7 @@ function CostCalculatorFormDemo() {
           onExportPdf={handleExportPdf}
           onReset={onReset}
           onAddEstimate={onAddEstimate}
+          onSavePayload={onSavePayload}
         />
       )}
     </Layout>
