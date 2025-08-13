@@ -20,6 +20,7 @@ Welcome to the `@remoteoss/remote-flows` package, a React library that provides 
   - [Custom Implementation](#custom-implementation)
 - [Example](#example)
 - [Release Process](#release-process)
+- [Internals](#internals)
 
 ## Installation
 
@@ -327,3 +328,11 @@ For a complete implementation example, refer to our [example application](https:
 
 5. **Publish**
    After the release PR is merged, the npm package will be published automatically.
+
+## Internals
+
+We have created an entry point in the package `@remoteoss/remote-flows/internals`
+
+This entry endpoint exports internals utils and shadcn components to avoid duplicating these on the `example` folder.
+
+We don't guarantee `semver` compatiblity if you used them in your project.
