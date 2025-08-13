@@ -20,14 +20,14 @@ export const useRouter = () => {
   }, []);
 
   const setSearchParams = useCallback(
-    (params: Record<string, string | null>) => {
+    (params: Record<string, string | number | null>) => {
       const url = new URL(window.location.href);
 
       Object.entries(params).forEach(([key, value]) => {
         if (value === null) {
           url.searchParams.delete(key);
         } else {
-          url.searchParams.set(key, value);
+          url.searchParams.set(key, value.toString());
         }
       });
 

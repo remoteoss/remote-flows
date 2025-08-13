@@ -7,9 +7,6 @@
  * Use at your own risk.
  */
 
-// Re-export all public APIs for convenience
-export * from './index';
-
 // Internal utilities
 export { useRouter } from './lib/router';
 export { useSearchParams } from './lib/useSearchParams';
