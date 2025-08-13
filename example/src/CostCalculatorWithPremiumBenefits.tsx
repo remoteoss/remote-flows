@@ -11,6 +11,13 @@ import {
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
 } from '@remoteoss/remote-flows';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@remoteoss/remote-flows/internal';
 import Flag from 'react-flagpack';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -43,6 +50,30 @@ const Header = () => {
       {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
       {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
     </div>
+  );
+};
+
+const AddEstimateButton = (props: { disabled: boolean }) => {
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <button
+          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
+          {...props}
+        >
+          Add estimate
+        </button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Add estimate</DrawerTitle>
+        </DrawerHeader>
+        <p>
+          Add a new estimate to your account. This will be saved and you can
+          access it later.
+        </p>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
@@ -79,12 +110,7 @@ const ActionToolbar = ({
         >
           Export as PDF
         </button>
-        <button
-          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
-          disabled
-        >
-          Add estimate
-        </button>
+        <AddEstimateButton disabled={false} />
       </div>
     </div>
   );

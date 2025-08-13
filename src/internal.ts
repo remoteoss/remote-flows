@@ -31,6 +31,14 @@ export {
 } from './components/ui/collapsible';
 
 export {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from './components/ui/drawer';
+
+export {
   Dialog,
   DialogTrigger,
   DialogContent,
