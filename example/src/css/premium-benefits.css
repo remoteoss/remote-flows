@@ -48,3 +48,40 @@ It should be done in the body to affect all pages && demos
   border-radius: 10px;
   box-shadow: 0px 1px 2px 0px hsla(0, 0%, 68%, 0.051);
 }
+
+.premium-benefits-action-toolbar {
+  background-color: white;
+  display: flex;
+  padding: 56px 40px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  gap: 16px;
+  justify-content: space-around;
+  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 68%, 0.051);
+}
+
+.premium-benefits-action-toolbar__button {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.051);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  height: 40px;
+}
+
+.premium-benefits-action-toolbar__button--primary {
+  background-color: #09090b;
+  color: #ffffff;
+}
+
+.premium-benefits-action-toolbar__button--secondary {
+  background-color: #f5f5f5;
+  color: #09090b;
+}
+
+.premium-benefits-action-toolbar__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
