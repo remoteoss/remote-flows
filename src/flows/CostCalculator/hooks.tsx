@@ -8,6 +8,7 @@ import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
+  EstimationError,
 } from '@/src/flows/CostCalculator/types';
 import type { JSFModify, Result } from '@/src/flows/types';
 
@@ -70,8 +71,6 @@ type UseCostCalculatorParams = {
   };
   version?: CostCalculatorVersion;
 };
-
-export type EstimationError = PostCreateEstimationError | ValidationError;
 
 const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
   const { schema: jsonSchemaModified } = modify(

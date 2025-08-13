@@ -1,4 +1,8 @@
-import type { EmploymentTermType } from '@/src/client';
+import type {
+  EmploymentTermType,
+  PostCreateEstimationError,
+  ValidationError,
+} from '@/src/client';
 
 export type CostCalculatorEstimationSubmitValues = {
   currency: string;
@@ -44,3 +48,5 @@ export type CostCalculatorEstimationOptions = Partial<{
    */
   enableCurrencyConversion: boolean;
 }>;
+
+export type EstimationError = PostCreateEstimationError | ValidationError;

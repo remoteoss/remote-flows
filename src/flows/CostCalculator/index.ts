@@ -8,3 +8,4 @@ export { useCostCalculatorEstimationPdf } from './api';
 export { disclaimerData } from './disclaimerUtils';
 export { CostCalculatorResults } from './Results/CostCalculatorResults';
 export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
+export type { EstimationError } from './types';
