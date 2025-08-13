@@ -76,7 +76,7 @@ export function buildPayload(
     | CostCalculatorEstimationSubmitValues[],
   estimationOptions: CostCalculatorEstimationOptions = defaultEstimationOptions,
   version: CostCalculatorVersion = 'standard',
-): CostCalculatorEstimateParams | CostCalculatorEstimateParams[] {
+): CostCalculatorEstimateParams {
   const employments = Array.isArray(values) ? values : [values];
 
   if (employments.length === 0) {

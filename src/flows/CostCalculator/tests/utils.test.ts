@@ -41,9 +41,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    expect(
-      (payload as CostCalculatorEstimateParams).employments[0].region_slug,
-    ).toBe('CA');
+    expect(payload.employments[0].region_slug).toBe('CA');
   });
 
   it('should include benefits if provided', () => {
@@ -59,9 +57,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    expect(
-      (payload as CostCalculatorEstimateParams).employments[0].benefits,
-    ).toEqual([
+    expect(payload.employments[0].benefits).toEqual([
       { benefit_group_slug: 'health', benefit_tier_slug: 'premium' },
       { benefit_group_slug: 'dental', benefit_tier_slug: 'basic' },
     ]);
@@ -77,9 +73,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    expect((payload as CostCalculatorEstimateParams).employments[0].age).toBe(
-      30,
-    );
+    expect(payload.employments[0].age).toBe(30);
   });
 
   it('should use contract_duration_type if provided', () => {
@@ -92,9 +86,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    expect(
-      (payload as CostCalculatorEstimateParams).employments[0].employment_term,
-    ).toBe('fixed');
+    expect(payload.employments[0].employment_term).toBe('fixed');
   });
 
   it('should use custom estimation options if provided', () => {
@@ -112,15 +104,9 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values, customOptions);
 
-    expect((payload as CostCalculatorEstimateParams).include_benefits).toBe(
-      false,
-    );
-    expect(
-      (payload as CostCalculatorEstimateParams).include_cost_breakdowns,
-    ).toBe(false);
-    expect((payload as CostCalculatorEstimateParams).employments[0].title).toBe(
-      'Custom Title',
-    );
+    expect(payload.include_benefits).toBe(false);
+    expect(payload.include_cost_breakdowns).toBe(false);
+    expect(payload.employments[0].title).toBe('Custom Title');
   });
 
   it('should not include some of the benefits if none is selected', () => {
@@ -136,9 +122,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    expect(
-      (payload as CostCalculatorEstimateParams).employments[0].benefits,
-    ).toEqual([
+    expect(payload.employments[0].benefits).toEqual([
       {
         benefit_group_slug: 'health',
         benefit_tier_slug: 'whatever',
@@ -160,19 +144,13 @@ describe('buildPayload', () => {
         'standard',
       );
 
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+      expect(payload.employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
       expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary,
-      ).toBe(100_000);
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary_in_employer_currency');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary_in_employer_currency,
+        payload.employments[0].annual_gross_salary_in_employer_currency,
       ).toBe(100_000);
     });
 
@@ -183,47 +161,30 @@ describe('buildPayload', () => {
         'marketing',
       );
 
+      expect(payload.employments[0]).not.toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
       expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).not.toHaveProperty('annual_gross_salary');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary_in_employer_currency');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary_in_employer_currency,
+        payload.employments[0].annual_gross_salary_in_employer_currency,
       ).toBe(100_000);
     });
 
     it('should default to "standard" behavior when version is not provided', () => {
       const payload = buildPayload(values, defaultEstimationOptions);
 
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
       expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary,
-      ).toBe(100_000);
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary_in_employer_currency');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary_in_employer_currency,
+        payload.employments[0].annual_gross_salary_in_employer_currency,
       ).toBe(100_000);
     });
 
     it('should default to "standard" behavior when only values parameter is provided', () => {
       const payload = buildPayload(values);
 
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0],
-      ).toHaveProperty('annual_gross_salary');
-      expect(
-        (payload as CostCalculatorEstimateParams).employments[0]
-          .annual_gross_salary,
-      ).toBe(100_000);
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
     });
   });
 
@@ -290,9 +251,7 @@ describe('buildPayload', () => {
       ];
 
       const payload = buildPayload(values);
-      const employments = (payload as CostCalculatorEstimateParams).employments;
-
-      console.log(employments[1]);
+      const employments = payload.employments;
 
       expect(employments).toHaveLength(2);
       expect(employments[0].region_slug).toBe('Berlin');
@@ -317,7 +276,7 @@ describe('buildPayload', () => {
         defaultEstimationOptions,
         'marketing',
       );
-      const employments = (payload as CostCalculatorEstimateParams).employments;
+      const employments = payload.employments;
 
       expect(employments[0]).not.toHaveProperty('annual_gross_salary');
       expect(employments[1]).not.toHaveProperty('annual_gross_salary');
