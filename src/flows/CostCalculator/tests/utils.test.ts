@@ -174,9 +174,6 @@ describe('buildPayload', () => {
 
       expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
       expect(payload.employments[0].annual_gross_salary).toBe(100_000);
-      expect(payload.employments[0]).toHaveProperty(
-        'annual_gross_salary_in_employer_currency',
-      );
       expect(
         payload.employments[0].annual_gross_salary_in_employer_currency,
       ).toBe(100_000);
@@ -187,6 +184,107 @@ describe('buildPayload', () => {
 
       expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
       expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+    });
+  });
+
+  describe('buildPayload with array input', () => {
+    it('should build payload with multiple employments from array', () => {
+      const values: CostCalculatorEstimationSubmitValues[] = [
+        {
+          currency: 'USD',
+          country: 'US',
+          salary: 100_000,
+        },
+        {
+          currency: 'USD', // Note: currency from first item is used
+          country: 'UK',
+          salary: 80_000,
+        },
+      ];
+
+      const payload = buildPayload(values);
+
+      expect(payload).toEqual({
+        employer_currency_slug: 'USD', // From first item
+        include_benefits: defaultEstimationOptions.includeBenefits,
+        include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
+        include_premium_benefits:
+          defaultEstimationOptions.includePremiumBenefits,
+        employments: [
+          {
+            region_slug: 'US',
+            annual_gross_salary: 100_000,
+            annual_gross_salary_in_employer_currency: 100_000,
+            employment_term: 'fixed',
+            title: defaultEstimationOptions.title,
+          },
+          {
+            region_slug: 'UK',
+            annual_gross_salary: 80_000,
+            annual_gross_salary_in_employer_currency: 80_000,
+            employment_term: 'fixed',
+            title: defaultEstimationOptions.title,
+          },
+        ],
+      });
+    });
+
+    it('should handle mixed properties in array (region vs country, benefits)', () => {
+      const values: CostCalculatorEstimationSubmitValues[] = [
+        {
+          currency: 'EUR',
+          country: 'DE',
+          region: 'Berlin',
+          salary: 90_000,
+          age: 25,
+          benefits: {
+            'benefit-health': 'premium',
+          },
+        },
+        {
+          currency: 'EUR',
+          country: 'FR',
+          salary: 85_000,
+          contract_duration_type: 'indefinite',
+        },
+      ];
+
+      const payload = buildPayload(values);
+      const employments = payload.employments;
+
+      expect(employments).toHaveLength(2);
+      expect(employments[0].region_slug).toBe('Berlin');
+      expect(employments[0].age).toBe(25);
+      expect(employments[0].benefits).toEqual([
+        { benefit_group_slug: 'health', benefit_tier_slug: 'premium' },
+      ]);
+      expect(employments[1].region_slug).toBe('FR');
+      expect(employments[1].employment_term).toBe('indefinite');
+      expect(employments[1].age).toBeUndefined();
+      expect(employments[1].benefits).toBeUndefined();
+    });
+
+    it('should apply version parameter to all employments in array', () => {
+      const values: CostCalculatorEstimationSubmitValues[] = [
+        { currency: 'USD', country: 'US', salary: 100_000 },
+        { currency: 'USD', country: 'UK', salary: 80_000 },
+      ];
+
+      const payload = buildPayload(
+        values,
+        defaultEstimationOptions,
+        'marketing',
+      );
+      const employments = payload.employments;
+
+      expect(employments[0]).not.toHaveProperty('annual_gross_salary');
+      expect(employments[1]).not.toHaveProperty('annual_gross_salary');
+      expect(employments[0]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
+      expect(employments[1]).toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
     });
   });
 });
