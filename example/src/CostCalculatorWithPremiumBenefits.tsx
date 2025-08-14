@@ -17,7 +17,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@remoteoss/remote-flows/internal';
+} from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import { ButtonHTMLAttributes, Fragment, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
