@@ -2,13 +2,13 @@ import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-type ForcedValueFieldProps = {
+export type ForcedValueFieldProps = {
   name: string;
   value: string;
   description: string;
   statement?: {
     title?: string;
-    description: string;
+    description?: string;
   };
   label: string;
 };
@@ -41,7 +41,7 @@ export function ForcedValueField({
           <p
             className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
             dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(statement?.description),
+              __html: sanitizeHtml(statement?.description || description),
             }}
           />
         </>
