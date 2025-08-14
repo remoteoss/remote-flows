@@ -6,6 +6,7 @@ export { CostCalculatorDisclaimer } from './CostCalculatorDisclaimer';
 export { useCostCalculator } from './hooks';
 export { useCostCalculatorEstimationPdf } from './api';
 export { disclaimerData } from './disclaimerUtils';
+export { EstimationResults } from './EstimationResults/EstimationResults';
 export { CostCalculatorResults } from './Results/CostCalculatorResults';
 export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
 export type { EstimationError } from './types';

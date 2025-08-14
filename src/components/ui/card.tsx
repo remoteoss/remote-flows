@@ -2,12 +2,17 @@ import * as React from 'react';
 
 import { cn } from '@/src/lib/utils';
 
-function Card({ className, ...props }: React.ComponentProps<'div'>) {
+interface CardProps extends React.ComponentProps<'div'> {
+  direction?: 'row' | 'col';
+}
+
+function Card({ className, direction = 'col', ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
-        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        'RemoteFlows__Card bg-white text-card-foreground rounded-2xl border border-gray-200 py-10 px-14 shadow-sm',
+        direction === 'row' ? 'flex flex-row' : 'flex flex-col',
         className,
       )}
       {...props}
