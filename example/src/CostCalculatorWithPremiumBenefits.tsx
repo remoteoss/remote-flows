@@ -84,23 +84,25 @@ const AddEstimateButton = ({
           Add estimate
         </button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent showHandle={false} className="max-h-[90vh] flex flex-col">
         <DrawerHeader className="hidden">
           <DrawerTitle className="hidden">Add estimate</DrawerTitle>
         </DrawerHeader>
-        <Layout>
-          <div className="mt-10 mb-8">
-            <Header
-              title="Add estimate"
-              description="Estimate the cost of another hire through Remote"
+        <div className="flex-1 overflow-y-auto">
+          <Layout>
+            <div className="mt-10 mb-8">
+              <Header
+                title="Add estimate"
+                description="Estimate the cost of another hire through Remote"
+              />
+            </div>
+            <AddEstimateForm
+              onSubmit={onSubmit}
+              onError={onError}
+              onSuccess={onSuccess}
             />
-          </div>
-          <AddEstimateForm
-            onSubmit={onSubmit}
-            onError={onError}
-            onSuccess={onSuccess}
-          />
-        </Layout>
+          </Layout>
+        </div>
       </DrawerContent>
     </Drawer>
   );
