@@ -9,7 +9,7 @@ export const tsup: Options = {
   dts: true,
   entry: [
     'src/index.tsx',
-    'src/internal.ts',
+    'src/internals.ts',
     'src/flows',
     '!src/**/*.test.{ts,tsx}',
     '!src/**/tests/*.{ts,tsx}',

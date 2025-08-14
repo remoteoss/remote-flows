@@ -13,7 +13,7 @@ import {
   CollapsibleTrigger,
   Button,
   cn,
-} from '@remoteoss/remote-flows/internal';
+} from '@remoteoss/remote-flows/internals';
 
 import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
 

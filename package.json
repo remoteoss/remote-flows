@@ -33,12 +33,12 @@
       },
       "default": "./dist/index.js"
     },
-    "./internal": {
+    "./internals": {
       "import": {
-        "types": "./dist/internal.d.ts",
-        "default": "./dist/internal.js"
+        "types": "./dist/internals.d.ts",
+        "default": "./dist/internals.js"
       },
-      "default": "./dist/internal.js"
+      "default": "./dist/internals.js"
     },
     "./flows/*": {
       "import": {
