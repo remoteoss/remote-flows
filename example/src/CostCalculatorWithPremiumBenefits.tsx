@@ -17,6 +17,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Card,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import { ButtonHTMLAttributes, Fragment, useState } from 'react';
@@ -123,7 +124,7 @@ const ActionToolbar = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="premium-benefits-action-toolbar">
+    <Card direction="row" className="justify-around">
       <div>
         <button
           className="premium-benefits-action-toolbar__button"
@@ -159,7 +160,7 @@ const ActionToolbar = ({
           }}
         />
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -202,7 +203,7 @@ const AddEstimateForm = ({
         }
 
         return (
-          <div className="premium-benefits-form-container">
+          <Card>
             <CostCalculatorForm
               onSubmit={onSubmit}
               onError={onError}
@@ -216,7 +217,7 @@ const AddEstimateForm = ({
                 Get estimate
               </CostCalculatorSubmitButton>
             </div>
-          </div>
+          </Card>
         );
       }}
     />

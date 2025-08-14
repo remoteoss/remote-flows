@@ -40,26 +40,6 @@ It should be done in the body to affect all pages && demos
   color: #4b5865;
 }
 
-.premium-benefits-form-container {
-  background-color: #ffffff;
-  padding: 40px 56px;
-  border-radius: 16px;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 68%, 0.051);
-}
-
-.premium-benefits-action-toolbar {
-  background-color: white;
-  display: flex;
-  padding: 56px 40px;
-  border-radius: 10px;
-  border: 1px solid #e5e5e5;
-  gap: 16px;
-  justify-content: space-around;
-  box-shadow: 0px 1px 2px 0px hsla(0, 0%, 68%, 0.051);
-}
-
 .premium-benefits-action-toolbar__button {
   cursor: pointer;
   padding: 8px 16px;
