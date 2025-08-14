@@ -1,17 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { ForcedValueField } from '../ForcedValueField';
-
-type ForcedValueFieldProps = {
-  name: string;
-  value: string;
-  description: string;
-  statement?: {
-    title?: string;
-    description: string;
-  };
-  label: string;
-};
+import { ForcedValueField, ForcedValueFieldProps } from '../ForcedValueField';
 
 describe('ForcedValueField Component', () => {
   const defaultProps: ForcedValueFieldProps = {
@@ -101,6 +90,25 @@ describe('ForcedValueField Component', () => {
 
       expect(screen.getByText('Test Label')).toBeInTheDocument();
       expect(screen.getByText('Statement Description')).toBeInTheDocument();
+    });
+  });
+
+  describe('when statement is provided but description is undefined', () => {
+    const propsWithUndefinedDescription: ForcedValueFieldProps = {
+      ...defaultProps,
+      statement: {
+        title: 'Test Label',
+        description: undefined,
+      },
+    };
+
+    it('falls back to description', () => {
+      renderWithFormContext(propsWithUndefinedDescription);
+
+      expect(screen.getByText('Test Label')).toBeInTheDocument();
+      expect(
+        screen.getByText('This is a test description'),
+      ).toBeInTheDocument();
     });
   });
 
