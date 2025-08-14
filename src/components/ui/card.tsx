@@ -11,7 +11,7 @@ function Card({ className, direction = 'col', ...props }: CardProps) {
     <div
       data-slot="card"
       className={cn(
-        'RemoteFlows__Card bg-white text-card-foreground rounded-2xl border border-gray-200 py-10 px-14',
+        'RemoteFlows__Card bg-white text-card-foreground rounded-[10px] gap-4 border border-gray-200 px-10 py-14',
         direction === 'row' ? 'flex flex-row' : 'flex flex-col',
         className,
       )}
