@@ -11,8 +11,15 @@ import {
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
 } from '@remoteoss/remote-flows';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
-import { useState } from 'react';
+import { ButtonHTMLAttributes, Fragment, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import './css/main.css';
@@ -35,14 +42,69 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const Header = () => {
+const Header = ({
+  title = 'Cost calculator',
+  description = 'Estimate the cost to hire someone through Remote',
+}: {
+  title?: string;
+  description?: string;
+}) => {
   return (
     <div className="premium-benefits-header">
-      <h1>Cost calculator</h1>
-      <p>Estimate the cost to hire someone through Remote</p>
+      <h1>{title}</h1>
+      <p>{description}</p>
       {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
       {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
     </div>
+  );
+};
+
+const AddEstimateButton = ({
+  buttonProps,
+  onSubmit,
+  onError,
+  onSuccess,
+  isDrawerOpen,
+  setIsDrawerOpen,
+}: {
+  buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (isOpen: boolean) => void;
+}) => {
+  return (
+    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      <DrawerTrigger asChild>
+        <button
+          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
+          {...buttonProps}
+        >
+          Add estimate
+        </button>
+      </DrawerTrigger>
+      <DrawerContent showHandle={false} className="max-h-[90vh] flex flex-col">
+        <DrawerHeader className="hidden">
+          <DrawerTitle className="hidden">Add estimate</DrawerTitle>
+        </DrawerHeader>
+        <div className="flex-1 overflow-y-auto">
+          <Layout>
+            <div className="mt-10 mb-8">
+              <Header
+                title="Add estimate"
+                description="Estimate the cost of another hire through Remote"
+              />
+            </div>
+            <AddEstimateForm
+              onSubmit={onSubmit}
+              onError={onError}
+              onSuccess={onSuccess}
+            />
+          </Layout>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
@@ -50,11 +112,16 @@ const ActionToolbar = ({
   onReset,
   onExportPdf,
   onCSVExport,
+  onAddEstimate,
+  onSavePayload,
 }: {
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
+  onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="premium-benefits-action-toolbar">
       <div>
@@ -79,14 +146,80 @@ const ActionToolbar = ({
         >
           Export as PDF
         </button>
-        <button
-          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
-          disabled
-        >
-          Add estimate
-        </button>
+        <AddEstimateButton
+          isDrawerOpen={isOpen}
+          setIsDrawerOpen={setIsOpen}
+          onSubmit={(payload) => {
+            onSavePayload(payload);
+          }}
+          onError={() => {}}
+          onSuccess={(estimation) => {
+            onAddEstimate(estimation);
+            setIsOpen(false);
+          }}
+        />
       </div>
     </div>
+  );
+};
+
+const AddEstimateForm = ({
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+}) => {
+  return (
+    <CostCalculatorFlow
+      estimationOptions={estimationOptions}
+      options={{
+        jsfModify: {
+          fields: {
+            country: {
+              title: 'Employee country',
+              description:
+                'Select the country where the employee will primarily live and work',
+            },
+            currency: {
+              title: 'Employer billing currency',
+              description:
+                "Select the currency you want to be invoiced in for this employee's services.",
+            },
+            salary: {
+              title: "Employee's annual salary",
+              description:
+                "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
+            },
+          },
+        },
+      }}
+      render={(props) => {
+        if (props.isLoading) {
+          return <div>Loading...</div>;
+        }
+
+        return (
+          <div className="premium-benefits-form-container">
+            <CostCalculatorForm
+              onSubmit={onSubmit}
+              onError={onError}
+              onSuccess={onSuccess}
+            />
+            <div className="flex justify-center mt-10">
+              <CostCalculatorSubmitButton
+                className="submit-button"
+                disabled={props.isSubmitting}
+              >
+                Get estimate
+              </CostCalculatorSubmitButton>
+            </div>
+          </div>
+        );
+      }}
+    />
   );
 };
 
@@ -102,52 +235,10 @@ const InitialForm = ({
   return (
     <>
       <Header />
-      <CostCalculatorFlow
-        estimationOptions={estimationOptions}
-        options={{
-          jsfModify: {
-            fields: {
-              country: {
-                title: 'Employee country',
-                description:
-                  'Select the country where the employee will primarily live and work',
-              },
-              currency: {
-                title: 'Employer billing currency',
-                description:
-                  'Select the currency you want to be invoiced in for this employee’s services.',
-              },
-              salary: {
-                title: "Employee's annual salary",
-                description:
-                  'We will use your selected billing currency, but you can also convert it to the employee’s local currency.',
-              },
-            },
-          },
-        }}
-        render={(props) => {
-          if (props.isLoading) {
-            return <div>Loading...</div>;
-          }
-
-          return (
-            <div className="premium-benefits-form-container">
-              <CostCalculatorForm
-                onSubmit={onSubmit}
-                onError={onError}
-                onSuccess={onSuccess}
-              />
-              <div className="flex justify-center mt-10">
-                <CostCalculatorSubmitButton
-                  className="submit-button"
-                  disabled={props.isSubmitting}
-                >
-                  Get estimate
-                </CostCalculatorSubmitButton>
-              </div>
-            </div>
-          );
-        }}
+      <AddEstimateForm
+        onSubmit={onSubmit}
+        onError={onError}
+        onSuccess={onSuccess}
       />
     </>
   );
@@ -157,10 +248,14 @@ const ResultsView = ({
   estimations,
   onExportPdf,
   onReset,
+  onAddEstimate,
+  onSavePayload,
 }: {
-  estimations: CostCalculatorEstimateResponse | null;
+  estimations: CostCalculatorEstimateResponse[];
   onExportPdf: () => void;
   onReset: () => void;
+  onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
   if (!estimations) {
     return null;
@@ -174,27 +269,52 @@ const ResultsView = ({
           onReset={onReset}
           onExportPdf={onExportPdf}
           onCSVExport={() => {}}
+          onAddEstimate={onAddEstimate}
+          onSavePayload={onSavePayload}
         />
       </div>
-      <div className="mt-4 mb-2 flex gap-2">
-        <Flag code={estimations.data.employments?.[0].country.alpha_2_code} />
-        <label className="text-md font-bold">
-          {estimations.data.employments?.[0].country.name}
-        </label>
-      </div>
-      <CostCalculatorResults employmentData={estimations.data} />
+      {estimations.map((estimation, index) => {
+        const primaryEmployment = estimation.data.employments?.[0];
+        const country = primaryEmployment?.country;
+
+        return (
+          <Fragment key={index}>
+            {country && (
+              <div className="mt-4 mb-2 flex gap-2">
+                <Flag
+                  code={estimation.data.employments?.[0].country.alpha_2_code}
+                />
+                <label className="text-md font-bold">
+                  {estimation.data.employments?.[0].country.name}
+                </label>
+              </div>
+            )}
+            <CostCalculatorResults employmentData={estimation.data} />
+          </Fragment>
+        );
+      })}
     </>
   );
 };
 
 function CostCalculatorFormDemo() {
-  const [estimations, setEstimations] =
-    useState<CostCalculatorEstimateResponse | null>(null);
-  const [payload, setPayload] =
-    useState<CostCalculatorEstimationSubmitValues | null>(null);
+  const [estimations, setEstimations] = useState<
+    CostCalculatorEstimateResponse[]
+  >([]);
+  const [payload, setPayload] = useState<
+    CostCalculatorEstimationSubmitValues[]
+  >([]);
 
   const onReset = () => {
-    setEstimations(null);
+    setEstimations([]);
+  };
+
+  const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
+    setEstimations([...estimations, estimation]);
+  };
+
+  const onSavePayload = (estimation: CostCalculatorEstimationSubmitValues) => {
+    setPayload([...payload, estimation]);
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
@@ -224,14 +344,14 @@ function CostCalculatorFormDemo() {
   };
   return (
     <Layout>
-      {!estimations ? (
+      {estimations.length === 0 ? (
         <InitialForm
           onSubmit={(payload) => {
-            setPayload(payload);
+            setPayload([payload]);
           }}
           onError={(error) => console.error({ error })}
           onSuccess={(response) => {
-            setEstimations(response);
+            setEstimations([response]);
           }}
         />
       ) : (
@@ -239,6 +359,8 @@ function CostCalculatorFormDemo() {
           estimations={estimations}
           onExportPdf={handleExportPdf}
           onReset={onReset}
+          onAddEstimate={onAddEstimate}
+          onSavePayload={onSavePayload}
         />
       )}
     </Layout>
