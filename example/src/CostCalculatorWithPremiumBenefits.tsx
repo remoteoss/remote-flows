@@ -311,9 +311,7 @@ function CostCalculatorFormDemo() {
     setEstimations([...estimations, estimation]);
   };
 
-  const onSavePayload = (
-    estimation: CostCalculatorEstimationSubmitValues[],
-  ) => {
+  const onSavePayload = (estimation: CostCalculatorEstimationSubmitValues) => {
     setPayload([...payload, estimation]);
   };
 
