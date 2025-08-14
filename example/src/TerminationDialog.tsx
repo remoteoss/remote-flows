@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './components/dialog';
+} from '@remoteoss/remote-flows/internals';
 
 export function TerminationDialog({
   open,

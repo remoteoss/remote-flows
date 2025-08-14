@@ -4,19 +4,20 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from './components/card';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
-import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
-
-import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './components/collapsible';
+  Button,
+  cn,
+} from '@remoteoss/remote-flows/internals';
+
+import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
+
 import { useState } from 'react';
-import { Button } from './components/button';
-import { cn } from './utils';
 import React from 'react';
 import type { $TSFixMe } from '@remoteoss/remote-flows';
 import { BasicCostCalculator } from './BasicCostCalculator';
@@ -287,7 +288,7 @@ function App() {
                               <Button
                                 key={child.id}
                                 variant={
-                                  activeDemo === child.id ? 'accent' : 'ghost'
+                                  activeDemo === child.id ? 'default' : 'ghost'
                                 }
                                 size="sm"
                                 className="w-full justify-start"
@@ -303,7 +304,7 @@ function App() {
                       // Standalone item
                       <Button
                         variant={
-                          activeDemo === category.id ? 'accent' : 'ghost'
+                          activeDemo === category.id ? 'default' : 'ghost'
                         }
                         className="w-full justify-start"
                         onClick={() => selectDemo(category.id)}
