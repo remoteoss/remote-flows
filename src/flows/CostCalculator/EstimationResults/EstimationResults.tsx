@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/accordion';
 import { cn } from '@/src/lib/utils';
+import { Button } from '@/src/components/ui/button';
 
 const EstimationResultsHeader = ({
   title,
@@ -120,6 +121,52 @@ function OnboardingTimeline({
   );
 }
 
+function HiringSection({
+  className,
+  countryBenefitsUrl,
+  countryGuideUrl,
+}: {
+  className?: string;
+  countryBenefitsUrl: string;
+  countryGuideUrl: string;
+}) {
+  return (
+    <Accordion type="single" collapsible className={cn('w-full', className)}>
+      <AccordionItem value="timeline" className="border-border">
+        <AccordionTrigger className="hover:no-underline px-0 py-4">
+          <div className="flex items-center justify-between w-full">
+            <span className="text-base font-medium text-[#0F172A]">
+              Hiring in France
+            </span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="flex flex-col gap-1">
+            <a
+              href={countryGuideUrl}
+              target="_blank"
+              className="RemoteFlows__Link"
+            >
+              Explore our complete guide ↗
+            </a>
+            <a
+              href={countryBenefitsUrl}
+              target="_blank"
+              className="RemoteFlows__Link"
+            >
+              Explore our available benefits ↗
+            </a>
+          </div>
+
+          <Button asChild className="mt-4">
+            <a href="#">Hire now</a>
+          </Button>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+}
+
 export const EstimationResults = ({
   estimation,
   title,
@@ -139,6 +186,12 @@ export const EstimationResults = ({
             minimumOnboardingDays={estimation.minimum_onboarding_time}
           />
         </div>
+
+        <HiringSection
+          countryBenefitsUrl={estimation.country_benefits_details_url as string}
+          countryGuideUrl={estimation.country_guide_url as string}
+          className="RemoteFlows__EstimationResults__HiringSection"
+        />
       </Card>
     </>
   );
