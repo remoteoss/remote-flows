@@ -23,7 +23,26 @@ const EstimationResultsHeader = ({
           <p className="text-xs text-[#71717A]">{country}</p>
         </div>
       </div>
-      <ActionsDropdown actions={[]} label="File Options" />
+      <ActionsDropdown
+        className="RemoteFlows__EstimationResults__ActionsDropdown"
+        actions={[
+          {
+            label: 'Edit',
+            onClick: () => {},
+            disabled: true,
+          },
+          {
+            label: 'Export',
+            onClick: () => {},
+            disabled: true,
+          },
+          {
+            label: 'Delete',
+            onClick: () => {},
+            disabled: true,
+          },
+        ]}
+      />
     </div>
   );
 };
@@ -34,8 +53,10 @@ type EstimationResultsProps = {
 
 export const EstimationResults = ({ estimation }: EstimationResultsProps) => {
   return (
-    <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <EstimationResultsHeader title="Estimate #01" country="France" />
-    </Card>
+    <>
+      <Card className="RemoteFlows__EstimationResults__Card p-10">
+        <EstimationResultsHeader title="Estimate #01" country="France" />
+      </Card>
+    </>
   );
 };
