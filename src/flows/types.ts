@@ -75,7 +75,7 @@ export type FlowOptions = {
   jsonSchemaVersion?: {
     contract_amendments?: number;
     form_schema?: {
-      [key in JSONSchemaFormType]: number;
+      [key in JSONSchemaFormType]?: number;
     };
     benefit_offers_form_schema?: number;
   };
