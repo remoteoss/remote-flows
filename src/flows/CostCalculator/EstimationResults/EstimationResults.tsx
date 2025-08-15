@@ -49,13 +49,22 @@ const EstimationResultsHeader = ({
 
 type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
+  title: string;
 };
 
-export const EstimationResults = ({ estimation }: EstimationResultsProps) => {
+export const EstimationResults = ({
+  estimation,
+  title,
+}: EstimationResultsProps) => {
   return (
     <>
       <Card className="RemoteFlows__EstimationResults__Card p-10">
-        <EstimationResultsHeader title="Estimate #01" country="France" />
+        <div className="border-b border-[#E4E4E7] pb-6">
+          <EstimationResultsHeader
+            title={title}
+            country={estimation.country.name}
+          />
+        </div>
       </Card>
     </>
   );

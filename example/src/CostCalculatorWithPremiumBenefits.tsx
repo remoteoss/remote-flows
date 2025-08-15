@@ -299,6 +299,7 @@ const ResultsView = ({
               estimation.data.employments.length > 0 && (
                 <EstimationResults
                   estimation={estimation.data.employments?.[0]}
+                  title={`Estimate #${index + 1}`}
                 />
               )}
           </Fragment>
@@ -997,7 +998,10 @@ export function CostCalculatorWithPremiumBenefits() {
       {/* <CostCalculatorFormDemo /> */}
       {Array.isArray(estimation.data.employments) &&
         estimation.data.employments.length > 0 && (
-          <EstimationResults estimation={estimation.data.employments?.[0]} />
+          <EstimationResults
+            estimation={estimation.data.employments?.[0]}
+            title="Estimate #01"
+          />
         )}
     </RemoteFlows>
   );
