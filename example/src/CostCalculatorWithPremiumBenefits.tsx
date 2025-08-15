@@ -300,6 +300,7 @@ const ResultsView = ({
                 <EstimationResults
                   estimation={estimation.data.employments?.[0]}
                   title={`Estimate #${index + 1}`}
+                  hireNowLinkBtn={'#'}
                 />
               )}
           </Fragment>
@@ -1001,6 +1002,7 @@ export function CostCalculatorWithPremiumBenefits() {
           <EstimationResults
             estimation={estimation.data.employments?.[0]}
             title="Estimate #01"
+            hireNowLinkBtn="#"
           />
         )}
     </RemoteFlows>

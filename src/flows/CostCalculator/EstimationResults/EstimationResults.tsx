@@ -58,6 +58,7 @@ const EstimationResultsHeader = ({
 type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
+  hireNowLinkBtn: string;
 };
 
 function OnboardingTimeline({
@@ -125,10 +126,12 @@ function HiringSection({
   className,
   countryBenefitsUrl,
   countryGuideUrl,
+  hireNowLinkBtn,
 }: {
   className?: string;
   countryBenefitsUrl: string;
   countryGuideUrl: string;
+  hireNowLinkBtn: string;
 }) {
   return (
     <Accordion type="single" collapsible className={cn('w-full', className)}>
@@ -158,8 +161,12 @@ function HiringSection({
             </a>
           </div>
 
-          <Button asChild className="mt-4">
-            <a href="#">Hire now</a>
+          <Button
+            variant="secondary"
+            asChild
+            className="RemoteFlows__EstimationResults__HireNowBtn mt-4"
+          >
+            <a href={hireNowLinkBtn}>Hire now</a>
           </Button>
         </AccordionContent>
       </AccordionItem>
@@ -170,6 +177,7 @@ function HiringSection({
 export const EstimationResults = ({
   estimation,
   title,
+  hireNowLinkBtn,
 }: EstimationResultsProps) => {
   return (
     <>
@@ -191,6 +199,7 @@ export const EstimationResults = ({
           countryBenefitsUrl={estimation.country_benefits_details_url as string}
           countryGuideUrl={estimation.country_guide_url as string}
           className="RemoteFlows__EstimationResults__HiringSection"
+          hireNowLinkBtn={hireNowLinkBtn}
         />
       </Card>
     </>
