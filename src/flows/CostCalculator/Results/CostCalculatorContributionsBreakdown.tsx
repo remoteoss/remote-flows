@@ -51,7 +51,7 @@ export function CostCalculatorContributionsBreakdown({
                     <BasicTooltip
                       content={
                         <>
-                          <span>{contribution.description}</span>
+                          <span>{contribution.description}</span>{' '}
                           {contribution.zendesk_article_url && (
                             <ZendeskTriggerButton
                               zendeskId={

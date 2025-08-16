@@ -42,7 +42,7 @@ export function CostCalculatorBenefitsBreakdown({
                 <BasicTooltip
                   content={
                     <>
-                      <span>{benefit.description}</span>
+                      <span>{benefit.description}</span>{' '}
                       {benefit.zendesk_article_url && (
                         <ZendeskTriggerButton
                           zendeskId={benefit.zendesk_article_id as string}
