@@ -194,8 +194,19 @@ const AddEstimateForm = ({
             },
             currency: {
               title: 'Employer billing currency',
-              description:
-                "Select the currency you want to be invoiced in for this employee's services.",
+              description: (
+                <>
+                  Select the currency you want to be invoiced in for this
+                  employee's services.
+                  <ZendeskTriggerButton
+                    className="text-sm"
+                    zendeskId="4410698586893"
+                    zendeskURL="https://support.remote.com/hc/en-us/articles/4410698586893-Do-you-have-international-pricing"
+                  >
+                    Learn more ↗
+                  </ZendeskTriggerButton>
+                </>
+              ),
             },
             salary: {
               title: "Employee's annual salary",
