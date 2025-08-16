@@ -996,7 +996,7 @@ export function CostCalculatorWithPremiumBenefits() {
       proxy={{ url: proxyURL }}
       isClientToken
     >
-      {/* <CostCalculatorFormDemo /> */}
+      <CostCalculatorFormDemo />
       {Array.isArray(estimation.data.employments) &&
         estimation.data.employments.length > 0 && (
           <EstimationResults

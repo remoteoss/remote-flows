@@ -13,7 +13,7 @@ interface ZendeskTriggerButtonProps {
 export function ZendeskTriggerButton({
   zendeskId,
   zendeskURL,
-  className = 'text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0',
+  className,
   onClick,
   children,
 }: ZendeskTriggerButtonProps) {
@@ -35,7 +35,7 @@ export function ZendeskTriggerButton({
         <button
           onClick={handleClick}
           className={cn(
-            'text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0',
+            'text-blue-500 hover:underline inline-block mt-1 text-xs bg-transparent border-none cursor-pointer p-0',
             className,
           )}
         >

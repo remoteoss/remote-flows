@@ -10,6 +10,7 @@ import {
 } from '@/src/components/ui/accordion';
 import { cn } from '@/src/lib/utils';
 import { Button } from '@/src/components/ui/button';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
 const EstimationResultsHeader = ({
   title,
@@ -114,7 +115,13 @@ function OnboardingTimeline({
           <p className="text-xs text-muted-foreground mt-4">
             For customers who accept our Terms of Service (ToS), the employee
             onboarding timeline starts once the employee has been invited to the
-            platform and completed self enrolment. <a href="#">Learn more</a>
+            platform and completed self enrolment. 
+            <ZendeskTriggerButton
+              zendeskId="4411262104589"
+              zendeskURL="https://support.remote.com/hc/en-us/articles/4411262104589-Employee-Onboarding-Timeline"
+            >
+              Learn more
+            </ZendeskTriggerButton>
           </p>
         </AccordionContent>
       </AccordionItem>
