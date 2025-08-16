@@ -18,7 +18,6 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
   name: string;
 } & Partial<
     JSFField & {
-      label?: React.ReactNode;
       onChange?: (value: any) => void;
       component?: Components['text'];
       includeErrorMessage?: boolean;
