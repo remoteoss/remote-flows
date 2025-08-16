@@ -12,6 +12,7 @@ export {
   useCostCalculator,
   disclaimerData,
   useCostCalculatorEstimationPdf,
+  EstimationResults,
 } from '@/src/flows/CostCalculator';
 
 export * from '@/src/flows/ContractAmendment';

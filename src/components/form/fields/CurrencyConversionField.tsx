@@ -56,7 +56,7 @@ export type CurrencyConversionFieldProps = JSFField & {
   conversionFieldName: string;
   conversionProperties?: {
     label?: string;
-    description?: string;
+    description?: ReactNode;
   };
   useProxy?: boolean;
   classNamePrefix: string;

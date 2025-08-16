@@ -66,3 +66,5 @@ export {
   SelectTrigger,
   SelectValue,
 } from './components/ui/select';
+
+export * from './components/shared/zendesk-drawer/ZendeskTriggerButton';
