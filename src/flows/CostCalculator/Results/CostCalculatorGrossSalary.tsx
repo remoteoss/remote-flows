@@ -29,7 +29,7 @@ export function CostCalculatorGrossSalary({
                   <span>
                     This country respects extra payments on top of the gross
                     salary.
-                  </span>
+                  </span>{' '}
                   <ZendeskTriggerButton
                     zendeskId={zendeskArticles.extraPayments.toString()}
                     zendeskURL={'#'}

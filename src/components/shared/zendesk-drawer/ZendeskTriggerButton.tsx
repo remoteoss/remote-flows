@@ -35,7 +35,7 @@ export function ZendeskTriggerButton({
         <button
           onClick={handleClick}
           className={cn(
-            'text-blue-500 hover:underline inline-block mt-1 text-xs bg-transparent border-none cursor-pointer p-0',
+            'RemoteFlows__ZendeskTriggerButton text-blue-500 hover:underline inline-block mt-1 text-xs bg-transparent border-none cursor-pointer p-0',
             className,
           )}
         >

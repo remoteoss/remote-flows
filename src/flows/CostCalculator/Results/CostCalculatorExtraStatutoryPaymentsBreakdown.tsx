@@ -44,7 +44,7 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
                 <BasicTooltip
                   content={
                     <>
-                      <span>{payment.description}</span>
+                      <span>{payment.description}</span>{' '}
                       {payment.zendesk_article_url && (
                         <ZendeskTriggerButton
                           zendeskId={payment.zendesk_article_id as string}

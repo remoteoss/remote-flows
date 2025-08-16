@@ -20,6 +20,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
   Card,
+  ZendeskTriggerButton,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import { ButtonHTMLAttributes, Fragment, useState } from 'react';
@@ -56,8 +57,13 @@ const Header = ({
     <div className="premium-benefits-header">
       <h1>{title}</h1>
       <p>{description}</p>
-      {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
-      {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
+      <ZendeskTriggerButton
+        className="text-sm"
+        zendeskId="4668194326797"
+        zendeskURL="https://support.remote.com/hc/en-us/articles/4668194326797-Disclaimer-information-on-Cost-of-Employment-calculations"
+      >
+        Learn more ↗
+      </ZendeskTriggerButton>
     </div>
   );
 };
