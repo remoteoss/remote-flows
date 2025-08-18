@@ -587,6 +587,19 @@ export const EstimationResults = ({
                   estimation.employer_currency_costs.currency.symbol,
                 ),
               },
+              {
+                label: 'Extra statutory payments',
+                regionalAmount: formatCurrency(
+                  estimation.regional_currency_costs
+                    .extra_statutory_payments_total,
+                  estimation.regional_currency_costs.currency.symbol,
+                ),
+                employerAmount: formatCurrency(
+                  estimation.employer_currency_costs
+                    .extra_statutory_payments_total,
+                  estimation.employer_currency_costs.currency.symbol,
+                ),
+              },
             ]}
             moreThanOneCurrency={moreThanOneCurrency}
           />
