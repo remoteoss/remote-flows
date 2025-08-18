@@ -231,13 +231,13 @@ function EstimationRow({
   isCollapsible?: boolean;
   children?: React.ReactNode;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className={cn('RemoteFlows__EstimationResults__Row', className)}>
       <div className="grid grid-cols-3 items-center">
         <div className="flex items-center gap-2">
-          <span className={isHeader ? 'font-medium text-[#0F1419]' : ''}>
+          <span className={cn('min-w-[140px]', isHeader ? 'font-medium' : '')}>
             {label}
           </span>
           {isCollapsible && (
@@ -283,9 +283,130 @@ function EstimationRow({
 
       {/* Collapsible content */}
       {isCollapsible && isOpen && children && (
-        <div className="mt-3 ml-6 space-y-2">{children}</div>
+        <div className="mt-4">{children}</div>
       )}
     </div>
+  );
+}
+
+interface BreakdownItem {
+  label: string;
+  regionalAmount?: string;
+  employerAmount?: string;
+  amount?: string; // For single currency
+  description?: string;
+  zendeskId?: string;
+  zendeskURL?: string;
+  isCollapsible?: boolean;
+  children?: BreakdownItem[]; // Nested breakdown items
+}
+
+function BreakdownListItem({
+  item,
+  moreThanOneCurrency,
+  level = 0,
+}: {
+  item: BreakdownItem;
+  moreThanOneCurrency: boolean;
+  level?: number;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = item.children && item.children.length > 0;
+  const indentClass = level > 0 ? `pl-${6 + level * 4}` : 'pl-0';
+
+  return (
+    <li role="listitem">
+      <div className={cn('grid grid-cols-3 items-center', indentClass)}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm">{item.label}</span>
+
+          {/* Zendesk trigger if available */}
+          {item.zendeskId && item.zendeskURL && (
+            <ZendeskTriggerButton
+              zendeskId={item.zendeskId}
+              zendeskURL={item.zendeskURL}
+              className="text-xs"
+            />
+          )}
+
+          {/* Collapsible chevron for nested items */}
+          {(item.isCollapsible || hasChildren) && (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1 hover:bg-gray-100 rounded"
+            >
+              <ChevronDown
+                className={`h-3 w-3 text-muted-foreground transition-transform ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          )}
+        </div>
+
+        {/* Amounts */}
+        {moreThanOneCurrency ? (
+          <>
+            <span className="text-sm text-right">
+              {item.regionalAmount || '—'}
+            </span>
+            <span className="text-sm text-right">
+              {item.employerAmount || '—'}
+            </span>
+          </>
+        ) : (
+          <>
+            <span></span>
+            <span className="text-sm text-right">{item.amount || '—'}</span>
+          </>
+        )}
+      </div>
+
+      {/* Nested breakdown items */}
+      {hasChildren && isOpen && (
+        <div className="mt-2">
+          <BreakdownList
+            items={item.children!}
+            moreThanOneCurrency={moreThanOneCurrency}
+            level={level + 1}
+          />
+        </div>
+      )}
+
+      {/* Description if available */}
+      {item.description && isOpen && (
+        <div className={cn('mt-1 text-xs text-muted-foreground', indentClass)}>
+          {item.description}
+        </div>
+      )}
+    </li>
+  );
+}
+
+interface BreakdownListProps {
+  items: BreakdownItem[];
+  moreThanOneCurrency: boolean;
+  className?: string;
+  level?: number; // For nested indentation
+}
+
+function BreakdownList({
+  items,
+  moreThanOneCurrency,
+  className,
+  level,
+}: BreakdownListProps) {
+  return (
+    <ul className={cn('list-none', className)} role="list">
+      {items.map((item, index) => (
+        <BreakdownListItem
+          key={index}
+          item={item}
+          moreThanOneCurrency={moreThanOneCurrency}
+          level={level}
+        />
+      ))}
+    </ul>
   );
 }
 
@@ -298,7 +419,6 @@ export const EstimationResults = ({
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
-  console.log('estimation', estimation);
   return (
     <>
       <Card className="RemoteFlows__EstimationResults__Card p-10">
@@ -327,7 +447,24 @@ export const EstimationResults = ({
             ]}
             isHeader
             isCollapsible
-          />
+          >
+            <BreakdownList
+              items={[
+                {
+                  label: 'Gross monthly salary',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs.monthly_gross_salary,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs.monthly_gross_salary,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
+              ]}
+              moreThanOneCurrency={moreThanOneCurrency}
+            />
+          </EstimationRow>
         </div>
         <div className="border-b border-[#E4E4E7] pb-6">
           <EstimationRow
@@ -344,7 +481,24 @@ export const EstimationResults = ({
             ]}
             isHeader
             isCollapsible
-          />
+          >
+            <BreakdownList
+              items={[
+                {
+                  label: 'Annual gross salary',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs.annual_gross_salary,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs.annual_gross_salary,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
+              ]}
+              moreThanOneCurrency={moreThanOneCurrency}
+            />
+          </EstimationRow>
         </div>
         <div className="border-b border-[#E4E4E7] pb-6">
           <OnboardingTimeline
