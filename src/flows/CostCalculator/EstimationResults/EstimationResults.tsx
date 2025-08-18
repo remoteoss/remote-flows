@@ -95,21 +95,21 @@ function OnboardingTimeline({
             </li>
             <li>
               <strong className="font-medium text-[#09090B]">
-                Invite employee 
+                Invite employee
               </strong>{' '}
               - Hire receives an email invitation from Remote to start the
               self-enrollment process.
             </li>
             <li>
               <strong className="font-medium text-[#09090B]">
-                Verify information 
+                Verify information
               </strong>{' '}
               - Remote prepares the Employment Agreement and verifies all the
               information.
             </li>
             <li>
               <strong className="font-medium text-[#09090B]">
-                Sign contract 
+                Sign contract
               </strong>{' '}
               - All parties sign the Employment Agreement and are ready to
               start. 🎉
@@ -118,7 +118,7 @@ function OnboardingTimeline({
           <p className="text-xs text-muted-foreground mt-4">
             For customers who accept our Terms of Service (ToS), the employee
             onboarding timeline starts once the employee has been invited to the
-            platform and completed self enrolment. 
+            platform and completed self enrolment.
             <ZendeskTriggerButton
               zendeskId="4411262104589"
               zendeskURL="https://support.remote.com/hc/en-us/articles/4411262104589-Employee-Onboarding-Timeline"
