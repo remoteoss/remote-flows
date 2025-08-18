@@ -312,13 +312,25 @@ function BreakdownListItem({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
-  const indentClass = level > 0 ? `pl-${6 + level * 4}` : 'pl-0';
+  const indentClass = level > 0 ? `pl-${6 + level * 4}` : '';
 
   return (
     <li role="listitem">
-      <div className={cn('grid grid-cols-3 items-center', indentClass)}>
+      <div
+        className={cn(
+          moreThanOneCurrency
+            ? 'grid grid-cols-3 items-center justify-between'
+            : 'grid grid-cols-2 items-center justify-between',
+          indentClass,
+        )}
+      >
+        {/* Bullet + Label + Buttons - takes remaining space */}
         <div className="flex items-center gap-2">
-          <span className="text-sm">{item.label}</span>
+          <span
+            className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
+            aria-hidden="true"
+          ></span>
+          <span className="text-sm text-[#09090B]">{item.label}</span>
 
           {/* Zendesk trigger if available */}
           {item.zendeskId && item.zendeskURL && (
@@ -344,21 +356,20 @@ function BreakdownListItem({
           )}
         </div>
 
-        {/* Amounts */}
+        {/* Amounts - separate columns for dual currency */}
         {moreThanOneCurrency ? (
           <>
-            <span className="text-sm text-right">
+            <span className="text-sm text-right text-[#09090B]">
               {item.regionalAmount || '—'}
             </span>
-            <span className="text-sm text-right">
+            <span className="text-sm text-right text-[#09090B]">
               {item.employerAmount || '—'}
             </span>
           </>
         ) : (
-          <>
-            <span></span>
-            <span className="text-sm text-right">{item.amount || '—'}</span>
-          </>
+          <span className="text-sm text-right text-[#09090B]">
+            {item.amount || '—'}
+          </span>
         )}
       </div>
 
@@ -375,7 +386,9 @@ function BreakdownListItem({
 
       {/* Description if available */}
       {item.description && isOpen && (
-        <div className={cn('mt-1 text-xs text-muted-foreground', indentClass)}>
+        <div
+          className={cn('mt-1 text-xs text-muted-foreground ml-6', indentClass)}
+        >
           {item.description}
         </div>
       )}
@@ -397,7 +410,7 @@ function BreakdownList({
   level,
 }: BreakdownListProps) {
   return (
-    <ul className={cn('list-none', className)} role="list">
+    <ul className={cn('list-none', className)}>
       {items.map((item, index) => (
         <BreakdownListItem
           key={index}
