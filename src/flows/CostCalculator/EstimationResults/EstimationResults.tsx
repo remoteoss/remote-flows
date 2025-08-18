@@ -487,6 +487,17 @@ export const EstimationResults = ({
                     estimation.employer_currency_costs.currency.symbol,
                   ),
                 },
+                {
+                  label: 'Core benefits',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs.monthly_benefits_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs.monthly_benefits_total,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
               ]}
               moreThanOneCurrency={moreThanOneCurrency}
             />
@@ -531,6 +542,17 @@ export const EstimationResults = ({
                   employerAmount: formatCurrency(
                     estimation.employer_currency_costs
                       .monthly_contributions_total,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
+                {
+                  label: 'Core benefits',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs.monthly_benefits_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs.monthly_benefits_total,
                     estimation.employer_currency_costs.currency.symbol,
                   ),
                 },
