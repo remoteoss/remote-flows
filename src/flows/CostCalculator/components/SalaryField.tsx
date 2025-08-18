@@ -1,6 +1,6 @@
 import { CurrencyConversionField } from '@/src/components/form/fields/CurrencyConversionField';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
-import { zendeskArticles } from '@/src/internals';
+import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { JSFField } from '@/src/types/remoteFlows';
 
 type SalaryFieldProps = JSFField & {

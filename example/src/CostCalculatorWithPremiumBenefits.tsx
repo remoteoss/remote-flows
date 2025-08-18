@@ -10,6 +10,7 @@ import {
   CostCalculatorResults,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
+  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -19,7 +20,6 @@ import {
   DrawerTrigger,
   ZendeskTriggerButton,
   Card,
-  zendeskArticles,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import { ButtonHTMLAttributes, Fragment, useState } from 'react';
