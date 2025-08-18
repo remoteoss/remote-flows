@@ -22,7 +22,7 @@ import {
   ZendeskTriggerButton,
   cn,
 } from '@remoteoss/remote-flows/internals';
-import { ButtonHTMLAttributes, Fragment, useState } from 'react';
+import { ButtonHTMLAttributes, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import './css/main.css';
