@@ -88,4 +88,12 @@
   .RemoteFlows__Card {
     box-shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.051);
   }
+
+  .RemoteFlows__Estimation__Separator {
+    @apply border-b border-[#E4E4E7] pb-6;
+  }
+
+  .RemoteFlows__EstimationResults__Headers__Label {
+    @apply text-sm text-[#27272A] text-right;
+  }
 }

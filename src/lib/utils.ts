@@ -11,7 +11,7 @@ export function formatCurrency(
   amount: number | undefined | null,
   symbol = '€',
 ): string {
-  if (amount === undefined || amount === null) {
+  if (amount == null) {
     return '-';
   }
 

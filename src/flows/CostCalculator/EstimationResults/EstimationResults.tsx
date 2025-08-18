@@ -73,7 +73,14 @@ function OnboardingTimeline({
   className?: string;
 }) {
   return (
-    <Accordion type="single" collapsible className={cn('w-full', className)}>
+    <Accordion
+      type="single"
+      collapsible
+      className={cn(
+        'RemoteFlows__EstimationResults__OnboardingTimeline w-full',
+        className,
+      )}
+    >
       <AccordionItem value="timeline" className="border-border">
         <AccordionTrigger className="hover:no-underline px-0 py-4">
           <div className="flex items-center justify-between w-full">
@@ -135,20 +142,29 @@ function HiringSection({
   className,
   countryBenefitsUrl,
   countryGuideUrl,
+  country,
   hireNowLinkBtn,
 }: {
   className?: string;
   countryBenefitsUrl: string;
   countryGuideUrl: string;
+  country: string;
   hireNowLinkBtn: string;
 }) {
   return (
-    <Accordion type="single" collapsible className={cn('w-full', className)}>
+    <Accordion
+      type="single"
+      collapsible
+      className={cn(
+        'RemoteFlows__EstimationResults__HiringSection w-full',
+        className,
+      )}
+    >
       <AccordionItem value="timeline" className="border-border">
         <AccordionTrigger className="hover:no-underline px-0 py-4">
           <div className="flex items-center justify-between w-full">
             <span className="text-base font-medium text-[#0F172A]">
-              Hiring in France
+              Hiring in {country}
             </span>
           </div>
         </AccordionTrigger>
@@ -184,10 +200,10 @@ function HiringSection({
 }
 
 function EstimationHeaders({
-  moreThanOneCurrency,
+  isMultipleCurrency,
   className,
 }: {
-  moreThanOneCurrency: boolean;
+  isMultipleCurrency: boolean;
   className?: string;
 }) {
   return (
@@ -198,19 +214,21 @@ function EstimationHeaders({
       )}
     >
       <span aria-hidden />
-      {moreThanOneCurrency ? (
+      {isMultipleCurrency ? (
         <>
-          <span className="text-sm text-[#27272A] text-right">
+          <span className="RemoteFlows__EstimationResults__Headers__Label">
             Employee currency
           </span>
-          <span className="text-sm text-[#27272A] text-right">
+          <span className="RemoteFlows__EstimationResults__Headers__Label">
             Employer currency
           </span>
         </>
       ) : (
         <>
           <span></span>
-          <span className="text-sm text-[#27272A] text-right">Amount</span>
+          <span className="RemoteFlows__EstimationResults__Headers__Label">
+            Amount
+          </span>
         </>
       )}
     </div>
@@ -238,7 +256,12 @@ function EstimationRow({
     <div className={cn('RemoteFlows__EstimationResults__Row', className)}>
       <div className="grid grid-cols-3 items-center">
         <div className="flex items-center gap-2">
-          <span className={cn('min-w-[140px]', isHeader ? 'font-medium' : '')}>
+          <span
+            className={cn(
+              'min-w-[140px]',
+              isHeader ? 'font-medium text-[#09090B]' : '',
+            )}
+          >
             {label}
           </span>
           {isCollapsible && (
@@ -304,11 +327,11 @@ interface BreakdownItem {
 
 function BreakdownListItem({
   item,
-  moreThanOneCurrency,
+  isMultipleCurrency,
   level = 0,
 }: {
   item: BreakdownItem;
-  moreThanOneCurrency: boolean;
+  isMultipleCurrency: boolean;
   level?: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -319,7 +342,7 @@ function BreakdownListItem({
     <li className={cn('pb-3', isNested && 'pb-1')}>
       <div
         className={cn(
-          moreThanOneCurrency
+          isMultipleCurrency
             ? 'grid grid-cols-3 items-center justify-between'
             : 'grid grid-cols-2 items-center justify-between',
         )}
@@ -378,8 +401,7 @@ function BreakdownListItem({
           )}
         </div>
 
-        {/* Amounts - separate columns for dual currency */}
-        {moreThanOneCurrency ? (
+        {isMultipleCurrency ? (
           <>
             <span
               className={cn(
@@ -410,12 +432,11 @@ function BreakdownListItem({
         )}
       </div>
 
-      {/* Nested breakdown items */}
       {hasChildren && isOpen && (
         <div className="mt-1">
           <BreakdownList
             items={item.children!}
-            moreThanOneCurrency={moreThanOneCurrency}
+            isMultipleCurrency={isMultipleCurrency}
             level={level + 1}
           />
         </div>
@@ -426,14 +447,14 @@ function BreakdownListItem({
 
 interface BreakdownListProps {
   items: BreakdownItem[];
-  moreThanOneCurrency: boolean;
+  isMultipleCurrency: boolean;
   className?: string;
-  level?: number; // For nested indentation
+  level?: number;
 }
 
 function BreakdownList({
   items,
-  moreThanOneCurrency,
+  isMultipleCurrency,
   className,
   level,
 }: BreakdownListProps) {
@@ -443,7 +464,7 @@ function BreakdownList({
         <BreakdownListItem
           key={index}
           item={item}
-          moreThanOneCurrency={moreThanOneCurrency}
+          isMultipleCurrency={isMultipleCurrency}
           level={level}
         />
       ))}
@@ -456,27 +477,27 @@ export const EstimationResults = ({
   title,
   hireNowLinkBtn,
 }: EstimationResultsProps) => {
-  const moreThanOneCurrency =
+  const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <div className="border-b border-[#E4E4E7] pb-6">
+      <div className="RemoteFlows__Estimation__Separator">
         <EstimationResultsHeader
           title={title}
           country={estimation.country.name}
         />
       </div>
-      <div className="border-b border-[#E4E4E7] pb-6">
+      <div className="RemoteFlows__Estimation__Separator">
         <EstimationHeaders
-          moreThanOneCurrency={moreThanOneCurrency}
+          isMultipleCurrency={isMultipleCurrency}
           className="mb-3"
         />
         <EstimationRow
           label="Monthly total cost"
           amounts={
-            moreThanOneCurrency
+            isMultipleCurrency
               ? [
                   formatCurrency(
                     estimation.regional_currency_costs.monthly_total,
@@ -571,15 +592,15 @@ export const EstimationResults = ({
                   ) || [],
               },
             ]}
-            moreThanOneCurrency={moreThanOneCurrency}
+            isMultipleCurrency={isMultipleCurrency}
           />
         </EstimationRow>
       </div>
-      <div className="border-b border-[#E4E4E7] pb-6">
+      <div className="RemoteFlows__Estimation__Separator">
         <EstimationRow
           label="Annual total cost"
           amounts={
-            moreThanOneCurrency
+            isMultipleCurrency
               ? [
                   formatCurrency(
                     estimation.regional_currency_costs.annual_total,
@@ -698,13 +719,12 @@ export const EstimationResults = ({
                   ) || [],
               },
             ]}
-            moreThanOneCurrency={moreThanOneCurrency}
+            isMultipleCurrency={isMultipleCurrency}
           />
         </EstimationRow>
       </div>
-      <div className="border-b border-[#E4E4E7] pb-6">
+      <div className="RemoteFlows__Estimation__Separator">
         <OnboardingTimeline
-          className="RemoteFlows__EstimationResults__OnboardingTimeline"
           minimumOnboardingDays={estimation.minimum_onboarding_time}
         />
       </div>
@@ -712,7 +732,7 @@ export const EstimationResults = ({
       <HiringSection
         countryBenefitsUrl={estimation.country_benefits_details_url as string}
         countryGuideUrl={estimation.country_guide_url as string}
-        className="RemoteFlows__EstimationResults__HiringSection"
+        country={estimation.country.name}
         hireNowLinkBtn={hireNowLinkBtn}
       />
     </Card>
