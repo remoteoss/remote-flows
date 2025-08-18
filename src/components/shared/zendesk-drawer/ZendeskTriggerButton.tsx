@@ -1,6 +1,6 @@
 import { cn } from '@/src/lib/utils';
 import { ZendeskDrawer } from './ZendeskDrawer';
-import { useRouter } from '@/src/lib/router';
+import { useState } from 'react';
 
 interface ZendeskTriggerButtonProps {
   zendeskId: number;
@@ -15,19 +15,18 @@ export function ZendeskTriggerButton({
   onClick,
   children,
 }: ZendeskTriggerButtonProps) {
-  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
-    router.setSearchParams({
-      articleId: zendeskId || '',
-    });
-
+    setIsOpen(true);
     onClick?.(zendeskId);
   };
 
   return (
     <ZendeskDrawer
       zendeskId={zendeskId}
+      open={isOpen}
+      onClose={() => setIsOpen(false)}
       Trigger={
         <button
           onClick={handleClick}

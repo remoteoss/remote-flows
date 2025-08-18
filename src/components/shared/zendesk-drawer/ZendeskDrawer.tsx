@@ -7,43 +7,38 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/src/components/ui/drawer';
-import { useRouter } from '@/src/lib/router';
-import { useSearchParams } from '@/src/lib/useSearchParams';
 import { sanitizeHtml } from '@/src/lib/utils';
-import { useEffect, useState } from 'react';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactNode;
   zendeskId: number;
+  open: boolean;
+  onClose: () => void;
 };
 
 const buildZendeskURL = (zendeskId: number) => {
   return `https://support.remote.com/hc/en-us/articles/${zendeskId}`;
 };
 
-export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export const ZendeskDrawer = ({
+  Trigger,
+  zendeskId,
+  open,
+  onClose,
+}: ZendeskDrawerProps) => {
   const zendeskURL = buildZendeskURL(zendeskId);
 
-  useEffect(() => {
-    const articleId = searchParams.get('articleId');
-    setIsOpen(articleId === zendeskId.toString());
-  }, [searchParams, zendeskId]);
-
   const handleClose = () => {
-    router.setSearchParams({ articleId: null });
-    setIsOpen(false);
+    onClose?.();
   };
 
   const { data, isLoading, error } = useZendeskArticle(zendeskId, {
-    enabled: isOpen,
+    enabled: open,
   });
 
   return (
     <Drawer
-      open={isOpen}
+      open={open}
       onOpenChange={(open) => !open && handleClose()}
       direction="right"
     >
