@@ -120,8 +120,7 @@ function OnboardingTimeline({
             onboarding timeline starts once the employee has been invited to the
             platform and completed self enrolment.
             <ZendeskTriggerButton
-              zendeskId="4411262104589"
-              zendeskURL="https://support.remote.com/hc/en-us/articles/4411262104589-Employee-Onboarding-Timeline"
+              zendeskId={zendeskArticles.employeeOnboardingTimeline}
             >
               Learn more
             </ZendeskTriggerButton>
@@ -347,10 +346,7 @@ function BreakdownListItem({
                 <>
                   <span>{item.tooltip}</span>{' '}
                   {item.zendeskId && item.zendeskURL && (
-                    <ZendeskTriggerButton
-                      zendeskId={item.zendeskId}
-                      zendeskURL={item.zendeskURL}
-                    >
+                    <ZendeskTriggerButton zendeskId={Number(item.zendeskId)}>
                       Learn more
                     </ZendeskTriggerButton>
                   )}
