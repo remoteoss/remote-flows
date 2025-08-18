@@ -618,13 +618,11 @@ export const EstimationResults = ({
               {
                 label: 'Mandatory employer costs',
                 regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs
-                    .monthly_contributions_total,
+                  estimation.regional_currency_costs.annual_contributions_total,
                   estimation.regional_currency_costs.currency.symbol,
                 ),
                 employerAmount: formatCurrency(
-                  estimation.employer_currency_costs
-                    .monthly_contributions_total,
+                  estimation.employer_currency_costs.annual_contributions_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
                 children:
@@ -648,11 +646,11 @@ export const EstimationResults = ({
               {
                 label: 'Core benefits',
                 regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.monthly_benefits_total,
+                  estimation.regional_currency_costs.annual_benefits_total,
                   estimation.regional_currency_costs.currency.symbol,
                 ),
                 employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.monthly_benefits_total,
+                  estimation.employer_currency_costs.annual_benefits_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
                 children:
