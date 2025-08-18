@@ -13,5 +13,7 @@ dist
 .idea
 .DS_Store
 .env
+.angular
 coverage
 example/public/
+example-angular/public
