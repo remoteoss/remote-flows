@@ -293,7 +293,6 @@ interface BreakdownItem {
   label: string;
   regionalAmount?: string;
   employerAmount?: string;
-  amount?: string; // For single currency
   description?: string;
   zendeskId?: string;
   zendeskURL?: string;
@@ -368,7 +367,7 @@ function BreakdownListItem({
           </>
         ) : (
           <span className="text-sm text-right text-[#09090B]">
-            {item.amount || '—'}
+            {item.regionalAmount || '—'}
           </span>
         )}
       </div>
@@ -448,16 +447,23 @@ export const EstimationResults = ({
           />
           <EstimationRow
             label="Monthly total cost"
-            amounts={[
-              formatCurrency(
-                estimation.regional_currency_costs.monthly_total,
-                estimation.regional_currency_costs.currency.symbol,
-              ),
-              formatCurrency(
-                estimation.employer_currency_costs.monthly_total,
-                estimation.employer_currency_costs.currency.symbol,
-              ),
-            ]}
+            amounts={
+              moreThanOneCurrency
+                ? [
+                    formatCurrency(
+                      estimation.regional_currency_costs.monthly_total,
+                      estimation.regional_currency_costs.currency.symbol,
+                    ),
+                    formatCurrency(
+                      estimation.employer_currency_costs.monthly_total,
+                      estimation.employer_currency_costs.currency.symbol,
+                    ),
+                  ]
+                : formatCurrency(
+                    estimation.regional_currency_costs.monthly_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  )
+            }
             isHeader
             isCollapsible
           >
@@ -506,16 +512,23 @@ export const EstimationResults = ({
         <div className="border-b border-[#E4E4E7] pb-6">
           <EstimationRow
             label="Annual total cost"
-            amounts={[
-              formatCurrency(
-                estimation.regional_currency_costs.annual_total,
-                estimation.regional_currency_costs.currency.symbol,
-              ),
-              formatCurrency(
-                estimation.employer_currency_costs.annual_total,
-                estimation.employer_currency_costs.currency.symbol,
-              ),
-            ]}
+            amounts={
+              moreThanOneCurrency
+                ? [
+                    formatCurrency(
+                      estimation.regional_currency_costs.annual_total,
+                      estimation.regional_currency_costs.currency.symbol,
+                    ),
+                    formatCurrency(
+                      estimation.employer_currency_costs.annual_total,
+                      estimation.employer_currency_costs.currency.symbol,
+                    ),
+                  ]
+                : formatCurrency(
+                    estimation.regional_currency_costs.annual_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  )
+            }
             isHeader
             isCollapsible
           >

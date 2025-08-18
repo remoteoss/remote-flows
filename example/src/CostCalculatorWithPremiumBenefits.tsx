@@ -386,7 +386,7 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithPremiumBenefits() {
-  const estimation: $TSFixMe = {
+  const estimationTwoCurrencies: $TSFixMe = {
     data: {
       employments: [
         {
@@ -994,6 +994,418 @@ export function CostCalculatorWithPremiumBenefits() {
       ],
     },
   };
+  const estimationOneCurrency: $TSFixMe = {
+    data: {
+      employments: [
+        {
+          country: {
+            code: 'ESP',
+            name: 'Spain',
+            slug: 'spain-2a0d3a99-851e-4ca6-988d-43bbc6becfde',
+            alpha_2_code: 'ES',
+          },
+          region: {
+            code: null,
+            name: 'Madrid',
+            status: 'active',
+            country: {
+              code: 'ESP',
+              name: 'Spain',
+              currency: {
+                code: 'EUR',
+                name: 'European Euro',
+                symbol: '€',
+                slug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+              },
+              slug: 'spain-2a0d3a99-851e-4ca6-988d-43bbc6becfde',
+              alpha_2_code: 'ES',
+            },
+            slug: 'd3afcf2a-d296-4560-aa9d-5591588295c4',
+            child_regions: [],
+            parent_region: null,
+          },
+          country_benefits_details_url:
+            'https://remote.com/benefits-guide/spain',
+          country_guide_url:
+            'https://remote.com/country-hiring-considerations#spain',
+          employer_currency_costs: {
+            currency: {
+              code: 'EUR',
+              name: 'European Euro',
+              symbol: '€',
+              slug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+            },
+            annual_gross_salary: 5000000,
+            annual_benefits_breakdown: [
+              {
+                name: 'Medical insurance',
+                description:
+                  'Calculated at 110(EUR) on top of the base monthly salary.',
+                amount: 119052,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+            ],
+            annual_benefits_total: 119052,
+            annual_contributions_breakdown: [
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 1172280,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Health check 2',
+                description:
+                  'Calculated at 58 on top of the base annual salary.',
+                amount: 5796,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 1172280,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Safety Training',
+                description:
+                  'Calculated at 27 on top of the base annual salary.',
+                amount: 2688,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Occupational accident and professional disease contribution',
+                description:
+                  '1.65% of the monthly wage with a ceiling of €4,139.40.',
+                amount: 81960,
+                zendesk_article_id: '4426718552333',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426718552333',
+              },
+              {
+                name: 'Unemployment',
+                description:
+                  '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,139.',
+                amount: 273204,
+                zendesk_article_id: '4426724133645',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724133645',
+              },
+              {
+                name: 'Vocational education and training',
+                description:
+                  '0.60% contributed towards professional training as part of the payroll taxation.',
+                amount: 29808,
+                zendesk_article_id: '4426724443661',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724443661',
+              },
+              {
+                name: 'Wage guarantee fund',
+                description:
+                  '0.20% of the monthly salary is contributed to the insolvency state fund, capped at €8.28/month.',
+                amount: 9936,
+                zendesk_article_id: '4426737935501',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426737935501',
+              },
+            ],
+            annual_contributions_total: 2747952,
+            annual_total: 8641004,
+            extra_statutory_payments_breakdown: [],
+            extra_statutory_payments_total: 0,
+            monthly_benefits_breakdown: [
+              {
+                name: 'Medical insurance',
+                description:
+                  'Calculated at 110(EUR) on top of the base monthly salary.',
+                amount: 9921,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+            ],
+            monthly_benefits_total: 9921,
+            monthly_contributions_breakdown: [
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 97690,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Health check 2',
+                description:
+                  'Calculated at 58 on top of the base annual salary.',
+                amount: 483,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 97690,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Safety Training',
+                description:
+                  'Calculated at 27 on top of the base annual salary.',
+                amount: 224,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Occupational accident and professional disease contribution',
+                description:
+                  '1.65% of the monthly wage with a ceiling of €4,139.40.',
+                amount: 6830,
+                zendesk_article_id: '4426718552333',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426718552333',
+              },
+              {
+                name: 'Unemployment',
+                description:
+                  '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,139.',
+                amount: 22767,
+                zendesk_article_id: '4426724133645',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724133645',
+              },
+              {
+                name: 'Vocational education and training',
+                description:
+                  '0.60% contributed towards professional training as part of the payroll taxation.',
+                amount: 2484,
+                zendesk_article_id: '4426724443661',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724443661',
+              },
+              {
+                name: 'Wage guarantee fund',
+                description:
+                  '0.20% of the monthly salary is contributed to the insolvency state fund, capped at €8.28/month.',
+                amount: 828,
+                zendesk_article_id: '4426737935501',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426737935501',
+              },
+            ],
+            monthly_contributions_total: 228996,
+            monthly_gross_salary: 416667,
+            monthly_tce: 645663,
+            monthly_total: 720084,
+            monthly_management_fee: 64500,
+            annual_management_fee: 774000,
+          },
+          has_extra_statutory_payment: false,
+          minimum_onboarding_time: 4,
+          regional_currency_costs: {
+            currency: {
+              code: 'EUR',
+              name: 'European Euro',
+              symbol: '€',
+              slug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+            },
+            annual_gross_salary: 5000000,
+            annual_benefits_breakdown: [
+              {
+                name: 'Medical insurance',
+                description:
+                  'Calculated at 110(EUR) on top of the base monthly salary.',
+                amount: 119052,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+            ],
+            annual_benefits_total: 119052,
+            annual_contributions_breakdown: [
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 1172280,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Health check 2',
+                description:
+                  'Calculated at 58 on top of the base annual salary.',
+                amount: 5796,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 1172280,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Safety Training',
+                description:
+                  'Calculated at 27 on top of the base annual salary.',
+                amount: 2688,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Occupational accident and professional disease contribution',
+                description:
+                  '1.65% of the monthly wage with a ceiling of €4,139.40.',
+                amount: 81960,
+                zendesk_article_id: '4426718552333',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426718552333',
+              },
+              {
+                name: 'Unemployment',
+                description:
+                  '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,139.',
+                amount: 273204,
+                zendesk_article_id: '4426724133645',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724133645',
+              },
+              {
+                name: 'Vocational education and training',
+                description:
+                  '0.60% contributed towards professional training as part of the payroll taxation.',
+                amount: 29808,
+                zendesk_article_id: '4426724443661',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724443661',
+              },
+              {
+                name: 'Wage guarantee fund',
+                description:
+                  '0.20% of the monthly salary is contributed to the insolvency state fund, capped at €8.28/month.',
+                amount: 9936,
+                zendesk_article_id: '4426737935501',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426737935501',
+              },
+            ],
+            annual_contributions_total: 2747952,
+            annual_total: 8641004,
+            extra_statutory_payments_breakdown: [],
+            extra_statutory_payments_total: 0,
+            monthly_benefits_breakdown: [
+              {
+                name: 'Medical insurance',
+                description:
+                  'Calculated at 110(EUR) on top of the base monthly salary.',
+                amount: 9921,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+            ],
+            monthly_benefits_total: 9921,
+            monthly_contributions_breakdown: [
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 97690,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Health check 2',
+                description:
+                  'Calculated at 58 on top of the base annual salary.',
+                amount: 483,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Common contingencies',
+                description:
+                  '23.60% of the monthly salary with ceiling of €4,139.',
+                amount: 97690,
+                zendesk_article_id: '4426708821133',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426708821133',
+              },
+              {
+                name: 'Mandatory Safety Training',
+                description:
+                  'Calculated at 27 on top of the base annual salary.',
+                amount: 224,
+                zendesk_article_id: null,
+                zendesk_article_url: null,
+              },
+              {
+                name: 'Occupational accident and professional disease contribution',
+                description:
+                  '1.65% of the monthly wage with a ceiling of €4,139.40.',
+                amount: 6830,
+                zendesk_article_id: '4426718552333',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426718552333',
+              },
+              {
+                name: 'Unemployment',
+                description:
+                  '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,139.',
+                amount: 22767,
+                zendesk_article_id: '4426724133645',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724133645',
+              },
+              {
+                name: 'Vocational education and training',
+                description:
+                  '0.60% contributed towards professional training as part of the payroll taxation.',
+                amount: 2484,
+                zendesk_article_id: '4426724443661',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426724443661',
+              },
+              {
+                name: 'Wage guarantee fund',
+                description:
+                  '0.20% of the monthly salary is contributed to the insolvency state fund, capped at €8.28/month.',
+                amount: 828,
+                zendesk_article_id: '4426737935501',
+                zendesk_article_url:
+                  'https://support.remote.com/hc/en-us/articles/4426737935501',
+              },
+            ],
+            monthly_contributions_total: 228996,
+            monthly_gross_salary: 416667,
+            monthly_tce: 645663,
+            monthly_total: 720084,
+            monthly_management_fee: 64500,
+            annual_management_fee: 774000,
+          },
+          has_partial_indirect_tax: false,
+        },
+      ],
+    },
+  };
+
   const proxyURL = window.location.origin;
   return (
     <RemoteFlows
@@ -1002,10 +1414,10 @@ export function CostCalculatorWithPremiumBenefits() {
       isClientToken
     >
       {/* <CostCalculatorFormDemo /> */}
-      {Array.isArray(estimation.data.employments) &&
-        estimation.data.employments.length > 0 && (
+      {Array.isArray(estimationTwoCurrencies.data.employments) &&
+        estimationTwoCurrencies.data.employments.length > 0 && (
           <EstimationResults
-            estimation={estimation.data.employments?.[0]}
+            estimation={estimationTwoCurrencies.data.employments?.[0]}
             title="Estimate #01"
             hireNowLinkBtn="#"
           />
