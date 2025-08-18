@@ -315,7 +315,7 @@ function BreakdownListItem({
   const indentClass = level > 0 ? `pl-${6 + level * 4}` : '';
 
   return (
-    <li role="listitem">
+    <li className="pb-3">
       <div
         className={cn(
           moreThanOneCurrency
@@ -474,6 +474,19 @@ export const EstimationResults = ({
                     estimation.employer_currency_costs.currency.symbol,
                   ),
                 },
+                {
+                  label: 'Mandatory employer costs',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs
+                      .monthly_contributions_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs
+                      .monthly_contributions_total,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
               ]}
               moreThanOneCurrency={moreThanOneCurrency}
             />
@@ -505,6 +518,19 @@ export const EstimationResults = ({
                   ),
                   employerAmount: formatCurrency(
                     estimation.employer_currency_costs.annual_gross_salary,
+                    estimation.employer_currency_costs.currency.symbol,
+                  ),
+                },
+                {
+                  label: 'Mandatory employer costs',
+                  regionalAmount: formatCurrency(
+                    estimation.regional_currency_costs
+                      .monthly_contributions_total,
+                    estimation.regional_currency_costs.currency.symbol,
+                  ),
+                  employerAmount: formatCurrency(
+                    estimation.employer_currency_costs
+                      .monthly_contributions_total,
                     estimation.employer_currency_costs.currency.symbol,
                   ),
                 },
