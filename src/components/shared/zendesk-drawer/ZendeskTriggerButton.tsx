@@ -1,36 +1,32 @@
 import { cn } from '@/src/lib/utils';
 import { ZendeskDrawer } from './ZendeskDrawer';
-import { useRouter } from '@/src/lib/router';
+import { useState } from 'react';
 
 interface ZendeskTriggerButtonProps {
-  zendeskId: string;
-  zendeskURL: string;
+  zendeskId: number;
   className?: string;
-  onClick?: (zendeskId: string) => void;
+  onClick?: (zendeskId: number) => void;
   children?: React.ReactNode;
 }
 
 export function ZendeskTriggerButton({
   zendeskId,
-  zendeskURL,
   className,
   onClick,
   children,
 }: ZendeskTriggerButtonProps) {
-  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
-    router.setSearchParams({
-      articleId: zendeskId || '',
-    });
-
+    setIsOpen(true);
     onClick?.(zendeskId);
   };
 
   return (
     <ZendeskDrawer
       zendeskId={zendeskId}
-      zendeskURL={zendeskURL}
+      open={isOpen}
+      onClose={() => setIsOpen(false)}
       Trigger={
         <button
           onClick={handleClick}

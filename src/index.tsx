@@ -48,3 +48,4 @@ export type {
 
 export type { $TSFixMe } from './types/remoteFlows';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
+export { zendeskArticles } from './components/shared/zendesk-drawer/utils';

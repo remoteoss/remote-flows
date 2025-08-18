@@ -8,8 +8,6 @@
  */
 
 // Internal utilities
-export { useRouter } from './lib/router';
-export { useSearchParams } from './lib/useSearchParams';
 export { cn } from './lib/utils';
 
 // UI Components for internal use

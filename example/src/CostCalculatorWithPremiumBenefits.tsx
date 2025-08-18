@@ -10,6 +10,7 @@ import {
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
   EstimationResults,
+  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -71,8 +72,7 @@ const Header = ({
       <p>{description}</p>
       <ZendeskTriggerButton
         className="text-sm"
-        zendeskId="4668194326797"
-        zendeskURL="https://support.remote.com/hc/en-us/articles/4668194326797-Disclaimer-information-on-Cost-of-Employment-calculations"
+        zendeskId={zendeskArticles.disclaimerCostCalculator}
       >
         Learn more ↗
       </ZendeskTriggerButton>
@@ -212,8 +212,7 @@ const AddEstimateForm = ({
                   employee's services.
                   <ZendeskTriggerButton
                     className="text-sm"
-                    zendeskId="4410698586893"
-                    zendeskURL="https://support.remote.com/hc/en-us/articles/4410698586893-Do-you-have-international-pricing"
+                    zendeskId={zendeskArticles.internationalPricing}
                   >
                     Learn more ↗
                   </ZendeskTriggerButton>

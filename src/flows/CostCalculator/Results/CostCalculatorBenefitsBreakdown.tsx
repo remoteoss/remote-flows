@@ -45,8 +45,7 @@ export function CostCalculatorBenefitsBreakdown({
                       <span>{benefit.description}</span>{' '}
                       {benefit.zendesk_article_url && (
                         <ZendeskTriggerButton
-                          zendeskId={benefit.zendesk_article_id as string}
-                          zendeskURL={benefit.zendesk_article_url as string}
+                          zendeskId={Number(benefit.zendesk_article_id)}
                         >
                           Learn more
                         </ZendeskTriggerButton>

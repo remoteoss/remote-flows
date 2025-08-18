@@ -1,5 +1,6 @@
 import { CurrencyConversionField } from '@/src/components/form/fields/CurrencyConversionField';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { JSFField } from '@/src/types/remoteFlows';
 
 type SalaryFieldProps = JSFField & {
@@ -25,8 +26,7 @@ export const SalaryField = ({
         The conversion is based on the Remote FX rate.{' '}
         <ZendeskTriggerButton
           className="text-sm"
-          zendeskId="33271144977421"
-          zendeskURL="https://support.remote.com/hc/en-us/articles/33271144977421-Remote-FX-rate"
+          zendeskId={zendeskArticles.remoteFxRate}
         >
           Learn more ↗
         </ZendeskTriggerButton>

@@ -31,8 +31,7 @@ export function CostCalculatorGrossSalary({
                     salary.
                   </span>{' '}
                   <ZendeskTriggerButton
-                    zendeskId={zendeskArticles.extraPayments.toString()}
-                    zendeskURL={'#'}
+                    zendeskId={zendeskArticles.extraPayments}
                   >
                     Learn more
                   </ZendeskTriggerButton>

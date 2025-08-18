@@ -4,7 +4,7 @@ import { Client } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 
 export const useZendeskArticle = (
-  zendeskId: string | null,
+  zendeskId: number | null,
   queryOptions?: { enabled?: boolean },
 ) => {
   const { client } = useClient();
