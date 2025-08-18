@@ -314,27 +314,33 @@ function BreakdownListItem({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
-  const indentClass = level > 0 ? `pl-${6 + level * 4}` : '';
+  const isNested = level > 0;
 
   return (
-    <li className="pb-3">
+    <li className={cn('pb-3', isNested && 'pb-1')}>
       <div
         className={cn(
           moreThanOneCurrency
             ? 'grid grid-cols-3 items-center justify-between'
             : 'grid grid-cols-2 items-center justify-between',
-          indentClass,
         )}
       >
-        {/* Bullet + Label + Buttons - takes remaining space */}
-        <div className="flex items-center gap-2">
-          <span
-            className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
-            aria-hidden="true"
-          ></span>
-          <span className="text-sm text-[#09090B]">{item.label}</span>
+        <div className={cn('flex items-center gap-2', isNested && 'pl-3')}>
+          {!isNested && (
+            <span
+              className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
+              aria-hidden="true"
+            />
+          )}
 
-          {/* Zendesk trigger if available */}
+          <span
+            className={cn(
+              isNested ? 'text-xs text-[#71717A]' : 'text-sm text-[#09090B]', // Different colors
+            )}
+          >
+            {item.label}
+          </span>
+
           {item.zendeskId && item.zendeskURL && item.tooltip && (
             <BasicTooltip
               content={
@@ -355,7 +361,6 @@ function BreakdownListItem({
             </BasicTooltip>
           )}
 
-          {/* Collapsible chevron for nested items */}
           {(item.isCollapsible || hasChildren) && (
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -373,15 +378,30 @@ function BreakdownListItem({
         {/* Amounts - separate columns for dual currency */}
         {moreThanOneCurrency ? (
           <>
-            <span className="text-sm text-right text-[#09090B]">
+            <span
+              className={cn(
+                'text-sm text-right',
+                isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+              )}
+            >
               {item.regionalAmount || '—'}
             </span>
-            <span className="text-sm text-right text-[#09090B]">
+            <span
+              className={cn(
+                'text-sm text-right',
+                isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+              )}
+            >
               {item.employerAmount || '—'}
             </span>
           </>
         ) : (
-          <span className="text-sm text-right text-[#09090B]">
+          <span
+            className={cn(
+              'text-sm text-right',
+              isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+            )}
+          >
             {item.regionalAmount || '—'}
           </span>
         )}
@@ -400,9 +420,7 @@ function BreakdownListItem({
 
       {/* Description if available */}
       {item.description && isOpen && (
-        <div
-          className={cn('mt-1 text-xs text-muted-foreground ml-6', indentClass)}
-        >
+        <div className={cn('mt-1 text-xs text-muted-foreground ml-6')}>
           {item.description}
         </div>
       )}
@@ -445,6 +463,8 @@ export const EstimationResults = ({
   const moreThanOneCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
+
+  console.log('estimation', estimation);
 
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
@@ -510,6 +530,7 @@ export const EstimationResults = ({
                     .monthly_contributions_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
+                children: [],
               },
               {
                 label: 'Core benefits',
@@ -599,6 +620,23 @@ export const EstimationResults = ({
                     .extra_statutory_payments_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
+                children:
+                  estimation.employer_currency_costs.extra_statutory_payments_breakdown?.map(
+                    (item) => ({
+                      label: item.name,
+                      regionalAmount: formatCurrency(
+                        item.amount,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        item.amount,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      zendeskId: item.zendesk_article_id || undefined,
+                      zendeskURL: item.zendesk_article_url || undefined,
+                      tooltip: item.description || undefined,
+                    }),
+                  ) || [],
               },
             ]}
             moreThanOneCurrency={moreThanOneCurrency}
