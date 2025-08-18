@@ -10,6 +10,7 @@ import {
   CostCalculatorResults,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
+  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -17,6 +18,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  ZendeskTriggerButton,
   Card,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
@@ -54,8 +56,12 @@ const Header = ({
     <div className="premium-benefits-header">
       <h1>{title}</h1>
       <p>{description}</p>
-      {/** TODO: Add a zendesk link that opens a Zendesk drawer */}
-      {/* <a href="https://remote.com/premium-benefits">Learn more</a> */}
+      <ZendeskTriggerButton
+        className="text-sm"
+        zendeskId={zendeskArticles.disclaimerCostCalculator}
+      >
+        Learn more ↗
+      </ZendeskTriggerButton>
     </div>
   );
 };
@@ -186,8 +192,18 @@ const AddEstimateForm = ({
             },
             currency: {
               title: 'Employer billing currency',
-              description:
-                "Select the currency you want to be invoiced in for this employee's services.",
+              description: (
+                <>
+                  Select the currency you want to be invoiced in for this
+                  employee's services.
+                  <ZendeskTriggerButton
+                    className="text-sm"
+                    zendeskId={zendeskArticles.internationalPricing}
+                  >
+                    Learn more ↗
+                  </ZendeskTriggerButton>
+                </>
+              ),
             },
             salary: {
               title: "Employee's annual salary",

@@ -2,10 +2,9 @@ import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 import { Button } from '@/src/components/ui/button';
-import { useRouter } from '@/src/lib/router';
 import { Info } from 'lucide-react';
-import { ZendeskDrawer } from '@/src/components/shared/zendesk-drawer/ZendeskDrawer';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
 type CostCalculatorGrossSalaryProps = {
   grossSalary: number;
@@ -18,7 +17,6 @@ export function CostCalculatorGrossSalary({
   currency,
   hasExtraStatutoryPayment = false,
 }: CostCalculatorGrossSalaryProps) {
-  const router = useRouter();
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -31,24 +29,12 @@ export function CostCalculatorGrossSalary({
                   <span>
                     This country respects extra payments on top of the gross
                     salary.
-                  </span>
-                  <ZendeskDrawer
-                    zendeskId={zendeskArticles.extraPayments.toString()}
-                    zendeskURL={'#'}
-                    Trigger={
-                      <button
-                        onClick={() => {
-                          const articleId = zendeskArticles.extraPayments;
-                          router.setSearchParams({
-                            articleId: articleId.toString() || '',
-                          });
-                        }}
-                        className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
-                      >
-                        Learn more
-                      </button>
-                    }
-                  />
+                  </span>{' '}
+                  <ZendeskTriggerButton
+                    zendeskId={zendeskArticles.extraPayments}
+                  >
+                    Learn more
+                  </ZendeskTriggerButton>
                 </>
               }
             >

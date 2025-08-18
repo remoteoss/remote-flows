@@ -4,8 +4,7 @@ import { Button } from '@/src/components/ui/button';
 import { Separator } from '@/src/components/ui/separator';
 import { formatCurrency } from '@/src/lib/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
-import { ZendeskDrawer } from '@/src/components/shared/zendesk-drawer/ZendeskDrawer';
-import { useRouter } from '@/src/lib/router';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
 type CostCalculatorExtraStatutoryPaymentsBreakdownProps = {
   extraStatutoryPaymentsTotal: number | null;
@@ -24,8 +23,6 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
   extraStatutoryPaymentsBreakdown,
   currency,
 }: CostCalculatorExtraStatutoryPaymentsBreakdownProps) {
-  const router = useRouter();
-
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -47,25 +44,13 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
                 <BasicTooltip
                   content={
                     <>
-                      <span>{payment.description}</span>
+                      <span>{payment.description}</span>{' '}
                       {payment.zendesk_article_url && (
-                        <ZendeskDrawer
-                          zendeskId={payment.zendesk_article_id as string}
-                          zendeskURL={payment.zendesk_article_url as string}
-                          Trigger={
-                            <button
-                              onClick={() => {
-                                const articleId = payment.zendesk_article_id;
-                                router.setSearchParams({
-                                  articleId: articleId || '',
-                                });
-                              }}
-                              className="text-blue-500 hover:underline block mt-1 text-xs bg-transparent border-none cursor-pointer p-0"
-                            >
-                              Learn more
-                            </button>
-                          }
-                        />
+                        <ZendeskTriggerButton
+                          zendeskId={Number(payment.zendesk_article_id)}
+                        >
+                          Learn more
+                        </ZendeskTriggerButton>
                       )}
                     </>
                   }
