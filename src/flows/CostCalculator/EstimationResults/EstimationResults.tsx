@@ -341,22 +341,29 @@ function BreakdownListItem({
             {item.label}
           </span>
 
-          {item.zendeskId && item.zendeskURL && item.tooltip && (
+          {item.tooltip && (
             <BasicTooltip
               content={
                 <>
                   <span>{item.tooltip}</span>{' '}
-                  <ZendeskTriggerButton
-                    zendeskId={item.zendeskId}
-                    zendeskURL={item.zendeskURL}
-                  >
-                    Learn more
-                  </ZendeskTriggerButton>
+                  {item.zendeskId && item.zendeskURL && (
+                    <ZendeskTriggerButton
+                      zendeskId={item.zendeskId}
+                      zendeskURL={item.zendeskURL}
+                    >
+                      Learn more
+                    </ZendeskTriggerButton>
+                  )}
                 </>
               }
             >
               <button className="p-1 hover:bg-gray-100 rounded">
-                <Info className="h-4 w-4 text-muted-foreground" />
+                <Info
+                  className={cn(
+                    'text-muted-foreground',
+                    isNested ? 'h-3 w-3' : 'h-4 w-4',
+                  )}
+                />
               </button>
             </BasicTooltip>
           )}
@@ -409,19 +416,12 @@ function BreakdownListItem({
 
       {/* Nested breakdown items */}
       {hasChildren && isOpen && (
-        <div className="mt-2">
+        <div className="mt-1">
           <BreakdownList
             items={item.children!}
             moreThanOneCurrency={moreThanOneCurrency}
             level={level + 1}
           />
-        </div>
-      )}
-
-      {/* Description if available */}
-      {item.description && isOpen && (
-        <div className={cn('mt-1 text-xs text-muted-foreground ml-6')}>
-          {item.description}
         </div>
       )}
     </li>
@@ -463,8 +463,6 @@ export const EstimationResults = ({
   const moreThanOneCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
-
-  console.log('estimation', estimation);
 
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
@@ -530,7 +528,23 @@ export const EstimationResults = ({
                     .monthly_contributions_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
-                children: [],
+                children:
+                  estimation.employer_currency_costs.monthly_contributions_breakdown?.map(
+                    (item) => ({
+                      label: item.name,
+                      regionalAmount: formatCurrency(
+                        item.amount,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        item.amount,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      zendeskId: item.zendesk_article_id || undefined,
+                      zendeskURL: item.zendesk_article_url || undefined,
+                      tooltip: item.description || undefined,
+                    }),
+                  ) || [],
               },
               {
                 label: 'Core benefits',
@@ -542,6 +556,23 @@ export const EstimationResults = ({
                   estimation.employer_currency_costs.monthly_benefits_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
+                children:
+                  estimation.employer_currency_costs.monthly_benefits_breakdown?.map(
+                    (item) => ({
+                      label: item.name,
+                      regionalAmount: formatCurrency(
+                        item.amount,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        item.amount,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      zendeskId: item.zendesk_article_id || undefined,
+                      zendeskURL: item.zendesk_article_url || undefined,
+                      tooltip: item.description || undefined,
+                    }),
+                  ) || [],
               },
             ]}
             moreThanOneCurrency={moreThanOneCurrency}
@@ -596,6 +627,23 @@ export const EstimationResults = ({
                     .monthly_contributions_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
+                children:
+                  estimation.employer_currency_costs.annual_contributions_breakdown?.map(
+                    (item) => ({
+                      label: item.name,
+                      regionalAmount: formatCurrency(
+                        item.amount,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        item.amount,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      zendeskId: item.zendesk_article_id || undefined,
+                      zendeskURL: item.zendesk_article_url || undefined,
+                      tooltip: item.description || undefined,
+                    }),
+                  ) || [],
               },
               {
                 label: 'Core benefits',
@@ -607,6 +655,23 @@ export const EstimationResults = ({
                   estimation.employer_currency_costs.monthly_benefits_total,
                   estimation.employer_currency_costs.currency.symbol,
                 ),
+                children:
+                  estimation.employer_currency_costs.annual_benefits_breakdown?.map(
+                    (item) => ({
+                      label: item.name,
+                      regionalAmount: formatCurrency(
+                        item.amount,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        item.amount,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      zendeskId: item.zendesk_article_id || undefined,
+                      zendeskURL: item.zendesk_article_url || undefined,
+                      tooltip: item.description || undefined,
+                    }),
+                  ) || [],
               },
               {
                 label: 'Extra statutory payments',
