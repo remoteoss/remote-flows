@@ -181,11 +181,34 @@ function HiringSection({
   );
 }
 
+function EstimationHeaders({
+  moreThanOneCurrency,
+}: {
+  moreThanOneCurrency: boolean;
+}) {
+  return (
+    <div className="RemoteFlows__EstimationResults__Headers flex justify-between">
+      <span aria-hidden />
+      {moreThanOneCurrency ? (
+        <>
+          <span className="text-sm text-[#27272A]">Employee currency</span>
+          <span className="text-sm text-[#27272A]">Employer currency</span>
+        </>
+      ) : (
+        <span className="text-sm text-[#27272A]">Amount</span>
+      )}
+    </div>
+  );
+}
+
 export const EstimationResults = ({
   estimation,
   title,
   hireNowLinkBtn,
 }: EstimationResultsProps) => {
+  const moreThanOneCurrency =
+    estimation.employer_currency_costs.currency.code !==
+    estimation.regional_currency_costs.currency.code;
   return (
     <>
       <Card className="RemoteFlows__EstimationResults__Card p-10">
@@ -194,6 +217,9 @@ export const EstimationResults = ({
             title={title}
             country={estimation.country.name}
           />
+        </div>
+        <div className="border-b border-[#E4E4E7] pb-6">
+          <EstimationHeaders moreThanOneCurrency={moreThanOneCurrency} />
         </div>
         <div className="border-b border-[#E4E4E7] pb-6">
           <OnboardingTimeline

@@ -8,7 +8,6 @@ import {
   buildCostCalculatorEstimationPayload,
   CostCalculatorFlow,
   CostCalculatorForm,
-  CostCalculatorResults,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
   EstimationResults,
@@ -21,8 +20,8 @@ import {
   DrawerTrigger,
   Card,
   ZendeskTriggerButton,
+  cn,
 } from '@remoteoss/remote-flows/internals';
-import Flag from 'react-flagpack';
 import { ButtonHTMLAttributes, Fragment, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
@@ -294,24 +293,13 @@ const ResultsView = ({
         />
       </div>
       {estimations.map((estimation, index) => {
-        const primaryEmployment = estimation.data.employments?.[0];
-        const country = primaryEmployment?.country;
-
-        console.log({ estimation: estimation.data });
-
         return (
-          <Fragment key={index}>
-            {country && (
-              <div className="mt-4 mb-2 flex gap-2">
-                <Flag
-                  code={estimation.data.employments?.[0].country.alpha_2_code}
-                />
-                <label className="text-md font-bold">
-                  {estimation.data.employments?.[0].country.name}
-                </label>
-              </div>
-            )}
-            <CostCalculatorResults employmentData={estimation.data} />
+          <div
+            className={cn({
+              'mb-6': index < estimations.length - 1,
+            })}
+            key={index}
+          >
             {Array.isArray(estimation.data.employments) &&
               estimation.data.employments.length > 0 && (
                 <EstimationResults
@@ -320,7 +308,7 @@ const ResultsView = ({
                   hireNowLinkBtn={'#'}
                 />
               )}
-          </Fragment>
+          </div>
         );
       })}
     </>
