@@ -14,22 +14,22 @@ import { useEffect, useState } from 'react';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactNode;
-  zendeskId: string;
-  zendeskURL: string;
+  zendeskId: number;
 };
 
-export const ZendeskDrawer = ({
-  Trigger,
-  zendeskId,
-  zendeskURL,
-}: ZendeskDrawerProps) => {
+const buildZendeskURL = (zendeskId: number) => {
+  return `https://support.remote.com/hc/en-us/articles/${zendeskId}`;
+};
+
+export const ZendeskDrawer = ({ Trigger, zendeskId }: ZendeskDrawerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const zendeskURL = buildZendeskURL(zendeskId);
 
   useEffect(() => {
     const articleId = searchParams.get('articleId');
-    setIsOpen(articleId === zendeskId);
+    setIsOpen(articleId === zendeskId.toString());
   }, [searchParams, zendeskId]);
 
   const handleClose = () => {

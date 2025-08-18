@@ -68,3 +68,4 @@ export {
 } from './components/ui/select';
 
 export * from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+export * from './components/shared/zendesk-drawer/utils';

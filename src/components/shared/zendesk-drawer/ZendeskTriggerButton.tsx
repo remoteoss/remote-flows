@@ -3,16 +3,14 @@ import { ZendeskDrawer } from './ZendeskDrawer';
 import { useRouter } from '@/src/lib/router';
 
 interface ZendeskTriggerButtonProps {
-  zendeskId: string;
-  zendeskURL: string;
+  zendeskId: number;
   className?: string;
-  onClick?: (zendeskId: string) => void;
+  onClick?: (zendeskId: number) => void;
   children?: React.ReactNode;
 }
 
 export function ZendeskTriggerButton({
   zendeskId,
-  zendeskURL,
   className,
   onClick,
   children,
@@ -30,7 +28,6 @@ export function ZendeskTriggerButton({
   return (
     <ZendeskDrawer
       zendeskId={zendeskId}
-      zendeskURL={zendeskURL}
       Trigger={
         <button
           onClick={handleClick}

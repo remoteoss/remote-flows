@@ -47,8 +47,7 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
                       <span>{payment.description}</span>{' '}
                       {payment.zendesk_article_url && (
                         <ZendeskTriggerButton
-                          zendeskId={payment.zendesk_article_id as string}
-                          zendeskURL={payment.zendesk_article_url as string}
+                          zendeskId={Number(payment.zendesk_article_id)}
                         >
                           Learn more
                         </ZendeskTriggerButton>

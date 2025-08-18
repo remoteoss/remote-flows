@@ -54,12 +54,9 @@ export function CostCalculatorContributionsBreakdown({
                           <span>{contribution.description}</span>{' '}
                           {contribution.zendesk_article_url && (
                             <ZendeskTriggerButton
-                              zendeskId={
-                                contribution.zendesk_article_id as string
-                              }
-                              zendeskURL={
-                                contribution.zendesk_article_url as string
-                              }
+                              zendeskId={Number(
+                                contribution.zendesk_article_id,
+                              )}
                             >
                               Learn more
                             </ZendeskTriggerButton>
