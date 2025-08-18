@@ -1,5 +1,4 @@
 import type {
-  $TSFixMe,
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -37,10 +36,24 @@ const estimationOptions = {
   enableCurrencyConversion: true,
 };
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({
+  children,
+  width,
+}: {
+  children: React.ReactNode;
+  width: 'initialForm' | 'results';
+}) => {
   return (
     <div className="premium-benefits-wrapper">
-      <div className="premium-benefits-container">{children}</div>
+      <div
+        className={cn({
+          'premium-benefits-container': true,
+          'premium-benefits-wrapper--initial': width === 'initialForm',
+          'premium-benefits-wrapper--results': width === 'results',
+        })}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -97,7 +110,7 @@ const AddEstimateButton = ({
           <DrawerTitle className="hidden">Add estimate</DrawerTitle>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto">
-          <Layout>
+          <Layout width="initialForm">
             <div className="mt-10 mb-8">
               <Header
                 title="Add estimate"
@@ -361,7 +374,7 @@ function CostCalculatorFormDemo() {
     }
   };
   return (
-    <Layout>
+    <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
         <InitialForm
           onSubmit={(payload) => {
