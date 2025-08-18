@@ -1,14 +1,15 @@
 import { CostCalculatorEmployment } from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
-import { User } from 'lucide-react';
+import { ChevronDown, User } from 'lucide-react';
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/accordion';
-import { cn } from '@/src/lib/utils';
+import { cn, formatCurrency } from '@/src/lib/utils';
 import { Button } from '@/src/components/ui/button';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
@@ -183,19 +184,106 @@ function HiringSection({
 
 function EstimationHeaders({
   moreThanOneCurrency,
+  className,
 }: {
   moreThanOneCurrency: boolean;
+  className?: string;
 }) {
   return (
-    <div className="RemoteFlows__EstimationResults__Headers flex justify-between">
+    <div
+      className={cn(
+        'RemoteFlows__EstimationResults__Headers grid grid-cols-3 items-center',
+        className,
+      )}
+    >
       <span aria-hidden />
       {moreThanOneCurrency ? (
         <>
-          <span className="text-sm text-[#27272A]">Employee currency</span>
-          <span className="text-sm text-[#27272A]">Employer currency</span>
+          <span className="text-sm text-[#27272A] text-right">
+            Employee currency
+          </span>
+          <span className="text-sm text-[#27272A] text-right">
+            Employer currency
+          </span>
         </>
       ) : (
-        <span className="text-sm text-[#27272A]">Amount</span>
+        <>
+          <span></span>
+          <span className="text-sm text-[#27272A] text-right">Amount</span>
+        </>
+      )}
+    </div>
+  );
+}
+
+function EstimationRow({
+  label,
+  amounts,
+  className,
+  isHeader = false,
+  isCollapsible = false,
+  children,
+}: {
+  label: string | React.ReactNode;
+  amounts: string | string[];
+  className?: string;
+  isHeader?: boolean;
+  isCollapsible?: boolean;
+  children?: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className={cn('RemoteFlows__EstimationResults__Row', className)}>
+      <div className="grid grid-cols-3 items-center">
+        <div className="flex items-center gap-2">
+          <span className={isHeader ? 'font-medium text-[#0F1419]' : ''}>
+            {label}
+          </span>
+          {isCollapsible && (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1 hover:bg-gray-100 rounded"
+            >
+              <ChevronDown
+                className={`h-4 w-4 text-muted-foreground transition-transform ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          )}
+        </div>
+
+        {Array.isArray(amounts) ? (
+          amounts.map((amount, index) => (
+            <span
+              key={index}
+              className={cn(
+                'text-right',
+                isHeader ? 'font-medium text-[#09090B]' : '',
+              )}
+            >
+              {amount}
+            </span>
+          ))
+        ) : (
+          <>
+            <span></span>
+            <span
+              className={cn(
+                'text-right',
+                isHeader ? 'font-medium text-[#09090B]' : '',
+              )}
+            >
+              {amounts}
+            </span>
+          </>
+        )}
+      </div>
+
+      {/* Collapsible content */}
+      {isCollapsible && isOpen && children && (
+        <div className="mt-3 ml-6 space-y-2">{children}</div>
       )}
     </div>
   );
@@ -209,6 +297,8 @@ export const EstimationResults = ({
   const moreThanOneCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
+
+  console.log('estimation', estimation);
   return (
     <>
       <Card className="RemoteFlows__EstimationResults__Card p-10">
@@ -219,7 +309,42 @@ export const EstimationResults = ({
           />
         </div>
         <div className="border-b border-[#E4E4E7] pb-6">
-          <EstimationHeaders moreThanOneCurrency={moreThanOneCurrency} />
+          <EstimationHeaders
+            moreThanOneCurrency={moreThanOneCurrency}
+            className="mb-3"
+          />
+          <EstimationRow
+            label="Monthly total cost"
+            amounts={[
+              formatCurrency(
+                estimation.regional_currency_costs.monthly_total,
+                estimation.regional_currency_costs.currency.symbol,
+              ),
+              formatCurrency(
+                estimation.employer_currency_costs.monthly_total,
+                estimation.employer_currency_costs.currency.symbol,
+              ),
+            ]}
+            isHeader
+            isCollapsible
+          />
+        </div>
+        <div className="border-b border-[#E4E4E7] pb-6">
+          <EstimationRow
+            label="Annual total cost"
+            amounts={[
+              formatCurrency(
+                estimation.regional_currency_costs.annual_total,
+                estimation.regional_currency_costs.currency.symbol,
+              ),
+              formatCurrency(
+                estimation.employer_currency_costs.annual_total,
+                estimation.employer_currency_costs.currency.symbol,
+              ),
+            ]}
+            isHeader
+            isCollapsible
+          />
         </div>
         <div className="border-b border-[#E4E4E7] pb-6">
           <OnboardingTimeline
