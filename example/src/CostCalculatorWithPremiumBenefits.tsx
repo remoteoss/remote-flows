@@ -7,9 +7,9 @@ import {
   buildCostCalculatorEstimationPayload,
   CostCalculatorFlow,
   CostCalculatorForm,
-  CostCalculatorResults,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
+  EstimationResults,
   zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
@@ -18,11 +18,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  ZendeskTriggerButton,
   Card,
+  ZendeskTriggerButton,
+  cn,
 } from '@remoteoss/remote-flows/internals';
-import Flag from 'react-flagpack';
-import { ButtonHTMLAttributes, Fragment, useState } from 'react';
+import { ButtonHTMLAttributes, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import './css/main.css';
@@ -37,10 +37,24 @@ const estimationOptions = {
   enableCurrencyConversion: true,
 };
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({
+  children,
+  width,
+}: {
+  children: React.ReactNode;
+  width: 'initialForm' | 'results';
+}) => {
   return (
     <div className="premium-benefits-wrapper">
-      <div className="premium-benefits-container">{children}</div>
+      <div
+        className={cn({
+          'premium-benefits-container': true,
+          'premium-benefits-wrapper--initial': width === 'initialForm',
+          'premium-benefits-wrapper--results': width === 'results',
+        })}
+      >
+        {children}
+      </div>
     </div>
   );
 };
@@ -96,7 +110,7 @@ const AddEstimateButton = ({
           <DrawerTitle className="hidden">Add estimate</DrawerTitle>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto">
-          <Layout>
+          <Layout width="initialForm">
             <div className="mt-10 mb-8">
               <Header
                 title="Add estimate"
@@ -291,23 +305,21 @@ const ResultsView = ({
         />
       </div>
       {estimations.map((estimation, index) => {
-        const primaryEmployment = estimation.data.employments?.[0];
-        const country = primaryEmployment?.country;
-
         return (
-          <Fragment key={index}>
-            {country && (
-              <div className="mt-4 mb-2 flex gap-2">
-                <Flag
-                  code={estimation.data.employments?.[0].country.alpha_2_code}
+          <div
+            className={cn({
+              'mb-6': index < estimations.length - 1,
+            })}
+            key={index}
+          >
+            {Array.isArray(estimation.data.employments) &&
+              estimation.data.employments.length > 0 && (
+                <EstimationResults
+                  estimation={estimation.data.employments?.[0]}
+                  title={`Estimate #${index + 1}`}
                 />
-                <label className="text-md font-bold">
-                  {estimation.data.employments?.[0].country.name}
-                </label>
-              </div>
-            )}
-            <CostCalculatorResults employmentData={estimation.data} />
-          </Fragment>
+              )}
+          </div>
         );
       })}
     </>
@@ -360,7 +372,7 @@ function CostCalculatorFormDemo() {
     }
   };
   return (
-    <Layout>
+    <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
         <InitialForm
           onSubmit={(payload) => {

@@ -13,8 +13,15 @@ It should be done in the body to affect all pages && demos
   min-height: 100vh;
 }
 
-.premium-benefits-container {
+.premium-benefits-wrapper--initial {
   max-width: 642px;
+}
+
+.premium-benefits-wrapper--results {
+  max-width: 750px;
+}
+
+.premium-benefits-container {
   margin: 0 auto;
 }
 
