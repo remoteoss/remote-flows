@@ -308,7 +308,6 @@ interface BreakdownItem {
   employerAmount?: string;
   description?: string;
   zendeskId?: string;
-  zendeskURL?: string;
   isCollapsible?: boolean;
   children?: BreakdownItem[];
 }
@@ -356,7 +355,7 @@ function BreakdownListItem({
               content={
                 <>
                   <span>{item.tooltip}</span>{' '}
-                  {item.zendeskId && item.zendeskURL && (
+                  {item.zendeskId && (
                     <ZendeskTriggerButton zendeskId={Number(item.zendeskId)}>
                       Learn more
                     </ZendeskTriggerButton>
@@ -460,266 +459,238 @@ function BreakdownList({
   );
 }
 
-export const EstimationResults = ({
-  estimation,
-  title,
-}: EstimationResultsProps) => {
+const useEstimationResults = (estimation: CostCalculatorEmployment) => {
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
+  const formatAmounts = (regionalAmount: number, employerAmount: number) => {
+    if (isMultipleCurrency) {
+      return [
+        formatCurrency(
+          regionalAmount,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        formatCurrency(
+          employerAmount,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+      ];
+    }
+    return formatCurrency(
+      regionalAmount,
+      estimation.regional_currency_costs.currency.symbol,
+    );
+  };
+
+  const createBreakdownItems = (
+    items:
+      | Array<{
+          name: string;
+          amount: number;
+          zendesk_article_id?: string | null;
+          description?: string | null;
+        }>
+      | undefined,
+  ): BreakdownItem[] => {
+    return (
+      items?.map((item) => ({
+        label: item.name,
+        regionalAmount: formatCurrency(
+          item.amount,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          item.amount,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        zendeskId: item.zendesk_article_id || undefined,
+        tooltip: item.description || undefined,
+      })) || []
+    );
+  };
+
+  const monthlyData = {
+    totalAmounts: formatAmounts(
+      estimation.regional_currency_costs.monthly_total,
+      estimation.employer_currency_costs.monthly_total,
+    ),
+    breakdownItems: [
+      {
+        label: 'Gross monthly salary',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.monthly_gross_salary,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.monthly_gross_salary,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        zendeskId: zendeskArticles.extraPayments.toString(),
+        tooltip:
+          'This country respects extra payments on top of the gross salary.',
+      },
+      {
+        label: 'Mandatory employer costs',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.monthly_contributions_total,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.monthly_contributions_total,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        children: createBreakdownItems(
+          estimation.employer_currency_costs.monthly_contributions_breakdown,
+        ),
+      },
+      {
+        label: 'Core benefits',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.monthly_benefits_total,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.monthly_benefits_total,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        children: createBreakdownItems(
+          estimation.employer_currency_costs.monthly_benefits_breakdown,
+        ),
+      },
+    ] as BreakdownItem[],
+  };
+
+  const annualData = {
+    totalAmounts: formatAmounts(
+      estimation.regional_currency_costs.annual_total,
+      estimation.employer_currency_costs.annual_total,
+    ),
+    breakdownItems: [
+      {
+        label: 'Annual gross salary',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.annual_gross_salary,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.annual_gross_salary,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+      },
+      {
+        label: 'Mandatory employer costs',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.annual_contributions_total,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.annual_contributions_total,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        children: createBreakdownItems(
+          estimation.employer_currency_costs.annual_contributions_breakdown,
+        ),
+      },
+      {
+        label: 'Core benefits',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.annual_benefits_total,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.annual_benefits_total,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        children: createBreakdownItems(
+          estimation.employer_currency_costs.annual_benefits_breakdown,
+        ),
+      },
+      {
+        label: 'Extra statutory payments',
+        regionalAmount: formatCurrency(
+          estimation.regional_currency_costs.extra_statutory_payments_total,
+          estimation.regional_currency_costs.currency.symbol,
+        ),
+        employerAmount: formatCurrency(
+          estimation.employer_currency_costs.extra_statutory_payments_total,
+          estimation.employer_currency_costs.currency.symbol,
+        ),
+        children: createBreakdownItems(
+          estimation.employer_currency_costs.extra_statutory_payments_breakdown,
+        ),
+      },
+    ] as BreakdownItem[],
+  };
+
+  return {
+    isMultipleCurrency,
+    country: estimation.country,
+    monthlyData,
+    annualData,
+    minimumOnboardingTime: estimation.minimum_onboarding_time,
+    countryBenefitsUrl: estimation.country_benefits_details_url as string,
+    countryGuideUrl: estimation.country_guide_url as string,
+  };
+};
+
+export const EstimationResults = ({
+  estimation,
+  title,
+}: EstimationResultsProps) => {
+  const {
+    isMultipleCurrency,
+    country,
+    monthlyData,
+    annualData,
+    minimumOnboardingTime,
+    countryBenefitsUrl,
+    countryGuideUrl,
+  } = useEstimationResults(estimation);
+
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <div className="RemoteFlows__Estimation__Separator">
-        <EstimationResultsHeader
-          title={title}
-          country={estimation.country.name}
-        />
+      <div className="RemoteFlows__Separator">
+        <EstimationResultsHeader title={title} country={country.name} />
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationHeaders
           isMultipleCurrency={isMultipleCurrency}
           className="mb-3"
         />
         <EstimationRow
           label="Monthly total cost"
-          amounts={
-            isMultipleCurrency
-              ? [
-                  formatCurrency(
-                    estimation.regional_currency_costs.monthly_total,
-                    estimation.regional_currency_costs.currency.symbol,
-                  ),
-                  formatCurrency(
-                    estimation.employer_currency_costs.monthly_total,
-                    estimation.employer_currency_costs.currency.symbol,
-                  ),
-                ]
-              : formatCurrency(
-                  estimation.regional_currency_costs.monthly_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                )
-          }
+          amounts={monthlyData.totalAmounts}
           isHeader
           isCollapsible
         >
           <BreakdownList
-            items={[
-              {
-                label: 'Gross monthly salary',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.monthly_gross_salary,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.monthly_gross_salary,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                zendeskId: zendeskArticles.extraPayments.toString(),
-                zendeskURL: '#',
-                tooltip:
-                  'This country respects extra payments on top of the gross salary.',
-              },
-              {
-                label: 'Mandatory employer costs',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs
-                    .monthly_contributions_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs
-                    .monthly_contributions_total,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                children:
-                  estimation.employer_currency_costs.monthly_contributions_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
-                      tooltip: item.description || undefined,
-                    }),
-                  ) || [],
-              },
-              {
-                label: 'Core benefits',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.monthly_benefits_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.monthly_benefits_total,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                children:
-                  estimation.employer_currency_costs.monthly_benefits_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
-                      tooltip: item.description || undefined,
-                    }),
-                  ) || [],
-              },
-            ]}
+            items={monthlyData.breakdownItems}
             isMultipleCurrency={isMultipleCurrency}
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationRow
           label="Annual total cost"
-          amounts={
-            isMultipleCurrency
-              ? [
-                  formatCurrency(
-                    estimation.regional_currency_costs.annual_total,
-                    estimation.regional_currency_costs.currency.symbol,
-                  ),
-                  formatCurrency(
-                    estimation.employer_currency_costs.annual_total,
-                    estimation.employer_currency_costs.currency.symbol,
-                  ),
-                ]
-              : formatCurrency(
-                  estimation.regional_currency_costs.annual_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                )
-          }
+          amounts={annualData.totalAmounts}
           isHeader
           isCollapsible
         >
           <BreakdownList
-            items={[
-              {
-                label: 'Annual gross salary',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.annual_gross_salary,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.annual_gross_salary,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-              },
-              {
-                label: 'Mandatory employer costs',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.annual_contributions_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.annual_contributions_total,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                children:
-                  estimation.employer_currency_costs.annual_contributions_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
-                      tooltip: item.description || undefined,
-                    }),
-                  ) || [],
-              },
-              {
-                label: 'Core benefits',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs.annual_benefits_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs.annual_benefits_total,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                children:
-                  estimation.employer_currency_costs.annual_benefits_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
-                      tooltip: item.description || undefined,
-                    }),
-                  ) || [],
-              },
-              {
-                label: 'Extra statutory payments',
-                regionalAmount: formatCurrency(
-                  estimation.regional_currency_costs
-                    .extra_statutory_payments_total,
-                  estimation.regional_currency_costs.currency.symbol,
-                ),
-                employerAmount: formatCurrency(
-                  estimation.employer_currency_costs
-                    .extra_statutory_payments_total,
-                  estimation.employer_currency_costs.currency.symbol,
-                ),
-                children:
-                  estimation.employer_currency_costs.extra_statutory_payments_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
-                      tooltip: item.description || undefined,
-                    }),
-                  ) || [],
-              },
-            ]}
+            items={annualData.breakdownItems}
             isMultipleCurrency={isMultipleCurrency}
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
-        <OnboardingTimeline
-          minimumOnboardingDays={estimation.minimum_onboarding_time}
-        />
+      <div className="RemoteFlows__Separator">
+        <OnboardingTimeline minimumOnboardingDays={minimumOnboardingTime} />
       </div>
 
       <HiringSection
-        countryBenefitsUrl={estimation.country_benefits_details_url as string}
-        countryGuideUrl={estimation.country_guide_url as string}
-        country={estimation.country.name}
+        countryBenefitsUrl={countryBenefitsUrl}
+        countryGuideUrl={countryGuideUrl}
+        country={country.name}
       />
     </Card>
   );
