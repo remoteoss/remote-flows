@@ -17,9 +17,11 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 const EstimationResultsHeader = ({
   title,
   country,
+  onDelete,
 }: {
   title: string;
   country: string;
+  onDelete: () => void;
 }) => {
   return (
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
@@ -49,18 +51,12 @@ const EstimationResultsHeader = ({
           },
           {
             label: 'Delete',
-            onClick: () => {},
-            disabled: true,
+            onClick: onDelete,
           },
         ]}
       />
     </div>
   );
-};
-
-type EstimationResultsProps = {
-  estimation: CostCalculatorEmployment;
-  title: string;
 };
 
 function OnboardingTimeline({
@@ -460,9 +456,16 @@ function BreakdownList({
   );
 }
 
+type EstimationResultsProps = {
+  estimation: CostCalculatorEmployment;
+  title: string;
+  onDelete: () => void;
+};
+
 export const EstimationResults = ({
   estimation,
   title,
+  onDelete,
 }: EstimationResultsProps) => {
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
@@ -474,6 +477,7 @@ export const EstimationResults = ({
         <EstimationResultsHeader
           title={title}
           country={estimation.country.name}
+          onDelete={onDelete}
         />
       </div>
       <div className="RemoteFlows__Estimation__Separator">

@@ -281,12 +281,14 @@ const ResultsView = ({
   onReset,
   onAddEstimate,
   onSavePayload,
+  onDeleteEstimate,
 }: {
   estimations: CostCalculatorEstimateResponse[];
   onExportPdf: () => void;
   onReset: () => void;
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
+  onDeleteEstimate: (index: number) => void;
 }) => {
   if (!estimations) {
     return null;
@@ -317,6 +319,7 @@ const ResultsView = ({
                 <EstimationResults
                   estimation={estimation.data.employments?.[0]}
                   title={`Estimate #${index + 1}`}
+                  onDelete={() => onDeleteEstimate(index)}
                 />
               )}
           </div>
@@ -340,6 +343,10 @@ function CostCalculatorFormDemo() {
 
   const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
     setEstimations([...estimations, estimation]);
+  };
+
+  const onDeleteEstimate = (index: number) => {
+    setEstimations(estimations.filter((_, i) => i !== index));
   };
 
   const onSavePayload = (estimation: CostCalculatorEstimationSubmitValues) => {
@@ -390,6 +397,7 @@ function CostCalculatorFormDemo() {
           onReset={onReset}
           onAddEstimate={onAddEstimate}
           onSavePayload={onSavePayload}
+          onDeleteEstimate={onDeleteEstimate}
         />
       )}
     </Layout>
