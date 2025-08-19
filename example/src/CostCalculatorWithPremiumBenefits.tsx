@@ -390,7 +390,6 @@ function CostCalculatorFormDemo() {
   };
 
   const onExportEstimate = (index: number) => {
-    // Handle export estimate logic here
     const pdfPayload = payload[index];
 
     if (pdfPayload) {
