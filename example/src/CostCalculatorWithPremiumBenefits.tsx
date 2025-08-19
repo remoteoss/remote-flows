@@ -317,7 +317,6 @@ const ResultsView = ({
                 <EstimationResults
                   estimation={estimation.data.employments?.[0]}
                   title={`Estimate #${index + 1}`}
-                  hireNowLinkBtn={'#'}
                 />
               )}
           </div>

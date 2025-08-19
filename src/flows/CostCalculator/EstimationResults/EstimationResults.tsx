@@ -10,7 +10,6 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/accordion';
 import { cn, formatCurrency } from '@/src/lib/utils';
-import { Button } from '@/src/components/ui/button';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
@@ -62,7 +61,6 @@ const EstimationResultsHeader = ({
 type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
-  hireNowLinkBtn: string;
 };
 
 function OnboardingTimeline({
@@ -143,13 +141,11 @@ function HiringSection({
   countryBenefitsUrl,
   countryGuideUrl,
   country,
-  hireNowLinkBtn,
 }: {
   className?: string;
   countryBenefitsUrl: string;
   countryGuideUrl: string;
   country: string;
-  hireNowLinkBtn: string;
 }) {
   return (
     <Accordion
@@ -185,14 +181,6 @@ function HiringSection({
               Explore our available benefits ↗
             </a>
           </div>
-
-          <Button
-            variant="secondary"
-            asChild
-            className="RemoteFlows__EstimationResults__HireNowBtn mt-4"
-          >
-            <a href={hireNowLinkBtn}>Hire now</a>
-          </Button>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
@@ -322,7 +310,7 @@ interface BreakdownItem {
   zendeskId?: string;
   zendeskURL?: string;
   isCollapsible?: boolean;
-  children?: BreakdownItem[]; // Nested breakdown items
+  children?: BreakdownItem[];
 }
 
 function BreakdownListItem({
@@ -475,7 +463,6 @@ function BreakdownList({
 export const EstimationResults = ({
   estimation,
   title,
-  hireNowLinkBtn,
 }: EstimationResultsProps) => {
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
@@ -733,7 +720,6 @@ export const EstimationResults = ({
         countryBenefitsUrl={estimation.country_benefits_details_url as string}
         countryGuideUrl={estimation.country_guide_url as string}
         country={estimation.country.name}
-        hireNowLinkBtn={hireNowLinkBtn}
       />
     </Card>
   );
