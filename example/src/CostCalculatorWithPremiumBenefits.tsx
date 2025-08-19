@@ -369,7 +369,7 @@ function CostCalculatorFormDemo() {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
             const a = document.createElement('a');
-            a.href = response.data.data.content as any;
+            a.href = response.data.data.content as unknown as string;
             a.download = 'estimation.pdf';
             document.body.appendChild(a);
             a.click();
