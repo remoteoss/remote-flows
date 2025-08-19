@@ -403,13 +403,920 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   const proxyURL = window.location.origin;
+  const estimations = [
+    {
+      country: {
+        code: 'ESP',
+        name: 'Spain',
+        slug: 'spain-65764d0d-94d9-49df-8c07-c9da8e757f67',
+        alpha_2_code: 'ES',
+      },
+      region: {
+        code: 'ESP',
+        name: 'Spain',
+        status: 'active',
+        country: {
+          code: 'ESP',
+          name: 'Spain',
+          currency: {
+            code: 'EUR',
+            name: 'European Euro',
+            symbol: '€',
+            slug: 'a9635cae-5c4b-438b-b34f-bfb80946036e',
+          },
+          slug: 'spain-65764d0d-94d9-49df-8c07-c9da8e757f67',
+          alpha_2_code: 'ES',
+        },
+        slug: 'bf953194-00ea-4ebd-9655-7c2b9d73432a',
+        child_regions: [],
+        parent_region: null,
+      },
+      country_benefits_details_url: 'https://remote.com/benefits-guide/spain',
+      country_guide_url:
+        'https://remote.com/country-hiring-considerations#spain',
+      employer_currency_costs: {
+        currency: {
+          code: 'USD',
+          name: 'United States Dollar',
+          symbol: '$',
+          slug: '1b2c181d-24c9-44ff-a8e1-2a7025ca491c',
+        },
+        annual_gross_salary: 6012725,
+        annual_benefits_breakdown: [
+          {
+            name: 'Retirement Benefit',
+            description:
+              'Optional retirement matching plan:\n\nBasic: Employee contributions only, no company match.\nStandard: 3% total with 2% from the company and 1% from the employee.\nPlus: 6% total with 4% from the company and 2% from the employee.\nPremium: 9% total with 6% from the company and 3% from the employee.\nPlatinum: 12% total with 8% from the company and 4% from the employee.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Medical Insurance',
+            description:
+              'Optional local health insurance is available through Sanitas, starting at €43.88/month for the Standard Plan and €62.15/month for the Premium Plan.\n\nInternational health insurance is also offered through Allianz, starting at $123.17 USD/month for the Standard Plan. Premium, Gold, and Platinum plans are also available.\n\nYou can choose coverage for the employee only or extend it to include family members.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_benefits_total: 0,
+        annual_contributions_breakdown: [
+          {
+            name: 'Mandatory Occupational Health Cost (incl. annual surveillance fee)',
+            description:
+              'Calculated at 69EUR annually on top of the salary. The cost consists of health check fees: 58EUR and Annual surveillance fee: 11EUR',
+            amount: 8292,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Cobee customer cost',
+            description:
+              'Cobee has a monthly cost for the client of 4,5EUR per employee',
+            amount: 6492,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 1',
+            description:
+              'Calculated at 0.7672% (0.92% * 83.39% borne by the employer) of the salary exceeding the max contribution base (4,909.50 EUR per month) up to 10% above the max contribution base (5,400.45 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 2',
+            description:
+              'Calculated at 0.8339% (1% * 83.39% borne by the employer) of the salary exceeding the Tier 1 (5,400.45 EUR per month) up to 50% above the max contribution base (7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 3',
+            description:
+              'Calculated at 0.9756% (1.17% * 83.39% borne by the employer) of the salary exceeding the Tier 2 (income exceeding 50% above the max contribution base, 7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Common contingencies',
+            description:
+              '23.60% of the monthly salary with ceiling of €4,909.50',
+            amount: 1419000,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Occupational accident and professional disease contribution',
+            description:
+              '1.65% of the monthly wage with a ceiling of €4,909.50',
+            amount: 99204,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Unemployment',
+            description:
+              '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,909.50',
+            amount: 330708,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Vocational education and training',
+            description:
+              '0.60% contributed towards professional training as part of the payroll taxation.',
+            amount: 36072,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Wage guarantee fund',
+            description:
+              '0.20% of the monthly salary is contributed to the insolvency state fund.',
+            amount: 12024,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'MEI (mecanismo de equidad intergeneracional)',
+            description: null,
+            amount: 40296,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Work from home allowance (mandatory)',
+            description:
+              'Calculated at 17.68EUR per month on top of the salary',
+            amount: 25512,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Mandatory Safety Training',
+            description:
+              'Calculated at 30EUR on top of the base annual salary.',
+            amount: 3612,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_contributions_total: 1981212,
+        annual_total: 7993937,
+        extra_statutory_payments_breakdown: [
+          {
+            name: 'Paga 13 (13th cheque)',
+            description:
+              'Spain has extra statutory holidays payments. These costs are typically included in the salary costs already hence do not cause any additional costs for the employer',
+            amount: 0,
+            zendesk_article_id: '4466822781709',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4466822781709-What-countries-offer-13th-14th-month-salary-payments-',
+          },
+          {
+            name: 'Paga 14 (14th cheque)',
+            description:
+              'Spain has extra statutory holidays payments. These costs are typically included in the salary costs already hence do not cause any additional costs for the employer',
+            amount: 0,
+            zendesk_article_id: '4466822781709',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4466822781709-What-countries-offer-13th-14th-month-salary-payments-',
+          },
+        ],
+        extra_statutory_payments_total: 0,
+        monthly_benefits_breakdown: [
+          {
+            name: 'Retirement Benefit',
+            description:
+              'Optional retirement matching plan:\n\nBasic: Employee contributions only, no company match.\nStandard: 3% total with 2% from the company and 1% from the employee.\nPlus: 6% total with 4% from the company and 2% from the employee.\nPremium: 9% total with 6% from the company and 3% from the employee.\nPlatinum: 12% total with 8% from the company and 4% from the employee.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Medical Insurance',
+            description:
+              'Optional local health insurance is available through Sanitas, starting at €43.88/month for the Standard Plan and €62.15/month for the Premium Plan.\n\nInternational health insurance is also offered through Allianz, starting at $123.17 USD/month for the Standard Plan. Premium, Gold, and Platinum plans are also available.\n\nYou can choose coverage for the employee only or extend it to include family members.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_benefits_total: 0,
+        monthly_contributions_breakdown: [
+          {
+            name: 'Mandatory Occupational Health Cost (incl. annual surveillance fee)',
+            description:
+              'Calculated at 69EUR annually on top of the salary. The cost consists of health check fees: 58EUR and Annual surveillance fee: 11EUR',
+            amount: 691,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Cobee customer cost',
+            description:
+              'Cobee has a monthly cost for the client of 4,5EUR per employee',
+            amount: 541,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 1',
+            description:
+              'Calculated at 0.7672% (0.92% * 83.39% borne by the employer) of the salary exceeding the max contribution base (4,909.50 EUR per month) up to 10% above the max contribution base (5,400.45 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 2',
+            description:
+              'Calculated at 0.8339% (1% * 83.39% borne by the employer) of the salary exceeding the Tier 1 (5,400.45 EUR per month) up to 50% above the max contribution base (7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 3',
+            description:
+              'Calculated at 0.9756% (1.17% * 83.39% borne by the employer) of the salary exceeding the Tier 2 (income exceeding 50% above the max contribution base, 7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Common contingencies',
+            description:
+              '23.60% of the monthly salary with ceiling of €4,909.50',
+            amount: 118250,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Occupational accident and professional disease contribution',
+            description:
+              '1.65% of the monthly wage with a ceiling of €4,909.50',
+            amount: 8267,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Unemployment',
+            description:
+              '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,909.50',
+            amount: 27559,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Vocational education and training',
+            description:
+              '0.60% contributed towards professional training as part of the payroll taxation.',
+            amount: 3006,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Wage guarantee fund',
+            description:
+              '0.20% of the monthly salary is contributed to the insolvency state fund.',
+            amount: 1002,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'MEI (mecanismo de equidad intergeneracional)',
+            description: null,
+            amount: 3358,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Work from home allowance (mandatory)',
+            description:
+              'Calculated at 17.68EUR per month on top of the salary',
+            amount: 2126,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Mandatory Safety Training',
+            description:
+              'Calculated at 30EUR on top of the base annual salary.',
+            amount: 301,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_contributions_total: 165101,
+        monthly_gross_salary: 501060,
+        monthly_tce: 666161,
+        monthly_total: 666161,
+      },
+      has_extra_statutory_payment: true,
+      minimum_onboarding_time: 3,
+      regional_currency_costs: {
+        currency: {
+          code: 'EUR',
+          name: 'European Euro',
+          symbol: '€',
+          slug: 'a9635cae-5c4b-438b-b34f-bfb80946036e',
+        },
+        annual_gross_salary: 5000000,
+        annual_benefits_breakdown: [
+          {
+            name: 'Retirement Benefit',
+            description:
+              'Optional retirement matching plan:\n\nBasic: Employee contributions only, no company match.\nStandard: 3% total with 2% from the company and 1% from the employee.\nPlus: 6% total with 4% from the company and 2% from the employee.\nPremium: 9% total with 6% from the company and 3% from the employee.\nPlatinum: 12% total with 8% from the company and 4% from the employee.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Medical Insurance',
+            description:
+              'Optional local health insurance is available through Sanitas, starting at €43.88/month for the Standard Plan and €62.15/month for the Premium Plan.\n\nInternational health insurance is also offered through Allianz, starting at $123.17 USD/month for the Standard Plan. Premium, Gold, and Platinum plans are also available.\n\nYou can choose coverage for the employee only or extend it to include family members.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_benefits_total: 0,
+        annual_contributions_breakdown: [
+          {
+            name: 'Mandatory Occupational Health Cost (incl. annual surveillance fee)',
+            description:
+              'Calculated at 69EUR annually on top of the salary. The cost consists of health check fees: 58EUR and Annual surveillance fee: 11EUR',
+            amount: 6900,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Cobee customer cost',
+            description:
+              'Cobee has a monthly cost for the client of 4,5EUR per employee',
+            amount: 5400,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 1',
+            description:
+              'Calculated at 0.7672% (0.92% * 83.39% borne by the employer) of the salary exceeding the max contribution base (4,909.50 EUR per month) up to 10% above the max contribution base (5,400.45 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 2',
+            description:
+              'Calculated at 0.8339% (1% * 83.39% borne by the employer) of the salary exceeding the Tier 1 (5,400.45 EUR per month) up to 50% above the max contribution base (7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 3',
+            description:
+              'Calculated at 0.9756% (1.17% * 83.39% borne by the employer) of the salary exceeding the Tier 2 (income exceeding 50% above the max contribution base, 7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Common contingencies',
+            description:
+              '23.60% of the monthly salary with ceiling of €4,909.50',
+            amount: 1179996,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Occupational accident and professional disease contribution',
+            description:
+              '1.65% of the monthly wage with a ceiling of €4,909.50',
+            amount: 82500,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Unemployment',
+            description:
+              '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,909.50',
+            amount: 275004,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Vocational education and training',
+            description:
+              '0.60% contributed towards professional training as part of the payroll taxation.',
+            amount: 30000,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Wage guarantee fund',
+            description:
+              '0.20% of the monthly salary is contributed to the insolvency state fund.',
+            amount: 9996,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'MEI (mecanismo de equidad intergeneracional)',
+            description: null,
+            amount: 33504,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Work from home allowance (mandatory)',
+            description:
+              'Calculated at 17.68EUR per month on top of the salary',
+            amount: 21216,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Mandatory Safety Training',
+            description:
+              'Calculated at 30EUR on top of the base annual salary.',
+            amount: 3000,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_contributions_total: 1647516,
+        annual_total: 6647516,
+        extra_statutory_payments_breakdown: [
+          {
+            name: 'Paga 13 (13th cheque)',
+            description:
+              'Spain has extra statutory holidays payments. These costs are typically included in the salary costs already hence do not cause any additional costs for the employer',
+            amount: 0,
+            zendesk_article_id: '4466822781709',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4466822781709-What-countries-offer-13th-14th-month-salary-payments-',
+          },
+          {
+            name: 'Paga 14 (14th cheque)',
+            description:
+              'Spain has extra statutory holidays payments. These costs are typically included in the salary costs already hence do not cause any additional costs for the employer',
+            amount: 0,
+            zendesk_article_id: '4466822781709',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4466822781709-What-countries-offer-13th-14th-month-salary-payments-',
+          },
+        ],
+        extra_statutory_payments_total: 0,
+        monthly_benefits_breakdown: [
+          {
+            name: 'Retirement Benefit',
+            description:
+              'Optional retirement matching plan:\n\nBasic: Employee contributions only, no company match.\nStandard: 3% total with 2% from the company and 1% from the employee.\nPlus: 6% total with 4% from the company and 2% from the employee.\nPremium: 9% total with 6% from the company and 3% from the employee.\nPlatinum: 12% total with 8% from the company and 4% from the employee.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Medical Insurance',
+            description:
+              'Optional local health insurance is available through Sanitas, starting at €43.88/month for the Standard Plan and €62.15/month for the Premium Plan.\n\nInternational health insurance is also offered through Allianz, starting at $123.17 USD/month for the Standard Plan. Premium, Gold, and Platinum plans are also available.\n\nYou can choose coverage for the employee only or extend it to include family members.',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_benefits_total: 0,
+        monthly_contributions_breakdown: [
+          {
+            name: 'Mandatory Occupational Health Cost (incl. annual surveillance fee)',
+            description:
+              'Calculated at 69EUR annually on top of the salary. The cost consists of health check fees: 58EUR and Annual surveillance fee: 11EUR',
+            amount: 575,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Cobee customer cost',
+            description:
+              'Cobee has a monthly cost for the client of 4,5EUR per employee',
+            amount: 450,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 1',
+            description:
+              'Calculated at 0.7672% (0.92% * 83.39% borne by the employer) of the salary exceeding the max contribution base (4,909.50 EUR per month) up to 10% above the max contribution base (5,400.45 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 2',
+            description:
+              'Calculated at 0.8339% (1% * 83.39% borne by the employer) of the salary exceeding the Tier 1 (5,400.45 EUR per month) up to 50% above the max contribution base (7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Solidarity Surcharge Tier 3',
+            description:
+              'Calculated at 0.9756% (1.17% * 83.39% borne by the employer) of the salary exceeding the Tier 2 (income exceeding 50% above the max contribution base, 7,364.25 EUR per month)',
+            amount: 0,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Common contingencies',
+            description:
+              '23.60% of the monthly salary with ceiling of €4,909.50',
+            amount: 98333,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Occupational accident and professional disease contribution',
+            description:
+              '1.65% of the monthly wage with a ceiling of €4,909.50',
+            amount: 6875,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Unemployment',
+            description:
+              '5.50% of the monthly salary with lower threshold of €1,050 and upper ceiling of €4,909.50',
+            amount: 22917,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Vocational education and training',
+            description:
+              '0.60% contributed towards professional training as part of the payroll taxation.',
+            amount: 2500,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Wage guarantee fund',
+            description:
+              '0.20% of the monthly salary is contributed to the insolvency state fund.',
+            amount: 833,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'MEI (mecanismo de equidad intergeneracional)',
+            description: null,
+            amount: 2792,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Work from home allowance (mandatory)',
+            description:
+              'Calculated at 17.68EUR per month on top of the salary',
+            amount: 1768,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Mandatory Safety Training',
+            description:
+              'Calculated at 30EUR on top of the base annual salary.',
+            amount: 250,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_contributions_total: 137293,
+        monthly_gross_salary: 416667,
+        monthly_tce: 553960,
+        monthly_total: 553960,
+      },
+    },
+    {
+      country: {
+        code: 'DEU',
+        name: 'Germany',
+        slug: 'germany-2539b093-1df7-4063-a656-5bcf30603ba6',
+        alpha_2_code: 'DE',
+      },
+      region: {
+        code: 'DEU',
+        name: 'Germany',
+        status: 'active',
+        country: {
+          code: 'DEU',
+          name: 'Germany',
+          currency: {
+            code: 'EUR',
+            name: 'European Euro',
+            symbol: '€',
+            slug: 'a9635cae-5c4b-438b-b34f-bfb80946036e',
+          },
+          slug: 'germany-2539b093-1df7-4063-a656-5bcf30603ba6',
+          alpha_2_code: 'DE',
+        },
+        slug: 'a41f478e-cc33-4de8-a044-998368a44790',
+        child_regions: [],
+        parent_region: null,
+      },
+      country_benefits_details_url: 'https://remote.com/benefits-guide/germany',
+      country_guide_url:
+        'https://remote.com/country-hiring-considerations#germany',
+      employer_currency_costs: {
+        currency: {
+          code: 'USD',
+          name: 'United States Dollar',
+          symbol: '$',
+          slug: '1b2c181d-24c9-44ff-a8e1-2a7025ca491c',
+        },
+        annual_gross_salary: 6012725,
+        annual_benefits_breakdown: [],
+        annual_benefits_total: 0,
+        annual_contributions_breakdown: [
+          {
+            name: 'Pension Insurance (gesetzliche Rentenversicherung)',
+            description:
+              'Calculated at 9.30% of the base annual salary and subject to an annual salary-ceiling of EUR 96,600',
+            amount: 559188,
+            zendesk_article_id: '4445778173837',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445778173837-What-is-the-German-Pension-Rentenversicherung-',
+          },
+          {
+            name: 'Unemployment Insurance (Arbeitslosenversicherung)',
+            description:
+              'Calculated at 1.30% of the base annual salary subject to an annual salary-ceiling of EUR 96,600',
+            amount: 78168,
+            zendesk_article_id: '4445938313741',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445938313741-What-is-the-Unemployment-Insurance-Arbeitslosenversicherung-',
+          },
+          {
+            name: 'Health Insurance (gesetzliche Krankenversicherung)',
+            description:
+              'Calculated at 7.90% of the base annual salary subject to an annual salary-ceiling of EUR 66,150',
+            amount: 475008,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 2: Maternity cover',
+            description: null,
+            amount: 26448,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Nursing Care Insurance (Pflegeversicherung)',
+            description:
+              'Calculated at 1.8% of the base annual salary subject to an annual salary-ceiling of EUR 66,150.',
+            amount: 108228,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Accident Insurance (Unfallversicherung) (est.)',
+            description: null,
+            amount: 30060,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 3 - Insolvency cover',
+            description: null,
+            amount: 9024,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_contributions_total: 1286124,
+        annual_total: 7298849,
+        extra_statutory_payments_breakdown: [],
+        extra_statutory_payments_total: 0,
+        monthly_benefits_breakdown: [],
+        monthly_benefits_total: 0,
+        monthly_contributions_breakdown: [
+          {
+            name: 'Pension Insurance (gesetzliche Rentenversicherung)',
+            description:
+              'Calculated at 9.30% of the base annual salary and subject to an annual salary-ceiling of EUR 96,600',
+            amount: 46599,
+            zendesk_article_id: '4445778173837',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445778173837-What-is-the-German-Pension-Rentenversicherung-',
+          },
+          {
+            name: 'Unemployment Insurance (Arbeitslosenversicherung)',
+            description:
+              'Calculated at 1.30% of the base annual salary subject to an annual salary-ceiling of EUR 96,600',
+            amount: 6514,
+            zendesk_article_id: '4445938313741',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445938313741-What-is-the-Unemployment-Insurance-Arbeitslosenversicherung-',
+          },
+          {
+            name: 'Health Insurance (gesetzliche Krankenversicherung)',
+            description:
+              'Calculated at 7.90% of the base annual salary subject to an annual salary-ceiling of EUR 66,150',
+            amount: 39584,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 2: Maternity cover',
+            description: null,
+            amount: 2204,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Nursing Care Insurance (Pflegeversicherung)',
+            description:
+              'Calculated at 1.8% of the base annual salary subject to an annual salary-ceiling of EUR 66,150.',
+            amount: 9019,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Accident Insurance (Unfallversicherung) (est.)',
+            description: null,
+            amount: 2505,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 3 - Insolvency cover',
+            description: null,
+            amount: 752,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_contributions_total: 107177,
+        monthly_gross_salary: 501060,
+        monthly_tce: 608237,
+        monthly_total: 608237,
+      },
+      has_extra_statutory_payment: false,
+      minimum_onboarding_time: 5,
+      regional_currency_costs: {
+        currency: {
+          code: 'EUR',
+          name: 'European Euro',
+          symbol: '€',
+          slug: 'a9635cae-5c4b-438b-b34f-bfb80946036e',
+        },
+        annual_gross_salary: 5000000,
+        annual_benefits_breakdown: [],
+        annual_benefits_total: 0,
+        annual_contributions_breakdown: [
+          {
+            name: 'Pension Insurance (gesetzliche Rentenversicherung)',
+            description:
+              'Calculated at 9.30% of the base annual salary and subject to an annual salary-ceiling of EUR 96,600',
+            amount: 465000,
+            zendesk_article_id: '4445778173837',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445778173837-What-is-the-German-Pension-Rentenversicherung-',
+          },
+          {
+            name: 'Unemployment Insurance (Arbeitslosenversicherung)',
+            description:
+              'Calculated at 1.30% of the base annual salary subject to an annual salary-ceiling of EUR 96,600',
+            amount: 65004,
+            zendesk_article_id: '4445938313741',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445938313741-What-is-the-Unemployment-Insurance-Arbeitslosenversicherung-',
+          },
+          {
+            name: 'Health Insurance (gesetzliche Krankenversicherung)',
+            description:
+              'Calculated at 7.90% of the base annual salary subject to an annual salary-ceiling of EUR 66,150',
+            amount: 395004,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 2: Maternity cover',
+            description: null,
+            amount: 21996,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Nursing Care Insurance (Pflegeversicherung)',
+            description:
+              'Calculated at 1.8% of the base annual salary subject to an annual salary-ceiling of EUR 66,150.',
+            amount: 90000,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Accident Insurance (Unfallversicherung) (est.)',
+            description: null,
+            amount: 24996,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 3 - Insolvency cover',
+            description: null,
+            amount: 7500,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        annual_contributions_total: 1069500,
+        annual_total: 6069500,
+        extra_statutory_payments_breakdown: [],
+        extra_statutory_payments_total: 0,
+        monthly_benefits_breakdown: [],
+        monthly_benefits_total: 0,
+        monthly_contributions_breakdown: [
+          {
+            name: 'Pension Insurance (gesetzliche Rentenversicherung)',
+            description:
+              'Calculated at 9.30% of the base annual salary and subject to an annual salary-ceiling of EUR 96,600',
+            amount: 38750,
+            zendesk_article_id: '4445778173837',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445778173837-What-is-the-German-Pension-Rentenversicherung-',
+          },
+          {
+            name: 'Unemployment Insurance (Arbeitslosenversicherung)',
+            description:
+              'Calculated at 1.30% of the base annual salary subject to an annual salary-ceiling of EUR 96,600',
+            amount: 5417,
+            zendesk_article_id: '4445938313741',
+            zendesk_article_url:
+              'https://support.remote.com/hc/en-us/articles/4445938313741-What-is-the-Unemployment-Insurance-Arbeitslosenversicherung-',
+          },
+          {
+            name: 'Health Insurance (gesetzliche Krankenversicherung)',
+            description:
+              'Calculated at 7.90% of the base annual salary subject to an annual salary-ceiling of EUR 66,150',
+            amount: 32917,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 2: Maternity cover',
+            description: null,
+            amount: 1833,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Nursing Care Insurance (Pflegeversicherung)',
+            description:
+              'Calculated at 1.8% of the base annual salary subject to an annual salary-ceiling of EUR 66,150.',
+            amount: 7500,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Accident Insurance (Unfallversicherung) (est.)',
+            description: null,
+            amount: 2083,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+          {
+            name: 'Umlage 3 - Insolvency cover',
+            description: null,
+            amount: 625,
+            zendesk_article_id: null,
+            zendesk_article_url: null,
+          },
+        ],
+        monthly_contributions_total: 89125,
+        monthly_gross_salary: 416667,
+        monthly_tce: 505792,
+        monthly_total: 505792,
+      },
+    },
+  ];
   return (
     <RemoteFlows
       components={components}
       proxy={{ url: proxyURL }}
       isClientToken
     >
-      <CostCalculatorFormDemo />
+      {/*  <CostCalculatorFormDemo /> */}
+      <SummaryResults estimations={estimations} />
     </RemoteFlows>
   );
 }
