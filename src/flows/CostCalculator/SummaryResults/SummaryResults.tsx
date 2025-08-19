@@ -68,7 +68,7 @@ const SummaryHeader = ({
   );
 };
 
-export const MultiColumnAccordion = ({
+const MultiColumnAccordion = ({
   label,
   columns,
   rows,

@@ -344,8 +344,6 @@ function CostCalculatorFormDemo() {
     CostCalculatorEstimationSubmitValues[]
   >([]);
 
-  console.log({ estimations });
-
   const onReset = () => {
     setEstimations([]);
   };
