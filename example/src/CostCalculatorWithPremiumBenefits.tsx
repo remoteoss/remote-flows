@@ -282,6 +282,7 @@ const ResultsView = ({
   onAddEstimate,
   onSavePayload,
   onDeleteEstimate,
+  onExportEstimate,
 }: {
   estimations: CostCalculatorEstimateResponse[];
   onExportPdf: () => void;
@@ -289,6 +290,7 @@ const ResultsView = ({
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
   onDeleteEstimate: (index: number) => void;
+  onExportEstimate: (index: number) => void;
 }) => {
   if (!estimations) {
     return null;
@@ -320,6 +322,7 @@ const ResultsView = ({
                   estimation={estimation.data.employments?.[0]}
                   title={`Estimate #${index + 1}`}
                   onDelete={() => onDeleteEstimate(index)}
+                  onExportPdf={() => onExportEstimate(index)}
                 />
               )}
           </div>
@@ -355,29 +358,46 @@ function CostCalculatorFormDemo() {
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
+  function exportPdf(
+    payloadToExport:
+      | CostCalculatorEstimationSubmitValues
+      | CostCalculatorEstimationSubmitValues[],
+  ) {
+    exportPdfMutation.mutate(
+      buildCostCalculatorEstimationPayload(payloadToExport, estimationOptions),
+      {
+        onSuccess: (response) => {
+          if (response?.data?.data?.content !== undefined) {
+            const a = document.createElement('a');
+            a.href = response.data.data.content as any;
+            a.download = 'estimation.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        },
+        onError: (error) => {
+          console.error({ error });
+        },
+      },
+    );
+  }
+
   const handleExportPdf = () => {
     if (payload) {
-      exportPdfMutation.mutate(
-        buildCostCalculatorEstimationPayload(payload, estimationOptions),
-        {
-          onSuccess: (response) => {
-            if (response?.data?.data?.content !== undefined) {
-              const a = document.createElement('a');
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              a.href = response.data.data.content as any;
-              a.download = 'estimation.pdf';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            }
-          },
-          onError: (error) => {
-            console.error({ error });
-          },
-        },
-      );
+      exportPdf(payload);
     }
   };
+
+  const onExportEstimate = (index: number) => {
+    // Handle export estimate logic here
+    const pdfPayload = payload[index];
+
+    if (pdfPayload) {
+      exportPdf(pdfPayload);
+    }
+  };
+
   return (
     <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
@@ -398,6 +418,7 @@ function CostCalculatorFormDemo() {
           onAddEstimate={onAddEstimate}
           onSavePayload={onSavePayload}
           onDeleteEstimate={onDeleteEstimate}
+          onExportEstimate={onExportEstimate}
         />
       )}
     </Layout>
