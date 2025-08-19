@@ -369,7 +369,10 @@ function CostCalculatorFormDemo() {
       {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
-            downloadPdf(response.data.data.content as unknown as string);
+            downloadPdf(
+              response.data.data.content as unknown as string,
+              'estimation.pdf',
+            );
           }
         },
         onError: (error) => {
