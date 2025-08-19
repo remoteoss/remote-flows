@@ -1,4 +1,5 @@
 import type {
+  CostCalculatorEmployment,
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -11,6 +12,7 @@ import {
   useCostCalculatorEstimationPdf,
   EstimationResults,
   zendeskArticles,
+  SummaryResults,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -282,7 +284,7 @@ const ResultsView = ({
   onAddEstimate,
   onSavePayload,
 }: {
-  estimations: CostCalculatorEstimateResponse[];
+  estimations: CostCalculatorEmployment[];
   onExportPdf: () => void;
   onReset: () => void;
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
@@ -304,6 +306,7 @@ const ResultsView = ({
           onSavePayload={onSavePayload}
         />
       </div>
+      {estimations.length >= 2 && <SummaryResults />}
       {estimations.map((estimation, index) => {
         return (
           <div
@@ -312,13 +315,10 @@ const ResultsView = ({
             })}
             key={index}
           >
-            {Array.isArray(estimation.data.employments) &&
-              estimation.data.employments.length > 0 && (
-                <EstimationResults
-                  estimation={estimation.data.employments?.[0]}
-                  title={`Estimate #${index + 1}`}
-                />
-              )}
+            <EstimationResults
+              estimation={estimation}
+              title={`Estimate #${index + 1}`}
+            />
           </div>
         );
       })}
@@ -327,19 +327,24 @@ const ResultsView = ({
 };
 
 function CostCalculatorFormDemo() {
-  const [estimations, setEstimations] = useState<
-    CostCalculatorEstimateResponse[]
-  >([]);
+  const [estimations, setEstimations] = useState<CostCalculatorEmployment[]>(
+    [],
+  );
   const [payload, setPayload] = useState<
     CostCalculatorEstimationSubmitValues[]
   >([]);
+
+  console.log({ estimations });
 
   const onReset = () => {
     setEstimations([]);
   };
 
   const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
-    setEstimations([...estimations, estimation]);
+    const payload = estimation.data.employments?.[0];
+    if (payload) {
+      setEstimations([...estimations, payload]);
+    }
   };
 
   const onSavePayload = (estimation: CostCalculatorEstimationSubmitValues) => {
@@ -380,7 +385,7 @@ function CostCalculatorFormDemo() {
           }}
           onError={(error) => console.error({ error })}
           onSuccess={(response) => {
-            setEstimations([response]);
+            onAddEstimate(response);
           }}
         />
       ) : (
