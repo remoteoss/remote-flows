@@ -68,23 +68,77 @@ const SummaryHeader = ({
   );
 };
 
-const AccordionInlineTrigger = ({
+export const MultiColumnAccordion = ({
   label,
-  rightContent,
+  columns,
+  rows,
+  defaultValue = 'accordion',
+  className,
 }: {
   label: React.ReactNode;
-  rightContent: React.ReactNode;
+  columns: string[];
+  rows: Array<{
+    label: React.ReactNode;
+    values: string[];
+  }>;
+  defaultValue?: string;
+  className?: string;
 }) => {
+  const gridCols = columns.length === 1 ? 'grid-cols-2' : 'grid-cols-3';
+
   return (
-    <AccordionTrigger className="hover:no-underline px-0 py-3 [&>svg]:hidden group">
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2">
-          {label}
-          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-        </div>
-        {rightContent}
-      </div>
-    </AccordionTrigger>
+    <Accordion
+      type="single"
+      collapsible
+      defaultValue={defaultValue}
+      className={cn('w-full', className)}
+    >
+      <AccordionItem value={defaultValue} className="border-none">
+        <AccordionTrigger className="hover:no-underline px-0 py-3 [&>svg]:hidden group">
+          <div className={cn('grid items-center w-full', gridCols)}>
+            <div className="flex items-center gap-2">
+              {label}
+              <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+            </div>
+            {columns.length === 1 ? (
+              <span className="text-xs text-[#27272A] text-right">
+                {columns[0]}
+              </span>
+            ) : (
+              columns.map((column, index) => (
+                <span key={index} className="text-xs text-[#27272A] text-right">
+                  {column}
+                </span>
+              ))
+            )}
+          </div>
+        </AccordionTrigger>
+
+        <AccordionContent className="px-0 pb-4">
+          <div className="space-y-3">
+            {rows.map((row, index) => (
+              <div key={index} className={cn('grid items-center', gridCols)}>
+                <div className="flex items-center gap-2">{row.label}</div>
+                {columns.length === 1 ? (
+                  <span className="text-sm text-[#09090B] text-right">
+                    {row.values[0]}
+                  </span>
+                ) : (
+                  row.values.map((value, valueIndex) => (
+                    <span
+                      key={valueIndex}
+                      className="text-sm text-[#09090B] text-right"
+                    >
+                      {value}
+                    </span>
+                  ))
+                )}
+              </div>
+            ))}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 
@@ -94,54 +148,66 @@ const CostForAllEmployees = ({
   employeesCost: { monthlyTotal: string; annualTotal: string };
 }) => {
   return (
-    <Accordion
-      type="single"
-      collapsible
+    <MultiColumnAccordion
+      label={
+        <span className="text-sm font-medium text-[#0F172A]">
+          Cost for all employees
+        </span>
+      }
+      columns={['Total cost']}
+      rows={[
+        {
+          label: (
+            <>
+              <span className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0" />
+              <span className="text-sm text-[#09090B]">Monthly cost</span>
+            </>
+          ),
+          values: [employeesCost.monthlyTotal],
+        },
+        {
+          label: (
+            <>
+              <span className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0" />
+              <span className="text-sm text-[#09090B]">Annual cost</span>
+            </>
+          ),
+          values: [employeesCost.annualTotal],
+        },
+      ]}
       defaultValue="cost-breakdown"
-      className="w-full"
-    >
-      <AccordionItem value="cost-breakdown" className="border-none">
-        <AccordionInlineTrigger
-          label={
-            <span className="text-sm font-medium text-[#0F172A]">
-              Cost for all employees
-            </span>
-          }
-          rightContent={
-            <span className="text-xs text-[#27272A]">Total cost</span>
-          }
-        />
+    />
+  );
+};
 
-        <AccordionContent className="px-0 pb-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span className="text-sm text-[#09090B]">Monthly cost</span>
-              </div>
-              <span className="text-sm text-[#09090B]">
-                {employeesCost.monthlyTotal}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span className="text-sm text-[#09090B]">Annual cost</span>
-              </div>
-              <span className="text-sm text-[#09090B]">
-                {employeesCost.annualTotal}
-              </span>
-            </div>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+const CostsPerCountry = ({
+  costsPerCountry,
+}: {
+  costsPerCountry: Array<{
+    country: { name: string };
+    monthlyCost: string;
+    annualCost: string;
+  }>;
+}) => {
+  return (
+    <MultiColumnAccordion
+      label={
+        <span className="text-sm font-medium text-[#0F172A]">
+          Cost per country
+        </span>
+      }
+      columns={['Monthly cost', 'Annual cost']}
+      rows={costsPerCountry.map((cost) => ({
+        label: (
+          <>
+            <span className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0" />
+            <span className="text-sm text-[#09090B]">{cost.country.name}</span>
+          </>
+        ),
+        values: [cost.monthlyCost, cost.annualCost],
+      }))}
+      defaultValue="country-breakdown"
+    />
   );
 };
 
@@ -180,6 +246,9 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
           <AccordionContent className="px-0 pb-4 mt-6">
             <div className="RemoteFlows__Separator">
               <CostForAllEmployees employeesCost={employeesCost} />
+            </div>
+            <div className="mt-6">
+              <CostsPerCountry costsPerCountry={costsPerCountry} />
             </div>
           </AccordionContent>
         </AccordionItem>
