@@ -48,7 +48,7 @@ describe('useCostCalculator', () => {
     );
 
     act(() => {
-      countryField?.onChange?.('POL');
+      countryField?.onChange?.('ESP');
     });
 
     await waitFor(() => {

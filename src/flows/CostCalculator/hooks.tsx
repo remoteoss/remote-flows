@@ -15,7 +15,7 @@ import type { JSFModify, Result } from '@/src/flows/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -63,6 +63,10 @@ type UseCostCalculatorParams = {
    */
   defaultRegion?: string;
   /**
+   * The default currency slug to preselect a currency.
+   */
+  defaultCurrency?: string;
+  /**
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
@@ -87,6 +91,7 @@ const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
 export const useCostCalculator = (
   {
     defaultRegion,
+    defaultCurrency,
     estimationOptions,
     options,
     version,
@@ -178,6 +183,30 @@ export const useCostCalculator = (
       },
     },
   });
+
+  useEffect(() => {
+    // Initialize selectedCountry from defaultRegion
+    if (defaultRegion && countries) {
+      const defaultCountry = countries.find(
+        ({ value }) => value === defaultRegion,
+      );
+      if (defaultCountry) {
+        setSelectedCountry(defaultCountry);
+      }
+    }
+  }, [defaultRegion, countries]);
+
+  useEffect(() => {
+    // Initialize selectedCurrency from defaultCurrency
+    if (defaultCurrency && currencies) {
+      const defaultCurrencyObj = currencies.find(
+        ({ value }) => value === defaultCurrency,
+      );
+      if (defaultCurrencyObj) {
+        setEmployerBillingCurrency(defaultCurrencyObj.label);
+      }
+    }
+  }, [defaultCurrency, currencies]);
 
   /**
    * Submit the estimation form with the given values.

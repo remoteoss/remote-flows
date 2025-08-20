@@ -111,6 +111,7 @@ describe('CostCalculatorFlow', () => {
 
     expect(currencyDropdown).toHaveTextContent(/USD/i);
     expect(salaryInput).toHaveValue('50000');
+    expect(screen.getByText(/Show USD conversion/i)).toBeInTheDocument();
   });
 
   it('should submit the form with default values', async () => {
