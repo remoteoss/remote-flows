@@ -70,7 +70,7 @@ export const CurrencyConversionField = ({
   conversionProperties,
   classNamePrefix,
   description,
-  conversionType = 'no_spread',
+  conversionType = 'spread',
   ...props
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);

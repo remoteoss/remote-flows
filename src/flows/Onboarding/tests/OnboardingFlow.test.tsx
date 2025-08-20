@@ -381,7 +381,7 @@ describe('OnboardingFlow', () => {
       http.patch('*/v1/employments/*', async () => {
         return HttpResponse.json(employmentUpdatedResponse);
       }),
-      http.post('*/v1/currency-converter', () => {
+      http.post('*/v1/currency-converter/effective', () => {
         return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
