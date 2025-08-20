@@ -114,6 +114,19 @@ describe('CostCalculatorFlow', () => {
     expect(screen.getByText(/Show USD conversion/i)).toBeInTheDocument();
   });
 
+  it('should render the 3 comboboxes when selecting a country with region', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'ESP',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('combobox')).toHaveLength(3);
+    });
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
