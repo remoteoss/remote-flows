@@ -17,9 +17,13 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 const EstimationResultsHeader = ({
   title,
   country,
+  onDelete,
+  onExportPdf,
 }: {
   title: string;
   country: string;
+  onDelete: () => void;
+  onExportPdf: () => void;
 }) => {
   return (
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
@@ -44,23 +48,16 @@ const EstimationResultsHeader = ({
           },
           {
             label: 'Export',
-            onClick: () => {},
-            disabled: true,
+            onClick: onExportPdf,
           },
           {
             label: 'Delete',
-            onClick: () => {},
-            disabled: true,
+            onClick: onDelete,
           },
         ]}
       />
     </div>
   );
-};
-
-type EstimationResultsProps = {
-  estimation: CostCalculatorEmployment;
-  title: string;
 };
 
 function OnboardingTimeline({
@@ -634,9 +631,18 @@ const useEstimationResults = (estimation: CostCalculatorEmployment) => {
   };
 };
 
+type EstimationResultsProps = {
+  estimation: CostCalculatorEmployment;
+  title: string;
+  onDelete: () => void;
+  onExportPdf: () => void;
+};
+
 export const EstimationResults = ({
   estimation,
   title,
+  onDelete,
+  onExportPdf,
 }: EstimationResultsProps) => {
   const {
     isMultipleCurrency,
@@ -651,7 +657,12 @@ export const EstimationResults = ({
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
       <div className="RemoteFlows__Separator">
-        <EstimationResultsHeader title={title} country={country.name} />
+        <EstimationResultsHeader
+          title={title}
+          country={country.name}
+          onDelete={onDelete}
+          onExportPdf={onExportPdf}
+        />
       </div>
       <div className="RemoteFlows__Separator">
         <EstimationHeaders
