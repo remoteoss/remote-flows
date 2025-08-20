@@ -80,13 +80,13 @@ export function CostCalculatorForm({
   ]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
-    const cleanedValues = costCalculatorBag?.parseFormValues(
+    const parsedValues = costCalculatorBag?.parseFormValues(
       values,
     ) as CostCalculatorEstimationSubmitValues;
     const costCalculatorResults =
-      await costCalculatorBag?.onSubmit(cleanedValues);
+      await costCalculatorBag?.onSubmit(parsedValues);
 
-    await onSubmit?.(cleanedValues);
+    await onSubmit?.(parsedValues);
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
