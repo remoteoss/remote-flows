@@ -9,6 +9,7 @@ import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
+  UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
 import type { JSFModify, Result } from '@/src/flows/types';
 
@@ -66,9 +67,7 @@ type UseCostCalculatorParams = {
    * The estimation options.
    */
   estimationOptions: CostCalculatorEstimationOptions;
-  options?: {
-    jsfModify?: JSFModify;
-  };
+  options?: UseCostCalculatorOptions;
   version?: CostCalculatorVersion;
 };
 
@@ -156,7 +155,12 @@ export const useCostCalculator = (
             Component: (
               props: JSFField & { currencies: { from: string; to: string } },
             ) => {
-              return <SalaryField {...props} />;
+              return (
+                <SalaryField
+                  conversionType={options?.salaryField?.conversionType}
+                  {...props}
+                />
+              );
             },
           },
         },

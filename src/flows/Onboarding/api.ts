@@ -493,17 +493,32 @@ export const useCountriesSchemaField = (
   };
 };
 
-export const useConvertCurrency = () => {
+export const useConvertCurrency = ({
+  type = 'spread',
+}: {
+  type?: 'spread' | 'no_spread';
+}) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: ConvertCurrencyParams) => {
-      return postConvertCurrencyConverter({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-      });
+      if (type === 'no_spread') {
+        // TODO: We need to implement a new endpoint in the BE that returns correctly the conversion rate
+        return postConvertCurrencyConverter({
+          client: client as Client,
+          headers: {
+            Authorization: ``,
+          },
+          body: payload,
+        });
+      } else {
+        return postConvertCurrencyConverter({
+          client: client as Client,
+          headers: {
+            Authorization: ``,
+          },
+          body: payload,
+        });
+      }
     },
   });
 };

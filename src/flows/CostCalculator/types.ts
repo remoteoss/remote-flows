@@ -3,6 +3,7 @@ import type {
   PostCreateEstimationError,
   ValidationError,
 } from '@/src/client';
+import { JSFModify } from '@/src/flows/types';
 
 export type CostCalculatorEstimationSubmitValues = {
   currency: string;
@@ -50,3 +51,10 @@ export type CostCalculatorEstimationOptions = Partial<{
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
+
+export type UseCostCalculatorOptions = {
+  jsfModify?: JSFModify;
+  salaryField?: {
+    conversionType?: 'spread' | 'no_spread';
+  };
+};

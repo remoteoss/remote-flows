@@ -277,8 +277,9 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: '',
-    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
+    employmentId: import.meta.env.VITE_EMPLOYMENT_ID || '', // use your own employment ID
+    companyId:
+      import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
