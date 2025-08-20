@@ -36,7 +36,6 @@ type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
 export const RemoteFlows = ({
   children,
   isClientToken,
-  proxy,
   ...props
 }: RemoteFlowsProps) => {
   const isProxyEnabled = import.meta.env.VITE_USE_PROXY === 'true';
