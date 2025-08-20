@@ -39,6 +39,9 @@ import type {
   GetShowContractorInvoiceData,
   GetShowContractorInvoiceResponse,
   GetShowContractorInvoiceError,
+  PostConvertRawCurrencyConverterData,
+  PostConvertRawCurrencyConverterResponse,
+  PostConvertRawCurrencyConverterError,
   GetIndexEmploymentData,
   GetIndexEmploymentResponse,
   GetIndexEmploymentError,
@@ -322,6 +325,9 @@ import type {
   GetDownloadPayslipPayslipData,
   GetDownloadPayslipPayslipResponse,
   GetDownloadPayslipPayslipError,
+  PostConvertWithSpreadCurrencyConverterData,
+  PostConvertWithSpreadCurrencyConverterResponse,
+  PostConvertWithSpreadCurrencyConverterError,
   GetShowTimeoffData,
   GetShowTimeoffResponse,
   GetShowTimeoffError,
@@ -454,9 +460,9 @@ import type {
   GetIndexEmploymentContractData,
   GetIndexEmploymentContractResponse,
   GetIndexEmploymentContractError,
-  PostConvertCurrencyConverterData,
-  PostConvertCurrencyConverterResponse,
-  PostConvertCurrencyConverterError,
+  PostConvertWithSpreadCurrencyConverter2Data,
+  PostConvertWithSpreadCurrencyConverter2Response,
+  PostConvertWithSpreadCurrencyConverter2Error,
   GetIndexCompanyData,
   GetIndexCompanyResponse,
   GetIndexCompanyError,
@@ -825,6 +831,36 @@ export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/contractor-invoices/{id}',
     ...options,
+  });
+};
+
+/**
+ * Convert currency using flat rates
+ * Convert currency using FX rates used in Remote’s estimation tools.
+ * These rates are not guaranteed to match final onboarding or contract rates.
+ */
+export const postConvertRawCurrencyConverter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostConvertRawCurrencyConverterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostConvertRawCurrencyConverterResponse,
+    PostConvertRawCurrencyConverterError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/currency-converter/raw',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };
 
@@ -3764,6 +3800,35 @@ export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Convert currency using dynamic rates
+ * Convert currency using the rates Remote applies during employment creation and invoicing.
+ */
+export const postConvertWithSpreadCurrencyConverter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostConvertWithSpreadCurrencyConverterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostConvertWithSpreadCurrencyConverterResponse,
+    PostConvertWithSpreadCurrencyConverterError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/currency-converter/effective',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Show Time Off
  * Shows a single Time Off record
  */
@@ -5096,17 +5161,17 @@ export const getIndexEmploymentContract = <
 };
 
 /**
- * Convert currency
- * Convert currency
+ * Convert currency using dynamic rates
+ * Convert currency using the rates Remote applies during employment creation and invoicing.
  */
-export const postConvertCurrencyConverter = <
+export const postConvertWithSpreadCurrencyConverter2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostConvertCurrencyConverterData, ThrowOnError>,
+  options: Options<PostConvertWithSpreadCurrencyConverter2Data, ThrowOnError>,
 ) => {
   return (options.client ?? _heyApiClient).post<
-    PostConvertCurrencyConverterResponse,
-    PostConvertCurrencyConverterError,
+    PostConvertWithSpreadCurrencyConverter2Response,
+    PostConvertWithSpreadCurrencyConverter2Error,
     ThrowOnError
   >({
     security: [

@@ -11,7 +11,8 @@ import {
   getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
-  postConvertCurrencyConverter,
+  postConvertRawCurrencyConverter,
+  postConvertWithSpreadCurrencyConverter,
   postCreateContractEligibility,
   postCreateEmployment2,
   postCreateRiskReserve,
@@ -502,8 +503,7 @@ export const useConvertCurrency = ({
   return useMutation({
     mutationFn: (payload: ConvertCurrencyParams) => {
       if (type === 'no_spread') {
-        // TODO: We need to implement a new endpoint in the BE that returns correctly the conversion rate
-        return postConvertCurrencyConverter({
+        return postConvertRawCurrencyConverter({
           client: client as Client,
           headers: {
             Authorization: ``,
@@ -511,7 +511,7 @@ export const useConvertCurrency = ({
           body: payload,
         });
       } else {
-        return postConvertCurrencyConverter({
+        return postConvertWithSpreadCurrencyConverter({
           client: client as Client,
           headers: {
             Authorization: ``,
