@@ -15,7 +15,7 @@ import type { JSFModify, Result } from '@/src/flows/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useEffect, useCallback, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -141,17 +141,6 @@ export const useCostCalculator = (
         ).presentation
       : undefined;
 
-  const getCurrencies = useCallback(() => {
-    if (employeeBillingCurrency !== employerBillingCurrency) {
-      return { from: employerBillingCurrency, to: employeeBillingCurrency };
-    }
-
-    return {
-      from: employeeBillingCurrency,
-      to: employerBillingCurrency,
-    };
-  }, [employeeBillingCurrency, employerBillingCurrency]);
-
   const customFields = useMemo(() => {
     return {
       fields: {
@@ -165,7 +154,10 @@ export const useCostCalculator = (
                 salaryFieldPresentation?.salary_conversion_properties
                   ?.description,
             },
-            currencies: getCurrencies(),
+            currencies: {
+              from: employeeBillingCurrency,
+              to: employerBillingCurrency,
+            },
             Component: (
               props: JSFField & { currencies: { from: string; to: string } },
             ) => {
