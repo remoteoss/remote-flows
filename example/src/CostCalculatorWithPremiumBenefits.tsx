@@ -425,13 +425,8 @@ function CostCalculatorFormDemo() {
 }
 
 export function CostCalculatorWithPremiumBenefits() {
-  const proxyURL = window.location.origin;
   return (
-    <RemoteFlows
-      components={components}
-      proxy={{ url: proxyURL }}
-      isClientToken
-    >
+    <RemoteFlows components={components} isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
