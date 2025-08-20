@@ -157,7 +157,9 @@ export const useCostCalculator = (
             ) => {
               return (
                 <SalaryField
-                  conversionType={options?.salaryField?.conversionType}
+                  conversionType={
+                    version === 'marketing' ? 'no_spread' : 'spread'
+                  }
                   {...props}
                 />
               );

@@ -54,7 +54,4 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
 
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;
-  salaryField?: {
-    conversionType?: 'spread' | 'no_spread';
-  };
 };
