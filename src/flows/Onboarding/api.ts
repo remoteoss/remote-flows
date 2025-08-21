@@ -11,7 +11,8 @@ import {
   getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
-  postConvertCurrencyConverter,
+  postConvertRawCurrencyConverter,
+  postConvertWithSpreadCurrencyConverter,
   postCreateContractEligibility,
   postCreateEmployment2,
   postCreateRiskReserve,
@@ -493,15 +494,20 @@ export const useCountriesSchemaField = (
   };
 };
 
-export const useConvertCurrency = () => {
+export const useConvertCurrency = ({
+  type = 'spread',
+}: {
+  type?: 'spread' | 'no_spread';
+}) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: ConvertCurrencyParams) => {
-      return postConvertCurrencyConverter({
+      const apiFn =
+        type === 'no_spread'
+          ? postConvertRawCurrencyConverter
+          : postConvertWithSpreadCurrencyConverter;
+      return apiFn({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
       });
     },

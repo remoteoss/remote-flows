@@ -95,7 +95,7 @@ describe('CurrencyFieldWithConversion', () => {
     vi.clearAllMocks();
 
     server.use(
-      http.post('*/v1/currency-converter', async ({ request }) => {
+      http.post('*/v1/currency-converter/effective', async ({ request }) => {
         const body = (await request.json()) as {
           source_currency: string;
           target_currency: string;
@@ -199,7 +199,7 @@ describe('CurrencyFieldWithConversion', () => {
       return HttpResponse.json({});
     });
 
-    server.use(http.post('*/v1/currency-converter', mockHandler));
+    server.use(http.post('*/v1/currency-converter/effective', mockHandler));
 
     const props = {
       ...defaultProps,

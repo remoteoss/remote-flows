@@ -60,6 +60,7 @@ export type CurrencyConversionFieldProps = JSFField & {
   };
   useProxy?: boolean;
   classNamePrefix: string;
+  conversionType?: 'spread' | 'no_spread';
 };
 
 export const CurrencyConversionField = ({
@@ -69,6 +70,7 @@ export const CurrencyConversionField = ({
   conversionProperties,
   classNamePrefix,
   description,
+  conversionType = 'spread',
   ...props
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
@@ -83,7 +85,9 @@ export const CurrencyConversionField = ({
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
-  const { mutateAsync: convertCurrency } = useConvertCurrency();
+  const { mutateAsync: convertCurrency } = useConvertCurrency({
+    type: conversionType,
+  });
 
   useEffect(() => {
     if (isFirstRender.current) {
