@@ -6,8 +6,10 @@ import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationSubmitValues,
+  CostCalculatorInternalEstimationSubmitValues,
   EstimationError,
 } from '@/src/flows/CostCalculator/types';
+import omit from 'lodash/omit';
 
 type CostCalculatorFormProps = Partial<{
   /**
@@ -82,11 +84,11 @@ export function CostCalculatorForm({
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     const parsedValues = costCalculatorBag?.parseFormValues(
       values,
-    ) as CostCalculatorEstimationSubmitValues;
+    ) as CostCalculatorInternalEstimationSubmitValues;
     const costCalculatorResults =
       await costCalculatorBag?.onSubmit(parsedValues);
-
-    await onSubmit?.(parsedValues);
+    const cleanValues = omit(parsedValues, ['salary_converted']);
+    await onSubmit?.(cleanValues);
 
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);

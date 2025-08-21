@@ -174,6 +174,7 @@ export const useCostCalculator = (
     salaryField,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     salaryFieldPresentation?.salary_conversion_properties?.label,
+    version,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({
