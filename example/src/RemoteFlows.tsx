@@ -38,11 +38,14 @@ export const RemoteFlows = ({
   isClientToken,
   ...props
 }: RemoteFlowsProps) => {
+  const isProxyEnabled = import.meta.env.VITE_USE_PROXY === 'true';
+  const proxyURL = window.location.origin;
   return (
     <RemoteFlowsAuth
       environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
       auth={!isClientToken ? fetchToken : fetchClientToken}
       authId={!isClientToken ? 'default' : 'client'}
+      proxy={isProxyEnabled ? { url: proxyURL } : undefined}
       {...props}
     >
       {children}
