@@ -8,6 +8,7 @@ import { JSFModify } from '@/src/flows/types';
 export type CostCalculatorEstimationSubmitValues = {
   currency: string;
   country: string;
+  salary_converted: boolean;
   salary: number;
 } & Partial<{
   region: string;
@@ -20,6 +21,8 @@ export type CostCalculatorEstimationFormValues = {
   currency: string;
   country: string;
   salary: string;
+  salary_converted: boolean;
+  salary_conversion: string;
 } & Partial<{
   region: string;
   age: number;

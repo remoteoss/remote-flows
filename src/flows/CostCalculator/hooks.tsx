@@ -381,13 +381,22 @@ export const useCostCalculator = (
     parseFormValues: (
       values: CostCalculatorEstimationFormValues,
     ): CostCalculatorEstimationSubmitValues => {
-      const { country, region, salary, currency, ...rest } = values;
+      const { country, region, currency, salary_converted, ...rest } = values;
+
+      // If the salary has been converted, we take the one the user has inputted
+      let salary = values.salary;
+      if (salary_converted) {
+        salary = values.salary_conversion;
+      }
+
       const jsonSchemaStaticFieldValues = {
         country,
         region,
         salary,
+        salary_converted,
         currency,
       };
+
       const parsedStaticFields = parseJSFToValidate(
         jsonSchemaStaticFieldValues,
         fieldsJSONSchema.fields,

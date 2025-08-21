@@ -163,8 +163,12 @@ export const CurrencyConversionField = ({
       ),
     500,
   );
+  // we keep track of the last input the user used, so we can make sure
+  // we keep consistent currency rates
+  const lastInputFieldName = `${props.name}_converted`;
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(lastInputFieldName, false);
     if (showConversion) {
       debouncedConvertCurrency(evt.target.value);
     }
@@ -173,6 +177,7 @@ export const CurrencyConversionField = ({
   const handleConversionFieldChange = (
     evt: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    setValue(lastInputFieldName, true);
     debouncedConvertCurrencyReverse(evt.target.value);
   };
 
@@ -222,6 +227,11 @@ export const CurrencyConversionField = ({
           onChange={handleConversionFieldChange}
         />
       )}
+      <input
+        type="hidden"
+        name={lastInputFieldName}
+        value={watch(lastInputFieldName) || false}
+      />
     </>
   );
 };
