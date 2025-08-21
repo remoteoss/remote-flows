@@ -23,6 +23,7 @@ Welcome to the CostCalculator flow docs
   - [CostCalculatorResetButton](#costcalculatorresetbutton)
   - [CostCalculatorDisclaimer](#costcalculatordisclaimer)
   - [CostCalculatorResults](#costcalculatorresults)
+  - [SummaryResults](#summaryresults-component)
   - [useCostCalculator](#usecostcalculator)
     - [Parameters](#parameters)
     - [EstimationOptions Properties](#estimationoptions-properties)
