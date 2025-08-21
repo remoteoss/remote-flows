@@ -60,11 +60,58 @@ const EstimationResultsHeader = ({
   );
 };
 
+interface OnboardingTimelineStep {
+  title: string;
+  description: string;
+  id: string;
+}
+
+interface OnboardingTimelineData {
+  steps: OnboardingTimelineStep[];
+  helpText: string;
+  zendeskArticleId?: number;
+}
+
+const getOnboardingTimelineData = (): OnboardingTimelineData => {
+  return {
+    steps: [
+      {
+        id: 'add-employment-details',
+        title: 'Add employment details',
+        description: 'You add employee employments details.',
+      },
+      {
+        id: 'invite-employee',
+        title: 'Invite employee',
+        description:
+          'Hire receives an email invitation from Remote to start the self-enrollment process.',
+      },
+      {
+        id: 'verify-information',
+        title: 'Verify information',
+        description:
+          'Remote prepares the Employment Agreement and verifies all the information.',
+      },
+      {
+        id: 'sign-contract',
+        title: 'Sign contract',
+        description:
+          'All parties sign the Employment Agreement and are ready to start. 🎉',
+      },
+    ],
+    helpText:
+      'For customers who accept our Terms of Service (ToS), the employee onboarding timeline starts once the employee has been invited to the platform and completed self enrolment.',
+    zendeskArticleId: zendeskArticles.employeeOnboardingTimeline,
+  };
+};
+
 function OnboardingTimeline({
   minimumOnboardingDays,
+  data,
   className,
 }: {
   minimumOnboardingDays: number | null;
+  data: OnboardingTimelineData;
   className?: string;
 }) {
   return (
@@ -89,43 +136,22 @@ function OnboardingTimeline({
         </AccordionTrigger>
         <AccordionContent className="px-0 pb-4">
           <ul className="list-disc list-inside space-y-2">
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Add employment details
-              </strong>{' '}
-              - You add employee employments details.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Invite employee
-              </strong>{' '}
-              - Hire receives an email invitation from Remote to start the
-              self-enrollment process.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Verify information
-              </strong>{' '}
-              - Remote prepares the Employment Agreement and verifies all the
-              information.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Sign contract
-              </strong>{' '}
-              - All parties sign the Employment Agreement and are ready to
-              start. 🎉
-            </li>
+            {data.steps.map((step) => (
+              <li key={step.id}>
+                <strong className="font-medium text-[#09090B]">
+                  {step.title}
+                </strong>{' '}
+                - {step.description}
+              </li>
+            ))}
           </ul>
           <p className="text-xs text-muted-foreground mt-4">
-            For customers who accept our Terms of Service (ToS), the employee
-            onboarding timeline starts once the employee has been invited to the
-            platform and completed self enrolment.
-            <ZendeskTriggerButton
-              zendeskId={zendeskArticles.employeeOnboardingTimeline}
-            >
-              Learn more
-            </ZendeskTriggerButton>
+            {data.helpText}
+            {data.zendeskArticleId && (
+              <ZendeskTriggerButton zendeskId={data.zendeskArticleId}>
+                Learn more
+              </ZendeskTriggerButton>
+            )}
           </p>
         </AccordionContent>
       </AccordionItem>
@@ -457,9 +483,28 @@ function BreakdownList({
   );
 }
 
+type EstimationResultsComponents = {
+  HiringSection?: React.ComponentType<{
+    country: string;
+    countryBenefitsUrl: string;
+    countryGuideUrl: string;
+  }>;
+  OnboardingTimeline?: React.ComponentType<{
+    minimumOnboardingDays: number | null;
+    data: OnboardingTimelineData;
+  }>;
+  EstimationResultsHeader?: React.ComponentType<{
+    title: string;
+    country: string;
+    onDelete: () => void;
+    onExportPdf: () => void;
+  }>;
+};
+
 type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
+  components?: EstimationResultsComponents;
   onDelete: () => void;
   onExportPdf: () => void;
 };
@@ -467,9 +512,18 @@ type EstimationResultsProps = {
 export const EstimationResults = ({
   estimation,
   title,
+  components,
   onDelete,
   onExportPdf,
 }: EstimationResultsProps) => {
+  const CustomHiringSection = components?.HiringSection || HiringSection;
+  const CustomOnboardingTimeline =
+    components?.OnboardingTimeline || OnboardingTimeline;
+  const CustomEstimationResultsHeader =
+    components?.EstimationResultsHeader || EstimationResultsHeader;
+
+  const onboardingTimelineData = getOnboardingTimelineData();
+
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
@@ -477,7 +531,7 @@ export const EstimationResults = ({
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
       <div className="RemoteFlows__Estimation__Separator">
-        <EstimationResultsHeader
+        <CustomEstimationResultsHeader
           title={title}
           country={estimation.country.name}
           onDelete={onDelete}
@@ -719,12 +773,13 @@ export const EstimationResults = ({
         </EstimationRow>
       </div>
       <div className="RemoteFlows__Estimation__Separator">
-        <OnboardingTimeline
+        <CustomOnboardingTimeline
           minimumOnboardingDays={estimation.minimum_onboarding_time}
+          data={onboardingTimelineData}
         />
       </div>
 
-      <HiringSection
+      <CustomHiringSection
         countryBenefitsUrl={estimation.country_benefits_details_url as string}
         countryGuideUrl={estimation.country_guide_url as string}
         country={estimation.country.name}
