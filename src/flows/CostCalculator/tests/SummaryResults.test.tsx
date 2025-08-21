@@ -215,4 +215,16 @@ describe('SummaryResults', () => {
       }),
     ).toBeInTheDocument();
   });
+
+  it('should not render with less than 2 estimations', () => {
+    const { container } = render(
+      <SummaryResults estimations={[mockEstimations[0]]} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should not render with empty estimations', () => {
+    const { container } = render(<SummaryResults estimations={[]} />);
+    expect(container).toBeEmptyDOMElement();
+  });
 });

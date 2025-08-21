@@ -11,6 +11,13 @@ import { ChevronDown, Globe } from 'lucide-react';
 import { useState } from 'react';
 
 const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
+  if (estimations.length < 2) {
+    return {
+      currency: null,
+      costsPerCountry: [],
+      employeesCost: null,
+    };
+  }
   const currency = estimations[0]?.employer_currency_costs.currency;
   const costsPerCountry = estimations.reduce(
     (acc, estimation) => {
@@ -233,14 +240,30 @@ const CostsPerCountry = ({
 };
 
 type SummaryResultsProps = {
+  /**
+   * Array of employments to compare costs for.
+   * 2 estimations required for the component to render
+   */
   estimations: CostCalculatorEmployment[];
 };
 
+/**
+ * Displays a summary comparison of costs across multiple estimations.
+ * The component will return null if you pass less than 2 estimations.
+ */
 export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
   const { currency, costsPerCountry, employeesCost } =
     useSummaryResults(estimations);
 
   const [accordionValue, setAccordionValue] = useState('summary');
+
+  if (
+    !currency ||
+    costsPerCountry.length === 0 ||
+    Object.keys(employeesCost).length === 0
+  ) {
+    return null;
+  }
 
   return (
     <Card className="RemoteFlows__SummaryResults__Card p-10">

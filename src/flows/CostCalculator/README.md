@@ -591,6 +591,21 @@ A component to display cost calculation results.
 | ---------------- | ------------------------------------ | -------- | ---------------------------- |
 | `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation response data |
 
+# SummaryResults Component
+
+A component that displays a comparative summary of costs across multiple estimations.
+
+## Requirements
+
+- **Minimum Estimations**: The component requires at least 2 estimations to render. It will return `null` if fewer estimations are provided.
+- **Currency**: All estimations must use the same currency (taken from the first estimation).
+
+## Props
+
+| Prop          | Type                         | Description                                                                                       |
+| ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| `estimations` | `CostCalculatorEmployment[]` | Array of employments to compare. **Must contain at least 2 entries** for the component to render. |
+
 ### useCostCalculator
 
 The `useCostCalculator` hook provides access to the underlying functionality of the cost calculator, allowing for custom implementations.
