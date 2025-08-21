@@ -5,7 +5,8 @@ import {
 } from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
-import { ChevronDown, Info, User } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
+import Flag from 'react-flagpack';
 import { useState } from 'react';
 import {
   Accordion,
@@ -35,7 +36,7 @@ const EstimationResultsHeader = ({
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
       <div className="flex flex-row items-center gap-6">
         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]">
-          <User className="h-6 w-6 text-[#000000]" />
+          <Flag code={country.alpha_2_code} />
         </div>
         <div className="space-y-1">
           <h2 className="text-lg font-medium leading-none text-[#181818]">
