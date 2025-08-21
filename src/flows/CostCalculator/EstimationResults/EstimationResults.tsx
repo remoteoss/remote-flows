@@ -1,4 +1,8 @@
-import { CostCalculatorEmployment, MinimalCountry } from '@/src/client';
+import {
+  CostCalculatorEmployment,
+  MinimalCountry,
+  MinimalRegion,
+} from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
 import { ChevronDown, Info, User } from 'lucide-react';
@@ -17,11 +21,13 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 const EstimationResultsHeader = ({
   title,
   country,
+  region,
   onDelete,
   onExportPdf,
 }: {
   title: string;
   country: MinimalCountry;
+  region?: MinimalRegion;
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
@@ -35,7 +41,9 @@ const EstimationResultsHeader = ({
           <h2 className="text-lg font-medium leading-none text-[#181818]">
             {title}
           </h2>
-          <p className="text-xs text-[#71717A]">{country.name}</p>
+          <p className="text-xs text-[#71717A]">
+            {country.name} {region ? ` (${region.name})` : ''}
+          </p>
         </div>
       </div>
       <ActionsDropdown
@@ -495,6 +503,7 @@ type EstimationResultsComponents = {
   }>;
   Header?: React.ComponentType<{
     title: string;
+    region?: MinimalRegion;
     country: MinimalCountry;
     onDelete: () => void;
     onExportPdf: () => void;
@@ -529,11 +538,14 @@ export const EstimationResults = ({
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
+  const hasRegion = estimation.region.code !== estimation.country.code;
+
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
       <div className="RemoteFlows__Estimation__Separator">
         <CustomHeader
           title={title}
+          region={hasRegion ? estimation.region : undefined}
           country={estimation.country}
           onDelete={onDelete}
           onExportPdf={onExportPdf}
