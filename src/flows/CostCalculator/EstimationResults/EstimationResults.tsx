@@ -499,6 +499,7 @@ type EstimationResultsComponents = {
     onDelete: () => void;
     onExportPdf: () => void;
   }>;
+  Footer?: React.ComponentType;
 };
 
 type EstimationResultsProps = {
@@ -521,6 +522,7 @@ export const EstimationResults = ({
     components?.OnboardingTimeline || OnboardingTimeline;
   const CustomEstimationResultsHeader =
     components?.EstimationResultsHeader || EstimationResultsHeader;
+  const CustomFooter = components?.Footer;
 
   const onboardingTimelineData = getOnboardingTimelineData();
 
@@ -784,6 +786,8 @@ export const EstimationResults = ({
         countryGuideUrl={estimation.country_guide_url as string}
         country={estimation.country.name}
       />
+
+      {CustomFooter && <CustomFooter />}
     </Card>
   );
 };
