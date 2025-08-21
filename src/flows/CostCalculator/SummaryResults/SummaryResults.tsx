@@ -12,19 +12,40 @@ import { useState } from 'react';
 
 const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
   const currency = estimations[0]?.employer_currency_costs.currency;
-  const costsPerCountry = estimations.map((estimation) => {
-    return {
-      country: estimation.country,
-      monthlyCost: formatCurrency(
-        estimation.employer_currency_costs.monthly_total,
-        currency.symbol,
-      ),
-      annualCost: formatCurrency(
-        estimation.employer_currency_costs.annual_total,
-        currency.symbol,
-      ),
-    };
-  });
+  const costsPerCountry = estimations.reduce(
+    (acc, estimation) => {
+      const countryName = estimation.country.name;
+
+      acc[countryName] = {
+        country: estimation.country,
+        monthlyTotal:
+          (acc[countryName]?.monthlyTotal || 0) +
+          estimation.employer_currency_costs.monthly_total,
+        annualTotal:
+          (acc[countryName]?.annualTotal || 0) +
+          estimation.employer_currency_costs.annual_total,
+      };
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        country: (typeof estimations)[0]['country'];
+        monthlyTotal: number;
+        annualTotal: number;
+      }
+    >,
+  );
+
+  const groupedCostsPerCountry = Object.values(costsPerCountry).map(
+    ({ country, monthlyTotal, annualTotal }) => ({
+      country,
+      monthlyCost: formatCurrency(monthlyTotal, currency.symbol),
+      annualCost: formatCurrency(annualTotal, currency.symbol),
+    }),
+  );
+
   const employeesCost = {
     monthlyTotal: formatCurrency(
       estimations.reduce((acc, estimation) => {
@@ -39,7 +60,7 @@ const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
       currency.symbol,
     ),
   };
-  return { currency, costsPerCountry, employeesCost };
+  return { currency, costsPerCountry: groupedCostsPerCountry, employeesCost };
 };
 
 const SummaryHeader = ({
