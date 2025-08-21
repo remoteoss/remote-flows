@@ -319,11 +319,6 @@ const ResultsView = ({
             {Array.isArray(estimation.data.employments) &&
               estimation.data.employments.length > 0 && (
                 <EstimationResults
-                  components={{
-                    Header: ({ country }) => {
-                      return <div>hello {country.name}</div>;
-                    },
-                  }}
                   estimation={estimation.data.employments?.[0]}
                   title={`Estimate #${index + 1}`}
                   onDelete={() => onDeleteEstimate(index)}
