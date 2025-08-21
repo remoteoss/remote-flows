@@ -7,10 +7,10 @@ import {
 } from '@remoteoss/remote-flows';
 import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
-import './css/main.css';
-import 'react-flagpack/dist/style.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import './css/main.css';
+import 'react-flagpack/dist/style.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
