@@ -1,4 +1,4 @@
-import { CostCalculatorEmployment } from '@/src/client';
+import { CostCalculatorEmployment, MinimalCountry } from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
 import { ChevronDown, Info, User } from 'lucide-react';
@@ -21,7 +21,7 @@ const EstimationResultsHeader = ({
   onExportPdf,
 }: {
   title: string;
-  country: string;
+  country: MinimalCountry;
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
@@ -35,7 +35,7 @@ const EstimationResultsHeader = ({
           <h2 className="text-lg font-medium leading-none text-[#181818]">
             {title}
           </h2>
-          <p className="text-xs text-[#71717A]">{country}</p>
+          <p className="text-xs text-[#71717A]">{country.name}</p>
         </div>
       </div>
       <ActionsDropdown
@@ -168,7 +168,7 @@ function HiringSection({
   className?: string;
   countryBenefitsUrl: string;
   countryGuideUrl: string;
-  country: string;
+  country: MinimalCountry;
 }) {
   return (
     <Accordion
@@ -183,7 +183,7 @@ function HiringSection({
         <AccordionTrigger className="hover:no-underline px-0 py-4">
           <div className="flex items-center justify-between w-full">
             <span className="text-base font-medium text-[#0F172A]">
-              Hiring in {country}
+              Hiring in {country.name}
             </span>
           </div>
         </AccordionTrigger>
@@ -485,7 +485,7 @@ function BreakdownList({
 
 type EstimationResultsComponents = {
   HiringSection?: React.ComponentType<{
-    country: string;
+    country: MinimalCountry;
     countryBenefitsUrl: string;
     countryGuideUrl: string;
   }>;
@@ -493,9 +493,9 @@ type EstimationResultsComponents = {
     minimumOnboardingDays: number | null;
     data: OnboardingTimelineData;
   }>;
-  EstimationResultsHeader?: React.ComponentType<{
+  Header?: React.ComponentType<{
     title: string;
-    country: string;
+    country: MinimalCountry;
     onDelete: () => void;
     onExportPdf: () => void;
   }>;
@@ -520,8 +520,7 @@ export const EstimationResults = ({
   const CustomHiringSection = components?.HiringSection || HiringSection;
   const CustomOnboardingTimeline =
     components?.OnboardingTimeline || OnboardingTimeline;
-  const CustomEstimationResultsHeader =
-    components?.EstimationResultsHeader || EstimationResultsHeader;
+  const CustomHeader = components?.Header || EstimationResultsHeader;
   const CustomFooter = components?.Footer;
 
   const onboardingTimelineData = getOnboardingTimelineData();
@@ -533,9 +532,9 @@ export const EstimationResults = ({
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
       <div className="RemoteFlows__Estimation__Separator">
-        <CustomEstimationResultsHeader
+        <CustomHeader
           title={title}
-          country={estimation.country.name}
+          country={estimation.country}
           onDelete={onDelete}
           onExportPdf={onExportPdf}
         />
@@ -784,7 +783,7 @@ export const EstimationResults = ({
       <CustomHiringSection
         countryBenefitsUrl={estimation.country_benefits_details_url as string}
         countryGuideUrl={estimation.country_guide_url as string}
-        country={estimation.country.name}
+        country={estimation.country}
       />
 
       {CustomFooter && <CustomFooter />}
