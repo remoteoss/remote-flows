@@ -502,23 +502,14 @@ export const useConvertCurrency = ({
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: ConvertCurrencyParams) => {
-      if (type === 'no_spread') {
-        return postConvertRawCurrencyConverter({
-          client: client as Client,
-          headers: {
-            Authorization: ``,
-          },
-          body: payload,
-        });
-      } else {
-        return postConvertWithSpreadCurrencyConverter({
-          client: client as Client,
-          headers: {
-            Authorization: ``,
-          },
-          body: payload,
-        });
-      }
+      const apiFn =
+        type === 'no_spread'
+          ? postConvertRawCurrencyConverter
+          : postConvertWithSpreadCurrencyConverter;
+      return apiFn({
+        client: client as Client,
+        body: payload,
+      });
     },
   });
 };
