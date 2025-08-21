@@ -12,11 +12,13 @@ type SalaryFieldProps = JSFField & {
     label?: string;
     description?: string;
   };
+  conversionType?: 'spread' | 'no_spread';
 };
 
 export const SalaryField = ({
   currencies: { from, to },
   salary_conversion_properties,
+  conversionType = 'no_spread',
   ...props
 }: SalaryFieldProps) => {
   const conversionProperties = {
@@ -42,6 +44,7 @@ export const SalaryField = ({
       conversionFieldName="salary_conversion"
       conversionProperties={conversionProperties}
       classNamePrefix="RemoteFlows-Salary"
+      conversionType={conversionType}
     />
   );
 };

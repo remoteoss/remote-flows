@@ -29,6 +29,7 @@ export const AnnualGrossSalary = ({
           'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.',
       }}
       classNamePrefix="RemoteFlows-AnnualGrossSalary"
+      conversionType="no_spread"
     />
   );
 };
