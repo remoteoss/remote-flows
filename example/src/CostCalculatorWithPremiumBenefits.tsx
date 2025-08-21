@@ -25,6 +25,7 @@ import {
 import { ButtonHTMLAttributes, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';

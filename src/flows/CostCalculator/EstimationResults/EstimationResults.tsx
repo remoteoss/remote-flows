@@ -1,7 +1,12 @@
-import { CostCalculatorEmployment, MinimalCountry } from '@/src/client';
+import {
+  CostCalculatorEmployment,
+  MinimalCountry,
+  MinimalRegion,
+} from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
-import { ChevronDown, Info, User } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
+import Flag from 'react-flagpack';
 import { useState } from 'react';
 import {
   Accordion,
@@ -17,11 +22,13 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 const EstimationResultsHeader = ({
   title,
   country,
+  region,
   onDelete,
   onExportPdf,
 }: {
   title: string;
   country: MinimalCountry;
+  region?: MinimalRegion;
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
@@ -29,13 +36,15 @@ const EstimationResultsHeader = ({
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
       <div className="flex flex-row items-center gap-6">
         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]">
-          <User className="h-6 w-6 text-[#000000]" />
+          <Flag code={country.alpha_2_code} />
         </div>
         <div className="space-y-1">
           <h2 className="text-lg font-medium leading-none text-[#181818]">
             {title}
           </h2>
-          <p className="text-xs text-[#71717A]">{country.name}</p>
+          <p className="text-xs text-[#71717A]">
+            {country.name} {region ? ` (${region.name})` : ''}
+          </p>
         </div>
       </div>
       <ActionsDropdown
@@ -495,6 +504,7 @@ type EstimationResultsComponents = {
   }>;
   Header?: React.ComponentType<{
     title: string;
+    region?: MinimalRegion;
     country: MinimalCountry;
     onDelete: () => void;
     onExportPdf: () => void;
@@ -529,11 +539,14 @@ export const EstimationResults = ({
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
+  const hasRegion = estimation.region.code !== estimation.country.code;
+
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
       <div className="RemoteFlows__Estimation__Separator">
         <CustomHeader
           title={title}
+          region={hasRegion ? estimation.region : undefined}
           country={estimation.country}
           onDelete={onDelete}
           onExportPdf={onExportPdf}
