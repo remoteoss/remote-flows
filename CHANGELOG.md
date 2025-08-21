@@ -13,6 +13,7 @@
   - Create a SummaryResults component [#404](https://github.com/remoteoss/remote-flows/pull/404)
   - If the user uses the conversion field the estimate should have the same value in USD [#408](https://github.com/remoteoss/remote-flows/pull/408)
   - Fix types in json-schema-version [#398](https://github.com/remoteoss/remote-flows/pull/398)
+  - Fix default values in cost calculator as the region field wasn't getting loaded correctly [#407](https://github.com/remoteoss/remote-flows/pull/407)
 
 ## 0.10.0
 
