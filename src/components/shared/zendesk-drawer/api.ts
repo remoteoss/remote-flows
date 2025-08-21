@@ -13,9 +13,6 @@ export const useZendeskArticle = (
     queryFn: async () => {
       const response = await getShowHelpCenterArticle({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         path: {
           id: Number(zendeskId),
         },
