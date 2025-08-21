@@ -305,7 +305,6 @@ interface BreakdownItem {
   employerAmount?: string;
   description?: string;
   zendeskId?: string;
-  zendeskURL?: string;
   isCollapsible?: boolean;
   children?: BreakdownItem[];
 }
@@ -353,7 +352,7 @@ function BreakdownListItem({
               content={
                 <>
                   <span>{item.tooltip}</span>{' '}
-                  {item.zendeskId && item.zendeskURL && (
+                  {item.zendeskId && (
                     <ZendeskTriggerButton zendeskId={Number(item.zendeskId)}>
                       Learn more
                     </ZendeskTriggerButton>
@@ -476,7 +475,7 @@ export const EstimationResults = ({
 
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationResultsHeader
           title={title}
           country={estimation.country.name}
@@ -484,7 +483,7 @@ export const EstimationResults = ({
           onExportPdf={onExportPdf}
         />
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationHeaders
           isMultipleCurrency={isMultipleCurrency}
           className="mb-3"
@@ -524,7 +523,6 @@ export const EstimationResults = ({
                   estimation.employer_currency_costs.currency.symbol,
                 ),
                 zendeskId: zendeskArticles.extraPayments.toString(),
-                zendeskURL: '#',
                 tooltip:
                   'This country respects extra payments on top of the gross salary.',
               },
@@ -553,7 +551,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -581,7 +578,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -591,7 +587,7 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationRow
           label="Annual total cost"
           amounts={
@@ -650,7 +646,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -678,7 +673,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -708,7 +702,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -718,7 +711,7 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <OnboardingTimeline
           minimumOnboardingDays={estimation.minimum_onboarding_time}
         />
