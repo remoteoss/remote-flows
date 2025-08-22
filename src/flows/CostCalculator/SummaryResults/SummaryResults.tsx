@@ -11,20 +11,48 @@ import { ChevronDown, Globe } from 'lucide-react';
 import { useState } from 'react';
 
 const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
-  const currency = estimations[0]?.employer_currency_costs.currency;
-  const costsPerCountry = estimations.map((estimation) => {
+  if (estimations.length < 2) {
     return {
-      country: estimation.country,
-      monthlyCost: formatCurrency(
-        estimation.employer_currency_costs.monthly_total,
-        currency.symbol,
-      ),
-      annualCost: formatCurrency(
-        estimation.employer_currency_costs.annual_total,
-        currency.symbol,
-      ),
+      currency: null,
+      costsPerCountry: [],
+      employeesCost: null,
     };
-  });
+  }
+  const currency = estimations[0]?.employer_currency_costs.currency;
+  const costsPerCountry = estimations.reduce(
+    (acc, estimation) => {
+      const countryName = estimation.country.name;
+
+      acc[countryName] = {
+        country: estimation.country,
+        monthlyTotal:
+          (acc[countryName]?.monthlyTotal || 0) +
+          estimation.employer_currency_costs.monthly_total,
+        annualTotal:
+          (acc[countryName]?.annualTotal || 0) +
+          estimation.employer_currency_costs.annual_total,
+      };
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        country: (typeof estimations)[0]['country'];
+        monthlyTotal: number;
+        annualTotal: number;
+      }
+    >,
+  );
+
+  const groupedCostsPerCountry = Object.values(costsPerCountry).map(
+    ({ country, monthlyTotal, annualTotal }) => ({
+      country,
+      monthlyCost: formatCurrency(monthlyTotal, currency.symbol),
+      annualCost: formatCurrency(annualTotal, currency.symbol),
+    }),
+  );
+
   const employeesCost = {
     monthlyTotal: formatCurrency(
       estimations.reduce((acc, estimation) => {
@@ -39,7 +67,7 @@ const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
       currency.symbol,
     ),
   };
-  return { currency, costsPerCountry, employeesCost };
+  return { currency, costsPerCountry: groupedCostsPerCountry, employeesCost };
 };
 
 const SummaryHeader = ({
@@ -212,14 +240,30 @@ const CostsPerCountry = ({
 };
 
 type SummaryResultsProps = {
+  /**
+   * Array of employments to compare costs for.
+   * 2 estimations required for the component to render
+   */
   estimations: CostCalculatorEmployment[];
 };
 
+/**
+ * Displays a summary comparison of costs across multiple estimations.
+ * The component will return null if you pass less than 2 estimations.
+ */
 export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
   const { currency, costsPerCountry, employeesCost } =
     useSummaryResults(estimations);
 
   const [accordionValue, setAccordionValue] = useState('summary');
+
+  if (
+    !currency ||
+    costsPerCountry.length === 0 ||
+    Object.keys(employeesCost).length === 0
+  ) {
+    return null;
+  }
 
   return (
     <Card className="RemoteFlows__SummaryResults__Card p-10">
