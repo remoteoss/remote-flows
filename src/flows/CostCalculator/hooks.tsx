@@ -141,7 +141,10 @@ export const useCostCalculator = (
       : undefined;
 
   const getCurrencies = useCallback(() => {
-    const shouldSwapOrder = employeeBillingCurrency !== employerBillingCurrency;
+    const shouldSwapOrder =
+      employeeBillingCurrency && employerBillingCurrency
+        ? employeeBillingCurrency !== employerBillingCurrency
+        : false;
 
     if (employeeBillingCurrency !== employerBillingCurrency) {
       return {
@@ -369,11 +372,11 @@ export const useCostCalculator = (
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;
-
     const parsedValues = parseJSFToValidate(values, allFields);
 
     // 1. validate static fields first using Yup validate function
     try {
+      console.log('parsedValues', parsedValues);
       await validationSchema.validate(parsedValues, {
         abortEarly: false,
       });
@@ -382,6 +385,7 @@ export const useCostCalculator = (
         yupError: new ValidationError([], values),
       };
     } catch (error) {
+      console.log('error', error);
       const iterateResult = iterateErrors(error as ValidationError);
 
       errors = {
@@ -428,12 +432,19 @@ export const useCostCalculator = (
     parseFormValues: (
       values: CostCalculatorEstimationFormValues,
     ): CostCalculatorEstimationSubmitValues => {
-      const { country, region, currency, salary_converted, ...rest } = values;
+      const {
+        country,
+        region,
+        currency,
+        salary_converted,
+        salary_conversion,
+        ...rest
+      } = values;
 
       // If the salary has been converted, we take the one the user has inputted
       let salary = values.salary;
       if (salary_converted === 'salary_conversion') {
-        salary = values.salary_conversion;
+        salary = salary_conversion;
       }
 
       const jsonSchemaStaticFieldValues = {
@@ -441,6 +452,7 @@ export const useCostCalculator = (
         region,
         salary,
         salary_converted,
+        salary_conversion,
         currency,
       };
 

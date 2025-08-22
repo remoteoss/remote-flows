@@ -1,7 +1,7 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, object } from 'yup';
+import { AnyObjectSchema, object, string } from 'yup';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
@@ -15,7 +15,20 @@ import type {
 export function buildValidationSchema(fields: $TSFixMe[]) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      // Special handling for salary fields
+      if (field.name === 'salary' || field.name === 'salary_conversion') {
+        fieldsSchemaAcc[field.name] = (field.schema as AnyObjectSchema).when(
+          'salary_converted',
+          {
+            is: (val: string | null) => val === field.name,
+            then: (schema) => schema.required('Salary is required'),
+            otherwise: (schema) => schema.optional(),
+          },
+        );
+      } else {
+        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      }
+      return fieldsSchemaAcc;
       return fieldsSchemaAcc;
     },
     {},

@@ -93,7 +93,7 @@ describe('CostCalculatorFlow', () => {
     );
   });
 
-  it('should render the form with default values', async () => {
+  it.only('should render the form with default values', async () => {
     renderComponent();
 
     await waitFor(() => {

@@ -91,6 +91,13 @@ export const CurrencyConversionField = ({
     type: conversionType,
   });
 
+  // we keep track of the last input the user used, so we can make sure
+  // we keep consistent currency rates
+  const lastInputFieldName = `${props.name}_converted`;
+  useEffect(() => {
+    setValue(lastInputFieldName, mainFieldName || props.name);
+  }, [setValue, mainFieldName, props.name, lastInputFieldName]);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -165,9 +172,6 @@ export const CurrencyConversionField = ({
       ),
     500,
   );
-  // we keep track of the last input the user used, so we can make sure
-  // we keep consistent currency rates
-  const lastInputFieldName = `${props.name}_converted`;
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setValue(lastInputFieldName, mainFieldName || props.name);

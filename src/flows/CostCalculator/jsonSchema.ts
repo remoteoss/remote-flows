@@ -38,8 +38,14 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             inputType: 'money',
           },
-          'x-jsf-errorMessage': {
-            required: 'Salary is required',
+        },
+        salary_conversion: {
+          description: '',
+          title: 'Salary',
+          type: 'integer',
+          'x-jsf-presentation': {
+            inputType: 'money',
+            hidden: true,
           },
         },
         salary_converted: {
@@ -49,10 +55,17 @@ export const jsonSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'hidden',
+            hidden: true,
           },
         },
       },
-      required: ['country', 'currency', 'salary', 'salary_converted'],
+      required: [
+        'country',
+        'currency',
+        'salary',
+        'salary_conversion',
+        'salary_converted',
+      ],
       type: 'object',
       'x-jsf-order': ['country', 'region', 'currency', 'salary'],
     },

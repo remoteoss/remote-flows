@@ -71,7 +71,9 @@ describe('useCostCalculator', () => {
     const validValues = {
       country: 'PRT',
       currency: 'USD',
-      salary: '500000',
+      salary: '',
+      salary_converted: 'salary_conversion',
+      salary_conversion: '500000',
     };
 
     await expect(
@@ -87,6 +89,8 @@ describe('useCostCalculator', () => {
       country: 'PRT',
       currency: 'USD',
       salary: '',
+      salary_converted: 'salary',
+      salary_conversion: '',
     };
 
     await expect(

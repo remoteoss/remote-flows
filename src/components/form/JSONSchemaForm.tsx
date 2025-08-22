@@ -53,7 +53,7 @@ export const JSONSchemaFormFields = ({
           };
         }
 
-        if (field.isVisible === false || field.deprecated) {
+        if (field.isVisible === false || field.deprecated || field.hidden) {
           return null; // Skip hidden or deprecated fields
         }
 
