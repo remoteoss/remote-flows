@@ -75,7 +75,7 @@ export const CostCalculatorFlow = ({
       country: defaultValues?.countryRegionSlug,
       currency: defaultValues?.currencySlug,
       region: '',
-      salary: defaultValues?.salary || '',
+      salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
     },
