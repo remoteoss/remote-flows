@@ -11,7 +11,8 @@ import {
   getSupportedCountry,
   MagicLinkParams,
   patchUpdateEmployment2,
-  postConvertCurrencyConverter,
+  postConvertRawCurrencyConverter,
+  postConvertWithSpreadCurrencyConverter,
   postCreateContractEligibility,
   postCreateEmployment2,
   postCreateRiskReserve,
@@ -102,9 +103,6 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
     queryFn: async () => {
       return getIndexBenefitOffer({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         path: {
           employment_id: employmentId as string,
         },
@@ -160,9 +158,6 @@ export const useCreateReserveInvoice = () => {
     mutationFn: (payload: { employment_slug: string }) => {
       return postCreateRiskReserve({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
       });
     },
@@ -277,9 +272,6 @@ export const useBenefitOffersSchema = (
     queryFn: async () => {
       const response = await getShowSchema({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         path: {
           employment_id: employmentId,
         },
@@ -402,9 +394,6 @@ export const useUpdateBenefitsOffers = (
         : {};
       return putUpdateBenefitOffer({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
         path: {
           employment_id: employmentId,
@@ -493,15 +482,20 @@ export const useCountriesSchemaField = (
   };
 };
 
-export const useConvertCurrency = () => {
+export const useConvertCurrency = ({
+  type = 'spread',
+}: {
+  type?: 'spread' | 'no_spread';
+}) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: ConvertCurrencyParams) => {
-      return postConvertCurrencyConverter({
+      const apiFn =
+        type === 'no_spread'
+          ? postConvertRawCurrencyConverter
+          : postConvertWithSpreadCurrencyConverter;
+      return apiFn({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
       });
     },
@@ -517,9 +511,6 @@ export const useUpsertContractEligibility = () => {
     }: { employmentId: string } & CreateContractEligibilityParams) => {
       return postCreateContractEligibility({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         path: {
           employment_id: employmentId,
         },

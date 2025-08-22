@@ -53,14 +53,17 @@ function mapValueToEmployment(
 ) {
   return {
     region_slug: value.region || value.country,
-    annual_gross_salary_in_employer_currency: value.salary,
     employment_term: value.contract_duration_type ?? 'fixed',
     title: estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
-    ...(version === 'standard' && {
-      annual_gross_salary: value.salary,
+    ...((version == 'marketing' || value.salary_converted) && {
+      annual_gross_salary_in_employer_currency: value.salary,
     }),
+    ...(version === 'standard' &&
+      !value.salary_converted && {
+        annual_gross_salary: value.salary,
+      }),
   };
 }
 

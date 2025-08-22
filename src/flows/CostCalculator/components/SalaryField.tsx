@@ -12,11 +12,15 @@ type SalaryFieldProps = JSFField & {
     label?: string;
     description?: string;
   };
+  conversionType?: 'spread' | 'no_spread';
+  shouldSwapOrder: boolean;
 };
 
 export const SalaryField = ({
   currencies: { from, to },
+  shouldSwapOrder,
   salary_conversion_properties,
+  conversionType = 'no_spread',
   ...props
 }: SalaryFieldProps) => {
   const conversionProperties = {
@@ -34,14 +38,21 @@ export const SalaryField = ({
     ),
   };
 
+  const mainFieldName = shouldSwapOrder ? 'salary_conversion' : props.name;
+  const conversionFieldName = shouldSwapOrder
+    ? props.name
+    : 'salary_conversion';
+
   return (
     <CurrencyConversionField
       {...props}
       sourceCurrency={from}
       targetCurrency={to}
-      conversionFieldName="salary_conversion"
+      mainFieldName={mainFieldName}
+      conversionFieldName={conversionFieldName}
       conversionProperties={conversionProperties}
       classNamePrefix="RemoteFlows-Salary"
+      conversionType={conversionType}
     />
   );
 };

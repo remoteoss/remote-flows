@@ -8,6 +8,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      salary_converted: false,
       salary: 100_000,
     };
 
@@ -22,6 +23,31 @@ describe('buildPayload', () => {
         {
           region_slug: 'US',
           annual_gross_salary: 100_000,
+          employment_term: 'fixed',
+          title: defaultEstimationOptions.title,
+        },
+      ],
+    });
+  });
+
+  it('should build a payload with minimal values when salary converted is true', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary_converted: true,
+      salary: 100_000,
+    };
+
+    const payload = buildPayload(values);
+
+    expect(payload).toEqual({
+      employer_currency_slug: 'USD',
+      include_benefits: defaultEstimationOptions.includeBenefits,
+      include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
+      include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
+      employments: [
+        {
+          region_slug: 'US',
           annual_gross_salary_in_employer_currency: 100_000,
           employment_term: 'fixed',
           title: defaultEstimationOptions.title,
@@ -92,6 +118,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      salary_converted: false,
       salary: 100_000,
     };
 
@@ -112,6 +139,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      salary_converted: false,
       salary: 100_000,
       benefits: {
         'benefit-health': 'whatever',
@@ -133,6 +161,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      salary_converted: false,
       salary: 100_000,
     };
 
@@ -145,12 +174,6 @@ describe('buildPayload', () => {
 
       expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
       expect(payload.employments[0].annual_gross_salary).toBe(100_000);
-      expect(payload.employments[0]).toHaveProperty(
-        'annual_gross_salary_in_employer_currency',
-      );
-      expect(
-        payload.employments[0].annual_gross_salary_in_employer_currency,
-      ).toBe(100_000);
     });
 
     it('should NOT include annual_gross_salary when version is "marketing"', () => {
@@ -174,9 +197,6 @@ describe('buildPayload', () => {
 
       expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
       expect(payload.employments[0].annual_gross_salary).toBe(100_000);
-      expect(
-        payload.employments[0].annual_gross_salary_in_employer_currency,
-      ).toBe(100_000);
     });
 
     it('should default to "standard" behavior when only values parameter is provided', () => {
@@ -193,11 +213,13 @@ describe('buildPayload', () => {
         {
           currency: 'USD',
           country: 'US',
+          salary_converted: false,
           salary: 100_000,
         },
         {
           currency: 'USD', // Note: currency from first item is used
           country: 'UK',
+          salary_converted: false,
           salary: 80_000,
         },
       ];
@@ -214,14 +236,12 @@ describe('buildPayload', () => {
           {
             region_slug: 'US',
             annual_gross_salary: 100_000,
-            annual_gross_salary_in_employer_currency: 100_000,
             employment_term: 'fixed',
             title: defaultEstimationOptions.title,
           },
           {
             region_slug: 'UK',
             annual_gross_salary: 80_000,
-            annual_gross_salary_in_employer_currency: 80_000,
             employment_term: 'fixed',
             title: defaultEstimationOptions.title,
           },
@@ -236,6 +256,7 @@ describe('buildPayload', () => {
           country: 'DE',
           region: 'Berlin',
           salary: 90_000,
+          salary_converted: false,
           age: 25,
           benefits: {
             'benefit-health': 'premium',
@@ -246,6 +267,7 @@ describe('buildPayload', () => {
           country: 'FR',
           salary: 85_000,
           contract_duration_type: 'indefinite',
+          salary_converted: false,
         },
       ];
 
@@ -266,8 +288,18 @@ describe('buildPayload', () => {
 
     it('should apply version parameter to all employments in array', () => {
       const values: CostCalculatorEstimationSubmitValues[] = [
-        { currency: 'USD', country: 'US', salary: 100_000 },
-        { currency: 'USD', country: 'UK', salary: 80_000 },
+        {
+          currency: 'USD',
+          country: 'US',
+          salary: 100_000,
+          salary_converted: false,
+        },
+        {
+          currency: 'USD',
+          country: 'UK',
+          salary: 80_000,
+          salary_converted: false,
+        },
       ];
 
       const payload = buildPayload(

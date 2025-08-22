@@ -1,4 +1,5 @@
 import type {
+  CostCalculatorEmployment,
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -11,6 +12,7 @@ import {
   useCostCalculatorEstimationPdf,
   EstimationResults,
   zendeskArticles,
+  SummaryResults,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -25,6 +27,7 @@ import {
 import { ButtonHTMLAttributes, useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
@@ -221,8 +224,9 @@ const AddEstimateForm = ({
             },
             salary: {
               title: "Employee's annual salary",
-              description:
-                "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
+              description: '',
+              // TODO: We'll include it later
+              // "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
             },
           },
         },
@@ -284,7 +288,7 @@ const ResultsView = ({
   onDeleteEstimate,
   onExportEstimate,
 }: {
-  estimations: CostCalculatorEstimateResponse[];
+  estimations: CostCalculatorEmployment[];
   onExportPdf: () => void;
   onReset: () => void;
   onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
@@ -308,6 +312,11 @@ const ResultsView = ({
           onSavePayload={onSavePayload}
         />
       </div>
+      {estimations.length >= 2 && (
+        <div className="mb-6">
+          <SummaryResults estimations={estimations} />
+        </div>
+      )}
       {estimations.map((estimation, index) => {
         return (
           <div
@@ -316,15 +325,12 @@ const ResultsView = ({
             })}
             key={index}
           >
-            {Array.isArray(estimation.data.employments) &&
-              estimation.data.employments.length > 0 && (
-                <EstimationResults
-                  estimation={estimation.data.employments?.[0]}
-                  title={`Estimate #${index + 1}`}
-                  onDelete={() => onDeleteEstimate(index)}
-                  onExportPdf={() => onExportEstimate(index)}
-                />
-              )}
+            <EstimationResults
+              estimation={estimation}
+              title={`Estimate #${index + 1}`}
+              onDelete={() => onDeleteEstimate(index)}
+              onExportPdf={() => onExportEstimate(index)}
+            />
           </div>
         );
       })}
@@ -333,9 +339,9 @@ const ResultsView = ({
 };
 
 function CostCalculatorFormDemo() {
-  const [estimations, setEstimations] = useState<
-    CostCalculatorEstimateResponse[]
-  >([]);
+  const [estimations, setEstimations] = useState<CostCalculatorEmployment[]>(
+    [],
+  );
   const [payload, setPayload] = useState<
     CostCalculatorEstimationSubmitValues[]
   >([]);
@@ -345,7 +351,10 @@ function CostCalculatorFormDemo() {
   };
 
   const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
-    setEstimations([...estimations, estimation]);
+    const payload = estimation.data.employments?.[0];
+    if (payload) {
+      setEstimations([...estimations, payload]);
+    }
   };
 
   const onDeleteEstimate = (index: number) => {
@@ -406,7 +415,7 @@ function CostCalculatorFormDemo() {
           }}
           onError={(error) => console.error({ error })}
           onSuccess={(response) => {
-            setEstimations([response]);
+            onAddEstimate(response);
           }}
         />
       ) : (
@@ -426,6 +435,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   const proxyURL = window.location.origin;
+
   return (
     <RemoteFlows
       components={components}

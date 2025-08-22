@@ -28,9 +28,6 @@ export const useCostCalculatorCountries = ({
     queryFn: () => {
       return getIndexCountry({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         query: {
           include_premium_benefits: includePremiumBenefits,
         },
@@ -60,9 +57,6 @@ export const useCompanyCurrencies = () => {
     queryFn: () => {
       return getIndexCompanyCurrency({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
       });
     },
     select: (data) =>
@@ -84,9 +78,6 @@ export const useCostCalculatorEstimation = () => {
     mutationFn: (payload: CostCalculatorEstimateParams) => {
       return postCreateEstimation({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
       });
     },
@@ -105,9 +96,6 @@ export const useCostCalculatorEstimationPdf = () => {
     mutationFn: (payload: CostCalculatorEstimateParams) => {
       return postCreateEstimationPdf({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         body: payload,
       });
     },
@@ -138,9 +126,6 @@ export const useRegionFields = (
     queryFn: () => {
       return getShowRegionField({
         client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
         path: { slug: region as string },
         query: {
           include_premium_benefits: includePremiumBenefits,

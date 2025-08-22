@@ -377,6 +377,7 @@ export type BillingDocumentBreakdownItem = {
   source_currency: CurrencyCode;
   type: string;
   variance_from_invoice: string | null;
+  variance_from_invoice_amount: number | null;
 };
 
 /**
@@ -439,6 +440,12 @@ export type Employment = {
     [key: string]: unknown;
   };
   company_id: string;
+  /**
+   * Work address information. Its properties may vary depending on the country.
+   */
+  work_address_details: {
+    [key: string]: unknown;
+  };
   work_email: string;
   status: EmploymentStatus;
   updated_at: string;
@@ -461,6 +468,12 @@ export type Employment = {
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   external_id?: string;
+  /**
+   * For the employment models `peo` and `global_payroll`, only [List employments](#operation/get_index_employment) and
+   * [Show employment](#operation/get_show_employment) operations are available.
+   *
+   */
+  employment_model: 'global_payroll' | 'peo' | 'eor';
   personal_email: string;
   country: Country;
   user_status?: UserStatus;
@@ -912,11 +925,13 @@ export type CompanyManagersResponse = {
  * - `enqueued`: An outstanding payment is enqueued to complete the invoice payment.
  * - `externally_paid`: The invoice was paid outside the platform and the employer reported that the contractor was paid.
  * - `issued`: This invoice has been uploaded by the contractor.
+ * - `in_review`: This invoice has been uploaded by the contractor and is in the process of review by Remote. This is only expected for Contractor of Record invoices.
  * - `paid_out`: This invoice has been paid out to contractor. This is the final expected stage of a contractor invoice.
  * - `pay_out_failed`: There were issues paying out to the contractor. This is usually caused by a balance issue, an issue with the contractor's bank account, or another type error that comes from payment partner.
  * - `pending_payment`: An outstanding payment has been created for this invoice and is awaiting the company payment before payout begins.
  * - `processing`: The invoice is being processed for pay out. This status should only exist for a few seconds.
- * - `rejected`: This invoice has been rejected by the the company or Remote support team. It cannot be rejected if it's already paid.
+ * - `rejected`: This invoice has been rejected by the the company or Remote support team, when requested by customers. It cannot be rejected if it's already paid.
+ * - `rejected_by_remote`: This invoice has been rejected by Remote during the Contractor of Record approval process.
  * - `funds_returned`: A pay out was successfully attempted for the invoice, but the funds were rejected by the contractor's bank, either due to incorrect details or some other reason.
  * - `manual_payout`: The invoice is not supported by our automated systems and must instead be manually paid by internal Remote teams.
  * - `blocked`: The invoice is marked as blocked. It will not be paid out.
@@ -927,8 +942,10 @@ export type ContractorInvoiceStatus =
   | 'draft'
   | 'approved'
   | 'pending_payment'
+  | 'in_review'
   | 'externally_paid'
   | 'rejected'
+  | 'rejected_by_remote'
   | 'blocked'
   | 'pay_out_scheduled'
   | 'enqueued'
@@ -1334,6 +1351,7 @@ export type ResignationOffboarding = {
     | 'company_culture_or_values'
     | 'conversion_to_contractor'
     | 'conversion_to_global_payroll'
+    | 'conversion_to_peo'
     | 'dissatisfaction_with_remote_service'
     | 'incapacity_to_perform_inherent_duties'
     | 'infrastructure_challenges'
@@ -2718,6 +2736,7 @@ export type MinimalEmployment = {
    */
   department_id?: string | null;
   employment_lifecycle_stage: EmploymentLifecycleStage;
+  employment_model: 'eor' | 'peo' | 'global_payroll';
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
@@ -2733,6 +2752,12 @@ export type MinimalEmployment = {
     | 'contractor'
     | 'direct_employee'
     | 'global_payroll_employee';
+  /**
+   * Work address information. Its properties may vary depending on the country.
+   */
+  work_address_details: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -2756,18 +2781,18 @@ export type BeforeAfterRequiredParams = {
 export type ResourceErrorResponse = {
   message: {
     code?:
-      | 'resource_not_eligible'
-      | 'resource_already_exists'
       | 'action_unrecognized'
       | 'action_invalid'
+      | 'resource_not_eligible'
+      | 'resource_already_exists'
       | 'parameter_invalid_date'
       | 'resource_invalid_state'
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -6549,6 +6574,44 @@ export type GetShowContractorInvoiceResponses = {
 export type GetShowContractorInvoiceResponse =
   GetShowContractorInvoiceResponses[keyof GetShowContractorInvoiceResponses];
 
+export type PostConvertRawCurrencyConverterData = {
+  /**
+   * Convert currency parameters
+   */
+  body: ConvertCurrencyParams;
+  path?: never;
+  query?: never;
+  url: '/v1/currency-converter/raw';
+};
+
+export type PostConvertRawCurrencyConverterErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostConvertRawCurrencyConverterError =
+  PostConvertRawCurrencyConverterErrors[keyof PostConvertRawCurrencyConverterErrors];
+
+export type PostConvertRawCurrencyConverterResponses = {
+  /**
+   * Success
+   */
+  200: ConvertCurrencyResponse;
+};
+
+export type PostConvertRawCurrencyConverterResponse =
+  PostConvertRawCurrencyConverterResponses[keyof PostConvertRawCurrencyConverterResponses];
+
 export type GetIndexEmploymentData = {
   body?: never;
   headers: {
@@ -6580,9 +6643,18 @@ export type GetIndexEmploymentData = {
     /**
      * Filters the results by employments whose employment product type matches the value
      * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
+     * `employee` returns all employments that are eor, peo or global payroll.
+     *
+     * `global_payroll_employee` will be deprecated in the future. Please use `global_payroll` in the `employment_model` field instead.
      *
      */
     employment_type?: string;
+    /**
+     * Filters the results by employments whose employment model matches the value.
+     * Possible values: `global_payroll`, `peo`, `eor`
+     *
+     */
+    employment_model?: string;
     /**
      * Starts fetching records after the given page
      */
@@ -11423,6 +11495,44 @@ export type GetDownloadPayslipPayslipResponses = {
 export type GetDownloadPayslipPayslipResponse =
   GetDownloadPayslipPayslipResponses[keyof GetDownloadPayslipPayslipResponses];
 
+export type PostConvertWithSpreadCurrencyConverterData = {
+  /**
+   * Convert currency parameters
+   */
+  body: ConvertCurrencyParams;
+  path?: never;
+  query?: never;
+  url: '/v1/currency-converter/effective';
+};
+
+export type PostConvertWithSpreadCurrencyConverterErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostConvertWithSpreadCurrencyConverterError =
+  PostConvertWithSpreadCurrencyConverterErrors[keyof PostConvertWithSpreadCurrencyConverterErrors];
+
+export type PostConvertWithSpreadCurrencyConverterResponses = {
+  /**
+   * Success
+   */
+  200: ConvertCurrencyResponse;
+};
+
+export type PostConvertWithSpreadCurrencyConverterResponse =
+  PostConvertWithSpreadCurrencyConverterResponses[keyof PostConvertWithSpreadCurrencyConverterResponses];
+
 export type GetShowTimeoffData = {
   body?: never;
   headers: {
@@ -12427,7 +12537,12 @@ export type PostUpdateBenefitRenewalRequestData = {
      */
     benefit_renewal_request_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
@@ -13733,7 +13848,7 @@ export type GetIndexEmploymentContractResponses = {
 export type GetIndexEmploymentContractResponse =
   GetIndexEmploymentContractResponses[keyof GetIndexEmploymentContractResponses];
 
-export type PostConvertCurrencyConverterData = {
+export type PostConvertWithSpreadCurrencyConverter2Data = {
   /**
    * Convert currency parameters
    */
@@ -13743,7 +13858,7 @@ export type PostConvertCurrencyConverterData = {
   url: '/v1/currency-converter';
 };
 
-export type PostConvertCurrencyConverterErrors = {
+export type PostConvertWithSpreadCurrencyConverter2Errors = {
   /**
    * Unauthorized
    */
@@ -13758,18 +13873,18 @@ export type PostConvertCurrencyConverterErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostConvertCurrencyConverterError =
-  PostConvertCurrencyConverterErrors[keyof PostConvertCurrencyConverterErrors];
+export type PostConvertWithSpreadCurrencyConverter2Error =
+  PostConvertWithSpreadCurrencyConverter2Errors[keyof PostConvertWithSpreadCurrencyConverter2Errors];
 
-export type PostConvertCurrencyConverterResponses = {
+export type PostConvertWithSpreadCurrencyConverter2Responses = {
   /**
    * Success
    */
   200: ConvertCurrencyResponse;
 };
 
-export type PostConvertCurrencyConverterResponse =
-  PostConvertCurrencyConverterResponses[keyof PostConvertCurrencyConverterResponses];
+export type PostConvertWithSpreadCurrencyConverter2Response =
+  PostConvertWithSpreadCurrencyConverter2Responses[keyof PostConvertWithSpreadCurrencyConverter2Responses];
 
 export type GetIndexCompanyData = {
   body?: never;

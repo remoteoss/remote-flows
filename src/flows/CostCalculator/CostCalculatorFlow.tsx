@@ -5,8 +5,10 @@ import {
   defaultEstimationOptions,
   useCostCalculator,
 } from '@/src/flows/CostCalculator/hooks';
-import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
-import { JSFModify } from '@/src/flows/types';
+import {
+  CostCalculatorEstimationOptions,
+  UseCostCalculatorOptions,
+} from '@/src/flows/CostCalculator/types';
 import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -32,9 +34,7 @@ export type CostCalculatorFlowProps = {
      */
     salary: string;
   }>;
-  options?: {
-    jsfModify?: JSFModify;
-  };
+  options?: UseCostCalculatorOptions;
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
   ) => React.ReactNode;
@@ -58,6 +58,7 @@ export const CostCalculatorFlow = ({
   const formId = useId();
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
+    defaultCurrency: defaultValues.currencySlug,
     estimationOptions,
     version,
     options,
@@ -74,6 +75,7 @@ export const CostCalculatorFlow = ({
       currency: defaultValues?.currencySlug,
       region: '',
       salary: defaultValues?.salary,
+      salary_converted: false,
     },
     shouldUnregister: false,
     mode: 'onBlur',

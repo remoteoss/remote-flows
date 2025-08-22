@@ -10,15 +10,30 @@ export const countries = {
         slug: 'pln-33441af1-a601-4a22-8f52-1ec090f10b4a',
       },
       region_slug: 'POL',
+      child_regions: [],
+      has_additional_fields: false,
+      availability: 'active',
+      original_country_slug: 'poland-d3f6d510-2fdf-4b9d-8520-2b581a862411',
+    },
+    {
+      code: 'ESP',
+      name: 'Spain',
+      currency: {
+        code: 'EUR',
+        name: 'Euro',
+        symbol: '€',
+        slug: 'eur-33441af1-a601-4a22-8f52-1ec090f10b4a',
+      },
+      region_slug: 'ESP',
       child_regions: [
         {
-          slug: 'POL',
+          slug: 'ESP',
           name: '',
         },
       ],
       has_additional_fields: true,
       availability: 'active',
-      original_country_slug: 'poland-d3f6d510-2fdf-4b9d-8520-2b581a862411',
+      original_country_slug: 'spain-d3f6d510-2fdf-4b9d-8520-2b581a862411',
     },
   ],
 };

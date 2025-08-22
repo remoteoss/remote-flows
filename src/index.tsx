@@ -13,6 +13,7 @@ export {
   disclaimerData,
   useCostCalculatorEstimationPdf,
   EstimationResults,
+  SummaryResults,
 } from '@/src/flows/CostCalculator';
 
 export * from '@/src/flows/ContractAmendment';

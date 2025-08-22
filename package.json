@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
@@ -97,6 +97,7 @@
     "lucide-react": "0.477.0",
     "postcss": "^8.5.3",
     "react-day-picker": "^8.10.1",
+    "react-flagpack": "^2.0.6",
     "react-hook-form": "^7.54.2",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.2",

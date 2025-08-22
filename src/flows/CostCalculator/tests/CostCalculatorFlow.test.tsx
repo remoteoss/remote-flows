@@ -111,6 +111,20 @@ describe('CostCalculatorFlow', () => {
 
     expect(currencyDropdown).toHaveTextContent(/USD/i);
     expect(salaryInput).toHaveValue('50000');
+    expect(screen.getByText(/Show USD conversion/i)).toBeInTheDocument();
+  });
+
+  it('should render the 3 comboboxes when selecting a country with region', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'ESP',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('combobox')).toHaveLength(3);
+    });
   });
 
   it('should submit the form with default values', async () => {
@@ -126,6 +140,7 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
+        salary_converted: false,
       });
     });
   });
@@ -270,6 +285,7 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
+        salary_converted: false,
       });
     });
   });

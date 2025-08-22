@@ -1,7 +1,12 @@
-import { CostCalculatorEmployment } from '@/src/client';
+import {
+  CostCalculatorEmployment,
+  MinimalCountry,
+  MinimalRegion,
+} from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
-import { ChevronDown, Info, User } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
+import Flag from 'react-flagpack';
 import { useState } from 'react';
 import {
   Accordion,
@@ -17,11 +22,13 @@ import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 const EstimationResultsHeader = ({
   title,
   country,
+  region,
   onDelete,
   onExportPdf,
 }: {
   title: string;
-  country: string;
+  country: MinimalCountry;
+  region?: MinimalRegion;
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
@@ -29,13 +36,15 @@ const EstimationResultsHeader = ({
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
       <div className="flex flex-row items-center gap-6">
         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]">
-          <User className="h-6 w-6 text-[#000000]" />
+          <Flag code={country.alpha_2_code} />
         </div>
         <div className="space-y-1">
           <h2 className="text-lg font-medium leading-none text-[#181818]">
             {title}
           </h2>
-          <p className="text-xs text-[#71717A]">{country}</p>
+          <p className="text-xs text-[#71717A]">
+            {country.name} {region ? ` (${region.name})` : ''}
+          </p>
         </div>
       </div>
       <ActionsDropdown
@@ -60,11 +69,58 @@ const EstimationResultsHeader = ({
   );
 };
 
+interface OnboardingTimelineStep {
+  title: string;
+  description: string;
+  id: string;
+}
+
+interface OnboardingTimelineData {
+  steps: OnboardingTimelineStep[];
+  helpText: string;
+  zendeskArticleId?: number;
+}
+
+const getOnboardingTimelineData = (): OnboardingTimelineData => {
+  return {
+    steps: [
+      {
+        id: 'add-employment-details',
+        title: 'Add employment details',
+        description: 'You add employee employments details.',
+      },
+      {
+        id: 'invite-employee',
+        title: 'Invite employee',
+        description:
+          'Hire receives an email invitation from Remote to start the self-enrollment process.',
+      },
+      {
+        id: 'verify-information',
+        title: 'Verify information',
+        description:
+          'Remote prepares the Employment Agreement and verifies all the information.',
+      },
+      {
+        id: 'sign-contract',
+        title: 'Sign contract',
+        description:
+          'All parties sign the Employment Agreement and are ready to start. 🎉',
+      },
+    ],
+    helpText:
+      'For customers who accept our Terms of Service (ToS), the employee onboarding timeline starts once the employee has been invited to the platform and completed self enrolment.',
+    zendeskArticleId: zendeskArticles.employeeOnboardingTimeline,
+  };
+};
+
 function OnboardingTimeline({
   minimumOnboardingDays,
+  data,
   className,
 }: {
   minimumOnboardingDays: number | null;
+  data: OnboardingTimelineData;
   className?: string;
 }) {
   return (
@@ -89,43 +145,22 @@ function OnboardingTimeline({
         </AccordionTrigger>
         <AccordionContent className="px-0 pb-4">
           <ul className="list-disc list-inside space-y-2">
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Add employment details
-              </strong>{' '}
-              - You add employee employments details.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Invite employee
-              </strong>{' '}
-              - Hire receives an email invitation from Remote to start the
-              self-enrollment process.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Verify information
-              </strong>{' '}
-              - Remote prepares the Employment Agreement and verifies all the
-              information.
-            </li>
-            <li>
-              <strong className="font-medium text-[#09090B]">
-                Sign contract
-              </strong>{' '}
-              - All parties sign the Employment Agreement and are ready to
-              start. 🎉
-            </li>
+            {data.steps.map((step) => (
+              <li key={step.id}>
+                <strong className="font-medium text-[#09090B]">
+                  {step.title}
+                </strong>{' '}
+                - {step.description}
+              </li>
+            ))}
           </ul>
           <p className="text-xs text-muted-foreground mt-4">
-            For customers who accept our Terms of Service (ToS), the employee
-            onboarding timeline starts once the employee has been invited to the
-            platform and completed self enrolment.
-            <ZendeskTriggerButton
-              zendeskId={zendeskArticles.employeeOnboardingTimeline}
-            >
-              Learn more
-            </ZendeskTriggerButton>
+            {data.helpText}
+            {data.zendeskArticleId && (
+              <ZendeskTriggerButton zendeskId={data.zendeskArticleId}>
+                Learn more
+              </ZendeskTriggerButton>
+            )}
           </p>
         </AccordionContent>
       </AccordionItem>
@@ -142,7 +177,7 @@ function HiringSection({
   className?: string;
   countryBenefitsUrl: string;
   countryGuideUrl: string;
-  country: string;
+  country: MinimalCountry;
 }) {
   return (
     <Accordion
@@ -157,7 +192,7 @@ function HiringSection({
         <AccordionTrigger className="hover:no-underline px-0 py-4">
           <div className="flex items-center justify-between w-full">
             <span className="text-base font-medium text-[#0F172A]">
-              Hiring in {country}
+              Hiring in {country.name}
             </span>
           </div>
         </AccordionTrigger>
@@ -305,7 +340,6 @@ interface BreakdownItem {
   employerAmount?: string;
   description?: string;
   zendeskId?: string;
-  zendeskURL?: string;
   isCollapsible?: boolean;
   children?: BreakdownItem[];
 }
@@ -353,7 +387,7 @@ function BreakdownListItem({
               content={
                 <>
                   <span>{item.tooltip}</span>{' '}
-                  {item.zendeskId && item.zendeskURL && (
+                  {item.zendeskId && (
                     <ZendeskTriggerButton zendeskId={Number(item.zendeskId)}>
                       Learn more
                     </ZendeskTriggerButton>
@@ -457,9 +491,30 @@ function BreakdownList({
   );
 }
 
+type EstimationResultsComponents = {
+  HiringSection?: React.ComponentType<{
+    country: MinimalCountry;
+    countryBenefitsUrl: string;
+    countryGuideUrl: string;
+  }>;
+  OnboardingTimeline?: React.ComponentType<{
+    minimumOnboardingDays: number | null;
+    data: OnboardingTimelineData;
+  }>;
+  Header?: React.ComponentType<{
+    title: string;
+    region?: MinimalRegion;
+    country: MinimalCountry;
+    onDelete: () => void;
+    onExportPdf: () => void;
+  }>;
+  Footer?: React.ComponentType;
+};
+
 type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
+  components?: EstimationResultsComponents;
   onDelete: () => void;
   onExportPdf: () => void;
 };
@@ -467,24 +522,36 @@ type EstimationResultsProps = {
 export const EstimationResults = ({
   estimation,
   title,
+  components,
   onDelete,
   onExportPdf,
 }: EstimationResultsProps) => {
+  const CustomHiringSection = components?.HiringSection || HiringSection;
+  const CustomOnboardingTimeline =
+    components?.OnboardingTimeline || OnboardingTimeline;
+  const CustomHeader = components?.Header || EstimationResultsHeader;
+  const CustomFooter = components?.Footer;
+
+  const onboardingTimelineData = getOnboardingTimelineData();
+
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
+  const hasRegion = estimation.region.code !== estimation.country.code;
+
   return (
     <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <div className="RemoteFlows__Estimation__Separator">
-        <EstimationResultsHeader
+      <div className="RemoteFlows__Separator">
+        <CustomHeader
           title={title}
-          country={estimation.country.name}
+          region={hasRegion ? estimation.region : undefined}
+          country={estimation.country}
           onDelete={onDelete}
           onExportPdf={onExportPdf}
         />
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationHeaders
           isMultipleCurrency={isMultipleCurrency}
           className="mb-3"
@@ -524,7 +591,6 @@ export const EstimationResults = ({
                   estimation.employer_currency_costs.currency.symbol,
                 ),
                 zendeskId: zendeskArticles.extraPayments.toString(),
-                zendeskURL: '#',
                 tooltip:
                   'This country respects extra payments on top of the gross salary.',
               },
@@ -553,7 +619,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -581,7 +646,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -591,7 +655,7 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
+      <div className="RemoteFlows__Separator">
         <EstimationRow
           label="Annual total cost"
           amounts={
@@ -650,7 +714,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -678,7 +741,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -708,7 +770,6 @@ export const EstimationResults = ({
                         estimation.employer_currency_costs.currency.symbol,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
-                      zendeskURL: item.zendesk_article_url || undefined,
                       tooltip: item.description || undefined,
                     }),
                   ) || [],
@@ -718,17 +779,20 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Estimation__Separator">
-        <OnboardingTimeline
+      <div className="RemoteFlows__Separator">
+        <CustomOnboardingTimeline
           minimumOnboardingDays={estimation.minimum_onboarding_time}
+          data={onboardingTimelineData}
         />
       </div>
 
-      <HiringSection
+      <CustomHiringSection
         countryBenefitsUrl={estimation.country_benefits_details_url as string}
         countryGuideUrl={estimation.country_guide_url as string}
-        country={estimation.country.name}
+        country={estimation.country}
       />
+
+      {CustomFooter && <CustomFooter />}
     </Card>
   );
 };
