@@ -37,7 +37,6 @@ const estimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
-  enableCurrencyConversion: true,
 };
 
 const Layout = ({
