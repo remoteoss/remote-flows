@@ -2,6 +2,8 @@ import { CurrencyConversionField } from '@/src/components/form/fields/CurrencyCo
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { JSFField } from '@/src/types/remoteFlows';
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 type SalaryFieldProps = JSFField & {
   currencies: {
@@ -23,6 +25,8 @@ export const SalaryField = ({
   conversionType = 'no_spread',
   ...props
 }: SalaryFieldProps) => {
+  const { setValue, getValues } = useFormContext();
+
   const conversionProperties = {
     label: salary_conversion_properties?.label || 'Salary conversion',
     description: salary_conversion_properties?.description || (
@@ -42,6 +46,16 @@ export const SalaryField = ({
   const conversionFieldName = shouldSwapOrder
     ? props.name
     : 'salary_conversion';
+
+  useEffect(() => {
+    if (shouldSwapOrder) {
+      const defaultSalary = getValues('salary');
+      if (defaultSalary) {
+        setValue('salary_conversion', defaultSalary);
+        setValue('salary_converted', 'salary_conversion');
+      }
+    }
+  }, [shouldSwapOrder, setValue, getValues]);
 
   return (
     <CurrencyConversionField

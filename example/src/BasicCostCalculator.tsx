@@ -31,7 +31,7 @@ export function BasicCostCalculator() {
           return (
             <div>
               <CostCalculatorForm
-                onSubmit={(payload) => console.log(payload)}
+                onSubmit={(payload) => console.log('payload', payload)}
                 onError={(error) => console.error({ error })}
                 onSuccess={(response) => console.log({ response })}
               />

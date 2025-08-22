@@ -93,7 +93,7 @@ describe('CostCalculatorFlow', () => {
     );
   });
 
-  it.only('should render the form with default values', async () => {
+  it('should render the form with default values', async () => {
     renderComponent();
 
     await waitFor(() => {
@@ -110,8 +110,10 @@ describe('CostCalculatorFlow', () => {
     });
 
     expect(currencyDropdown).toHaveTextContent(/USD/i);
-    expect(salaryInput).toHaveValue('50000');
-    expect(screen.getByText(/Show USD conversion/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(salaryInput).toHaveValue('50000');
+    });
+    expect(screen.getByText(/Show PLN conversion/i)).toBeInTheDocument();
   });
 
   it('should render the 3 comboboxes when selecting a country with region', async () => {
@@ -140,7 +142,8 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
-        salary_converted: false,
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
       });
     });
   });
@@ -285,7 +288,8 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
-        salary_converted: false,
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
       });
     });
   });

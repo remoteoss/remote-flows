@@ -376,7 +376,6 @@ export const useCostCalculator = (
 
     // 1. validate static fields first using Yup validate function
     try {
-      console.log('parsedValues', parsedValues);
       await validationSchema.validate(parsedValues, {
         abortEarly: false,
       });
@@ -385,7 +384,6 @@ export const useCostCalculator = (
         yupError: new ValidationError([], values),
       };
     } catch (error) {
-      console.log('error', error);
       const iterateResult = iterateErrors(error as ValidationError);
 
       errors = {
