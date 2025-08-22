@@ -224,9 +224,8 @@ const AddEstimateForm = ({
             },
             salary: {
               title: "Employee's annual salary",
-              description: '',
-              // TODO: We'll include it later
-              // "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
+              description:
+                "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
             },
           },
         },
