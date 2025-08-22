@@ -15,7 +15,20 @@ import type {
 export function buildValidationSchema(fields: $TSFixMe[]) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
-      fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      // Special handling for salary fields
+      if (field.name === 'salary' || field.name === 'salary_conversion') {
+        fieldsSchemaAcc[field.name] = (field.schema as AnyObjectSchema).when(
+          'salary_converted',
+          {
+            is: (val: string | null) => val === field.name,
+            then: (schema) => schema.required('Salary is required'),
+            otherwise: (schema) => schema.optional(),
+          },
+        );
+      } else {
+        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
+      }
+      return fieldsSchemaAcc;
       return fieldsSchemaAcc;
     },
     {},
@@ -57,11 +70,12 @@ function mapValueToEmployment(
     title: estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
-    ...((version == 'marketing' || value.salary_converted) && {
+    ...((version == 'marketing' ||
+      value.salary_converted === 'salary_conversion') && {
       annual_gross_salary_in_employer_currency: value.salary,
     }),
     ...(version === 'standard' &&
-      !value.salary_converted && {
+      value.salary_converted === 'salary' && {
         annual_gross_salary: value.salary,
       }),
   };

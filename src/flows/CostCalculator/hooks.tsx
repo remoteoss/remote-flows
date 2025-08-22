@@ -16,7 +16,7 @@ import type { JSFModify, Result } from '@/src/flows/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -67,6 +67,11 @@ type UseCostCalculatorParams = {
    * The default currency slug to preselect a currency.
    */
   defaultCurrency?: string;
+
+  /**
+   * The default salary to preselect a salary.
+   */
+  defaultSalary?: string;
   /**
    * The estimation options.
    */
@@ -91,6 +96,7 @@ export const useCostCalculator = (
   {
     defaultRegion,
     defaultCurrency,
+    defaultSalary,
     estimationOptions,
     options,
     version,
@@ -140,7 +146,30 @@ export const useCostCalculator = (
         ).presentation
       : undefined;
 
+  const getCurrencies = useCallback(() => {
+    const shouldSwapOrder =
+      employeeBillingCurrency && employerBillingCurrency
+        ? employeeBillingCurrency !== employerBillingCurrency
+        : false;
+
+    if (employeeBillingCurrency !== employerBillingCurrency) {
+      return {
+        from: employerBillingCurrency,
+        to: employeeBillingCurrency,
+        shouldSwapOrder,
+      };
+    }
+
+    return {
+      from: employeeBillingCurrency,
+      to: employerBillingCurrency,
+      shouldSwapOrder,
+    };
+  }, [employeeBillingCurrency, employerBillingCurrency]);
+
   const customFields = useMemo(() => {
+    const { from, to, shouldSwapOrder } = getCurrencies();
+
     return {
       fields: {
         salary: {
@@ -153,19 +182,18 @@ export const useCostCalculator = (
                 salaryFieldPresentation?.salary_conversion_properties
                   ?.description,
             },
-            currencies: {
-              from: employeeBillingCurrency,
-              to: employerBillingCurrency,
-            },
+            currencies: { from, to },
             Component: (
               props: JSFField & { currencies: { from: string; to: string } },
             ) => {
               return (
                 <SalaryField
                   {...props}
+                  shouldSwapOrder={shouldSwapOrder}
                   conversionType={
                     version === 'marketing' ? 'no_spread' : 'spread'
                   }
+                  defaultValue={defaultSalary}
                 />
               );
             },
@@ -351,7 +379,6 @@ export const useCostCalculator = (
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;
-
     const parsedValues = parseJSFToValidate(values, allFields);
 
     // 1. validate static fields first using Yup validate function
@@ -410,12 +437,19 @@ export const useCostCalculator = (
     parseFormValues: (
       values: CostCalculatorEstimationFormValues,
     ): CostCalculatorEstimationSubmitValues => {
-      const { country, region, currency, salary_converted, ...rest } = values;
+      const {
+        country,
+        region,
+        currency,
+        salary_converted,
+        salary_conversion,
+        ...rest
+      } = values;
 
       // If the salary has been converted, we take the one the user has inputted
       let salary = values.salary;
-      if (salary_converted) {
-        salary = values.salary_conversion;
+      if (salary_converted === 'salary_conversion') {
+        salary = salary_conversion;
       }
 
       const jsonSchemaStaticFieldValues = {
@@ -423,6 +457,7 @@ export const useCostCalculator = (
         region,
         salary,
         salary_converted,
+        salary_conversion,
         currency,
       };
 

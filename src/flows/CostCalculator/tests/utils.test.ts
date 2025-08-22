@@ -8,7 +8,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary_converted: false,
+      salary_converted: 'salary',
       salary: 100_000,
     };
 
@@ -34,7 +34,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary_converted: true,
+      salary_converted: 'salary_conversion',
       salary: 100_000,
     };
 
@@ -62,6 +62,7 @@ describe('buildPayload', () => {
       country: 'US',
       region: 'CA',
       salary: 100_000,
+      salary_converted: 'salary',
     };
 
     const payload = buildPayload(values);
@@ -74,6 +75,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary: 100_000,
+      salary_converted: 'salary',
       benefits: {
         'benefit-health': 'premium',
         'benefit-dental': 'basic',
@@ -93,6 +95,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary: 100_000,
+      salary_converted: 'salary',
       age: 30,
     };
 
@@ -106,6 +109,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary: 100_000,
+      salary_converted: 'salary',
       contract_duration_type: 'fixed',
     };
 
@@ -118,7 +122,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary_converted: false,
+      salary_converted: 'salary',
       salary: 100_000,
     };
 
@@ -139,7 +143,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary_converted: false,
+      salary_converted: 'salary',
       salary: 100_000,
       benefits: {
         'benefit-health': 'whatever',
@@ -161,7 +165,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
-      salary_converted: false,
+      salary_converted: 'salary',
       salary: 100_000,
     };
 
@@ -213,13 +217,13 @@ describe('buildPayload', () => {
         {
           currency: 'USD',
           country: 'US',
-          salary_converted: false,
+          salary_converted: 'salary',
           salary: 100_000,
         },
         {
           currency: 'USD', // Note: currency from first item is used
           country: 'UK',
-          salary_converted: false,
+          salary_converted: 'salary',
           salary: 80_000,
         },
       ];
@@ -256,7 +260,7 @@ describe('buildPayload', () => {
           country: 'DE',
           region: 'Berlin',
           salary: 90_000,
-          salary_converted: false,
+          salary_converted: 'salary',
           age: 25,
           benefits: {
             'benefit-health': 'premium',
@@ -267,7 +271,7 @@ describe('buildPayload', () => {
           country: 'FR',
           salary: 85_000,
           contract_duration_type: 'indefinite',
-          salary_converted: false,
+          salary_converted: 'salary',
         },
       ];
 
@@ -292,13 +296,13 @@ describe('buildPayload', () => {
           currency: 'USD',
           country: 'US',
           salary: 100_000,
-          salary_converted: false,
+          salary_converted: 'salary',
         },
         {
           currency: 'USD',
           country: 'UK',
           salary: 80_000,
-          salary_converted: false,
+          salary_converted: 'salary',
         },
       ];
 

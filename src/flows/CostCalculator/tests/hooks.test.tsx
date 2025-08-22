@@ -72,6 +72,8 @@ describe('useCostCalculator', () => {
       country: 'PRT',
       currency: 'USD',
       salary: '500000',
+      salary_converted: 'salary',
+      salary_conversion: '',
     };
 
     await expect(
@@ -87,6 +89,8 @@ describe('useCostCalculator', () => {
       country: 'PRT',
       currency: 'USD',
       salary: '',
+      salary_converted: 'salary',
+      salary_conversion: '',
     };
 
     await expect(

@@ -59,6 +59,7 @@ export const CostCalculatorFlow = ({
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     defaultCurrency: defaultValues.currencySlug,
+    defaultSalary: defaultValues.salary,
     estimationOptions,
     version,
     options,
@@ -75,7 +76,8 @@ export const CostCalculatorFlow = ({
       currency: defaultValues?.currencySlug,
       region: '',
       salary: defaultValues?.salary,
-      salary_converted: false,
+      salary_conversion: '',
+      salary_converted: '',
     },
     shouldUnregister: false,
     mode: 'onBlur',

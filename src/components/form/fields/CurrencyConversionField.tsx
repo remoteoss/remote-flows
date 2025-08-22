@@ -53,6 +53,7 @@ const DescriptionWithConversion = ({
 export type CurrencyConversionFieldProps = JSFField & {
   sourceCurrency: string;
   targetCurrency: string;
+  mainFieldName?: string;
   conversionFieldName: string;
   conversionProperties?: {
     label?: string;
@@ -66,6 +67,7 @@ export type CurrencyConversionFieldProps = JSFField & {
 export const CurrencyConversionField = ({
   sourceCurrency,
   targetCurrency,
+  mainFieldName,
   conversionFieldName,
   conversionProperties,
   classNamePrefix,
@@ -75,7 +77,7 @@ export const CurrencyConversionField = ({
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
   const { setValue, watch } = useFormContext();
-  const fieldValue = watch(props.name);
+  const fieldValue = watch(mainFieldName || props.name);
   const isFirstRender = useRef(true);
 
   const conversionCache = useRef<Map<string, { targetAmount: string }>>(
@@ -88,6 +90,13 @@ export const CurrencyConversionField = ({
   const { mutateAsync: convertCurrency } = useConvertCurrency({
     type: conversionType,
   });
+
+  // we keep track of the last input the user used, so we can make sure
+  // we keep consistent currency rates
+  const lastInputFieldName = `${props.name}_converted`;
+  useEffect(() => {
+    setValue(lastInputFieldName, mainFieldName || props.name);
+  }, [setValue, mainFieldName, props.name, lastInputFieldName]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -159,16 +168,13 @@ export const CurrencyConversionField = ({
         value,
         targetCurrency,
         sourceCurrency,
-        props.name,
+        mainFieldName || props.name,
       ),
     500,
   );
-  // we keep track of the last input the user used, so we can make sure
-  // we keep consistent currency rates
-  const lastInputFieldName = `${props.name}_converted`;
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(lastInputFieldName, false);
+    setValue(lastInputFieldName, mainFieldName || props.name);
     if (showConversion) {
       debouncedConvertCurrency(evt.target.value);
     }
@@ -177,7 +183,7 @@ export const CurrencyConversionField = ({
   const handleConversionFieldChange = (
     evt: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setValue(lastInputFieldName, true);
+    setValue(lastInputFieldName, conversionFieldName);
     debouncedConvertCurrencyReverse(evt.target.value);
   };
 
@@ -206,6 +212,7 @@ export const CurrencyConversionField = ({
     <>
       <TextField
         {...props}
+        name={mainFieldName || props.name}
         additionalProps={{ currency: sourceCurrency }}
         description={extraDescription}
         type="text"
@@ -230,7 +237,7 @@ export const CurrencyConversionField = ({
       <input
         type="hidden"
         name={lastInputFieldName}
-        value={watch(lastInputFieldName) || false}
+        value={watch(lastInputFieldName) || mainFieldName || props.name}
       />
     </>
   );
