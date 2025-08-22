@@ -77,7 +77,7 @@ export const CurrencyConversionField = ({
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
   const { setValue, watch } = useFormContext();
-  const fieldValue = watch(props.name);
+  const fieldValue = watch(mainFieldName || props.name);
   const isFirstRender = useRef(true);
 
   const conversionCache = useRef<Map<string, { targetAmount: string }>>(
