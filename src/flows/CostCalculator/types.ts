@@ -21,7 +21,7 @@ export type CostCalculatorEstimationFormValues = {
   currency: string;
   country: string;
   salary: string;
-  salary_converted: string;
+  salary_converted: 'salary' | 'salary_conversion';
   salary_conversion: string;
 } & Partial<{
   region: string;
