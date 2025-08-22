@@ -46,13 +46,13 @@ export const jsonSchema = {
           description:
             'Whether the salary is expressed in regional or employer currency',
           title: 'Salary in employer currency',
-          type: 'boolean',
+          type: 'string',
           'x-jsf-presentation': {
             inputType: 'hidden',
           },
         },
       },
-      required: ['country', 'currency', 'salary', 'salary_converted'],
+      required: ['country', 'currency'],
       type: 'object',
       'x-jsf-order': ['country', 'region', 'currency', 'salary'],
     },

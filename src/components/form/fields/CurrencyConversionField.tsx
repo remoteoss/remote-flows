@@ -161,7 +161,7 @@ export const CurrencyConversionField = ({
         value,
         targetCurrency,
         sourceCurrency,
-        props.name,
+        mainFieldName || props.name,
       ),
     500,
   );
@@ -170,7 +170,7 @@ export const CurrencyConversionField = ({
   const lastInputFieldName = `${props.name}_converted`;
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(lastInputFieldName, false);
+    setValue(lastInputFieldName, mainFieldName || props.name);
     if (showConversion) {
       debouncedConvertCurrency(evt.target.value);
     }
@@ -179,7 +179,7 @@ export const CurrencyConversionField = ({
   const handleConversionFieldChange = (
     evt: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setValue(lastInputFieldName, true);
+    setValue(lastInputFieldName, conversionFieldName);
     debouncedConvertCurrencyReverse(evt.target.value);
   };
 
@@ -233,7 +233,7 @@ export const CurrencyConversionField = ({
       <input
         type="hidden"
         name={lastInputFieldName}
-        value={watch(lastInputFieldName) || false}
+        value={watch(lastInputFieldName) || mainFieldName || props.name}
       />
     </>
   );

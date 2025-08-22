@@ -61,7 +61,7 @@ function mapValueToEmployment(
       annual_gross_salary_in_employer_currency: value.salary,
     }),
     ...(version === 'standard' &&
-      !value.salary_converted && {
+      value.salary_converted === 'salary' && {
         annual_gross_salary: value.salary,
       }),
   };

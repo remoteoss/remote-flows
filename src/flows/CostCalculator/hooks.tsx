@@ -432,7 +432,7 @@ export const useCostCalculator = (
 
       // If the salary has been converted, we take the one the user has inputted
       let salary = values.salary;
-      if (salary_converted) {
+      if (salary_converted === 'salary_conversion') {
         salary = values.salary_conversion;
       }
 
