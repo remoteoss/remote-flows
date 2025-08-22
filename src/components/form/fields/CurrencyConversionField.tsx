@@ -26,8 +26,6 @@ const DescriptionWithConversion = ({
     ? `Hide ${targetCurrency} conversion`
     : `Show ${targetCurrency} conversion`;
 
-  console.log('label', label);
-
   const CustomButton = components?.button;
   return (
     <span className={className}>
