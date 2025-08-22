@@ -57,7 +57,8 @@ function mapValueToEmployment(
     title: estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
-    ...((version == 'marketing' || value.salary_converted) && {
+    ...((version == 'marketing' ||
+      value.salary_converted === 'salary_conversion') && {
       annual_gross_salary_in_employer_currency: value.salary,
     }),
     ...(version === 'standard' &&

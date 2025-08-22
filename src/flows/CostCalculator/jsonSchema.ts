@@ -52,7 +52,7 @@ export const jsonSchema = {
           },
         },
       },
-      required: ['country', 'currency'],
+      required: ['country', 'currency', 'salary', 'salary_converted'],
       type: 'object',
       'x-jsf-order': ['country', 'region', 'currency', 'salary'],
     },
