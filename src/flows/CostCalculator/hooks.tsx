@@ -67,6 +67,11 @@ type UseCostCalculatorParams = {
    * The default currency slug to preselect a currency.
    */
   defaultCurrency?: string;
+
+  /**
+   * The default salary to preselect a salary.
+   */
+  defaultSalary?: string;
   /**
    * The estimation options.
    */
@@ -91,6 +96,7 @@ export const useCostCalculator = (
   {
     defaultRegion,
     defaultCurrency,
+    defaultSalary,
     estimationOptions,
     options,
     version,
@@ -187,6 +193,7 @@ export const useCostCalculator = (
                   conversionType={
                     version === 'marketing' ? 'no_spread' : 'spread'
                   }
+                  defaultValue={defaultSalary}
                 />
               );
             },

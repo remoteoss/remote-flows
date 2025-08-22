@@ -16,6 +16,7 @@ type SalaryFieldProps = JSFField & {
   };
   conversionType?: 'spread' | 'no_spread';
   shouldSwapOrder: boolean;
+  defaultValue?: string;
 };
 
 export const SalaryField = ({
@@ -23,6 +24,7 @@ export const SalaryField = ({
   shouldSwapOrder,
   salary_conversion_properties,
   conversionType = 'no_spread',
+  defaultValue,
   ...props
 }: SalaryFieldProps) => {
   const { setValue, getValues } = useFormContext();
@@ -48,14 +50,11 @@ export const SalaryField = ({
     : 'salary_conversion';
 
   useEffect(() => {
-    if (shouldSwapOrder) {
-      const defaultSalary = getValues('salary');
-      if (defaultSalary) {
-        setValue('salary_conversion', defaultSalary);
-        setValue('salary_converted', 'salary_conversion');
-      }
+    if (shouldSwapOrder && defaultValue) {
+      setValue('salary_conversion', defaultValue);
+      setValue('salary_converted', 'salary_conversion');
     }
-  }, [shouldSwapOrder, setValue, getValues]);
+  }, [shouldSwapOrder, defaultValue, setValue, getValues]);
 
   return (
     <CurrencyConversionField

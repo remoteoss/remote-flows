@@ -1,7 +1,7 @@
 import type { CostCalculatorEstimateParams } from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, object, string } from 'yup';
+import { AnyObjectSchema, object } from 'yup';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
