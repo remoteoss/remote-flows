@@ -29,9 +29,32 @@ const EstimationResultsHeader = ({
   title: string;
   country: MinimalCountry;
   region?: MinimalRegion;
-  onDelete: () => void;
-  onExportPdf: () => void;
+  onDelete?: () => void;
+  onExportPdf?: () => void;
 }) => {
+  const actions = [
+    {
+      label: 'Edit',
+      onClick: () => {},
+      disabled: true,
+    },
+    ...(onExportPdf
+      ? [
+          {
+            label: 'Export',
+            onClick: onExportPdf,
+          },
+        ]
+      : []),
+    ...(onDelete
+      ? [
+          {
+            label: 'Delete',
+            onClick: onDelete,
+          },
+        ]
+      : []),
+  ];
   return (
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
       <div className="flex flex-row items-center gap-6">
@@ -49,21 +72,7 @@ const EstimationResultsHeader = ({
       </div>
       <ActionsDropdown
         className="RemoteFlows__EstimationResults__ActionsDropdown"
-        actions={[
-          {
-            label: 'Edit',
-            onClick: () => {},
-            disabled: true,
-          },
-          {
-            label: 'Export',
-            onClick: onExportPdf,
-          },
-          {
-            label: 'Delete',
-            onClick: onDelete,
-          },
-        ]}
+        actions={actions}
       />
     </div>
   );
@@ -505,8 +514,8 @@ type EstimationResultsComponents = {
     title: string;
     region?: MinimalRegion;
     country: MinimalCountry;
-    onDelete: () => void;
-    onExportPdf: () => void;
+    onDelete?: () => void;
+    onExportPdf?: () => void;
   }>;
   Footer?: React.ComponentType;
 };
@@ -515,8 +524,8 @@ type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
   components?: EstimationResultsComponents;
-  onDelete: () => void;
-  onExportPdf: () => void;
+  onDelete?: () => void;
+  onExportPdf?: () => void;
 };
 
 export const EstimationResults = ({
@@ -537,6 +546,9 @@ export const EstimationResults = ({
   const isMultipleCurrency =
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
+
+  const hasManagementFee =
+    estimation.employer_currency_costs.monthly_management_fee;
 
   const hasRegion = estimation.region.code !== estimation.country.code;
 
@@ -650,6 +662,25 @@ export const EstimationResults = ({
                     }),
                   ) || [],
               },
+              ...(hasManagementFee
+                ? [
+                    {
+                      label: 'Management fee',
+                      regionalAmount: formatCurrency(
+                        estimation.regional_currency_costs
+                          .monthly_management_fee,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        estimation.employer_currency_costs
+                          .monthly_management_fee,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      tooltip:
+                        'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',
+                    },
+                  ]
+                : []),
             ]}
             isMultipleCurrency={isMultipleCurrency}
           />
@@ -774,6 +805,25 @@ export const EstimationResults = ({
                     }),
                   ) || [],
               },
+              ...(hasManagementFee
+                ? [
+                    {
+                      label: 'Management fee',
+                      regionalAmount: formatCurrency(
+                        estimation.regional_currency_costs
+                          .annual_management_fee,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        estimation.employer_currency_costs
+                          .annual_management_fee,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      tooltip:
+                        'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',
+                    },
+                  ]
+                : []),
             ]}
             isMultipleCurrency={isMultipleCurrency}
           />
