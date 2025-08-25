@@ -506,8 +506,8 @@ type EstimationResultsComponents = {
     title: string;
     region?: MinimalRegion;
     country: MinimalCountry;
-    onDelete?: () => void;
-    onExportPdf?: () => void;
+    onDelete: () => void;
+    onExportPdf: () => void;
   }>;
   Footer?: React.ComponentType;
 };
