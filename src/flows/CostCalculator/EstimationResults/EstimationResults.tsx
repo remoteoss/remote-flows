@@ -32,6 +32,21 @@ const EstimationResultsHeader = ({
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
+  const actions = [
+    {
+      label: 'Edit',
+      onClick: () => {},
+      disabled: true,
+    },
+    {
+      label: 'Export',
+      onClick: onExportPdf,
+    },
+    {
+      label: 'Delete',
+      onClick: onDelete,
+    },
+  ];
   return (
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
       <div className="flex flex-row items-center gap-6">
@@ -49,21 +64,7 @@ const EstimationResultsHeader = ({
       </div>
       <ActionsDropdown
         className="RemoteFlows__EstimationResults__ActionsDropdown"
-        actions={[
-          {
-            label: 'Edit',
-            onClick: () => {},
-            disabled: true,
-          },
-          {
-            label: 'Export',
-            onClick: onExportPdf,
-          },
-          {
-            label: 'Delete',
-            onClick: onDelete,
-          },
-        ]}
+        actions={actions}
       />
     </div>
   );
@@ -538,6 +539,9 @@ export const EstimationResults = ({
     estimation.employer_currency_costs.currency.code !==
     estimation.regional_currency_costs.currency.code;
 
+  const hasManagementFee =
+    estimation.employer_currency_costs.monthly_management_fee;
+
   const hasRegion = estimation.region.code !== estimation.country.code;
 
   return (
@@ -650,6 +654,25 @@ export const EstimationResults = ({
                     }),
                   ) || [],
               },
+              ...(hasManagementFee
+                ? [
+                    {
+                      label: 'Management fee',
+                      regionalAmount: formatCurrency(
+                        estimation.regional_currency_costs
+                          .monthly_management_fee,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        estimation.employer_currency_costs
+                          .monthly_management_fee,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      tooltip:
+                        'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',
+                    },
+                  ]
+                : []),
             ]}
             isMultipleCurrency={isMultipleCurrency}
           />
@@ -774,6 +797,25 @@ export const EstimationResults = ({
                     }),
                   ) || [],
               },
+              ...(hasManagementFee
+                ? [
+                    {
+                      label: 'Management fee',
+                      regionalAmount: formatCurrency(
+                        estimation.regional_currency_costs
+                          .annual_management_fee,
+                        estimation.regional_currency_costs.currency.symbol,
+                      ),
+                      employerAmount: formatCurrency(
+                        estimation.employer_currency_costs
+                          .annual_management_fee,
+                        estimation.employer_currency_costs.currency.symbol,
+                      ),
+                      tooltip:
+                        'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',
+                    },
+                  ]
+                : []),
             ]}
             isMultipleCurrency={isMultipleCurrency}
           />

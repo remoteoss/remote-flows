@@ -19,6 +19,7 @@ describe('buildPayload', () => {
       include_benefits: defaultEstimationOptions.includeBenefits,
       include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
       include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
+      include_management_fee: defaultEstimationOptions.includeManagementFee,
       employments: [
         {
           region_slug: 'US',
@@ -45,6 +46,7 @@ describe('buildPayload', () => {
       include_benefits: defaultEstimationOptions.includeBenefits,
       include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
       include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
+      include_management_fee: defaultEstimationOptions.includeManagementFee,
       employments: [
         {
           region_slug: 'US',
@@ -236,6 +238,7 @@ describe('buildPayload', () => {
         include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
         include_premium_benefits:
           defaultEstimationOptions.includePremiumBenefits,
+        include_management_fee: defaultEstimationOptions.includeManagementFee,
         employments: [
           {
             region_slug: 'US',

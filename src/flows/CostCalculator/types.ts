@@ -51,6 +51,10 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Enable currency conversion. Default is false.
    */
   enableCurrencyConversion: boolean;
+  /**
+   * Include management fee in the estimation. Default is false.
+   */
+  includeManagementFee: boolean;
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
