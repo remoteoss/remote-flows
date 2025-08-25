@@ -103,6 +103,9 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
     queryFn: async () => {
       return getIndexBenefitOffer({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         path: {
           employment_id: employmentId as string,
         },
@@ -158,6 +161,9 @@ export const useCreateReserveInvoice = () => {
     mutationFn: (payload: { employment_slug: string }) => {
       return postCreateRiskReserve({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         body: payload,
       });
     },
@@ -272,6 +278,9 @@ export const useBenefitOffersSchema = (
     queryFn: async () => {
       const response = await getShowSchema({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         path: {
           employment_id: employmentId,
         },
@@ -394,6 +403,9 @@ export const useUpdateBenefitsOffers = (
         : {};
       return putUpdateBenefitOffer({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         body: payload,
         path: {
           employment_id: employmentId,
@@ -511,6 +523,9 @@ export const useUpsertContractEligibility = () => {
     }: { employmentId: string } & CreateContractEligibilityParams) => {
       return postCreateContractEligibility({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         path: {
           employment_id: employmentId,
         },

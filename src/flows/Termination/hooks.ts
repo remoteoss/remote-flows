@@ -54,6 +54,9 @@ const useCreateTermination = () => {
     mutationFn: (payload: CreateOffboardingParams) => {
       return postCreateOffboarding({
         client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
         body: payload,
       });
     },
