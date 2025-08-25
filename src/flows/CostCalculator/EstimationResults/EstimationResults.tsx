@@ -516,8 +516,8 @@ type EstimationResultsProps = {
   estimation: CostCalculatorEmployment;
   title: string;
   components?: EstimationResultsComponents;
-  onDelete?: () => void;
-  onExportPdf?: () => void;
+  onDelete: () => void;
+  onExportPdf: () => void;
 };
 
 export const EstimationResults = ({
