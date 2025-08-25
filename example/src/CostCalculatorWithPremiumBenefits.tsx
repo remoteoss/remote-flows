@@ -1,6 +1,7 @@
 import type {
   CostCalculatorEmployment,
   CostCalculatorEstimateResponse,
+  CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
 } from '@remoteoss/remote-flows';
@@ -32,11 +33,12 @@ import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
 
-const estimationOptions = {
+const estimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimate for a new company',
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
+  includeManagementFee: false,
   enableCurrencyConversion: true,
 };
 
