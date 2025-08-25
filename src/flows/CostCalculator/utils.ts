@@ -1,4 +1,7 @@
-import type { CostCalculatorEstimateParams } from '@/src/client';
+import type {
+  CostCalculatorEmploymentParam,
+  CostCalculatorEstimateParams,
+} from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AnyObjectSchema, object } from 'yup';
@@ -62,7 +65,7 @@ function mapValueToEmployment(
   value: CostCalculatorEstimationSubmitValues,
   estimationOptions: CostCalculatorEstimationOptions,
   version: CostCalculatorVersion,
-) {
+): CostCalculatorEmploymentParam {
   return {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
@@ -77,12 +80,6 @@ function mapValueToEmployment(
       value.salary_converted === 'salary' && {
         annual_gross_salary: value.salary,
       }),
-    ...(estimationOptions.globalDiscount && {
-      global_discount: {
-        quoted_amount: estimationOptions.globalDiscount.quotedAmount,
-        text: estimationOptions.globalDiscount.text || 'New Management fee',
-      },
-    }),
   };
 }
 
@@ -120,6 +117,12 @@ export function buildPayload(
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
+    ...(estimationOptions.globalDiscount && {
+      global_discount: {
+        quoted_amount: estimationOptions.globalDiscount.quotedAmount,
+        text: estimationOptions.globalDiscount.text || 'New Management fee',
+      },
+    }),
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),
