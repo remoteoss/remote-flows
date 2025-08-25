@@ -353,8 +353,21 @@ function CostCalculatorFormDemo() {
 
   const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
     const payload = estimation.data.employments?.[0];
+    const modifiedEstimation = {
+      ...payload,
+      employer_currency_costs: {
+        ...payload.employer_currency_costs,
+        monthly_management_fee: 20000,
+        annual_management_fee: 240000,
+      },
+      regional_currency_costs: {
+        ...payload.regional_currency_costs,
+        monthly_management_fee: 20000,
+        annual_management_fee: 240000,
+      },
+    };
     if (payload) {
-      setEstimations([...estimations, payload]);
+      setEstimations([...estimations, modifiedEstimation]);
     }
   };
 
