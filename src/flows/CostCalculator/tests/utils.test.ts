@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { defaultEstimationOptions } from '../hooks';
-import type { CostCalculatorEstimationSubmitValues } from '../types';
+import type {
+  CostCalculatorEstimationOptions,
+  CostCalculatorEstimationSubmitValues,
+} from '../types';
 import { buildPayload } from '../utils';
 
 describe('buildPayload', () => {
@@ -161,6 +164,29 @@ describe('buildPayload', () => {
         benefit_tier_slug: 'whatever',
       },
     ]);
+  });
+
+  it('should add global_discount if we provided in the estimationOptions', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary: 100_000,
+      salary_converted: 'salary',
+    };
+
+    const customOptions: CostCalculatorEstimationOptions = {
+      globalDiscount: {
+        quotedAmount: 100000,
+        text: 'flat fee',
+      },
+    };
+
+    const payload = buildPayload(values, customOptions);
+
+    expect(payload.global_discount).toEqual({
+      quoted_amount: 100000,
+      text: 'flat fee',
+    });
   });
 
   describe('version parameter', () => {

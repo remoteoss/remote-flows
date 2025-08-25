@@ -40,6 +40,9 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includePremiumBenefits: true,
   includeManagementFee: true,
   enableCurrencyConversion: true,
+  globalDiscount: {
+    quotedAmount: 10000,
+  },
 };
 
 const Layout = ({
