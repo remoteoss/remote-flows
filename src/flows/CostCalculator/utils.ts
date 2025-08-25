@@ -29,7 +29,6 @@ export function buildValidationSchema(fields: $TSFixMe[]) {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }
       return fieldsSchemaAcc;
-      return fieldsSchemaAcc;
     },
     {},
   );
@@ -78,6 +77,12 @@ function mapValueToEmployment(
       value.salary_converted === 'salary' && {
         annual_gross_salary: value.salary,
       }),
+    ...(estimationOptions.globalDiscount && {
+      global_discount: {
+        quoted_amount: estimationOptions.globalDiscount.quotedAmount,
+        text: estimationOptions.globalDiscount.text || 'New Management fee',
+      },
+    }),
   };
 }
 

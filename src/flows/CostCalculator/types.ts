@@ -1,4 +1,5 @@
 import type {
+  CostCalculatorDiscount,
   EmploymentTermType,
   PostCreateEstimationError,
   ValidationError,
@@ -55,6 +56,14 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include management fee in the estimation. Default is false.
    */
   includeManagementFee: boolean;
+
+  /**
+   * Global discount. Default is null.
+   */
+  globalDiscount?: {
+    quotedAmount: CostCalculatorDiscount['quoted_amount'];
+    text?: CostCalculatorDiscount['text'];
+  };
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
