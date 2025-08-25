@@ -56,6 +56,7 @@ export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   includeCostBreakdowns: false,
   includePremiumBenefits: false,
   enableCurrencyConversion: false,
+  includeManagementFee: false,
 };
 
 type UseCostCalculatorParams = {

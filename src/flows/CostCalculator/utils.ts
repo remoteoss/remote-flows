@@ -114,6 +114,7 @@ export function buildPayload(
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
+    include_management_fee: estimationOptions.includeManagementFee,
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),
