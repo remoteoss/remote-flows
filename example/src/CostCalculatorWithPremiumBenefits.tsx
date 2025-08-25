@@ -38,7 +38,7 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
-  includeManagementFee: false,
+  includeManagementFee: true,
   enableCurrencyConversion: true,
   globalDiscount: {
     quotedAmount: 10000,

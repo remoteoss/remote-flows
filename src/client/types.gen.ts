@@ -2186,6 +2186,10 @@ export type CostCalculatorCosts = {
    */
   annual_indirect_tax?: number;
   /**
+   * The annual management fees
+   */
+  annual_management_fee?: number;
+  /**
    * The annual gross salary + annual contributions + annual fee (monthly fee * 12) + extra statutory payments if applicable
    */
   annual_total: number;
@@ -2223,6 +2227,10 @@ export type CostCalculatorCosts = {
    * The monthly indirect tax that a company must pay for this employment
    */
   monthly_indirect_tax?: number;
+  /**
+   * The monthly management fees
+   */
+  monthly_management_fee?: number;
   /**
    * Monthly gross salary + monthly contributions  (doesn't include fee)
    */
@@ -2781,18 +2789,18 @@ export type BeforeAfterRequiredParams = {
 export type ResourceErrorResponse = {
   message: {
     code?:
-      | 'action_unrecognized'
-      | 'action_invalid'
       | 'resource_not_eligible'
       | 'resource_already_exists'
+      | 'action_unrecognized'
+      | 'action_invalid'
       | 'parameter_invalid_date'
       | 'resource_invalid_state'
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
