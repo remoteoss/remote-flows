@@ -29,8 +29,8 @@ const EstimationResultsHeader = ({
   title: string;
   country: MinimalCountry;
   region?: MinimalRegion;
-  onDelete?: () => void;
-  onExportPdf?: () => void;
+  onDelete: () => void;
+  onExportPdf: () => void;
 }) => {
   const actions = [
     {
@@ -38,22 +38,14 @@ const EstimationResultsHeader = ({
       onClick: () => {},
       disabled: true,
     },
-    ...(onExportPdf
-      ? [
-          {
-            label: 'Export',
-            onClick: onExportPdf,
-          },
-        ]
-      : []),
-    ...(onDelete
-      ? [
-          {
-            label: 'Delete',
-            onClick: onDelete,
-          },
-        ]
-      : []),
+    {
+      label: 'Export',
+      onClick: onExportPdf,
+    },
+    {
+      label: 'Delete',
+      onClick: onDelete,
+    },
   ];
   return (
     <div className="RemoteFlows__EstimationResults__Header flex justify-between">
