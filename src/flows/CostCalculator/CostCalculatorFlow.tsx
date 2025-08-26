@@ -81,7 +81,7 @@ export const CostCalculatorFlow = ({
       management_fee:
         estimationOptions.globalDiscount?.quotedAmount &&
         estimationOptions.includeManagementFee
-          ? estimationOptions.globalDiscount.quotedAmount / 100
+          ? estimationOptions.globalDiscount.quotedAmount
           : '',
     },
     shouldUnregister: false,

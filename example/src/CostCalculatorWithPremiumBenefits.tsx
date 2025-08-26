@@ -41,7 +41,7 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includeManagementFee: true,
   enableCurrencyConversion: true,
   globalDiscount: {
-    quotedAmount: 89900,
+    quotedAmount: 499,
   },
 };
 
