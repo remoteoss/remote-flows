@@ -172,11 +172,13 @@ describe('buildPayload', () => {
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
+      management_fee: '59900',
     };
 
     const customOptions: CostCalculatorEstimationOptions = {
+      includeManagementFee: true,
       globalDiscount: {
-        quotedAmount: 100000,
+        quotedAmount: 59900,
         text: 'flat fee',
       },
     };
@@ -184,7 +186,7 @@ describe('buildPayload', () => {
     const payload = buildPayload(values, customOptions);
 
     expect(payload.global_discount).toEqual({
-      quoted_amount: 100000,
+      quoted_amount: 59900,
       text: 'flat fee',
     });
   });

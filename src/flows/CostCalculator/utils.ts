@@ -111,6 +111,8 @@ export function buildPayload(
     }
   }
 
+  const managementFee = Number(employments[0].management_fee);
+
   return {
     employer_currency_slug: employments[0].currency,
     include_benefits: estimationOptions.includeBenefits,
@@ -118,9 +120,10 @@ export function buildPayload(
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
     ...(estimationOptions.includeManagementFee &&
-      estimationOptions.globalDiscount && {
+      estimationOptions.globalDiscount &&
+      managementFee && {
         global_discount: {
-          quoted_amount: Number(employments[0].management_fee),
+          quoted_amount: managementFee,
           text: estimationOptions.globalDiscount.text || 'New Management fee',
         },
       }),
