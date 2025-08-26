@@ -220,9 +220,12 @@ export const useCostCalculator = (
           },
           presentation: {
             ...(typeof options?.jsfModify?.fields?.management === 'object'
-              ? (options?.jsfModify?.fields?.management as Record<string, any>)[
-                  'x-jsf-presentation'
-                ]
+              ? (
+                  options?.jsfModify?.fields?.management as Record<
+                    string,
+                    $TSFixMe
+                  >
+                )['x-jsf-presentation']
               : {}),
             hidden: !showManagementField,
           },
