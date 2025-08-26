@@ -555,4 +555,125 @@ describe('CostCalculatorFlow', () => {
       }),
     ).toHaveTextContent(/USD/i);
   });
+
+  it('should show management fee field when both includeManagementFee and globalDiscount are true', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        enableCurrencyConversion: true,
+        globalDiscount: {
+          quotedAmount: 89900,
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('should hide management fee field when includeManagementFee is false', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: false,
+        enableCurrencyConversion: true,
+        globalDiscount: {
+          quotedAmount: 89900,
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: /management fee/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should hide management fee field when globalDiscount is not present', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        enableCurrencyConversion: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: /management fee/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should submit form with management fee when field is visible and filled', async () => {
+    const user = userEvent.setup();
+
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        enableCurrencyConversion: true,
+        globalDiscount: {
+          quotedAmount: 699,
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const managementFeeInput = screen.getByRole('textbox', {
+      name: /management fee/i,
+    });
+
+    await waitFor(() => {
+      expect(managementFeeInput).toHaveValue('699');
+    });
+
+    await user.clear(managementFeeInput);
+    await user.type(managementFeeInput, '599');
+
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          country: 'POL',
+          currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+          salary: 5_000_000,
+          salary_converted: 'salary_conversion',
+          salary_conversion: 5000000,
+          management_fee: 59900,
+        }),
+      );
+    });
+  });
 });
