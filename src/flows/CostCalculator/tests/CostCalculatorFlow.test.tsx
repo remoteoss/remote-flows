@@ -565,7 +565,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        enableCurrencyConversion: true,
         globalDiscount: {
           quotedAmount: 699,
         },
@@ -590,7 +589,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: false,
-        enableCurrencyConversion: true,
         globalDiscount: {
           quotedAmount: 669,
         },
@@ -615,7 +613,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        enableCurrencyConversion: true,
       },
     });
 
@@ -639,7 +636,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        enableCurrencyConversion: true,
         globalDiscount: {
           quotedAmount: 699,
         },
