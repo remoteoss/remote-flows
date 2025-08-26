@@ -208,6 +208,9 @@ export const useCostCalculator = (
           presentation: {
             inputType: 'money',
             hidden: !showManagementField,
+            additionalProps: {
+              currency: employerBillingCurrency || 'USD',
+            },
           },
         },
       },
