@@ -37,7 +37,7 @@ type FieldSetProps = {
   statement?: StatementProps;
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
-  variant?: 'inset' | 'outset';
+  variant: 'outset' | 'inset';
 };
 
 export function FieldSetField({
@@ -49,7 +49,7 @@ export function FieldSetField({
   statement,
   isFlatFieldset,
   extra,
-  variant,
+  variant = 'outset',
 }: FieldSetProps) {
   const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
@@ -117,7 +117,6 @@ export function FieldSetField({
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
         </div>
       )}
-
       {description ? (
         <div
           className="mb-5 RemoteFlows__FieldSetField__Description"
