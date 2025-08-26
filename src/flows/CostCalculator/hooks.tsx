@@ -219,6 +219,11 @@ export const useCostCalculator = (
             },
           },
           presentation: {
+            ...(typeof options?.jsfModify?.fields?.management === 'object'
+              ? (options?.jsfModify?.fields?.management as Record<string, any>)[
+                  'x-jsf-presentation'
+                ]
+              : {}),
             hidden: !showManagementField,
           },
         },
@@ -395,15 +400,7 @@ export const useCostCalculator = (
 
   const allFields = [
     ...fieldsJSONSchema.fields.filter((field) => field.name !== 'management'),
-    ...(jsonSchemaRegionFields?.fields.map((field) => {
-      if (field.name === 'benefits') {
-        return {
-          ...field,
-          variant: 'inset',
-        };
-      }
-      return field;
-    }) || []),
+    ...(jsonSchemaRegionFields?.fields || []),
     ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 

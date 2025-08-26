@@ -73,7 +73,6 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             inputType: 'fieldset',
             hidden: true,
-            variant: 'inset',
           },
         },
       },
