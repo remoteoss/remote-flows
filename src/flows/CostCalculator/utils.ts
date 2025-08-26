@@ -120,7 +120,7 @@ export function buildPayload(
     ...(estimationOptions.includeManagementFee &&
       estimationOptions.globalDiscount && {
         global_discount: {
-          quoted_amount: Number(employments[0].management_fee) * 100,
+          quoted_amount: Number(employments[0].management_fee),
           text: estimationOptions.globalDiscount.text || 'New Management fee',
         },
       }),
