@@ -25,7 +25,7 @@ import {
   useCostCalculatorEstimation,
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
-import { JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 
 export type CostCalculatorVersion = 'standard' | 'marketing';
@@ -203,14 +203,23 @@ export const useCostCalculator = (
             },
           },
         },
-        management_fee: {
-          ...options?.jsfModify?.fields?.management_fee,
-          presentation: {
-            inputType: 'money',
-            hidden: !showManagementField,
-            additionalProps: {
-              currency: employerBillingCurrency || 'USD',
+        management: {
+          ...options?.jsfModify?.fields?.management,
+          properties: {
+            ...(options?.jsfModify?.fields?.management as $TSFixMe)?.properties,
+            management_fee: {
+              ...(options?.jsfModify?.fields?.management as $TSFixMe)
+                ?.properties?.management_fee,
+              'x-jsf-presentation': {
+                inputType: 'money',
+                additionalProps: {
+                  currency: employerBillingCurrency || 'USD',
+                },
+              },
             },
+          },
+          presentation: {
+            hidden: !showManagementField,
           },
         },
       },
@@ -462,7 +471,7 @@ export const useCostCalculator = (
         currency,
         salary_converted,
         salary_conversion,
-        management_fee,
+        management,
         ...rest
       } = values;
 
@@ -479,7 +488,7 @@ export const useCostCalculator = (
         salary_converted,
         salary_conversion,
         currency,
-        management_fee,
+        management,
       };
 
       const parsedStaticFields = parseJSFToValidate(

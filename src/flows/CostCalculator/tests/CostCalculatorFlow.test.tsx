@@ -667,7 +667,9 @@ describe('CostCalculatorFlow', () => {
           salary: 5_000_000,
           salary_converted: 'salary_conversion',
           salary_conversion: 5000000,
-          management_fee: 59900,
+          management: {
+            management_fee: 59900,
+          },
         }),
       );
     });

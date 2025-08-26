@@ -111,7 +111,7 @@ export function buildPayload(
     }
   }
 
-  const managementFee = Number(employments[0].management_fee);
+  const managementFee = Number(employments[0].management?.management_fee);
 
   return {
     employer_currency_slug: employments[0].currency,

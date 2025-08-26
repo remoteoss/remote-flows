@@ -78,11 +78,13 @@ export const CostCalculatorFlow = ({
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
-      management_fee:
-        estimationOptions.globalDiscount?.quotedAmount &&
-        estimationOptions.includeManagementFee
-          ? estimationOptions.globalDiscount.quotedAmount
-          : '',
+      management: {
+        management_fee:
+          estimationOptions.globalDiscount?.quotedAmount &&
+          estimationOptions.includeManagementFee
+            ? estimationOptions.globalDiscount.quotedAmount
+            : '',
+      },
     },
     shouldUnregister: false,
     mode: 'onBlur',
