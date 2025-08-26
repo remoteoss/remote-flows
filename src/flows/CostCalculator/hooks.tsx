@@ -395,7 +395,15 @@ export const useCostCalculator = (
 
   const allFields = [
     ...fieldsJSONSchema.fields.filter((field) => field.name !== 'management'),
-    ...(jsonSchemaRegionFields?.fields || []),
+    ...(jsonSchemaRegionFields?.fields.map((field) => {
+      if (field.name === 'benefits') {
+        return {
+          ...field,
+          variant: 'inset',
+        };
+      }
+      return field;
+    }) || []),
     ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 
