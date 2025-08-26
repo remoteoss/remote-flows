@@ -182,6 +182,62 @@ const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   );
 };
 
+export const Countries = ({
+  field,
+  fieldData,
+  fieldState,
+}: FieldComponentProps) => {
+  const hasError = !!fieldState.error;
+
+  const { onChange, value, ...fieldProps } = field;
+
+  return (
+    <div className="input-container">
+      <label htmlFor={field.name}>{fieldData.label}</label>
+
+      <div className={`select-wrapper ${hasError ? 'error' : ''}`}>
+        <select
+          id={field.name}
+          className="select"
+          value={value || ''}
+          onChange={(e) => onChange([e.target.value])}
+          {...fieldProps}
+        >
+          <option value="" disabled>
+            Select an option
+          </option>
+          {fieldData.options?.map((option) => {
+            return (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            );
+          })}
+        </select>
+        <div className="select-arrow" aria-hidden="true">
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+            <path
+              d="M1 1.5L6 6.5L11 1.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {fieldData.description && (
+        <p className="input-description">{fieldData.description}</p>
+      )}
+
+      {fieldState.error && (
+        <p className="error-message">{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -189,4 +245,5 @@ export const components: Components = {
   textarea: Textarea,
   radio: Radio,
   checkbox: Checkbox,
+  countries: Countries,
 };
