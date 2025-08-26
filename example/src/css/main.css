@@ -906,3 +906,16 @@ button.reset-button {
     margin-bottom: 0;
   }
 }
+
+.RemoteFlows__FieldSetField {
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  border-radius: 10px;
+  padding: 40px 56px;
+}
+
+.RemoteFlows__FieldSetField__Title {
+  color: #000000;
+  font-weight: 500;
+  font-size: 16px;
+}
