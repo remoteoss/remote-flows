@@ -381,8 +381,13 @@ export const useCostCalculator = (
   };
 
   const allFields = [
-    ...fieldsJSONSchema.fields,
+    ...fieldsJSONSchema.fields.filter(
+      (field) => field.name !== 'management_fee',
+    ),
     ...(jsonSchemaRegionFields?.fields || []),
+    ...fieldsJSONSchema.fields.filter(
+      (field) => field.name === 'management_fee',
+    ),
   ];
 
   const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
