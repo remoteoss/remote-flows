@@ -567,7 +567,7 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         enableCurrencyConversion: true,
         globalDiscount: {
-          quotedAmount: 89900,
+          quotedAmount: 699,
         },
       },
     });
@@ -592,7 +592,7 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: false,
         enableCurrencyConversion: true,
         globalDiscount: {
-          quotedAmount: 89900,
+          quotedAmount: 669,
         },
       },
     });
