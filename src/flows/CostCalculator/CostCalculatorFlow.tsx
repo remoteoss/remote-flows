@@ -1,3 +1,5 @@
+import React, { useId } from 'react';
+import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
@@ -9,8 +11,6 @@ import {
   CostCalculatorEstimationOptions,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import React, { useId } from 'react';
-import { useForm } from 'react-hook-form';
 
 export type CostCalculatorFlowProps = {
   /**
@@ -78,6 +78,11 @@ export const CostCalculatorFlow = ({
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
+      management_fee:
+        estimationOptions.globalDiscount?.quotedAmount &&
+        estimationOptions.includeManagementFee
+          ? estimationOptions.globalDiscount.quotedAmount / 100
+          : '',
     },
     shouldUnregister: false,
     mode: 'onBlur',

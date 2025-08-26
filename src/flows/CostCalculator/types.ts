@@ -16,6 +16,7 @@ export type CostCalculatorEstimationSubmitValues = {
   age: number;
   contract_duration_type: EmploymentTermType;
   benefits: Record<string, string>;
+  management_fee: string;
 }>;
 
 export type CostCalculatorEstimationFormValues = {
@@ -29,6 +30,7 @@ export type CostCalculatorEstimationFormValues = {
   age: number;
   contract_duration_type: EmploymentTermType;
   benefits: Record<string, string>;
+  management_fee: string;
 }>;
 
 export type CostCalculatorEstimationOptions = Partial<{

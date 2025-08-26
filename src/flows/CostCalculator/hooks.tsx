@@ -200,6 +200,15 @@ export const useCostCalculator = (
             },
           },
         },
+        management_fee: {
+          ...options?.jsfModify?.fields?.management_fee,
+          presentation: {
+            inputType: 'money',
+            hidden:
+              !estimationOptions.includeManagementFee &&
+              !estimationOptions.globalDiscount,
+          },
+        },
       },
     };
   }, [
@@ -444,6 +453,7 @@ export const useCostCalculator = (
         currency,
         salary_converted,
         salary_conversion,
+        management_fee,
         ...rest
       } = values;
 
@@ -460,6 +470,7 @@ export const useCostCalculator = (
         salary_converted,
         salary_conversion,
         currency,
+        management_fee,
       };
 
       const parsedStaticFields = parseJSFToValidate(

@@ -117,12 +117,13 @@ export function buildPayload(
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
-    ...(estimationOptions.globalDiscount && {
-      global_discount: {
-        quoted_amount: estimationOptions.globalDiscount.quotedAmount,
-        text: estimationOptions.globalDiscount.text || 'New Management fee',
-      },
-    }),
+    ...(estimationOptions.includeManagementFee &&
+      estimationOptions.globalDiscount && {
+        global_discount: {
+          quoted_amount: Number(employments[0].management_fee) * 100,
+          text: estimationOptions.globalDiscount.text || 'New Management fee',
+        },
+      }),
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),
