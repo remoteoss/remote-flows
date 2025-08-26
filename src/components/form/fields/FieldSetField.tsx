@@ -112,14 +112,12 @@ export function FieldSetField({
       >
         {label}
       </legend>
-      <h3
-        className={cn(
-          'RemoteFlows__FieldSetField__Title',
-          variant !== 'inset' && 'hidden',
-        )}
-      >
-        {label}
-      </h3>
+      {variant === 'inset' && (
+        <div className="RemoteFlows__FieldSetField__Header">
+          <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
+        </div>
+      )}
+
       {description ? (
         <div
           className="mb-5 RemoteFlows__FieldSetField__Description"
