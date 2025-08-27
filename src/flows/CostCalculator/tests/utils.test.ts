@@ -166,7 +166,7 @@ describe('buildPayload', () => {
     ]);
   });
 
-  it('should add global_discount if we provided in the estimationOptions', () => {
+  it('should add management_fee if we provided in the estimationOptions', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
@@ -179,20 +179,6 @@ describe('buildPayload', () => {
 
     const customOptions: CostCalculatorEstimationOptions = {
       includeManagementFee: true,
-      managementFees: {
-        USD: 699,
-        AUD: 699,
-        CAD: 699,
-        CHF: 699,
-        DKK: 699,
-        EUR: 699,
-        GBP: 699,
-        JPY: 699,
-        NOK: 699,
-        NZD: 699,
-        SEK: 699,
-        SGD: 699,
-      },
     };
 
     const payload = buildPayload(values, customOptions);
