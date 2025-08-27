@@ -17,6 +17,7 @@ import {
   regionFields,
   regionFieldsWithAgeProperty,
 } from './fixtures';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const queryClient = new QueryClient();
 
@@ -647,5 +648,33 @@ describe('CostCalculatorFlow', () => {
         }),
       );
     });
+  });
+
+  it('should show management fee field when includeManagementFee is true and managementFees is present', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        managementFees: {
+          USD: 599,
+        } as $TSFixMe,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toHaveValue('599');
   });
 });
