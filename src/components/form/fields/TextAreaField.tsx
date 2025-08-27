@@ -67,7 +67,7 @@ export function TextAreaField({
             data-field={name}
             className={`RemoteFlows__TextArea__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__TextArea__Label">
+            <FormLabel className='RemoteFlows__TextArea__Label'>
               {label}
             </FormLabel>
             <FormControl>
@@ -87,21 +87,21 @@ export function TextAreaField({
               />
             </FormControl>
             {(description || maxLength) && (
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 {description && (
-                  <FormDescription className="RemoteFlows__TextArea__Description">
+                  <FormDescription className='RemoteFlows__TextArea__Description'>
                     {description}
                   </FormDescription>
                 )}
                 {maxLength && (
-                  <span className="text-sm ml-auto RemoteFlows__TextArea__MaxLength">
+                  <span className='text-sm ml-auto RemoteFlows__TextArea__MaxLength'>
                     {valueLength}/{maxLength}
                   </span>
                 )}
               </div>
             )}
             {fieldState.error && (
-              <FormMessage className="RemoteFlows__TextArea__Error" />
+              <FormMessage className='RemoteFlows__TextArea__Error' />
             )}
           </FormItem>
         );

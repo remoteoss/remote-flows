@@ -15,7 +15,7 @@ export function TerminationDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[920px]">
+      <DialogContent className='sm:max-w-[920px]'>
         <DialogHeader>
           <DialogTitle>Termination Reasons</DialogTitle>
           <DialogDescription>
@@ -25,7 +25,7 @@ export function TerminationDialog({
             reason in the platform.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4"></div>
+        <div className='grid gap-4 py-4'></div>
       </DialogContent>
     </Dialog>
   );

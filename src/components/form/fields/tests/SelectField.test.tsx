@@ -85,7 +85,7 @@ describe('SelectField Component', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-select-field">Custom Select Field</div>
+        <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -102,7 +102,7 @@ describe('SelectField Component', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-select-field">Custom Select Field</div>
+        <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -125,11 +125,11 @@ describe('SelectField Component', () => {
 
       return (
         <select
-          data-testid="custom-select"
+          data-testid='custom-select'
           onChange={(e) => handleChange(e.target.value)}
         >
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
+          <option value='option1'>Option 1</option>
+          <option value='option2'>Option 2</option>
         </select>
       );
     });
@@ -150,12 +150,12 @@ describe('SelectField Component', () => {
     const CustomSelectFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-select-field">Context Select Field</div>
+        <div data-testid='context-select-field'>Context Select Field</div>
       ));
     const CustomSelectFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-select-field">Prop Select Field</div>
+        <div data-testid='prop-select-field'>Prop Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -220,11 +220,11 @@ describe('SelectField Component', () => {
 
         return (
           <select
-            data-testid="custom-select"
+            data-testid='custom-select'
             onChange={(e) => handleChange(e.target.value)}
           >
-            <option value="1">One</option>
-            <option value="2">Two</option>
+            <option value='1'>One</option>
+            <option value='2'>Two</option>
           </select>
         );
       });
@@ -259,11 +259,11 @@ describe('SelectField Component', () => {
 
         return (
           <select
-            data-testid="custom-select"
+            data-testid='custom-select'
             onChange={(e) => handleChange(e.target.value)}
           >
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
+            <option value='option1'>Option 1</option>
+            <option value='option2'>Option 2</option>
           </select>
         );
       });

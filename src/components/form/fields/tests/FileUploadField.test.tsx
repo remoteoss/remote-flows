@@ -72,7 +72,7 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-file-upload-field">
+        <div data-testid='custom-file-upload-field'>
           Custom File Upload Field
         </div>
       ));
@@ -91,7 +91,7 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-file-upload-field">
+        <div data-testid='custom-file-upload-field'>
           Custom File Upload Field
         </div>
       ));
@@ -116,8 +116,8 @@ describe('FileUploadField Component', () => {
 
       return (
         <input
-          type="file"
-          data-testid="custom-file-input"
+          type='file'
+          data-testid='custom-file-input'
           onChange={handleChange}
         />
       );
@@ -142,14 +142,14 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-file-upload-field">
+        <div data-testid='context-file-upload-field'>
           Context File Upload Field
         </div>
       ));
     const CustomFileUploadFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-file-upload-field">Prop File Upload Field</div>
+        <div data-testid='prop-file-upload-field'>Prop File Upload Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

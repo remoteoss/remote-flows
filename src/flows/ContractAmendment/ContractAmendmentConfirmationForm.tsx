@@ -78,7 +78,7 @@ export function ContractAmendmentConfirmationForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="RemoteFlows__ContractAmendmentConfirmationForm"
+        className='RemoteFlows__ContractAmendmentConfirmationForm'
       ></form>
     </Form>
   );

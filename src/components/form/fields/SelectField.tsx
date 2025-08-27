@@ -79,11 +79,11 @@ export function SelectField({
             data-field={name}
             className={`RemoteFlows__SelectField__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__SelectField__Label">
+            <FormLabel className='RemoteFlows__SelectField__Label'>
               {label}
             </FormLabel>
             <FormControl>
-              <div className="relative">
+              <div className='relative'>
                 <Select
                   value={field.value || ''}
                   onValueChange={(value: string) => {
@@ -96,21 +96,21 @@ export function SelectField({
                   }}
                 >
                   <SelectTrigger
-                    className="RemoteFlows__SelectField__Trigger"
+                    className='RemoteFlows__SelectField__Trigger'
                     aria-invalid={Boolean(fieldState.error)}
                     aria-label={label}
                   >
-                    <span className="absolute">
+                    <span className='absolute'>
                       <SelectValue placeholder={label} />
                     </span>
                   </SelectTrigger>
-                  <SelectContent className="RemoteFlows__SelectField__Content">
-                    <SelectGroup className="RemoteFlows__SelectField__Group">
+                  <SelectContent className='RemoteFlows__SelectField__Content'>
+                    <SelectGroup className='RemoteFlows__SelectField__Group'>
                       {options.map((option) => (
                         <SelectItem
                           key={option.value}
                           value={option.value}
-                          className="RemoteFlows__SelectField__SelectItem"
+                          className='RemoteFlows__SelectField__SelectItem'
                         >
                           {option.label}
                         </SelectItem>

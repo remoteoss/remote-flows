@@ -55,7 +55,7 @@ describe('TerminationFlow', () => {
       case 'employee_communication':
         return (
           <>
-            <div className="alert">
+            <div className='alert'>
               <p>
                 Please do not inform the employee of their termination until we
                 review your request for legal risks. When we approve your
@@ -100,7 +100,7 @@ describe('TerminationFlow', () => {
                       We have recorded {days} {daysLiteral} of paid time off for{' '}
                       {username}
                     </p>
-                    <a href="#">See {username}'s timeoff breakdown</a>
+                    <a href='#'>See {username}'s timeoff breakdown</a>
                   </>
                 );
               }}
@@ -117,7 +117,7 @@ describe('TerminationFlow', () => {
         return (
           <>
             <AdditionalDetailsStep
-              requesterName="ze"
+              requesterName='ze'
               onSubmit={(payload) => onSubmitForm(payload)}
               onSuccess={onSuccess}
               onError={onError}

@@ -36,9 +36,9 @@ describe('TerminationSubmit', () => {
       render(
         <TerminationSubmit
           disabled
-          data-testid="submit-button"
-          aria-label="Submit form"
-          className="custom-class"
+          data-testid='submit-button'
+          aria-label='Submit form'
+          className='custom-class'
         >
           <span>Submit Termination</span>
         </TerminationSubmit>,
@@ -56,7 +56,7 @@ describe('TerminationSubmit', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, ...props }) => (
-      <button data-testid="custom-button" {...props}>
+      <button data-testid='custom-button' {...props}>
         {children}
       </button>
     ));
@@ -73,11 +73,11 @@ describe('TerminationSubmit', () => {
       render(
         <TerminationSubmit
           disabled
-          className="custom-class"
-          data-testid="submit-button"
-          aria-label="Submit form"
+          className='custom-class'
+          data-testid='submit-button'
+          aria-label='Submit form'
           onClick={vi.fn()}
-          variant="custom"
+          variant='custom'
         >
           Submit
         </TerminationSubmit>,

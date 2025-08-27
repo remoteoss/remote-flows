@@ -100,7 +100,7 @@ export function CostCalculatorForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__CostCalculatorForm"
+        className='space-y-4 RemoteFlows__CostCalculatorForm'
       >
         <JSONSchemaFormFields fields={costCalculatorBag?.fields ?? []} />
       </form>

@@ -83,7 +83,7 @@ describe('DatePickerField Component', () => {
     const CustomDatePickerField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-date-picker-field">
+        <div data-testid='custom-date-picker-field'>
           Custom Date Picker Field
         </div>
       ));
@@ -102,7 +102,7 @@ describe('DatePickerField Component', () => {
     const CustomDatePickerField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-date-picker-field">
+        <div data-testid='custom-date-picker-field'>
           Custom Date Picker Field
         </div>
       ));
@@ -127,8 +127,8 @@ describe('DatePickerField Component', () => {
 
       return (
         <input
-          type="date"
-          data-testid="custom-date-picker"
+          type='date'
+          data-testid='custom-date-picker'
           onChange={(e) => handleChange(new Date(e.target.value))}
         />
       );
@@ -150,14 +150,14 @@ describe('DatePickerField Component', () => {
     const CustomDatePickerFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-date-picker-field">
+        <div data-testid='context-date-picker-field'>
           Context Date Picker Field
         </div>
       ));
     const CustomDatePickerFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-date-picker-field">Prop Date Picker Field</div>
+        <div data-testid='prop-date-picker-field'>Prop Date Picker Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

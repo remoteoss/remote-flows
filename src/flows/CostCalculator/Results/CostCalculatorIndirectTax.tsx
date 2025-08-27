@@ -12,9 +12,9 @@ export function CostCalculatorIndirectTax({
 }: CostCalculatorIndirectTaxProps) {
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-medium text-primary-foreground">Indirect Tax</h3>
-        <span className="font-semibold text-lg">
+      <div className='flex justify-between items-center mb-2'>
+        <h3 className='font-medium text-primary-foreground'>Indirect Tax</h3>
+        <span className='font-semibold text-lg'>
           {formatCurrency(indirectTax, currency)}
         </span>
       </div>

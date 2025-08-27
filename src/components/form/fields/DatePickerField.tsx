@@ -83,7 +83,7 @@ export function DatePickerField({
             data-field={name}
             className={`flex flex-col RemoteFlows__DatePickerField__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__DatePickerField__Label">
+            <FormLabel className='RemoteFlows__DatePickerField__Label'>
               {label}
             </FormLabel>
             <Popover>
@@ -91,7 +91,7 @@ export function DatePickerField({
                 <FormControl>
                   <div>
                     <Button
-                      type="button"
+                      type='button'
                       variant={'outline'}
                       className={cn(
                         'w-full pl-3 text-left font-normal',
@@ -100,18 +100,18 @@ export function DatePickerField({
                       data-testid={`date-picker-button-${name}`}
                     >
                       {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
                     </Button>
                   </div>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent
                 className={`w-auto p-0 RemoteFlows__DatepickerField__PopoverContent`}
-                align="start"
+                align='start'
               >
                 <Calendar
-                  mode="single"
-                  className="RemoteFlows__DatepickerField__Calendar"
+                  mode='single'
+                  className='RemoteFlows__DatepickerField__Calendar'
                   selected={field.value ? new Date(field.value) : undefined}
                   onSelect={(date) => {
                     field.onChange(date ? format(date, 'yyyy-MM-dd') : null);
@@ -135,7 +135,7 @@ export function DatePickerField({
               <FormDescription>{description}</FormDescription>
             ) : null}
             {fieldState.error && (
-              <FormMessage className="RemoteFlows__DatePickerField__Error" />
+              <FormMessage className='RemoteFlows__DatePickerField__Error' />
             )}
           </FormItem>
         );

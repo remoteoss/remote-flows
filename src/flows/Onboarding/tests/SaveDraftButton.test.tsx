@@ -52,7 +52,7 @@ const mockRender = vi.fn(
     };
 
     if (onboardingBag.isLoading) {
-      return <div data-testid="spinner">Loading...</div>;
+      return <div data-testid='spinner'>Loading...</div>;
     }
 
     // Render the appropriate step component based on current step
@@ -368,7 +368,7 @@ describe('SaveDraftButton', () => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
-          className="custom-class"
+          className='custom-class'
           onSuccess={mockSuccess}
           onError={mockError}
         >
@@ -413,7 +413,7 @@ describe('SaveDraftButton', () => {
             onSuccess={mockSuccess}
             onError={mockError}
             disabled={true}
-            className="test-class"
+            className='test-class'
           >
             Save Draft
           </SaveDraftButton>

@@ -40,8 +40,8 @@ export const EquityPriceDetails = ({
   }
 
   return (
-    <div className="RemoteFlows__EquityPriceDetails">
-      <span className="RemoteFlows__Equity__Price">
+    <div className='RemoteFlows__EquityPriceDetails'>
+      <span className='RemoteFlows__Equity__Price'>
         A monthly fee of{' '}
         <strong>
           {isFeeWaived ? (
@@ -54,10 +54,10 @@ export const EquityPriceDetails = ({
           will apply.
         </strong>
       </span>
-      <span className="RemoteFlows__Equity__Fee">
+      <span className='RemoteFlows__Equity__Fee'>
         This is a fee for managing equity through Remote.
       </span>
-      <span className="RemoteFlows__Equity__Reporting">
+      <span className='RemoteFlows__Equity__Reporting'>
         To fulfill local reporting obligations, Remote must note any equity
         grants made and any related taxable events, such as exercising stock
         options and RSU vesting.

@@ -70,7 +70,7 @@ describe('TextAreaField Component', () => {
     const CustomTextAreaField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-textarea-field">Custom TextArea Field</div>
+        <div data-testid='custom-textarea-field'>Custom TextArea Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -87,7 +87,7 @@ describe('TextAreaField Component', () => {
     const CustomTextAreaField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-textarea-field">Custom TextArea Field</div>
+        <div data-testid='custom-textarea-field'>Custom TextArea Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -108,7 +108,7 @@ describe('TextAreaField Component', () => {
         field.onChange(e);
       };
 
-      return <textarea data-testid="custom-textarea" onChange={handleChange} />;
+      return <textarea data-testid='custom-textarea' onChange={handleChange} />;
     });
 
     (useFormFields as any).mockReturnValue({
@@ -127,12 +127,12 @@ describe('TextAreaField Component', () => {
     const CustomTextAreaFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-textarea-field">Context TextArea Field</div>
+        <div data-testid='context-textarea-field'>Context TextArea Field</div>
       ));
     const CustomTextAreaFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-textarea-field">Prop TextArea Field</div>
+        <div data-testid='prop-textarea-field'>Prop TextArea Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

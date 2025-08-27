@@ -51,14 +51,14 @@ const mockRender = vi.fn(
     };
 
     if (onboardingBag.isLoading) {
-      return <div data-testid="spinner">Loading...</div>;
+      return <div data-testid='spinner'>Loading...</div>;
     }
 
     return (
       <>
         <h1>Step: {steps[currentStepIndex]}</h1>
         <OnboardingInvite
-          data-testid="onboarding-invite"
+          data-testid='onboarding-invite'
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
@@ -298,7 +298,7 @@ describe('OnboardingInvite', () => {
       const { OnboardingInvite } = components;
       return (
         <OnboardingInvite
-          data-testid="onboarding-invite"
+          data-testid='onboarding-invite'
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
@@ -342,7 +342,7 @@ describe('OnboardingInvite', () => {
       const { OnboardingInvite } = components;
       return (
         <OnboardingInvite
-          data-testid="onboarding-invite"
+          data-testid='onboarding-invite'
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
@@ -477,7 +477,7 @@ describe('OnboardingInvite', () => {
       const { OnboardingInvite } = components;
       return (
         <OnboardingInvite
-          data-testid="onboarding-invite"
+          data-testid='onboarding-invite'
           disabled={true}
           onSuccess={mockSuccess}
           onError={mockError}
@@ -711,7 +711,7 @@ describe('OnboardingInvite', () => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
-            data-testid="onboarding-invite"
+            data-testid='onboarding-invite'
             onSuccess={mockSuccess}
             onError={mockError}
             onSubmit={mockSubmit}
@@ -777,7 +777,7 @@ describe('OnboardingInvite', () => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
-            data-testid="onboarding-invite"
+            data-testid='onboarding-invite'
             onSuccess={mockSuccess}
             onError={mockError}
             onSubmit={mockSubmit}
@@ -828,7 +828,7 @@ describe('OnboardingInvite', () => {
         <button
           onClick={onClick}
           disabled={disabled}
-          data-testid="custom-button"
+          data-testid='custom-button'
           {...props}
         >
           {children}
@@ -860,7 +860,7 @@ describe('OnboardingInvite', () => {
             onError={mockError}
             onSubmit={mockSubmit}
             render={mockRenderProp}
-            className="test-class"
+            className='test-class'
           />
         );
       });
@@ -1037,7 +1037,7 @@ describe('OnboardingInvite', () => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
-            data-testid="onboarding-invite"
+            data-testid='onboarding-invite'
             onSuccess={mockSuccess}
             onError={mockError}
             onSubmit={mockSubmit}
@@ -1067,9 +1067,9 @@ describe('OnboardingInvite', () => {
             disabled={false}
             render={() => 'Custom Props Button'}
             style={{ color: 'red' }}
-            type="button"
-            id="custom-id"
-            data-testid="custom-button"
+            type='button'
+            id='custom-id'
+            data-testid='custom-button'
           />
         );
       });
@@ -1104,14 +1104,14 @@ describe('OnboardingInvite', () => {
             onSubmit={mockSubmit}
             disabled={false}
             render={mockRenderProp}
-            variant="outline"
-            size="lg"
-            intent="secondary"
-            data-analytics="invite-button"
+            variant='outline'
+            size='lg'
+            intent='secondary'
+            data-analytics='invite-button'
             style={{ color: 'red' }}
-            type="button"
-            id="custom-id"
-            data-testid="custom-button"
+            type='button'
+            id='custom-id'
+            data-testid='custom-button'
           />
         );
       });

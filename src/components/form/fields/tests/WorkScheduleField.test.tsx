@@ -212,7 +212,7 @@ describe('WorkScheduleField Component', () => {
     const CustomWorkSchedule = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-work-schedule">Custom Work Schedule</div>
+        <div data-testid='custom-work-schedule'>Custom Work Schedule</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -230,12 +230,12 @@ describe('WorkScheduleField Component', () => {
     const CustomWorkScheduleFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-work-schedule">Context Work Schedule</div>
+        <div data-testid='context-work-schedule'>Context Work Schedule</div>
       ));
     const CustomWorkScheduleProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-work-schedule">Prop Work Schedule</div>
+        <div data-testid='prop-work-schedule'>Prop Work Schedule</div>
       ));
 
     (useFormFields as any).mockReturnValue({

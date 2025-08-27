@@ -37,9 +37,9 @@ describe('CostCalculatorSubmitButton', () => {
       render(
         <CostCalculatorSubmitButton
           disabled
-          data-testid="submit-button"
-          aria-label="Submit form"
-          className="custom-class"
+          data-testid='submit-button'
+          aria-label='Submit form'
+          className='custom-class'
         >
           <span>Custom Submit Text</span>
         </CostCalculatorSubmitButton>,
@@ -58,7 +58,7 @@ describe('CostCalculatorSubmitButton', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, ...props }) => (
-      <button data-testid="custom-button" {...props}>
+      <button data-testid='custom-button' {...props}>
         {children}
       </button>
     ));
@@ -75,10 +75,10 @@ describe('CostCalculatorSubmitButton', () => {
       render(
         <CostCalculatorSubmitButton
           disabled
-          className="custom-class"
-          data-testid="submit-button"
+          className='custom-class'
+          data-testid='submit-button'
           onClick={vi.fn()}
-          variant="custom"
+          variant='custom'
         >
           Submit custom button
         </CostCalculatorSubmitButton>,

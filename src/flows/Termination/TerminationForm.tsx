@@ -49,7 +49,7 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
       <form
         id={formId}
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 RemoteFlows__TerminationForm"
+        className='space-y-4 RemoteFlows__TerminationForm'
       >
         <JSONSchemaFormFields fields={jsonSchemaFields} />
       </form>

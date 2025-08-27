@@ -25,20 +25,20 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
 }: CostCalculatorExtraStatutoryPaymentsBreakdownProps) {
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-medium text-primary-foreground-800">
+      <div className='flex justify-between items-center mb-2'>
+        <h3 className='font-medium text-primary-foreground-800'>
           Extra Statutory Payments
         </h3>
-        <span className="font-semibold text-lg">
+        <span className='font-semibold text-lg'>
           {formatCurrency(extraStatutoryPaymentsTotal, currency)}
         </span>
       </div>
-      <Separator className="mb-3" />
+      <Separator className='mb-3' />
 
-      <div className="space-y-3 pl-2">
+      <div className='space-y-3 pl-2'>
         {extraStatutoryPaymentsBreakdown.map((payment, index) => (
-          <div key={index} className="flex justify-between items-start text-sm">
-            <div className="flex items-start gap-2">
+          <div key={index} className='flex justify-between items-start text-sm'>
+            <div className='flex items-start gap-2'>
               <span>{payment.name}</span>
               {payment.description && (
                 <BasicTooltip
@@ -55,9 +55,9 @@ export function CostCalculatorExtraStatutoryPaymentsBreakdown({
                     </>
                   }
                 >
-                  <Button variant="ghost" size="icon" className="h-4 w-4 p-0">
-                    <Info className="h-3 w-3 text-gray-400" />
-                    <span className="sr-only">Info</span>
+                  <Button variant='ghost' size='icon' className='h-4 w-4 p-0'>
+                    <Info className='h-3 w-3 text-gray-400' />
+                    <span className='sr-only'>Info</span>
                   </Button>
                 </BasicTooltip>
               )}

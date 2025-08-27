@@ -66,9 +66,9 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             }}
           />
           <AlertError errors={errors} />
-          <div className="buttons-container">
+          <div className='buttons-container'>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
@@ -97,15 +97,15 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
           <AlertError errors={errors} />
-          <div className="buttons-container">
+          <div className='buttons-container'>
             <BackButton
-              className="back-button"
+              className='back-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Previous Step
             </BackButton>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               disabled={onboardingBag.isSubmitting}
             >
@@ -117,7 +117,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
 
     case 'benefits':
       return (
-        <div className="benefits-container">
+        <div className='benefits-container'>
           <BenefitsStep
             components={{
               radio: ({ field, fieldData }) => {
@@ -131,7 +131,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
                 };
 
                 return (
-                  <div className="benefit-cards-container">
+                  <div className='benefit-cards-container'>
                     {(fieldData.options as OptionWithMeta[] | undefined)?.map(
                       (option) => {
                         const isSelected = selectedValue === option.value;
@@ -142,7 +142,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
                             className={`benefit-card${isSelected ? ' benefit-card--selected' : ''}`}
                           >
                             <input
-                              type="radio"
+                              type='radio'
                               name={field.name}
                               value={option.value}
                               checked={isSelected}
@@ -150,19 +150,19 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
                               style={{ display: 'none' }}
                             />
                             <div
-                              className="benefit-card__label"
+                              className='benefit-card__label'
                               title={option.label}
                             >
                               {option.label}
                             </div>
-                            <div className="benefit-card__summary">
+                            <div className='benefit-card__summary'>
                               {option.description || 'Plan summary'}
                             </div>
-                            <div className="benefit-card__cost">
+                            <div className='benefit-card__cost'>
                               {meta.display_cost || ''}
                             </div>
                             <button
-                              type="button"
+                              type='button'
                               className={`benefit-card__button${isSelected ? ' benefit-card__button--selected' : ''}`}
                               tabIndex={-1}
                             >
@@ -171,7 +171,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
                                 : 'Select This Plan'}
                             </button>
                             {isSelected && (
-                              <span className="benefit-card__selected-check">
+                              <span className='benefit-card__selected-check'>
                                 ✓ Plan Selected!
                               </span>
                             )}
@@ -196,10 +196,10 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
           <AlertError errors={errors} />
-          <div className="buttons-container">
-            <BackButton className="back-button">Previous Step</BackButton>
+          <div className='buttons-container'>
+            <BackButton className='back-button'>Previous Step</BackButton>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -272,47 +272,47 @@ export const OnboardingCustomBenefitsForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="onboarding-form-container">
-      <div className="onboarding-form-group">
-        <label htmlFor="companyId" className="onboarding-form-label">
+    <form onSubmit={handleSubmit} className='onboarding-form-container'>
+      <div className='onboarding-form-group'>
+        <label htmlFor='companyId' className='onboarding-form-label'>
           Company ID:
         </label>
         <input
-          id="companyId"
-          type="text"
+          id='companyId'
+          type='text'
           value={formData.companyId}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, companyId: e.target.value }))
           }
           required
-          placeholder="e.g. Your Company ID"
-          className="onboarding-form-input"
+          placeholder='e.g. Your Company ID'
+          className='onboarding-form-input'
         />
       </div>
 
-      <div className="onboarding-form-group">
-        <label htmlFor="countryCode" className="onboarding-form-label">
+      <div className='onboarding-form-group'>
+        <label htmlFor='countryCode' className='onboarding-form-label'>
           Country Code:
         </label>
         <input
-          id="countryCode"
-          type="text"
+          id='countryCode'
+          type='text'
           value={formData.countryCode}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
           }
           required
-          placeholder="e.g. PRT"
-          className="onboarding-form-input"
+          placeholder='e.g. PRT'
+          className='onboarding-form-input'
         />
       </div>
 
-      <div className="onboarding-form-group">
-        <label htmlFor="type" className="onboarding-form-label">
+      <div className='onboarding-form-group'>
+        <label htmlFor='type' className='onboarding-form-label'>
           Type:
         </label>
         <select
-          id="type"
+          id='type'
           value={formData.type}
           onChange={(e) =>
             setFormData((prev) => ({
@@ -321,30 +321,30 @@ export const OnboardingCustomBenefitsForm = () => {
             }))
           }
           required
-          className="onboarding-form-select"
+          className='onboarding-form-select'
         >
-          <option value="employee">Employee</option>
-          <option value="contractor">Contractor</option>
+          <option value='employee'>Employee</option>
+          <option value='contractor'>Contractor</option>
         </select>
       </div>
 
-      <div className="onboarding-form-group">
-        <label htmlFor="employmentId" className="onboarding-form-label">
+      <div className='onboarding-form-group'>
+        <label htmlFor='employmentId' className='onboarding-form-label'>
           Employment ID:
         </label>
         <input
-          id="employmentId"
-          type="text"
+          id='employmentId'
+          type='text'
           value={formData.employmentId}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
           }
-          placeholder="Enter employment ID"
-          className="onboarding-form-input"
+          placeholder='Enter employment ID'
+          className='onboarding-form-input'
         />
       </div>
 
-      <button type="submit" className="onboarding-form-button">
+      <button type='submit' className='onboarding-form-button'>
         Start Onboarding
       </button>
     </form>

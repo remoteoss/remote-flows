@@ -78,7 +78,7 @@ export function TextField({
             className={`RemoteFlows__TextField__Item__${name}`}
           >
             {label && (
-              <FormLabel className="RemoteFlows__TextField__Label">
+              <FormLabel className='RemoteFlows__TextField__Label'>
                 {label}
               </FormLabel>
             )}
@@ -90,18 +90,18 @@ export function TextField({
                   field.onChange(event);
                   onChange?.(event);
                 }}
-                className="RemoteFlows__TextField__Input"
+                className='RemoteFlows__TextField__Input'
                 placeholder={label}
                 maxLength={maxLength}
               />
             </FormControl>
             {description && (
-              <FormDescription className="RemoteFlows__TextField__Description">
+              <FormDescription className='RemoteFlows__TextField__Description'>
                 {description}
               </FormDescription>
             )}
             {includeErrorMessage && fieldState.error && (
-              <FormMessage className="RemoteFlows__TextField__Error" />
+              <FormMessage className='RemoteFlows__TextField__Error' />
             )}
           </FormItem>
         );
