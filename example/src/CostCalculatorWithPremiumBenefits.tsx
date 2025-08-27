@@ -40,8 +40,19 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includePremiumBenefits: true,
   includeManagementFee: true,
   enableCurrencyConversion: true,
-  globalDiscount: {
-    quotedAmount: 499,
+  managementFees: {
+    USD: 499,
+    EUR: 450,
+    GBP: 430,
+    AUD: 4999,
+    CAD: 995,
+    CHF: 615,
+    DKK: 4825,
+    NOK: 7340,
+    NZD: 1155,
+    SEK: 7270,
+    SGD: 940,
+    JPY: 1070,
   },
 };
 

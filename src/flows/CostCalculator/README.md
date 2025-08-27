@@ -532,15 +532,14 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 
 #### estimationParams Properties
 
-| Property                   | Type                                   | Description                                                                               |
-| -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `title`                    | `string`                               | Custom title for the estimation report                                                    |
-| `includeBenefits`          | `boolean`                              | If `true`, includes benefits information in the response                                  |
-| `includeCostBreakdowns`    | `boolean`                              | If `true`, includes detailed cost breakdowns in the response                              |
-| `includePremiumBenefits`   | `boolean`                              | If `true`, includes detailed premium benefits in the response                             |
-| `includeManagementFee`     | `boolean`                              | If `true`, includes the management fee in the response                                    |
-| `enableCurrencyConversion` | `boolean`                              | If `true`, enables currency conversion in the salary field                                |
-| `globalDiscount`           | `{quotedAmount: number, text: string}` | If defined shows a discount in the estimation, quoted_amount should be expressed in cents |
+| Property                   | Type      | Description                                                   |
+| -------------------------- | --------- | ------------------------------------------------------------- |
+| `title`                    | `string`  | Custom title for the estimation report                        |
+| `includeBenefits`          | `boolean` | If `true`, includes benefits information in the response      |
+| `includeCostBreakdowns`    | `boolean` | If `true`, includes detailed cost breakdowns in the response  |
+| `includePremiumBenefits`   | `boolean` | If `true`, includes detailed premium benefits in the response |
+| `includeManagementFee`     | `boolean` | If `true`, includes the management fee in the response        |
+| `enableCurrencyConversion` | `boolean` | If `true`, enables currency conversion in the salary field    |
 
 #### defaultValues Properties
 
@@ -633,12 +632,11 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 
 The `estimationOptions` object has the following properties:
 
-| Property                   | Type                                   | Description                                                   |
-| -------------------------- | -------------------------------------- | ------------------------------------------------------------- |
-| `title`                    | `string`                               | Custom title for the estimation report                        |
-| `includeBenefits`          | `boolean`                              | If `true`, includes benefits information in the response      |
-| `includeCostBreakdowns`    | `boolean`                              | If `true`, includes detailed cost breakdowns in the response  |
-| `includePremiumBenefits`   | `boolean`                              | If `true`, includes detailed premium benefits in the response |
-| `includeManagementFee`     | `boolean`                              | If `true`, includes the management fee in the response        |
-| `enableCurrencyConversion` | `boolean`                              | If `true`, enables currency conversion in the salary field    |
-| `globalDiscount`           | `{quotedAmount: number, text: string}` | If defined shows the management_fee in the estimation,        |
+| Property                   | Type      | Description                                                   |
+| -------------------------- | --------- | ------------------------------------------------------------- |
+| `title`                    | `string`  | Custom title for the estimation report                        |
+| `includeBenefits`          | `boolean` | If `true`, includes benefits information in the response      |
+| `includeCostBreakdowns`    | `boolean` | If `true`, includes detailed cost breakdowns in the response  |
+| `includePremiumBenefits`   | `boolean` | If `true`, includes detailed premium benefits in the response |
+| `includeManagementFee`     | `boolean` | If `true`, includes the management fee in the response        |
+| `enableCurrencyConversion` | `boolean` | If `true`, enables currency conversion in the salary field    |

@@ -556,7 +556,7 @@ describe('CostCalculatorFlow', () => {
     ).toHaveTextContent(/USD/i);
   });
 
-  it('should show management fee field when both includeManagementFee and globalDiscount are true', async () => {
+  it('should show management fee field when both includeManagementFee and managementFees are true', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
       estimationOptions: {
@@ -565,8 +565,19 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        globalDiscount: {
-          quotedAmount: 699,
+        managementFees: {
+          USD: 699,
+          AUD: 699,
+          CAD: 699,
+          CHF: 699,
+          DKK: 699,
+          EUR: 699,
+          GBP: 699,
+          JPY: 699,
+          NOK: 699,
+          NZD: 699,
+          SEK: 699,
+          SGD: 699,
         },
       },
     });
@@ -589,8 +600,19 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: false,
-        globalDiscount: {
-          quotedAmount: 669,
+        managementFees: {
+          USD: 699,
+          AUD: 699,
+          CAD: 699,
+          CHF: 699,
+          DKK: 699,
+          EUR: 699,
+          GBP: 699,
+          JPY: 699,
+          NOK: 699,
+          NZD: 699,
+          SEK: 699,
+          SGD: 699,
         },
       },
     });
@@ -636,8 +658,19 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        globalDiscount: {
-          quotedAmount: 699,
+        managementFees: {
+          USD: 699,
+          AUD: 699,
+          CAD: 699,
+          CHF: 699,
+          DKK: 699,
+          EUR: 699,
+          GBP: 699,
+          JPY: 699,
+          NOK: 699,
+          NZD: 699,
+          SEK: 699,
+          SGD: 699,
         },
       },
     });

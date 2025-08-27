@@ -120,11 +120,11 @@ export function buildPayload(
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
     ...(estimationOptions.includeManagementFee &&
-      estimationOptions.globalDiscount &&
+      estimationOptions.managementFees &&
       managementFee && {
         global_discount: {
           quoted_amount: managementFee,
-          text: estimationOptions.globalDiscount.text || 'New Management fee',
+          text: 'New Management fee',
         },
       }),
     employments: employments.map((value) =>

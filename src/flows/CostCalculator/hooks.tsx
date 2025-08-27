@@ -169,8 +169,8 @@ export const useCostCalculator = (
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
   const showManagementField =
-    estimationOptions.includeManagementFee && estimationOptions.globalDiscount;
-
+    estimationOptions.includeManagementFee &&
+    Object.keys(estimationOptions.managementFees || {}).length > 0;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
 

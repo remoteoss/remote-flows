@@ -65,12 +65,9 @@ export type CostCalculatorEstimationOptions = Partial<{
   includeManagementFee: boolean;
 
   /**
-   * Global discount. Default is null.
+   * Management fees by currency. Default is null.
    */
-  globalDiscount?: {
-    quotedAmount: CostCalculatorDiscount['quoted_amount'];
-    text?: CostCalculatorDiscount['text'];
-  };
+  managementFees?: Record<CurrencyKey, number>;
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;

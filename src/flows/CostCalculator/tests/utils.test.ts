@@ -179,9 +179,19 @@ describe('buildPayload', () => {
 
     const customOptions: CostCalculatorEstimationOptions = {
       includeManagementFee: true,
-      globalDiscount: {
-        quotedAmount: 599,
-        text: 'flat fee',
+      managementFees: {
+        USD: 699,
+        AUD: 699,
+        CAD: 699,
+        CHF: 699,
+        DKK: 699,
+        EUR: 699,
+        GBP: 699,
+        JPY: 699,
+        NOK: 699,
+        NZD: 699,
+        SEK: 699,
+        SGD: 699,
       },
     };
 

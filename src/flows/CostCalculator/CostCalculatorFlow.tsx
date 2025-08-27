@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
@@ -9,6 +9,7 @@ import {
 } from '@/src/flows/CostCalculator/hooks';
 import {
   CostCalculatorEstimationOptions,
+  CurrencyKey,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
@@ -45,6 +46,17 @@ export type CostCalculatorFlowProps = {
   version?: CostCalculatorVersion;
 };
 
+const getDefaultManagementFee = (
+  baseRates: Record<CurrencyKey, number>,
+  currency: CurrencyKey,
+  managementFees?: Record<CurrencyKey, number>,
+) => {
+  if (managementFees && managementFees[currency]) {
+    return managementFees[currency];
+  }
+  return baseRates[currency] / 100;
+};
+
 export const CostCalculatorFlow = ({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
@@ -57,12 +69,16 @@ export const CostCalculatorFlow = ({
   version = 'standard',
 }: CostCalculatorFlowProps) => {
   const formId = useId();
+  const [currency, setCurrency] = useState<CurrencyKey>('USD');
   const onCurrencyChange = (currency: string) => {
-    if (BASE_RATES[currency as keyof typeof BASE_RATES]) {
-      form.setValue(
-        'management.management_fee',
-        BASE_RATES[currency as keyof typeof BASE_RATES] / 100,
-      );
+    setCurrency(currency as CurrencyKey);
+    const managementFee = getDefaultManagementFee(
+      BASE_RATES,
+      currency as CurrencyKey,
+      estimationOptions.managementFees,
+    );
+    if (managementFee) {
+      form.setValue('management.management_fee', managementFee);
     }
   };
   const costCalculatorBag = useCostCalculator({
@@ -81,6 +97,13 @@ export const CostCalculatorFlow = ({
     costCalculatorBag.handleValidation,
   );
 
+  // TODO: Problem here is when you pass the currencySlug, we should change it to accept USD as value
+  const defaultManagementFee = getDefaultManagementFee(
+    BASE_RATES,
+    currency,
+    estimationOptions.managementFees,
+  );
+
   const form = useForm({
     resolver,
     defaultValues: {
@@ -91,11 +114,7 @@ export const CostCalculatorFlow = ({
       salary_conversion: '',
       salary_converted: '',
       management: {
-        management_fee:
-          estimationOptions.globalDiscount?.quotedAmount &&
-          estimationOptions.includeManagementFee
-            ? estimationOptions.globalDiscount.quotedAmount
-            : '',
+        management_fee: defaultManagementFee,
       },
     },
     shouldUnregister: false,
