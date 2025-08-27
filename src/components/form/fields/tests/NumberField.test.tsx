@@ -71,7 +71,7 @@ describe('NumberField Component', () => {
     const CustomNumberField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-number-field">Custom Number Field</div>
+        <div data-testid='custom-number-field'>Custom Number Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -88,7 +88,7 @@ describe('NumberField Component', () => {
     const CustomNumberField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-number-field">Custom Number Field</div>
+        <div data-testid='custom-number-field'>Custom Number Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -109,7 +109,7 @@ describe('NumberField Component', () => {
         field.onChange(e);
       };
 
-      return <input data-testid="custom-input" onChange={handleChange} />;
+      return <input data-testid='custom-input' onChange={handleChange} />;
     });
 
     (useFormFields as any).mockReturnValue({
@@ -128,12 +128,12 @@ describe('NumberField Component', () => {
     const CustomNumberFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-number-field">Context Number Field</div>
+        <div data-testid='context-number-field'>Context Number Field</div>
       ));
     const CustomNumberFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-number-field">Prop Number Field</div>
+        <div data-testid='prop-number-field'>Prop Number Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

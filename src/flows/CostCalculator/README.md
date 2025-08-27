@@ -231,7 +231,7 @@ export function BasicCostCalculatorLabels() {
           },
         }}
       />
-      <CostCalculatorDisclaimer label="Disclaimer" />
+      <CostCalculatorDisclaimer label='Disclaimer' />
     </RemoteFlows>
   );
 }

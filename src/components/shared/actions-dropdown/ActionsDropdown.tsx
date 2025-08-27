@@ -25,20 +25,20 @@ export function ActionsDropdown({
   return (
     <div className={cn('relative', className)}>
       <Button
-        variant="ghost"
-        className="h-8 w-8 p-0"
+        variant='ghost'
+        className='h-8 w-8 p-0'
         onClick={() => setIsOpen(!isOpen)}
       >
-        <MoreHorizontal className="h-4 w-4" />
+        <MoreHorizontal className='h-4 w-4' />
       </Button>
 
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40"
+            className='fixed inset-0 z-40'
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-1/2 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[120px]">
+          <div className='absolute right-0 top-1/2 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[120px]'>
             {actions.map((action, index) => (
               <button
                 key={index}

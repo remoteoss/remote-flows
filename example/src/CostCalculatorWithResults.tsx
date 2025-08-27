@@ -40,12 +40,12 @@ export function CostCalculatorWithResults() {
                   setEstimations(response);
                 }}
               />
-              <div className="buttons-container">
-                <CostCalculatorResetButton className="reset-button">
+              <div className='buttons-container'>
+                <CostCalculatorResetButton className='reset-button'>
                   Reset
                 </CostCalculatorResetButton>
                 <CostCalculatorSubmitButton
-                  className="submit-button"
+                  className='submit-button'
                   disabled={props.isSubmitting}
                 >
                   Get estimate
@@ -57,11 +57,11 @@ export function CostCalculatorWithResults() {
       />
       {estimations && (
         <>
-          <div className="mt-4 mb-2 flex gap-2">
+          <div className='mt-4 mb-2 flex gap-2'>
             <Flag
               code={estimations.data.employments?.[0].country.alpha_2_code}
             />
-            <label className="text-md font-bold">
+            <label className='text-md font-bold'>
               {estimations.data.employments?.[0].country.name}
             </label>
           </div>

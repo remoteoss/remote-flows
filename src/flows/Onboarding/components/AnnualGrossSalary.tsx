@@ -21,15 +21,15 @@ export const AnnualGrossSalary = ({
       {...props}
       sourceCurrency={currency}
       targetCurrency={desiredCurrency}
-      conversionFieldName="annual_gross_salary_conversion"
+      conversionFieldName='annual_gross_salary_conversion'
       conversionProperties={{
         ...annual_gross_salary_conversion_properties,
         description:
           annual_gross_salary_conversion_properties?.description ||
           'Estimated amount. This is an estimation. We calculate conversions based on spot rates that are subject to fluctuation over time.',
       }}
-      classNamePrefix="RemoteFlows-AnnualGrossSalary"
-      conversionType="no_spread"
+      classNamePrefix='RemoteFlows-AnnualGrossSalary'
+      conversionType='no_spread'
     />
   );
 };

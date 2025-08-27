@@ -28,7 +28,7 @@ describe('ReviewStep Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRender.mockReturnValue(
-      <div data-testid="rendered-content">Test Content</div>,
+      <div data-testid='rendered-content'>Test Content</div>,
     );
 
     (useOnboardingContext as any).mockReturnValue({
@@ -331,7 +331,7 @@ describe('ReviewStep Component', () => {
 
     it('should render the content returned by the render prop', () => {
       mockRender.mockReturnValue(
-        <div data-testid="custom-content">Custom Review Content</div>,
+        <div data-testid='custom-content'>Custom Review Content</div>,
       );
 
       render(<ReviewStep render={mockRender} />);

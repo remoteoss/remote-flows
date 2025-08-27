@@ -77,7 +77,7 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <FormItemContext.Provider value={{ id }}>
       <div
-        data-slot="form-item"
+        data-slot='form-item'
         {...props}
         className={cn('grid gap-2', className)}
       />
@@ -93,7 +93,7 @@ function FormLabel({
 
   return (
     <Label
-      data-slot="form-label"
+      data-slot='form-label'
       data-error={!!error}
       className={cn(
         'text-base-color mb-1 data-[error=true]:text-destructive',
@@ -114,7 +114,7 @@ const FormControl = React.forwardRef<
 
   return (
     <Slot
-      data-slot="form-control"
+      data-slot='form-control'
       ref={ref}
       id={formItemId}
       aria-describedby={
@@ -142,7 +142,7 @@ function FormDescription({
   if (typeof children === 'string') {
     return (
       <p
-        data-slot="form-description"
+        data-slot='form-description'
         id={formDescriptionId}
         className={cn('text-base-color text-xs', className)}
         dangerouslySetInnerHTML={{
@@ -155,7 +155,7 @@ function FormDescription({
 
   return (
     <p
-      data-slot="form-description"
+      data-slot='form-description'
       id={formDescriptionId}
       className={cn('text-base-color text-xs', className)}
       {...props}
@@ -175,7 +175,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
 
   return (
     <p
-      data-slot="form-message"
+      data-slot='form-message'
       id={formMessageId}
       className={cn('text-destructive text-sm', className)}
       {...props}

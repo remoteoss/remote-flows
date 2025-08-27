@@ -61,7 +61,7 @@ export const SaveDraftButton = ({
 
   return (
     <button
-      type="button"
+      type='button'
       onClick={handleSaveDraft}
       disabled={disabled || onboardingBag.isSubmitting}
       className={className}

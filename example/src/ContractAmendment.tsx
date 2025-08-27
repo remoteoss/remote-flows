@@ -30,7 +30,7 @@ function AmendmentFlow({
   switch (contractAmendmentBag.stepState.currentStep.name) {
     case 'form':
       return (
-        <div className="amendment_form">
+        <div className='amendment_form'>
           <Form
             onSuccess={handleSuccess}
             onError={(err) => {
@@ -43,8 +43,8 @@ function AmendmentFlow({
             }}
           />
           {error && (
-            <div className="amendment_form__error">
-              <p className="amendment_form__error__title">
+            <div className='amendment_form__error'>
+              <p className='amendment_form__error__title'>
                 Contract detail change required
               </p>
               <p>
@@ -55,7 +55,7 @@ function AmendmentFlow({
             </div>
           )}
           <SubmitButton
-            className="amendment_form__buttons__submit"
+            className='amendment_form__buttons__submit'
             disabled={contractAmendmentBag.isSubmitting}
           >
             Go to preview and confirm changes
@@ -64,7 +64,7 @@ function AmendmentFlow({
       );
     case 'confirmation_form':
       return (
-        <div className="confirmation_form">
+        <div className='confirmation_form'>
           <ConfirmationForm />
           <div>
             {Object.entries(
@@ -77,18 +77,18 @@ function AmendmentFlow({
                   (field) => field.name === key,
                 )?.label as string;
                 return (
-                  <div className="confirmation_form__item" key={key}>
+                  <div className='confirmation_form__item' key={key}>
                     <p>{label}:</p>
                     {initialValue ? (
-                      <div className="confirmation_form__item__value">
-                        <span className="confirmation_form__item__value__initial">
+                      <div className='confirmation_form__item__value'>
+                        <span className='confirmation_form__item__value__initial'>
                           {initialValue}
                         </span>
                         <span>&rarr;</span>
                         <span>{value as string}</span>
                       </div>
                     ) : (
-                      <div className="confirmation_form__item__value">
+                      <div className='confirmation_form__item__value'>
                         <span>{value as string}</span>
                       </div>
                     )}
@@ -101,14 +101,14 @@ function AmendmentFlow({
           {automatable?.data?.automatable ? (
             <div>{automatable?.data?.message}</div>
           ) : null}
-          <div className="confirmation_form__buttons">
+          <div className='confirmation_form__buttons'>
             <SubmitButton
               disabled={contractAmendmentBag.isSubmitting}
-              className="confirmation_form__buttons__submit"
+              className='confirmation_form__buttons__submit'
             >
               Submit amendment request
             </SubmitButton>
-            <BackButton className="confirmation_form__buttons__back">
+            <BackButton className='confirmation_form__buttons__back'>
               Back
             </BackButton>
           </div>
@@ -126,7 +126,7 @@ export function ContractAmendment() {
     >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
-          countryCode="PRT"
+          countryCode='PRT'
           employmentId={EMPLOYMENT_ID}
           render={AmendmentFlow}
         />

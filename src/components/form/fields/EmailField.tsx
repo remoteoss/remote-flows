@@ -39,5 +39,5 @@ export function EmailField(props: EmailFieldProps) {
     );
   }
 
-  return <TextField {...props} type="email" />;
+  return <TextField {...props} type='email' />;
 }

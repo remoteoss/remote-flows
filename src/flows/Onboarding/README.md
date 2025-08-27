@@ -101,11 +101,11 @@ const MultiStepForm = ({
             }
             onError={(error: Error) => setApiError(error.message)}
           />
-          <div className="buttons-container">
+          <div className='buttons-container'>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
-              variant="outline"
+              variant='outline'
             >
               Continue
             </SubmitButton>
@@ -124,16 +124,16 @@ const MultiStepForm = ({
             }
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
-          <div className="buttons-container">
+          {apiError && <p className='alert-error'>{apiError}</p>}
+          <div className='buttons-container'>
             <BackButton
-              className="back-button"
+              className='back-button'
               onClick={() => setApiError(null)}
             >
               Previous Step
             </BackButton>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
               onClick={() => setApiError(null)}
             >
@@ -152,16 +152,16 @@ const MultiStepForm = ({
             onSuccess={(data: EmploymentResponse) => console.log('data', data)}
             onError={(error: Error) => setApiError(error.message)}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
-          <div className="buttons-container">
+          {apiError && <p className='alert-error'>{apiError}</p>}
+          <div className='buttons-container'>
             <BackButton
-              className="back-button"
+              className='back-button'
               onClick={() => setApiError(null)}
             >
               Previous Step
             </BackButton>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               onClick={() => setApiError(null)}
               disabled={onboardingBag.isSubmitting}
             >
@@ -172,7 +172,7 @@ const MultiStepForm = ({
       );
     case 'benefits':
       return (
-        <div className="benefits-container">
+        <div className='benefits-container'>
           <BenefitsStep
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
@@ -180,17 +180,17 @@ const MultiStepForm = ({
             onError={(error: Error) => setApiError(error.message)}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
-          <div className="buttons-container">
+          {apiError && <p className='alert-error'>{apiError}</p>}
+          <div className='buttons-container'>
             <BackButton
-              className="back-button"
+              className='back-button'
               onClick={() => setApiError(null)}
             >
               Previous Step
             </BackButton>
             <SubmitButton
               onClick={() => setApiError(null)}
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -223,7 +223,7 @@ const OnBoardingRender = ({
 
   return (
     <>
-      <div className="steps-navigation">
+      <div className='steps-navigation'>
         <ul>
           {STEPS.map((step, index) => (
             <li
@@ -236,8 +236,8 @@ const OnBoardingRender = ({
         </ul>
       </div>
 
-      <div className="card" style={{ marginBottom: '20px' }}>
-        <h1 className="heading">{stepTitle}</h1>
+      <div className='card' style={{ marginBottom: '20px' }}>
+        <h1 className='heading'>{stepTitle}</h1>
         <MultiStepForm onboardingBag={onboardingBag} components={components} />
       </div>
     </>
@@ -260,9 +260,9 @@ const fetchToken = () => {
 export const OnboardingForm = () => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
-      type="employee"
-      countryCode="PRT"
+      companyId='c3c22940-e118-425c-9e31-f2fd4d43c6d8'
+      type='employee'
+      countryCode='PRT'
       render={OnBoardingRender}
     />
   </RemoteFlows>
@@ -302,10 +302,10 @@ const STEPS = [
 export const OnboardingForm = () => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
-      type="employee"
+      companyId='c3c22940-e118-425c-9e31-f2fd4d43c6d8'
+      type='employee'
       render={OnBoardingRender}
-      employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
+      employmentId='afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395'
       skipSteps={['select_country']}
     />
   </RemoteFlows>
@@ -350,7 +350,7 @@ const MultiStepForm = ({
     // ... other cases
     case 'benefits':
       return (
-        <div className="benefits-container">
+        <div className='benefits-container'>
           <BenefitsStep
             components={{
               radio: ({ field, fieldData }) => {
@@ -364,7 +364,7 @@ const MultiStepForm = ({
                 };
 
                 return (
-                  <div className="benefit-cards-container">
+                  <div className='benefit-cards-container'>
                     {(fieldData.options as OptionWithMeta[] | undefined)?.map(
                       (option) => {
                         const isSelected = selectedValue === option.value;
@@ -375,7 +375,7 @@ const MultiStepForm = ({
                             className={`benefit-card${isSelected ? ' benefit-card--selected' : ''}`}
                           >
                             <input
-                              type="radio"
+                              type='radio'
                               name={field.name}
                               value={option.value}
                               checked={isSelected}
@@ -383,19 +383,19 @@ const MultiStepForm = ({
                               style={{ display: 'none' }}
                             />
                             <div
-                              className="benefit-card__label"
+                              className='benefit-card__label'
                               title={option.label}
                             >
                               {option.label}
                             </div>
-                            <div className="benefit-card__summary">
+                            <div className='benefit-card__summary'>
                               {option.description || 'Plan summary'}
                             </div>
-                            <div className="benefit-card__cost">
+                            <div className='benefit-card__cost'>
                               {meta.display_cost || ''}
                             </div>
                             <button
-                              type="button"
+                              type='button'
                               className={`benefit-card__button${isSelected ? ' benefit-card__button--selected' : ''}`}
                               tabIndex={-1}
                             >
@@ -404,7 +404,7 @@ const MultiStepForm = ({
                                 : 'Select This Plan'}
                             </button>
                             {isSelected && (
-                              <span className="benefit-card__selected-check">
+                              <span className='benefit-card__selected-check'>
                                 ✓ Plan Selected!
                               </span>
                             )}
@@ -422,11 +422,11 @@ const MultiStepForm = ({
             onError={(error: Error) => setApiError(error.message)}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
-          {apiError && <p className="alert-error">{apiError}</p>}
-          <div className="buttons-container">
-            <BackButton className="back-button">Previous Step</BackButton>
+          {apiError && <p className='alert-error'>{apiError}</p>}
+          <div className='buttons-container'>
+            <BackButton className='back-button'>Previous Step</BackButton>
             <SubmitButton
-              className="submit-button"
+              className='submit-button'
               disabled={onboardingBag.isSubmitting}
             >
               Continue
@@ -441,9 +441,9 @@ const MultiStepForm = ({
 export const OnboardingForm = () => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      companyId="your-company-id"
-      type="employee"
-      countryCode="PRT"
+      companyId='your-company-id'
+      type='employee'
+      countryCode='PRT'
       render={MultiStepForm}
     />
   </RemoteFlows>
@@ -476,10 +476,10 @@ const ReviewStep = ({
 export const OnboardingForm = () => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
-      type="employee"
-      countryCode="PRT"
-      externalId="EMP-12345" // Your internal employee ID
+      companyId='c3c22940-e118-425c-9e31-f2fd4d43c6d8'
+      type='employee'
+      countryCode='PRT'
+      externalId='EMP-12345' // Your internal employee ID
       initialValues={{
         name: 'John Doe',
         email: 'john.doe@example.com',
@@ -558,10 +558,10 @@ const STEPS = [
 export const OnboardingForm = () => (
   <RemoteFlows auth={fetchToken}>
     <OnboardingFlow
-      companyId="c3c22940-e118-425c-9e31-f2fd4d43c6d8"
-      type="employee"
+      companyId='c3c22940-e118-425c-9e31-f2fd4d43c6d8'
+      type='employee'
       render={OnBoardingRender}
-      employmentId="afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395"
+      employmentId='afe2f0dd-2a07-425a-a8f7-4fdf4f8f4395'
       options={{
         jsfModify: {
           basic_information: {
@@ -677,7 +677,7 @@ Component that handles the invitation process and reserve invoice creation based
       ? 'Create Reserve'
       : 'Invite Employee';
   }}
-  className="submit-button"
+  className='submit-button'
 />
 ```
 

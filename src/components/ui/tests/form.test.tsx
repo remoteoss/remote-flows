@@ -47,7 +47,7 @@ describe('Form', () => {
 
     it('should render the description tag when we inline a function component', () => {
       const TestComponent = () => {
-        return <span data-testid="test">hello this is my message</span>;
+        return <span data-testid='test'>hello this is my message</span>;
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

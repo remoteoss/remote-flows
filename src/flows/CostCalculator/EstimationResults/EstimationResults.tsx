@@ -48,22 +48,22 @@ const EstimationResultsHeader = ({
     },
   ];
   return (
-    <div className="RemoteFlows__EstimationResults__Header flex justify-between">
-      <div className="flex flex-row items-center gap-6">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]">
+    <div className='RemoteFlows__EstimationResults__Header flex justify-between'>
+      <div className='flex flex-row items-center gap-6'>
+        <div className='flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
           <Flag code={country.alpha_2_code} />
         </div>
-        <div className="space-y-1">
-          <h2 className="text-lg font-medium leading-none text-[#181818]">
+        <div className='space-y-1'>
+          <h2 className='text-lg font-medium leading-none text-[#181818]'>
             {title}
           </h2>
-          <p className="text-xs text-[#71717A]">
+          <p className='text-xs text-[#71717A]'>
             {country.name} {region ? ` (${region.name})` : ''}
           </p>
         </div>
       </div>
       <ActionsDropdown
-        className="RemoteFlows__EstimationResults__ActionsDropdown"
+        className='RemoteFlows__EstimationResults__ActionsDropdown'
         actions={actions}
       />
     </div>
@@ -126,36 +126,36 @@ function OnboardingTimeline({
 }) {
   return (
     <Accordion
-      type="single"
+      type='single'
       collapsible
       className={cn(
         'RemoteFlows__EstimationResults__OnboardingTimeline w-full',
         className,
       )}
     >
-      <AccordionItem value="timeline" className="border-border">
-        <AccordionTrigger className="hover:no-underline px-0 py-4">
-          <div className="flex items-center justify-between w-full">
-            <span className="text-base font-medium text-[#0F172A]">
+      <AccordionItem value='timeline' className='border-border'>
+        <AccordionTrigger className='hover:no-underline px-0 py-4'>
+          <div className='flex items-center justify-between w-full'>
+            <span className='text-base font-medium text-[#0F172A]'>
               Onboarding timeline
             </span>
-            <span className="text-base text-muted-foreground mr-4">
+            <span className='text-base text-muted-foreground mr-4'>
               {minimumOnboardingDays} days
             </span>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-0 pb-4">
-          <ul className="list-disc list-inside space-y-2">
+        <AccordionContent className='px-0 pb-4'>
+          <ul className='list-disc list-inside space-y-2'>
             {data.steps.map((step) => (
               <li key={step.id}>
-                <strong className="font-medium text-[#09090B]">
+                <strong className='font-medium text-[#09090B]'>
                   {step.title}
                 </strong>{' '}
                 - {step.description}
               </li>
             ))}
           </ul>
-          <p className="text-xs text-muted-foreground mt-4">
+          <p className='text-xs text-muted-foreground mt-4'>
             {data.helpText}
             {data.zendeskArticleId && (
               <ZendeskTriggerButton zendeskId={data.zendeskArticleId}>
@@ -182,34 +182,34 @@ function HiringSection({
 }) {
   return (
     <Accordion
-      type="single"
+      type='single'
       collapsible
       className={cn(
         'RemoteFlows__EstimationResults__HiringSection w-full',
         className,
       )}
     >
-      <AccordionItem value="timeline" className="border-border">
-        <AccordionTrigger className="hover:no-underline px-0 py-4">
-          <div className="flex items-center justify-between w-full">
-            <span className="text-base font-medium text-[#0F172A]">
+      <AccordionItem value='timeline' className='border-border'>
+        <AccordionTrigger className='hover:no-underline px-0 py-4'>
+          <div className='flex items-center justify-between w-full'>
+            <span className='text-base font-medium text-[#0F172A]'>
               Hiring in {country.name}
             </span>
           </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className="flex flex-col gap-1">
+          <div className='flex flex-col gap-1'>
             <a
               href={countryGuideUrl}
-              target="_blank"
-              className="RemoteFlows__Link"
+              target='_blank'
+              className='RemoteFlows__Link'
             >
               Explore our complete guide ↗
             </a>
             <a
               href={countryBenefitsUrl}
-              target="_blank"
-              className="RemoteFlows__Link"
+              target='_blank'
+              className='RemoteFlows__Link'
             >
               Explore our available benefits ↗
             </a>
@@ -237,17 +237,17 @@ function EstimationHeaders({
       <span aria-hidden />
       {isMultipleCurrency ? (
         <>
-          <span className="RemoteFlows__EstimationResults__Headers__Label">
+          <span className='RemoteFlows__EstimationResults__Headers__Label'>
             Employee currency
           </span>
-          <span className="RemoteFlows__EstimationResults__Headers__Label">
+          <span className='RemoteFlows__EstimationResults__Headers__Label'>
             Employer currency
           </span>
         </>
       ) : (
         <>
           <span></span>
-          <span className="RemoteFlows__EstimationResults__Headers__Label">
+          <span className='RemoteFlows__EstimationResults__Headers__Label'>
             Amount
           </span>
         </>
@@ -275,8 +275,8 @@ function EstimationRow({
 
   return (
     <div className={cn('RemoteFlows__EstimationResults__Row', className)}>
-      <div className="grid grid-cols-3 items-center">
-        <div className="flex items-center gap-2">
+      <div className='grid grid-cols-3 items-center'>
+        <div className='flex items-center gap-2'>
           <span
             className={cn(
               'min-w-[140px]',
@@ -288,7 +288,7 @@ function EstimationRow({
           {isCollapsible && (
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1 hover:bg-gray-100 rounded"
+              className='p-1 hover:bg-gray-100 rounded'
             >
               <ChevronDown
                 className={`h-4 w-4 text-muted-foreground transition-transform ${
@@ -328,7 +328,7 @@ function EstimationRow({
 
       {/* Collapsible content */}
       {isCollapsible && isOpen && children && (
-        <div className="mt-4">{children}</div>
+        <div className='mt-4'>{children}</div>
       )}
     </div>
   );
@@ -370,8 +370,8 @@ function BreakdownListItem({
         <div className={cn('flex items-center gap-2', isNested && 'pl-3')}>
           {!isNested && (
             <span
-              className="w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0"
-              aria-hidden="true"
+              className='w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0'
+              aria-hidden='true'
             />
           )}
 
@@ -396,7 +396,7 @@ function BreakdownListItem({
                 </>
               }
             >
-              <button className="p-1 hover:bg-gray-100 rounded">
+              <button className='p-1 hover:bg-gray-100 rounded'>
                 <Info
                   className={cn(
                     'text-muted-foreground',
@@ -410,7 +410,7 @@ function BreakdownListItem({
           {(item.isCollapsible || hasChildren) && (
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1 hover:bg-gray-100 rounded"
+              className='p-1 hover:bg-gray-100 rounded'
             >
               <ChevronDown
                 className={`h-3 w-3 text-muted-foreground transition-transform ${
@@ -453,7 +453,7 @@ function BreakdownListItem({
       </div>
 
       {hasChildren && isOpen && (
-        <div className="mt-1">
+        <div className='mt-1'>
           <BreakdownList
             items={item.children!}
             isMultipleCurrency={isMultipleCurrency}
@@ -545,8 +545,8 @@ export const EstimationResults = ({
   const hasRegion = estimation.region.code !== estimation.country.code;
 
   return (
-    <Card className="RemoteFlows__EstimationResults__Card p-10">
-      <div className="RemoteFlows__Separator">
+    <Card className='RemoteFlows__EstimationResults__Card p-10'>
+      <div className='RemoteFlows__Separator'>
         <CustomHeader
           title={title}
           region={hasRegion ? estimation.region : undefined}
@@ -555,13 +555,13 @@ export const EstimationResults = ({
           onExportPdf={onExportPdf}
         />
       </div>
-      <div className="RemoteFlows__Separator">
+      <div className='RemoteFlows__Separator'>
         <EstimationHeaders
           isMultipleCurrency={isMultipleCurrency}
-          className="mb-3"
+          className='mb-3'
         />
         <EstimationRow
-          label="Monthly total cost"
+          label='Monthly total cost'
           amounts={
             isMultipleCurrency
               ? [
@@ -678,9 +678,9 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Separator">
+      <div className='RemoteFlows__Separator'>
         <EstimationRow
-          label="Annual total cost"
+          label='Annual total cost'
           amounts={
             isMultipleCurrency
               ? [
@@ -821,7 +821,7 @@ export const EstimationResults = ({
           />
         </EstimationRow>
       </div>
-      <div className="RemoteFlows__Separator">
+      <div className='RemoteFlows__Separator'>
         <CustomOnboardingTimeline
           minimumOnboardingDays={estimation.minimum_onboarding_time}
           data={onboardingTimelineData}

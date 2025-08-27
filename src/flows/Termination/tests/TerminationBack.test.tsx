@@ -40,9 +40,9 @@ describe('TerminationBack', () => {
       render(
         <TerminationBack
           disabled
-          data-testid="back-button"
-          aria-label="Go back"
-          className="custom-class"
+          data-testid='back-button'
+          aria-label='Go back'
+          className='custom-class'
           onClick={mockOnClick}
         >
           <span>Back Step</span>
@@ -79,7 +79,7 @@ describe('TerminationBack', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, onClick, ...props }) => (
-      <button data-testid="custom-button" onClick={onClick} {...props}>
+      <button data-testid='custom-button' onClick={onClick} {...props}>
         {children}
       </button>
     ));
@@ -96,10 +96,10 @@ describe('TerminationBack', () => {
       render(
         <TerminationBack
           disabled
-          className="custom-class"
-          data-testid="back-button"
+          className='custom-class'
+          data-testid='back-button'
           onClick={mockOnClick}
-          variant="custom"
+          variant='custom'
         >
           Back custom button
         </TerminationBack>,

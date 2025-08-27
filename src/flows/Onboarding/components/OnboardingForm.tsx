@@ -126,7 +126,7 @@ export function OnboardingForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__OnboardingForm"
+        className='space-y-4 RemoteFlows__OnboardingForm'
       >
         <JSONSchemaFormFields
           components={components}

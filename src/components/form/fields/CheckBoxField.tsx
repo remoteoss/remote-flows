@@ -107,7 +107,7 @@ export function CheckBoxField({
 
                 {options && multiple ? (
                   options.map((option) => (
-                    <div key={option.value} className="flex space-x-2">
+                    <div key={option.value} className='flex space-x-2'>
                       <Checkbox
                         id={option.value}
                         onCheckedChange={(checked: CheckedState) => {
@@ -119,18 +119,18 @@ export function CheckBoxField({
                           onChange?.(checked, option.value);
                         }}
                         checked={field.value?.includes(option.value)}
-                        className="RemoteFlows__CheckBox__Input"
+                        className='RemoteFlows__CheckBox__Input'
                       />
                       <FormLabel
                         htmlFor={option.value}
-                        className="mb-0 RemoteFlows__CheckBox__Label"
+                        className='mb-0 RemoteFlows__CheckBox__Label'
                       >
                         {option.label}
                       </FormLabel>
                     </div>
                   ))
                 ) : (
-                  <div className="flex space-x-2">
+                  <div className='flex space-x-2'>
                     <Checkbox
                       id={name}
                       onCheckedChange={(event: CheckedState) => {
@@ -138,11 +138,11 @@ export function CheckBoxField({
                         onChange?.(event);
                       }}
                       checked={field.value}
-                      className="RemoteFlows__CheckBox__Input"
+                      className='RemoteFlows__CheckBox__Input'
                     />
                     <FormLabel
                       htmlFor={name}
-                      className="mb-0 RemoteFlows__CheckBox__Label"
+                      className='mb-0 RemoteFlows__CheckBox__Label'
                     >
                       {label}
                     </FormLabel>

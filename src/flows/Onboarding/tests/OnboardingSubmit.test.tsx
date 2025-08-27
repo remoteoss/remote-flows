@@ -56,8 +56,8 @@ describe('OnboardingSubmit Component', () => {
       <OnboardingSubmit
         onClick={mockOnClick}
         disabled={true}
-        className="custom-class"
-        type="submit"
+        className='custom-class'
+        type='submit'
       >
         Submit Application
       </OnboardingSubmit>,
@@ -74,7 +74,7 @@ describe('OnboardingSubmit Component', () => {
     const CustomButton = vi
       .fn()
       .mockImplementationOnce(({ children }) => (
-        <button data-testid="custom-button">{children}</button>
+        <button data-testid='custom-button'>{children}</button>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -96,7 +96,7 @@ describe('OnboardingSubmit Component', () => {
     const CustomButton = vi
       .fn()
       .mockImplementationOnce(({ children, ...props }) => (
-        <button data-testid="custom-button" {...props}>
+        <button data-testid='custom-button' {...props}>
           {children}
         </button>
       ));
@@ -133,7 +133,7 @@ describe('OnboardingSubmit Component', () => {
         { form, children, ...props }, // Changed: destructure onClick directly
       ) => (
         <button
-          data-testid="custom-button"
+          data-testid='custom-button'
           form={form}
           onClick={props.onClick} // Changed: use onClick directly, not props?.onClick
         >
@@ -193,7 +193,7 @@ describe('OnboardingSubmit Component', () => {
       .fn()
       .mockImplementationOnce(({ children, variant, form, ...props }) => (
         <button
-          data-testid="custom-button"
+          data-testid='custom-button'
           data-variant={variant}
           form={form}
           {...props}
@@ -209,8 +209,8 @@ describe('OnboardingSubmit Component', () => {
     render(
       <OnboardingSubmit
         onClick={mockOnClick}
-        variant="outline"
-        className="submit-button"
+        variant='outline'
+        className='submit-button'
         disabled={false}
       >
         Continue

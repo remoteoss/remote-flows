@@ -17,7 +17,7 @@ export function CostCalculatorResetButton({
     return (
       <CustomButton
         {...props}
-        type="reset"
+        type='reset'
         form={formId}
         onClick={(evt) => {
           costCalculatorBag?.resetForm();
@@ -33,7 +33,7 @@ export function CostCalculatorResetButton({
   return (
     <Button
       {...props}
-      type="reset"
+      type='reset'
       className={cn(
         'RemoteFlows__CostCalculatorForm__ResetButton',
         props.className,

@@ -24,7 +24,7 @@ export function CostCalculatorSubmitButton({
   return (
     <Button
       {...props}
-      type="submit"
+      type='submit'
       className={cn(
         'RemoteFlows__CostCalculatorForm__SubmitButton',
         props.className,

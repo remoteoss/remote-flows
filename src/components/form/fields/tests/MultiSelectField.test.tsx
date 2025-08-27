@@ -163,7 +163,7 @@ describe('MultiSelectField Component', () => {
     const CustomMultiSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-multi-select-field">
+        <div data-testid='custom-multi-select-field'>
           Custom Multi-Select Field
         </div>
       ));
@@ -182,7 +182,7 @@ describe('MultiSelectField Component', () => {
     const CustomMultiSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-multi-select-field">
+        <div data-testid='custom-multi-select-field'>
           Custom Multi-Select Field
         </div>
       ));
@@ -208,7 +208,7 @@ describe('MultiSelectField Component', () => {
       return (
         <div>
           <button
-            data-testid="custom-select-option"
+            data-testid='custom-select-option'
             onClick={() => handleChange(['option1', 'option2'])}
           >
             Select Options
@@ -233,14 +233,14 @@ describe('MultiSelectField Component', () => {
     const CustomMultiSelectFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-multi-select-field">
+        <div data-testid='context-multi-select-field'>
           Context Multi-Select Field
         </div>
       ));
     const CustomMultiSelectFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-multi-select-field">Prop Multi-Select Field</div>
+        <div data-testid='prop-multi-select-field'>Prop Multi-Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

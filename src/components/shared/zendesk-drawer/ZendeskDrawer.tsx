@@ -40,28 +40,28 @@ export const ZendeskDrawer = ({
     <Drawer
       open={open}
       onOpenChange={(open) => !open && handleClose()}
-      direction="right"
+      direction='right'
     >
       <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
-      <DrawerContent className="h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer">
-        <div className="h-full flex flex-col">
+      <DrawerContent className='h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer'>
+        <div className='h-full flex flex-col'>
           <DrawerHeader>
             <DrawerTitle>{data?.title}</DrawerTitle>
             <DrawerDescription>
               For more details see our{' '}
-              <a href={zendeskURL} target="_blank" rel="noopener noreferrer">
+              <a href={zendeskURL} target='_blank' rel='noopener noreferrer'>
                 help article
               </a>{' '}
             </DrawerDescription>
           </DrawerHeader>
           {isLoading && <div>Loading...</div>}
           {error && (
-            <div className="text-sm p-4 text-red-500">
+            <div className='text-sm p-4 text-red-500'>
               Error loading article
             </div>
           )}
           <div
-            className="flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content"
+            className='flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content'
             dangerouslySetInnerHTML={{
               __html: sanitizeHtml(data?.body || ''),
             }}

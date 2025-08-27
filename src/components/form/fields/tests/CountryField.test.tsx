@@ -103,7 +103,7 @@ describe('CountryField Component', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-select-field">Custom Select Field</div>
+        <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -120,7 +120,7 @@ describe('CountryField Component', () => {
     const CustomSelectField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-select-field">Custom Select Field</div>
+        <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -143,11 +143,11 @@ describe('CountryField Component', () => {
 
       return (
         <select
-          data-testid="custom-select"
+          data-testid='custom-select'
           onChange={(e) => handleChange(e.target.value)}
         >
-          <option value="US">United States</option>
-          <option value="CA">Canada</option>
+          <option value='US'>United States</option>
+          <option value='CA'>Canada</option>
         </select>
       );
     });
@@ -221,12 +221,12 @@ describe('CountryField Component', () => {
     const CustomCountryFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-country-field">Context Country Field</div>
+        <div data-testid='context-country-field'>Context Country Field</div>
       ));
     const CustomCountryFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-country-field">Prop Country Field</div>
+        <div data-testid='prop-country-field'>Prop Country Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

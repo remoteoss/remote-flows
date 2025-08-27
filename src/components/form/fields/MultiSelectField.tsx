@@ -76,7 +76,7 @@ export function MultiSelectField({
             data-field={name}
             className={`RemoteFlows__SelectField__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__SelectField__Label">
+            <FormLabel className='RemoteFlows__SelectField__Label'>
               {label}
             </FormLabel>
             <FormControl>

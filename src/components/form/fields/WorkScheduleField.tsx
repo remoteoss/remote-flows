@@ -135,88 +135,88 @@ function WorkScheduleSelectionForm({
   }
 
   return (
-    <div className="flex items-center justify-between">
+    <div className='flex items-center justify-between'>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
           <Button
             variant={'link'}
-            className="flex items-center p-0 RemoteFlows__WorkScheduleSelectionForm__Trigger"
+            className='flex items-center p-0 RemoteFlows__WorkScheduleSelectionForm__Trigger'
           >
             Edit Schedule
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__WorkScheduleSelectionForm__Content">
+        <DialogContent className='max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__WorkScheduleSelectionForm__Content'>
           <DialogHeader>
-            <DialogTitle className="RemoteFlows__WorkScheduleSelectionForm__Title">
+            <DialogTitle className='RemoteFlows__WorkScheduleSelectionForm__Title'>
               Edit employee working hours
             </DialogTitle>
           </DialogHeader>
 
           <Form {...form}>
-            <form className="space-y-4 RemoteFlows__WorkScheduleSelectionForm__Form">
-              <div className="rounded-lg">
-                <p className="text-gray-600 text-sm mb-4 RemoteFlows__WorkScheduleSelectionForm__Description">
+            <form className='space-y-4 RemoteFlows__WorkScheduleSelectionForm__Form'>
+              <div className='rounded-lg'>
+                <p className='text-gray-600 text-sm mb-4 RemoteFlows__WorkScheduleSelectionForm__Description'>
                   The times displayed are in the employee's time zone in the
                   24-hour format.
                 </p>
 
-                <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide RemoteFlows__WorkScheduleSelectionForm__Header">
-                  <div className="col-span-2"></div>
-                  <div className="col-span-3 text-center">START</div>
-                  <div className="col-span-1 text-center"></div>
-                  <div className="col-span-3 text-center">END</div>
-                  <div className="col-span-2 text-center">HOURS</div>
+                <div className='grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide RemoteFlows__WorkScheduleSelectionForm__Header'>
+                  <div className='col-span-2'></div>
+                  <div className='col-span-3 text-center'>START</div>
+                  <div className='col-span-1 text-center'></div>
+                  <div className='col-span-3 text-center'>END</div>
+                  <div className='col-span-2 text-center'>HOURS</div>
                   {/* <div className="col-span-2 text-center">ACTIONS</div> */}
                 </div>
 
-                <div className="RemoteFlows__WorkScheduleSelectionForm__Rows">
+                <div className='RemoteFlows__WorkScheduleSelectionForm__Rows'>
                   {fields.map((field, index) => {
                     const currentDay = watchedSchedule[index];
                     const calculatedHours = calculateHours(currentDay);
 
                     return (
                       <React.Fragment key={field.id}>
-                        <div className="grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Hours">
-                          <div className="col-span-2 flex items-center gap-3">
+                        <div className='grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Hours'>
+                          <div className='col-span-2 flex items-center gap-3'>
                             <CheckBoxField
                               label={field.day}
                               name={`schedule.${index}.checked`}
                             />
                           </div>
-                          <div className="col-span-3">
+                          <div className='col-span-3'>
                             <TextField
                               name={`schedule.${index}.start_time`}
                               includeErrorMessage={false}
                             />
                           </div>
-                          <div className="col-span-1 text-center text-gray-500">
+                          <div className='col-span-1 text-center text-gray-500'>
                             to
                           </div>
-                          <div className="col-span-3">
+                          <div className='col-span-3'>
                             <TextField
                               name={`schedule.${index}.end_time`}
                               includeErrorMessage={false}
                             />
                           </div>
-                          <div className="col-span-2 text-center text-gray-600">
+                          <div className='col-span-2 text-center text-gray-600'>
                             {isNaN(calculatedHours)
                               ? '-'
                               : `${calculatedHours} hours`}
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Break">
-                          <div className="col-span-2 text-gray-500">Break</div>
-                          <div className="col-span-2">
+                        <div className='grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__WorkScheduleSelectionForm__Row-Break'>
+                          <div className='col-span-2 text-gray-500'>Break</div>
+                          <div className='col-span-2'>
                             <TextField
                               name={`schedule.${index}.break_duration_minutes`}
                               includeErrorMessage={false}
                             />
                           </div>
-                          <div className="col-span-2 text-gray-500">
+                          <div className='col-span-2 text-gray-500'>
                             minutes
                           </div>
-                          <div className="col-span-4"></div>
+                          <div className='col-span-4'></div>
                         </div>
                       </React.Fragment>
                     );
@@ -225,23 +225,23 @@ function WorkScheduleSelectionForm({
               </div>
 
               {Object.keys(formState.errors).length > 0 && (
-                <p className="text-destructive text-sm mb-0">
+                <p className='text-destructive text-sm mb-0'>
                   Invalid time format (HH:mm)
                 </p>
               )}
 
-              <div className="flex gap-4 pt-4">
+              <div className='flex gap-4 pt-4'>
                 <Button
-                  type="button"
-                  className="reset-button"
-                  variant="outline"
+                  type='button'
+                  className='reset-button'
+                  variant='outline'
                   onClick={handleCancel}
                 >
                   Cancel
                 </Button>
                 <Button
-                  type="button"
-                  className="submit-button"
+                  type='button'
+                  className='submit-button'
                   onClick={handleSubmit(handleSubmitWorkingHours)}
                 >
                   Save Schedule
@@ -314,18 +314,18 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
       <p className={`text-sm RemoteFlows__WorkScheduleField__Title`}>
         Work hours
       </p>
-      <div className="flex flex-col gap-1 RemoteFlows__WorkScheduleField__Summary">
+      <div className='flex flex-col gap-1 RemoteFlows__WorkScheduleField__Summary'>
         <p
-          className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__WorkHours"
+          className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__WorkHours'
           dangerouslySetInnerHTML={{
             __html: workHoursSummary.join(', '),
           }}
         />
 
-        <p className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Break">
+        <p className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Break'>
           {breakSummary.join()}
         </p>
-        <p className="text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Total">
+        <p className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Total'>
           Total of <span>{totalWorkHours}</span> hours per week
         </p>
         <WorkScheduleSelectionForm

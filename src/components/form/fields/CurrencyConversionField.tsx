@@ -33,7 +33,7 @@ const DescriptionWithConversion = ({
       {CustomButton ? (
         <CustomButton
           className={`${className.replace('-description', '-button')}`}
-          data-type="inline"
+          data-type='inline'
           onClick={onClick}
         >
           {label}
@@ -215,9 +215,9 @@ export const CurrencyConversionField = ({
         name={mainFieldName || props.name}
         additionalProps={{ currency: sourceCurrency }}
         description={extraDescription}
-        type="text"
-        inputMode="decimal"
-        pattern="^[0-9.]*$"
+        type='text'
+        inputMode='decimal'
+        pattern='^[0-9.]*$'
         maxLength={15}
         onChange={handleMainFieldChange}
       />
@@ -227,15 +227,15 @@ export const CurrencyConversionField = ({
           name={conversionFieldName}
           label={conversionProperties?.label || 'Conversion'}
           description={conversionProperties?.description}
-          type="text"
-          inputMode="decimal"
-          pattern="^[0-9.]*$"
+          type='text'
+          inputMode='decimal'
+          pattern='^[0-9.]*$'
           maxLength={15}
           onChange={handleConversionFieldChange}
         />
       )}
       <input
-        type="hidden"
+        type='hidden'
         name={lastInputFieldName}
         value={watch(lastInputFieldName) || mainFieldName || props.name}
       />

@@ -49,8 +49,8 @@ describe('OnboardingBack Component', () => {
       <OnboardingBack
         onClick={mockOnClick}
         disabled={true}
-        className="custom-class"
-        type="button"
+        className='custom-class'
+        type='button'
       >
         Go Back
       </OnboardingBack>,
@@ -66,7 +66,7 @@ describe('OnboardingBack Component', () => {
     const CustomButton = vi
       .fn()
       .mockImplementationOnce(({ children }) => (
-        <button data-testid="custom-button">{children}</button>
+        <button data-testid='custom-button'>{children}</button>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -84,7 +84,7 @@ describe('OnboardingBack Component', () => {
     const CustomButton = vi
       .fn()
       .mockImplementationOnce(({ children, onClick, ...props }) => (
-        <button data-testid="custom-button" onClick={onClick} {...props}>
+        <button data-testid='custom-button' onClick={onClick} {...props}>
           {children}
         </button>
       ));
@@ -118,7 +118,7 @@ describe('OnboardingBack Component', () => {
           ...props
         }) => (
           <button
-            data-testid="custom-button"
+            data-testid='custom-button'
             onClick={onClick}
             disabled={disabled}
             className={className}
@@ -141,12 +141,12 @@ describe('OnboardingBack Component', () => {
       <OnboardingBack
         onClick={mockOnClick}
         disabled={false}
-        className="custom-class"
-        type="button"
-        variant="outline"
-        size="lg"
-        intent="secondary"
-        data-analytics="back-button"
+        className='custom-class'
+        type='button'
+        variant='outline'
+        size='lg'
+        intent='secondary'
+        data-analytics='back-button'
       >
         Go Back
       </OnboardingBack>,
@@ -213,7 +213,7 @@ describe('OnboardingBack Component', () => {
       const CustomButton = vi
         .fn()
         .mockImplementation(({ children, onClick }) => (
-          <button data-testid="custom-button" onClick={onClick}>
+          <button data-testid='custom-button' onClick={onClick}>
             {children}
           </button>
         ));

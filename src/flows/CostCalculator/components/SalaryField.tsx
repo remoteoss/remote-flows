@@ -35,7 +35,7 @@ export const SalaryField = ({
       <>
         The conversion is based on the Remote FX rate.{' '}
         <ZendeskTriggerButton
-          className="text-sm"
+          className='text-sm'
           zendeskId={zendeskArticles.remoteFxRate}
         >
           Learn more ↗
@@ -64,7 +64,7 @@ export const SalaryField = ({
       mainFieldName={mainFieldName}
       conversionFieldName={conversionFieldName}
       conversionProperties={conversionProperties}
-      classNamePrefix="RemoteFlows-Salary"
+      classNamePrefix='RemoteFlows-Salary'
       conversionType={conversionType}
     />
   );

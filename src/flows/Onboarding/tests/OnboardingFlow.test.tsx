@@ -56,7 +56,7 @@ const mockOnError = vi.fn();
 
 function Review({ values }: { values: Record<string, unknown> }) {
   return (
-    <div className="onboarding-values">
+    <div className='onboarding-values'>
       {Object.entries(values).map(([key, value]) => {
         if (Array.isArray(value)) {
           return (
@@ -102,7 +102,7 @@ describe('OnboardingFlow', () => {
     } = components;
 
     if (onboardingBag.isLoading) {
-      return <div data-testid="spinner">Loading...</div>;
+      return <div data-testid='spinner'>Loading...</div>;
     }
     switch (onboardingBag.stepState.currentStep.name) {
       case 'select_country':
@@ -113,9 +113,9 @@ describe('OnboardingFlow', () => {
               onSuccess={mockOnSuccess}
               onError={mockOnError}
             />
-            <div className="buttons-container">
+            <div className='buttons-container'>
               <SubmitButton
-                className="submit-button"
+                className='submit-button'
                 disabled={onboardingBag.isSubmitting}
               >
                 Continue
@@ -168,16 +168,16 @@ describe('OnboardingFlow', () => {
         );
       case 'review':
         return (
-          <div className="onboarding-review">
-            <h2 className="title">Basic Information</h2>
+          <div className='onboarding-review'>
+            <h2 className='title'>Basic Information</h2>
             <Review
               values={onboardingBag.stepState.values?.basic_information || {}}
             />
-            <h2 className="title">Contract Details</h2>
+            <h2 className='title'>Contract Details</h2>
             <Review
               values={onboardingBag.stepState.values?.contract_details || {}}
             />
-            <h2 className="title">Benefits</h2>
+            <h2 className='title'>Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
             <OnboardingInvite
@@ -213,7 +213,7 @@ describe('OnboardingFlow', () => {
     } = components;
 
     if (onboardingBag.isLoading) {
-      return <div data-testid="spinner">Loading...</div>;
+      return <div data-testid='spinner'>Loading...</div>;
     }
 
     switch (onboardingBag.stepState.currentStep.name) {
@@ -262,16 +262,16 @@ describe('OnboardingFlow', () => {
         );
       case 'review':
         return (
-          <div className="onboarding-review">
-            <h2 className="title">Basic Information</h2>
+          <div className='onboarding-review'>
+            <h2 className='title'>Basic Information</h2>
             <Review
               values={onboardingBag.stepState.values?.basic_information || {}}
             />
-            <h2 className="title">Contract Details</h2>
+            <h2 className='title'>Contract Details</h2>
             <Review
               values={onboardingBag.stepState.values?.contract_details || {}}
             />
-            <h2 className="title">Benefits</h2>
+            <h2 className='title'>Benefits</h2>
             <Review values={onboardingBag.stepState.values?.benefits || {}} />
             <BackButton>Back</BackButton>
             <OnboardingInvite
@@ -930,7 +930,7 @@ describe('OnboardingFlow', () => {
     render(
       <OnboardingFlow
         {...defaultProps}
-        countryCode="PRT"
+        countryCode='PRT'
         skipSteps={['select_country']}
       />,
       { wrapper },
@@ -1174,7 +1174,7 @@ describe('OnboardingFlow', () => {
 
         // Return the current step or loading state
         if (onboardingBag.isLoading) {
-          return <div data-testid="spinner">Loading...</div>;
+          return <div data-testid='spinner'>Loading...</div>;
         }
 
         return (
@@ -1234,7 +1234,7 @@ describe('OnboardingFlow', () => {
         };
 
         if (onboardingBag.isLoading) {
-          return <div data-testid="spinner">Loading...</div>;
+          return <div data-testid='spinner'>Loading...</div>;
         }
 
         return (
@@ -1304,7 +1304,7 @@ describe('OnboardingFlow', () => {
         };
 
         if (onboardingBag.isLoading) {
-          return <div data-testid="spinner">Loading...</div>;
+          return <div data-testid='spinner'>Loading...</div>;
         }
 
         return (
@@ -1395,7 +1395,7 @@ describe('OnboardingFlow', () => {
         };
 
         if (onboardingBag.isLoading) {
-          return <div data-testid="spinner">Loading...</div>;
+          return <div data-testid='spinner'>Loading...</div>;
         }
 
         return (
@@ -1481,7 +1481,7 @@ describe('OnboardingFlow', () => {
 
     render(
       <OnboardingFlow
-        countryCode="PRT"
+        countryCode='PRT'
         skipSteps={['select_country']}
         {...defaultProps}
       />,
@@ -1872,7 +1872,7 @@ describe('OnboardingFlow', () => {
     render(
       <OnboardingFlow
         {...defaultProps}
-        countryCode="PRT"
+        countryCode='PRT'
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
@@ -2158,7 +2158,7 @@ describe('OnboardingFlow', () => {
       <OnboardingFlow
         {...defaultProps}
         skipSteps={['select_country']}
-        countryCode="PRT"
+        countryCode='PRT'
         initialValues={initialValues}
       />,
       { wrapper },

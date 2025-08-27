@@ -70,7 +70,7 @@ describe('CheckBoxField Component', () => {
     const CustomCheckboxField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-checkbox-field">Custom Checkbox Field</div>
+        <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -87,7 +87,7 @@ describe('CheckBoxField Component', () => {
     const CustomCheckboxField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-checkbox-field">Custom Checkbox Field</div>
+        <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -110,8 +110,8 @@ describe('CheckBoxField Component', () => {
 
       return (
         <input
-          type="checkbox"
-          data-testid="custom-checkbox"
+          type='checkbox'
+          data-testid='custom-checkbox'
           onChange={handleChange}
         />
       );
@@ -194,12 +194,12 @@ describe('CheckBoxField Component', () => {
     const CustomCheckboxFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-checkbox-field">Context Checkbox Field</div>
+        <div data-testid='context-checkbox-field'>Context Checkbox Field</div>
       ));
     const CustomCheckboxFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-checkbox-field">Prop Checkbox Field</div>
+        <div data-testid='prop-checkbox-field'>Prop Checkbox Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

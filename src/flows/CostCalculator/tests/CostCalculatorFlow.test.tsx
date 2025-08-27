@@ -50,7 +50,7 @@ function renderComponent(
       {...props}
       render={(props) => {
         if (props.isLoading) {
-          return <div data-testid="loading">Loading...</div>;
+          return <div data-testid='loading'>Loading...</div>;
         }
         return (
           <div>
@@ -389,7 +389,7 @@ describe('CostCalculatorFlow', () => {
         defaultValues={defaultProps.defaultValues}
         render={(props) => {
           if (props.isLoading) {
-            return <div data-testid="loading">Loading...</div>;
+            return <div data-testid='loading'>Loading...</div>;
           }
           return (
             <div>
@@ -470,7 +470,7 @@ describe('CostCalculatorFlow', () => {
         defaultValues={defaultProps.defaultValues}
         render={(props) => {
           if (props.isLoading) {
-            return <div data-testid="loading">Loading...</div>;
+            return <div data-testid='loading'>Loading...</div>;
           }
           return (
             <div>

@@ -38,23 +38,23 @@ export function FileUploader({
   return (
     <div className={cn('flex flex-col items-start gap-4', className)}>
       <input
-        type="file"
+        type='file'
         ref={inputRef}
         onChange={handleChange}
-        className="hidden"
-        aria-label="File upload"
+        className='hidden'
+        aria-label='File upload'
         multiple={multiple}
       />
-      <Button type="button" onClick={handleClick} className="gap-2">
-        <Upload className="h-4 w-4" />
+      <Button type='button' onClick={handleClick} className='gap-2'>
+        <Upload className='h-4 w-4' />
         Choose File
       </Button>
       {files.length === 0 && (
-        <div className="text-sm">
+        <div className='text-sm'>
           {!multiple ? (
-            <span className="font-medium">No file selected.</span>
+            <span className='font-medium'>No file selected.</span>
           ) : (
-            <span className="font-medium">
+            <span className='font-medium'>
               No files selected. You can select multiple files
             </span>
           )}
@@ -62,10 +62,10 @@ export function FileUploader({
       )}
       {files.length > 0 &&
         files.map((file, index) => (
-          <div key={index} className="text-sm flex items-center gap-2">
-            Selected file: <span className="font-medium">{file.name}</span> (
+          <div key={index} className='text-sm flex items-center gap-2'>
+            Selected file: <span className='font-medium'>{file.name}</span> (
             {Math.round(file.size / 1024)} KB)
-            <Button variant="ghost" onClick={() => onRemoveFile(file)}>
+            <Button variant='ghost' onClick={() => onRemoveFile(file)}>
               <X />
             </Button>
           </div>
