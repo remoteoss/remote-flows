@@ -54,7 +54,10 @@ const getDefaultManagementFee = (
   if (managementFees && managementFees[currency]) {
     return managementFees[currency];
   }
-  return baseRates[currency] / 100;
+  if (baseRates[currency]) {
+    return baseRates[currency] / 100;
+  }
+  return 0;
 };
 
 export const CostCalculatorFlow = ({
