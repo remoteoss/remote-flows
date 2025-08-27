@@ -548,5 +548,10 @@ export const useCostCalculator = (
      * Function to reset the cost calculator form
      */
     resetForm,
+
+    /**
+     * Currencies data useful to get the currency if you have a currencySlug
+     */
+    currencies,
   };
 };

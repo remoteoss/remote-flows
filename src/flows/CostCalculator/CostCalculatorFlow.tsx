@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
@@ -97,12 +97,13 @@ export const CostCalculatorFlow = ({
     costCalculatorBag.handleValidation,
   );
 
-  // TODO: Problem here is when you pass the currencySlug, we should change it to accept USD as value
-  const defaultManagementFee = getDefaultManagementFee(
-    BASE_RATES,
-    currency,
-    estimationOptions.managementFees,
-  );
+  const defaultManagementFee = defaultValues.currencySlug
+    ? ''
+    : getDefaultManagementFee(
+        BASE_RATES,
+        currency,
+        estimationOptions.managementFees,
+      );
 
   const form = useForm({
     resolver,
@@ -120,6 +121,24 @@ export const CostCalculatorFlow = ({
     shouldUnregister: false,
     mode: 'onBlur',
   });
+
+  useEffect(() => {
+    if (defaultValues.currencySlug && costCalculatorBag.currencies) {
+      const currencyData = costCalculatorBag.currencies.find(
+        (currency) => currency.value === defaultValues.currencySlug,
+      );
+      const currencyCode = currencyData?.label;
+      if (currencyCode) {
+        setCurrency(currencyCode as CurrencyKey);
+        const defaultManagementFee = getDefaultManagementFee(
+          BASE_RATES,
+          currencyCode as CurrencyKey,
+          estimationOptions.managementFees,
+        );
+        form.setValue('management.management_fee', defaultManagementFee);
+      }
+    }
+  }, [defaultValues.currencySlug, costCalculatorBag.currencies]);
 
   return (
     <CostCalculatorContext.Provider
