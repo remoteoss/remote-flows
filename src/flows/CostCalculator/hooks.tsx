@@ -25,7 +25,7 @@ import {
   useCostCalculatorEstimation,
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
-import { JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 
 export type CostCalculatorVersion = 'standard' | 'marketing';
@@ -168,6 +168,7 @@ export const useCostCalculator = (
     };
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
+  const showManagementField = estimationOptions.includeManagementFee;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
 
@@ -198,6 +199,33 @@ export const useCostCalculator = (
                 />
               );
             },
+          },
+        },
+        management: {
+          ...options?.jsfModify?.fields?.management,
+          properties: {
+            ...(options?.jsfModify?.fields?.management as $TSFixMe)?.properties,
+            management_fee: {
+              ...(options?.jsfModify?.fields?.management as $TSFixMe)
+                ?.properties?.management_fee,
+              'x-jsf-presentation': {
+                inputType: 'money',
+                additionalProps: {
+                  currency: employerBillingCurrency || 'USD',
+                },
+              },
+            },
+          },
+          presentation: {
+            ...(typeof options?.jsfModify?.fields?.management === 'object'
+              ? (
+                  options?.jsfModify?.fields?.management as Record<
+                    string,
+                    $TSFixMe
+                  >
+                )['x-jsf-presentation']
+              : {}),
+            hidden: !showManagementField,
           },
         },
       },
@@ -322,6 +350,7 @@ export const useCostCalculator = (
       (c) => c.value === currency,
     )?.label;
     setEmployerBillingCurrency(selectedCurrency);
+    options?.onCurrencyChange?.(selectedCurrency || '');
   }
 
   const regionField = fieldsJSONSchema.fields.find(
@@ -372,11 +401,15 @@ export const useCostCalculator = (
   };
 
   const allFields = [
-    ...fieldsJSONSchema.fields,
+    ...fieldsJSONSchema.fields.filter((field) => field.name !== 'management'),
     ...(jsonSchemaRegionFields?.fields || []),
+    ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 
-  const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
+  const validationSchema = buildValidationSchema(
+    fieldsJSONSchema.fields,
+    employerBillingCurrency || 'USD',
+  );
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;
@@ -428,13 +461,27 @@ export const useCostCalculator = (
   }
 
   return {
+    /**
+     * Current step state containing the current step and total number of steps
+     */
     stepState: {
       current: 0,
       total: 1,
       isLastStep: true,
     },
+    /**
+     * Array of form fields from the cost calculator schema + dynamic region fields like benefits, age, etc.
+     */
     fields: allFields,
+    /**
+     * Validation schema for the cost calculator form
+     */
     validationSchema,
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
     parseFormValues: (
       values: CostCalculatorEstimationFormValues,
     ): CostCalculatorEstimationSubmitValues => {
@@ -444,6 +491,7 @@ export const useCostCalculator = (
         currency,
         salary_converted,
         salary_conversion,
+        management,
         ...rest
       } = values;
 
@@ -460,6 +508,7 @@ export const useCostCalculator = (
         salary_converted,
         salary_conversion,
         currency,
+        management,
       };
 
       const parsedStaticFields = parseJSFToValidate(
@@ -477,11 +526,33 @@ export const useCostCalculator = (
         ...parsedRegionFields,
       } as CostCalculatorEstimationSubmitValues;
     },
+    /**
+     * Function to handle validation of the cost calculator form
+     * @param values - Form values to validate
+     * @returns Validation result
+     */
     handleValidation,
+    /**
+     * Whether the cost calculator form is currently being submitted
+     */
     isSubmitting: costCalculatorEstimationMutation.isPending,
+    /**
+     * Whether the cost calculator form is currently loading
+     */
     isLoading:
       isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
+    /**
+     * Function to submit the cost calculator form
+     */
     onSubmit,
+    /**
+     * Function to reset the cost calculator form
+     */
     resetForm,
+
+    /**
+     * Currencies data useful to get the currency if you have a currencySlug
+     */
+    currencies,
   };
 };

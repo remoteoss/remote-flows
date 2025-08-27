@@ -234,6 +234,11 @@ const AddEstimateForm = ({
                 variant: 'inset',
               },
             },
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
           },
         },
       }}

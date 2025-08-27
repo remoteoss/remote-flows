@@ -3,6 +3,7 @@ import type {
   PostCreateEstimationError,
   ValidationError,
 } from '@/src/client';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 import { JSFModify } from '@/src/flows/types';
 
 export type CostCalculatorEstimationSubmitValues = {
@@ -15,6 +16,9 @@ export type CostCalculatorEstimationSubmitValues = {
   age: number;
   contract_duration_type: EmploymentTermType;
   benefits: Record<string, string>;
+  management: {
+    management_fee: string;
+  };
 }>;
 
 export type CostCalculatorEstimationFormValues = {
@@ -28,6 +32,9 @@ export type CostCalculatorEstimationFormValues = {
   age: number;
   contract_duration_type: EmploymentTermType;
   benefits: Record<string, string>;
+  management: {
+    management_fee: string;
+  };
 }>;
 
 export type CostCalculatorEstimationOptions = Partial<{
@@ -55,10 +62,18 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include management fee in the estimation. Default is false.
    */
   includeManagementFee: boolean;
+
+  /**
+   * Management fees by currency. Default is null.
+   */
+  managementFees?: Record<CurrencyKey, number>;
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
 
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;
+  onCurrencyChange?: (currency: string) => void;
 };
+
+export type CurrencyKey = keyof typeof BASE_RATES;

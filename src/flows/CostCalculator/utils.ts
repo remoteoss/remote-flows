@@ -1,18 +1,26 @@
-import type { CostCalculatorEstimateParams } from '@/src/client';
+import type {
+  CostCalculatorEmploymentParam,
+  CostCalculatorEstimateParams,
+} from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, object } from 'yup';
+import { AnyObjectSchema, number, object } from 'yup';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
+  CurrencyKey,
 } from './types';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
 /**
  * Build the validation schema for the form.
  * @returns
  */
-export function buildValidationSchema(fields: $TSFixMe[]) {
+export function buildValidationSchema(
+  fields: $TSFixMe[],
+  employerBillingCurrency: string,
+) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
       // Special handling for salary fields
@@ -25,10 +33,29 @@ export function buildValidationSchema(fields: $TSFixMe[]) {
             otherwise: (schema) => schema.optional(),
           },
         );
+      } else if (field.name === 'management') {
+        fieldsSchemaAcc[field.name] = object({
+          management_fee: number()
+            .transform((value) => {
+              return isNaN(value) ? undefined : value;
+            })
+            .min(0, 'Management fee must be greater than or equal to 0')
+            .max(
+              employerBillingCurrency
+                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                : BASE_RATES.USD,
+              () => {
+                const maxValue = employerBillingCurrency
+                  ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                  : BASE_RATES.USD;
+                const displayValue = maxValue / 100;
+                return `Management fee cannot exceed ${displayValue} ${employerBillingCurrency}`;
+              },
+            ),
+        });
       } else {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }
-      return fieldsSchemaAcc;
       return fieldsSchemaAcc;
     },
     {},
@@ -63,7 +90,7 @@ function mapValueToEmployment(
   value: CostCalculatorEstimationSubmitValues,
   estimationOptions: CostCalculatorEstimationOptions,
   version: CostCalculatorVersion,
-) {
+): CostCalculatorEmploymentParam {
   return {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
@@ -109,12 +136,21 @@ export function buildPayload(
     }
   }
 
+  const managementFee = Number(employments[0].management?.management_fee);
+
   return {
     employer_currency_slug: employments[0].currency,
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
+    ...(estimationOptions.includeManagementFee &&
+      managementFee && {
+        global_discount: {
+          quoted_amount: managementFee,
+          text: 'New Management fee',
+        },
+      }),
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),

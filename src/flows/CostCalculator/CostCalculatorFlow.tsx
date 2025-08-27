@@ -1,3 +1,5 @@
+import React, { useEffect, useId, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
@@ -7,10 +9,10 @@ import {
 } from '@/src/flows/CostCalculator/hooks';
 import {
   CostCalculatorEstimationOptions,
+  CurrencyKey,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import React, { useId } from 'react';
-import { useForm } from 'react-hook-form';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
 export type CostCalculatorFlowProps = {
   /**
@@ -44,6 +46,20 @@ export type CostCalculatorFlowProps = {
   version?: CostCalculatorVersion;
 };
 
+const getDefaultManagementFee = (
+  baseRates: Record<CurrencyKey, number>,
+  currency: CurrencyKey,
+  managementFees?: Record<CurrencyKey, number>,
+) => {
+  if (managementFees && managementFees[currency]) {
+    return managementFees[currency];
+  }
+  if (baseRates[currency]) {
+    return baseRates[currency] / 100;
+  }
+  return 0;
+};
+
 export const CostCalculatorFlow = ({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
@@ -56,18 +72,41 @@ export const CostCalculatorFlow = ({
   version = 'standard',
 }: CostCalculatorFlowProps) => {
   const formId = useId();
+  const [currency, setCurrency] = useState<CurrencyKey>('USD');
+  const onCurrencyChange = (currency: string) => {
+    setCurrency(currency as CurrencyKey);
+    const managementFee = getDefaultManagementFee(
+      BASE_RATES,
+      currency as CurrencyKey,
+      estimationOptions.managementFees,
+    );
+    if (managementFee) {
+      form.setValue('management.management_fee', managementFee);
+    }
+  };
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     defaultCurrency: defaultValues.currencySlug,
     defaultSalary: defaultValues.salary,
     estimationOptions,
     version,
-    options,
+    options: {
+      ...options,
+      onCurrencyChange: onCurrencyChange,
+    },
   });
   const resolver = useJsonSchemasValidationFormResolver(
     // @ts-expect-error no matching type
     costCalculatorBag.handleValidation,
   );
+
+  const defaultManagementFee = defaultValues.currencySlug
+    ? ''
+    : getDefaultManagementFee(
+        BASE_RATES,
+        currency,
+        estimationOptions.managementFees,
+      );
 
   const form = useForm({
     resolver,
@@ -78,10 +117,35 @@ export const CostCalculatorFlow = ({
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
+      management: {
+        management_fee: defaultManagementFee,
+      },
     },
     shouldUnregister: false,
     mode: 'onBlur',
   });
+
+  useEffect(() => {
+    if (
+      defaultValues.currencySlug &&
+      costCalculatorBag.currencies &&
+      estimationOptions.includeManagementFee
+    ) {
+      const currencyData = costCalculatorBag.currencies.find(
+        (currency) => currency.value === defaultValues.currencySlug,
+      );
+      const currencyCode = currencyData?.label;
+      if (currencyCode) {
+        setCurrency(currencyCode as CurrencyKey);
+        const defaultManagementFee = getDefaultManagementFee(
+          BASE_RATES,
+          currencyCode as CurrencyKey,
+          estimationOptions.managementFees,
+        );
+        form.setValue('management.management_fee', defaultManagementFee);
+      }
+    }
+  }, [defaultValues.currencySlug, costCalculatorBag.currencies]);
 
   return (
     <CostCalculatorContext.Provider

@@ -58,6 +58,23 @@ export const jsonSchema = {
             hidden: true,
           },
         },
+        management: {
+          title: 'Management fee',
+          type: 'object',
+          properties: {
+            management_fee: {
+              title: 'Desired monthly management fee',
+              type: 'integer',
+              'x-jsf-presentation': {
+                inputType: 'money',
+              },
+            },
+          },
+          'x-jsf-presentation': {
+            inputType: 'fieldset',
+            hidden: true,
+          },
+        },
       },
       required: [
         'country',
@@ -67,7 +84,7 @@ export const jsonSchema = {
         'salary_converted',
       ],
       type: 'object',
-      'x-jsf-order': ['country', 'region', 'currency', 'salary'],
+      'x-jsf-order': ['country', 'region', 'currency', 'salary', 'management'],
     },
   },
 };
