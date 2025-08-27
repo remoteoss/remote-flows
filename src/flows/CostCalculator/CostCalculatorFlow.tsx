@@ -123,7 +123,11 @@ export const CostCalculatorFlow = ({
   });
 
   useEffect(() => {
-    if (defaultValues.currencySlug && costCalculatorBag.currencies) {
+    if (
+      defaultValues.currencySlug &&
+      costCalculatorBag.currencies &&
+      estimationOptions.includeManagementFee
+    ) {
       const currencyData = costCalculatorBag.currencies.find(
         (currency) => currency.value === defaultValues.currencySlug,
       );

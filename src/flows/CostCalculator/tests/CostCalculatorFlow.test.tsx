@@ -626,7 +626,7 @@ describe('CostCalculatorFlow', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should hide management fee field when globalDiscount is not present', async () => {
+  it('should hide management fee field when managementFees & includeManagementFee are not present', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
       estimationOptions: {
@@ -634,7 +634,7 @@ describe('CostCalculatorFlow', () => {
         includeBenefits: true,
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
-        includeManagementFee: true,
+        includeManagementFee: false,
       },
     });
 
