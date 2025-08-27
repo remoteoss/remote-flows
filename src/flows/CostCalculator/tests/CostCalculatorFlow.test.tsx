@@ -93,6 +93,7 @@ describe('CostCalculatorFlow', () => {
         }),
       ],
     );
+    vi.clearAllMocks();
   });
 
   it('should render the form with default values', async () => {
@@ -696,5 +697,42 @@ describe('CostCalculatorFlow', () => {
     expect(
       screen.getByRole('textbox', { name: /management fee/i }),
     ).toHaveValue('645');
+  });
+
+  it('should throw the management fee error when the management fee is above the threshold', async () => {
+    const user = userEvent.setup();
+
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const managementFeeInput = screen.getByRole('textbox', {
+      name: /management fee/i,
+    });
+    expect(managementFeeInput).toHaveValue('699');
+
+    await user.clear(managementFeeInput);
+    await user.type(managementFeeInput, '700');
+
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Management fee cannot exceed 699 USD/i),
+      ).toBeInTheDocument();
+    });
+
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 });
