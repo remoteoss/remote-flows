@@ -1,5 +1,4 @@
 import type {
-  CostCalculatorDiscount,
   EmploymentTermType,
   PostCreateEstimationError,
   ValidationError,
