@@ -18,6 +18,7 @@ import {
   regionFieldsWithAgeProperty,
 } from './fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { fillSelect } from '@/src/tests/testHelpers';
 
 const queryClient = new QueryClient();
 
@@ -575,10 +576,6 @@ describe('CostCalculatorFlow', () => {
 
     expect(
       screen.getByRole('textbox', { name: /management fee/i }),
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
     ).toHaveValue('699');
   });
 
@@ -671,10 +668,33 @@ describe('CostCalculatorFlow', () => {
 
     expect(
       screen.getByRole('textbox', { name: /management fee/i }),
-    ).toBeInTheDocument();
+    ).toHaveValue('599');
+  });
+
+  it('should change the employer billing currency and update the management fee', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     expect(
       screen.getByRole('textbox', { name: /management fee/i }),
-    ).toHaveValue('599');
+    ).toHaveValue('699');
+
+    await fillSelect('Currency', 'EUR');
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toHaveValue('645');
   });
 });
