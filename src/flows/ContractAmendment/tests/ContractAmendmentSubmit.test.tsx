@@ -36,9 +36,9 @@ describe('ContractAmendmentSubmit', () => {
       render(
         <ContractAmendmentSubmit
           disabled
-          data-testid="submit-button"
-          aria-label="Submit form"
-          className="custom-class"
+          data-testid='submit-button'
+          aria-label='Submit form'
+          className='custom-class'
         >
           <span>Submit Amendment</span>
         </ContractAmendmentSubmit>,
@@ -56,7 +56,7 @@ describe('ContractAmendmentSubmit', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, ...props }) => (
-      <button data-testid="custom-button" {...props}>
+      <button data-testid='custom-button' {...props}>
         {children}
       </button>
     ));
@@ -73,10 +73,10 @@ describe('ContractAmendmentSubmit', () => {
       render(
         <ContractAmendmentSubmit
           disabled
-          className="custom-class"
-          data-testid="submit-button"
-          aria-label="Submit form"
-          variant="custom"
+          className='custom-class'
+          data-testid='submit-button'
+          aria-label='Submit form'
+          variant='custom'
           onClick={vi.fn()}
         >
           Submit custom button

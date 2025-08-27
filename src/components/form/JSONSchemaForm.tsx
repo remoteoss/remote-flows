@@ -116,7 +116,7 @@ export const JSONSchemaFormFields = ({
             {field.extra ? field.extra : null}
           </Fragment>
         ) : (
-          <p className="error">
+          <p className='error'>
             Field type {field.type as string} not supported
           </p>
         );

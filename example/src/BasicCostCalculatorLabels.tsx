@@ -30,12 +30,12 @@ export function BasicCostCalculatorLabels() {
                 onError={(error) => console.error({ error })}
                 onSuccess={(response) => console.log({ response })}
               />
-              <div className="buttons-container">
-                <CostCalculatorResetButton className="reset-button">
+              <div className='buttons-container'>
+                <CostCalculatorResetButton className='reset-button'>
                   Reset
                 </CostCalculatorResetButton>
                 <CostCalculatorSubmitButton
-                  className="submit-button"
+                  className='submit-button'
                   disabled={props.isSubmitting}
                 >
                   Get estimate
@@ -57,7 +57,7 @@ export function BasicCostCalculatorLabels() {
           },
         }}
       />
-      <CostCalculatorDisclaimer label="Disclaimer" />
+      <CostCalculatorDisclaimer label='Disclaimer' />
     </RemoteFlows>
   );
 }

@@ -10,7 +10,7 @@ export function HiddenField(props: Field) {
       control={control}
       name={props.name}
       render={({ field }) => {
-        return <input {...field} type="hidden" />;
+        return <input {...field} type='hidden' />;
       }}
     />
   );

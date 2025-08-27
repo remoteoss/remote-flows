@@ -66,18 +66,18 @@ function CostCalculatorFormDemo() {
                   setEstimations(response);
                 }}
               />
-              <div className="buttons-container">
-                <CostCalculatorResetButton className="reset-button">
+              <div className='buttons-container'>
+                <CostCalculatorResetButton className='reset-button'>
                   Reset
                 </CostCalculatorResetButton>
                 <CostCalculatorSubmitButton
-                  className="submit-button"
+                  className='submit-button'
                   disabled={props.isSubmitting}
                 >
                   Get estimate
                 </CostCalculatorSubmitButton>
                 {estimations && (
-                  <button className="submit-button" onClick={handleExportPdf}>
+                  <button className='submit-button' onClick={handleExportPdf}>
                     Export as PDF
                   </button>
                 )}

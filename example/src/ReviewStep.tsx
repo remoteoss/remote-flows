@@ -20,9 +20,9 @@ export const InviteSection = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <div className="rmt-invitation-section">
-      <h2 className="rmt-invitation-title">{title}</h2>
-      <p className="rmt-invitation-description">{description}</p>
+    <div className='rmt-invitation-section'>
+      <h2 className='rmt-invitation-title'>{title}</h2>
+      <p className='rmt-invitation-description'>{description}</p>
       {children}
     </div>
   );
@@ -42,7 +42,7 @@ const CreditRiskSections = ({
       return (
         <InviteSection
           title={`Confirm ${employment?.basic_information?.name} Profile`}
-          description="Once your account is approved, you can invite your employees to Remote."
+          description='Once your account is approved, you can invite your employees to Remote.'
         >
           <OnboardingAlertStatuses creditRiskStatus={creditRiskStatus} />
         </InviteSection>
@@ -50,18 +50,18 @@ const CreditRiskSections = ({
     case 'deposit_required':
       return (
         <InviteSection
-          title="Confirm Details && Continue"
+          title='Confirm Details && Continue'
           description="If the employee's details look good, click Continue to check if your reserve invoice is ready for payment. After we receive payment, you'll be able to invite the employee to onboard to Remote."
         >
           <OnboardingAlertStatuses creditRiskStatus={creditRiskStatus} />
-          <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+          <a href='https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment'>
             What is a reserve payment
           </a>
         </InviteSection>
       );
     case 'deposit_required_successful':
       return (
-        <div className="reserve-invoice">
+        <div className='reserve-invoice'>
           <h2>You’ll receive a reserve invoice soon</h2>
           <p>
             We saved {employment?.basic_information?.name as string} details as
@@ -69,11 +69,11 @@ const CreditRiskSections = ({
             the reserve payment.
           </p>
           <div>
-            <button type="submit">Go to dashboard</button>
+            <button type='submit'>Go to dashboard</button>
 
             <br />
 
-            <a href="https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment">
+            <a href='https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment'>
               What is a reserve payment
             </a>
           </div>
@@ -88,7 +88,7 @@ const CreditRiskSections = ({
       );
     case 'invite_successful':
       return (
-        <div className="invite-successful">
+        <div className='invite-successful'>
           <h2>You’re all set!</h2>
           <p>
             {employment?.basic_information?.name as string} at{' '}
@@ -97,7 +97,7 @@ const CreditRiskSections = ({
             onboarding process
           </p>
           <div>
-            <button type="submit">Go to dashboard</button>
+            <button type='submit'>Go to dashboard</button>
           </div>
         </div>
       );
@@ -108,7 +108,7 @@ const CreditRiskSections = ({
 
 function Review({ meta }: { meta: Meta }) {
   return (
-    <div className="onboarding-values">
+    <div className='onboarding-values'>
       {Object.entries(meta).map(([key, value]) => {
         const label = value?.label;
         const prettyValue = value?.prettyValue;
@@ -154,7 +154,7 @@ export const MyOnboardingInviteButton = ({
     return (
       <Component
         disabled={!canInvite}
-        className="submit-button"
+        className='submit-button'
         onSuccess={() => {
           console.log(
             'after inviting or creating a reserve navigate to whatever place you want',
@@ -175,7 +175,7 @@ export const MyOnboardingInviteButton = ({
             fieldErrors: [],
           });
         }}
-        type="submit"
+        type='submit'
       />
     );
   }
@@ -206,36 +206,36 @@ export const ReviewStep = ({
   } = components;
 
   return (
-    <div className="onboarding-review">
-      <h2 className="title">Basic Information</h2>
+    <div className='onboarding-review'>
+      <h2 className='title'>Basic Information</h2>
       <Review meta={onboardingBag.meta.fields.basic_information} />
       <button
-        className="back-button"
+        className='back-button'
         onClick={() => onboardingBag.goTo('basic_information')}
         disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Basic Information
       </button>
-      <h2 className="title">Contract Details</h2>
+      <h2 className='title'>Contract Details</h2>
       <Review meta={onboardingBag.meta.fields.contract_details} />
       <button
-        className="back-button"
+        className='back-button'
         onClick={() => onboardingBag.goTo('contract_details')}
         disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Contract Details
       </button>
-      <h2 className="title">Benefits</h2>
+      <h2 className='title'>Benefits</h2>
       <Review meta={onboardingBag.meta.fields.benefits} />
 
       <button
-        className="back-button"
+        className='back-button'
         onClick={() => onboardingBag.goTo('benefits')}
         disabled={onboardingBag.isEmploymentReadOnly}
       >
         Edit Benefits
       </button>
-      <h2 className="title">Review</h2>
+      <h2 className='title'>Review</h2>
       <ReviewStepCreditRisk
         render={({
           creditRiskState,
@@ -251,9 +251,9 @@ export const ReviewStep = ({
                 creditRiskStatus={creditRiskStatus}
                 employment={onboardingBag.employment}
               />
-              <div className="buttons-container">
+              <div className='buttons-container'>
                 <BackButton
-                  className="back-button"
+                  className='back-button'
                   disabled={onboardingBag.isEmploymentReadOnly}
                 >
                   Back

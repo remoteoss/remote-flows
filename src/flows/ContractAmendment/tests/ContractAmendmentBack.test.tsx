@@ -40,9 +40,9 @@ describe('ContractAmendmentBack', () => {
       render(
         <ContractAmendmentBack
           disabled
-          data-testid="back-button"
-          aria-label="Go back"
-          className="custom-class"
+          data-testid='back-button'
+          aria-label='Go back'
+          className='custom-class'
           onClick={mockOnClick}
         >
           <span>Back Step</span>
@@ -83,7 +83,7 @@ describe('ContractAmendmentBack', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, onClick, ...props }) => (
-      <button data-testid="custom-button" onClick={onClick} {...props}>
+      <button data-testid='custom-button' onClick={onClick} {...props}>
         {children}
       </button>
     ));
@@ -100,9 +100,9 @@ describe('ContractAmendmentBack', () => {
       render(
         <ContractAmendmentBack
           disabled
-          className="custom-class"
-          variant="custom"
-          data-testid="back-button"
+          className='custom-class'
+          variant='custom'
+          data-testid='back-button'
           onClick={mockOnClick}
         >
           Back custom button

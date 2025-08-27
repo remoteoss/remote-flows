@@ -50,7 +50,7 @@ const Layout = ({
   width: 'initialForm' | 'results';
 }) => {
   return (
-    <div className="premium-benefits-wrapper">
+    <div className='premium-benefits-wrapper'>
       <div
         className={cn({
           'premium-benefits-container': true,
@@ -72,11 +72,11 @@ const Header = ({
   description?: string;
 }) => {
   return (
-    <div className="premium-benefits-header">
+    <div className='premium-benefits-header'>
       <h1>{title}</h1>
       <p>{description}</p>
       <ZendeskTriggerButton
-        className="text-sm"
+        className='text-sm'
         zendeskId={zendeskArticles.disclaimerCostCalculator}
       >
         Learn more ↗
@@ -104,22 +104,22 @@ const AddEstimateButton = ({
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger asChild>
         <button
-          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary"
+          className='premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary'
           {...buttonProps}
         >
           Add estimate
         </button>
       </DrawerTrigger>
-      <DrawerContent showHandle={false} className="max-h-[90vh] flex flex-col">
-        <DrawerHeader className="hidden">
-          <DrawerTitle className="hidden">Add estimate</DrawerTitle>
+      <DrawerContent showHandle={false} className='max-h-[90vh] flex flex-col'>
+        <DrawerHeader className='hidden'>
+          <DrawerTitle className='hidden'>Add estimate</DrawerTitle>
         </DrawerHeader>
-        <div className="flex-1 overflow-y-auto">
-          <Layout width="initialForm">
-            <div className="mt-10 mb-8">
+        <div className='flex-1 overflow-y-auto'>
+          <Layout width='initialForm'>
+            <div className='mt-10 mb-8'>
               <Header
-                title="Add estimate"
-                description="Estimate the cost of another hire through Remote"
+                title='Add estimate'
+                description='Estimate the cost of another hire through Remote'
               />
             </div>
             <AddEstimateForm
@@ -149,25 +149,25 @@ const ActionToolbar = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <Card direction="row" className="justify-around">
+    <Card direction='row' className='justify-around'>
       <div>
         <button
-          className="premium-benefits-action-toolbar__button"
+          className='premium-benefits-action-toolbar__button'
           onClick={onReset}
         >
           Reset estimate
         </button>
       </div>
-      <div className="flex gap-2">
+      <div className='flex gap-2'>
         <button
-          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary"
+          className='premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary'
           onClick={onCSVExport}
           disabled
         >
           Export as CSV
         </button>
         <button
-          className="premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary"
+          className='premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary'
           onClick={onExportPdf}
         >
           Export as PDF
@@ -216,7 +216,7 @@ const AddEstimateForm = ({
                   Select the currency you want to be invoiced in for this
                   employee's services.
                   <ZendeskTriggerButton
-                    className="text-sm"
+                    className='text-sm'
                     zendeskId={zendeskArticles.internationalPricing}
                   >
                     Learn more ↗
@@ -254,9 +254,9 @@ const AddEstimateForm = ({
               onError={onError}
               onSuccess={onSuccess}
             />
-            <div className="flex justify-center mt-10">
+            <div className='flex justify-center mt-10'>
               <CostCalculatorSubmitButton
-                className="submit-button"
+                className='submit-button'
                 disabled={props.isSubmitting}
               >
                 Get estimate
@@ -314,7 +314,7 @@ const ResultsView = ({
   return (
     <>
       <Header />
-      <div className="mb-8">
+      <div className='mb-8'>
         <ActionToolbar
           onReset={onReset}
           onExportPdf={onExportPdf}
@@ -324,7 +324,7 @@ const ResultsView = ({
         />
       </div>
       {estimations.length >= 2 && (
-        <div className="mb-6">
+        <div className='mb-6'>
           <SummaryResults estimations={estimations} />
         </div>
       )}

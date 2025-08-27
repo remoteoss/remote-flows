@@ -138,9 +138,9 @@ export function ContractAmendmentForm({
     <Form {...form}>
       <form
         id={formId}
-        data-testid="contract-amendment-form"
+        data-testid='contract-amendment-form'
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 RemoteFlows__ContractAmendmentForm"
+        className='space-y-4 RemoteFlows__ContractAmendmentForm'
       >
         <JSONSchemaFormFields fields={fields} />
       </form>

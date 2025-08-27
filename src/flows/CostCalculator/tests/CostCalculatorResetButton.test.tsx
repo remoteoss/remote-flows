@@ -44,9 +44,9 @@ describe('CostCalculatorResetButton', () => {
       render(
         <CostCalculatorResetButton
           disabled
-          data-testid="reset-button"
-          aria-label="Reset form"
-          className="custom-class"
+          data-testid='reset-button'
+          aria-label='Reset form'
+          className='custom-class'
           onClick={mockOnClick}
         >
           <span>Reset Form</span>
@@ -91,7 +91,7 @@ describe('CostCalculatorResetButton', () => {
 
   describe('custom button behavior', () => {
     const CustomButton = vi.fn(({ children, onClick, ...props }) => (
-      <button data-testid="custom-button" onClick={onClick} {...props}>
+      <button data-testid='custom-button' onClick={onClick} {...props}>
         {children}
       </button>
     ));
@@ -108,10 +108,10 @@ describe('CostCalculatorResetButton', () => {
       render(
         <CostCalculatorResetButton
           disabled
-          className="custom-class"
-          data-testid="reset-button"
+          className='custom-class'
+          data-testid='reset-button'
           onClick={mockOnClick}
-          variant="custom"
+          variant='custom'
         >
           Reset custom button
         </CostCalculatorResetButton>,

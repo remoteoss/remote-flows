@@ -40,6 +40,6 @@ export function NumberField(props: NumberFieldProps) {
   }
 
   return (
-    <TextField {...props} type="text" inputMode="decimal" pattern="^[0-9.]*$" />
+    <TextField {...props} type='text' inputMode='decimal' pattern='^[0-9.]*$' />
   );
 }

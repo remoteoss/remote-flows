@@ -61,27 +61,27 @@ export function MultiSelect({
     <Popover open={open} onOpenChange={setOpen} {...props}>
       <PopoverTrigger>
         <Button
-          variant="outline"
-          role="combobox"
+          variant='outline'
+          role='combobox'
           aria-expanded={open}
-          className="w-full justify-between font-normal"
-          type="button"
+          className='w-full justify-between font-normal'
+          type='button'
         >
-          <div className="flex gap-1 flex-wrap overflow-x-auto max-h-[2.5rem] items-center">
+          <div className='flex gap-1 flex-wrap overflow-x-auto max-h-[2.5rem] items-center'>
             {selected.length > 0 ? (
               selected.map((option) => {
                 return (
                   <Badge
                     key={option.label}
-                    variant="secondary"
-                    className="mr-1 mb-1"
+                    variant='secondary'
+                    className='mr-1 mb-1'
                   >
                     {option.label}
                     <div
-                      role="button"
+                      role='button'
                       tabIndex={0}
                       aria-label={`remove ${option.label}`}
-                      className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
+                      className='ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer'
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleUnselect(option);
@@ -93,19 +93,19 @@ export function MultiSelect({
                       }}
                       onClick={() => handleUnselect(option)}
                     >
-                      <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                      <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
                     </div>
                   </Badge>
                 );
               })
             ) : (
-              <span className="text-foreground">{placeholder}</span>
+              <span className='text-foreground'>{placeholder}</span>
             )}
           </div>
-          <ChevronDownIcon className="size-4" />
+          <ChevronDownIcon className='size-4' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-full p-0">
+      <PopoverContent align='start' className='w-full p-0'>
         <Command>
           <CommandList>
             <CommandEmpty>No item found.</CommandEmpty>

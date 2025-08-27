@@ -128,9 +128,9 @@ Here's an example of custom field components implementation:
     number: ({ field, fieldState, fieldData }) => (
       <div>
         <label>{fieldData.label}</label>
-        <input {...field} type="number" />
+        <input {...field} type='number' />
         {fieldState.error && (
-          <span className="text-red-500">{fieldState.error.message}</span>
+          <span className='text-red-500'>{fieldState.error.message}</span>
         )}
       </div>
     ),
@@ -144,7 +144,7 @@ Here's an example of custom field components implementation:
           ))}
         </select>
         {fieldState.error && (
-          <span className="text-red-500">{fieldState.error.message}</span>
+          <span className='text-red-500'>{fieldState.error.message}</span>
         )}
       </>
     ),

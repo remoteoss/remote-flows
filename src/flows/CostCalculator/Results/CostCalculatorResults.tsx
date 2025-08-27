@@ -107,15 +107,15 @@ export function CostCalculatorResults({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between mb-6 RemoteFlows__CostCalculatorResults">
-        <div className="RemoteFlows__CostCalculatorResults__Header">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <span className="flex items-center gap-1">
+      <div className='flex flex-col md:flex-row gap-4 md:items-center justify-between mb-6 RemoteFlows__CostCalculatorResults'>
+        <div className='RemoteFlows__CostCalculatorResults__Header'>
+          <h2 className='text-xl font-semibold flex items-center gap-2'>
+            <span className='flex items-center gap-1'>
               {options?.title ?? 'Cost Calculator'}
             </span>
-            <Badge className="ml-2">{employment.country.name}</Badge>
+            <Badge className='ml-2'>{employment.country.name}</Badge>
           </h2>
-          <p className="text-primary-foreground font-medium mt-1">
+          <p className='text-primary-foreground font-medium mt-1'>
             {options?.description ??
               `Total cost of employment in ${employment.country.name}`}
           </p>
@@ -124,11 +124,11 @@ export function CostCalculatorResults({
         <Tabs
           value={view}
           onValueChange={(v) => setView(v as 'monthly' | 'annual')}
-          className="w-full md:w-auto RemoteFlows__CostCalculatorResults__Tabs"
+          className='w-full md:w-auto RemoteFlows__CostCalculatorResults__Tabs'
         >
-          <TabsList className="grid w-full md:w-[200px] grid-cols-2">
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="annual">Annual</TabsTrigger>
+          <TabsList className='grid w-full md:w-[200px] grid-cols-2'>
+            <TabsTrigger value='monthly'>Monthly</TabsTrigger>
+            <TabsTrigger value='annual'>Annual</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -140,15 +140,15 @@ export function CostCalculatorResults({
           'RemoteFlows__CostCalculatorResults_CostBreakdown',
         )}
       >
-        <Card className="md:col-span-2 rounded-lg">
-          <CardHeader className="pb-2">
+        <Card className='md:col-span-2 rounded-lg'>
+          <CardHeader className='pb-2'>
             <CardTitle>Cost Breakdown</CardTitle>
             <CardDescription>
               Detailed breakdown of all employer costs
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* Salary Section */}
               <CostCalculatorGrossSalary
                 grossSalary={grossSalary}

@@ -87,7 +87,7 @@ describe('RadioGroupField Component', () => {
     const CustomRadioGroupField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-radio-field">Custom Radio Field</div>
+        <div data-testid='custom-radio-field'>Custom Radio Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -104,7 +104,7 @@ describe('RadioGroupField Component', () => {
     const CustomRadioGroupField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="custom-radio-field">Custom Radio Field</div>
+        <div data-testid='custom-radio-field'>Custom Radio Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -128,13 +128,13 @@ describe('RadioGroupField Component', () => {
       return (
         <div>
           <input
-            type="radio"
-            data-testid="custom-radio-input"
+            type='radio'
+            data-testid='custom-radio-input'
             onChange={() => handleChange('option1')}
           />
           <input
-            type="radio"
-            data-testid="custom-radio-input-2"
+            type='radio'
+            data-testid='custom-radio-input-2'
             onChange={() => handleChange('option2')}
           />
         </div>
@@ -157,12 +157,12 @@ describe('RadioGroupField Component', () => {
     const CustomRadioGroupFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="context-radio-field">Context Radio Field</div>
+        <div data-testid='context-radio-field'>Context Radio Field</div>
       ));
     const CustomRadioGroupFieldProp = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid="prop-radio-field">Prop Radio Field</div>
+        <div data-testid='prop-radio-field'>Prop Radio Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({

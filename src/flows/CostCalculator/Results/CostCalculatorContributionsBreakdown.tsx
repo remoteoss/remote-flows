@@ -28,24 +28,24 @@ export function CostCalculatorContributionsBreakdown({
 }: CostCalculatorContributionsBreakdownProps) {
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-medium text-primary-foreground">
+      <div className='flex justify-between items-center mb-2'>
+        <h3 className='font-medium text-primary-foreground'>
           Employer Contributions
         </h3>
-        <span className="font-semibold text-lg">
+        <span className='font-semibold text-lg'>
           {formatCurrency(contributionsTotal, currency)}
         </span>
       </div>
       {contributionsBreakdown ? (
         <>
-          <Separator className="mb-3" />
-          <div className="space-y-3 pl-2">
+          <Separator className='mb-3' />
+          <div className='space-y-3 pl-2'>
             {contributionsBreakdown.map((contribution, index) => (
               <div
                 key={index}
-                className="flex justify-between items-start text-sm"
+                className='flex justify-between items-start text-sm'
               >
-                <div className="flex items-start gap-2">
+                <div className='flex items-start gap-2'>
                   <span>{contribution.name}</span>
                   {contribution.description && (
                     <BasicTooltip
@@ -65,12 +65,12 @@ export function CostCalculatorContributionsBreakdown({
                       }
                     >
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-4 w-4 p-0"
+                        variant='ghost'
+                        size='icon'
+                        className='h-4 w-4 p-0'
                       >
-                        <Info className="h-3 w-3 text-gray-400" />
-                        <span className="sr-only">Info</span>
+                        <Info className='h-3 w-3 text-gray-400' />
+                        <span className='sr-only'>Info</span>
                       </Button>
                     </BasicTooltip>
                   )}

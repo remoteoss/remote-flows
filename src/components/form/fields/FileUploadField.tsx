@@ -94,7 +94,7 @@ export function FileUploadField({
             data-field={name}
             className={`RemoteFlows__FileUpload__Item__${name}`}
           >
-            <FormLabel className="RemoteFlows__FileUpload__Label">
+            <FormLabel className='RemoteFlows__FileUpload__Label'>
               {label}
             </FormLabel>
             <FormControl>
@@ -111,14 +111,14 @@ export function FileUploadField({
               />
             </FormControl>
             {description && (
-              <div className="flex items-center justify-between">
-                <FormDescription className="RemoteFlows__FileUpload__Description">
+              <div className='flex items-center justify-between'>
+                <FormDescription className='RemoteFlows__FileUpload__Description'>
                   {description}
                 </FormDescription>
               </div>
             )}
             {fieldState.error && (
-              <FormMessage className="RemoteFlows__FileUpload__Error" />
+              <FormMessage className='RemoteFlows__FileUpload__Error' />
             )}
           </FormItem>
         );

@@ -38,7 +38,7 @@ describe('TimeOff', () => {
                 We have recorded {days} {daysLiteral} of paid time off for{' '}
                 {username}
               </p>
-              <a href="#">Check {username}'s timeoff breakdown</a>
+              <a href='#'>Check {username}'s timeoff breakdown</a>
             </>
           );
         }}

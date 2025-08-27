@@ -38,7 +38,7 @@ describe('ContractAmendmentFlow', () => {
       switch (contractAmendmentBag.stepState.currentStep.name) {
         case 'form':
           return (
-            <div data-testid="form">
+            <div data-testid='form'>
               <Form
                 onError={mockError}
                 onSuccess={mockSuccess}
@@ -51,7 +51,7 @@ describe('ContractAmendmentFlow', () => {
           );
         case 'confirmation_form':
           return (
-            <div data-testid="confirmation-form">
+            <div data-testid='confirmation-form'>
               <ConfirmationForm onSubmit={mockOnSubmitConfirmation} />
               <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
                 Confirm

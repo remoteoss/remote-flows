@@ -113,17 +113,17 @@ export function FieldSetField({
         {label}
       </legend>
       {variant === 'inset' && (
-        <div className="RemoteFlows__FieldSetField__Header">
+        <div className='RemoteFlows__FieldSetField__Header'>
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
         </div>
       )}
       {description ? (
         <div
-          className="mb-5 RemoteFlows__FieldSetField__Description"
+          className='mb-5 RemoteFlows__FieldSetField__Description'
           dangerouslySetInnerHTML={{ __html: description }}
         />
       ) : null}
-      <div className="grid gap-4">
+      <div className='grid gap-4'>
         {fields.map((field: $TSFixMe) => {
           if (field.calculateDynamicProperties) {
             field = {

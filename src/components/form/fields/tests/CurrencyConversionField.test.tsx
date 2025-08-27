@@ -343,7 +343,7 @@ describe('CurrencyFieldWithConversion', () => {
                 sourceCurrency={sourceCurrency}
               />
               <button
-                data-testid="change-currency"
+                data-testid='change-currency'
                 onClick={() => setSourceCurrency('GBP')}
               >
                 Change Currency
@@ -377,7 +377,7 @@ describe('CurrencyFieldWithConversion', () => {
         .fn()
         .mockImplementation(({ children, onClick, ...props }) => (
           <button
-            data-testid="custom-button"
+            data-testid='custom-button'
             onClick={onClick}
             data-type={props['data-type']}
             className={props.className}
@@ -408,7 +408,7 @@ describe('CurrencyFieldWithConversion', () => {
         .fn()
         .mockImplementation(({ children, onClick, ...props }) => (
           <button
-            data-testid="custom-button"
+            data-testid='custom-button'
             onClick={onClick}
             data-type={props['data-type']}
             className={props.className}

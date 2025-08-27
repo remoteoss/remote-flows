@@ -248,21 +248,21 @@ function App() {
   const currentDemo = flattenedDemos[activeDemo];
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">SDK Demos</h1>
+    <div className='container mx-auto py-8 px-4'>
+      <h1 className='text-3xl font-bold mb-6'>SDK Demos</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
         {/* Nested Navigation Sidebar */}
-        <div className="lg:col-span-1">
+        <div className='lg:col-span-1'>
           <Card>
             <CardHeader>
               <CardTitle>Demos</CardTitle>
               <CardDescription>Browse all available demos</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col space-y-1">
+              <div className='flex flex-col space-y-1'>
                 {demoStructure.map((category) => (
-                  <div key={category.id} className="space-y-1">
+                  <div key={category.id} className='space-y-1'>
                     {category.children ? (
                       // Category with children
                       <Collapsible
@@ -271,27 +271,27 @@ function App() {
                       >
                         <CollapsibleTrigger asChild>
                           <Button
-                            variant="ghost"
-                            className="w-full justify-between"
+                            variant='ghost'
+                            className='w-full justify-between'
                           >
                             {category.title}
                             {expandedCategories[category.id] ? (
-                              <ChevronDown className="h-4 w-4" />
+                              <ChevronDown className='h-4 w-4' />
                             ) : (
-                              <ChevronRight className="h-4 w-4" />
+                              <ChevronRight className='h-4 w-4' />
                             )}
                           </Button>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <div className="pl-4 space-y-1 mt-1">
+                          <div className='pl-4 space-y-1 mt-1'>
                             {category.children.map((child) => (
                               <Button
                                 key={child.id}
                                 variant={
                                   activeDemo === child.id ? 'default' : 'ghost'
                                 }
-                                size="sm"
-                                className="w-full justify-start"
+                                size='sm'
+                                className='w-full justify-start'
                                 onClick={() => selectDemo(child.id)}
                               >
                                 {child.title}
@@ -306,7 +306,7 @@ function App() {
                         variant={
                           activeDemo === category.id ? 'default' : 'ghost'
                         }
-                        className="w-full justify-start"
+                        className='w-full justify-start'
                         onClick={() => selectDemo(category.id)}
                       >
                         {category.title}
@@ -319,29 +319,29 @@ function App() {
           </Card>
         </div>
         {/* Main Content */}
-        <div className="lg:col-span-3">
+        <div className='lg:col-span-3'>
           <Card>
             <CardHeader>
               <CardTitle>{currentDemo.title}</CardTitle>
               <CardDescription>{currentDemo.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="demo" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="demo">Demo</TabsTrigger>
-                  <TabsTrigger value="code">Code</TabsTrigger>
+              <Tabs defaultValue='demo' className='w-full'>
+                <TabsList className='grid w-full grid-cols-2'>
+                  <TabsTrigger value='demo'>Demo</TabsTrigger>
+                  <TabsTrigger value='code'>Code</TabsTrigger>
                 </TabsList>
-                <TabsContent value="demo" className="mt-4">
+                <TabsContent value='demo' className='mt-4'>
                   {React.createElement(currentDemo.component as $TSFixMe)}
                 </TabsContent>
-                <TabsContent value="code" className="mt-4">
-                  <div className="relative">
-                    <SyntaxHighlighter language="javascript" style={docco}>
+                <TabsContent value='code' className='mt-4'>
+                  <div className='relative'>
+                    <SyntaxHighlighter language='javascript' style={docco}>
                       {currentDemo.sourceCode as string}
                     </SyntaxHighlighter>
                     <Button
-                      size="sm"
-                      variant="ghost"
+                      size='sm'
+                      variant='ghost'
                       className={cn(
                         'absolute top-2 right-2 h-8 w-8 p-0',
                         copied === currentDemo.id && 'text-green-500',
@@ -354,11 +354,11 @@ function App() {
                       }
                     >
                       {copied === currentDemo.id ? (
-                        <Check className="h-4 w-4" />
+                        <Check className='h-4 w-4' />
                       ) : (
-                        <Copy className="h-4 w-4" />
+                        <Copy className='h-4 w-4' />
                       )}
-                      <span className="sr-only">Copy code</span>
+                      <span className='sr-only'>Copy code</span>
                     </Button>
                   </div>
                 </TabsContent>

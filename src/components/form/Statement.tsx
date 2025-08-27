@@ -25,8 +25,8 @@ export function Statement({ title, description, severity }: StatementProps) {
   }
 
   return (
-    <Alert variant="warning">
-      <AlertCircle className="h-4 w-4" />
+    <Alert variant='warning'>
+      <AlertCircle className='h-4 w-4' />
       {title && <AlertTitle>{title}</AlertTitle>}
       <AlertDescription>{description}</AlertDescription>
     </Alert>

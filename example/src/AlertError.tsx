@@ -10,7 +10,7 @@ export const AlertError = ({
 }) => {
   if (errors.apiError) {
     return (
-      <div className="alert-error">
+      <div className='alert-error'>
         <p>{errors.apiError}</p>
         <ul>
           {errors.fieldErrors.map((fieldError) => (

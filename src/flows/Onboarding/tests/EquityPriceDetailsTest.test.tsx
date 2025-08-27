@@ -32,7 +32,7 @@ describe('EquityPriceDetails', () => {
     it('should render the equity price details with fee waived (strikethrough) when discount exists', () => {
       const { container } = render(
         <EquityPriceDetails
-          offerEquity="yes"
+          offerEquity='yes'
           equityCost={mockEquityCostWithDiscount}
         />,
       );
@@ -56,7 +56,7 @@ describe('EquityPriceDetails', () => {
     it('should render the equity price details without strikethrough when no discount exists', () => {
       const { container } = render(
         <EquityPriceDetails
-          offerEquity="yes"
+          offerEquity='yes'
           equityCost={mockEquityCostWithoutDiscount}
         />,
       );
@@ -80,7 +80,7 @@ describe('EquityPriceDetails', () => {
     it('should not render anything', () => {
       render(
         <EquityPriceDetails
-          offerEquity="no"
+          offerEquity='no'
           equityCost={mockEquityCostWithDiscount}
         />,
       );
@@ -108,7 +108,7 @@ describe('EquityPriceDetails', () => {
 
   describe('when equityCost is not provided', () => {
     it('should not render anything even if offerEquity is "yes"', () => {
-      render(<EquityPriceDetails offerEquity="yes" />);
+      render(<EquityPriceDetails offerEquity='yes' />);
 
       expect(
         screen.queryByText('This is a fee for managing equity through Remote.'),
