@@ -556,7 +556,7 @@ describe('CostCalculatorFlow', () => {
     ).toHaveTextContent(/USD/i);
   });
 
-  it('should show management fee field when both includeManagementFee and managementFees are true', async () => {
+  it('should show management fee field when includeManagementFee is true', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
       estimationOptions: {
@@ -565,20 +565,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        managementFees: {
-          USD: 699,
-          AUD: 699,
-          CAD: 699,
-          CHF: 699,
-          DKK: 699,
-          EUR: 699,
-          GBP: 699,
-          JPY: 699,
-          NOK: 699,
-          NZD: 699,
-          SEK: 699,
-          SGD: 699,
-        },
       },
     });
 
@@ -589,44 +575,13 @@ describe('CostCalculatorFlow', () => {
     expect(
       screen.getByRole('textbox', { name: /management fee/i }),
     ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toHaveValue('699');
   });
 
   it('should hide management fee field when includeManagementFee is false', async () => {
-    renderComponent({
-      defaultValues: defaultProps.defaultValues,
-      estimationOptions: {
-        title: 'Test',
-        includeBenefits: true,
-        includeCostBreakdowns: true,
-        includePremiumBenefits: true,
-        includeManagementFee: false,
-        managementFees: {
-          USD: 699,
-          AUD: 699,
-          CAD: 699,
-          CHF: 699,
-          DKK: 699,
-          EUR: 699,
-          GBP: 699,
-          JPY: 699,
-          NOK: 699,
-          NZD: 699,
-          SEK: 699,
-          SGD: 699,
-        },
-      },
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
-    });
-
-    expect(
-      screen.queryByRole('textbox', { name: /management fee/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('should hide management fee field when managementFees & includeManagementFee are not present', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
       estimationOptions: {
@@ -658,20 +613,6 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
-        managementFees: {
-          USD: 699,
-          AUD: 699,
-          CAD: 699,
-          CHF: 699,
-          DKK: 699,
-          EUR: 699,
-          GBP: 699,
-          JPY: 699,
-          NOK: 699,
-          NZD: 699,
-          SEK: 699,
-          SGD: 699,
-        },
       },
     });
 
