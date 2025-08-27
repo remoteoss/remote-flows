@@ -1,0 +1,14 @@
+export const BASE_RATES = {
+  AUD: 106900,
+  CAD: 94500,
+  CHF: 61500,
+  DKK: 482500,
+  EUR: 64500,
+  GBP: 55900,
+  JPY: 10500000,
+  NOK: 734000,
+  NZD: 115500,
+  SEK: 727000,
+  SGD: 94000,
+  USD: 69900,
+};

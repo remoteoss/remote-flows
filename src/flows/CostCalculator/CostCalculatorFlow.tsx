@@ -11,6 +11,7 @@ import {
   CostCalculatorEstimationOptions,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
 export type CostCalculatorFlowProps = {
   /**
@@ -56,13 +57,24 @@ export const CostCalculatorFlow = ({
   version = 'standard',
 }: CostCalculatorFlowProps) => {
   const formId = useId();
+  const onCurrencyChange = (currency: string) => {
+    if (BASE_RATES[currency as keyof typeof BASE_RATES]) {
+      form.setValue(
+        'management.management_fee',
+        BASE_RATES[currency as keyof typeof BASE_RATES] / 100,
+      );
+    }
+  };
   const costCalculatorBag = useCostCalculator({
     defaultRegion: defaultValues.countryRegionSlug,
     defaultCurrency: defaultValues.currencySlug,
     defaultSalary: defaultValues.salary,
     estimationOptions,
     version,
-    options,
+    options: {
+      ...options,
+      onCurrencyChange: onCurrencyChange,
+    },
   });
   const resolver = useJsonSchemasValidationFormResolver(
     // @ts-expect-error no matching type

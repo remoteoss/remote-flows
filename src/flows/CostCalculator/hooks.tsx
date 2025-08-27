@@ -352,6 +352,7 @@ export const useCostCalculator = (
       (c) => c.value === currency,
     )?.label;
     setEmployerBillingCurrency(selectedCurrency);
+    options?.onCurrencyChange?.(selectedCurrency || '');
   }
 
   const regionField = fieldsJSONSchema.fields.find(
@@ -459,13 +460,27 @@ export const useCostCalculator = (
   }
 
   return {
+    /**
+     * Current step state containing the current step and total number of steps
+     */
     stepState: {
       current: 0,
       total: 1,
       isLastStep: true,
     },
+    /**
+     * Array of form fields from the cost calculator schema + dynamic region fields like benefits, age, etc.
+     */
     fields: allFields,
+    /**
+     * Validation schema for the cost calculator form
+     */
     validationSchema,
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
     parseFormValues: (
       values: CostCalculatorEstimationFormValues,
     ): CostCalculatorEstimationSubmitValues => {
@@ -510,11 +525,28 @@ export const useCostCalculator = (
         ...parsedRegionFields,
       } as CostCalculatorEstimationSubmitValues;
     },
+    /**
+     * Function to handle validation of the cost calculator form
+     * @param values - Form values to validate
+     * @returns Validation result
+     */
     handleValidation,
+    /**
+     * Whether the cost calculator form is currently being submitted
+     */
     isSubmitting: costCalculatorEstimationMutation.isPending,
+    /**
+     * Whether the cost calculator form is currently loading
+     */
     isLoading:
       isLoadingCountries && isLoadingCurrencies && isLoadingRegionFields,
+    /**
+     * Function to submit the cost calculator form
+     */
     onSubmit,
+    /**
+     * Function to reset the cost calculator form
+     */
     resetForm,
   };
 };

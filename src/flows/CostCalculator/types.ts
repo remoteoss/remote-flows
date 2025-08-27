@@ -4,6 +4,7 @@ import type {
   PostCreateEstimationError,
   ValidationError,
 } from '@/src/client';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 import { JSFModify } from '@/src/flows/types';
 
 export type CostCalculatorEstimationSubmitValues = {
@@ -76,4 +77,7 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
 
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;
+  onCurrencyChange?: (currency: string) => void;
 };
+
+export type CurrencyKey = keyof typeof BASE_RATES;
