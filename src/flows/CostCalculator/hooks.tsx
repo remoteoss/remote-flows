@@ -408,7 +408,10 @@ export const useCostCalculator = (
     ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 
-  const validationSchema = buildValidationSchema(fieldsJSONSchema.fields);
+  const validationSchema = buildValidationSchema(
+    fieldsJSONSchema.fields,
+    employerBillingCurrency || 'USD',
+  );
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;

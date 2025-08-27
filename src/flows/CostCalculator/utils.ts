@@ -4,18 +4,24 @@ import type {
 } from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, object } from 'yup';
+import { AnyObjectSchema, number, object } from 'yup';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
+  CurrencyKey,
 } from './types';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
 /**
  * Build the validation schema for the form.
  * @returns
  */
-export function buildValidationSchema(fields: $TSFixMe[]) {
+export function buildValidationSchema(
+  fields: $TSFixMe[],
+  employerBillingCurrency: string,
+) {
+  console.log('employerBillingCurrency', employerBillingCurrency);
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
       // Special handling for salary fields
@@ -28,6 +34,26 @@ export function buildValidationSchema(fields: $TSFixMe[]) {
             otherwise: (schema) => schema.optional(),
           },
         );
+      } else if (field.name === 'management') {
+        fieldsSchemaAcc[field.name] = object({
+          management_fee: number()
+            .transform((value) => {
+              return isNaN(value) ? undefined : value;
+            })
+            .min(0, 'Management fee must be greater than or equal to 0')
+            .max(
+              employerBillingCurrency
+                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                : BASE_RATES.USD,
+              () => {
+                const maxValue = employerBillingCurrency
+                  ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                  : BASE_RATES.USD;
+                const displayValue = maxValue / 100;
+                return `Management fee cannot exceed ${displayValue} ${employerBillingCurrency}`;
+              },
+            ),
+        });
       } else {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }
