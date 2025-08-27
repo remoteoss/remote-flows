@@ -21,7 +21,6 @@ export function buildValidationSchema(
   fields: $TSFixMe[],
   employerBillingCurrency: string,
 ) {
-  console.log('employerBillingCurrency', employerBillingCurrency);
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
       // Special handling for salary fields
