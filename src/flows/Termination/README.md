@@ -105,7 +105,7 @@ const MultiStepForm = ({
     case 'employee_communication':
       return (
         <>
-          <div className="alert">
+          <div className='alert'>
             <p>
               Please do not inform the employee of their termination until we
               review your request for legal risks. When we approve your request,
@@ -147,7 +147,7 @@ const MultiStepForm = ({
                     We have recorded {days} {daysLiteral} of paid time off for{' '}
                     {username}
                   </p>
-                  <a href="#">See {username}'s timeoff breakdown</a>
+                  <a href='#'>See {username}'s timeoff breakdown</a>
                 </>
               );
             }}
@@ -164,7 +164,7 @@ const MultiStepForm = ({
       return (
         <>
           <AdditionalDetailsStep
-            requesterName="ze"
+            requesterName='ze'
             onSubmit={(payload) => onSubmitForm(payload)}
             onSuccess={onSuccess}
             onError={onError}
@@ -190,7 +190,7 @@ const TerminationForm = ({
 
   return (
     <>
-      <div className="steps-navigation">
+      <div className='steps-navigation'>
         <ul>
           {STEPS.map((step, index) => (
             <li
@@ -202,8 +202,8 @@ const TerminationForm = ({
           ))}
         </ul>
       </div>
-      <div className="card" style={{ marginBottom: '20px' }}>
-        <h1 className="heading">{stepTitle}</h1>
+      <div className='card' style={{ marginBottom: '20px' }}>
+        <h1 className='heading'>{stepTitle}</h1>
         <MultiStepForm
           terminationBag={terminationBag}
           components={components}
@@ -223,9 +223,9 @@ export const Termination = () => {
   const [open, setOpen] = useState(false);
   return (
     <RemoteFlows auth={fetchToken}>
-      <div className="termination_container">
+      <div className='termination_container'>
         <TerminationFlow
-          employmentId="7df92706-59ef-44a1-91f6-a275b9149994"
+          employmentId='7df92706-59ef-44a1-91f6-a275b9149994'
           render={TerminationForm}
           options={{
             jsfModify: {
@@ -330,7 +330,7 @@ Component that retrieves the employment and the timeoff of the employee. It uses
         <p>
           We have recorded {days} {daysLiteral} of paid time off for {username}
         </p>
-        <a href="#">See {username}'s timeoff breakdown</a>
+        <a href='#'>See {username}'s timeoff breakdown</a>
       </>
     );
   }}
