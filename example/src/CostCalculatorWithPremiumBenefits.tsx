@@ -229,6 +229,11 @@ const AddEstimateForm = ({
               description:
                 "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
             },
+            benefits: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
           },
         },
       }}
