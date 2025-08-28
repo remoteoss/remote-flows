@@ -66,7 +66,7 @@ export type CostCalculatorEstimationOptions = Partial<{
   /**
    * Management fees by currency. Default is null.
    */
-  managementFees?: Record<CurrencyKey, number>;
+  managementFees?: Partial<Record<CurrencyKey, number>>;
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;

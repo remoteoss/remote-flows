@@ -49,7 +49,7 @@ export type CostCalculatorFlowProps = {
 const getDefaultManagementFee = (
   baseRates: Record<CurrencyKey, number>,
   currency: CurrencyKey,
-  managementFees?: Record<CurrencyKey, number>,
+  managementFees?: Partial<Record<CurrencyKey, number>>,
 ) => {
   if (managementFees && managementFees[currency]) {
     return managementFees[currency];
@@ -145,7 +145,13 @@ export const CostCalculatorFlow = ({
         form.setValue('management.management_fee', defaultManagementFee);
       }
     }
-  }, [defaultValues.currencySlug, costCalculatorBag.currencies]);
+  }, [
+    defaultValues.currencySlug,
+    costCalculatorBag.currencies,
+    estimationOptions.includeManagementFee,
+    estimationOptions.managementFees,
+    form,
+  ]);
 
   return (
     <CostCalculatorContext.Provider
