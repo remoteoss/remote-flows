@@ -40,6 +40,14 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includePremiumBenefits: true,
   includeManagementFee: true,
   enableCurrencyConversion: true,
+  managementFees: {
+    USD: 594,
+    CAD: 803.25,
+    NZD: 981.75,
+    AUD: 908.65,
+    EUR: 548.25,
+    GBP: 475.15,
+  },
 };
 
 const Layout = ({

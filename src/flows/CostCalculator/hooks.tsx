@@ -231,11 +231,15 @@ export const useCostCalculator = (
       },
     };
   }, [
-    employeeBillingCurrency,
     employerBillingCurrency,
     salaryField,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     salaryFieldPresentation?.salary_conversion_properties?.label,
+    defaultSalary,
+    getCurrencies,
+    options?.jsfModify?.fields?.management,
+    showManagementField,
+    version,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({
