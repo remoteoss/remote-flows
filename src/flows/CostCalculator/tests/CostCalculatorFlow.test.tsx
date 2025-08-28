@@ -672,6 +672,30 @@ describe('CostCalculatorFlow', () => {
     ).toHaveValue('599');
   });
 
+  it('should show the base rate fee field when includeManagementFee is true and managementFees is present', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        managementFees: {
+          EUR: 530,
+        } as $TSFixMe,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('textbox', { name: /management fee/i }),
+    ).toHaveValue('699');
+  });
+
   it('should change the employer billing currency and update the management fee', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
