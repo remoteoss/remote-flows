@@ -50,14 +50,14 @@ const EstimationResultsHeader = ({
   return (
     <div className='RemoteFlows__EstimationResults__Header flex justify-between'>
       <div className='flex flex-row items-center gap-6'>
-        <div className='flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
+        <div className='RemoteFlows__EstimationResultsHeader__FlagContainer flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
           <Flag code={country.alpha_2_code} />
         </div>
         <div className='space-y-1'>
-          <h2 className='text-lg font-medium leading-none text-[#181818]'>
+          <h2 className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'>
             {title}
           </h2>
-          <p className='text-xs text-[#71717A]'>
+          <p className='RemoteFlows__EstimationResultsHeader__Country text-xs text-[#71717A]'>
             {country.name} {region ? ` (${region.name})` : ''}
           </p>
         </div>
@@ -133,19 +133,22 @@ function OnboardingTimeline({
         className,
       )}
     >
-      <AccordionItem value='timeline' className='border-border'>
-        <AccordionTrigger className='hover:no-underline px-0 py-4'>
+      <AccordionItem
+        value='timeline'
+        className='RemoteFlows__OnboardingTimeline__AccordionItem border-border'
+      >
+        <AccordionTrigger className='RemoteFlows__OnboardingTimeline__AccordionTrigger hover:no-underline px-0 py-4'>
           <div className='flex items-center justify-between w-full'>
-            <span className='text-base font-medium text-[#0F172A]'>
+            <span className='RemoteFlows__OnboardingTimeline__Title text-base font-medium text-[#0F172A]'>
               Onboarding timeline
             </span>
-            <span className='text-base text-muted-foreground mr-4'>
+            <span className='RemoteFlows__OnboardingTimeline__Description text-base text-muted-foreground mr-4'>
               {minimumOnboardingDays} days
             </span>
           </div>
         </AccordionTrigger>
         <AccordionContent className='px-0 pb-4'>
-          <ul className='list-disc list-inside space-y-2'>
+          <ul className='RemoteFlows__OnboardingTimeline__List list-disc list-inside space-y-2'>
             {data.steps.map((step) => (
               <li key={step.id}>
                 <strong className='font-medium text-[#09090B]'>
@@ -155,7 +158,7 @@ function OnboardingTimeline({
               </li>
             ))}
           </ul>
-          <p className='text-xs text-muted-foreground mt-4'>
+          <p className='RemoteFlows__OnboardingTimeline__HelpText text-xs text-muted-foreground mt-4'>
             {data.helpText}
             {data.zendeskArticleId && (
               <ZendeskTriggerButton zendeskId={data.zendeskArticleId}>
@@ -189,8 +192,11 @@ function HiringSection({
         className,
       )}
     >
-      <AccordionItem value='timeline' className='border-border'>
-        <AccordionTrigger className='hover:no-underline px-0 py-4'>
+      <AccordionItem
+        value='timeline'
+        className='RemoteFlows__HiringSection__AccordionItem border-border'
+      >
+        <AccordionTrigger className='RemoteFlows__HiringSection__AccordionTrigger hover:no-underline px-0 py-4'>
           <div className='flex items-center justify-between w-full'>
             <span className='text-base font-medium text-[#0F172A]'>
               Hiring in {country.name}
@@ -260,15 +266,11 @@ function EstimationRow({
   label,
   amounts,
   className,
-  isHeader = false,
-  isCollapsible = false,
   children,
 }: {
   label: string | React.ReactNode;
   amounts: string | string[];
   className?: string;
-  isHeader?: boolean;
-  isCollapsible?: boolean;
   children?: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -279,24 +281,21 @@ function EstimationRow({
         <div className='flex items-center gap-2'>
           <span
             className={cn(
-              'min-w-[140px]',
-              isHeader ? 'font-medium text-[#09090B]' : '',
+              'RemoteFlows__EstimationRow__Title min-w-[140px] font-medium text-[#09090B]',
             )}
           >
             {label}
           </span>
-          {isCollapsible && (
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className='p-1 hover:bg-gray-100 rounded'
-            >
-              <ChevronDown
-                className={`h-4 w-4 text-muted-foreground transition-transform ${
-                  isOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-          )}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className='RemoteFlows__EstimationRow__CollapseButton p-1 hover:bg-gray-100 rounded'
+          >
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground transition-transform ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
         </div>
 
         {Array.isArray(amounts) ? (
@@ -304,8 +303,7 @@ function EstimationRow({
             <span
               key={index}
               className={cn(
-                'text-right',
-                isHeader ? 'font-medium text-[#09090B]' : '',
+                'RemoteFlows__EstimationRow__RegionalAmount text-right font-medium text-[#09090B]',
               )}
             >
               {amount}
@@ -316,8 +314,7 @@ function EstimationRow({
             <span></span>
             <span
               className={cn(
-                'text-right',
-                isHeader ? 'font-medium text-[#09090B]' : '',
+                'RemoteFlows__EstimationRow__EmployerAmount text-right font-medium text-[#09090B]',
               )}
             >
               {amounts}
@@ -327,8 +324,10 @@ function EstimationRow({
       </div>
 
       {/* Collapsible content */}
-      {isCollapsible && isOpen && children && (
-        <div className='mt-4'>{children}</div>
+      {isOpen && children && (
+        <div className='RemoteFlows__EstimationRow__CollapsibleContent mt-4'>
+          {children}
+        </div>
       )}
     </div>
   );
@@ -359,7 +358,12 @@ function BreakdownListItem({
   const isNested = level > 0;
 
   return (
-    <li className={cn('pb-3', isNested && 'pb-1')}>
+    <li
+      className={cn(
+        'RemoteFlows__BreakdownList__Item pb-3',
+        isNested && 'pb-1',
+      )}
+    >
       <div
         className={cn(
           isMultipleCurrency
@@ -370,14 +374,16 @@ function BreakdownListItem({
         <div className={cn('flex items-center gap-2', isNested && 'pl-3')}>
           {!isNested && (
             <span
-              className='w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0'
+              className='RemoteFlows__BreakdownList__Bullet w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0'
               aria-hidden='true'
             />
           )}
 
           <span
             className={cn(
-              isNested ? 'text-xs text-[#71717A]' : 'text-sm text-[#09090B]', // Different colors
+              isNested
+                ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
+                : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B]',
             )}
           >
             {item.label}
@@ -396,7 +402,7 @@ function BreakdownListItem({
                 </>
               }
             >
-              <button className='p-1 hover:bg-gray-100 rounded'>
+              <button className='RemoteFlows__BreakdownList__InfoButton p-1 hover:bg-gray-100 rounded'>
                 <Info
                   className={cn(
                     'text-muted-foreground',
@@ -410,7 +416,7 @@ function BreakdownListItem({
           {(item.isCollapsible || hasChildren) && (
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className='p-1 hover:bg-gray-100 rounded'
+              className='RemoteFlows__BreakdownList__CollapsibleButton p-1 hover:bg-gray-100 rounded'
             >
               <ChevronDown
                 className={`h-3 w-3 text-muted-foreground transition-transform ${
@@ -425,16 +431,20 @@ function BreakdownListItem({
           <>
             <span
               className={cn(
-                'text-sm text-right',
-                isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+                'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
+                isNested
+                  ? 'RemoteFlows__BreakdownList__RegionalAmountText--Nested text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__RegionalAmountText--NotNested text-[#09090B]',
               )}
             >
               {item.regionalAmount || '—'}
             </span>
             <span
               className={cn(
-                'text-sm text-right',
-                isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+                'RemoteFlows__BreakdownList__EmployerAmountText text-sm text-right',
+                isNested
+                  ? 'RemoteFlows__BreakdownList__EmployerAmountText--Nested text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__EmployerAmountText--NotNested text-[#09090B]',
               )}
             >
               {item.employerAmount || '—'}
@@ -443,8 +453,10 @@ function BreakdownListItem({
         ) : (
           <span
             className={cn(
-              'text-sm text-right',
-              isNested ? 'text-[#71717A]' : 'text-[#09090B]',
+              'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
+              isNested
+                ? 'RemoteFlows__BreakdownList__RegionalAmountText--Nested text-[#71717A]'
+                : 'RemoteFlows__BreakdownList__RegionalAmountText--NotNested text-[#09090B]',
             )}
           >
             {item.regionalAmount || '—'}
@@ -479,7 +491,7 @@ function BreakdownList({
   level,
 }: BreakdownListProps) {
   return (
-    <ul className={cn('list-none', className)}>
+    <ul className={cn('RemoteFlows__BreakdownList list-none', className)}>
       {items.map((item, index) => (
         <BreakdownListItem
           key={index}
@@ -579,8 +591,6 @@ export const EstimationResults = ({
                   estimation.regional_currency_costs.currency.symbol,
                 )
           }
-          isHeader
-          isCollapsible
         >
           <BreakdownList
             items={[
@@ -698,8 +708,6 @@ export const EstimationResults = ({
                   estimation.regional_currency_costs.currency.symbol,
                 )
           }
-          isHeader
-          isCollapsible
         >
           <BreakdownList
             items={[
