@@ -148,7 +148,7 @@ export function buildPayload(
       managementFee && {
         global_discount: {
           quoted_amount: managementFee,
-          text: 'New Management fee',
+          text: '',
         },
       }),
     employments: employments.map((value) =>
