@@ -431,20 +431,20 @@ function BreakdownListItem({
           <>
             <span
               className={cn(
-                'RemoteFlows__RegionalAmount__Text text-sm text-right',
+                'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
                 isNested
-                  ? 'RemoteFlows__RegionalAmount--Nested text-[#71717A]'
-                  : 'RemoteFlows__RegionalAmount--NotNested text-[#09090B]',
+                  ? 'RemoteFlows__BreakdownList__RegionalAmountText--Nested text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__RegionalAmountText--NotNested text-[#09090B]',
               )}
             >
               {item.regionalAmount || '—'}
             </span>
             <span
               className={cn(
-                'RemoteFlows__EmployerAmount__Text text-sm text-right',
+                'RemoteFlows__BreakdownList__EmployerAmountText text-sm text-right',
                 isNested
-                  ? 'RemoteFlows__EmployerAmount--Nested text-[#71717A]'
-                  : 'RemoteFlows__EmployerAmount--NotNested text-[#09090B]',
+                  ? 'RemoteFlows__BreakdownList__EmployerAmountText--Nested text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__EmployerAmountText--NotNested text-[#09090B]',
               )}
             >
               {item.employerAmount || '—'}
@@ -453,10 +453,10 @@ function BreakdownListItem({
         ) : (
           <span
             className={cn(
-              'RemoteFlows__RegionalAmount__Text text-sm text-right',
+              'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
               isNested
-                ? 'RemoteFlows__RegionalAmount--Nested text-[#71717A]'
-                : 'RemoteFlows__RegionalAmount--NotNested text-[#09090B]',
+                ? 'RemoteFlows__BreakdownList__RegionalAmountText--Nested text-[#71717A]'
+                : 'RemoteFlows__BreakdownList__RegionalAmountText--NotNested text-[#09090B]',
             )}
           >
             {item.regionalAmount || '—'}
