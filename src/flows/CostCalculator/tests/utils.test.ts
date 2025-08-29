@@ -185,7 +185,7 @@ describe('buildPayload', () => {
 
     expect(payload.global_discount).toEqual({
       quoted_amount: 59900,
-      text: 'New Management fee',
+      text: '',
     });
   });
 
