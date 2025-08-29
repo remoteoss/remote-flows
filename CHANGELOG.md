@@ -7,6 +7,7 @@
 - 2ad10ad: - feat: fieldsets support an inset variant [#425](https://github.com/remoteoss/remote-flows/pull/425)
   - feat: add management fieldset [#423](https://github.com/remoteoss/remote-flows/pull/423)
   - feat: add css classes to the EstimationResults [#431](https://github.com/remoteoss/remote-flows/pull/431)
+  - feat: add managementFees option to the estimationOptions [#428](https://github.com/remoteoss/remote-flows/pull/428)
 
 ## 0.12.0
 
