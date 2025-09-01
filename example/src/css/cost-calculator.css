@@ -5,6 +5,7 @@
 }
 
 /* Position the conversion field with margin for gap */
-.input-container[data-field='salary'] {
+.input-container[data-field='salary_conversion']
+  + .input-container[data-field='salary'] {
   margin-left: 16px;
 }
