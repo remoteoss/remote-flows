@@ -8,7 +8,7 @@ import {
   ScrollArea,
   DialogTrigger,
 } from '@remoteoss/remote-flows/internals';
-import type { ZendeskDialogComponentProps } from '@remoteoss/remote-flows';
+import type { ZendeskDrawerComponentProps } from '@remoteoss/remote-flows';
 
 export function ZendeskDialog({
   open,
@@ -18,7 +18,7 @@ export function ZendeskDialog({
   error,
   zendeskURL,
   Trigger,
-}: ZendeskDialogComponentProps) {
+}: ZendeskDrawerComponentProps) {
   const triggerElement = React.isValidElement(Trigger) ? (
     Trigger
   ) : (
