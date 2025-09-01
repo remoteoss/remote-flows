@@ -3,6 +3,7 @@ import type {
   Components,
   FieldComponentProps,
 } from '@remoteoss/remote-flows';
+//import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
@@ -246,4 +247,5 @@ export const components: Components = {
   radio: Radio,
   checkbox: Checkbox,
   countries: Countries,
+  //zendeskDrawer: ZendeskDialog,
 };

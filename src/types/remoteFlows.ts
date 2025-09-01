@@ -1,13 +1,14 @@
-import { ThemeProviderProps } from '@/src/types/theme';
 import {
   ControllerFieldState,
   ControllerRenderProps,
   FieldValues,
 } from 'react-hook-form';
+import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
+import { ThemeProviderProps } from '@/src/types/theme';
+import { HelpCenterArticle } from '@/src/client';
 import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
-import { ReactNode } from 'react';
 import { ENVIRONMENTS } from '../environments';
 
 type AuthResponse = {
@@ -88,6 +89,16 @@ export type ButtonComponentProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement> &
   Record<string, unknown>;
 
+export type ZendeskDrawerComponentProps = {
+  open: boolean;
+  onClose: () => void;
+  data?: HelpCenterArticle;
+  isLoading: boolean;
+  error: Error | null;
+  zendeskURL: string;
+  Trigger: React.ReactElement;
+};
+
 /**
  * Props for custom statement components.
  */
@@ -100,6 +111,7 @@ export type Components = {
 } & {
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
+  zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
