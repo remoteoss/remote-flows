@@ -1,15 +1,15 @@
-import { ThemeProviderProps } from '@/src/types/theme';
 import {
   ControllerFieldState,
   ControllerRenderProps,
   FieldValues,
 } from 'react-hook-form';
+import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
+import { ThemeProviderProps } from '@/src/types/theme';
+import { HelpCenterArticle } from '@/src/client';
 import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
-import { ReactNode } from 'react';
 import { ENVIRONMENTS } from '../environments';
-import { HelpCenterArticle } from '@/src/client';
 
 type AuthResponse = {
   accessToken: string;
