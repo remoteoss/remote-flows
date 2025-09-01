@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from '@remoteoss/remote-flows/internals';
 import type { ZendeskDialogComponentProps } from '@remoteoss/remote-flows';
-import { sanitizeHtml } from '@remoteoss/remote-flows';
 
 export function ZendeskDialog({
   open,
@@ -48,7 +47,7 @@ export function ZendeskDialog({
             <div
               className='flex-1 overflow-y-auto'
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(data?.body || ''),
+                __html: data?.body || '',
               }}
             ></div>
           </div>

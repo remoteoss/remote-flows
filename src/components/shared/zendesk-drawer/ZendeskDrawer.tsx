@@ -8,7 +8,6 @@ import {
   DrawerTitle,
 } from '@/src/components/ui/drawer';
 import { useFormFields } from '@/src/context';
-import { sanitizeHtml } from '@/src/lib/utils';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactElement;
@@ -81,7 +80,7 @@ export const ZendeskDrawer = ({
           <div
             className='flex-1 overflow-y-auto p-4 RemoteFlows_ZendeskDrawer__Content'
             dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(data?.body || ''),
+              __html: data?.body || '',
             }}
           ></div>
         </div>
