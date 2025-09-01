@@ -816,11 +816,6 @@ button.reset-button {
   cursor: not-allowed;
 }
 
-.RemoteFlows-Salary-description {
-  display: block;
-  margin-top: 8px;
-}
-
 .RemoteFlows__EquityPriceDetails {
   display: flex;
   flex-direction: column;

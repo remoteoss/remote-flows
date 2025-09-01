@@ -1,0 +1,10 @@
+.input-container[data-field='salary_conversion'],
+.input-container[data-field='salary'] {
+  display: inline-grid;
+  width: calc(50% - 8px); /* Each takes half the space minus gap */
+}
+
+/* Position the conversion field with margin for gap */
+.input-container[data-field='salary'] {
+  margin-left: 16px;
+}
