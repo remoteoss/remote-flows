@@ -89,7 +89,7 @@ export type ButtonComponentProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement> &
   Record<string, unknown>;
 
-export type ZendeskDialogComponentProps = {
+export type ZendeskDrawerComponentProps = {
   open: boolean;
   onClose: () => void;
   data?: HelpCenterArticle;
@@ -111,7 +111,7 @@ export type Components = {
 } & {
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
-  zendeskDialog?: React.ComponentType<ZendeskDialogComponentProps>;
+  zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

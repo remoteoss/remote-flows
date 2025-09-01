@@ -247,5 +247,5 @@ export const components: Components = {
   radio: Radio,
   checkbox: Checkbox,
   countries: Countries,
-  //zendeskDialog: ZendeskDialog,
+  //zendeskDrawer: ZendeskDialog,
 };

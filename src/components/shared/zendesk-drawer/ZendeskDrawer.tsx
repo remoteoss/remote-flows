@@ -37,7 +37,7 @@ export const ZendeskDrawer = ({
     enabled: open,
   });
 
-  const CustomZendeskDrawer = components?.zendeskDialog;
+  const CustomZendeskDrawer = components?.zendeskDrawer;
 
   if (CustomZendeskDrawer) {
     return (

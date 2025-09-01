@@ -136,7 +136,7 @@ describe('ZendeskDrawer', () => {
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider
           components={{
-            zendeskDialog: CustomComponent,
+            zendeskDrawer: CustomComponent,
           }}
         >
           {children}
@@ -221,7 +221,7 @@ describe('ZendeskDrawer', () => {
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider
           components={{
-            zendeskDialog: CustomComponent,
+            zendeskDrawer: CustomComponent,
           }}
         >
           {children}
