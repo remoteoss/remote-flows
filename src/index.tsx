@@ -23,7 +23,7 @@ export * from '@/src/flows/Onboarding';
 export type * from '@/src/flows/CostCalculator/types';
 export * from '@/src/common/api';
 
-export { transformYupErrorsIntoObject } from '@/src/lib/utils';
+export { transformYupErrorsIntoObject, sanitizeHtml } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
@@ -33,6 +33,7 @@ export type {
   FieldComponentProps,
   ButtonComponentProps,
   StatementComponentProps,
+  ZendeskDialogComponentProps,
 } from '@/src/types/remoteFlows';
 
 export type {

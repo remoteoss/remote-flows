@@ -9,6 +9,7 @@ import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
 import { ReactNode } from 'react';
 import { ENVIRONMENTS } from '../environments';
+import { HelpCenterArticle } from '@/src/client';
 
 type AuthResponse = {
   accessToken: string;
@@ -88,6 +89,16 @@ export type ButtonComponentProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement> &
   Record<string, unknown>;
 
+export type ZendeskDialogComponentProps = {
+  open: boolean;
+  onClose: () => void;
+  data?: HelpCenterArticle;
+  isLoading: boolean;
+  error: Error | null;
+  zendeskURL: string;
+  Trigger: React.ReactElement;
+};
+
 /**
  * Props for custom statement components.
  */
@@ -100,6 +111,7 @@ export type Components = {
 } & {
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
+  zendeskDialog?: React.ComponentType<ZendeskDialogComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

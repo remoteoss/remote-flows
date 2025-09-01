@@ -7,10 +7,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/src/components/ui/drawer';
+import { useFormFields } from '@/src/context';
 import { sanitizeHtml } from '@/src/lib/utils';
 
 export type ZendeskDrawerProps = {
-  Trigger: React.ReactNode;
+  Trigger: React.ReactElement;
   zendeskId: number;
   open: boolean;
   onClose: () => void;
@@ -26,6 +27,7 @@ export const ZendeskDrawer = ({
   open,
   onClose,
 }: ZendeskDrawerProps) => {
+  const { components } = useFormFields();
   const zendeskURL = buildZendeskURL(zendeskId);
 
   const handleClose = () => {
@@ -35,6 +37,22 @@ export const ZendeskDrawer = ({
   const { data, isLoading, error } = useZendeskArticle(zendeskId, {
     enabled: open,
   });
+
+  const CustomZendeskDrawer = components?.zendeskDialog;
+
+  if (CustomZendeskDrawer) {
+    return (
+      <CustomZendeskDrawer
+        open={open}
+        onClose={handleClose}
+        data={data}
+        isLoading={isLoading}
+        error={error}
+        zendeskURL={zendeskURL}
+        Trigger={Trigger}
+      />
+    );
+  }
 
   return (
     <Drawer
