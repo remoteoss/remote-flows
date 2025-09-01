@@ -33,7 +33,7 @@ export type {
   FieldComponentProps,
   ButtonComponentProps,
   StatementComponentProps,
-  ZendeskDialogComponentProps,
+  ZendeskDrawerComponentProps,
 } from '@/src/types/remoteFlows';
 
 export type {
