@@ -4,7 +4,7 @@ import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { ZendeskDrawer } from '../ZendeskDrawer';
 import userEvent from '@testing-library/user-event';
 
@@ -199,5 +199,143 @@ describe('ZendeskDrawer', () => {
     const content = await screen.findByText('Safe content');
     const container = content.parentElement;
     expect(container?.innerHTML).not.toContain('<script>');
+  });
+
+  describe('ZendeskDrawer with custom component', () => {
+    let queryClient: QueryClient;
+    let CustomComponent: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+
+      CustomComponent = vi.fn(() => null);
+    });
+
+    const customWrapper = ({ children }: PropsWithChildren) => (
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider
+          components={{
+            zendeskDialog: CustomComponent,
+          }}
+        >
+          {children}
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    );
+
+    it('passes all required props to custom component', () => {
+      render(<ZendeskDrawer {...defaultProps} />, { wrapper: customWrapper });
+
+      expect(CustomComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          open: defaultProps.open,
+          onClose: expect.any(Function),
+          zendeskURL: expect.stringContaining(String(defaultProps.zendeskId)),
+          Trigger: defaultProps.Trigger,
+          data: undefined,
+          isLoading: false,
+          error: null,
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it('passes loading state to custom component', () => {
+      server.use(
+        http.get('*/v1/help-center-articles/*', async () => {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          return HttpResponse.json({ data: mockArticle });
+        }),
+      );
+
+      render(<ZendeskDrawer {...defaultProps} open={true} />, {
+        wrapper: customWrapper,
+      });
+
+      expect(CustomComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isLoading: true,
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it('passes error state to custom component', async () => {
+      server.use(
+        http.get('*/v1/help-center-articles/*', () => {
+          return new HttpResponse(null, { status: 500 });
+        }),
+      );
+
+      render(<ZendeskDrawer {...defaultProps} open={true} />, {
+        wrapper: customWrapper,
+      });
+
+      await waitFor(() => {
+        expect(CustomComponent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: expect.any(Error),
+          }),
+          expect.any(Object),
+        );
+      });
+    });
+
+    it('passes article data to custom component when loaded', async () => {
+      server.use(
+        http.get('*/v1/help-center-articles/*', () => {
+          return HttpResponse.json({ data: mockArticle });
+        }),
+      );
+
+      render(<ZendeskDrawer {...defaultProps} open={true} />, {
+        wrapper: customWrapper,
+      });
+
+      await waitFor(() => {
+        expect(CustomComponent).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({
+              title: mockArticle.help_center_article.title,
+              body: mockArticle.help_center_article.body,
+            }),
+          }),
+          expect.any(Object),
+        );
+      });
+    });
+
+    it('does not render default drawer when custom component is provided', () => {
+      render(<ZendeskDrawer {...defaultProps} open={true} />, {
+        wrapper: customWrapper,
+      });
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('calls onClose through custom component', async () => {
+      const onClose = vi.fn();
+
+      CustomComponent.mockImplementation(
+        ({ onClose }: { onClose: () => void }) => (
+          <button onClick={onClose}>Close</button>
+        ),
+      );
+
+      render(
+        <ZendeskDrawer {...defaultProps} open={true} onClose={onClose} />,
+        { wrapper: customWrapper },
+      );
+
+      // Click the close button
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+      expect(onClose).toHaveBeenCalled();
+    });
   });
 });
