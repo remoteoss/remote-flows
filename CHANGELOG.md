@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.14.0
+
+### Minor Changes
+
+- db2f477: - Override ZendeskDrawer component through the components prop [#435](https://github.com/remoteoss/remote-flows/pull/435)
+
 ## 0.13.0
 
 ### Minor Changes
