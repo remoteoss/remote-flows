@@ -32,6 +32,7 @@ import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
+import './css/cost-calculator.css';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimate for a new company',
@@ -236,6 +237,9 @@ const AddEstimateForm = ({
               title: "Employee's annual salary",
               description:
                 "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
+            },
+            salary_conversion: {
+              title: 'Salary conversion...',
             },
             benefits: {
               'x-jsf-presentation': {

@@ -29,7 +29,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
   const hasCurrency = fieldData.metadata?.currency;
 
   return (
-    <div className='input-container'>
+    <div className='input-container' data-field={field.name}>
       <label htmlFor={field.name}>{fieldData.label}</label>
 
       {hasCurrency ? (
