@@ -1314,6 +1314,9 @@ export type NotFoundResponse = {
 };
 
 export type CostCalculatorEstimateResponse = {
+  error?: {
+    message: string;
+  };
   data: {
     employments?: Array<CostCalculatorEmployment>;
   };
