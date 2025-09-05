@@ -32,6 +32,7 @@ import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
+import { downloadPdf } from './utils';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   title: 'Estimate for a new company',
@@ -396,12 +397,10 @@ function CostCalculatorFormDemo() {
       {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
-            const a = document.createElement('a');
-            a.href = response.data.data.content as unknown as string;
-            a.download = 'estimation.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            downloadPdf(
+              response.data.data.content as unknown as string,
+              'estimation.pdf',
+            );
           }
         },
         onError: (error) => {
