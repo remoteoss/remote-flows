@@ -87,7 +87,7 @@ const Header = ({
         className='text-sm'
         zendeskId={zendeskArticles.disclaimerCostCalculator}
       >
-        Learn more ↗
+        Disclaimer ↗
       </ZendeskTriggerButton>
     </div>
   );

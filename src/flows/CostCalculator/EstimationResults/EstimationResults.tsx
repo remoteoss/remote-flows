@@ -205,20 +205,24 @@ function HiringSection({
         </AccordionTrigger>
         <AccordionContent>
           <div className='flex flex-col gap-1'>
-            <a
-              href={countryGuideUrl}
-              target='_blank'
-              className='RemoteFlows__Link'
-            >
-              Explore our complete guide ↗
-            </a>
-            <a
-              href={countryBenefitsUrl}
-              target='_blank'
-              className='RemoteFlows__Link'
-            >
-              Explore our available benefits ↗
-            </a>
+            {countryGuideUrl && (
+              <a
+                href={countryGuideUrl}
+                target='_blank'
+                className='RemoteFlows__Link'
+              >
+                Explore our complete guide ↗
+              </a>
+            )}
+            {countryBenefitsUrl && (
+              <a
+                href={countryBenefitsUrl}
+                target='_blank'
+                className='RemoteFlows__Link'
+              >
+                Explore our available benefits ↗
+              </a>
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>
@@ -336,6 +340,7 @@ function EstimationRow({
 interface BreakdownItem {
   label: string;
   tooltip?: string;
+  dataSelector?: string;
   regionalAmount?: string;
   employerAmount?: string;
   description?: string;
@@ -430,6 +435,9 @@ function BreakdownListItem({
         {isMultipleCurrency ? (
           <>
             <span
+              data-selector={
+                item.dataSelector && item.dataSelector + '-employee-amount'
+              }
               className={cn(
                 'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
                 isNested
@@ -440,6 +448,9 @@ function BreakdownListItem({
               {item.regionalAmount || '—'}
             </span>
             <span
+              data-selector={
+                item.dataSelector && item.dataSelector + '-employer-amount'
+              }
               className={cn(
                 'RemoteFlows__BreakdownList__EmployerAmountText text-sm text-right',
                 isNested
@@ -452,6 +463,7 @@ function BreakdownListItem({
           </>
         ) : (
           <span
+            data-selector={item.dataSelector}
             className={cn(
               'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
               isNested
@@ -713,6 +725,7 @@ export const EstimationResults = ({
             items={[
               {
                 label: 'Annual gross salary',
+                dataSelector: 'annual-gross-salary',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_gross_salary,
                   estimation.regional_currency_costs.currency.symbol,

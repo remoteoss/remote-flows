@@ -1,5 +1,8 @@
 {
   "version": 2,
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "github": {
+    "enabled": false
+  },
   "installCommand": "node scripts/set-commit-hash.js && npm install"
 }
