@@ -4,3 +4,9 @@ node_modules
 public
 dist
 .env
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

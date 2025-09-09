@@ -16,11 +16,12 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.nodejs_20 or pkgs.nodejs_latest
-            pkgs.cypress
+            pkgs.playwright-driver.browsers
+            pkgs.playwright
           ];
           shellHook = ''
-             export CYPRESS_INSTALL_BINARY=0
-             export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
+             export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+             export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
            '';
         };
       }
