@@ -16,7 +16,13 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.nodejs_20 or pkgs.nodejs_latest
+            pkgs.playwright-driver.browsers
+            pkgs.playwright
           ];
+          shellHook = ''
+             export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+             export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+           '';
         };
       }
     );

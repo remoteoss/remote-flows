@@ -11,7 +11,7 @@
     "postinstall": "react-flagpack"
   },
   "dependencies": {
-    "@remoteoss/remote-flows": "0.13.0",
+    "@remoteoss/remote-flows": "file://..",
     "axios": "^1.8.3",
     "dotenv": "^17.0.0",
     "express": "^4.21.2",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@playwright/test": "1.52.0",
     "@types/node": "^22.13.4",
     "@types/react-dom": "^19.0.4",
     "@types/react-syntax-highlighter": "^15.5.13",
