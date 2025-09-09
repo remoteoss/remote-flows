@@ -23,12 +23,14 @@ const EstimationResultsHeader = ({
   title,
   country,
   region,
+  annualGrossSalary,
   onDelete,
   onExportPdf,
 }: {
   title: string;
   country: MinimalCountry;
   region?: MinimalRegion;
+  annualGrossSalary: string;
   onDelete: () => void;
   onExportPdf: () => void;
 }) => {
@@ -50,7 +52,7 @@ const EstimationResultsHeader = ({
   return (
     <div className='RemoteFlows__EstimationResults__Header flex justify-between'>
       <div className='flex flex-row items-center gap-6'>
-        <div className='RemoteFlows__EstimationResultsHeader__FlagContainer flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
+        <div className='RemoteFlows__EstimationResultsHeader__FlagContainer flex h-16 w-16 items-center justify-center rounded-lg bg-[#F4F4F5]'>
           <Flag code={country.alpha_2_code} />
         </div>
         <div className='space-y-1'>
@@ -59,6 +61,15 @@ const EstimationResultsHeader = ({
           </h2>
           <p className='RemoteFlows__EstimationResultsHeader__Country text-xs text-[#71717A]'>
             {country.name} {region ? ` (${region.name})` : ''}
+          </p>
+          <p
+            data-selector='estimation-results-header-annual-gross-salary'
+            className='RemoteFlows__EstimationResultsHeader__AnnualGrossSalary text-xs text-[#71717A]'
+          >
+            <span className='text-[#181818]'>
+              Employee annual gross salary:
+            </span>{' '}
+            {annualGrossSalary}
           </p>
         </div>
       </div>
@@ -568,11 +579,17 @@ export const EstimationResults = ({
 
   const hasRegion = estimation.region.code !== estimation.country.code;
 
+  const formattedSalary = formatCurrency(
+    estimation.regional_currency_costs.annual_gross_salary,
+    estimation.regional_currency_costs.currency.symbol,
+  );
+
   return (
     <Card className='RemoteFlows__EstimationResults__Card p-10'>
       <div className='RemoteFlows__Separator'>
         <CustomHeader
           title={title}
+          annualGrossSalary={formattedSalary}
           region={hasRegion ? estimation.region : undefined}
           country={estimation.country}
           onDelete={onDelete}
