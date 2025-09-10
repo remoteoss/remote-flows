@@ -75,6 +75,14 @@
   --text-2xl: calc(var(--fontBase) * 1.5);
 }
 
+@layer utilities {
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+  .h-16 {
+    height: calc(var(--spacing) * 16);
+  }
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
