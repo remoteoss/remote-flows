@@ -154,7 +154,7 @@ function OnboardingTimeline({
               Onboarding timeline
             </span>
             <span className='RemoteFlows__OnboardingTimeline__Description text-base text-muted-foreground mr-4'>
-              {minimumOnboardingDays} days
+              {minimumOnboardingDays != null && `${minimumOnboardingDays} days`}
             </span>
           </div>
         </AccordionTrigger>
