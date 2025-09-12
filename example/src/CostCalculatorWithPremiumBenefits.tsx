@@ -25,7 +25,7 @@ import {
   ZendeskTriggerButton,
   cn,
 } from '@remoteoss/remote-flows/internals';
-import { ButtonHTMLAttributes, useState } from 'react';
+import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import 'react-flagpack/dist/style.css';
@@ -93,6 +93,87 @@ const Header = ({
   );
 };
 
+const DrawerEstimationForm = ({
+  isDrawerOpen,
+  setIsDrawerOpen,
+  Trigger,
+  header,
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (isOpen: boolean) => void;
+  Trigger?: React.ReactElement;
+  header: {
+    title: string;
+    description: string;
+  };
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+}) => {
+  const triggerElement = isValidElement(Trigger) ? (
+    Trigger
+  ) : (
+    <div>{Trigger}</div>
+  );
+  return (
+    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      {Trigger && <DrawerTrigger asChild>{triggerElement}</DrawerTrigger>}
+      <DrawerContent showHandle={false} className='max-h-[90vh] flex flex-col'>
+        <DrawerHeader className='hidden'>
+          <DrawerTitle className='hidden'>{header.title}</DrawerTitle>
+        </DrawerHeader>
+        <div className='flex-1 overflow-y-auto'>
+          <Layout width='initialForm'>
+            <div className='mt-10 mb-8'>
+              <Header title={header.title} description={header.description} />
+            </div>
+            <AddEstimateForm
+              onSubmit={onSubmit}
+              onError={onError}
+              onSuccess={onSuccess}
+            />
+          </Layout>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
+const EditEstimationForm = ({
+  isDrawerOpen,
+  estimationIndex,
+  estimation,
+  setIsDrawerOpen,
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  isDrawerOpen: boolean;
+  estimationIndex: number;
+  estimation: CostCalculatorEmployment | null;
+  setIsDrawerOpen: (isOpen: boolean) => void;
+  onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
+  onError: (error: EstimationError) => void;
+  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+}) => {
+  return (
+    <DrawerEstimationForm
+      header={{
+        title: 'Edit estimate',
+        description: `Estimate #${estimationIndex + 1}`,
+      }}
+      isDrawerOpen={isDrawerOpen}
+      setIsDrawerOpen={setIsDrawerOpen}
+      onSubmit={onSubmit}
+      onError={onError}
+      onSuccess={onSuccess}
+    />
+  );
+};
+
 const AddEstimateButton = ({
   buttonProps,
   onSubmit,
@@ -109,36 +190,25 @@ const AddEstimateButton = ({
   setIsDrawerOpen: (isOpen: boolean) => void;
 }) => {
   return (
-    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <DrawerTrigger asChild>
+    <DrawerEstimationForm
+      isDrawerOpen={isDrawerOpen}
+      setIsDrawerOpen={setIsDrawerOpen}
+      Trigger={
         <button
           className='premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--primary'
           {...buttonProps}
         >
           Add estimate
         </button>
-      </DrawerTrigger>
-      <DrawerContent showHandle={false} className='max-h-[90vh] flex flex-col'>
-        <DrawerHeader className='hidden'>
-          <DrawerTitle className='hidden'>Add estimate</DrawerTitle>
-        </DrawerHeader>
-        <div className='flex-1 overflow-y-auto'>
-          <Layout width='initialForm'>
-            <div className='mt-10 mb-8'>
-              <Header
-                title='Add estimate'
-                description='Estimate the cost of another hire through Remote'
-              />
-            </div>
-            <AddEstimateForm
-              onSubmit={onSubmit}
-              onError={onError}
-              onSuccess={onSuccess}
-            />
-          </Layout>
-        </div>
-      </DrawerContent>
-    </Drawer>
+      }
+      header={{
+        title: 'Add estimate',
+        description: 'Estimate the cost of another hire through Remote',
+      }}
+      onSubmit={onSubmit}
+      onError={onError}
+      onSuccess={onSuccess}
+    />
   );
 };
 
@@ -306,6 +376,7 @@ const ResultsView = ({
   onSavePayload,
   onDeleteEstimate,
   onExportEstimate,
+  onEditEstimate,
 }: {
   estimations: CostCalculatorEmployment[];
   onExportPdf: () => void;
@@ -314,6 +385,7 @@ const ResultsView = ({
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
   onDeleteEstimate: (index: number) => void;
   onExportEstimate: (index: number) => void;
+  onEditEstimate: (index: number) => void;
 }) => {
   if (!estimations) {
     return null;
@@ -349,6 +421,7 @@ const ResultsView = ({
               title={`Estimate #${index + 1}`}
               onDelete={() => onDeleteEstimate(index)}
               onExportPdf={() => onExportEstimate(index)}
+              onEdit={() => onEditEstimate(index)}
             />
           </div>
         );
@@ -364,6 +437,16 @@ function CostCalculatorFormDemo() {
   const [payload, setPayload] = useState<
     CostCalculatorEstimationSubmitValues[]
   >([]);
+
+  const [editProps, setEditProps] = useState<{
+    isDrawerOpen: boolean;
+    estimationIndex: number;
+    estimation: CostCalculatorEmployment | null;
+  }>({
+    isDrawerOpen: false, // TODO: probably we can get rid of this later and rely on the estimationIndex or estimation
+    estimationIndex: -1,
+    estimation: null,
+  });
 
   const onReset = () => {
     setEstimations([]);
@@ -425,6 +508,19 @@ function CostCalculatorFormDemo() {
     }
   };
 
+  const onEditEstimate = (index: number) => {
+    const estimation = estimations[index];
+    setEditProps({
+      isDrawerOpen: true,
+      estimationIndex: index,
+      estimation,
+    });
+  };
+
+  const setIsDrawerOpen = (isOpen: boolean) => {
+    setEditProps({ ...editProps, isDrawerOpen: isOpen });
+  };
+
   return (
     <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
@@ -438,15 +534,27 @@ function CostCalculatorFormDemo() {
           }}
         />
       ) : (
-        <ResultsView
-          estimations={estimations}
-          onExportPdf={handleExportPdf}
-          onReset={onReset}
-          onAddEstimate={onAddEstimate}
-          onSavePayload={onSavePayload}
-          onDeleteEstimate={onDeleteEstimate}
-          onExportEstimate={onExportEstimate}
-        />
+        <>
+          <ResultsView
+            estimations={estimations}
+            onExportPdf={handleExportPdf}
+            onReset={onReset}
+            onAddEstimate={onAddEstimate}
+            onSavePayload={onSavePayload}
+            onDeleteEstimate={onDeleteEstimate}
+            onExportEstimate={onExportEstimate}
+            onEditEstimate={onEditEstimate}
+          />
+          <EditEstimationForm
+            isDrawerOpen={editProps.isDrawerOpen}
+            estimationIndex={editProps.estimationIndex}
+            estimation={editProps.estimation}
+            setIsDrawerOpen={setIsDrawerOpen}
+            onSubmit={(payload) => console.log(payload)}
+            onError={(error) => console.error({ error })}
+            onSuccess={(response) => console.log({ response })}
+          />
+        </>
       )}
     </Layout>
   );
