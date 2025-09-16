@@ -34,14 +34,16 @@ export const useCostCalculatorCountries = ({
       });
     },
     select: (data) =>
-      data.data?.data.map((country) => ({
-        value: country.region_slug,
-        label: country.name,
-        childRegions: country.child_regions,
-        hasAdditionalFields: country.has_additional_fields,
-        regionSlug: country.region_slug,
-        currency: country.currency.code,
-      })),
+      data.data?.data
+        .filter((country) => country.availability === 'active')
+        .map((country) => ({
+          value: country.region_slug,
+          label: country.name,
+          childRegions: country.child_regions,
+          hasAdditionalFields: country.has_additional_fields,
+          regionSlug: country.region_slug,
+          currency: country.currency.code,
+        })),
   });
 };
 
