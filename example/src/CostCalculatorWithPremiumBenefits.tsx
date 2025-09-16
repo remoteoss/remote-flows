@@ -487,6 +487,32 @@ function CostCalculatorFormDemo() {
     setPayload([...payload, estimation]);
   };
 
+  const onEditPayload = (
+    estimation: CostCalculatorEstimationSubmitValues,
+    index: number,
+  ) => {
+    const newPayload = [...payload];
+    newPayload[index] = estimation;
+    setPayload(newPayload);
+  };
+
+  const onEditSuccess = (
+    response: CostCalculatorEstimateResponse,
+    index: number,
+  ) => {
+    if (response.data.employments?.[0]) {
+      const newEstimations = [...estimations];
+      newEstimations[index] = response.data.employments?.[0];
+      setEstimations(newEstimations);
+    }
+
+    setEditProps({
+      isDrawerOpen: false,
+      estimationIndex: -1,
+      payload: null,
+    });
+  };
+
   const exportPdfMutation = useCostCalculatorEstimationPdf();
 
   function exportPdf(
@@ -570,9 +596,12 @@ function CostCalculatorFormDemo() {
             estimationIndex={editProps.estimationIndex}
             payload={editProps.payload}
             setIsDrawerOpen={setIsDrawerOpen}
-            onSubmit={(payload) => console.log(payload)}
-            onError={(error) => console.error({ error })}
-            onSuccess={(response) => console.log({ response })}
+            onSubmit={(payload) =>
+              onEditPayload(payload, editProps.estimationIndex)
+            }
+            onSuccess={(response) =>
+              onEditSuccess(response, editProps.estimationIndex)
+            }
           />
         </>
       )}
