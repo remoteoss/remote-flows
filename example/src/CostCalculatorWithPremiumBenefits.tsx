@@ -457,7 +457,7 @@ function CostCalculatorFormDemo() {
     estimationIndex: number;
     payload: CostCalculatorEstimationSubmitValues | null;
   }>({
-    isDrawerOpen: false, // TODO: probably we can get rid of this later and rely on the estimationIndex or estimation
+    isDrawerOpen: false,
     estimationIndex: -1,
     payload: null,
   });
