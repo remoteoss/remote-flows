@@ -27,6 +27,8 @@ export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
+export { convertFromCents } from '@/src/components/form/utils';
+
 export type {
   Components,
   RemoteFlowsSDKProps,

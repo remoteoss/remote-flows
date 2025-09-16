@@ -14,6 +14,7 @@ import {
   EstimationResults,
   zendeskArticles,
   SummaryResults,
+  convertFromCents,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -98,6 +99,7 @@ const DrawerEstimationForm = ({
   setIsDrawerOpen,
   Trigger,
   header,
+  defaultValues,
   onSubmit,
   onError,
   onSuccess,
@@ -105,6 +107,11 @@ const DrawerEstimationForm = ({
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
   Trigger?: React.ReactElement;
+  defaultValues?: Partial<{
+    countryRegionSlug: string;
+    currencySlug: string;
+    salary: string;
+  }>;
   header: {
     title: string;
     description: string;
@@ -131,6 +138,7 @@ const DrawerEstimationForm = ({
               <Header title={header.title} description={header.description} />
             </div>
             <AddEstimateForm
+              defaultValues={defaultValues}
               onSubmit={onSubmit}
               onError={onError}
               onSuccess={onSuccess}
@@ -145,7 +153,7 @@ const DrawerEstimationForm = ({
 const EditEstimationForm = ({
   isDrawerOpen,
   estimationIndex,
-  estimation,
+  payload,
   setIsDrawerOpen,
   onSubmit,
   onError,
@@ -153,7 +161,7 @@ const EditEstimationForm = ({
 }: {
   isDrawerOpen: boolean;
   estimationIndex: number;
-  estimation: CostCalculatorEmployment | null;
+  payload: CostCalculatorEstimationSubmitValues | null;
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -164,6 +172,11 @@ const EditEstimationForm = ({
       header={{
         title: 'Edit estimate',
         description: `Estimate #${estimationIndex + 1}`,
+      }}
+      defaultValues={{
+        countryRegionSlug: payload?.country,
+        currencySlug: payload?.currency,
+        salary: convertFromCents(payload?.salary)?.toString() ?? '',
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -271,14 +284,21 @@ const AddEstimateForm = ({
   onSubmit,
   onError,
   onSuccess,
+  defaultValues,
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  defaultValues?: Partial<{
+    countryRegionSlug: string;
+    currencySlug: string;
+    salary: string;
+  }>;
 }) => {
   return (
     <CostCalculatorFlow
       estimationOptions={estimationOptions}
+      defaultValues={defaultValues}
       options={{
         jsfModify: {
           fields: {
@@ -441,11 +461,11 @@ function CostCalculatorFormDemo() {
   const [editProps, setEditProps] = useState<{
     isDrawerOpen: boolean;
     estimationIndex: number;
-    estimation: CostCalculatorEmployment | null;
+    payload: CostCalculatorEstimationSubmitValues | null;
   }>({
     isDrawerOpen: false, // TODO: probably we can get rid of this later and rely on the estimationIndex or estimation
     estimationIndex: -1,
-    estimation: null,
+    payload: null,
   });
 
   const onReset = () => {
@@ -509,11 +529,11 @@ function CostCalculatorFormDemo() {
   };
 
   const onEditEstimate = (index: number) => {
-    const estimation = estimations[index];
+    const savedPayload = payload[index];
     setEditProps({
       isDrawerOpen: true,
       estimationIndex: index,
-      estimation,
+      payload: savedPayload,
     });
   };
 
@@ -548,7 +568,7 @@ function CostCalculatorFormDemo() {
           <EditEstimationForm
             isDrawerOpen={editProps.isDrawerOpen}
             estimationIndex={editProps.estimationIndex}
-            estimation={editProps.estimation}
+            payload={editProps.payload}
             setIsDrawerOpen={setIsDrawerOpen}
             onSubmit={(payload) => console.log(payload)}
             onError={(error) => console.error({ error })}
