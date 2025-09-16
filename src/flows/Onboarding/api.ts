@@ -444,12 +444,14 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
     },
     select: ({ data }) => {
       return (
-        data?.data?.map((country) => {
-          return {
-            label: country.name,
-            value: country.code,
-          };
-        }) || []
+        data?.data
+          ?.filter((country) => country.eor_onboarding)
+          .map((country) => {
+            return {
+              label: country.name,
+              value: country.code,
+            };
+          }) || []
       );
     },
   });
