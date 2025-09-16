@@ -111,6 +111,7 @@ const DrawerEstimationForm = ({
     countryRegionSlug: string;
     currencySlug: string;
     salary: string;
+    benefits?: Record<string, string>;
   }>;
   header: {
     title: string;
@@ -177,6 +178,7 @@ const EditEstimationForm = ({
         countryRegionSlug: payload?.country,
         currencySlug: payload?.currency,
         salary: convertFromCents(payload?.salary)?.toString() ?? '',
+        benefits: payload?.benefits,
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -599,6 +601,7 @@ function CostCalculatorFormDemo() {
             onSubmit={(payload) =>
               onEditPayload(payload, editProps.estimationIndex)
             }
+            onError={() => {}}
             onSuccess={(response) =>
               onEditSuccess(response, editProps.estimationIndex)
             }

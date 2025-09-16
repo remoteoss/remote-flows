@@ -35,6 +35,10 @@ export type CostCalculatorFlowProps = {
      * Default value for the salary field.
      */
     salary: string;
+    /**
+     * Default value for the benefits field.
+     */
+    benefits: Record<string, string>;
   }>;
   options?: UseCostCalculatorOptions;
   render: (
@@ -66,6 +70,7 @@ export const CostCalculatorFlow = ({
     countryRegionSlug: '',
     currencySlug: '',
     salary: '',
+    benefits: {},
   },
   options,
   render,
@@ -120,6 +125,7 @@ export const CostCalculatorFlow = ({
       management: {
         management_fee: defaultManagementFee,
       },
+      benefits: defaultValues?.benefits,
     },
     shouldUnregister: false,
     mode: 'onBlur',
