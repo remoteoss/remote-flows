@@ -16,6 +16,8 @@ export {
   SummaryResults,
 } from '@/src/flows/CostCalculator';
 
+export type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator';
+
 export * from '@/src/flows/ContractAmendment';
 export * from '@/src/flows/Termination';
 export * from '@/src/flows/Onboarding';

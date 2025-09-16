@@ -11,3 +11,4 @@ export { SummaryResults } from './SummaryResults/SummaryResults';
 export { CostCalculatorResults } from './Results/CostCalculatorResults';
 export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
 export type { EstimationError } from './types';
+export type { CostCalculatorFlowProps } from './CostCalculatorFlow';

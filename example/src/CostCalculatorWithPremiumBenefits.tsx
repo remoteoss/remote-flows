@@ -4,6 +4,7 @@ import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
+  CostCalculatorFlowProps,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -107,12 +108,7 @@ const DrawerEstimationForm = ({
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
   Trigger?: React.ReactElement;
-  defaultValues?: Partial<{
-    countryRegionSlug: string;
-    currencySlug: string;
-    salary: string;
-    benefits?: Record<string, string>;
-  }>;
+  defaultValues?: CostCalculatorFlowProps['defaultValues'];
   header: {
     title: string;
     description: string;
@@ -291,11 +287,7 @@ const AddEstimateForm = ({
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
-  defaultValues?: Partial<{
-    countryRegionSlug: string;
-    currencySlug: string;
-    salary: string;
-  }>;
+  defaultValues?: CostCalculatorFlowProps['defaultValues'];
 }) => {
   return (
     <CostCalculatorFlow
