@@ -26,6 +26,7 @@ const EstimationResultsHeader = ({
   annualGrossSalary,
   onDelete,
   onExportPdf,
+  onEdit,
 }: {
   title: string;
   country: MinimalCountry;
@@ -33,12 +34,12 @@ const EstimationResultsHeader = ({
   annualGrossSalary: string;
   onDelete: () => void;
   onExportPdf: () => void;
+  onEdit: () => void;
 }) => {
   const actions = [
     {
       label: 'Edit',
-      onClick: () => {},
-      disabled: true,
+      onClick: onEdit,
     },
     {
       label: 'Export',
@@ -553,6 +554,7 @@ type EstimationResultsProps = {
   components?: EstimationResultsComponents;
   onDelete: () => void;
   onExportPdf: () => void;
+  onEdit: () => void;
 };
 
 export const EstimationResults = ({
@@ -561,6 +563,7 @@ export const EstimationResults = ({
   components,
   onDelete,
   onExportPdf,
+  onEdit,
 }: EstimationResultsProps) => {
   const CustomHiringSection = components?.HiringSection || HiringSection;
   const CustomOnboardingTimeline =
@@ -594,6 +597,7 @@ export const EstimationResults = ({
           country={estimation.country}
           onDelete={onDelete}
           onExportPdf={onExportPdf}
+          onEdit={onEdit}
         />
       </div>
       <div className='RemoteFlows__Separator'>
