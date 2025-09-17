@@ -30,7 +30,7 @@ export function buildValidationSchema(
           'salary_converted',
           {
             is: (val: string | null) => val === field.name,
-            then: (schema) => schema.required('Salary is required'),
+            then: (schema) => schema.required('Required field'),
             otherwise: (schema) => schema.optional(),
           },
         );
@@ -58,7 +58,7 @@ export function buildValidationSchema(
         // Make estimation_title required when includeEstimationTitle is true
         fieldsSchemaAcc[field.name] = (
           field.schema as AnyObjectSchema
-        ).required('Estimation title is required');
+        ).required('Required field');
       } else {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }

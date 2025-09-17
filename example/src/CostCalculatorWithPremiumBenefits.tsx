@@ -101,6 +101,7 @@ const DrawerEstimationForm = ({
   isDrawerOpen,
   setIsDrawerOpen,
   Trigger,
+  options,
   header,
   defaultValues,
   'data-selector': dataSelector,
@@ -111,6 +112,9 @@ const DrawerEstimationForm = ({
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
   Trigger?: React.ReactElement;
+  options: {
+    title: string;
+  };
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
   header: {
     title: string;
@@ -143,6 +147,7 @@ const DrawerEstimationForm = ({
               />
             </div>
             <AddEstimateForm
+              options={options}
               defaultValues={defaultValues}
               onSubmit={onSubmit}
               onError={onError}
@@ -174,6 +179,7 @@ const EditEstimationForm = ({
 }) => {
   return (
     <DrawerEstimationForm
+      options={{ title: `Estimate #${estimationIndex + 1}` }}
       data-selector='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
@@ -195,6 +201,7 @@ const EditEstimationForm = ({
 };
 
 const AddEstimateButton = ({
+  options,
   buttonProps,
   onSubmit,
   onError,
@@ -202,6 +209,9 @@ const AddEstimateButton = ({
   isDrawerOpen,
   setIsDrawerOpen,
 }: {
+  options: {
+    title: string;
+  };
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -211,6 +221,7 @@ const AddEstimateButton = ({
 }) => {
   return (
     <DrawerEstimationForm
+      options={options}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
       Trigger={
@@ -233,12 +244,14 @@ const AddEstimateButton = ({
 };
 
 const ActionToolbar = ({
+  estimations,
   onReset,
   onExportPdf,
   onCSVExport,
   onAddEstimate,
   onSavePayload,
 }: {
+  estimations: CostCalculatorEmployment[];
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
@@ -271,6 +284,7 @@ const ActionToolbar = ({
           Export as PDF
         </button>
         <AddEstimateButton
+          options={{ title: `Estimate #${estimations.length + 1}` }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
           onSubmit={(payload) => {
@@ -292,15 +306,19 @@ const AddEstimateForm = ({
   onError,
   onSuccess,
   defaultValues,
+  options,
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  options: {
+    title: string;
+  };
 }) => {
   return (
     <CostCalculatorFlow
-      estimationOptions={estimationOptions}
+      estimationOptions={{ ...estimationOptions, title: options.title }}
       defaultValues={defaultValues}
       options={{
         jsfModify: {
@@ -371,10 +389,14 @@ const AddEstimateForm = ({
 };
 
 const InitialForm = ({
+  options,
   onSubmit,
   onError,
   onSuccess,
 }: {
+  options: {
+    title: string;
+  };
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
@@ -383,6 +405,7 @@ const InitialForm = ({
     <>
       <Header />
       <AddEstimateForm
+        options={options}
         onSubmit={onSubmit}
         onError={onError}
         onSuccess={onSuccess}
@@ -419,6 +442,7 @@ const ResultsView = ({
       <Header />
       <div className='mb-8'>
         <ActionToolbar
+          estimations={estimations}
           onReset={onReset}
           onExportPdf={onExportPdf}
           onCSVExport={() => {}}
@@ -574,6 +598,7 @@ function CostCalculatorFormDemo() {
     <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
         <InitialForm
+          options={{ title: 'Estimate #1' }}
           onSubmit={(payload) => {
             setPayload([payload]);
           }}

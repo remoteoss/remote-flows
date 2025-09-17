@@ -126,6 +126,7 @@ export const CostCalculatorFlow = ({
         management_fee: defaultManagementFee,
       },
       benefits: defaultValues?.benefits,
+      estimation_title: estimationOptions.title,
     },
     shouldUnregister: false,
     mode: 'onBlur',
