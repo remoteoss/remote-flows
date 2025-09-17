@@ -84,7 +84,7 @@ export type UseCostCalculatorOptions = {
 
 export type CurrencyKey = keyof typeof BASE_RATES;
 
-type CostCalculatorEmploymentWithTitle = CostCalculatorEmployment & {
+export type CostCalculatorEmploymentWithTitle = CostCalculatorEmployment & {
   title: string;
 };
 

@@ -100,7 +100,7 @@ function mapValueToEmployment(
   return {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
-    title: estimationOptions.title,
+    title: value.estimation_title || estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
     ...((version == 'marketing' ||
