@@ -3,7 +3,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
-  CostCalculatorEstimateResponseWithTitle,
+  CostCalculatorEstimationResponse,
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -21,9 +21,7 @@ type CostCalculatorFormProps = Partial<{
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
-  onSuccess: (
-    data: CostCalculatorEstimateResponseWithTitle,
-  ) => Promise<void> | void;
+  onSuccess: (data: CostCalculatorEstimationResponse) => Promise<void> | void;
   /**
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
