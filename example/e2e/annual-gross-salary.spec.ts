@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fillEstimationForm } from './helpers';
 
 test.describe('annual gross salary', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,10 +9,11 @@ test.describe('annual gross salary', () => {
   test('shows the annual gross salary both in the header and in the table', async ({
     page,
   }) => {
-    await page.selectOption('#country', 'Sweden');
-    await page.selectOption('#currency', 'USD');
-    await page.fill('#salary_conversion', '100');
-    await page.click('.submit-button');
+    await fillEstimationForm(page, {
+      country: 'Sweden',
+      currency: 'USD',
+      salary: '100',
+    });
     await expect(
       page.locator('[data-selector=annual-gross-salary-employer-amount]'),
     ).toHaveText('$100.00');
