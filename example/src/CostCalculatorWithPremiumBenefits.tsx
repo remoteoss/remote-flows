@@ -36,11 +36,11 @@ import './css/premium-benefits.css';
 import './css/utils.css';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
-  title: 'Estimate for a new company',
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
   includeManagementFee: true,
+  includeEstimationTitle: true,
   enableCurrencyConversion: true,
   managementFees: {
     USD: 594,

@@ -45,6 +45,7 @@ export const jsonSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'text',
+            hidden: true,
           },
         },
         salary_conversion: {
@@ -90,7 +91,6 @@ export const jsonSchema = {
         'salary',
         'salary_conversion',
         'salary_converted',
-        'estimation_title',
       ],
       type: 'object',
       'x-jsf-order': [

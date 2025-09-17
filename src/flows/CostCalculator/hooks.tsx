@@ -56,6 +56,7 @@ export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   includeCostBreakdowns: false,
   includePremiumBenefits: false,
   enableCurrencyConversion: false,
+  includeEstimationTitle: false,
   includeManagementFee: false,
 };
 
@@ -169,6 +170,7 @@ export const useCostCalculator = (
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
   const showManagementField = estimationOptions.includeManagementFee;
+  const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
 
@@ -226,6 +228,12 @@ export const useCostCalculator = (
                 )['x-jsf-presentation']
               : {}),
             hidden: !showManagementField,
+          },
+        },
+        estimation_title: {
+          ...options?.jsfModify?.fields?.estimation_title,
+          'x-jsf-presentation': {
+            hidden: !showEstimationTitleField,
           },
         },
       },

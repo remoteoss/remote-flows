@@ -64,7 +64,10 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include management fee in the estimation. Default is false.
    */
   includeManagementFee: boolean;
-
+  /**
+   * Include estimation title field in the estimation. Default is false.
+   */
+  includeEstimationTitle: boolean;
   /**
    * Management fees by currency. Default is null.
    */
