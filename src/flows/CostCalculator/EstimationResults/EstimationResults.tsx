@@ -57,7 +57,10 @@ const EstimationResultsHeader = ({
           <Flag code={country.alpha_2_code} />
         </div>
         <div className='space-y-1'>
-          <h2 className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'>
+          <h2
+            data-selector='estimation-results-header-title'
+            className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'
+          >
             {title}
           </h2>
           <p className='RemoteFlows__EstimationResultsHeader__Country text-xs text-[#71717A]'>

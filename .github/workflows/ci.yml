@@ -42,23 +42,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            example/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json', 'example/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ hashFiles('package-lock.json', 'example/package-lock.json') }}-
-            ${{ runner.os }}-node-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-
       - name: Install dependencies
         run: npm ci
 
