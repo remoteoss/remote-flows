@@ -110,13 +110,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install example/ dependencies
-        working-directory: ./example
-        run: npm ci
-
       - name: Restore Playwright cache
         uses: actions/cache@v4
         with:
@@ -128,9 +121,15 @@ jobs:
         with:
           name: deployment-urls
 
+      - name: Set deployment URLs
+        id: set-urls
+        run: |
+          echo "REMOTE_FLOWS_URL=$(cat remote-flows-url.txt)" >> $GITHUB_ENV
+          echo "EXAMPLE_APP_URL=$(cat example-app-url.txt)" >> $GITHUB_ENV
+
       - name: Run Playwright tests
         env:
-          BASE_URL: $(cat remote-flows-url.txt)
+          BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         working-directory: ./example
         run: npx playwright test
