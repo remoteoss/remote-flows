@@ -110,20 +110,24 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Restore Playwright cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+
       - name: Install Playwright in example directory
         run: |
           cd example
           # Temporarily rename the root package.json to prevent npm from finding it
           mv ../package.json ../package.json.bak
           npm install @playwright/test
+          # Only install browsers if cache miss
+          if [ ! -d ~/.cache/ms-playwright ]; then
+            npx playwright install --with-deps
+          fi
           # Restore the root package.json
           mv ../package.json.bak ../package.json
-
-      - name: Restore Playwright cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
 
       - name: Download deployment URLs
         uses: actions/download-artifact@v4
