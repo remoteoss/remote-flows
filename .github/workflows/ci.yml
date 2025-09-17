@@ -47,7 +47,7 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: ./example
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
       - name: Cache Playwright browsers
         id: playwright-cache
