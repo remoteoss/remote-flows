@@ -112,7 +112,7 @@ jobs:
 
       - name: Install Playwright
         working-directory: ./example
-        run: npm install @playwright/test
+        run: npm install --no-save @playwright/test
 
       - name: Restore Playwright cache
         uses: actions/cache@v4
