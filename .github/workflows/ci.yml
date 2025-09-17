@@ -1,15 +1,37 @@
-name: PR E2E Tests
+name: CI
 on:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
 
 jobs:
-  e2e:
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CI tests
+        run: npm run ci
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    # Only run E2E tests on PRs against main or pushes to main
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-e2e-${{ github.ref }}
       cancel-in-progress: true
 
     steps:
@@ -53,9 +75,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
 
-      - name: Run CI tests
-        run: npm run ci
-
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ steps.vercel-remote-flows.outputs.preview-url }}
@@ -70,8 +89,15 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+  deploy-production:
+    name: Deploy to Production
+    needs: [unit-tests, e2e]
+    if: github.ref == 'refs/heads/main' && success()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Promote remote-flows to production
-        if: github.ref == 'refs/heads/main' && success()
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -81,8 +107,8 @@ jobs:
           vercel-args: '--prod'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
+
       - name: Promote example app to production
-        if: github.ref == 'refs/heads/main' && success()
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
