@@ -122,7 +122,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwoff2dec1 libwoff2common1 libwoff2enc1
+          sudo apt-get install -y libwoff2common libwoff2dec
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
