@@ -4,8 +4,8 @@ import type {
   CostCalculatorEstimationSubmitValues,
   EstimationError,
   CostCalculatorFlowProps,
-  CostCalculatorEstimateResponseWithTitle,
-  CostCalculatorEmploymentWithTitle,
+  CostCalculatorEstimationResponse,
+  CostCalculatorEstimation,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -124,7 +124,7 @@ const DrawerEstimationForm = ({
   'data-selector'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponseWithTitle) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   const triggerElement = isValidElement(Trigger) ? (
     Trigger
@@ -176,7 +176,7 @@ const EditEstimationForm = ({
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponseWithTitle) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   return (
     <DrawerEstimationForm
@@ -216,7 +216,7 @@ const AddEstimateButton = ({
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponseWithTitle) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
 }) => {
@@ -256,7 +256,7 @@ const ActionToolbar = ({
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
-  onAddEstimate: (estimation: CostCalculatorEstimateResponseWithTitle) => void;
+  onAddEstimate: (estimation: CostCalculatorEstimationResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -311,7 +311,7 @@ const AddEstimateForm = ({
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponseWithTitle) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
   options: {
     title: string;
@@ -400,7 +400,7 @@ const InitialForm = ({
   };
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponseWithTitle) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   return (
     <>
@@ -425,10 +425,10 @@ const ResultsView = ({
   onExportEstimate,
   onEditEstimate,
 }: {
-  estimations: CostCalculatorEmploymentWithTitle[];
+  estimations: CostCalculatorEstimation[];
   onExportPdf: () => void;
   onReset: () => void;
-  onAddEstimate: (estimation: CostCalculatorEstimateResponseWithTitle) => void;
+  onAddEstimate: (estimation: CostCalculatorEstimationResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
   onDeleteEstimate: (index: number) => void;
   onExportEstimate: (index: number) => void;
@@ -479,9 +479,9 @@ const ResultsView = ({
 };
 
 function CostCalculatorFormDemo() {
-  const [estimations, setEstimations] = useState<
-    CostCalculatorEmploymentWithTitle[]
-  >([]);
+  const [estimations, setEstimations] = useState<CostCalculatorEstimation[]>(
+    [],
+  );
   const [payload, setPayload] = useState<
     CostCalculatorEstimationSubmitValues[]
   >([]);
@@ -500,9 +500,7 @@ function CostCalculatorFormDemo() {
     setEstimations([]);
   };
 
-  const onAddEstimate = (
-    estimation: CostCalculatorEstimateResponseWithTitle,
-  ) => {
+  const onAddEstimate = (estimation: CostCalculatorEstimationResponse) => {
     const payload = estimation.data.employments?.[0];
     if (payload) {
       setEstimations([...estimations, payload]);
@@ -527,7 +525,7 @@ function CostCalculatorFormDemo() {
   };
 
   const onEditSuccess = (
-    response: CostCalculatorEstimateResponseWithTitle,
+    response: CostCalculatorEstimationResponse,
     index: number,
   ) => {
     if (response.data.employments?.[0]) {
