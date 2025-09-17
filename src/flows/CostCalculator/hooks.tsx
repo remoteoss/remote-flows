@@ -421,6 +421,7 @@ export const useCostCalculator = (
   const validationSchema = buildValidationSchema(
     fieldsJSONSchema.fields,
     employerBillingCurrency || 'USD',
+    estimationOptions.includeEstimationTitle,
   );
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {

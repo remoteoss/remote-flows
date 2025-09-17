@@ -20,6 +20,7 @@ import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 export function buildValidationSchema(
   fields: $TSFixMe[],
   employerBillingCurrency: string,
+  includeEstimationTitle?: boolean,
 ) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
@@ -53,6 +54,11 @@ export function buildValidationSchema(
               },
             ),
         });
+      } else if (field.name === 'estimation_title' && includeEstimationTitle) {
+        // Make estimation_title required when includeEstimationTitle is true
+        fieldsSchemaAcc[field.name] = (
+          field.schema as AnyObjectSchema
+        ).required('Estimation title is required');
       } else {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }
