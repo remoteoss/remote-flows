@@ -25,15 +25,11 @@ jobs:
       - name: Run CI tests
         run: npm run ci
 
-  e2e:
-    name: E2E Tests
+  setup-e2e:
+    name: Setup E2E Environment
     runs-on: ubuntu-latest
-    # Only run E2E tests on PRs against main or pushes to main
+    # Only run E2E setup on PRs against main or pushes to main
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    concurrency:
-      group: ${{ github.workflow }}-e2e-${{ github.ref }}
-      cancel-in-progress: true
-
     steps:
       - uses: actions/checkout@v4
 
@@ -52,6 +48,20 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./example
         run: npx playwright install --with-deps
+
+      - name: Cache Playwright setup
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+
+  deploy-preview:
+    name: Deploy Preview Environments
+    runs-on: ubuntu-latest
+    # Only run deployments on PRs against main or pushes to main
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Deploy remote-flows to vercel
         id: vercel-remote-flows
@@ -75,9 +85,52 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
 
+      - name: Save deployment URLs
+        run: |
+          echo "${{ steps.vercel-remote-flows.outputs.preview-url }}" > remote-flows-url.txt
+          echo "${{ steps.vercel-example-app.outputs.preview-url }}" > example-app-url.txt
+
+      - name: Upload deployment URLs
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-urls
+          path: |
+            remote-flows-url.txt
+            example-app-url.txt
+
+  run-e2e:
+    name: Run E2E Tests
+    needs: [setup-e2e, deploy-preview]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install example/ dependencies
+        working-directory: ./example
+        run: npm ci
+
+      - name: Restore Playwright cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+
+      - name: Download deployment URLs
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-urls
+
       - name: Run Playwright tests
         env:
-          BASE_URL: ${{ steps.vercel-remote-flows.outputs.preview-url }}
+          BASE_URL: $(cat remote-flows-url.txt)
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         working-directory: ./example
         run: npx playwright test
@@ -91,7 +144,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    needs: [unit-tests, e2e]
+    needs: [unit-tests, run-e2e]
     if: github.ref == 'refs/heads/main' && success()
     runs-on: ubuntu-latest
     steps:
