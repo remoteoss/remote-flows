@@ -47,13 +47,16 @@ jobs:
 
       - name: Install Playwright Browsers
         working-directory: ./example
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
-      - name: Cache Playwright setup
+      - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+          path: |
+            ~/.cache/ms-playwright/firefox*
+            ~/.cache/ms-playwright/webkit*
+            ~/.cache/ms-playwright/chromium*
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
 
   deploy-preview:
     name: Deploy Preview Environments
@@ -115,6 +118,25 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwoff2dec1 libwoff2common1 libwoff2enc1
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright/firefox*
+            ~/.cache/ms-playwright/webkit*
+            ~/.cache/ms-playwright/chromium*
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
+
+      - name: Install Playwright Browsers (on cache miss)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        working-directory: ./example
+        run: npx playwright install
 
       - name: Install Playwright in example directory
         run: |
