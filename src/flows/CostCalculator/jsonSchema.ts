@@ -39,6 +39,14 @@ export const jsonSchema = {
             inputType: 'money',
           },
         },
+        estimation_title: {
+          title: 'Estimation title',
+          description: 'Employee title. e.g; "Software Engineer".',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'text',
+          },
+        },
         salary_conversion: {
           description: '',
           title: 'Salary',
@@ -82,9 +90,17 @@ export const jsonSchema = {
         'salary',
         'salary_conversion',
         'salary_converted',
+        'estimation_title',
       ],
       type: 'object',
-      'x-jsf-order': ['country', 'region', 'currency', 'salary', 'management'],
+      'x-jsf-order': [
+        'country',
+        'region',
+        'currency',
+        'salary',
+        'estimation_title',
+        'management',
+      ],
     },
   },
 };

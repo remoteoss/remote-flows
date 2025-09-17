@@ -11,6 +11,7 @@ export type CostCalculatorEstimationSubmitValues = {
   country: string;
   salary_converted: 'salary' | 'salary_conversion';
   salary: number;
+  estimation_title: string;
 } & Partial<{
   region: string;
   age: number;
@@ -27,6 +28,7 @@ export type CostCalculatorEstimationFormValues = {
   salary: string;
   salary_converted: 'salary' | 'salary_conversion';
   salary_conversion: string;
+  estimation_title: string;
 } & Partial<{
   region: string;
   age: number;

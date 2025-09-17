@@ -496,6 +496,7 @@ export const useCostCalculator = (
         salary_converted,
         salary_conversion,
         management,
+        estimation_title,
         ...rest
       } = values;
 
@@ -513,6 +514,7 @@ export const useCostCalculator = (
         salary_conversion,
         currency,
         management,
+        estimation_title,
       };
 
       const parsedStaticFields = parseJSFToValidate(
