@@ -48,8 +48,9 @@ jobs:
           path: |
             node_modules
             example/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json', 'example/package-lock.json') }}
           restore-keys: |
+            ${{ runner.os }}-node-${{ hashFiles('package-lock.json', 'example/package-lock.json') }}-
             ${{ runner.os }}-node-
 
       - name: Cache Playwright browsers
