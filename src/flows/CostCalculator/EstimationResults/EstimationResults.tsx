@@ -78,6 +78,7 @@ const EstimationResultsHeader = ({
         </div>
       </div>
       <ActionsDropdown
+        data-selector='estimation-results-header-actions-dropdown'
         className='RemoteFlows__EstimationResults__ActionsDropdown'
         actions={actions}
       />

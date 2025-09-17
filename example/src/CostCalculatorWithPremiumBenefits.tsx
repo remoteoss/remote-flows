@@ -77,14 +77,16 @@ const Layout = ({
 const Header = ({
   title = 'Cost calculator',
   description = 'Estimate the cost to hire someone through Remote',
+  'data-selector': dataSelector = 'premium-benefits-header',
 }: {
   title?: string;
   description?: string;
+  'data-selector'?: string;
 }) => {
   return (
     <div className='premium-benefits-header'>
-      <h1>{title}</h1>
-      <p>{description}</p>
+      <h1 data-selector={`${dataSelector}-header-title`}>{title}</h1>
+      <p data-selector={`${dataSelector}-header-description`}>{description}</p>
       <ZendeskTriggerButton
         className='text-sm'
         zendeskId={zendeskArticles.disclaimerCostCalculator}
@@ -101,6 +103,7 @@ const DrawerEstimationForm = ({
   Trigger,
   header,
   defaultValues,
+  'data-selector': dataSelector,
   onSubmit,
   onError,
   onSuccess,
@@ -113,6 +116,7 @@ const DrawerEstimationForm = ({
     title: string;
     description: string;
   };
+  'data-selector'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimateResponse) => void;
@@ -132,7 +136,11 @@ const DrawerEstimationForm = ({
         <div className='flex-1 overflow-y-auto'>
           <Layout width='initialForm'>
             <div className='mt-10 mb-8'>
-              <Header title={header.title} description={header.description} />
+              <Header
+                data-selector={dataSelector}
+                title={header.title}
+                description={header.description}
+              />
             </div>
             <AddEstimateForm
               defaultValues={defaultValues}
@@ -166,6 +174,7 @@ const EditEstimationForm = ({
 }) => {
   return (
     <DrawerEstimationForm
+      data-selector='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
         description: `Estimate #${estimationIndex + 1}`,
