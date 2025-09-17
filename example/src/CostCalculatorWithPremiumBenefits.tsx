@@ -1,5 +1,4 @@
 import type {
-  CostCalculatorEmployment,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -252,7 +251,7 @@ const ActionToolbar = ({
   onAddEstimate,
   onSavePayload,
 }: {
-  estimations: CostCalculatorEmployment[];
+  estimations: CostCalculatorEstimation[];
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
