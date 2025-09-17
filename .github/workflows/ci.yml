@@ -110,6 +110,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install Playwright
+        working-directory: ./example
+        run: npm install @playwright/test
+
       - name: Restore Playwright cache
         uses: actions/cache@v4
         with:
