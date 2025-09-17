@@ -50,6 +50,7 @@ jobs:
         run: npx playwright install
 
       - name: Cache Playwright browsers
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: |
@@ -131,9 +132,6 @@ jobs:
       - name: Install main package dependencies
         run: npm ci
 
-      - name: Build main package
-        run: npm run build
-
       - name: Install example/ dependencies
         working-directory: ./example
         run: npm ci
@@ -142,7 +140,10 @@ jobs:
         id: playwright-cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ms-playwright
+          path: |
+            ~/.cache/ms-playwright/firefox*
+            ~/.cache/ms-playwright/webkit*
+            ~/.cache/ms-playwright/chromium*
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
 
       - name: Install Playwright browsers and system dependencies
