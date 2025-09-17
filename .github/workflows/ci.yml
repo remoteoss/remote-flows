@@ -58,8 +58,8 @@ jobs:
             ~/.cache/ms-playwright/chromium*
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('example/package-lock.json') }}
 
-  deploy-preview:
-    name: Deploy Preview Environments
+  deploy-remote-flows:
+    name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
     # Only run deployments on PRs against main or pushes to main
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
@@ -77,6 +77,24 @@ jobs:
           github-comment: true
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
+      - name: Save deployment URL
+        run: |
+          echo "${{ steps.vercel-remote-flows.outputs.preview-url }}" > remote-flows-url.txt
+
+      - name: Upload deployment URL
+        uses: actions/upload-artifact@v4
+        with:
+          name: remote-flows-url
+          path: remote-flows-url.txt
+
+  deploy-example-app:
+    name: Deploy Example App Preview
+    runs-on: ubuntu-latest
+    # Only run deployments on PRs against main or pushes to main
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Deploy remote-flows-example-app to vercel
         id: vercel-example-app
         uses: amondnet/vercel-action@v20
@@ -88,22 +106,19 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
 
-      - name: Save deployment URLs
+      - name: Save deployment URL
         run: |
-          echo "${{ steps.vercel-remote-flows.outputs.preview-url }}" > remote-flows-url.txt
           echo "${{ steps.vercel-example-app.outputs.preview-url }}" > example-app-url.txt
 
-      - name: Upload deployment URLs
+      - name: Upload deployment URL
         uses: actions/upload-artifact@v4
         with:
-          name: deployment-urls
-          path: |
-            remote-flows-url.txt
-            example-app-url.txt
+          name: example-app-url
+          path: example-app-url.txt
 
   run-e2e:
     name: Run E2E Tests
-    needs: [setup-e2e, deploy-preview]
+    needs: [setup-e2e, deploy-remote-flows, deploy-example-app]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -151,10 +166,15 @@ jobs:
           # Restore the root package.json
           mv ../package.json.bak ../package.json
 
-      - name: Download deployment URLs
+      - name: Download remote-flows URL
         uses: actions/download-artifact@v4
         with:
-          name: deployment-urls
+          name: remote-flows-url
+
+      - name: Download example-app URL
+        uses: actions/download-artifact@v4
+        with:
+          name: example-app-url
 
       - name: Set deployment URLs
         id: set-urls
