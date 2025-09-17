@@ -139,7 +139,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    needs: [unit-tests, run-e2e]
+    needs: [unit-tests, e2e-tests]
     if: github.ref == 'refs/heads/main' && success()
     runs-on: ubuntu-latest
     steps:
