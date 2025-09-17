@@ -110,12 +110,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Setup temporary test environment
+      - name: Install Playwright in example directory
         run: |
-          mkdir -p temp-test-dir
-          cd temp-test-dir
-          npm init -y
+          cd example
+          # Temporarily rename the root package.json to prevent npm from finding it
+          mv ../package.json ../package.json.bak
           npm install @playwright/test
+          # Restore the root package.json
+          mv ../package.json.bak ../package.json
 
       - name: Restore Playwright cache
         uses: actions/cache@v4
@@ -138,9 +140,8 @@ jobs:
         env:
           BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
-        run: |
-          cd example
-          ../temp-test-dir/node_modules/.bin/playwright test
+        working-directory: ./example
+        run: npx playwright test
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
