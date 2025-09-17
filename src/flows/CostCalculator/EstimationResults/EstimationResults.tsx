@@ -158,9 +158,11 @@ function OnboardingTimeline({
             <span className='RemoteFlows__OnboardingTimeline__Title text-base font-medium text-[#0F172A]'>
               Onboarding timeline
             </span>
-            <span className='RemoteFlows__OnboardingTimeline__Description text-base text-muted-foreground mr-4'>
-              {minimumOnboardingDays} days
-            </span>
+            {minimumOnboardingDays != null && (
+              <span className='RemoteFlows__OnboardingTimeline__Description text-base text-muted-foreground mr-4'>
+                {minimumOnboardingDays} days
+              </span>
+            )}
           </div>
         </AccordionTrigger>
         <AccordionContent className='px-0 pb-4'>
