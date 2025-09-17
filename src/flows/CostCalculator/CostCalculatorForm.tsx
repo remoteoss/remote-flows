@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { CostCalculatorEstimateResponse } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
+  CostCalculatorEstimateResponseWithTitle,
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
@@ -21,7 +21,9 @@ type CostCalculatorFormProps = Partial<{
    * Callback function to handle the success when the estimation succeeds. The CostCalculatorEstimateResponse is sent back to you.
    * @param data - The response data from the /cost-calculator/estimation endpoint.
    */
-  onSuccess: (data: CostCalculatorEstimateResponse) => Promise<void> | void;
+  onSuccess: (
+    data: CostCalculatorEstimateResponseWithTitle,
+  ) => Promise<void> | void;
   /**
    * Callback function to handle the error when the estimation fails.
    * @param error - The error object.
@@ -91,7 +93,18 @@ export function CostCalculatorForm({
     if (costCalculatorResults?.error) {
       onError?.(costCalculatorResults.error);
     } else if (costCalculatorResults?.data) {
-      await onSuccess?.(costCalculatorResults?.data);
+      const responseWithTitle = {
+        data: {
+          ...costCalculatorResults.data.data,
+          employments: costCalculatorResults.data.data.employments?.map(
+            (employment) => ({
+              ...employment,
+              title: parsedValues.estimation_title,
+            }),
+          ),
+        },
+      };
+      await onSuccess?.(responseWithTitle);
     }
   };
 

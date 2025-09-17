@@ -1,4 +1,5 @@
 import type {
+  CostCalculatorEmployment,
   EmploymentTermType,
   PostCreateEstimationError,
   ValidationError,
@@ -82,3 +83,13 @@ export type UseCostCalculatorOptions = {
 };
 
 export type CurrencyKey = keyof typeof BASE_RATES;
+
+type CostCalculatorEmploymentWithTitle = CostCalculatorEmployment & {
+  title: string;
+};
+
+export type CostCalculatorEstimateResponseWithTitle = {
+  data: {
+    employments?: Array<CostCalculatorEmploymentWithTitle>;
+  };
+};
