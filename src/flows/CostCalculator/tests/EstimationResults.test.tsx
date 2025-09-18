@@ -278,6 +278,48 @@ describe('EstimationResults', () => {
     ).toBeInTheDocument();
   });
 
+  it('displays correct currency conversions for benefits', () => {
+    render(<EstimationResults {...defaultProps} />, { wrapper });
+
+    // Find and expand Core Benefits section
+    const coreBenefitsSection = screen.getAllByText('Core benefits')[0];
+    fireEvent.click(coreBenefitsSection);
+
+    // Check the Allianz Premium benefit amounts
+    const allianzBenefit = screen.getByText(
+      'Family - Allianz Premium (Family)',
+    );
+    expect(allianzBenefit).toBeInTheDocument();
+
+    const expectedRegionalAmount = formatCurrency(
+      mockEstimation.regional_currency_costs.monthly_benefits_breakdown[0]
+        .amount,
+      mockEstimation.regional_currency_costs.currency.symbol,
+    );
+    const expectedEmployerAmount = formatCurrency(
+      mockEstimation.employer_currency_costs.monthly_benefits_breakdown[0]
+        .amount,
+      mockEstimation.employer_currency_costs.currency.symbol,
+    );
+
+    // Find the amounts in the document
+    expect(screen.getByText(expectedRegionalAmount)).toBeInTheDocument();
+    expect(screen.getByText(expectedEmployerAmount)).toBeInTheDocument();
+
+    // Also verify the total core benefits
+    const totalRegionalAmount = formatCurrency(
+      mockEstimation.regional_currency_costs.monthly_benefits_total,
+      mockEstimation.regional_currency_costs.currency.symbol,
+    );
+    const totalEmployerAmount = formatCurrency(
+      mockEstimation.employer_currency_costs.monthly_benefits_total,
+      mockEstimation.employer_currency_costs.currency.symbol,
+    );
+
+    expect(screen.getByText(totalRegionalAmount)).toBeInTheDocument();
+    expect(screen.getByText(totalEmployerAmount)).toBeInTheDocument();
+  });
+
   it('renders onboarding timeline correctly', () => {
     render(<EstimationResults {...defaultProps} />, { wrapper });
 
