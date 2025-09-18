@@ -14,7 +14,7 @@ test.describe('edit estimation', () => {
     });
 
     const title = page.getByTestId('estimation-results-header-title');
-    await expect(title).toHaveText('Estimate #1');
+    await expect(title).toHaveText('Estimate #01');
 
     // Open actions dropdown and click edit
     const actionsDropdown = page.getByRole('button', { name: /actions/i });
@@ -37,6 +37,7 @@ test.describe('edit estimation', () => {
 
     // Update salary and submit
     await page.fill('#salary_conversion', '200');
+    await page.fill('#estimation_title', 'Test estimation');
     await page.click('.submit-button');
 
     // Verify updated amount
@@ -44,5 +45,7 @@ test.describe('edit estimation', () => {
       'annual-gross-salary-employer-amount',
     );
     await expect(employerAmount).toHaveText('$200.00');
+
+    await page.getByText('Test estimation');
   });
 });
