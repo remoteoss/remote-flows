@@ -1,4 +1,5 @@
 const ENVIRONMENTS = {
+  local: 'http://localhost:4000/api/eor',
   partners: 'https://gateway.partners.remote-sandbox.com',
   production: 'https://gateway.remote.com',
   sandbox: 'https://gateway.remote-sandbox.com',
@@ -24,9 +25,10 @@ async function fetchAccessToken() {
     VITE_REFRESH_TOKEN,
   } = process.env;
 
+  // for local development, we don't need a client secret
   if (
     !VITE_CLIENT_ID ||
-    !VITE_CLIENT_SECRET ||
+    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY ||
     !VITE_REFRESH_TOKEN
   ) {
