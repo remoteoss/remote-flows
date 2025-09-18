@@ -13,34 +13,36 @@ test.describe('edit estimation', () => {
       salary: '100',
     });
 
-    await expect(
-      page.locator('[data-selector=estimation-results-header-title]'),
-    ).toHaveText('Estimate #1');
+    const title = page.getByTestId('estimation-results-header-title');
+    await expect(title).toHaveText('Estimate #1');
 
-    await page
-      .locator('[data-selector=estimation-results-header-actions-dropdown]')
-      .click();
-    await page
-      .locator(
-        '[data-selector=estimation-results-header-actions-dropdown-edit]',
-      )
-      .click();
+    // Open actions dropdown and click edit
+    const actionsDropdown = page.getByRole('button', { name: /actions/i });
 
-    await expect(
-      page.locator('[data-selector=drawer-edit-estimation-form-header-title]'),
-    ).toHaveText('Edit estimate');
+    await actionsDropdown.click();
 
-    await expect(
-      page.locator(
-        '[data-selector=drawer-edit-estimation-form-header-description]',
-      ),
-    ).toHaveText('Estimate #1');
+    const editAction = page.getByRole('button', { name: /edit/i });
+    await editAction.click();
 
+    // Check drawer content
+    const drawerTitle = page.getByTestId(
+      'drawer-edit-estimation-form-header-title',
+    );
+    await expect(drawerTitle).toHaveText('Edit estimate');
+
+    const drawerDescription = page.getByTestId(
+      'drawer-edit-estimation-form-header-description',
+    );
+    await expect(drawerDescription).toHaveText('Estimate #1');
+
+    // Update salary and submit
     await page.fill('#salary_conversion', '200');
     await page.click('.submit-button');
 
-    await expect(
-      page.locator('[data-selector=annual-gross-salary-employer-amount]'),
-    ).toHaveText('$200.00');
+    // Verify updated amount
+    const employerAmount = page.getByTestId(
+      'annual-gross-salary-employer-amount',
+    );
+    await expect(employerAmount).toHaveText('$200.00');
   });
 });

@@ -13,22 +13,25 @@ export interface DropdownAction {
 
 interface ActionsDropdownProps {
   actions?: DropdownAction[];
+  label?: string;
   className?: string;
-  'data-selector'?: string;
+  'data-testid'?: string;
 }
 
 export function ActionsDropdown({
   actions = [],
   className,
-  'data-selector': dataSelector,
+  label,
+  'data-testid': dataSelector,
 }: ActionsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={cn('relative', className)}>
       <Button
-        data-selector={dataSelector}
+        data-testid={dataSelector}
         variant='ghost'
+        aria-label={label}
         className='h-8 w-8 p-0'
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -45,7 +48,7 @@ export function ActionsDropdown({
             {actions.map((action, index) => (
               <button
                 key={index}
-                data-selector={`${dataSelector}-${action.label.toLowerCase().replace(' ', '-')}`}
+                data-testid={`${dataSelector}-${action.label.toLowerCase().replace(' ', '-')}`}
                 className={cn(
                   'w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100',
                   action.disabled && 'opacity-50 cursor-not-allowed',
