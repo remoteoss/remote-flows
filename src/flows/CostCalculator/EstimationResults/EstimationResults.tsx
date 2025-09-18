@@ -58,7 +58,7 @@ const EstimationResultsHeader = ({
         </div>
         <div className='space-y-1'>
           <h2
-            data-selector='estimation-results-header-title'
+            data-testid='estimation-results-header-title'
             className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'
           >
             {title}
@@ -67,7 +67,7 @@ const EstimationResultsHeader = ({
             {country.name} {region ? ` (${region.name})` : ''}
           </p>
           <p
-            data-selector='estimation-results-header-annual-gross-salary'
+            data-testid='estimation-results-header-annual-gross-salary'
             className='RemoteFlows__EstimationResultsHeader__AnnualGrossSalary text-xs text-[#71717A]'
           >
             <span className='text-[#181818]'>
@@ -78,7 +78,8 @@ const EstimationResultsHeader = ({
         </div>
       </div>
       <ActionsDropdown
-        data-selector='estimation-results-header-actions-dropdown'
+        data-testid='estimation-results-header-actions-dropdown'
+        label='Actions'
         className='RemoteFlows__EstimationResults__ActionsDropdown'
         actions={actions}
       />
@@ -453,7 +454,7 @@ function BreakdownListItem({
         {isMultipleCurrency ? (
           <>
             <span
-              data-selector={
+              data-testid={
                 item.dataSelector && item.dataSelector + '-employee-amount'
               }
               className={cn(
@@ -466,7 +467,7 @@ function BreakdownListItem({
               {item.regionalAmount || '—'}
             </span>
             <span
-              data-selector={
+              data-testid={
                 item.dataSelector && item.dataSelector + '-employer-amount'
               }
               className={cn(
@@ -481,7 +482,7 @@ function BreakdownListItem({
           </>
         ) : (
           <span
-            data-selector={item.dataSelector}
+            data-testid={item.dataSelector}
             className={cn(
               'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
               isNested

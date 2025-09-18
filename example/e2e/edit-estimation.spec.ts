@@ -14,25 +14,23 @@ test.describe('edit estimation', () => {
     });
 
     await expect(
-      page.locator('[data-selector=estimation-results-header-title]'),
+      page.locator('[data-testid=estimation-results-header-title]'),
     ).toHaveText('Estimate #1');
 
     await page
-      .locator('[data-selector=estimation-results-header-actions-dropdown]')
+      .locator('[data-testid=estimation-results-header-actions-dropdown]')
       .click();
     await page
-      .locator(
-        '[data-selector=estimation-results-header-actions-dropdown-edit]',
-      )
+      .locator('[data-testid=estimation-results-header-actions-dropdown-edit]')
       .click();
 
     await expect(
-      page.locator('[data-selector=drawer-edit-estimation-form-header-title]'),
+      page.locator('[data-testid=drawer-edit-estimation-form-header-title]'),
     ).toHaveText('Edit estimate');
 
     await expect(
       page.locator(
-        '[data-selector=drawer-edit-estimation-form-header-description]',
+        '[data-testid=drawer-edit-estimation-form-header-description]',
       ),
     ).toHaveText('Estimate #1');
 
@@ -40,7 +38,7 @@ test.describe('edit estimation', () => {
     await page.click('.submit-button');
 
     await expect(
-      page.locator('[data-selector=annual-gross-salary-employer-amount]'),
+      page.locator('[data-testid=annual-gross-salary-employer-amount]'),
     ).toHaveText('$200.00');
   });
 });

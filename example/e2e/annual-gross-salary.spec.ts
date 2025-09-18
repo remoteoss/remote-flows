@@ -15,11 +15,11 @@ test.describe('annual gross salary', () => {
       salary: '100',
     });
     await expect(
-      page.locator('[data-selector=annual-gross-salary-employer-amount]'),
+      page.locator('[data-testid=annual-gross-salary-employer-amount]'),
     ).toHaveText('$100.00');
     await expect(
       page.locator(
-        '[data-selector=estimation-results-header-annual-gross-salary]',
+        '[data-testid=estimation-results-header-annual-gross-salary]',
       ),
     ).toHaveText(/Employee annual gross salary: kr\d+\.\d\d/);
   });
