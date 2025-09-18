@@ -80,18 +80,24 @@ export function CostCalculatorForm({
   ]);
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
-    const parsedValues = costCalculatorBag?.parseFormValues(
-      values,
-    ) as CostCalculatorEstimationSubmitValues;
-    const costCalculatorResults =
-      await costCalculatorBag?.onSubmit(parsedValues);
+    try {
+      const parsedValues = costCalculatorBag?.parseFormValues(
+        values,
+      ) as CostCalculatorEstimationSubmitValues;
 
-    await onSubmit?.(parsedValues);
+      const costCalculatorResults =
+        await costCalculatorBag?.onSubmit(parsedValues);
 
-    if (costCalculatorResults?.error) {
-      onError?.(costCalculatorResults.error);
-    } else if (costCalculatorResults?.data) {
-      await onSuccess?.(costCalculatorResults?.data);
+      // if this rejects, catch will handle it
+      await onSubmit?.(parsedValues);
+
+      if (costCalculatorResults?.error) {
+        onError?.(costCalculatorResults.error);
+      } else if (costCalculatorResults?.data) {
+        await onSuccess?.(costCalculatorResults.data);
+      }
+    } catch (err) {
+      onError?.(err as EstimationError);
     }
   };
 

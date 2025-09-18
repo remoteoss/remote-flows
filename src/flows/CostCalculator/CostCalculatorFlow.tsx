@@ -122,6 +122,7 @@ export const CostCalculatorFlow = ({
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
+      hiring_budget: 'employee_annual_salary',
       management: {
         management_fee: defaultManagementFee,
       },

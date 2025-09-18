@@ -145,6 +145,7 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
+        hiring_budget: 'employee_annual_salary',
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
       });
@@ -291,6 +292,7 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
+        hiring_budget: 'employee_annual_salary',
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
       });
