@@ -465,7 +465,7 @@ const ResultsView = ({
           >
             <EstimationResults
               estimation={estimation}
-              title={estimation.title}
+              title={estimation.title ?? 'My first estimate'}
               onDelete={() => onDeleteEstimate(index)}
               onExportPdf={() => onExportEstimate(index)}
               onEdit={() => onEditEstimate(index)}
