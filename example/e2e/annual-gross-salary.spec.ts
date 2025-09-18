@@ -14,13 +14,15 @@ test.describe('annual gross salary', () => {
       currency: 'USD',
       salary: '100',
     });
-    await expect(
-      page.locator('[data-selector=annual-gross-salary-employer-amount]'),
-    ).toHaveText('$100.00');
-    await expect(
-      page.locator(
-        '[data-selector=estimation-results-header-annual-gross-salary]',
-      ),
-    ).toHaveText(/Employee annual gross salary: kr\d+\.\d\d/);
+    const employerAmount = page.getByTestId(
+      'annual-gross-salary-employer-amount',
+    );
+    await expect(employerAmount).toHaveText('$100.00');
+
+    // Using getByText for static text + regex for dynamic part
+    const headerAmount = page.getByText(
+      /Employee annual gross salary: kr\d+\.\d\d/,
+    );
+    await expect(headerAmount).toBeVisible();
   });
 });

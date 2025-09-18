@@ -77,16 +77,16 @@ const Layout = ({
 const Header = ({
   title = 'Cost calculator',
   description = 'Estimate the cost to hire someone through Remote',
-  'data-selector': dataSelector = 'premium-benefits-header',
+  'data-testid': dataSelector = 'premium-benefits-header',
 }: {
   title?: string;
   description?: string;
-  'data-selector'?: string;
+  'data-testid'?: string;
 }) => {
   return (
     <div className='premium-benefits-header'>
-      <h1 data-selector={`${dataSelector}-header-title`}>{title}</h1>
-      <p data-selector={`${dataSelector}-header-description`}>{description}</p>
+      <h1 data-testid={`${dataSelector}-header-title`}>{title}</h1>
+      <p data-testid={`${dataSelector}-header-description`}>{description}</p>
       <ZendeskTriggerButton
         className='text-sm'
         zendeskId={zendeskArticles.disclaimerCostCalculator}
@@ -104,7 +104,7 @@ const DrawerEstimationForm = ({
   options,
   header,
   defaultValues,
-  'data-selector': dataSelector,
+  'data-testid': dataSelector,
   onSubmit,
   onError,
   onSuccess,
@@ -120,7 +120,7 @@ const DrawerEstimationForm = ({
     title: string;
     description: string;
   };
-  'data-selector'?: string;
+  'data-testid'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
@@ -141,7 +141,7 @@ const DrawerEstimationForm = ({
           <Layout width='initialForm'>
             <div className='mt-10 mb-8'>
               <Header
-                data-selector={dataSelector}
+                data-testid={dataSelector}
                 title={header.title}
                 description={header.description}
               />
@@ -180,7 +180,7 @@ const EditEstimationForm = ({
   return (
     <DrawerEstimationForm
       options={{ title: `Estimate #${estimationIndex + 1}` }}
-      data-selector='drawer-edit-estimation-form'
+      data-testid='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
         description: `Estimate #${estimationIndex + 1}`,

@@ -55,7 +55,7 @@ const EstimationResultsHeader = ({
         </div>
         <div className='space-y-1'>
           <h2
-            data-selector='estimation-results-header-title'
+            data-testid='estimation-results-header-title'
             className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'
           >
             {title}
@@ -64,7 +64,7 @@ const EstimationResultsHeader = ({
             {country.name} {region ? ` (${region.name})` : ''}
           </p>
           <p
-            data-selector='estimation-results-header-annual-gross-salary'
+            data-testid='estimation-results-header-annual-gross-salary'
             className='RemoteFlows__EstimationResultsHeader__AnnualGrossSalary text-xs text-[#71717A]'
           >
             <span className='text-[#181818]'>
@@ -75,7 +75,7 @@ const EstimationResultsHeader = ({
         </div>
       </div>
       <ActionsDropdown
-        data-selector='estimation-results-header-actions-dropdown'
+        label='Actions'
         className='RemoteFlows__EstimationResults__ActionsDropdown'
         actions={actions}
       />
@@ -376,6 +376,7 @@ function BreakdownListItem({
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const isNested = level > 0;
+  const isCollapsible = item.isCollapsible || hasChildren;
 
   return (
     <li
@@ -399,15 +400,37 @@ function BreakdownListItem({
             />
           )}
 
-          <span
-            className={cn(
-              isNested
-                ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
-                : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B]',
-            )}
-          >
-            {item.label}
-          </span>
+          {isCollapsible ? (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className='flex items-center gap-2 hover:bg-gray-100 rounded p-1'
+            >
+              <span
+                className={cn(
+                  isNested
+                    ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
+                    : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B]',
+                )}
+              >
+                {item.label}
+              </span>
+              <ChevronDown
+                className={`h-3 w-3 text-muted-foreground transition-transform ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          ) : (
+            <span
+              className={cn(
+                isNested
+                  ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B] p-1',
+              )}
+            >
+              {item.label}
+            </span>
+          )}
 
           {item.tooltip && (
             <BasicTooltip
@@ -432,25 +455,12 @@ function BreakdownListItem({
               </button>
             </BasicTooltip>
           )}
-
-          {(item.isCollapsible || hasChildren) && (
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className='RemoteFlows__BreakdownList__CollapsibleButton p-1 hover:bg-gray-100 rounded'
-            >
-              <ChevronDown
-                className={`h-3 w-3 text-muted-foreground transition-transform ${
-                  isOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-          )}
         </div>
 
         {isMultipleCurrency ? (
           <>
             <span
-              data-selector={
+              data-testid={
                 item.dataSelector && item.dataSelector + '-employee-amount'
               }
               className={cn(
@@ -463,7 +473,7 @@ function BreakdownListItem({
               {item.regionalAmount || '—'}
             </span>
             <span
-              data-selector={
+              data-testid={
                 item.dataSelector && item.dataSelector + '-employer-amount'
               }
               className={cn(
@@ -478,7 +488,7 @@ function BreakdownListItem({
           </>
         ) : (
           <span
-            data-selector={item.dataSelector}
+            data-testid={item.dataSelector}
             className={cn(
               'RemoteFlows__BreakdownList__RegionalAmountText text-sm text-right',
               isNested
