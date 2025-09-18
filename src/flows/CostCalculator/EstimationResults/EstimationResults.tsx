@@ -662,7 +662,6 @@ export const EstimationResults = ({
                 children:
                   estimation.employer_currency_costs.monthly_contributions_breakdown?.map(
                     (item, index) => {
-                      console.log({ item });
                       return {
                         label: item.name,
                         regionalAmount: formatCurrency(
