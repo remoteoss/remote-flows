@@ -19,6 +19,10 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
 
+const FLAG_CODE_MAPPING: Record<string, string> = {
+  GB: 'GB-UKM',
+};
+
 const EstimationResultsHeader = ({
   title,
   country,
@@ -54,7 +58,11 @@ const EstimationResultsHeader = ({
     <div className='RemoteFlows__EstimationResults__Header flex justify-between'>
       <div className='flex flex-row items-center gap-6'>
         <div className='RemoteFlows__EstimationResultsHeader__FlagContainer flex h-16 w-16 items-center justify-center rounded-lg bg-[#F4F4F5]'>
-          <Flag code={country.alpha_2_code} />
+          <Flag
+            code={
+              FLAG_CODE_MAPPING[country.alpha_2_code] || country.alpha_2_code
+            }
+          />
         </div>
         <div className='space-y-1'>
           <h2
