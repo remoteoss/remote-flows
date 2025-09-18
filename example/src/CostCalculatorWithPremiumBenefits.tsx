@@ -177,9 +177,10 @@ const EditEstimationForm = ({
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
+  const paddedIndex = (estimationIndex + 1).toString().padStart(2, '0');
   return (
     <DrawerEstimationForm
-      options={{ title: `Estimate #${estimationIndex + 1}` }}
+      options={{ title: `Estimate #${paddedIndex}` }}
       data-testid='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
@@ -284,7 +285,9 @@ const ActionToolbar = ({
           Export as PDF
         </button>
         <AddEstimateButton
-          options={{ title: `Estimate #${estimations.length + 1}` }}
+          options={{
+            title: `Estimate #${(estimations.length + 1).toString().padStart(2, '0')}`,
+          }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
           onSubmit={(payload) => {
@@ -598,7 +601,7 @@ function CostCalculatorFormDemo() {
     <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
         <InitialForm
-          options={{ title: 'Estimate #1' }}
+          options={{ title: 'Estimate #01' }}
           onSubmit={(payload) => {
             setPayload([payload]);
           }}
