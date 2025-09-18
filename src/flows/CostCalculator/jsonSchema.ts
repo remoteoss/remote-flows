@@ -31,6 +31,24 @@ export const jsonSchema = {
             inputType: 'select',
           },
         },
+        hiring_budget: {
+          title: 'How would you like to estimate the cost of hiring?',
+          enum: ['employee_annual_salary', 'my_hiring_budget'],
+          type: 'string',
+          oneOf: [
+            {
+              title: "With the employee's annual salary",
+              const: 'employee_annual_salary',
+            },
+            {
+              title: 'With my hiring budget for this role',
+              const: 'my_hiring_budget',
+            },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+          },
+        },
         salary: {
           description: '',
           title: 'Salary',

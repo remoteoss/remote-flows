@@ -11,6 +11,7 @@ export type CostCalculatorEstimationSubmitValues = {
   currency: string;
   country: string;
   salary_converted: 'salary' | 'salary_conversion';
+  hiring_budget: string;
   salary: number;
 } & Partial<{
   region: string;
@@ -32,6 +33,7 @@ export type CostCalculatorEstimationFormValues = {
 } & Partial<{
   region: string;
   age: number;
+  hiring_budget: string;
   contract_duration_type: EmploymentTermType;
   benefits: Record<string, string>;
   management: {
@@ -80,6 +82,7 @@ export type EstimationError = PostCreateEstimationError | ValidationError;
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;
   onCurrencyChange?: (currency: string) => void;
+  onValidation?: (values: CostCalculatorEstimationFormValues) => void;
 };
 
 export type CurrencyKey = keyof typeof BASE_RATES;

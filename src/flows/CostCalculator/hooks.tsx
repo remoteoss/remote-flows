@@ -91,6 +91,25 @@ const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
   return createHeadlessForm(jsonSchemaModified);
 };
 
+type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';
+
+function getSalaryTitle(
+  salaryField: unknown,
+  hiringBudget?: HiringBudget,
+): string {
+  if (
+    typeof salaryField === 'object' &&
+    salaryField !== null &&
+    'title' in salaryField
+  ) {
+    const title = (salaryField as { title?: string }).title;
+    if (title) return title;
+  }
+  return hiringBudget === 'my_hiring_budget'
+    ? 'Hiring budget'
+    : "Employee's annual salary";
+}
+
 /**
  * Hook to use the cost calculator.
  */
@@ -114,6 +133,7 @@ export const useCostCalculator = (
   const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
     string | undefined
   >();
+  const [hiringBudget, setHiringBudget] = useState<HiringBudget>();
   const { data: countries, isLoading: isLoadingCountries } =
     useCostCalculatorCountries({
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
@@ -173,11 +193,13 @@ export const useCostCalculator = (
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
+    const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
 
     return {
       fields: {
         salary: {
           ...salaryField,
+          title: salaryTitle,
           presentation: {
             salary_conversion_properties: {
               label:
@@ -201,6 +223,11 @@ export const useCostCalculator = (
                 />
               );
             },
+          },
+        },
+        hiring_budget: {
+          presentation: {
+            hidden: version == 'marketing',
           },
         },
         management: {
@@ -241,6 +268,7 @@ export const useCostCalculator = (
   }, [
     employerBillingCurrency,
     salaryField,
+    hiringBudget,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     salaryFieldPresentation?.salary_conversion_properties?.label,
     defaultSalary,
@@ -310,11 +338,9 @@ export const useCostCalculator = (
                 error: null,
               });
             } else {
-              resolve({
+              reject({
                 data: null,
-                error: new Error(
-                  'Something went wrong. Please try again later.',
-                ),
+                error: response.error as PostCreateEstimationError,
               });
             }
           },
@@ -357,6 +383,10 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
+  function onHiringBudgetChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setHiringBudget(event.target.value as HiringBudget);
+  }
+
   function onChangeCurrency(currency: string) {
     const selectedCurrency = currencies?.find(
       (c) => c.value === currency,
@@ -397,6 +427,13 @@ export const useCostCalculator = (
     }
   }
 
+  const hiringBudgetField = fieldsJSONSchema.fields.find(
+    (field) => field.name === 'hiring_budget',
+  );
+  if (hiringBudgetField) {
+    hiringBudgetField.onChange = onHiringBudgetChange;
+  }
+
   if (countries) {
     const countryField = fieldsJSONSchema.fields.find(
       (field) => field.name === 'country',
@@ -426,6 +463,8 @@ export const useCostCalculator = (
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
     let errors: JSFValidationError | null = null;
+
+    options?.onValidation?.(values);
     const parsedValues = parseJSFToValidate(values, allFields);
 
     // 1. validate static fields first using Yup validate function
@@ -503,6 +542,7 @@ export const useCostCalculator = (
         region,
         currency,
         salary_converted,
+        hiring_budget,
         salary_conversion,
         management,
         estimation_title,
@@ -521,6 +561,7 @@ export const useCostCalculator = (
         salary,
         salary_converted,
         salary_conversion,
+        hiring_budget,
         currency,
         management,
         estimation_title,

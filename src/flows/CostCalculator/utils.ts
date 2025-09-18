@@ -97,21 +97,51 @@ function mapValueToEmployment(
   estimationOptions: CostCalculatorEstimationOptions,
   version: CostCalculatorVersion,
 ): CostCalculatorEmploymentParam {
-  return {
+  const base: CostCalculatorEmploymentParam = {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
     title: value.estimation_title || estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
-    ...((version == 'marketing' ||
-      value.salary_converted === 'salary_conversion') && {
-      annual_gross_salary_in_employer_currency: value.salary,
-    }),
-    ...(version === 'standard' &&
-      value.salary_converted === 'salary' && {
-        annual_gross_salary: value.salary,
-      }),
   };
+
+  return {
+    ...base,
+    ...getSalaryFields(value, version),
+  };
+}
+
+function getSalaryFields(
+  value: CostCalculatorEstimationSubmitValues,
+  version: CostCalculatorVersion,
+): Partial<CostCalculatorEmploymentParam> {
+  const isMarketing =
+    version === 'marketing' || value.salary_converted === 'salary_conversion';
+  const isStandard =
+    version === 'standard' && value.salary_converted === 'salary';
+  const useHiringBudget = value.hiring_budget === 'my_hiring_budget';
+
+  if (isMarketing) {
+    return useHiringBudget
+      ? {
+          annual_total_cost_in_employer_currency: value.salary,
+        }
+      : {
+          annual_gross_salary_in_employer_currency: value.salary,
+        };
+  }
+
+  if (isStandard) {
+    return useHiringBudget
+      ? {
+          annual_total_cost: value.salary,
+        }
+      : {
+          annual_gross_salary: value.salary,
+        };
+  }
+
+  return {};
 }
 
 /**
@@ -141,7 +171,6 @@ export function buildPayload(
       );
     }
   }
-
   const managementFee = Number(employments[0].management?.management_fee);
 
   return {

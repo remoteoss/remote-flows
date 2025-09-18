@@ -12,6 +12,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       salary: 100_000,
     };
 
@@ -38,6 +39,7 @@ describe('buildPayload', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      hiring_budget: 'employee_annual_salary',
       salary_converted: 'salary_conversion',
       salary: 100_000,
     };
@@ -61,10 +63,67 @@ describe('buildPayload', () => {
     });
   });
 
+  it('should build a payload with minimal values when salary converted is true and hiring_budget is my_hiring_budget', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      hiring_budget: 'my_hiring_budget',
+      salary_converted: 'salary_conversion',
+      salary: 100_000,
+    };
+
+    const payload = buildPayload(values);
+
+    expect(payload).toEqual({
+      employer_currency_slug: 'USD',
+      include_benefits: defaultEstimationOptions.includeBenefits,
+      include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
+      include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
+      include_management_fee: defaultEstimationOptions.includeManagementFee,
+      employments: [
+        {
+          region_slug: 'US',
+          annual_total_cost_in_employer_currency: 100_000,
+          employment_term: 'fixed',
+          title: defaultEstimationOptions.title,
+        },
+      ],
+    });
+  });
+
+  it('should build a payload with minimal values when hiring_budget is my_hiring_budget ', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary_converted: 'salary',
+      hiring_budget: 'my_hiring_budget',
+      salary: 100_000,
+    };
+
+    const payload = buildPayload(values);
+
+    expect(payload).toEqual({
+      employer_currency_slug: 'USD',
+      include_benefits: defaultEstimationOptions.includeBenefits,
+      include_cost_breakdowns: defaultEstimationOptions.includeCostBreakdowns,
+      include_premium_benefits: defaultEstimationOptions.includePremiumBenefits,
+      include_management_fee: defaultEstimationOptions.includeManagementFee,
+      employments: [
+        {
+          region_slug: 'US',
+          annual_total_cost: 100_000,
+          employment_term: 'fixed',
+          title: defaultEstimationOptions.title,
+        },
+      ],
+    });
+  });
+
   it('should use region if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       country: 'US',
+      hiring_budget: 'employee_annual_salary',
       region: 'CA',
       salary: 100_000,
       salary_converted: 'salary',
@@ -81,6 +140,7 @@ describe('buildPayload', () => {
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       benefits: {
         'benefit-health': 'premium',
         'benefit-dental': 'basic',
@@ -101,6 +161,7 @@ describe('buildPayload', () => {
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       age: 30,
     };
 
@@ -115,6 +176,7 @@ describe('buildPayload', () => {
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       contract_duration_type: 'fixed',
     };
 
@@ -128,6 +190,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       salary: 100_000,
     };
 
@@ -163,6 +226,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       salary: 100_000,
       benefits: {
         'benefit-health': 'whatever',
@@ -186,6 +250,7 @@ describe('buildPayload', () => {
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       management: {
         management_fee: '59900',
       },
@@ -208,6 +273,7 @@ describe('buildPayload', () => {
       currency: 'USD',
       country: 'US',
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       salary: 100_000,
     };
 
@@ -260,12 +326,14 @@ describe('buildPayload', () => {
           currency: 'USD',
           country: 'US',
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
           salary: 100_000,
         },
         {
           currency: 'USD', // Note: currency from first item is used
           country: 'UK',
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
           salary: 80_000,
         },
       ];
@@ -304,6 +372,7 @@ describe('buildPayload', () => {
           region: 'Berlin',
           salary: 90_000,
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
           age: 25,
           benefits: {
             'benefit-health': 'premium',
@@ -340,6 +409,7 @@ describe('buildPayload', () => {
           country: 'US',
           salary: 100_000,
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
         },
         {
           currency: 'USD',

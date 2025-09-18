@@ -319,11 +319,14 @@ const AddEstimateForm = ({
     title: string;
   };
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   return (
     <CostCalculatorFlow
       estimationOptions={{ ...estimationOptions, title: options.title }}
       defaultValues={defaultValues}
       options={{
+        onValidation: () => setErrorMessage(null),
         jsfModify: {
           fields: {
             country: {
@@ -347,7 +350,6 @@ const AddEstimateForm = ({
               ),
             },
             salary: {
-              title: "Employee's annual salary",
               description:
                 "We will use your selected billing currency, but you can also convert it to the employee's local currency.",
             },
@@ -373,9 +375,21 @@ const AddEstimateForm = ({
           <Card>
             <CostCalculatorForm
               onSubmit={onSubmit}
-              onError={onError}
+              onError={(error) => {
+                setErrorMessage(
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (error as any)?.error?.error?.message || 'An error occurred',
+                );
+                onError(error);
+              }}
               onSuccess={onSuccess}
             />
+            {errorMessage && (
+              <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
+                {errorMessage}
+              </div>
+            )}
+
             <div className='flex justify-center mt-10'>
               <CostCalculatorSubmitButton
                 className='submit-button'
