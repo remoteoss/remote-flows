@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { SummaryResults } from '../SummaryResults/SummaryResults';
 import userEvent from '@testing-library/user-event';
-import { CostCalculatorEmployment } from '@/src/client/types.gen';
+import { CostCalculatorEstimation } from '@/src/flows/CostCalculator/types';
 
-const mockEstimations: CostCalculatorEmployment[] = [
+const mockEstimations: CostCalculatorEstimation[] = [
   {
+    title: 'Estimation 1',
     country: {
       name: 'United States',
       code: 'US',

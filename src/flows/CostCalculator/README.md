@@ -607,7 +607,7 @@ A component that displays a comparative summary of costs across multiple estimat
 
 | Prop          | Type                         | Description                                                                                       |
 | ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
-| `estimations` | `CostCalculatorEmployment[]` | Array of employments to compare. **Must contain at least 2 entries** for the component to render. |
+| `estimations` | `CostCalculatorEstimation[]` | Array of employments to compare. **Must contain at least 2 entries** for the component to render. |
 
 ### useCostCalculator
 

@@ -1,4 +1,4 @@
-import { CostCalculatorEmployment, Currency } from '@/src/client';
+import { Currency } from '@/src/client';
 import {
   Accordion,
   AccordionContent,
@@ -6,11 +6,12 @@ import {
   AccordionTrigger,
 } from '@/src/components/ui/accordion';
 import { Card } from '@/src/components/ui/card';
+import { CostCalculatorEstimation } from '@/src/flows/CostCalculator/types';
 import { cn, formatCurrency } from '@/src/lib/utils';
 import { ChevronDown, Globe } from 'lucide-react';
 import { useState } from 'react';
 
-const useSummaryResults = (estimations: CostCalculatorEmployment[]) => {
+const useSummaryResults = (estimations: CostCalculatorEstimation[]) => {
   if (estimations.length < 2) {
     return {
       currency: null,
@@ -244,7 +245,7 @@ type SummaryResultsProps = {
    * Array of employments to compare costs for.
    * 2 estimations required for the component to render
    */
-  estimations: CostCalculatorEmployment[];
+  estimations: CostCalculatorEstimation[];
 };
 
 /**

@@ -1,8 +1,4 @@
-import {
-  CostCalculatorEmployment,
-  MinimalCountry,
-  MinimalRegion,
-} from '@/src/client';
+import { MinimalCountry, MinimalRegion } from '@/src/client';
 import { ActionsDropdown } from '@/src/components/shared/actions-dropdown/ActionsDropdown';
 import { Card } from '@/src/components/ui/card';
 import { ChevronDown, Info } from 'lucide-react';
@@ -18,6 +14,7 @@ import { cn, formatCurrency } from '@/src/lib/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
+import { CostCalculatorEstimation } from '@/src/flows/CostCalculator/types';
 
 const EstimationResultsHeader = ({
   title,
@@ -555,7 +552,7 @@ type EstimationResultsComponents = {
 };
 
 type EstimationResultsProps = {
-  estimation: CostCalculatorEmployment;
+  estimation: CostCalculatorEstimation;
   title: string;
   components?: EstimationResultsComponents;
   onDelete: () => void;
