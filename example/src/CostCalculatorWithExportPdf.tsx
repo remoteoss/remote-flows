@@ -13,6 +13,7 @@ import type {
 import './css/main.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { downloadPdf } from './utils';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -33,13 +34,10 @@ function CostCalculatorFormDemo() {
       exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
-            const a = document.createElement('a');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a.href = response.data.data.content as any;
-            a.download = 'estimation.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            downloadPdf(
+              response.data.data.content as unknown as string,
+              'estimation.pdf',
+            );
           }
         },
         onError: (error) => {
