@@ -56,6 +56,7 @@ export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
   includeCostBreakdowns: false,
   includePremiumBenefits: false,
   enableCurrencyConversion: false,
+  includeEstimationTitle: false,
   includeManagementFee: false,
 };
 
@@ -189,6 +190,7 @@ export const useCostCalculator = (
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
   const showManagementField = estimationOptions.includeManagementFee;
+  const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
     const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
@@ -253,6 +255,12 @@ export const useCostCalculator = (
                 )['x-jsf-presentation']
               : {}),
             hidden: !showManagementField,
+          },
+        },
+        estimation_title: {
+          ...options?.jsfModify?.fields?.estimation_title,
+          'x-jsf-presentation': {
+            hidden: !showEstimationTitleField,
           },
         },
       },
@@ -450,6 +458,7 @@ export const useCostCalculator = (
   const validationSchema = buildValidationSchema(
     fieldsJSONSchema.fields,
     employerBillingCurrency || 'USD',
+    estimationOptions.includeEstimationTitle,
   );
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
@@ -536,6 +545,7 @@ export const useCostCalculator = (
         hiring_budget,
         salary_conversion,
         management,
+        estimation_title,
         ...rest
       } = values;
 
@@ -554,6 +564,7 @@ export const useCostCalculator = (
         hiring_budget,
         currency,
         management,
+        estimation_title,
       };
 
       const parsedStaticFields = parseJSFToValidate(

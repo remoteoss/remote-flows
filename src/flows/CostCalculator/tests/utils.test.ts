@@ -207,6 +207,20 @@ describe('buildPayload', () => {
     expect(payload.employments[0].title).toBe('Custom Title');
   });
 
+  it('should get the title from the form values', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      country: 'US',
+      salary_converted: 'salary',
+      salary: 100_000,
+      estimation_title: 'Custom Title',
+    };
+
+    const payload = buildPayload(values);
+
+    expect(payload.employments[0].title).toBe('Custom Title');
+  });
+
   it('should not include some of the benefits if none is selected', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',

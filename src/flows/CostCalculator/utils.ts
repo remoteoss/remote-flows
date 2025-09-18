@@ -20,6 +20,7 @@ import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 export function buildValidationSchema(
   fields: $TSFixMe[],
   employerBillingCurrency: string,
+  includeEstimationTitle?: boolean,
 ) {
   const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
     (fieldsSchemaAcc, field) => {
@@ -29,7 +30,7 @@ export function buildValidationSchema(
           'salary_converted',
           {
             is: (val: string | null) => val === field.name,
-            then: (schema) => schema.required('Salary is required'),
+            then: (schema) => schema.required('Required field'),
             otherwise: (schema) => schema.optional(),
           },
         );
@@ -53,6 +54,11 @@ export function buildValidationSchema(
               },
             ),
         });
+      } else if (field.name === 'estimation_title' && includeEstimationTitle) {
+        // Make estimation_title required when includeEstimationTitle is true
+        fieldsSchemaAcc[field.name] = (
+          field.schema as AnyObjectSchema
+        ).required('Required field');
       } else {
         fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
       }
@@ -94,7 +100,7 @@ function mapValueToEmployment(
   const base: CostCalculatorEmploymentParam = {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
-    title: estimationOptions.title,
+    title: value.estimation_title || estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
   };

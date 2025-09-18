@@ -1,10 +1,10 @@
 import type {
-  CostCalculatorEmployment,
-  CostCalculatorEstimateResponse,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   EstimationError,
   CostCalculatorFlowProps,
+  CostCalculatorEstimationResponse,
+  CostCalculatorEstimation,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -37,11 +37,11 @@ import './css/utils.css';
 import { downloadPdf } from './utils';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
-  title: 'Estimate for a new company',
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
   includeManagementFee: true,
+  includeEstimationTitle: true,
   enableCurrencyConversion: true,
   managementFees: {
     USD: 594,
@@ -102,6 +102,7 @@ const DrawerEstimationForm = ({
   isDrawerOpen,
   setIsDrawerOpen,
   Trigger,
+  options,
   header,
   defaultValues,
   'data-testid': dataSelector,
@@ -112,6 +113,9 @@ const DrawerEstimationForm = ({
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
   Trigger?: React.ReactElement;
+  options: {
+    title: string;
+  };
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
   header: {
     title: string;
@@ -120,7 +124,7 @@ const DrawerEstimationForm = ({
   'data-testid'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   const triggerElement = isValidElement(Trigger) ? (
     Trigger
@@ -144,6 +148,7 @@ const DrawerEstimationForm = ({
               />
             </div>
             <AddEstimateForm
+              options={options}
               defaultValues={defaultValues}
               onSubmit={onSubmit}
               onError={onError}
@@ -171,10 +176,12 @@ const EditEstimationForm = ({
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
+  const paddedIndex = (estimationIndex + 1).toString().padStart(2, '0');
   return (
     <DrawerEstimationForm
+      options={{ title: `Estimate #${paddedIndex}` }}
       data-testid='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
@@ -196,6 +203,7 @@ const EditEstimationForm = ({
 };
 
 const AddEstimateButton = ({
+  options,
   buttonProps,
   onSubmit,
   onError,
@@ -203,15 +211,19 @@ const AddEstimateButton = ({
   isDrawerOpen,
   setIsDrawerOpen,
 }: {
+  options: {
+    title: string;
+  };
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
 }) => {
   return (
     <DrawerEstimationForm
+      options={options}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
       Trigger={
@@ -234,16 +246,18 @@ const AddEstimateButton = ({
 };
 
 const ActionToolbar = ({
+  estimations,
   onReset,
   onExportPdf,
   onCSVExport,
   onAddEstimate,
   onSavePayload,
 }: {
+  estimations: CostCalculatorEstimation[];
   onReset: () => void;
   onExportPdf: () => void;
   onCSVExport: () => void;
-  onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onAddEstimate: (estimation: CostCalculatorEstimationResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -272,6 +286,9 @@ const ActionToolbar = ({
           Export as PDF
         </button>
         <AddEstimateButton
+          options={{
+            title: `Estimate #${(estimations.length + 1).toString().padStart(2, '0')}`,
+          }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
           onSubmit={(payload) => {
@@ -293,17 +310,21 @@ const AddEstimateForm = ({
   onError,
   onSuccess,
   defaultValues,
+  options,
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  options: {
+    title: string;
+  };
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   return (
     <CostCalculatorFlow
-      estimationOptions={estimationOptions}
+      estimationOptions={{ ...estimationOptions, title: options.title }}
       defaultValues={defaultValues}
       options={{
         onValidation: () => setErrorMessage(null),
@@ -386,18 +407,23 @@ const AddEstimateForm = ({
 };
 
 const InitialForm = ({
+  options,
   onSubmit,
   onError,
   onSuccess,
 }: {
+  options: {
+    title: string;
+  };
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
-  onSuccess: (response: CostCalculatorEstimateResponse) => void;
+  onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   return (
     <>
       <Header />
       <AddEstimateForm
+        options={options}
         onSubmit={onSubmit}
         onError={onError}
         onSuccess={onSuccess}
@@ -416,10 +442,10 @@ const ResultsView = ({
   onExportEstimate,
   onEditEstimate,
 }: {
-  estimations: CostCalculatorEmployment[];
+  estimations: CostCalculatorEstimation[];
   onExportPdf: () => void;
   onReset: () => void;
-  onAddEstimate: (estimation: CostCalculatorEstimateResponse) => void;
+  onAddEstimate: (estimation: CostCalculatorEstimationResponse) => void;
   onSavePayload: (estimation: CostCalculatorEstimationSubmitValues) => void;
   onDeleteEstimate: (index: number) => void;
   onExportEstimate: (index: number) => void;
@@ -434,6 +460,7 @@ const ResultsView = ({
       <Header />
       <div className='mb-8'>
         <ActionToolbar
+          estimations={estimations}
           onReset={onReset}
           onExportPdf={onExportPdf}
           onCSVExport={() => {}}
@@ -456,7 +483,7 @@ const ResultsView = ({
           >
             <EstimationResults
               estimation={estimation}
-              title={`Estimate #${index + 1}`}
+              title={estimation.title ?? 'My first estimate'}
               onDelete={() => onDeleteEstimate(index)}
               onExportPdf={() => onExportEstimate(index)}
               onEdit={() => onEditEstimate(index)}
@@ -469,7 +496,7 @@ const ResultsView = ({
 };
 
 function CostCalculatorFormDemo() {
-  const [estimations, setEstimations] = useState<CostCalculatorEmployment[]>(
+  const [estimations, setEstimations] = useState<CostCalculatorEstimation[]>(
     [],
   );
   const [payload, setPayload] = useState<
@@ -490,7 +517,7 @@ function CostCalculatorFormDemo() {
     setEstimations([]);
   };
 
-  const onAddEstimate = (estimation: CostCalculatorEstimateResponse) => {
+  const onAddEstimate = (estimation: CostCalculatorEstimationResponse) => {
     const payload = estimation.data.employments?.[0];
     if (payload) {
       setEstimations([...estimations, payload]);
@@ -515,7 +542,7 @@ function CostCalculatorFormDemo() {
   };
 
   const onEditSuccess = (
-    response: CostCalculatorEstimateResponse,
+    response: CostCalculatorEstimationResponse,
     index: number,
   ) => {
     if (response.data.employments?.[0]) {
@@ -587,6 +614,7 @@ function CostCalculatorFormDemo() {
     <Layout width={estimations.length === 0 ? 'initialForm' : 'results'}>
       {estimations.length === 0 ? (
         <InitialForm
+          options={{ title: 'Estimate #01' }}
           onSubmit={(payload) => {
             setPayload([payload]);
           }}

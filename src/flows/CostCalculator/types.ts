@@ -1,4 +1,5 @@
 import type {
+  CostCalculatorEmployment,
   EmploymentTermType,
   PostCreateEstimationError,
   ValidationError,
@@ -20,6 +21,7 @@ export type CostCalculatorEstimationSubmitValues = {
   management: {
     management_fee: string;
   };
+  estimation_title: string;
 }>;
 
 export type CostCalculatorEstimationFormValues = {
@@ -37,6 +39,7 @@ export type CostCalculatorEstimationFormValues = {
   management: {
     management_fee: string;
   };
+  estimation_title: string;
 }>;
 
 export type CostCalculatorEstimationOptions = Partial<{
@@ -64,7 +67,10 @@ export type CostCalculatorEstimationOptions = Partial<{
    * Include management fee in the estimation. Default is false.
    */
   includeManagementFee: boolean;
-
+  /**
+   * Include estimation title field in the estimation. Default is false.
+   */
+  includeEstimationTitle: boolean;
   /**
    * Management fees by currency. Default is null.
    */
@@ -80,3 +86,13 @@ export type UseCostCalculatorOptions = {
 };
 
 export type CurrencyKey = keyof typeof BASE_RATES;
+
+export type CostCalculatorEstimation = CostCalculatorEmployment & {
+  title?: string;
+};
+
+export type CostCalculatorEstimationResponse = {
+  data: {
+    employments?: Array<CostCalculatorEstimation>;
+  };
+};
