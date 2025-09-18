@@ -74,7 +74,8 @@ describe('useCostCalculator', () => {
       salary: '500000',
       salary_converted: 'salary',
       salary_conversion: '',
-    };
+      estimation_title: 'Test estimation',
+    } as const;
 
     await expect(
       result.current.handleValidation(validValues),
@@ -91,13 +92,14 @@ describe('useCostCalculator', () => {
       salary: '',
       salary_converted: 'salary',
       salary_conversion: '',
-    };
+      estimation_title: 'Test estimation',
+    } as const;
 
     await expect(
       result.current.handleValidation(invalidValues),
     ).resolves.toMatchObject({
       formErrors: {
-        salary: 'Salary is required',
+        salary: 'Required field',
       },
     });
   });

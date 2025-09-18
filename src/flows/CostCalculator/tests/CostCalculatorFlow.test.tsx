@@ -147,6 +147,7 @@ describe('CostCalculatorFlow', () => {
         salary: 5_000_000,
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
+        estimation_title: 'Estimation',
       });
     });
   });
@@ -198,7 +199,7 @@ describe('CostCalculatorFlow', () => {
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/salary is required/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(3);
     });
   });
 
@@ -291,6 +292,7 @@ describe('CostCalculatorFlow', () => {
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         salary: 5_000_000,
+        estimation_title: 'Estimation',
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
       });
