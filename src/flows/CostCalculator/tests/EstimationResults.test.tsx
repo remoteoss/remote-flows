@@ -258,7 +258,7 @@ describe('EstimationResults', () => {
     );
   });
 
-  it.only('displays breakdown items correctly', () => {
+  it('displays breakdown items correctly', () => {
     render(<EstimationResults {...defaultProps} />, { wrapper });
 
     // Check if main sections are present

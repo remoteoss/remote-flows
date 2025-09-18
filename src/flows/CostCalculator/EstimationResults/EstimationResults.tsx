@@ -380,6 +380,7 @@ function BreakdownListItem({
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const isNested = level > 0;
+  const isCollapsible = item.isCollapsible || hasChildren;
 
   return (
     <li
@@ -403,15 +404,37 @@ function BreakdownListItem({
             />
           )}
 
-          <span
-            className={cn(
-              isNested
-                ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
-                : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B]',
-            )}
-          >
-            {item.label}
-          </span>
+          {isCollapsible ? (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className='flex items-center gap-2 hover:bg-gray-100 rounded p-1'
+            >
+              <span
+                className={cn(
+                  isNested
+                    ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
+                    : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B]',
+                )}
+              >
+                {item.label}
+              </span>
+              <ChevronDown
+                className={`h-3 w-3 text-muted-foreground transition-transform ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          ) : (
+            <span
+              className={cn(
+                isNested
+                  ? 'RemoteFlows__BreakdownList__Text--Nested text-xs text-[#71717A]'
+                  : 'RemoteFlows__BreakdownList__Text--NotNested text-sm text-[#09090B] p-1',
+              )}
+            >
+              {item.label}
+            </span>
+          )}
 
           {item.tooltip && (
             <BasicTooltip
@@ -435,19 +458,6 @@ function BreakdownListItem({
                 />
               </button>
             </BasicTooltip>
-          )}
-
-          {(item.isCollapsible || hasChildren) && (
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className='RemoteFlows__BreakdownList__CollapsibleButton p-1 hover:bg-gray-100 rounded'
-            >
-              <ChevronDown
-                className={`h-3 w-3 text-muted-foreground transition-transform ${
-                  isOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
           )}
         </div>
 
