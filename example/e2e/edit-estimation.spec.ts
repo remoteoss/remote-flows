@@ -21,9 +21,7 @@ test.describe('edit estimation', () => {
 
     await actionsDropdown.click();
 
-    const editAction = page.getByTestId(
-      'estimation-results-header-actions-dropdown-edit',
-    );
+    const editAction = page.getByRole('button', { name: /edit/i });
     await editAction.click();
 
     // Check drawer content
