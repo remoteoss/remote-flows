@@ -17,9 +17,8 @@ test.describe('edit estimation', () => {
     await expect(title).toHaveText('Estimate #1');
 
     // Open actions dropdown and click edit
-    const actionsDropdown = page.getByTestId(
-      'estimation-results-header-actions-dropdown',
-    );
+    const actionsDropdown = page.getByRole('button', { name: /actions/i });
+
     await actionsDropdown.click();
 
     const editAction = page.getByTestId(

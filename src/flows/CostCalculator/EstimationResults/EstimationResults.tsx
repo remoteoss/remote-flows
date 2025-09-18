@@ -78,7 +78,6 @@ const EstimationResultsHeader = ({
         </div>
       </div>
       <ActionsDropdown
-        data-testid='estimation-results-header-actions-dropdown'
         label='Actions'
         className='RemoteFlows__EstimationResults__ActionsDropdown'
         actions={actions}
