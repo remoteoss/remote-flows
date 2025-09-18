@@ -122,7 +122,7 @@ export function OnboardingForm({
   };
 
   return (
-    <Form {...form}>
+    <Form {...form} key={`form-${onboardingBag.stepState.currentStep.name}`}>
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}

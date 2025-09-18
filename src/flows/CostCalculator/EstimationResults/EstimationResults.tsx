@@ -661,19 +661,22 @@ export const EstimationResults = ({
                 ),
                 children:
                   estimation.employer_currency_costs.monthly_contributions_breakdown?.map(
-                    (item) => ({
-                      label: item.name,
-                      regionalAmount: formatCurrency(
-                        item.amount,
-                        estimation.regional_currency_costs.currency.symbol,
-                      ),
-                      employerAmount: formatCurrency(
-                        item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
-                      ),
-                      zendeskId: item.zendesk_article_id || undefined,
-                      tooltip: item.description || undefined,
-                    }),
+                    (item, index) => {
+                      return {
+                        label: item.name,
+                        regionalAmount: formatCurrency(
+                          estimation.regional_currency_costs
+                            .monthly_contributions_breakdown?.[index]?.amount,
+                          estimation.regional_currency_costs.currency.symbol,
+                        ),
+                        employerAmount: formatCurrency(
+                          item.amount,
+                          estimation.employer_currency_costs.currency.symbol,
+                        ),
+                        zendeskId: item.zendesk_article_id || undefined,
+                        tooltip: item.description || undefined,
+                      };
+                    },
                   ) || [],
               },
               {
@@ -688,10 +691,11 @@ export const EstimationResults = ({
                 ),
                 children:
                   estimation.employer_currency_costs.monthly_benefits_breakdown?.map(
-                    (item) => ({
+                    (item, index) => ({
                       label: item.name,
                       regionalAmount: formatCurrency(
-                        item.amount,
+                        estimation.regional_currency_costs
+                          .monthly_benefits_breakdown?.[index]?.amount,
                         estimation.regional_currency_costs.currency.symbol,
                       ),
                       employerAmount: formatCurrency(
@@ -774,10 +778,11 @@ export const EstimationResults = ({
                 ),
                 children:
                   estimation.employer_currency_costs.annual_contributions_breakdown?.map(
-                    (item) => ({
+                    (item, index) => ({
                       label: item.name,
                       regionalAmount: formatCurrency(
-                        item.amount,
+                        estimation.regional_currency_costs
+                          .annual_contributions_breakdown?.[index]?.amount,
                         estimation.regional_currency_costs.currency.symbol,
                       ),
                       employerAmount: formatCurrency(
@@ -801,10 +806,11 @@ export const EstimationResults = ({
                 ),
                 children:
                   estimation.employer_currency_costs.annual_benefits_breakdown?.map(
-                    (item) => ({
+                    (item, index) => ({
                       label: item.name,
                       regionalAmount: formatCurrency(
-                        item.amount,
+                        estimation.regional_currency_costs
+                          .annual_benefits_breakdown?.[index]?.amount,
                         estimation.regional_currency_costs.currency.symbol,
                       ),
                       employerAmount: formatCurrency(
@@ -830,10 +836,11 @@ export const EstimationResults = ({
                 ),
                 children:
                   estimation.employer_currency_costs.extra_statutory_payments_breakdown?.map(
-                    (item) => ({
+                    (item, index) => ({
                       label: item.name,
                       regionalAmount: formatCurrency(
-                        item.amount,
+                        estimation.regional_currency_costs
+                          .extra_statutory_payments_breakdown?.[index]?.amount,
                         estimation.regional_currency_costs.currency.symbol,
                       ),
                       employerAmount: formatCurrency(
