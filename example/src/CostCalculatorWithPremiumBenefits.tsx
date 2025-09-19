@@ -115,6 +115,7 @@ const DrawerEstimationForm = ({
   Trigger?: React.ReactElement;
   options: {
     title: string;
+    hideCurrency?: boolean;
   };
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
   header: {
@@ -181,7 +182,7 @@ const EditEstimationForm = ({
   const paddedIndex = (estimationIndex + 1).toString().padStart(2, '0');
   return (
     <DrawerEstimationForm
-      options={{ title: `Estimate #${paddedIndex}` }}
+      options={{ title: `Estimate #${paddedIndex}`, hideCurrency: true }}
       data-testid='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
@@ -205,6 +206,7 @@ const EditEstimationForm = ({
 const AddEstimateButton = ({
   options,
   buttonProps,
+  defaultValues,
   onSubmit,
   onError,
   onSuccess,
@@ -213,7 +215,9 @@ const AddEstimateButton = ({
 }: {
   options: {
     title: string;
+    hideCurrency?: boolean;
   };
+  defaultValues?: CostCalculatorFlowProps['defaultValues'];
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -223,6 +227,8 @@ const AddEstimateButton = ({
 }) => {
   return (
     <DrawerEstimationForm
+      data-testid='drawer-add-estimation-form'
+      defaultValues={defaultValues}
       options={options}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -288,6 +294,12 @@ const ActionToolbar = ({
         <AddEstimateButton
           options={{
             title: `Estimate #${(estimations.length + 1).toString().padStart(2, '0')}`,
+            hideCurrency: true,
+          }}
+          defaultValues={{
+            currencySlug:
+              estimations[estimations.length - 1].employer_currency_costs
+                .currency.slug,
           }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
@@ -318,10 +330,10 @@ const AddEstimateForm = ({
   defaultValues?: CostCalculatorFlowProps['defaultValues'];
   options: {
     title: string;
+    hideCurrency?: boolean;
   };
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   return (
     <CostCalculatorFlow
       estimationOptions={{ ...estimationOptions, title: options.title }}
@@ -349,6 +361,9 @@ const AddEstimateForm = ({
                   </ZendeskTriggerButton>
                 </>
               ),
+              'x-jsf-presentation': {
+                hidden: options.hideCurrency,
+              },
             },
             salary: {
               description:
