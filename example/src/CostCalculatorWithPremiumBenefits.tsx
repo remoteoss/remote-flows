@@ -117,7 +117,9 @@ const DrawerEstimationForm = ({
     title: string;
     hideCurrency?: boolean;
   };
-  defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
+  };
   header: {
     title: string;
     description: string;
@@ -166,6 +168,7 @@ const EditEstimationForm = ({
   isDrawerOpen,
   estimationIndex,
   payload,
+  estimation,
   setIsDrawerOpen,
   onSubmit,
   onError,
@@ -174,6 +177,7 @@ const EditEstimationForm = ({
   isDrawerOpen: boolean;
   estimationIndex: number;
   payload: CostCalculatorEstimationSubmitValues | null;
+  estimation: CostCalculatorEstimation | null;
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -193,6 +197,7 @@ const EditEstimationForm = ({
         currencySlug: payload?.currency,
         salary: convertFromCents(payload?.salary)?.toString() ?? '',
         benefits: payload?.benefits,
+        selectedCurrency: estimation?.employer_currency_costs.currency.code,
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -217,7 +222,9 @@ const AddEstimateButton = ({
     title: string;
     hideCurrency?: boolean;
   };
-  defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
+  };
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -300,6 +307,9 @@ const ActionToolbar = ({
             currencySlug:
               estimations[estimations.length - 1].employer_currency_costs
                 .currency.slug,
+            selectedCurrency:
+              estimations[estimations.length - 1].employer_currency_costs
+                .currency.code,
           }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
@@ -327,7 +337,9 @@ const AddEstimateForm = ({
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
-  defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
+  };
   options: {
     title: string;
     hideCurrency?: boolean;
@@ -362,7 +374,14 @@ const AddEstimateForm = ({
                 </>
               ),
               'x-jsf-presentation': {
-                hidden: options.hideCurrency,
+                hidden: false,
+                statement: {
+                  title:
+                    'The billing currency will appear as the one you picked earlier',
+                  description: `Your billing currency will be shown as ${defaultValues?.selectedCurrency}, based on your earlier selection`,
+                  inputType: 'statement',
+                  severity: 'warning',
+                },
               },
             },
             salary: {
@@ -654,6 +673,7 @@ function CostCalculatorFormDemo() {
             isDrawerOpen={editProps.isDrawerOpen}
             estimationIndex={editProps.estimationIndex}
             payload={editProps.payload}
+            estimation={estimations[editProps.estimationIndex]}
             setIsDrawerOpen={setIsDrawerOpen}
             onSubmit={(payload) =>
               onEditPayload(payload, editProps.estimationIndex)
