@@ -31,6 +31,18 @@ test.describe('add estimation from drawer', () => {
       'Estimate the cost of another hire through Remote',
     );
 
+    await expect(
+      page.getByText(
+        'The billing currency will appear as the one you picked earlier',
+      ),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(
+        'Your billing currency will be shown as USD, based on your earlier selection',
+      ),
+    ).toBeVisible();
+
     await expect(page.locator('#currency')).toHaveCount(0);
 
     await fillEstimationForm(page, {
