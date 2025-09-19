@@ -32,5 +32,12 @@ test.describe('add estimation from drawer', () => {
     );
 
     await expect(page.locator('#currency')).toHaveCount(0);
+
+    await fillEstimationForm(page, {
+      country: 'Sweden',
+      salary: '200',
+    });
+
+    await expect(page.getByText('$200.00')).toBeVisible();
   });
 });
