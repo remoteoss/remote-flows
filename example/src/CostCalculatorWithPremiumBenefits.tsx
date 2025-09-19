@@ -374,7 +374,12 @@ const AddEstimateForm = ({
                 </>
               ),
               'x-jsf-presentation': {
-                hidden: false,
+                hidden: options.hideCurrency,
+              },
+            },
+            currency_statement: {
+              'x-jsf-presentation': {
+                hidden: !options.hideCurrency,
                 statement: {
                   title:
                     'The billing currency will appear as the one you picked earlier',
