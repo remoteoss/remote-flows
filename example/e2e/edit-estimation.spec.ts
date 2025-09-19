@@ -30,6 +30,18 @@ test.describe('edit estimation', () => {
     );
     await expect(drawerTitle).toHaveText('Edit estimate');
 
+    await expect(
+      page.getByText(
+        'The billing currency will appear as the one you picked earlier',
+      ),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(
+        'Your billing currency will be shown as USD, based on your earlier selection',
+      ),
+    ).toBeVisible();
+
     const drawerDescription = page.getByTestId(
       'drawer-edit-estimation-form-header-description',
     );

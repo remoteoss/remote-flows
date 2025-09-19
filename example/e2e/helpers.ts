@@ -8,10 +8,16 @@ interface FillEstimationFormOptions {
 
 export async function fillEstimationForm(
   page: Page,
-  options: FillEstimationFormOptions,
+  options: Partial<FillEstimationFormOptions>,
 ) {
-  await page.selectOption('#country', options.country);
-  await page.selectOption('#currency', options.currency);
-  await page.fill('#salary_conversion', options.salary);
+  if (options.country) {
+    await page.selectOption('#country', options.country);
+  }
+  if (options.currency) {
+    await page.selectOption('#currency', options.currency);
+  }
+  if (options.salary) {
+    await page.fill('#salary_conversion', options.salary);
+  }
   await page.click('.submit-button');
 }
