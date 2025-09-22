@@ -31,6 +31,23 @@ export const jsonSchema = {
             inputType: 'select',
           },
         },
+        currency_statement: {
+          type: 'null',
+          title: 'Company statement',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+            hidden: true,
+            statement: {
+              title: '<TITLE_PLACEHOLDER>',
+              description: '<DESCRIPTION_PLACEHOLDER>',
+              inputType: 'statement',
+              severity: 'warning',
+            },
+            meta: {
+              ignoreValue: true,
+            },
+          },
+        },
         hiring_budget: {
           title: 'How would you like to estimate the cost of hiring?',
           enum: ['employee_annual_salary', 'my_hiring_budget'],
@@ -115,6 +132,7 @@ export const jsonSchema = {
         'country',
         'region',
         'currency',
+        'currency_statement',
         'salary',
         'estimation_title',
         'management',

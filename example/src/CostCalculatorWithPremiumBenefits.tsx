@@ -115,8 +115,11 @@ const DrawerEstimationForm = ({
   Trigger?: React.ReactElement;
   options: {
     title: string;
+    hideCurrency?: boolean;
   };
-  defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
+  };
   header: {
     title: string;
     description: string;
@@ -165,6 +168,7 @@ const EditEstimationForm = ({
   isDrawerOpen,
   estimationIndex,
   payload,
+  selectedEstimation,
   setIsDrawerOpen,
   onSubmit,
   onError,
@@ -173,6 +177,7 @@ const EditEstimationForm = ({
   isDrawerOpen: boolean;
   estimationIndex: number;
   payload: CostCalculatorEstimationSubmitValues | null;
+  selectedEstimation: CostCalculatorEstimation | null;
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -181,7 +186,7 @@ const EditEstimationForm = ({
   const paddedIndex = (estimationIndex + 1).toString().padStart(2, '0');
   return (
     <DrawerEstimationForm
-      options={{ title: `Estimate #${paddedIndex}` }}
+      options={{ title: `Estimate #${paddedIndex}`, hideCurrency: true }}
       data-testid='drawer-edit-estimation-form'
       header={{
         title: 'Edit estimate',
@@ -192,6 +197,8 @@ const EditEstimationForm = ({
         currencySlug: payload?.currency,
         salary: convertFromCents(payload?.salary)?.toString() ?? '',
         benefits: payload?.benefits,
+        selectedCurrency:
+          selectedEstimation?.employer_currency_costs.currency.code ?? '',
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -205,6 +212,7 @@ const EditEstimationForm = ({
 const AddEstimateButton = ({
   options,
   buttonProps,
+  defaultValues,
   onSubmit,
   onError,
   onSuccess,
@@ -213,6 +221,10 @@ const AddEstimateButton = ({
 }: {
   options: {
     title: string;
+    hideCurrency?: boolean;
+  };
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
   };
   buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
@@ -223,6 +235,8 @@ const AddEstimateButton = ({
 }) => {
   return (
     <DrawerEstimationForm
+      data-testid='drawer-add-estimation-form'
+      defaultValues={defaultValues}
       options={options}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -288,6 +302,15 @@ const ActionToolbar = ({
         <AddEstimateButton
           options={{
             title: `Estimate #${(estimations.length + 1).toString().padStart(2, '0')}`,
+            hideCurrency: true,
+          }}
+          defaultValues={{
+            currencySlug:
+              estimations[estimations.length - 1].employer_currency_costs
+                .currency.slug,
+            selectedCurrency:
+              estimations[estimations.length - 1].employer_currency_costs
+                .currency.code,
           }}
           isDrawerOpen={isOpen}
           setIsDrawerOpen={setIsOpen}
@@ -315,13 +338,15 @@ const AddEstimateForm = ({
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
-  defaultValues?: CostCalculatorFlowProps['defaultValues'];
+  defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
+    selectedCurrency?: string;
+  };
   options: {
     title: string;
+    hideCurrency?: boolean;
   };
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   return (
     <CostCalculatorFlow
       estimationOptions={{ ...estimationOptions, title: options.title }}
@@ -349,6 +374,21 @@ const AddEstimateForm = ({
                   </ZendeskTriggerButton>
                 </>
               ),
+              'x-jsf-presentation': {
+                hidden: options.hideCurrency,
+              },
+            },
+            currency_statement: {
+              'x-jsf-presentation': {
+                hidden: !options.hideCurrency,
+                statement: {
+                  title:
+                    'The billing currency will appear as the one you picked earlier',
+                  description: `Your billing currency will be shown as ${defaultValues?.selectedCurrency}, based on your earlier selection`,
+                  inputType: 'statement',
+                  severity: 'warning',
+                },
+              },
             },
             salary: {
               description:
@@ -639,6 +679,7 @@ function CostCalculatorFormDemo() {
             isDrawerOpen={editProps.isDrawerOpen}
             estimationIndex={editProps.estimationIndex}
             payload={editProps.payload}
+            selectedEstimation={estimations[editProps.estimationIndex]}
             setIsDrawerOpen={setIsDrawerOpen}
             onSubmit={(payload) =>
               onEditPayload(payload, editProps.estimationIndex)
