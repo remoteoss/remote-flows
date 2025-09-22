@@ -168,7 +168,7 @@ const EditEstimationForm = ({
   isDrawerOpen,
   estimationIndex,
   payload,
-  estimation,
+  selectedEstimation,
   setIsDrawerOpen,
   onSubmit,
   onError,
@@ -177,7 +177,7 @@ const EditEstimationForm = ({
   isDrawerOpen: boolean;
   estimationIndex: number;
   payload: CostCalculatorEstimationSubmitValues | null;
-  estimation: CostCalculatorEstimation | null;
+  selectedEstimation: CostCalculatorEstimation | null;
   setIsDrawerOpen: (isOpen: boolean) => void;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
   onError: (error: EstimationError) => void;
@@ -197,7 +197,8 @@ const EditEstimationForm = ({
         currencySlug: payload?.currency,
         salary: convertFromCents(payload?.salary)?.toString() ?? '',
         benefits: payload?.benefits,
-        selectedCurrency: estimation?.employer_currency_costs.currency.code,
+        selectedCurrency:
+          selectedEstimation?.employer_currency_costs.currency.code ?? '',
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
@@ -678,7 +679,7 @@ function CostCalculatorFormDemo() {
             isDrawerOpen={editProps.isDrawerOpen}
             estimationIndex={editProps.estimationIndex}
             payload={editProps.payload}
-            estimation={estimations[editProps.estimationIndex]}
+            selectedEstimation={estimations[editProps.estimationIndex]}
             setIsDrawerOpen={setIsDrawerOpen}
             onSubmit={(payload) =>
               onEditPayload(payload, editProps.estimationIndex)

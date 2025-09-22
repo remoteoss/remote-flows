@@ -38,9 +38,8 @@ export const jsonSchema = {
             inputType: 'hidden',
             hidden: true,
             statement: {
-              title: 'Important statement',
-              description:
-                "This statement message will be shown at all times, irrespective of this field's visibility.",
+              title: '<TITLE_PLACEHOLDER>',
+              description: '<DESCRIPTION_PLACEHOLDER>',
               inputType: 'statement',
               severity: 'warning',
             },
