@@ -271,6 +271,7 @@ describe('buildPayload', () => {
 
     const customOptions: CostCalculatorEstimationOptions = {
       includeManagementFee: true,
+      showManagementFee: true,
     };
 
     const payload = buildPayload(values, customOptions);
