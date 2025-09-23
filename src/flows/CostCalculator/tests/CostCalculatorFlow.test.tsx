@@ -565,7 +565,43 @@ describe('CostCalculatorFlow', () => {
     ).toHaveTextContent(/USD/i);
   });
 
-  it('should show management fee field when includeManagementFee is true', async () => {
+  it('should not show management fee field when includeManagementFee is false && showManagementFee is false', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        includeManagementFee: false,
+        showManagementFee: false,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: /management fee/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should not show management fee field when includeManagementFee is true && showManagementFee is false', async () => {
+    renderComponent({
+      defaultValues: defaultProps.defaultValues,
+      estimationOptions: {
+        includeManagementFee: true,
+        showManagementFee: false,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: /management fee/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should show management fee field when includeManagementFee is true && showManagementFee is true', async () => {
     renderComponent({
       defaultValues: defaultProps.defaultValues,
       estimationOptions: {
