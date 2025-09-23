@@ -271,12 +271,34 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values);
 
-    console.log(payload);
-
     expect(payload.global_discount).toBeUndefined();
   });
 
-  it('should add management_fee if we provided in the estimationOptions', () => {
+  it('should include management_fee using remote base prices if estimationOptions.showManagementFee is false and estimationOptions.includeManagementFee is true', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      currency_code: 'USD',
+      country: 'US',
+      salary: 100_000,
+      salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
+      management: {
+        management_fee: '69900',
+      },
+    };
+
+    const payload = buildPayload(values, {
+      includeManagementFee: true,
+      showManagementFee: false,
+    });
+
+    expect(payload.global_discount).toEqual({
+      quoted_amount: 69900,
+      text: '',
+    });
+  });
+
+  it('should add management_fee if we provided in the estimationOptions.showManagementFee is true and estimationOptions.includeManagementFee is true', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
       currency_code: 'USD',
