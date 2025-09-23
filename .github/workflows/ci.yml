@@ -89,7 +89,7 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    needs: [deploy-remote-flows, deploy-example-app]
+    needs: [unit-tests, deploy-remote-flows, deploy-example-app]
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
