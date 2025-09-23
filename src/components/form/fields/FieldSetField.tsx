@@ -28,7 +28,7 @@ type FieldWithoutOptions = FieldBase & {
 
 type Field = FieldWithOptions | FieldWithoutOptions;
 
-type FieldSetProps = {
+export type FieldSetProps = {
   label: string;
   name: string;
   description: string;

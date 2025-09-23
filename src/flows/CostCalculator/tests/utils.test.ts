@@ -214,6 +214,7 @@ describe('buildPayload', () => {
       salary_converted: 'salary',
       salary: 100_000,
       estimation_title: 'Custom Title',
+      hiring_budget: 'employee_annual_salary',
     };
 
     const payload = buildPayload(values);
@@ -384,6 +385,7 @@ describe('buildPayload', () => {
           salary: 85_000,
           contract_duration_type: 'indefinite',
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
         },
       ];
 
@@ -416,6 +418,7 @@ describe('buildPayload', () => {
           country: 'UK',
           salary: 80_000,
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
         },
       ];
 

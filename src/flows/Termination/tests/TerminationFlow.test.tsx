@@ -64,7 +64,7 @@ describe('TerminationFlow', () => {
               </p>
             </div>
             <EmployeeComunicationStep
-              onSubmit={(payload) =>
+              onSubmit={(payload: $TSFixMe) =>
                 onSubmitStep(payload, 'employee_communication')
               }
             />
@@ -75,7 +75,7 @@ describe('TerminationFlow', () => {
         return (
           <>
             <TerminationDetailsStep
-              onSubmit={(payload) =>
+              onSubmit={(payload: $TSFixMe) =>
                 onSubmitStep(payload, 'termination_details')
               }
             />
@@ -87,7 +87,7 @@ describe('TerminationFlow', () => {
         return (
           <>
             <TimeOff
-              render={({ employment, timeoff }) => {
+              render={({ employment, timeoff }: $TSFixMe) => {
                 const username = employment?.data?.employment?.basic_information
                   ?.name as string;
                 const days = timeoff?.data?.total_count || 0;
@@ -106,7 +106,9 @@ describe('TerminationFlow', () => {
               }}
             />
             <PaidTimeOffStep
-              onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
+              onSubmit={(payload: $TSFixMe) =>
+                onSubmitStep(payload, 'paid_time_off')
+              }
             />
             <Back>Back</Back>
             <SubmitButton>Next Step</SubmitButton>
@@ -118,7 +120,7 @@ describe('TerminationFlow', () => {
           <>
             <AdditionalDetailsStep
               requesterName='ze'
-              onSubmit={(payload) => onSubmitForm(payload)}
+              onSubmit={(payload: $TSFixMe) => onSubmitForm(payload)}
               onSuccess={onSuccess}
               onError={onError}
             />
@@ -127,6 +129,8 @@ describe('TerminationFlow', () => {
           </>
         );
     }
+
+    return null;
   };
 
   const mockRender = vi.fn(
