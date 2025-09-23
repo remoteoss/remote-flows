@@ -189,7 +189,7 @@ export const useCostCalculator = (
     };
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
-  const showManagementField = estimationOptions.includeManagementFee;
+  const showManagementField = estimationOptions.showManagementFee;
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
@@ -577,9 +577,14 @@ export const useCostCalculator = (
         jsonSchemaRegionFields?.fields || [],
       );
 
+      const additionalFields = {
+        currency_code: currencies?.find((c) => c.value === currency)?.label,
+      };
+
       return {
         ...parsedStaticFields,
         ...parsedRegionFields,
+        ...additionalFields,
       } as CostCalculatorEstimationSubmitValues;
     },
     /**

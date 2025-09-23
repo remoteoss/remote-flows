@@ -9,6 +9,7 @@ import { JSFModify } from '@/src/flows/types';
 
 export type CostCalculatorEstimationSubmitValues = {
   currency: string;
+  currency_code: string;
   country: string;
   salary_converted: 'salary' | 'salary_conversion';
   hiring_budget: string;
@@ -26,6 +27,7 @@ export type CostCalculatorEstimationSubmitValues = {
 
 export type CostCalculatorEstimationFormValues = {
   currency: string;
+  currency_code: string;
   country: string;
   salary: string;
   salary_converted: 'salary' | 'salary_conversion';
@@ -74,7 +76,12 @@ export type CostCalculatorEstimationOptions = Partial<{
   /**
    * Management fees by currency. Default is null.
    */
-  managementFees?: Partial<Record<CurrencyKey, number>>;
+  managementFees: Partial<Record<CurrencyKey, number>>;
+
+  /**
+   * Show management fee field in the estimation. Default is false.
+   */
+  showManagementFee: boolean;
 }>;
 
 export type EstimationError = PostCreateEstimationError | ValidationError;
