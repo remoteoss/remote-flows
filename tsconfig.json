@@ -26,5 +26,10 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src", "vitest-setup.ts"]
+  "include": [
+    "src", 
+    "vitest-setup.ts",  
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
 }
