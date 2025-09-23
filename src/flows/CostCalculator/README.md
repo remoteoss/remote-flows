@@ -17,6 +17,7 @@ Welcome to the CostCalculator flow docs
   - [RemoteFlows](#remoteflows)
   - [CostCalculatorFlow](#costcalculatorflow)
     - [EstimationParams Properties](#estimationparams-properties)
+      - [Management Fee Configuration](#management-fee-configuration)
     - [DefaultValues Properties](#defaultvalues-properties)
   - [CostCalculatorForm](#costcalculatorform)
   - [CostCalculatorSubmitButton](#costcalculatorsubmitbutton)
@@ -532,15 +533,53 @@ The `CostCalculatorFlow` component lets you render different components like `Co
 
 #### estimationParams Properties
 
-| Property                   | Type                           | Description                                                   |
-| -------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| `title`                    | `string`                       | Custom title for the estimation report                        |
-| `includeBenefits`          | `boolean`                      | If `true`, includes benefits information in the response      |
-| `includeCostBreakdowns`    | `boolean`                      | If `true`, includes detailed cost breakdowns in the response  |
-| `includePremiumBenefits`   | `boolean`                      | If `true`, includes detailed premium benefits in the response |
-| `includeManagementFee`     | `boolean`                      | If `true`, includes the management fee in the response        |
-| `enableCurrencyConversion` | `boolean`                      | If `true`, enables currency conversion in the salary field    |
-| `managementFees`           | `Record<CurrencyCode, number>` | Override the base management fees from the SDK                |
+| Property                   | Type                           | Description                                                     |
+| -------------------------- | ------------------------------ | --------------------------------------------------------------- |
+| `title`                    | `string`                       | Custom title for the estimation report                          |
+| `includeBenefits`          | `boolean`                      | If `true`, includes benefits information in the response        |
+| `includeCostBreakdowns`    | `boolean`                      | If `true`, includes detailed cost breakdowns in the response    |
+| `includePremiumBenefits`   | `boolean`                      | If `true`, includes detailed premium benefits in the response   |
+| `includeManagementFee`     | `boolean`                      | If `true`, includes the management fee in the response          |
+| `enableCurrencyConversion` | `boolean`                      | If `true`, enables currency conversion in the salary field      |
+| `managementFees`           | `Record<CurrencyCode, number>` | Override the base management fees from the SDK                  |
+| `showManagementFee`        | `boolean`                      | If `true`, includes the management fee in the input in the form |
+
+##### Management Fee Configuration
+
+The management fee behavior can be configured using a combination of `includeManagementFee` and `showManagementFee`:
+
+1. No management fees (hide completely):
+
+```typescript
+{
+  includeManagementFee: false,
+  showManagementFeeInput: false
+}
+```
+
+This configuration excludes management fees from both the estimation results and the UI.
+
+2. Use Remote base prices (show in estimation only):
+
+```typescript
+{
+  includeManagementFee: true,
+  showManagementFeeInput: false
+}
+```
+
+This configuration includes management fees in the estimation using Remote's base prices, but hides the management fee input field in the UI.
+
+3. Full management fee control:
+
+```typescript
+{
+  includeManagementFee: true,
+  showManagementFeeInput: true
+}
+```
+
+This configuration shows management fees in both the estimation results and provides a UI input field for customizing the fee.
 
 #### defaultValues Properties
 
@@ -633,12 +672,13 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 
 The `estimationOptions` object has the following properties:
 
-| Property                   | Type                           | Description                                                   |
-| -------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| `title`                    | `string`                       | Custom title for the estimation report                        |
-| `includeBenefits`          | `boolean`                      | If `true`, includes benefits information in the response      |
-| `includeCostBreakdowns`    | `boolean`                      | If `true`, includes detailed cost breakdowns in the response  |
-| `includePremiumBenefits`   | `boolean`                      | If `true`, includes detailed premium benefits in the response |
-| `includeManagementFee`     | `boolean`                      | If `true`, includes the management fee in the response        |
-| `enableCurrencyConversion` | `boolean`                      | If `true`, enables currency conversion in the salary field    |
-| `managementFees`           | `Record<CurrencyCode, number>` | Override the base management fees from the SDK                |
+| Property                   | Type                           | Description                                                     |
+| -------------------------- | ------------------------------ | --------------------------------------------------------------- |
+| `title`                    | `string`                       | Custom title for the estimation report                          |
+| `includeBenefits`          | `boolean`                      | If `true`, includes benefits information in the response        |
+| `includeCostBreakdowns`    | `boolean`                      | If `true`, includes detailed cost breakdowns in the response    |
+| `includePremiumBenefits`   | `boolean`                      | If `true`, includes detailed premium benefits in the response   |
+| `includeManagementFee`     | `boolean`                      | If `true`, includes the management fee in the response          |
+| `enableCurrencyConversion` | `boolean`                      | If `true`, enables currency conversion in the salary field      |
+| `managementFees`           | `Record<CurrencyCode, number>` | Override the base management fees from the SDK                  |
+| `showManagementFee`        | `boolean`                      | If `true`, includes the management fee in the input in the form |
