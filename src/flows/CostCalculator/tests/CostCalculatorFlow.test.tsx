@@ -144,6 +144,7 @@ describe('CostCalculatorFlow', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
         salary: 5_000_000,
         hiring_budget: 'employee_annual_salary',
         salary_converted: 'salary_conversion',
@@ -292,6 +293,7 @@ describe('CostCalculatorFlow', () => {
         },
         country: 'POL',
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
         salary: 5_000_000,
         estimation_title: 'Estimation',
         hiring_budget: 'employee_annual_salary',
@@ -572,6 +574,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
       },
     });
 
@@ -593,6 +596,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: false,
+        showManagementFee: false,
       },
     });
 
@@ -616,6 +620,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
       },
     });
 
@@ -661,6 +666,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
         managementFees: {
           USD: 599,
         } as $TSFixMe,
@@ -685,6 +691,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
         managementFees: {
           EUR: 530,
         } as $TSFixMe,
@@ -709,6 +716,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
       },
     });
 
@@ -738,6 +746,7 @@ describe('CostCalculatorFlow', () => {
         includeCostBreakdowns: true,
         includePremiumBenefits: true,
         includeManagementFee: true,
+        showManagementFee: true,
       },
     });
 
