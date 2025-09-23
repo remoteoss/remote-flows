@@ -172,6 +172,7 @@ export function buildPayload(
     }
   }
   const managementFee = Number(employments[0].management?.management_fee);
+  const currencyCode = employments[0].currency_code;
 
   return {
     employer_currency_slug: employments[0].currency,
@@ -182,7 +183,10 @@ export function buildPayload(
     ...(estimationOptions.includeManagementFee &&
       managementFee && {
         global_discount: {
-          quoted_amount: managementFee,
+          quoted_amount: estimationOptions.showManagementFee
+            ? managementFee
+            : BASE_RATES[currencyCode as keyof typeof BASE_RATES] ||
+              BASE_RATES.USD,
           text: '',
         },
       }),
