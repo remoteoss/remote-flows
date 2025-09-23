@@ -97,12 +97,25 @@ function mapValueToEmployment(
   estimationOptions: CostCalculatorEstimationOptions,
   version: CostCalculatorVersion,
 ): CostCalculatorEmploymentParam {
+  const managementFee = Number(value.management?.management_fee);
+  const currencyCode = value.currency_code;
+
   const base: CostCalculatorEmploymentParam = {
     region_slug: value.region || value.country,
     employment_term: value.contract_duration_type ?? 'fixed',
     title: value.estimation_title || estimationOptions.title,
     age: value.age ?? undefined,
     ...(value.benefits && { benefits: formatBenefits(value.benefits) }),
+    ...(estimationOptions.includeManagementFee &&
+      managementFee && {
+        discount: {
+          quoted_amount: estimationOptions.showManagementFee
+            ? managementFee
+            : BASE_RATES[currencyCode as keyof typeof BASE_RATES] ||
+              BASE_RATES.USD,
+          text: '',
+        },
+      }),
   };
 
   return {
@@ -171,8 +184,6 @@ export function buildPayload(
       );
     }
   }
-  const managementFee = Number(employments[0].management?.management_fee);
-  const currencyCode = employments[0].currency_code;
 
   return {
     employer_currency_slug: employments[0].currency,
@@ -180,16 +191,6 @@ export function buildPayload(
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,
     include_management_fee: estimationOptions.includeManagementFee,
-    ...(estimationOptions.includeManagementFee &&
-      managementFee && {
-        global_discount: {
-          quoted_amount: estimationOptions.showManagementFee
-            ? managementFee
-            : BASE_RATES[currencyCode as keyof typeof BASE_RATES] ||
-              BASE_RATES.USD,
-          text: '',
-        },
-      }),
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),
