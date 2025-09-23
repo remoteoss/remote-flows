@@ -1,0 +1,10 @@
+# Build outputs
+dist/
+coverage/
+
+# Example generated files
+example/playwright-report/
+example/node_modules/
+
+# Dependencies
+node_modules/
