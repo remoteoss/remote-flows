@@ -256,6 +256,26 @@ describe('buildPayload', () => {
     ]);
   });
 
+  it('should include management_fee if estimationOptions.includeManagementFee is false && estimationOptions.showManagementFee is false', () => {
+    const values: CostCalculatorEstimationSubmitValues = {
+      currency: 'USD',
+      currency_code: 'USD',
+      country: 'US',
+      salary: 100_000,
+      salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
+      management: {
+        management_fee: '59900',
+      },
+    };
+
+    const payload = buildPayload(values);
+
+    console.log(payload);
+
+    expect(payload.global_discount).toBeUndefined();
+  });
+
   it('should add management_fee if we provided in the estimationOptions', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
