@@ -10,6 +10,7 @@ describe('buildPayload', () => {
   it('should build a payload with minimal values', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
       hiring_budget: 'employee_annual_salary',
@@ -38,6 +39,7 @@ describe('buildPayload', () => {
   it('should build a payload with minimal values when salary converted is true', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       hiring_budget: 'employee_annual_salary',
       salary_converted: 'salary_conversion',
@@ -66,6 +68,7 @@ describe('buildPayload', () => {
   it('should build a payload with minimal values when salary converted is true and hiring_budget is my_hiring_budget', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       hiring_budget: 'my_hiring_budget',
       salary_converted: 'salary_conversion',
@@ -94,6 +97,7 @@ describe('buildPayload', () => {
   it('should build a payload with minimal values when hiring_budget is my_hiring_budget ', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
       hiring_budget: 'my_hiring_budget',
@@ -122,6 +126,7 @@ describe('buildPayload', () => {
   it('should use region if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       hiring_budget: 'employee_annual_salary',
       region: 'CA',
@@ -137,6 +142,7 @@ describe('buildPayload', () => {
   it('should include benefits if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
@@ -158,6 +164,7 @@ describe('buildPayload', () => {
   it('should include age if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
@@ -173,6 +180,7 @@ describe('buildPayload', () => {
   it('should use contract_duration_type if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
@@ -188,6 +196,7 @@ describe('buildPayload', () => {
   it('should use custom estimation options if provided', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
       hiring_budget: 'employee_annual_salary',
@@ -210,8 +219,10 @@ describe('buildPayload', () => {
   it('should get the title from the form values', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
+      hiring_budget: 'employee_annual_salary',
       salary: 100_000,
       estimation_title: 'Custom Title',
     };
@@ -224,6 +235,7 @@ describe('buildPayload', () => {
   it('should not include some of the benefits if none is selected', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
       hiring_budget: 'employee_annual_salary',
@@ -247,6 +259,7 @@ describe('buildPayload', () => {
   it('should add management_fee if we provided in the estimationOptions', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary: 100_000,
       salary_converted: 'salary',
@@ -271,6 +284,7 @@ describe('buildPayload', () => {
   describe('version parameter', () => {
     const values: CostCalculatorEstimationSubmitValues = {
       currency: 'USD',
+      currency_code: 'USD',
       country: 'US',
       salary_converted: 'salary',
       hiring_budget: 'employee_annual_salary',
@@ -324,6 +338,7 @@ describe('buildPayload', () => {
       const values: CostCalculatorEstimationSubmitValues[] = [
         {
           currency: 'USD',
+          currency_code: 'USD',
           country: 'US',
           salary_converted: 'salary',
           hiring_budget: 'employee_annual_salary',
@@ -331,6 +346,7 @@ describe('buildPayload', () => {
         },
         {
           currency: 'USD', // Note: currency from first item is used
+          currency_code: 'USD',
           country: 'UK',
           salary_converted: 'salary',
           hiring_budget: 'employee_annual_salary',
@@ -368,6 +384,7 @@ describe('buildPayload', () => {
       const values: CostCalculatorEstimationSubmitValues[] = [
         {
           currency: 'EUR',
+          currency_code: 'EUR',
           country: 'DE',
           region: 'Berlin',
           salary: 90_000,
@@ -380,10 +397,12 @@ describe('buildPayload', () => {
         },
         {
           currency: 'EUR',
+          currency_code: 'EUR',
           country: 'FR',
           salary: 85_000,
           contract_duration_type: 'indefinite',
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
         },
       ];
 
@@ -406,6 +425,7 @@ describe('buildPayload', () => {
       const values: CostCalculatorEstimationSubmitValues[] = [
         {
           currency: 'USD',
+          currency_code: 'USD',
           country: 'US',
           salary: 100_000,
           salary_converted: 'salary',
@@ -413,9 +433,11 @@ describe('buildPayload', () => {
         },
         {
           currency: 'USD',
+          currency_code: 'USD',
           country: 'UK',
           salary: 80_000,
           salary_converted: 'salary',
+          hiring_budget: 'employee_annual_salary',
         },
       ];
 
