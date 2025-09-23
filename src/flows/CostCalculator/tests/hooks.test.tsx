@@ -71,6 +71,7 @@ describe('useCostCalculator', () => {
     const validValues = {
       country: 'PRT',
       currency: 'USD',
+      currency_code: 'USD',
       salary: '500000',
       salary_converted: 'salary',
       salary_conversion: '',
@@ -89,6 +90,7 @@ describe('useCostCalculator', () => {
     const invalidValues = {
       country: 'PRT',
       currency: 'USD',
+      currency_code: 'USD',
       salary: '',
       salary_converted: 'salary',
       salary_conversion: '',

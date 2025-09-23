@@ -225,7 +225,6 @@ describe('buildPayload', () => {
       hiring_budget: 'employee_annual_salary',
       salary: 100_000,
       estimation_title: 'Custom Title',
-      hiring_budget: 'employee_annual_salary',
     };
 
     const payload = buildPayload(values);
@@ -293,7 +292,7 @@ describe('buildPayload', () => {
       showManagementFee: false,
     });
 
-    expect(payload.global_discount).toEqual({
+    expect(payload.employments[0].discount).toEqual({
       quoted_amount: 69900,
       text: '',
     });
@@ -319,7 +318,7 @@ describe('buildPayload', () => {
 
     const payload = buildPayload(values, customOptions);
 
-    expect(payload.global_discount).toEqual({
+    expect(payload.employments[0].discount).toEqual({
       quoted_amount: 59900,
       text: '',
     });

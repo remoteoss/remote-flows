@@ -40,8 +40,8 @@ const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
   includeCostBreakdowns: true,
   includePremiumBenefits: true,
-  includeManagementFee: false,
-  showManagementFee: false,
+  includeManagementFee: true,
+  showManagementFee: true,
   includeEstimationTitle: true,
   enableCurrencyConversion: true,
   managementFees: {
