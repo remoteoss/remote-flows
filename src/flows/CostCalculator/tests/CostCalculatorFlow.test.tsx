@@ -623,8 +623,24 @@ describe('CostCalculatorFlow', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', { name: /desired monthly management fee/i }),
     ).toHaveValue('699');
   });
 
