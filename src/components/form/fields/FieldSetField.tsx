@@ -5,7 +5,7 @@ import { SupportedTypes } from './types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { useFormFields } from '@/src/context';
 import { Button } from '@/src/components/ui/button';
 
@@ -34,6 +34,7 @@ type FieldSetFeatures = {
   toggle?: {
     enabled: boolean;
     defaultExpanded?: boolean;
+    stateField?: string;
     labels?: {
       expand: string;
       collapse: string;
@@ -86,17 +87,31 @@ export function FieldSetField({
   variant = 'outset',
   features,
 }: FieldSetProps) {
-  const [isExpanded, setIsExpanded] = useState(
-    features?.toggle?.defaultExpanded ?? true,
-  );
+  const { watch, setValue, trigger, formState } = useFormContext();
   const { components: formComponents } = useFormFields();
-  const { watch, trigger, formState } = useFormContext();
+
+  // Get expanded state from form state if stateField is provided
+  const stateField = features?.toggle?.stateField;
+  const isExpanded = stateField
+    ? watch(stateField)
+    : (features?.toggle?.defaultExpanded ?? true);
+
+  console.log('expanded', { isExpanded });
+
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
   const watchedValues = watch(fieldNames);
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const toggleExpanded = () => {
+    console.log('clicking toggle');
+    if (stateField) {
+      console.log('toggling', { stateField, isExpanded });
+      setValue(stateField, !isExpanded);
+    }
+  };
 
   useEffect(() => {
     const currentValues = watchedValues;
@@ -173,7 +188,7 @@ export function FieldSetField({
                 'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
                 features.toggle?.className,
               )}
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={toggleExpanded}
             >
               {isExpanded
                 ? (features.toggle.labels?.collapse ?? 'Remove')
@@ -183,12 +198,7 @@ export function FieldSetField({
         </div>
       )}
       {isExpanded && (
-        <div
-          id={contentId}
-          aria-labelledby={headerId}
-          role='region'
-          className={cn(!isExpanded && 'hidden')}
-        >
+        <div id={contentId} aria-labelledby={headerId} role='region'>
           {description ? (
             <div
               className='mb-5 RemoteFlows__FieldSetField__Description'

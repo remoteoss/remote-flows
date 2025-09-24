@@ -759,20 +759,59 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         showManagementFee: true,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
-      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+    console.log(
+      'Before click - Content div:',
+      document.getElementById('management-content')?.className,
+    );
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
     });
 
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('699');
 
     await fillSelect('Currency', 'EUR');
 
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('645');
   });
 
@@ -789,10 +828,31 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         showManagementFee: true,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
     });
 
     const managementFeeInput = screen.getByRole('textbox', {

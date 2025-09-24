@@ -266,7 +266,7 @@ export const useCostCalculator = (
                   features={{
                     toggle: {
                       enabled: true,
-                      defaultExpanded: false,
+                      stateField: 'management._expanded',
                       labels: {
                         expand: 'Define',
                         collapse: 'Remove',

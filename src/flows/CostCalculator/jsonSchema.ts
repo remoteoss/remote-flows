@@ -113,6 +113,14 @@ export const jsonSchema = {
                 inputType: 'money',
               },
             },
+            _expanded: {
+              type: 'boolean',
+              default: false,
+              'x-jsf-presentation': {
+                inputType: 'hidden',
+                hidden: true,
+              },
+            },
           },
           'x-jsf-presentation': {
             inputType: 'fieldset',
