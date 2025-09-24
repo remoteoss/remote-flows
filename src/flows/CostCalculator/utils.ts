@@ -135,12 +135,15 @@ function getSalaryFields(
   const useHiringBudget = value.hiring_budget === 'my_hiring_budget';
 
   if (isMarketing) {
+    const useEmployerCurrency = value.salary_converted === 'salary_conversion';
     return useHiringBudget
       ? {
           annual_total_cost_in_employer_currency: value.salary,
         }
       : {
-          annual_gross_salary_in_employer_currency: value.salary,
+          [useEmployerCurrency
+            ? 'annual_gross_salary_in_employer_currency'
+            : 'annual_gross_salary']: value.salary,
         };
   }
 
