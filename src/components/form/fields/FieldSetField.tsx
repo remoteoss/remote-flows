@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
@@ -210,7 +210,13 @@ export function FieldSetField({
                     {}),
                 };
               }
-              let FieldComponent = fieldsMap[field.type as SupportedTypes];
+              let FieldComponent =
+                baseFields[
+                  field.type as Exclude<
+                    SupportedTypes,
+                    'fieldset' | 'fieldset-flat'
+                  >
+                ];
 
               if (field.isVisible === false || field.deprecated) {
                 return null; // Skip hidden or deprecated fields
@@ -224,7 +230,7 @@ export function FieldSetField({
               }
 
               if (field.type === 'select' && field.multiple) {
-                FieldComponent = fieldsMap['multi-select'];
+                FieldComponent = baseFields['multi-select'];
               }
 
               return (
