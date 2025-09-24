@@ -345,17 +345,31 @@ describe('buildPayload', () => {
       expect(payload.employments[0].annual_gross_salary).toBe(100_000);
     });
 
-    it('should NOT include annual_gross_salary when version is "marketing"', () => {
+    it('should include annual_gross_salary when version is "marketing" and salary_converted is "salary"', () => {
       const payload = buildPayload(
         values,
         defaultEstimationOptions,
         'marketing',
       );
 
-      expect(payload.employments[0]).not.toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0]).toHaveProperty('annual_gross_salary');
+      expect(payload.employments[0]).not.toHaveProperty(
+        'annual_gross_salary_in_employer_currency',
+      );
+      expect(payload.employments[0].annual_gross_salary).toBe(100_000);
+    });
+
+    it('should include annual_gross_salary_in_employer_currency when version is "marketing" and salary_converted is "salary_conversion"', () => {
+      const payload = buildPayload(
+        { ...values, salary_converted: 'salary_conversion' },
+        defaultEstimationOptions,
+        'marketing',
+      );
+
       expect(payload.employments[0]).toHaveProperty(
         'annual_gross_salary_in_employer_currency',
       );
+      expect(payload.employments[0]).not.toHaveProperty('annual_gross_salary');
       expect(
         payload.employments[0].annual_gross_salary_in_employer_currency,
       ).toBe(100_000);
@@ -491,12 +505,12 @@ describe('buildPayload', () => {
       );
       const employments = payload.employments;
 
-      expect(employments[0]).not.toHaveProperty('annual_gross_salary');
-      expect(employments[1]).not.toHaveProperty('annual_gross_salary');
-      expect(employments[0]).toHaveProperty(
+      expect(employments[0]).toHaveProperty('annual_gross_salary');
+      expect(employments[1]).toHaveProperty('annual_gross_salary');
+      expect(employments[0]).not.toHaveProperty(
         'annual_gross_salary_in_employer_currency',
       );
-      expect(employments[1]).toHaveProperty(
+      expect(employments[1]).not.toHaveProperty(
         'annual_gross_salary_in_employer_currency',
       );
     });
