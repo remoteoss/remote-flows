@@ -617,6 +617,17 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         showManagementFee: true,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
