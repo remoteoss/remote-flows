@@ -6,6 +6,12 @@ test.describe('add estimation from drawer', () => {
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 
+  test('should have a management fee field', async ({ page }) => {
+    await expect(
+      page.getByLabel(/Desired monthly management fee/i),
+    ).toBeVisible();
+  });
+
   test('should not have an employer billing currency', async ({ page }) => {
     await fillEstimationForm(page, {
       country: 'Sweden',
