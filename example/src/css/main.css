@@ -921,12 +921,20 @@ button.reset-button {
 }
 
 .RemoteFlows__FieldSetField__Header {
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e4e4e7;
-  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.RemoteFlows__FieldSetField__Header[data-state='expanded'] {
+  border-bottom: 1px solid #e4e4e7;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.RemoteFlows__FieldSetField__Header[data-state='collapsed'] {
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .RemoteFlows__FieldSetField__ToggleButton {
@@ -937,4 +945,9 @@ button.reset-button {
   border-radius: 6px;
   box-shadow: 0px 1px 2px 0px #0000000d;
   color: #171717;
+}
+
+.RemoteFlows__FieldSetField__ToggleButton[aria-expanded='true'] {
+  background-color: #dc2626;
+  color: white;
 }

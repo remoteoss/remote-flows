@@ -156,7 +156,12 @@ export function FieldSetField({
         {label}
       </legend>
       {variant === 'inset' && (
-        <div className='RemoteFlows__FieldSetField__Header' id={headerId}>
+        <div
+          className='RemoteFlows__FieldSetField__Header'
+          id={headerId}
+          data-state={isExpanded ? 'expanded' : 'collapsed'}
+          aria-expanded={isExpanded}
+        >
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
           {features?.toggle?.enabled && (
             <ToggleButton
@@ -171,7 +176,7 @@ export function FieldSetField({
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded
-                ? (features.toggle.labels?.collapse ?? 'Hide')
+                ? (features.toggle.labels?.collapse ?? 'Remove')
                 : (features.toggle.labels?.expand ?? 'Define')}
             </ToggleButton>
           )}

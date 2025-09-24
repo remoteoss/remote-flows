@@ -269,7 +269,7 @@ export const useCostCalculator = (
                       defaultExpanded: false,
                       labels: {
                         expand: 'Define',
-                        collapse: 'Hide',
+                        collapse: 'Remove',
                       },
                     },
                   }}
