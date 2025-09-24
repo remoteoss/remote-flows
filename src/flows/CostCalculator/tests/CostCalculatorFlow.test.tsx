@@ -745,21 +745,19 @@ describe('CostCalculatorFlow', () => {
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          country: 'POL',
-          currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-          currency_code: 'USD',
-          estimation_title: 'Test',
-          hiring_budget: 'my_hiring_budget',
-          salary: 5_000_000,
-          salary_converted: 'salary_conversion',
-          salary_conversion: 5000000,
-          management: {
-            management_fee: 59900,
-          },
-        }),
-      );
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        country: 'POL',
+        currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
+        estimation_title: 'Test',
+        hiring_budget: 'my_hiring_budget',
+        salary: 5_000_000,
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
+        management: {
+          management_fee: 59900,
+        },
+      });
     });
   });
 
