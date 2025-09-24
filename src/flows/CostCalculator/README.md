@@ -581,6 +581,36 @@ This configuration includes management fees in the estimation using Remote's bas
 
 This configuration shows management fees in both the estimation results and provides a UI input field for customizing the fee.
 
+##### Version prop
+
+The `version` prop (`'standard' | 'marketing'`) controls three key behaviors in the cost calculator:
+
+1. Currency Conversion:
+
+   - `marketing`: Uses `no_spread` (raw exchange rate without additional fees/risk margins)
+   - `standard`: Uses `spread` (includes forex risk and service fees in exchange rate)
+
+2. UI/Form Elements:
+
+   - `marketing`: Hiring budget radio option is hidden
+   - `standard`: Hiring budget radio option is shown
+
+3. Salary Field Behavior:
+
+   - Marketing Version:
+     - Based on last input field used:
+       - If last input was in country's currency → `annual_gross_salary`
+       - If last input was in employer's currency → `annual_gross_salary_in_employer_currency`
+   - Standard Version:
+     - When hiring budget is NOT selected:
+       - If country currency matches selected currency → `annual_gross_salary`
+       - If currencies are different → `annual_gross_salary_in_employer_currency`
+     - When hiring budget IS selected:
+       - If country currency matches selected currency → `annual_total_cost`
+       - If currencies are different → `annual_total_cost_in_employer_currency`
+
+Note: The spread in currency conversion accounts for foreign exchange risk (currency fluctuations), transaction costs, and service fees.
+
 #### defaultValues Properties
 
 | Property            | Type     | Description                 |
