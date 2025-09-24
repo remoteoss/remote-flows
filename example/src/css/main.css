@@ -924,4 +924,6 @@ button.reset-button {
   padding-bottom: 24px;
   border-bottom: 1px solid #e4e4e7;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
 }

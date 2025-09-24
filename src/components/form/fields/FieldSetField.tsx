@@ -5,7 +5,7 @@ import { SupportedTypes } from './types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 type FieldBase = {
   label: string;
@@ -28,11 +28,23 @@ type FieldWithoutOptions = FieldBase & {
 
 type Field = FieldWithOptions | FieldWithoutOptions;
 
+type FieldSetFeatures = {
+  toggle?: {
+    enabled: boolean;
+    defaultExpanded?: boolean;
+    labels?: {
+      expand: string;
+      collapse: string;
+    };
+  };
+};
+
 export type FieldSetProps = {
   label: string;
   name: string;
   description: string;
   fields: Field[];
+  features: FieldSetFeatures;
   components: Components;
   statement?: StatementProps;
   isFlatFieldset: boolean;
@@ -50,7 +62,11 @@ export function FieldSetField({
   isFlatFieldset,
   extra,
   variant = 'outset',
+  features,
 }: FieldSetProps) {
+  const [isExpanded, setIsExpanded] = useState(
+    features?.toggle?.defaultExpanded ?? true,
+  );
   const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
@@ -115,55 +131,67 @@ export function FieldSetField({
       {variant === 'inset' && (
         <div className='RemoteFlows__FieldSetField__Header'>
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
+          {features?.toggle?.enabled && (
+            <button type='button' onClick={() => setIsExpanded(!isExpanded)}>
+              {isExpanded
+                ? (features.toggle.labels?.collapse ?? 'Hide')
+                : (features.toggle.labels?.expand ?? 'Define')}
+            </button>
+          )}
         </div>
       )}
-      {description ? (
-        <div
-          className='mb-5 RemoteFlows__FieldSetField__Description'
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
-      ) : null}
-      <div className='grid gap-4'>
-        {fields.map((field: $TSFixMe) => {
-          if (field.calculateDynamicProperties) {
-            field = {
-              ...field,
-              ...(field.calculateDynamicProperties(watchedValues, field) || {}),
-            };
-          }
-          let FieldComponent = fieldsMap[field.type as SupportedTypes];
+      {isExpanded && (
+        <>
+          {description ? (
+            <div
+              className='mb-5 RemoteFlows__FieldSetField__Description'
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          ) : null}
+          <div className='grid gap-4'>
+            {fields.map((field: $TSFixMe) => {
+              if (field.calculateDynamicProperties) {
+                field = {
+                  ...field,
+                  ...(field.calculateDynamicProperties(watchedValues, field) ||
+                    {}),
+                };
+              }
+              let FieldComponent = fieldsMap[field.type as SupportedTypes];
 
-          if (field.isVisible === false || field.deprecated) {
-            return null; // Skip hidden or deprecated fields
-          }
+              if (field.isVisible === false || field.deprecated) {
+                return null; // Skip hidden or deprecated fields
+              }
 
-          if (field.Component) {
-            const { Component } = field as {
-              Component: React.ComponentType<any>;
-            };
-            return <Component key={field.name} {...field} />;
-          }
+              if (field.Component) {
+                const { Component } = field as {
+                  Component: React.ComponentType<any>;
+                };
+                return <Component key={field.name} {...field} />;
+              }
 
-          if (field.type === 'select' && field.multiple) {
-            FieldComponent = fieldsMap['multi-select'];
-          }
+              if (field.type === 'select' && field.multiple) {
+                FieldComponent = fieldsMap['multi-select'];
+              }
 
-          return (
-            <Fragment
-              key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-            >
-              <FieldComponent
-                {...field}
-                name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                component={components?.[field.type as SupportedTypes]}
-              />
-              {field.extra ? field.extra : null}
-            </Fragment>
-          );
-        })}
-        {extra ? extra : null}
-        {statement ? <Statement {...statement} /> : null}
-      </div>
+              return (
+                <Fragment
+                  key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                >
+                  <FieldComponent
+                    {...field}
+                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    component={components?.[field.type as SupportedTypes]}
+                  />
+                  {field.extra ? field.extra : null}
+                </Fragment>
+              );
+            })}
+            {extra ? extra : null}
+            {statement ? <Statement {...statement} /> : null}
+          </div>
+        </>
+      )}
     </fieldset>
   );
 }
