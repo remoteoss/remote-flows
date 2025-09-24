@@ -47,7 +47,7 @@ export type FieldSetProps = {
   name: string;
   description: string;
   fields: Field[];
-  features: FieldSetFeatures;
+  features?: FieldSetFeatures;
   components: Components;
   statement?: StatementProps;
   isFlatFieldset: boolean;
