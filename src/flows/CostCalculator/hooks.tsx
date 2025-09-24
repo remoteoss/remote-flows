@@ -297,6 +297,8 @@ export const useCostCalculator = (
     options?.jsfModify?.fields?.management,
     showManagementField,
     version,
+    showEstimationTitleField,
+    options?.jsfModify?.fields?.estimation_title,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({

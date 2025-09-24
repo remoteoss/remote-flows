@@ -38,6 +38,7 @@ type FieldSetFeatures = {
       expand: string;
       collapse: string;
     };
+    className?: string;
   };
 };
 
@@ -57,9 +58,18 @@ export type FieldSetProps = {
 const DefaultToggleButton = ({
   onClick,
   children,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <Button variant='default' onClick={onClick} {...props}>
+  <Button
+    className={cn(
+      'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
+      className,
+    )}
+    variant='default'
+    onClick={onClick}
+    {...props}
+  >
     {children}
   </Button>
 );
@@ -154,6 +164,10 @@ export function FieldSetField({
               aria-controls={contentId}
               aria-label={`${isExpanded ? 'Hide' : 'Show'} ${label}`}
               type='button'
+              className={cn(
+                'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
+                features.toggle?.className,
+              )}
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded

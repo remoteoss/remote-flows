@@ -926,4 +926,15 @@ button.reset-button {
   margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.RemoteFlows__FieldSetField__ToggleButton {
+  border: 1px solid #e4e4e7;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+  box-shadow: 0px 1px 2px 0px #0000000d;
+  color: #171717;
 }
