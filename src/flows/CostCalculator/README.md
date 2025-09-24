@@ -18,6 +18,7 @@ Welcome to the CostCalculator flow docs
   - [CostCalculatorFlow](#costcalculatorflow)
     - [EstimationParams Properties](#estimationparams-properties)
       - [Management Fee Configuration](#management-fee-configuration)
+      - [Version Prop](#version-prop)
     - [DefaultValues Properties](#defaultvalues-properties)
   - [CostCalculatorForm](#costcalculatorform)
   - [CostCalculatorSubmitButton](#costcalculatorsubmitbutton)
