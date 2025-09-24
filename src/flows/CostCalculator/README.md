@@ -619,6 +619,7 @@ Note: The spread in currency conversion accounts for foreign exchange risk (curr
 | `countryRegionSlug` | `string` | Pre-selected country/region |
 | `currencySlug`      | `string` | Pre-selected currency       |
 | `salary`            | `string` | Pre-filled salary amount    |
+| `hiringBudget`      | `string` | Pre-filled hiring budget    |
 
 #### options.jsfModify properties
 

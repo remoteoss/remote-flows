@@ -39,6 +39,10 @@ export type CostCalculatorFlowProps = {
      * Default value for the benefits field.
      */
     benefits: Record<string, string>;
+    /**
+     * Default value for the hiring budget field
+     */
+    hiringBudget: string;
   }>;
   options?: UseCostCalculatorOptions;
   render: (
@@ -122,7 +126,7 @@ export const CostCalculatorFlow = ({
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',
-      hiring_budget: 'employee_annual_salary',
+      hiring_budget: defaultValues?.hiringBudget || 'employee_annual_salary',
       management: {
         management_fee: defaultManagementFee,
       },

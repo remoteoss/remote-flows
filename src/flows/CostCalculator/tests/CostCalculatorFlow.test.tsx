@@ -36,6 +36,7 @@ const onResetHandler = vi.fn();
 const defaultProps = {
   defaultValues: {
     countryRegionSlug: 'POL',
+    hiringBudget: 'my_hiring_budget',
     currencySlug: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
     salary: '50000',
   },
@@ -117,6 +118,10 @@ describe('CostCalculatorFlow', () => {
       expect(salaryInput).toHaveValue('50000');
     });
     expect(screen.getByText(/Show PLN conversion/i)).toBeInTheDocument();
+    const hiringBudgetRadio = screen.getByRole('radio', {
+      name: /my hiring budget/i,
+    });
+    expect(hiringBudgetRadio).toBeChecked();
   });
 
   it('should render the 3 comboboxes when selecting a country with region', async () => {
@@ -146,7 +151,7 @@ describe('CostCalculatorFlow', () => {
         currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
         currency_code: 'USD',
         salary: 5_000_000,
-        hiring_budget: 'employee_annual_salary',
+        hiring_budget: 'my_hiring_budget',
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
         estimation_title: 'Estimation',
@@ -296,7 +301,7 @@ describe('CostCalculatorFlow', () => {
         currency_code: 'USD',
         salary: 5_000_000,
         estimation_title: 'Estimation',
-        hiring_budget: 'employee_annual_salary',
+        hiring_budget: 'my_hiring_budget',
         salary_converted: 'salary_conversion',
         salary_conversion: 5000000,
       });
