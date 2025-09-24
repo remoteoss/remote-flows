@@ -510,6 +510,24 @@ function removeEmptyValues<T extends Record<string, any>>(
   );
 }
 
+function cleanUnderscoreFields(obj: Record<string, any>): Record<string, any> {
+  if (Array.isArray(obj)) {
+    return obj.map(cleanUnderscoreFields);
+  }
+  if (obj && typeof obj === 'object') {
+    return Object.entries(obj).reduce(
+      (acc, [key, value]) => {
+        if (!key.startsWith('_')) {
+          acc[key] = cleanUnderscoreFields(value);
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+  }
+  return obj;
+}
+
 export function parseSubmitValues(
   formValues: Record<string, any>,
   fields: any[],
@@ -529,7 +547,7 @@ export function parseSubmitValues(
     formValuesWithUndefined,
     fields,
   );
-  return valuesWithReadOnly;
+  return cleanUnderscoreFields(valuesWithReadOnly);
 }
 
 export function parseJSFToValidate(

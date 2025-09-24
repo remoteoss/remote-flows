@@ -96,8 +96,6 @@ export function FieldSetField({
     ? watch(stateField)
     : (features?.toggle?.defaultExpanded ?? true);
 
-  console.log('expanded', { isExpanded });
-
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
@@ -106,9 +104,7 @@ export function FieldSetField({
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const toggleExpanded = () => {
-    console.log('clicking toggle');
     if (stateField) {
-      console.log('toggling', { stateField, isExpanded });
       setValue(stateField, !isExpanded);
     }
   };

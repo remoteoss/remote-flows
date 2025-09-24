@@ -663,14 +663,49 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         showManagementFee: true,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     const managementFeeInput = screen.getByRole('textbox', {
-      name: /management fee/i,
+      name: /desired monthly management fee/i,
     });
 
     await waitFor(() => {
@@ -687,6 +722,9 @@ describe('CostCalculatorFlow', () => {
         expect.objectContaining({
           country: 'POL',
           currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+          currency_code: 'USD',
+          estimation_title: 'Test',
+          hiring_budget: 'my_hiring_budget',
           salary: 5_000_000,
           salary_converted: 'salary_conversion',
           salary_conversion: 5000000,
@@ -712,14 +750,51 @@ describe('CostCalculatorFlow', () => {
           USD: 599,
         } as $TSFixMe,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('599');
   });
 
@@ -737,14 +812,51 @@ describe('CostCalculatorFlow', () => {
           EUR: 530,
         } as $TSFixMe,
       },
+      options: {
+        jsfModify: {
+          fields: {
+            management: {
+              'x-jsf-presentation': {
+                variant: 'inset',
+              },
+            },
+          },
+        },
+      },
     });
 
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('699');
   });
 
@@ -781,10 +893,6 @@ describe('CostCalculatorFlow', () => {
     const defineButton = screen.getByRole('button', {
       name: 'Show Management fee',
     });
-    console.log(
-      'Before click - Content div:',
-      document.getElementById('management-content')?.className,
-    );
 
     fireEvent.click(defineButton);
 
