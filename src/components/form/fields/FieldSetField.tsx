@@ -6,6 +6,8 @@ import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef, useState } from 'react';
+import { useFormFields } from '@/src/context';
+import { Button } from '@/src/components/ui/button';
 
 type FieldBase = {
   label: string;
@@ -52,6 +54,16 @@ export type FieldSetProps = {
   variant: 'outset' | 'inset';
 };
 
+const DefaultToggleButton = ({
+  onClick,
+  children,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+  <Button variant='default' onClick={onClick} {...props}>
+    {children}
+  </Button>
+);
+
 export function FieldSetField({
   label,
   name,
@@ -67,6 +79,7 @@ export function FieldSetField({
   const [isExpanded, setIsExpanded] = useState(
     features?.toggle?.defaultExpanded ?? true,
   );
+  const { components: formComponents } = useFormFields();
   const { watch, trigger, formState } = useFormContext();
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
@@ -112,6 +125,10 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
+  const ToggleButton = formComponents?.button || DefaultToggleButton;
+  const contentId = `${name}-content`;
+  const headerId = `${name}-header`;
+
   return (
     <fieldset
       className={cn(
@@ -129,19 +146,30 @@ export function FieldSetField({
         {label}
       </legend>
       {variant === 'inset' && (
-        <div className='RemoteFlows__FieldSetField__Header'>
+        <div className='RemoteFlows__FieldSetField__Header' id={headerId}>
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
           {features?.toggle?.enabled && (
-            <button type='button' onClick={() => setIsExpanded(!isExpanded)}>
+            <ToggleButton
+              aria-expanded={isExpanded}
+              aria-controls={contentId}
+              aria-label={`${isExpanded ? 'Hide' : 'Show'} ${label}`}
+              type='button'
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
               {isExpanded
                 ? (features.toggle.labels?.collapse ?? 'Hide')
                 : (features.toggle.labels?.expand ?? 'Define')}
-            </button>
+            </ToggleButton>
           )}
         </div>
       )}
       {isExpanded && (
-        <>
+        <div
+          id={contentId}
+          aria-labelledby={headerId}
+          role='region'
+          className={cn(!isExpanded && 'hidden')}
+        >
           {description ? (
             <div
               className='mb-5 RemoteFlows__FieldSetField__Description'
@@ -190,7 +218,7 @@ export function FieldSetField({
             {extra ? extra : null}
             {statement ? <Statement {...statement} /> : null}
           </div>
-        </>
+        </div>
       )}
     </fieldset>
   );

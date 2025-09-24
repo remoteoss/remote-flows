@@ -263,7 +263,6 @@ export const useCostCalculator = (
               return (
                 <FieldSetField
                   {...props}
-                  description='whatever description'
                   features={{
                     toggle: {
                       enabled: true,
