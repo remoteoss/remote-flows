@@ -4,6 +4,7 @@ interface FillEstimationFormOptions {
   country: string;
   currency: string;
   salary: string;
+  management_fee: string;
 }
 
 export async function fillEstimationForm(
@@ -18,6 +19,9 @@ export async function fillEstimationForm(
   }
   if (options.salary) {
     await page.fill('#salary_conversion', options.salary);
+  }
+  if (options.management_fee) {
+    await page.fill('#management\\.management_fee', options.management_fee);
   }
   await page.click('.submit-button');
 }
