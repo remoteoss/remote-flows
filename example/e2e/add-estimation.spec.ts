@@ -11,6 +11,7 @@ test.describe('add estimation from drawer', () => {
       country: 'Sweden',
       currency: 'USD',
       salary: '100',
+      management_fee: '399',
     });
 
     const title = page.getByTestId('estimation-results-header-title');
@@ -30,6 +31,8 @@ test.describe('add estimation from drawer', () => {
     await expect(drawerDescription).toHaveText(
       'Estimate the cost of another hire through Remote',
     );
+
+    await expect(page.getByText('$399.00')).toBeVisible();
 
     await expect(
       page.getByText(
