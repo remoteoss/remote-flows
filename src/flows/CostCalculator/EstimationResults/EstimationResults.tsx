@@ -131,7 +131,7 @@ const getOnboardingTimelineData = (): OnboardingTimelineData => {
       },
     ],
     helpText:
-      'For customers who accept our Terms of Service (ToS), the employee onboarding timeline starts once the employee has been invited to the platform and completed self enrolment.',
+      "For customers who accept Remote's Terms of Service (ToS), the employee onboarding timeline starts once the employee has been invited to the platform and completed self enrollment.",
     zendeskArticleId: zendeskArticles.employeeOnboardingTimeline,
   };
 };
