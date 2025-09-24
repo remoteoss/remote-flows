@@ -13,10 +13,11 @@ import { WorkScheduleField } from './WorkScheduleField';
 import { MultiSelectField } from './MultiSelectField';
 import { MoneyField } from './MoneyField';
 import { SupportedTypes } from './types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const baseFields: Record<
   Exclude<SupportedTypes, 'fieldset' | 'fieldset-flat'>,
-  React.ComponentType<any>
+  React.ComponentType<$TSFixMe>
 > = {
   checkbox: CheckBoxField,
   text: TextField,
