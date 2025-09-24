@@ -134,14 +134,6 @@ function getSalaryFields(
     version === 'standard' && value.salary_converted === 'salary';
   const useHiringBudget = value.hiring_budget === 'my_hiring_budget';
 
-  console.log({
-    version,
-    isMarketing,
-    isStandard,
-    useHiringBudget,
-    salary_converted: value.salary_converted,
-  });
-
   if (isMarketing) {
     const useEmployerCurrency = value.salary_converted === 'salary_conversion';
     return useHiringBudget
