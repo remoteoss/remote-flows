@@ -129,5 +129,89 @@ describe('FieldSetField', () => {
         expect(button).toHaveAttribute('aria-expanded', 'true');
       });
     });
+
+    it('should use custom button component when provided', () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, ...props }) => (
+          <button {...props} data-testid='custom-button'>
+            {children}
+          </button>
+        ));
+
+      (useFormFields as $TSFixMe).mockReturnValue({
+        components: {
+          button: CustomButton,
+        },
+      });
+
+      renderWithFormContext({
+        variant: 'inset',
+        features: {
+          toggle: {
+            enabled: true,
+            stateField: 'test-fieldset._expanded',
+            labels: {
+              expand: 'Define',
+              collapse: 'Remove',
+            },
+          },
+        },
+      });
+
+      // Verify custom button was rendered
+      expect(screen.getByTestId('custom-button')).toBeInTheDocument();
+      expect(CustomButton).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'aria-expanded': false,
+          'aria-controls': 'test-fieldset-content',
+          'aria-label': 'Show Test Fieldset',
+        }),
+        expect.anything(),
+      );
+    });
+
+    it('should pass correct props to custom button when toggled', async () => {
+      const CustomButton = vi
+        .fn()
+        .mockImplementation(({ children, ...props }) => (
+          <button {...props} data-testid='custom-button'>
+            {children}
+          </button>
+        ));
+
+      (useFormFields as $TSFixMe).mockReturnValue({
+        components: {
+          button: CustomButton,
+        },
+      });
+
+      renderWithFormContext({
+        variant: 'inset',
+        features: {
+          toggle: {
+            enabled: true,
+            stateField: 'test-fieldset._expanded',
+            labels: {
+              expand: 'Define',
+              collapse: 'Remove',
+            },
+          },
+        },
+      });
+
+      const button = screen.getByTestId('custom-button');
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        expect(CustomButton).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            'aria-expanded': true,
+            children: 'Remove', // Should use collapse label
+          }),
+          expect.anything(),
+        );
+      });
+    });
   });
 });
