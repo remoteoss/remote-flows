@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseFields } from '@/src/components/form/fields/baseFields';
-import { cn } from '@/src/lib/utils';
+import { cn, sanitizeHtml } from '@/src/lib/utils';
 import { SupportedTypes } from './types';
-import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import {
+  $TSFixMe,
+  Components,
+  FieldSetToggleComponentProps,
+} from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
 import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
@@ -57,21 +61,22 @@ export type FieldSetProps = {
 };
 
 const DefaultToggleButton = ({
-  onClick,
-  children,
+  isExpanded,
+  onToggle,
   className,
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+}: FieldSetToggleComponentProps) => (
   <Button
+    type='button'
     className={cn(
       'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
       className,
     )}
     variant='default'
-    onClick={onClick}
+    onClick={onToggle}
     {...props}
   >
-    {children}
+    {isExpanded ? 'Remove' : 'Define'}
   </Button>
 );
 
@@ -146,7 +151,7 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
-  const ToggleButton = formComponents?.button || DefaultToggleButton;
+  const ToggleComponent = formComponents?.fieldsetToggle || DefaultToggleButton;
   const contentId = `${name}-content`;
   const headerId = `${name}-header`;
 
@@ -175,21 +180,21 @@ export function FieldSetField({
         >
           <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
           {features?.toggle?.enabled && (
-            <ToggleButton
+            <ToggleComponent
+              isExpanded={isExpanded}
+              onToggle={toggleExpanded}
               aria-expanded={isExpanded}
               aria-controls={contentId}
               aria-label={`${isExpanded ? 'Hide' : 'Show'} ${label}`}
-              type='button'
               className={cn(
-                'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
+                'RemoteFlows__FieldSetField__Toggle',
                 features.toggle?.className,
               )}
-              onClick={toggleExpanded}
             >
               {isExpanded
                 ? (features.toggle.labels?.collapse ?? 'Remove')
                 : (features.toggle.labels?.expand ?? 'Define')}
-            </ToggleButton>
+            </ToggleComponent>
           )}
         </div>
       )}
@@ -198,7 +203,7 @@ export function FieldSetField({
           {description ? (
             <div
               className='mb-5 RemoteFlows__FieldSetField__Description'
-              dangerouslySetInnerHTML={{ __html: description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
             />
           ) : null}
           <div className='grid gap-4'>

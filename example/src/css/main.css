@@ -932,7 +932,7 @@ button.reset-button {
   margin-bottom: 24px;
 }
 
-.RemoteFlows__FieldSetField__ToggleButton {
+.RemoteFlows__FieldSetField__Toggle {
   border: 1px solid #e4e4e7;
   font-size: 14px;
   font-weight: 500;
@@ -942,7 +942,7 @@ button.reset-button {
   color: #171717;
 }
 
-.RemoteFlows__FieldSetField__ToggleButton[aria-expanded='true'] {
+.RemoteFlows__FieldSetField__Toggle[aria-expanded='true'] {
   background-color: #dc2626;
   color: white;
 }

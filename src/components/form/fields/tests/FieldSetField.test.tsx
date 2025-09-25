@@ -141,7 +141,7 @@ describe('FieldSetField', () => {
 
       (useFormFields as $TSFixMe).mockReturnValue({
         components: {
-          button: CustomButton,
+          fieldsetToggle: CustomButton,
         },
       });
 
@@ -174,15 +174,19 @@ describe('FieldSetField', () => {
     it('should pass correct props to custom button when toggled', async () => {
       const CustomButton = vi
         .fn()
-        .mockImplementation(({ children, ...props }) => (
-          <button {...props} data-testid='custom-button'>
-            {children}
+        .mockImplementation(({ isExpanded, onToggle }) => (
+          <button
+            aria-expanded={isExpanded}
+            onClick={onToggle}
+            data-testid='custom-button'
+          >
+            {isExpanded ? 'Remove' : 'Define'}
           </button>
         ));
 
       (useFormFields as $TSFixMe).mockReturnValue({
         components: {
-          button: CustomButton,
+          fieldsetToggle: CustomButton,
         },
       });
 
