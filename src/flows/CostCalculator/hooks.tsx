@@ -230,6 +230,7 @@ export const useCostCalculator = (
           },
         },
         hiring_budget: {
+          ...options?.jsfModify?.fields?.hiring_budget,
           presentation: {
             hidden: version == 'marketing',
           },
