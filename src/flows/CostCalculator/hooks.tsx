@@ -263,6 +263,7 @@ export const useCostCalculator = (
               return (
                 <FieldSetField
                   {...props}
+                  variant='inset'
                   features={{
                     toggle: {
                       enabled: true,

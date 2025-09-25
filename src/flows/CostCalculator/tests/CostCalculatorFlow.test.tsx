@@ -617,17 +617,6 @@ describe('CostCalculatorFlow', () => {
         includeManagementFee: true,
         showManagementFee: true,
       },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
-      },
     });
 
     await waitFor(() => {
@@ -689,17 +678,6 @@ describe('CostCalculatorFlow', () => {
         includePremiumBenefits: true,
         includeManagementFee: true,
         showManagementFee: true,
-      },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
       },
     });
 
@@ -775,17 +753,6 @@ describe('CostCalculatorFlow', () => {
           USD: 599,
         } as $TSFixMe,
       },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
-      },
     });
 
     await waitFor(() => {
@@ -837,17 +804,6 @@ describe('CostCalculatorFlow', () => {
           EUR: 530,
         } as $TSFixMe,
       },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
-      },
     });
 
     await waitFor(() => {
@@ -895,17 +851,6 @@ describe('CostCalculatorFlow', () => {
         includePremiumBenefits: true,
         includeManagementFee: true,
         showManagementFee: true,
-      },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
       },
     });
 
@@ -960,17 +905,6 @@ describe('CostCalculatorFlow', () => {
         includePremiumBenefits: true,
         includeManagementFee: true,
         showManagementFee: true,
-      },
-      options: {
-        jsfModify: {
-          fields: {
-            management: {
-              'x-jsf-presentation': {
-                variant: 'inset',
-              },
-            },
-          },
-        },
       },
     });
 
