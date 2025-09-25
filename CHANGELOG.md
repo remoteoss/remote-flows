@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.18.1
+
+### Patch Changes
+
+- 29c9d4e: - fix hiring budget jsfModify override [#474](https://github.com/remoteoss/remote-flows/pull/474)
+
 ## 0.18.0
 
 ### Minor Changes
