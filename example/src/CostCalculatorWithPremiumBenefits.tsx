@@ -402,6 +402,21 @@ const AddEstimateForm = ({
                 variant: 'inset',
               },
             },
+            hiring_budget: {
+              title: 'Hiring budget',
+              description:
+                'Enter your total budget for this hire, including salary and benefits.',
+              oneOf: [
+                {
+                  title: "With the employee's annual salary...",
+                  const: 'employee_annual_salary',
+                },
+                {
+                  title: 'With my hiring budget for this role...',
+                  const: 'my_hiring_budget',
+                },
+              ],
+            },
           },
         },
       }}
