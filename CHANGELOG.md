@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.18.0
+
+### Minor Changes
+
+- afefb52: - Hide management field value with a toggle [#471](https://github.com/remoteoss/remote-flows/pull/471)
+
 ## 0.17.0
 
 ### Minor Changes
