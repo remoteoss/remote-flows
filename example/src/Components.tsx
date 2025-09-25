@@ -2,6 +2,7 @@ import type {
   ButtonComponentProps,
   Components,
   FieldComponentProps,
+  FieldSetToggleComponentProps,
 } from '@remoteoss/remote-flows';
 //import { ZendeskDialog } from './ZendeskDialog';
 
@@ -239,6 +240,28 @@ export const Countries = ({
   );
 };
 
+const FieldsetToggle = ({
+  isExpanded,
+  onToggle,
+  className,
+  'aria-controls': controls,
+  'aria-label': label,
+  children,
+}: FieldSetToggleComponentProps) => {
+  return (
+    <button
+      type='button'
+      className={className}
+      onClick={onToggle}
+      aria-expanded={isExpanded}
+      aria-controls={controls}
+      aria-label={label}
+    >
+      {children}
+    </button>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -247,5 +270,6 @@ export const components: Components = {
   radio: Radio,
   checkbox: Checkbox,
   countries: Countries,
+  fieldsetToggle: FieldsetToggle,
   //zendeskDrawer: ZendeskDialog,
 };

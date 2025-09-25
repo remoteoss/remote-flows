@@ -106,11 +106,22 @@ export type StatementComponentProps = {
   data: StatementProps;
 };
 
+export type FieldSetToggleComponentProps = {
+  isExpanded: boolean;
+  onToggle: () => void;
+  'aria-expanded': boolean;
+  'aria-controls': string;
+  'aria-label': string;
+  className?: string;
+  children?: React.ReactNode;
+};
+
 export type Components = {
   [K in SupportedTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
+  fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
 };
 

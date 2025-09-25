@@ -21,6 +21,7 @@ export async function fillEstimationForm(
     await page.fill('#salary_conversion', options.salary);
   }
   if (options.management_fee) {
+    await page.getByRole('button', { name: 'Show Management fee' }).click();
     await page.fill('#management\\.management_fee', options.management_fee);
   }
   await page.click('.submit-button');

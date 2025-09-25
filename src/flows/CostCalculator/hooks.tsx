@@ -27,6 +27,10 @@ import {
 } from '@/src/flows/CostCalculator/api';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
+import {
+  FieldSetField,
+  FieldSetProps,
+} from '@/src/components/form/fields/FieldSetField';
 
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
@@ -255,6 +259,24 @@ export const useCostCalculator = (
                 )['x-jsf-presentation']
               : {}),
             hidden: !showManagementField,
+            Component: (props: FieldSetProps) => {
+              return (
+                <FieldSetField
+                  {...props}
+                  variant='inset'
+                  features={{
+                    toggle: {
+                      enabled: true,
+                      stateField: 'management._expanded',
+                      labels: {
+                        expand: 'Define',
+                        collapse: 'Remove',
+                      },
+                    },
+                  }}
+                />
+              );
+            },
           },
         },
         estimation_title: {
@@ -276,6 +298,8 @@ export const useCostCalculator = (
     options?.jsfModify?.fields?.management,
     showManagementField,
     version,
+    showEstimationTitleField,
+    options?.jsfModify?.fields?.estimation_title,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({

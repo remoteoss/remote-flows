@@ -623,8 +623,24 @@ describe('CostCalculatorFlow', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', { name: /desired monthly management fee/i }),
     ).toHaveValue('699');
   });
 
@@ -669,8 +685,32 @@ describe('CostCalculatorFlow', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     const managementFeeInput = screen.getByRole('textbox', {
-      name: /management fee/i,
+      name: /desired monthly management fee/i,
     });
 
     await waitFor(() => {
@@ -683,18 +723,19 @@ describe('CostCalculatorFlow', () => {
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          country: 'POL',
-          currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
-          salary: 5_000_000,
-          salary_converted: 'salary_conversion',
-          salary_conversion: 5000000,
-          management: {
-            management_fee: 59900,
-          },
-        }),
-      );
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        country: 'POL',
+        currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
+        estimation_title: 'Test',
+        hiring_budget: 'my_hiring_budget',
+        salary: 5_000_000,
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
+        management: {
+          management_fee: 59900,
+        },
+      });
     });
   });
 
@@ -718,8 +759,34 @@ describe('CostCalculatorFlow', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('599');
   });
 
@@ -743,8 +810,34 @@ describe('CostCalculatorFlow', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('699');
   });
 
@@ -762,17 +855,41 @@ describe('CostCalculatorFlow', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
     });
 
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('699');
 
     await fillSelect('Currency', 'EUR');
 
     expect(
-      screen.getByRole('textbox', { name: /management fee/i }),
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
     ).toHaveValue('645');
   });
 
@@ -793,6 +910,16 @@ describe('CostCalculatorFlow', () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
     });
 
     const managementFeeInput = screen.getByRole('textbox', {
