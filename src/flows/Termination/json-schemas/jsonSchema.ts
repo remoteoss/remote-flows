@@ -175,9 +175,9 @@ export const jsonSchema = {
           },
         },
         personal_email: {
-          description: '',
           maxLength: 255,
           title: "Employee's personal email",
+          description: 'We’ll use this for post-termination communication.',
           format: 'email',
           type: 'string',
           'x-jsf-presentation': {

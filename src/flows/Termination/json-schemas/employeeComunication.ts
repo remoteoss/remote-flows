@@ -81,7 +81,9 @@ export const employeeComunicationSchema = {
             inputType: 'radio',
             statement: {
               title:
-                "Please do not inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we'll take it from there.",
+                'Please do not inform the employee of their termination until we review your request for legal risks.',
+              description:
+                "When we approve your request, you can inform the employee and we'll take it from there.",
               inputType: 'statement',
               severity: 'warning',
             },
@@ -128,7 +130,7 @@ export const employeeComunicationSchema = {
           },
         },
         personal_email: {
-          description: '',
+          description: 'We’ll use this for post-termination communication.',
           maxLength: 255,
           title: "Employee's personal email",
           format: 'email',
