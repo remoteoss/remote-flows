@@ -1,25 +1,20 @@
 import {
   CreateOffboardingParams,
-  postCreateOffboarding,
   TerminationDetailsParams,
 } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { createHeadlessForm } from '@remoteoss/json-schema-form';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-import { useClient } from '@/src/context';
 import omit from 'lodash.omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
-import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
-import { schema } from '@/src/flows/Termination/json-schemas/schema';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { JSFModify } from '@/src/flows/types';
+import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -47,46 +42,6 @@ function buildInitialValues(
 
   return initialValues;
 }
-
-const useCreateTermination = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (payload: CreateOffboardingParams) => {
-      return postCreateOffboarding({
-        client: client as Client,
-        body: payload,
-      });
-    },
-  });
-};
-
-const useTerminationSchema = ({
-  formValues,
-  jsfModify,
-  step,
-}: {
-  formValues?: TerminationFormValues;
-  jsfModify?: JSFModify;
-  step?: string;
-}) => {
-  return useQuery({
-    queryKey: ['rmt-flows-termination-schema', step],
-    queryFn: () => {
-      return schema[step as keyof typeof schema] ?? defaultSchema;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.schema || {};
-      if (jsfModify) {
-        const { schema } = modify(jsfSchema, jsfModify);
-        jsfSchema = schema;
-      }
-      const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues || {},
-      });
-      return form;
-    },
-  });
-};
 
 type TerminationHookProps = {
   employmentId: string;
