@@ -3,7 +3,7 @@ import {
   TerminationDetailsParams,
 } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
@@ -15,6 +15,8 @@ import { STEPS } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { JSFModify } from '@/src/flows/types';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
+import { useMemo } from 'react';
+import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -62,10 +64,32 @@ export const useTermination = ({
     ...fieldValues,
   };
 
+  const customFields = useMemo(() => {
+    return {
+      fields: {
+        risk_assesment_info: createInformationField(
+          'Offboarding risk assessment',
+          'Employees may be protected from termination if they fall into certain categories. To help avoid claims from employees, let us know if the employee is part of one or more of these categories. Select all that apply.',
+          {
+            className: (
+              options?.jsfModify?.fields?.risk_assesment_info as $TSFixMe
+            )?.['x-jsf-presentation']?.className,
+          },
+        ),
+      },
+    };
+  }, [options?.jsfModify]);
+
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
       formValues: formValues,
-      jsfModify: options?.jsfModify,
+      jsfModify: {
+        ...options?.jsfModify,
+        fields: {
+          ...options?.jsfModify?.fields,
+          ...customFields?.fields,
+        },
+      },
       step: stepState.currentStep.name,
     });
 
