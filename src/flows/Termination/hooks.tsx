@@ -17,6 +17,8 @@ import { JSFModify } from '@/src/flows/types';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
 import { useMemo } from 'react';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
+import { cn, ZendeskTriggerButton } from '@/src/internals';
+import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -73,6 +75,33 @@ export const useTermination = ({
           {
             className: (
               options?.jsfModify?.fields?.risk_assesment_info as $TSFixMe
+            )?.['x-jsf-presentation']?.className,
+          },
+        ),
+        proposed_termination_date_info: createInformationField(
+          'Proposed termination date',
+          <>
+            In most cases, we must provide notice to the employee before
+            termination. The required notice period depends on local labor laws,
+            the employment agreement, and other factors. We'll use those factors
+            to determine the required notice period.
+            <ZendeskTriggerButton
+              zendeskId={zendeskArticles.terminationNoticePeriods}
+              className={cn(
+                'text-sm',
+                (
+                  options?.jsfModify?.fields
+                    ?.proposed_termination_date_info as $TSFixMe
+                )?.['x-jsf-presentation']?.zendeskTriggerButtonClassName,
+              )}
+            >
+              Learn about notice periods
+            </ZendeskTriggerButton>
+          </>,
+          {
+            className: (
+              options?.jsfModify?.fields
+                ?.proposed_termination_date_info as $TSFixMe
             )?.['x-jsf-presentation']?.className,
           },
         ),

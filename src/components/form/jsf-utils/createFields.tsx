@@ -16,8 +16,8 @@ type JSFFieldConfig = {
  * Creates an information field with standard styling
  */
 export function createInformationField(
-  title: string,
-  description: string,
+  title: React.ReactNode,
+  description: React.ReactNode,
   options?: {
     className?: string;
     titleClassName?: string;

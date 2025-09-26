@@ -209,6 +209,14 @@ export const terminationDetailsSchema = {
             inputType: 'textarea',
           },
         },
+        proposed_termination_date_info: {
+          description: '',
+          title: 'Proposed termination date info',
+          type: 'null',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
         proposed_termination_date: {
           description: '',
           format: 'date',
@@ -237,6 +245,7 @@ export const terminationDetailsSchema = {
         'risk_assessment_reasons',
         'will_challenge_termination',
         'will_challenge_termination_description',
+        'proposed_termination_date_info',
         'proposed_termination_date',
       ],
     },
