@@ -20,41 +20,26 @@ export function createInformationField(
   description: React.ReactNode,
   options?: {
     className?: string;
-    titleClassName?: string;
-    descriptionClassName?: string;
-    Component?: React.ComponentType<any>;
   },
 ): JSFFieldConfig {
   return {
     presentation: {
       inputType: 'hidden',
-      Component:
-        options?.Component ||
-        (() => (
-          <div
-            className={cn(
-              'RemoteFlows__InformationStatement',
-              options?.className,
-            )}
-          >
-            <h3
-              className={cn(
-                'RemoteFlows__InformationStatement__Title',
-                options?.titleClassName,
-              )}
-            >
-              {title}
-            </h3>
-            <p
-              className={cn(
-                'RemoteFlows__InformationStatement__Description',
-                options?.descriptionClassName,
-              )}
-            >
-              {description}
-            </p>
-          </div>
-        )),
+      Component: () => (
+        <div
+          className={cn(
+            'RemoteFlows__InformationStatement',
+            options?.className,
+          )}
+        >
+          <h3 className={cn('RemoteFlows__InformationStatement__Title')}>
+            {title}
+          </h3>
+          <p className={cn('RemoteFlows__InformationStatement__Description')}>
+            {description}
+          </p>
+        </div>
+      ),
     },
   };
 }

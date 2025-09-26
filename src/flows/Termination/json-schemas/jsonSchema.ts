@@ -272,6 +272,14 @@ export const jsonSchema = {
             multiple: true,
           },
         },
+        risk_assesment_info: {
+          description: '',
+          title: 'Risk assessment info',
+          type: 'null',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
         risk_assessment_reasons: {
           description: '',
           title: 'This employee is...',
@@ -354,6 +362,14 @@ export const jsonSchema = {
           type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'textarea',
+          },
+        },
+        proposed_termination_date_info: {
+          description: '',
+          title: 'Proposed termination date info',
+          type: 'null',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
           },
         },
         proposed_termination_date: {
