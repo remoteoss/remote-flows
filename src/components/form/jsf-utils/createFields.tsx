@@ -1,8 +1,9 @@
 import { cn } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type JSFPresentationConfig = {
   inputType?: string;
-  Component?: React.ComponentType<any>;
+  Component?: React.ComponentType<$TSFixMe>;
   hidden?: boolean;
   [key: string]: unknown;
 };
