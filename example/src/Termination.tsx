@@ -1,4 +1,4 @@
-import { TerminationFlow } from '@remoteoss/remote-flows';
+import { TerminationFlow /* zendeskArticles */ } from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
@@ -7,6 +7,7 @@ import type {
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 import { RemoteFlows } from './RemoteFlows';
+//import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
 const STEPS = [
@@ -61,19 +62,12 @@ const MultiStepForm = ({
     case 'employee_communication':
       return (
         <>
-          <div className='alert'>
-            <p>
-              Please do not inform the employee of their termination until we
-              review your request for legal risks. When we approve your request,
-              you can inform the employee and we'll take it from there.
-            </p>
-          </div>
           <EmployeeComunicationStep
             onSubmit={(payload) =>
               onSubmitStep(payload, 'employee_communication')
             }
           />
-          <SubmitButton className='submit-button'>Next Step</SubmitButton>
+          <SubmitButton className='submit-button mt-3'>Next Step</SubmitButton>
         </>
       );
     case 'termination_details':
@@ -82,7 +76,7 @@ const MultiStepForm = ({
           <TerminationDetailsStep
             onSubmit={(payload) => onSubmitStep(payload, 'termination_details')}
           />
-          <div className='buttons-container'>
+          <div className='buttons-container mt-3'>
             <Back className='back-button'>Back</Back>
             <SubmitButton className='submit-button'>Next Step</SubmitButton>
           </div>
@@ -113,7 +107,7 @@ const MultiStepForm = ({
           <PaidTimeOffStep
             onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
           />
-          <div className='buttons-container'>
+          <div className='buttons-container mt-3'>
             <Back className='back-button'>Back</Back>
             <SubmitButton className='submit-button'>Next Step</SubmitButton>
           </div>
@@ -130,7 +124,7 @@ const MultiStepForm = ({
             onError={onError}
           />
           <div className='buttons-container'>
-            <Back>Back</Back>
+            <Back className='back-button'>Back</Back>
             <SubmitButton className='submit-button'>Submit</SubmitButton>
           </div>
         </>
@@ -166,6 +160,14 @@ const TerminationForm = ({
       </div>
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
+        <div className='mt-3 mb-3'>
+          {/* <ZendeskTriggerButton
+            className='text-sm'
+            zendeskId={zendeskArticles.terminationEmployeeCommunication}
+          >
+            Learn more about employee communication
+          </ZendeskTriggerButton> */}
+        </div>
         <MultiStepForm
           terminationBag={terminationBag}
           components={components}
@@ -193,11 +195,6 @@ export const Termination = () => {
           jsfModify: {
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
-              confidential: {
-                'x-jsf-presentation': {
-                  statement: null, // this removes potential fixed statements that come from the confidential field
-                },
-              },
               termination_reason: {
                 description: () => (
                   <TerminationReasonDetailsDescription

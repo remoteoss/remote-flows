@@ -175,9 +175,9 @@ export const jsonSchema = {
           },
         },
         personal_email: {
-          description: '',
           maxLength: 255,
           title: "Employee's personal email",
+          description: 'We’ll use this for post-termination communication.',
           format: 'email',
           type: 'string',
           'x-jsf-presentation': {
@@ -272,6 +272,14 @@ export const jsonSchema = {
             multiple: true,
           },
         },
+        risk_assesment_info: {
+          description: '',
+          title: 'Risk assessment info',
+          type: 'null',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
         risk_assessment_reasons: {
           description: '',
           title: 'This employee is...',
@@ -354,6 +362,14 @@ export const jsonSchema = {
           type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'textarea',
+          },
+        },
+        proposed_termination_date_info: {
+          description: '',
+          title: 'Proposed termination date info',
+          type: 'null',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
           },
         },
         proposed_termination_date: {
@@ -441,9 +457,11 @@ export const jsonSchema = {
         'reason_description',
         'additional_comments',
         'termination_reason_files',
+        'risk_assesment_info',
         'risk_assessment_reasons',
         'will_challenge_termination',
         'will_challenge_termination_description',
+        'proposed_termination_date_info',
         'proposed_termination_date',
         'agrees_to_pto_amount',
         'agrees_to_pto_amount_notes',

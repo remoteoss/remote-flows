@@ -1,25 +1,24 @@
 import {
   CreateOffboardingParams,
-  postCreateOffboarding,
   TerminationDetailsParams,
 } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-import { useClient } from '@/src/context';
 import omit from 'lodash.omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
-import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
-import { schema } from '@/src/flows/Termination/json-schemas/schema';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { JSFModify } from '@/src/flows/types';
+import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
+import { useMemo } from 'react';
+import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
+import { cn, ZendeskTriggerButton } from '@/src/internals';
+import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -48,46 +47,6 @@ function buildInitialValues(
   return initialValues;
 }
 
-const useCreateTermination = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (payload: CreateOffboardingParams) => {
-      return postCreateOffboarding({
-        client: client as Client,
-        body: payload,
-      });
-    },
-  });
-};
-
-const useTerminationSchema = ({
-  formValues,
-  jsfModify,
-  step,
-}: {
-  formValues?: TerminationFormValues;
-  jsfModify?: JSFModify;
-  step?: string;
-}) => {
-  return useQuery({
-    queryKey: ['rmt-flows-termination-schema', step],
-    queryFn: () => {
-      return schema[step as keyof typeof schema] ?? defaultSchema;
-    },
-    select: ({ data }) => {
-      let jsfSchema = data?.schema || {};
-      if (jsfModify) {
-        const { schema } = modify(jsfSchema, jsfModify);
-        jsfSchema = schema;
-      }
-      const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues || {},
-      });
-      return form;
-    },
-  });
-};
-
 type TerminationHookProps = {
   employmentId: string;
   options?: {
@@ -107,10 +66,59 @@ export const useTermination = ({
     ...fieldValues,
   };
 
+  const customFields = useMemo(() => {
+    return {
+      fields: {
+        risk_assesment_info: createInformationField(
+          'Offboarding risk assessment',
+          'Employees may be protected from termination if they fall into certain categories. To help avoid claims from employees, let us know if the employee is part of one or more of these categories. Select all that apply.',
+          {
+            className: (
+              options?.jsfModify?.fields?.risk_assesment_info as $TSFixMe
+            )?.['x-jsf-presentation']?.className,
+          },
+        ),
+        proposed_termination_date_info: createInformationField(
+          'Proposed termination date',
+          <>
+            In most cases, we must provide notice to the employee before
+            termination. The required notice period depends on local labor laws,
+            the employment agreement, and other factors. We'll use those factors
+            to determine the required notice period.
+            <ZendeskTriggerButton
+              zendeskId={zendeskArticles.terminationNoticePeriods}
+              className={cn(
+                'text-sm',
+                (
+                  options?.jsfModify?.fields
+                    ?.proposed_termination_date_info as $TSFixMe
+                )?.['x-jsf-presentation']?.zendeskTriggerButtonClassName,
+              )}
+            >
+              Learn about notice periods
+            </ZendeskTriggerButton>
+          </>,
+          {
+            className: (
+              options?.jsfModify?.fields
+                ?.proposed_termination_date_info as $TSFixMe
+            )?.['x-jsf-presentation']?.className,
+          },
+        ),
+      },
+    };
+  }, [options?.jsfModify]);
+
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
       formValues: formValues,
-      jsfModify: options?.jsfModify,
+      jsfModify: {
+        ...options?.jsfModify,
+        fields: {
+          ...options?.jsfModify?.fields,
+          ...customFields?.fields,
+        },
+      },
       step: stepState.currentStep.name,
     });
 
