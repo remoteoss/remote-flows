@@ -124,7 +124,7 @@ const MultiStepForm = ({
             onError={onError}
           />
           <div className='buttons-container'>
-            <Back>Back</Back>
+            <Back className='back-button'>Back</Back>
             <SubmitButton className='submit-button'>Submit</SubmitButton>
           </div>
         </>
