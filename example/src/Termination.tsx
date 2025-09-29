@@ -1,4 +1,4 @@
-import { TerminationFlow, zendeskArticles } from '@remoteoss/remote-flows';
+import { TerminationFlow /* zendeskArticles */ } from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
@@ -7,7 +7,7 @@ import type {
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 import { RemoteFlows } from './RemoteFlows';
-import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+//import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
 const STEPS = [
@@ -161,12 +161,12 @@ const TerminationForm = ({
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
         <div className='mt-3 mb-3'>
-          <ZendeskTriggerButton
+          {/* <ZendeskTriggerButton
             className='text-sm'
             zendeskId={zendeskArticles.terminationEmployeeCommunication}
           >
             Learn more about employee communication
-          </ZendeskTriggerButton>
+          </ZendeskTriggerButton> */}
         </div>
         <MultiStepForm
           terminationBag={terminationBag}
