@@ -893,7 +893,7 @@ describe('CostCalculatorFlow', () => {
     ).toHaveValue('645');
   });
 
-  it.only("should show the default management fee when it's provided", async () => {
+  it("should show the default management fee when it's provided", async () => {
     renderComponent({
       defaultValues: {
         ...defaultProps.defaultValues,
