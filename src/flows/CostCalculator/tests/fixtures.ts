@@ -27,8 +27,12 @@ export const countries = {
       region_slug: 'ESP',
       child_regions: [
         {
-          slug: 'ESP',
-          name: '',
+          slug: 'AST',
+          name: 'Asturias',
+        },
+        {
+          slug: 'CAN',
+          name: 'Canary Islands',
         },
       ],
       has_additional_fields: true,
