@@ -141,8 +141,6 @@ export const CostCalculatorFlow = ({
     estimationOptions.managementFees,
   );
 
-  console.log('defaultManagementFee', defaultManagementFee);
-
   const form = useForm({
     resolver,
     defaultValues: {
