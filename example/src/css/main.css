@@ -946,3 +946,12 @@ button.reset-button {
   background-color: #dc2626;
   color: white;
 }
+
+.RemoteFlows__TerminationReasonsDetailContent__ListItem {
+  margin-bottom: 24px;
+}
+
+.RemoteFlows__TerminationReasonsDetailContent__ListItemDescription {
+  display: block;
+  padding-left: 20px;
+}

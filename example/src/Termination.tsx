@@ -1,4 +1,4 @@
-import { TerminationFlow /* zendeskArticles */ } from '@remoteoss/remote-flows';
+import { TerminationFlow, zendeskArticles } from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
@@ -6,7 +6,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
-//import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
 const STEPS = [
@@ -155,12 +155,12 @@ const TerminationForm = ({
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
         <div className='mt-3 mb-3'>
-          {/* <ZendeskTriggerButton
+          <ZendeskTriggerButton
             className='text-sm'
             zendeskId={zendeskArticles.terminationEmployeeCommunication}
           >
             Learn more about employee communication
-          </ZendeskTriggerButton> */}
+          </ZendeskTriggerButton>
         </div>
         <MultiStepForm
           terminationBag={terminationBag}
@@ -189,7 +189,7 @@ export const Termination = () => {
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
               termination_reason: {
-                description: () => <TerminationReasonDetailsDescription />,
+                description: <TerminationReasonDetailsDescription />,
               },
             },
           },
