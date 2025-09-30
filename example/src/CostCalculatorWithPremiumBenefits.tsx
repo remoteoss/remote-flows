@@ -185,7 +185,6 @@ const EditEstimationForm = ({
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   const paddedIndex = (estimationIndex + 1).toString().padStart(2, '0');
-
   return (
     <DrawerEstimationForm
       options={{ title: `Estimate #${paddedIndex}`, hideCurrency: true }}
@@ -202,6 +201,8 @@ const EditEstimationForm = ({
         benefits: payload?.benefits,
         selectedCurrency:
           selectedEstimation?.employer_currency_costs.currency.code ?? '',
+        age: payload?.age,
+        contractDurationType: payload?.contract_duration_type,
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
