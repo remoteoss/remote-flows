@@ -16,9 +16,10 @@ import {
   estimation,
   regionFields,
   regionFieldsWithAgeProperty,
+  regionFieldsWithContractDurationTypeProperty,
 } from './fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { fillSelect } from '@/src/tests/testHelpers';
+import { assertRadioValue, fillSelect } from '@/src/tests/testHelpers';
 
 const queryClient = new QueryClient();
 
@@ -279,6 +280,27 @@ describe('CostCalculatorFlow', () => {
     });
 
     expect(screen.getByRole('textbox', { name: /age/i })).toHaveValue('30');
+  });
+
+  it('should load the form with contract duration type field already filled', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithContractDurationTypeProperty);
+      }),
+    );
+
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        contractDurationType: 'fixed',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await assertRadioValue('Contract duration', 'Fixed Term');
   });
 
   it('should load, fill and submit form with regional fields', async () => {
