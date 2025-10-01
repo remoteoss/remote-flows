@@ -52,6 +52,12 @@ export type CostCalculatorFlowProps = {
        * Default value for the contract duration type field.
        */
       contractDurationType: 'fixed' | 'indefinite';
+      /**
+       * Default value for the management fee field.
+       */
+      management: {
+        management_fee: string;
+      };
     } & Record<string, unknown>
   >;
   options?: UseCostCalculatorOptions;
@@ -78,6 +84,22 @@ const getDefaultManagementFee = (
   return 0;
 };
 
+const getManagementFee = (
+  currency: CurrencyKey,
+  currencySlug?: string,
+  management?: { management_fee: string },
+  managementFees?: Partial<Record<CurrencyKey, number>>,
+) => {
+  if (!currencySlug && !management?.management_fee && currency) {
+    return getDefaultManagementFee(BASE_RATES, currency, managementFees);
+  }
+  if (currencySlug && !management?.management_fee) {
+    return '';
+  }
+
+  return management?.management_fee;
+};
+
 export const CostCalculatorFlow = ({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
@@ -85,6 +107,9 @@ export const CostCalculatorFlow = ({
     currencySlug: '',
     salary: '',
     benefits: {},
+    management: {
+      management_fee: '',
+    },
   },
   options,
   render,
@@ -119,13 +144,12 @@ export const CostCalculatorFlow = ({
     costCalculatorBag.handleValidation,
   );
 
-  const defaultManagementFee = defaultValues.currencySlug
-    ? ''
-    : getDefaultManagementFee(
-        BASE_RATES,
-        currency,
-        estimationOptions.managementFees,
-      );
+  const defaultManagementFee = getManagementFee(
+    currency,
+    defaultValues.currencySlug,
+    defaultValues.management,
+    estimationOptions.managementFees,
+  );
 
   const {
     countryRegionSlug,
@@ -165,7 +189,8 @@ export const CostCalculatorFlow = ({
     if (
       defaultValues.currencySlug &&
       costCalculatorBag.currencies &&
-      estimationOptions.includeManagementFee
+      estimationOptions.includeManagementFee &&
+      !defaultValues.management?.management_fee
     ) {
       const currencyData = costCalculatorBag.currencies.find(
         (currency) => currency.value === defaultValues.currencySlug,
@@ -186,6 +211,7 @@ export const CostCalculatorFlow = ({
     costCalculatorBag.currencies,
     estimationOptions.includeManagementFee,
     estimationOptions.managementFees,
+    defaultValues.management?.management_fee,
     form,
   ]);
 
