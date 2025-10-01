@@ -70,7 +70,7 @@ async function getToken(req, res) {
 
   if (NODE_ENV === 'production') {
     return res.status(403).json({
-      error: 'This endpoint is not available in production mode',
+      error: `This endpoint is not available in production mode`,
     });
   }
 

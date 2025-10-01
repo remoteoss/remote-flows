@@ -16,9 +16,10 @@ import {
   estimation,
   regionFields,
   regionFieldsWithAgeProperty,
+  regionFieldsWithContractDurationTypeProperty,
 } from './fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { fillSelect } from '@/src/tests/testHelpers';
+import { assertRadioValue, fillSelect } from '@/src/tests/testHelpers';
 
 const queryClient = new QueryClient();
 
@@ -137,6 +138,22 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should have selected Asturias as the region', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'ESP',
+        regionSlug: 'AST',
+      },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', { name: /Region/i }),
+      ).toHaveTextContent(/Asturias/i);
+    });
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
@@ -234,6 +251,56 @@ describe('CostCalculatorFlow', () => {
     expect(screen.getByText('Benefits')).toBeInTheDocument();
     expect(screen.getByLabelText('Health Insurance')).toBeInTheDocument();
     expect(screen.getByLabelText('Life Insurance')).toBeInTheDocument();
+  });
+
+  it('should load the form with age field already filled', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        age: 30,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('textbox', { name: /age/i })).toHaveValue('30');
+  });
+
+  it('should load the form with contract duration type field already filled', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithContractDurationTypeProperty);
+      }),
+    );
+
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        contractDurationType: 'fixed',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await assertRadioValue('Contract duration', 'Fixed Term');
   });
 
   it('should load, fill and submit form with regional fields', async () => {
@@ -891,6 +958,55 @@ describe('CostCalculatorFlow', () => {
         name: /desired monthly management fee/i,
       }),
     ).toHaveValue('645');
+  });
+
+  it("should show the default management fee when it's provided", async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        management: {
+          management_fee: '100',
+        },
+      },
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        showManagementFee: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
+    ).toHaveValue('100');
   });
 
   it('should throw the management fee error when the management fee is above the threshold', async () => {

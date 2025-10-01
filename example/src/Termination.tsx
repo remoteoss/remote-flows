@@ -7,6 +7,7 @@ import type {
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+import { OffboardingRequestModal } from './OffboardingRequestModal';
 import './css/main.css';
 
 const STEPS = [
@@ -179,8 +180,9 @@ const TerminationForm = ({
 
 export const Termination = () => {
   const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
+  const proxyURL = window.location.origin;
   return (
-    <RemoteFlows>
+    <RemoteFlows proxy={{ url: proxyURL }}>
       <TerminationFlow
         employmentId={EMPLOYMENT_ID}
         render={TerminationForm}
@@ -195,6 +197,7 @@ export const Termination = () => {
           },
         }}
       />
+      <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
   );
 };
