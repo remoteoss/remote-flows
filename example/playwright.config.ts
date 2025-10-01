@@ -33,6 +33,10 @@ export default defineConfig({
     baseURL:
       process.env.BASE_URL ||
       'http://localhost:3001/?demo=with-premium-benefits-cost-calculator',
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN || '',
+      'x-vercel-set-bypass-cookie': 'true',
+    },
   },
 
   /* Configure projects for major browsers */
