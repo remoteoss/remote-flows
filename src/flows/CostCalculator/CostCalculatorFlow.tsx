@@ -43,6 +43,10 @@ export type CostCalculatorFlowProps = {
      * Default value for the hiring budget field
      */
     hiringBudget: string;
+    /**
+     * Default value for the region field.
+     */
+    regionSlug: string;
   }>;
   options?: UseCostCalculatorOptions;
   render: (
@@ -72,6 +76,7 @@ export const CostCalculatorFlow = ({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
     countryRegionSlug: '',
+    regionSlug: '',
     currencySlug: '',
     salary: '',
     benefits: {},
@@ -122,7 +127,7 @@ export const CostCalculatorFlow = ({
     defaultValues: {
       country: defaultValues?.countryRegionSlug,
       currency: defaultValues?.currencySlug,
-      region: '',
+      region: defaultValues?.regionSlug,
       salary: defaultValues?.salary,
       salary_conversion: '',
       salary_converted: '',

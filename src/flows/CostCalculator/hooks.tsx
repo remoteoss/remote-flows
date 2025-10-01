@@ -289,18 +289,19 @@ export const useCostCalculator = (
       },
     };
   }, [
-    employerBillingCurrency,
+    getCurrencies,
     salaryField,
     hiringBudget,
-    salaryFieldPresentation?.salary_conversion_properties?.description,
     salaryFieldPresentation?.salary_conversion_properties?.label,
-    defaultSalary,
-    getCurrencies,
+    salaryFieldPresentation?.salary_conversion_properties?.description,
+    options?.jsfModify?.fields?.hiring_budget,
     options?.jsfModify?.fields?.management,
-    showManagementField,
-    version,
-    showEstimationTitleField,
     options?.jsfModify?.fields?.estimation_title,
+    version,
+    employerBillingCurrency,
+    showManagementField,
+    showEstimationTitleField,
+    defaultSalary,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({
