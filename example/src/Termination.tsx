@@ -1,4 +1,4 @@
-import { TerminationFlow /* zendeskArticles */ } from '@remoteoss/remote-flows';
+import { TerminationFlow, zendeskArticles } from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
@@ -7,7 +7,8 @@ import type {
 import { useState } from 'react';
 import { TerminationDialog } from './TerminationDialog';
 import { RemoteFlows } from './RemoteFlows';
-//import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+import { OffboardingRequestModal } from './OffboardingRequestModal';
 import './css/main.css';
 
 const STEPS = [
@@ -161,12 +162,12 @@ const TerminationForm = ({
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
         <div className='mt-3 mb-3'>
-          {/* <ZendeskTriggerButton
+          <ZendeskTriggerButton
             className='text-sm'
             zendeskId={zendeskArticles.terminationEmployeeCommunication}
           >
             Learn more about employee communication
-          </ZendeskTriggerButton> */}
+          </ZendeskTriggerButton>
         </div>
         <MultiStepForm
           terminationBag={terminationBag}
@@ -186,8 +187,9 @@ const TerminationForm = ({
 export const Termination = () => {
   const [open, setOpen] = useState(false);
   const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
+  const proxyURL = window.location.origin;
   return (
-    <RemoteFlows>
+    <RemoteFlows proxy={{ url: proxyURL }}>
       <TerminationFlow
         employmentId={EMPLOYMENT_ID}
         render={TerminationForm}
@@ -207,6 +209,7 @@ export const Termination = () => {
         }}
       />
       <TerminationDialog open={open} setOpen={setOpen} />
+      <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
   );
 };
