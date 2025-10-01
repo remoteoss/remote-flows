@@ -202,6 +202,8 @@ const EditEstimationForm = ({
         benefits: payload?.benefits,
         selectedCurrency:
           selectedEstimation?.employer_currency_costs.currency.code ?? '',
+        age: payload?.age,
+        contractDurationType: payload?.contract_duration_type,
         management: {
           management_fee:
             convertFromCents(payload?.management?.management_fee)?.toString() ??

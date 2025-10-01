@@ -22,38 +22,48 @@ export type CostCalculatorFlowProps = {
   /**
    * Default values for the form fields.
    */
-  defaultValues?: Partial<{
-    /**
-     * Default value for the country field.
-     */
-    countryRegionSlug: string;
-    /**
-     * Default value for the currency field.
-     */
-    currencySlug: string;
-    /**
-     * Default value for the salary field.
-     */
-    salary: string;
-    /**
-     * Default value for the benefits field.
-     */
-    benefits: Record<string, string>;
-    /**
-     * Default value for the hiring budget field
-     */
-    hiringBudget: string;
-    /**
-     * Default value for the management fee field.
-     */
-    management: {
-      management_fee: string;
-    };
-    /**
-     * Default value for the region field.
-     */
-    regionSlug: string;
-  }>;
+  defaultValues?: Partial<
+    {
+      /**
+       * Default value for the country field.
+       */
+      countryRegionSlug: string;
+      /**
+       * Default value for the currency field.
+       */
+      currencySlug: string;
+      /**
+       * Default value for the salary field.
+       */
+      salary: string;
+      /**
+       * Default value for the benefits field.
+       */
+      benefits: Record<string, string>;
+      /**
+       * Default value for the hiring budget field
+       */
+      hiringBudget: string;
+      /**
+       * Default value for the age field.
+       */
+      age: number;
+      /**
+       * Default value for the contract duration type field.
+       */
+      contractDurationType: 'fixed' | 'indefinite';
+      /**
+       * Default value for the management fee field.
+       */
+      management: {
+        management_fee: string;
+      };
+      /**
+       * Default value for the region field.
+       */
+      regionSlug: string;
+    } & Record<string, unknown>
+  >;
   options?: UseCostCalculatorOptions;
   render: (
     costCalculatorBag: ReturnType<typeof useCostCalculator>,
@@ -146,21 +156,36 @@ export const CostCalculatorFlow = ({
     estimationOptions.managementFees,
   );
 
+  const {
+    countryRegionSlug,
+    currencySlug,
+    salary,
+    benefits,
+    hiringBudget,
+    age,
+    contractDurationType,
+    regionSlug,
+    ...formDefaultValues
+  } = defaultValues;
+
   const form = useForm({
     resolver,
     defaultValues: {
-      country: defaultValues?.countryRegionSlug,
-      currency: defaultValues?.currencySlug,
-      region: defaultValues?.regionSlug,
-      salary: defaultValues?.salary,
+      country: countryRegionSlug,
+      currency: currencySlug,
+      region: regionSlug,
+      salary: salary,
       salary_conversion: '',
       salary_converted: '',
-      hiring_budget: defaultValues?.hiringBudget || 'employee_annual_salary',
+      hiring_budget: hiringBudget || 'employee_annual_salary',
+      age: age,
+      contract_duration_type: contractDurationType,
       management: {
         management_fee: defaultManagementFee,
       },
-      benefits: defaultValues?.benefits,
+      benefits: benefits,
       estimation_title: estimationOptions.title,
+      ...formDefaultValues,
     },
     shouldUnregister: false,
     mode: 'onBlur',
