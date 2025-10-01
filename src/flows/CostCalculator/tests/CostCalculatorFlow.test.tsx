@@ -909,6 +909,55 @@ describe('CostCalculatorFlow', () => {
     ).toHaveValue('645');
   });
 
+  it("should show the default management fee when it's provided", async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        management: {
+          management_fee: '100',
+        },
+      },
+      estimationOptions: {
+        title: 'Test',
+        includeBenefits: true,
+        includeCostBreakdowns: true,
+        includePremiumBenefits: true,
+        includeManagementFee: true,
+        showManagementFee: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Show Management fee' }),
+      ).toBeInTheDocument();
+    });
+
+    const defineButton = screen.getByRole('button', {
+      name: 'Show Management fee',
+    });
+
+    fireEvent.click(defineButton);
+
+    await waitFor(() => {
+      expect(defineButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /desired monthly management fee/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByRole('textbox', {
+        name: /desired monthly management fee/i,
+      }),
+    ).toHaveValue('100');
+  });
+
   it('should throw the management fee error when the management fee is above the threshold', async () => {
     const user = userEvent.setup();
 

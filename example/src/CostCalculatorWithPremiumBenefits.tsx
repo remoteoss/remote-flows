@@ -30,11 +30,11 @@ import {
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import { downloadPdf } from './utils';
 import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
-import { downloadPdf } from './utils';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
@@ -202,6 +202,11 @@ const EditEstimationForm = ({
         benefits: payload?.benefits,
         selectedCurrency:
           selectedEstimation?.employer_currency_costs.currency.code ?? '',
+        management: {
+          management_fee:
+            convertFromCents(payload?.management?.management_fee)?.toString() ??
+            '',
+        },
       }}
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
