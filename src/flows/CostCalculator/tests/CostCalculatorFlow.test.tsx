@@ -252,6 +252,35 @@ describe('CostCalculatorFlow', () => {
     expect(screen.getByLabelText('Life Insurance')).toBeInTheDocument();
   });
 
+  it('should load the form with age field already filled', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgeProperty);
+      }),
+    );
+
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        age: 30,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('textbox', { name: /age/i })).toHaveValue('30');
+  });
+
   it('should load, fill and submit form with regional fields', async () => {
     const user = userEvent.setup();
     server.use(
