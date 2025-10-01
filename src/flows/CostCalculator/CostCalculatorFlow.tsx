@@ -58,6 +58,10 @@ export type CostCalculatorFlowProps = {
       management: {
         management_fee: string;
       };
+      /**
+       * Default value for the region field.
+       */
+      regionSlug: string;
     } & Record<string, unknown>
   >;
   options?: UseCostCalculatorOptions;
@@ -104,6 +108,7 @@ export const CostCalculatorFlow = ({
   estimationOptions = defaultEstimationOptions,
   defaultValues = {
     countryRegionSlug: '',
+    regionSlug: '',
     currencySlug: '',
     salary: '',
     benefits: {},
@@ -159,6 +164,7 @@ export const CostCalculatorFlow = ({
     hiringBudget,
     age,
     contractDurationType,
+    regionSlug,
     ...formDefaultValues
   } = defaultValues;
 
@@ -167,7 +173,7 @@ export const CostCalculatorFlow = ({
     defaultValues: {
       country: countryRegionSlug,
       currency: currencySlug,
-      region: '',
+      region: regionSlug,
       salary: salary,
       salary_conversion: '',
       salary_converted: '',

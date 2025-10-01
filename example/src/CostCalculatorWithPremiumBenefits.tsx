@@ -195,6 +195,7 @@ const EditEstimationForm = ({
       }}
       defaultValues={{
         countryRegionSlug: payload?.country,
+        regionSlug: payload?.region,
         hiringBudget: payload?.hiring_budget,
         currencySlug: payload?.currency,
         salary: convertFromCents(payload?.salary)?.toString() ?? '',

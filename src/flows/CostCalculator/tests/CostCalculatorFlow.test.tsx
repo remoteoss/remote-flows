@@ -137,6 +137,22 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should have selected Asturias as the region', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'ESP',
+        regionSlug: 'AST',
+      },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', { name: /Region/i }),
+      ).toHaveTextContent(/Asturias/i);
+    });
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
