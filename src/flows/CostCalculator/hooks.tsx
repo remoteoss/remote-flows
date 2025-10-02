@@ -16,7 +16,7 @@ import type { JSFModify, Result } from '@/src/flows/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -31,6 +31,8 @@ import {
   FieldSetField,
   FieldSetProps,
 } from '@/src/components/form/fields/FieldSetField';
+import { Meta } from '@/src/flows/Onboarding/types';
+import { prettifyFormValues } from '@/src/flows/Onboarding/utils';
 
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
@@ -129,6 +131,11 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
+  const fieldsMetaRef = useRef<{
+    fields: Meta;
+  }>({
+    fields: {},
+  });
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -344,6 +351,17 @@ export const useCostCalculator = (
   async function onSubmit(
     values: CostCalculatorEstimationSubmitValues,
   ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
+    // Prettify values for the current step
+    if (fieldsMetaRef.current.fields) {
+      fieldsMetaRef.current.fields = prettifyFormValues(
+        values,
+        fieldsJSONSchema.fields,
+      );
+
+      fieldsMetaRef.current.fields['employer_currency_slug'] =
+        fieldsMetaRef.current.fields['currency'];
+    }
+
     return new Promise((resolve, reject) => {
       costCalculatorEstimationMutation.mutate(
         buildPayload(values, estimationOptions, version),
@@ -634,5 +652,13 @@ export const useCostCalculator = (
      * Currencies data useful to get the currency if you have a currencySlug
      */
     currencies,
+
+    /**
+     * Fields metadata
+     */
+
+    meta: {
+      fields: fieldsMetaRef.current,
+    },
   };
 };

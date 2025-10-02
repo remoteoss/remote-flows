@@ -134,29 +134,19 @@ export function CostCalculatorForm({
 
       if (onErrorWithFields && fieldErrors.length > 0) {
         // Create field metadata for better error messages
-        const fieldsMeta = costCalculatorBag?.fields?.reduce(
-          (acc, field) => {
-            acc[field.name as $TSFixMe] = { label: field.label || field.name };
-            return acc;
-          },
-          {} as Record<string, { label: string }>,
+        const fieldsMeta = costCalculatorBag?.meta?.fields;
+
+        // Normalize field errors with user-friendly labels
+        const normalizedFieldErrors = normalizeFieldErrors(
+          fieldErrors,
+          fieldsMeta as $TSFixMe,
         );
 
-        if (fieldsMeta) {
-          fieldsMeta['employer_currency_slug'] = fieldsMeta['currency'];
-
-          // Normalize field errors with user-friendly labels
-          const normalizedFieldErrors = normalizeFieldErrors(
-            fieldErrors,
-            fieldsMeta as $TSFixMe,
-          );
-
-          onErrorWithFields({
-            error: error.error as Error,
-            rawError: error as Record<string, unknown>,
-            fieldErrors: normalizedFieldErrors,
-          });
-        }
+        onErrorWithFields({
+          error: error.error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: normalizedFieldErrors,
+        });
       } else {
         // Fall back to the original error handler
         onError?.(error.error);
