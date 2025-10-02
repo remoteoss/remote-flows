@@ -427,17 +427,11 @@ const AddEstimateForm = ({
               }}
               onSuccess={onSuccess}
             />
-            {errorMessage && fieldErrors.length === 0 && (
-              <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
-                <p>{errorMessage}</p>
-              </div>
-            )}
-            {fieldErrors.length > 0 && errorMessage && (
+            {errorMessage && (
               <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
                 <AlertError errors={{ apiError: errorMessage, fieldErrors }} />
               </div>
             )}
-
             <div className='flex justify-center mt-10'>
               <CostCalculatorSubmitButton
                 className='submit-button'
