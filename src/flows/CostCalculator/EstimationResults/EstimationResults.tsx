@@ -695,7 +695,7 @@ export const EstimationResults = ({
                   ) || [],
               },
               {
-                label: 'Core benefits',
+                label: 'Benefits',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.monthly_benefits_total,
                   estimation.regional_currency_costs.currency.symbol,
@@ -725,7 +725,7 @@ export const EstimationResults = ({
               ...(hasManagementFee
                 ? [
                     {
-                      label: 'Management fee',
+                      label: 'Monthly fee',
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .monthly_management_fee,
@@ -770,7 +770,7 @@ export const EstimationResults = ({
           <BreakdownList
             items={[
               {
-                label: 'Annual gross salary',
+                label: 'Gross annual salary',
                 dataSelector: 'annual-gross-salary',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_gross_salary,
@@ -810,7 +810,7 @@ export const EstimationResults = ({
                   ) || [],
               },
               {
-                label: 'Core benefits',
+                label: 'Benefits',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_benefits_total,
                   estimation.regional_currency_costs.currency.symbol,
@@ -870,7 +870,7 @@ export const EstimationResults = ({
               ...(hasManagementFee
                 ? [
                     {
-                      label: 'Management fee',
+                      label: 'Annual fee',
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .annual_management_fee,
