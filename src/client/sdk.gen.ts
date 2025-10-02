@@ -113,6 +113,9 @@ import type {
   PostCreateBenefitRenewalRequestData,
   PostCreateBenefitRenewalRequestResponse,
   PostCreateBenefitRenewalRequestError,
+  GetShowContractDocumentData,
+  GetShowContractDocumentResponse,
+  GetShowContractDocumentError,
   GetIndexExpenseData,
   GetIndexExpenseResponse,
   GetIndexExpenseError,
@@ -179,6 +182,9 @@ import type {
   PostCreateRiskReserveData,
   PostCreateRiskReserveResponse,
   PostCreateRiskReserveError,
+  GetIndexCompanyProductPriceData,
+  GetIndexCompanyProductPriceResponse,
+  GetIndexCompanyProductPriceError,
   GetShowCompanyData,
   GetShowCompanyResponse,
   GetShowCompanyError,
@@ -301,6 +307,9 @@ import type {
   GetShowOffboardingData,
   GetShowOffboardingResponse,
   GetShowOffboardingError,
+  GetEmployeeDetailsPayrollRunData,
+  GetEmployeeDetailsPayrollRunResponse,
+  GetEmployeeDetailsPayrollRunError,
   PostCreateEmploymentData,
   PostCreateEmploymentResponse,
   PostCreateEmploymentError,
@@ -310,6 +319,9 @@ import type {
   GetSupportedCountryData,
   GetSupportedCountryResponse,
   GetSupportedCountryError,
+  PostCreateTokenCompanyTokenData,
+  PostCreateTokenCompanyTokenResponse,
+  PostCreateTokenCompanyTokenError,
   PostCompleteOnboardingEmploymentData,
   PostCompleteOnboardingEmploymentResponse,
   PostCompleteOnboardingEmploymentError,
@@ -319,6 +331,9 @@ import type {
   GetTimeoffTypesTimeoffData,
   GetTimeoffTypesTimeoffResponse,
   GetTimeoffTypesTimeoffError,
+  PostCreateEstimationCsvData,
+  PostCreateEstimationCsvResponse,
+  PostCreateEstimationCsvError,
   PostTriggerWebhookCallbackData,
   PostTriggerWebhookCallbackResponse,
   PostTriggerWebhookCallbackError,
@@ -469,6 +484,9 @@ import type {
   PostCreateCompanyData,
   PostCreateCompanyResponse,
   PostCreateCompanyError,
+  PostSignContractDocumentData,
+  PostSignContractDocumentResponse,
+  PostSignContractDocumentError,
   PostSendBackTimesheetData,
   PostSendBackTimesheetResponse,
   PostSendBackTimesheetError,
@@ -749,8 +767,13 @@ export const getIndexCompanyPricingPlan = <
 };
 
 /**
- * Create a pricing plan for a company from a partner template
- * Create a pricing plan for a company from a partner template.
+ * Create a pricing plan for a company
+ * Create a pricing plan for a company, in order to do that we have 2 ways:
+ *
+ * 1. Create a pricing plan from a partner template
+ * 2. Create a pricing plan from a product price
+ *
+ * The pricing plan is always created in the company's desired currency.
  *
  */
 export const postCreateCompanyPricingPlan = <
@@ -850,6 +873,14 @@ export const postConvertRawCurrencyConverter = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -1570,6 +1601,32 @@ export const postCreateBenefitRenewalRequest = <
 };
 
 /**
+ * Return a base64 encoded version of the contract document
+ */
+export const getShowContractDocument = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowContractDocumentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetShowContractDocumentResponse,
+    GetShowContractDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}',
+    ...options,
+  });
+};
+
+/**
  * List expenses
  * Lists all expenses records
  */
@@ -1660,16 +1717,6 @@ export const postCreateSsoConfiguration = <
     PostCreateSsoConfigurationError,
     ThrowOnError
   >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
     url: '/v1/sso-configuration',
     ...options,
     headers: {
@@ -2241,6 +2288,33 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Show product prices in the company's desired currency
+ * Show product prices in the company's desired currency.
+ * the product prices are then used to create a pricing plan for the company.
+ *
+ */
+export const getIndexCompanyProductPrice = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyProductPriceData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexCompanyProductPriceResponse,
+    GetIndexCompanyProductPriceError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/companies/{company_id}/product-prices',
+    ...options,
+  });
+};
+
+/**
  * Show a company
  * Given an ID, shows a company.
  *
@@ -2465,6 +2539,8 @@ export const postCreateContractAmendment = <
 /**
  * Show Company Payroll Runs
  * Given an ID, shows a payroll run.
+ * `employee_details` field is deprecated in favour of the `employee_details` endpoint and will be removed in the future.
+ *
  */
 export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
   options: Options<GetShowPayrollRunData, ThrowOnError>,
@@ -2703,6 +2779,7 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - billing_address_details
  * - contract_details
  * - emergency_contact
+ * - emergency_contact_details
  * - employment_document_details
  * - personal_details
  * - pricing_plan_details
@@ -3377,6 +3454,8 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * We block updates to some employment data because employees need to agree to amendments in certain cases, such as when there are changes to their contract_details.
  * Currently, these amendments can only be done through the Remote UI.
  *
+ * It is possible to update the `external_id` of the employment for all employment statuses.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -3434,6 +3513,8 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * If you want to provide additional information for an employment, please make sure to do so **before** the employee is invited.
  * We block updates to some employment data because employees need to agree to amendments in certain cases, such as when there are changes to their contract_details.
  * Currently, these amendments can only be done through the Remote UI.
+ *
+ * It is possible to update the `external_id` of the employment for all employment statuses.
  *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
@@ -3554,6 +3635,35 @@ export const getShowOffboarding = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Get Employee Details for a Payroll Run
+ * Gets the employee details for a payroll run
+ */
+export const getEmployeeDetailsPayrollRun = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetEmployeeDetailsPayrollRunData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetEmployeeDetailsPayrollRunResponse,
+    GetEmployeeDetailsPayrollRunError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
+    ...options,
+  });
+};
+
+/**
  * Create employment
  * Creates an employment without provisional_start_date validation.
  *
@@ -3630,7 +3740,9 @@ export const postCreateContractEligibility = <
 
 /**
  * List countries
- * Returns a list of all countries that are supported by Remote API alphabetically ordered. The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
+ * Returns a list of all countries that are supported by Remote API alphabetically ordered.
+ * The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
+ * The countries present in the list are the ones where creating a company is allowed.
  *
  */
 export const getSupportedCountry = <ThrowOnError extends boolean = false>(
@@ -3648,6 +3760,31 @@ export const getSupportedCountry = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/countries',
+    ...options,
+  });
+};
+
+/**
+ * Create a new token for a company
+ * Creates new tokens for a given company
+ */
+export const postCreateTokenCompanyToken = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateTokenCompanyTokenData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateTokenCompanyTokenResponse,
+    PostCreateTokenCompanyTokenError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/companies/{company_id}/create-token',
     ...options,
   });
 };
@@ -3739,6 +3876,44 @@ export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Creates a CSV cost estimation of employments
+ */
+export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateEstimationCsvData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    PostCreateEstimationCsvResponse,
+    PostCreateEstimationCsvError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/cost-calculator/estimation-csv',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Trigger a Webhook
  * Triggers a callback previously registered for webhooks. Use this endpoint to
  * emit a webhook for testing in the Sandbox environment. This endpoint will
@@ -3814,6 +3989,14 @@ export const postConvertWithSpreadCurrencyConverter = <
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -4113,6 +4296,10 @@ export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
       {
         scheme: 'bearer',
         type: 'http',
@@ -5179,6 +5366,14 @@ export const postConvertWithSpreadCurrencyConverter2 = <
         scheme: 'bearer',
         type: 'http',
       },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/currency-converter',
     ...options,
@@ -5263,6 +5458,36 @@ export const postCreateCompany = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/companies',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Sign a document for a contractor
+ */
+export const postSignContractDocument = <ThrowOnError extends boolean = false>(
+  options: Options<PostSignContractDocumentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostSignContractDocumentResponse,
+    PostSignContractDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/{contract_document_id}/sign',
     ...options,
     headers: {
       'Content-Type': 'application/json',
