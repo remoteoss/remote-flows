@@ -614,7 +614,7 @@ function CostCalculatorFormDemo() {
       {
         onSuccess: (response) => {
           downloadFile(
-            response.data.data.content as unknown as string,
+            response?.data?.data?.content as unknown as string,
             'estimation.csv',
           );
         },
