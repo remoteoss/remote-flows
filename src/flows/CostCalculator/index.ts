@@ -4,7 +4,10 @@ export { CostCalculatorSubmitButton } from './CostCalculatorSubmitButton';
 export { CostCalculatorResetButton } from './CostCalculatorResetButton';
 export { CostCalculatorDisclaimer } from './CostCalculatorDisclaimer';
 export { useCostCalculator } from './hooks';
-export { useCostCalculatorEstimationPdf } from './api';
+export {
+  useCostCalculatorEstimationPdf,
+  useCostCalculatorEstimationCsv,
+} from './api';
 export { disclaimerData } from './disclaimerUtils';
 export { EstimationResults } from './EstimationResults/EstimationResults';
 export { SummaryResults } from './SummaryResults/SummaryResults';

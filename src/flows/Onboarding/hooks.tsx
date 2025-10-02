@@ -439,11 +439,13 @@ export const useOnboarding = ({
   };
 
   const {
-    country: { code: employmentCountryCode } = {},
+    country,
     basic_information: employmentBasicInformation = {},
     contract_details: employmentContractDetails = {},
     status: employmentStatus,
   } = employment || {};
+
+  const employmentCountryCode = country?.code;
   const currentStepName = stepState.currentStep.name;
 
   const selectCountryInitialValues = useMemo(

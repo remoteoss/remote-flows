@@ -12,6 +12,7 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   useCostCalculatorEstimationPdf,
+  useCostCalculatorEstimationCsv,
   EstimationResults,
   zendeskArticles,
   SummaryResults,
@@ -30,7 +31,7 @@ import {
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
-import { downloadPdf } from './utils';
+import { downloadFile } from './utils';
 import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
@@ -299,7 +300,6 @@ const ActionToolbar = ({
         <button
           className='premium-benefits-action-toolbar__button premium-benefits-action-toolbar__button--secondary'
           onClick={onCSVExport}
-          disabled
         >
           Export as CSV
         </button>
@@ -480,6 +480,7 @@ const InitialForm = ({
 const ResultsView = ({
   estimations,
   onExportPdf,
+  onCSVExport,
   onReset,
   onAddEstimate,
   onSavePayload,
@@ -495,6 +496,7 @@ const ResultsView = ({
   onDeleteEstimate: (index: number) => void;
   onExportEstimate: (index: number) => void;
   onEditEstimate: (index: number) => void;
+  onCSVExport: () => void;
 }) => {
   if (!estimations) {
     return null;
@@ -508,7 +510,7 @@ const ResultsView = ({
           estimations={estimations}
           onReset={onReset}
           onExportPdf={onExportPdf}
-          onCSVExport={() => {}}
+          onCSVExport={onCSVExport}
           onAddEstimate={onAddEstimate}
           onSavePayload={onSavePayload}
         />
@@ -604,6 +606,21 @@ function CostCalculatorFormDemo() {
   };
 
   const exportPdfMutation = useCostCalculatorEstimationPdf();
+  const exportCsvMutation = useCostCalculatorEstimationCsv();
+
+  function exportCsv(payloadToExport: CostCalculatorEstimationSubmitValues[]) {
+    exportCsvMutation.mutate(
+      buildCostCalculatorEstimationPayload(payloadToExport, estimationOptions),
+      {
+        onSuccess: (response) => {
+          downloadFile(
+            response?.data?.data?.content as unknown as string,
+            'estimation.csv',
+          );
+        },
+      },
+    );
+  }
 
   function exportPdf(
     payloadToExport:
@@ -615,7 +632,7 @@ function CostCalculatorFormDemo() {
       {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
-            downloadPdf(
+            downloadFile(
               response.data.data.content as unknown as string,
               'estimation.pdf',
             );
@@ -639,6 +656,12 @@ function CostCalculatorFormDemo() {
 
     if (pdfPayload) {
       exportPdf(pdfPayload);
+    }
+  };
+
+  const onCSVExport = () => {
+    if (payload) {
+      exportCsv(payload);
     }
   };
 
@@ -679,6 +702,7 @@ function CostCalculatorFormDemo() {
             onDeleteEstimate={onDeleteEstimate}
             onExportEstimate={onExportEstimate}
             onEditEstimate={onEditEstimate}
+            onCSVExport={onCSVExport}
           />
           <EditEstimationForm
             isDrawerOpen={editProps.isDrawerOpen}
