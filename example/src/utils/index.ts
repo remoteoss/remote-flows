@@ -1,4 +1,4 @@
-export const downloadPdf = (url: string, downloadFile: string) => {
+export const downloadFile = (url: string, downloadFile: string) => {
   const link = document.createElement('a');
   link.href = url;
   link.download = downloadFile;

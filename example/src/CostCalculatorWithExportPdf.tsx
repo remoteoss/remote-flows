@@ -13,7 +13,7 @@ import type {
 import './css/main.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import { downloadPdf } from './utils';
+import { downloadFile } from './utils';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -34,7 +34,7 @@ function CostCalculatorFormDemo() {
       exportPdfMutation.mutate(buildCostCalculatorEstimationPayload(payload), {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
-            downloadPdf(
+            downloadFile(
               response.data.data.content as unknown as string,
               'estimation.pdf',
             );

@@ -4,6 +4,7 @@ import {
   getIndexCountry,
   getShowRegionField,
   postCreateEstimation,
+  postCreateEstimationCsv,
   postCreateEstimationPdf,
 } from '@/src/client';
 import { Client } from '@hey-api/client-fetch';
@@ -97,6 +98,23 @@ export const useCostCalculatorEstimationPdf = () => {
   return useMutation({
     mutationFn: (payload: CostCalculatorEstimateParams) => {
       return postCreateEstimationPdf({
+        client: client as Client,
+        body: payload,
+      });
+    },
+  });
+};
+
+/**
+ * Custom hook to create a CSV estimation.
+ *
+ * @returns
+ */
+export const useCostCalculatorEstimationCsv = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: CostCalculatorEstimateParams) => {
+      return postCreateEstimationCsv({
         client: client as Client,
         body: payload,
       });
