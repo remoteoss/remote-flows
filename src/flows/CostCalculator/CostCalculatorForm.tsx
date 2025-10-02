@@ -9,10 +9,12 @@ import {
   EstimationError,
 } from '@/src/flows/CostCalculator/types';
 import {
-  extractFieldErrors,
+  FieldError,
   NormalizedFieldError,
   normalizeFieldErrors,
 } from '@/src/lib/mutations';
+import { prettifyFormValues } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type CostCalculatorFormProps = Partial<{
   /**
@@ -38,12 +40,11 @@ type CostCalculatorFormProps = Partial<{
    */
   onErrorWithFields?: ({
     error,
-    rawError,
     fieldErrors,
   }: {
     error: Error;
-    rawError: Record<string, unknown>;
     fieldErrors: NormalizedFieldError[];
+    rawError: Record<string, unknown>;
   }) => void;
   /**
    * Whether to reset the form when the form is successfully submitted.
@@ -104,6 +105,15 @@ export function CostCalculatorForm({
         values,
       ) as CostCalculatorEstimationSubmitValues;
 
+      if (costCalculatorBag?.meta?.fields) {
+        costCalculatorBag.meta.fields = prettifyFormValues(
+          values,
+          costCalculatorBag.fields,
+        );
+        costCalculatorBag.meta.fields['employer_currency_slug'] =
+          costCalculatorBag.meta.fields['currency'];
+      }
+
       const costCalculatorResults =
         await costCalculatorBag?.onSubmit(parsedValues);
 
@@ -114,12 +124,12 @@ export function CostCalculatorForm({
         const responseWithTitle = {
           data: {
             ...costCalculatorResults.data.data,
-            employments: costCalculatorResults.data.data.employments?.map(
-              (employment) => ({
-                ...employment,
-                title: parsedValues.estimation_title,
-              }),
-            ),
+            employments: (
+              costCalculatorResults as $TSFixMe
+            ).data.data.employments?.map((employment: $TSFixMe) => ({
+              ...employment,
+              title: parsedValues.estimation_title,
+            })),
           },
         };
         await onSuccess?.(responseWithTitle);
@@ -127,14 +137,20 @@ export function CostCalculatorForm({
         throw {
           data: null,
           error: costCalculatorResults?.error,
+          fieldErrors: costCalculatorResults?.fieldErrors,
+          rawError: costCalculatorResults?.rawError,
         };
       }
     } catch (err) {
       // Handles here the errors caused by the API
-      const error = err as { data: null; error: EstimationError };
+      const error = err as {
+        data: null;
+        error: EstimationError;
+        fieldErrors: FieldError[];
+        rawError: Record<string, unknown>;
+      };
 
-      // Try to extract field errors from caught errors
-      const fieldErrors = extractFieldErrors(error.error as Error);
+      const fieldErrors = error.fieldErrors;
 
       if (onErrorWithFields) {
         // Create field metadata for better error messages
@@ -148,7 +164,7 @@ export function CostCalculatorForm({
 
         onErrorWithFields({
           error: error.error as Error,
-          rawError: error as Record<string, unknown>,
+          rawError: error.rawError as Record<string, unknown>,
           fieldErrors: normalizedFieldErrors,
         });
       } else {

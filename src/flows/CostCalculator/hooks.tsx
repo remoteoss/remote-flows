@@ -1,17 +1,12 @@
-import {
-  CostCalculatorEstimateResponse,
-  MinimalRegion,
-  PostCreateEstimationError,
-} from '@/src/client';
+import { MinimalRegion } from '@/src/client';
 import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
-  EstimationError,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import type { JSFModify, Result } from '@/src/flows/types';
+import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
@@ -31,7 +26,7 @@ import {
   FieldSetField,
   FieldSetProps,
 } from '@/src/components/form/fields/FieldSetField';
-import { prettifyFormValues } from '@/src/lib/utils';
+import { mutationToPromise } from '@/src/lib/mutations';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
 type CostCalculatorCountry = {
@@ -158,6 +153,8 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  const { mutateAsync: costCalculatorEstimationMutationAsync } =
+    mutationToPromise(costCalculatorEstimationMutation);
   const employeeBillingCurrency = selectedCountry?.currency;
 
   const salaryField = options?.jsfModify?.fields?.salary;
@@ -346,48 +343,10 @@ export const useCostCalculator = (
    * Submit the estimation form with the given values.
    * @param values
    */
-  async function onSubmit(
-    values: CostCalculatorEstimationSubmitValues,
-  ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
-    // Prettify values for the current step
-    if (fieldsMetaRef.current.fields) {
-      fieldsMetaRef.current.fields = prettifyFormValues(
-        values,
-        fieldsJSONSchema.fields,
-      );
-
-      fieldsMetaRef.current.fields['employer_currency_slug'] =
-        fieldsMetaRef.current.fields['currency'];
-    }
-
-    return new Promise((resolve, reject) => {
-      costCalculatorEstimationMutation.mutate(
-        buildPayload(values, estimationOptions, version),
-        {
-          onSuccess: (response) => {
-            if (response.data) {
-              resolve({
-                data: response.data,
-                error: null,
-              });
-            } else {
-              // 422 error with response body - REJECTS the promise
-              reject({
-                data: null,
-                error: response.error as PostCreateEstimationError,
-              });
-            }
-          },
-          onError: (error) => {
-            // Network errors, 4xx/5xx without response body
-            reject({
-              data: null,
-              error: error as PostCreateEstimationError,
-            });
-          },
-        },
-      );
-    });
+  async function onSubmit(values: CostCalculatorEstimationSubmitValues) {
+    return costCalculatorEstimationMutationAsync(
+      buildPayload(values, estimationOptions, version),
+    );
   }
 
   /**
@@ -655,7 +614,7 @@ export const useCostCalculator = (
      * Fields metadata
      */
     meta: {
-      fields: fieldsMetaRef.current,
+      fields: fieldsMetaRef.current?.fields,
     },
   };
 };
