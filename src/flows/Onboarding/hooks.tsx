@@ -8,11 +8,11 @@ import { Fields } from '@remoteoss/json-schema-form';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
-  prettifyFormValues,
   reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
 } from '@/src/flows/Onboarding/utils';
+import { prettifyFormValues } from '@/src/lib/utils';
 import {
   getInitialValues,
   enableAckFields,
@@ -20,7 +20,7 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
-import { Meta, OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
@@ -37,7 +37,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
-import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 
 type OnboardingHookProps = OnboardingFlowParams;

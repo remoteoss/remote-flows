@@ -171,3 +171,12 @@ declare global {
     };
   }
 }
+
+type MetaValues = {
+  label?: string;
+  prettyValue?: string | boolean;
+  inputType?: string;
+  desiredCurrency?: string;
+};
+
+export type Meta = Record<string, MetaValues>;

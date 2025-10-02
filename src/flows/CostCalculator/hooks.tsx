@@ -25,15 +25,13 @@ import {
   useCostCalculatorEstimation,
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
-import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField, Meta } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 import {
   FieldSetField,
   FieldSetProps,
 } from '@/src/components/form/fields/FieldSetField';
-import { Meta } from '@/src/flows/Onboarding/types';
-import { prettifyFormValues } from '@/src/flows/Onboarding/utils';
-
+import { prettifyFormValues } from '@/src/lib/utils';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
 type CostCalculatorCountry = {
