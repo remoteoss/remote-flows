@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Meta } from '@/src/flows/Onboarding/types';
+import { Meta } from '@/src/types/remoteFlows';
 import { UseMutationResult } from '@tanstack/react-query';
 
 type MutationData<T> =
