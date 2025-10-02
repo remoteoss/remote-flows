@@ -132,7 +132,6 @@ export const useCostCalculator = (
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
-
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
   const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
