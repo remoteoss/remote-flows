@@ -418,13 +418,17 @@ const AddEstimateForm = ({
               onSubmit={onSubmit}
               onErrorWithFields={({ error, fieldErrors }) => {
                 setErrorMessage(
-                  (error as $TSFixMe)?.error?.error?.message ||
-                    'An error occurred',
+                  (error as $TSFixMe)?.message || 'An error occurred',
                 );
                 setFieldErrors(fieldErrors);
               }}
               onSuccess={onSuccess}
             />
+            {errorMessage && fieldErrors.length === 0 && (
+              <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
+                <p>{errorMessage}</p>
+              </div>
+            )}
             {fieldErrors.length > 0 && errorMessage && (
               <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
                 <AlertError errors={{ apiError: errorMessage, fieldErrors }} />

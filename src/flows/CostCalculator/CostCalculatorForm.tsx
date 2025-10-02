@@ -13,7 +13,6 @@ import {
   NormalizedFieldError,
   normalizeFieldErrors,
 } from '@/src/lib/mutations';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type CostCalculatorFormProps = Partial<{
   /**
@@ -111,7 +110,7 @@ export function CostCalculatorForm({
       // if this rejects, catch will handle it
       await onSubmit?.(parsedValues);
 
-      if (costCalculatorResults?.data) {
+      if (costCalculatorResults?.data && !costCalculatorResults.error) {
         const responseWithTitle = {
           data: {
             ...costCalculatorResults.data.data,
@@ -124,6 +123,11 @@ export function CostCalculatorForm({
           },
         };
         await onSuccess?.(responseWithTitle);
+      } else {
+        throw {
+          data: null,
+          error: costCalculatorResults?.error,
+        };
       }
     } catch (err) {
       // Handles here the errors caused by the API
@@ -132,14 +136,14 @@ export function CostCalculatorForm({
       // Try to extract field errors from caught errors
       const fieldErrors = extractFieldErrors(error.error as Error);
 
-      if (onErrorWithFields && fieldErrors.length > 0) {
+      if (onErrorWithFields) {
         // Create field metadata for better error messages
         const fieldsMeta = costCalculatorBag?.meta?.fields;
 
         // Normalize field errors with user-friendly labels
         const normalizedFieldErrors = normalizeFieldErrors(
           fieldErrors,
-          fieldsMeta as $TSFixMe,
+          fieldsMeta,
         );
 
         onErrorWithFields({
