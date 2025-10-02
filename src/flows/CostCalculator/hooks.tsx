@@ -654,7 +654,6 @@ export const useCostCalculator = (
     /**
      * Fields metadata
      */
-
     meta: {
       fields: fieldsMetaRef.current,
     },
