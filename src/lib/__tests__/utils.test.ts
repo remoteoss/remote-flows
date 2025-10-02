@@ -1,3 +1,4 @@
+import { Fields } from '@remoteoss/json-schema-form';
 import { prettifyFormValues, sanitizeHtml } from '../utils';
 
 describe('utils lib', () => {
