@@ -40,6 +40,7 @@ export type {
   ButtonComponentProps,
   StatementComponentProps,
   ZendeskDrawerComponentProps,
+  Meta,
 } from '@/src/types/remoteFlows';
 
 export type {
