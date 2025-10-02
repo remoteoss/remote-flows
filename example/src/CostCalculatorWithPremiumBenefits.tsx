@@ -5,7 +5,6 @@ import type {
   CostCalculatorFlowProps,
   CostCalculatorEstimationResponse,
   CostCalculatorEstimation,
-  $TSFixMe,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import {
@@ -416,10 +415,14 @@ const AddEstimateForm = ({
           <Card>
             <CostCalculatorForm
               onSubmit={onSubmit}
-              onErrorWithFields={({ error, fieldErrors }) => {
-                setErrorMessage(
-                  (error as $TSFixMe)?.message || 'An error occurred',
-                );
+              onErrorWithFields={({
+                error,
+                fieldErrors,
+              }: {
+                error: Error;
+                fieldErrors: NormalizedFieldError[];
+              }) => {
+                setErrorMessage(error?.message || 'An error occurred');
                 setFieldErrors(fieldErrors);
               }}
               onSuccess={onSuccess}
