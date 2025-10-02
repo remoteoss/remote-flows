@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { fillEstimationForm } from './helpers';
+import { fillEstimationForm, setupVercelBypass } from './helpers';
 
 test.describe('edit estimation', () => {
   test.beforeEach(async ({ page }) => {
+    await setupVercelBypass(page);
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 

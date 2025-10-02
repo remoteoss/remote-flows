@@ -127,6 +127,7 @@ jobs:
         env:
           BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
+          DEBUG: pw:api
         working-directory: ./example
         run: npx playwright test --project=chromium
 
