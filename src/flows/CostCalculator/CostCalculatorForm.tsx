@@ -8,6 +8,12 @@ import {
   CostCalculatorEstimationSubmitValues,
   EstimationError,
 } from '@/src/flows/CostCalculator/types';
+import {
+  extractFieldErrors,
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type CostCalculatorFormProps = Partial<{
   /**
@@ -28,6 +34,19 @@ type CostCalculatorFormProps = Partial<{
    */
   onError: (error: EstimationError) => void;
   /**
+   * Enhanced callback function to handle errors with field-level details.
+   * @param error - The error object with field errors.
+   */
+  onErrorWithFields?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
+  /**
    * Whether to reset the form when the form is successfully submitted.
    */
   shouldResetForm?: boolean;
@@ -42,6 +61,7 @@ export function CostCalculatorForm({
   onSubmit,
   onError,
   onSuccess,
+  onErrorWithFields,
   shouldResetForm,
   resetFields,
 }: CostCalculatorFormProps) {
@@ -91,9 +111,7 @@ export function CostCalculatorForm({
       // if this rejects, catch will handle it
       await onSubmit?.(parsedValues);
 
-      if (costCalculatorResults?.error) {
-        onError?.(costCalculatorResults.error);
-      } else if (costCalculatorResults?.data) {
+      if (costCalculatorResults?.data) {
         const responseWithTitle = {
           data: {
             ...costCalculatorResults.data.data,
@@ -108,7 +126,41 @@ export function CostCalculatorForm({
         await onSuccess?.(responseWithTitle);
       }
     } catch (err) {
-      onError?.(err as EstimationError);
+      // Handles here the errors caused by the API
+      const error = err as { data: null; error: EstimationError };
+
+      // Try to extract field errors from caught errors
+      const fieldErrors = extractFieldErrors(error.error as Error);
+
+      if (onErrorWithFields && fieldErrors.length > 0) {
+        // Create field metadata for better error messages
+        const fieldsMeta = costCalculatorBag?.fields?.reduce(
+          (acc, field) => {
+            acc[field.name as $TSFixMe] = { label: field.label || field.name };
+            return acc;
+          },
+          {} as Record<string, { label: string }>,
+        );
+
+        if (fieldsMeta) {
+          fieldsMeta['employer_currency_slug'] = fieldsMeta['currency'];
+
+          // Normalize field errors with user-friendly labels
+          const normalizedFieldErrors = normalizeFieldErrors(
+            fieldErrors,
+            fieldsMeta as $TSFixMe,
+          );
+
+          onErrorWithFields({
+            error: error.error as Error,
+            rawError: error as Record<string, unknown>,
+            fieldErrors: normalizedFieldErrors,
+          });
+        }
+      } else {
+        // Fall back to the original error handler
+        onError?.(error.error);
+      }
     }
   };
 

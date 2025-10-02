@@ -197,5 +197,5 @@ export function buildPayload(
     employments: employments.map((value) =>
       mapValueToEmployment(value, estimationOptions, version),
     ),
-  };
+  } as $TSFixMe;
 }

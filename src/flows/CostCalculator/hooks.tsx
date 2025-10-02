@@ -132,6 +132,7 @@ export const useCostCalculator = (
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
+
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
   const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
@@ -344,15 +345,6 @@ export const useCostCalculator = (
   async function onSubmit(
     values: CostCalculatorEstimationSubmitValues,
   ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
-    try {
-      await validationSchema.validate(values, { abortEarly: false });
-    } catch (err) {
-      return {
-        data: null,
-        error: err as ValidationError,
-      };
-    }
-
     return new Promise((resolve, reject) => {
       costCalculatorEstimationMutation.mutate(
         buildPayload(values, estimationOptions, version),
@@ -364,6 +356,7 @@ export const useCostCalculator = (
                 error: null,
               });
             } else {
+              // 422 error with response body - REJECTS the promise
               reject({
                 data: null,
                 error: response.error as PostCreateEstimationError,
@@ -371,6 +364,7 @@ export const useCostCalculator = (
             }
           },
           onError: (error) => {
+            // Network errors, 4xx/5xx without response body
             reject({
               data: null,
               error: error as PostCreateEstimationError,

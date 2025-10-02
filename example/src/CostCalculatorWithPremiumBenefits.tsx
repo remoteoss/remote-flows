@@ -5,6 +5,8 @@ import type {
   CostCalculatorFlowProps,
   CostCalculatorEstimationResponse,
   CostCalculatorEstimation,
+  $TSFixMe,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -36,6 +38,7 @@ import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
+import { AlertError } from './AlertError';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
@@ -109,7 +112,6 @@ const DrawerEstimationForm = ({
   defaultValues,
   'data-testid': dataSelector,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   isDrawerOpen: boolean;
@@ -128,7 +130,6 @@ const DrawerEstimationForm = ({
   };
   'data-testid'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
-  onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   const triggerElement = isValidElement(Trigger) ? (
@@ -156,7 +157,6 @@ const DrawerEstimationForm = ({
               options={options}
               defaultValues={defaultValues}
               onSubmit={onSubmit}
-              onError={onError}
               onSuccess={onSuccess}
             />
           </Layout>
@@ -173,7 +173,6 @@ const EditEstimationForm = ({
   selectedEstimation,
   setIsDrawerOpen,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   isDrawerOpen: boolean;
@@ -214,7 +213,6 @@ const EditEstimationForm = ({
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
       onSubmit={onSubmit}
-      onError={onError}
       onSuccess={onSuccess}
     />
   );
@@ -225,7 +223,6 @@ const AddEstimateButton = ({
   buttonProps,
   defaultValues,
   onSubmit,
-  onError,
   onSuccess,
   isDrawerOpen,
   setIsDrawerOpen,
@@ -264,7 +261,6 @@ const AddEstimateButton = ({
         description: 'Estimate the cost of another hire through Remote',
       }}
       onSubmit={onSubmit}
-      onError={onError}
       onSuccess={onSuccess}
     />
   );
@@ -340,13 +336,11 @@ const ActionToolbar = ({
 
 const AddEstimateForm = ({
   onSubmit,
-  onError,
   onSuccess,
   defaultValues,
   options,
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
-  onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
   defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
     selectedCurrency?: string;
@@ -357,6 +351,7 @@ const AddEstimateForm = ({
   };
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<NormalizedFieldError[]>([]);
   return (
     <CostCalculatorFlow
       estimationOptions={{ ...estimationOptions, title: options.title }}
@@ -421,18 +416,18 @@ const AddEstimateForm = ({
           <Card>
             <CostCalculatorForm
               onSubmit={onSubmit}
-              onError={(error) => {
+              onErrorWithFields={({ error, fieldErrors }) => {
                 setErrorMessage(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (error as any)?.error?.error?.message || 'An error occurred',
+                  (error as $TSFixMe)?.error?.error?.message ||
+                    'An error occurred',
                 );
-                onError(error);
+                setFieldErrors(fieldErrors);
               }}
               onSuccess={onSuccess}
             />
-            {errorMessage && (
+            {fieldErrors.length > 0 && errorMessage && (
               <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
-                {errorMessage}
+                <AlertError errors={{ apiError: errorMessage, fieldErrors }} />
               </div>
             )}
 
@@ -454,7 +449,6 @@ const AddEstimateForm = ({
 const InitialForm = ({
   options,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   options: {
@@ -470,7 +464,6 @@ const InitialForm = ({
       <AddEstimateForm
         options={options}
         onSubmit={onSubmit}
-        onError={onError}
         onSuccess={onSuccess}
       />
     </>
