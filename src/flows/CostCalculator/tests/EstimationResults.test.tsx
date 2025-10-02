@@ -264,12 +264,12 @@ describe('EstimationResults', () => {
     // Check if main sections are present
     expect(screen.getByText('Monthly total cost')).toBeInTheDocument();
     expect(screen.getByText('Annual total cost')).toBeInTheDocument();
-    expect(screen.getAllByText('Core benefits')).toHaveLength(2);
+    expect(screen.getAllByText('Benefits')).toHaveLength(2);
     expect(screen.getAllByText('Mandatory employer costs')).toHaveLength(2);
 
     // Check if breakdown items are expandable
-    const coreBenefitsSection = screen.getAllByText('Core benefits')[0];
-    fireEvent.click(coreBenefitsSection);
+    const benefitsSection = screen.getAllByText('Benefits')[0];
+    fireEvent.click(benefitsSection);
 
     // Verify that breakdown items are visible
     expect(screen.getByText('Gross monthly salary')).toBeInTheDocument();
@@ -282,8 +282,8 @@ describe('EstimationResults', () => {
     render(<EstimationResults {...defaultProps} />, { wrapper });
 
     // Find and expand Core Benefits section
-    const coreBenefitsSection = screen.getAllByText('Core benefits')[0];
-    fireEvent.click(coreBenefitsSection);
+    const benefitsSection = screen.getAllByText('Benefits')[0];
+    fireEvent.click(benefitsSection);
 
     // Check the Allianz Premium benefit amounts
     const allianzBenefit = screen.getByText(
