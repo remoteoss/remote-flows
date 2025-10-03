@@ -4,8 +4,7 @@ import type {
   TerminationFormValues,
   OffboardingResponse,
 } from '@remoteoss/remote-flows';
-import { useState } from 'react';
-import { TerminationDialog } from './TerminationDialog';
+import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
@@ -18,15 +17,10 @@ const STEPS = [
   'Additional Information',
 ];
 
-const TerminationReasonDetailsDescription = ({
-  onClick,
-}: {
-  onClick: () => void;
-}) => (
+const TerminationReasonDetailsDescription = () => (
   <>
     Make sure you choose an accurate termination reason to avoid unfair or
-    unlawful dismissal claims.{' '}
-    <a onClick={onClick}>Learn more termination details</a>
+    unlawful dismissal claims. <TerminationReasonsDialog />
   </>
 );
 
@@ -185,7 +179,6 @@ const TerminationForm = ({
 };
 
 export const Termination = () => {
-  const [open, setOpen] = useState(false);
   const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
   const proxyURL = window.location.origin;
   return (
@@ -198,17 +191,12 @@ export const Termination = () => {
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
               termination_reason: {
-                description: () => (
-                  <TerminationReasonDetailsDescription
-                    onClick={() => setOpen(true)}
-                  />
-                ),
+                description: <TerminationReasonDetailsDescription />,
               },
             },
           },
         }}
       />
-      <TerminationDialog open={open} setOpen={setOpen} />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
   );
