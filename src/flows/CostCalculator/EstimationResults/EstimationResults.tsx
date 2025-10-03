@@ -304,8 +304,8 @@ function EstimationRow({
 
   return (
     <div className={cn('RemoteFlows__EstimationResults__Row', className)}>
-      <div className='grid grid-cols-3 items-center'>
-        <div className='flex items-center gap-2'>
+      <div className='RemoteFlows__EstimationRow__Grid grid grid-cols-3 items-center'>
+        <div className='RemoteFlows__EstimationRow__LabelContainer flex items-center gap-2'>
           <span
             className={cn(
               'RemoteFlows__EstimationRow__Title min-w-[140px] font-medium text-[#09090B]',
@@ -396,11 +396,16 @@ function BreakdownListItem({
       <div
         className={cn(
           isMultipleCurrency
-            ? 'grid grid-cols-3 items-center justify-between'
-            : 'grid grid-cols-2 items-center justify-between',
+            ? 'RemoteFlows__BreakdownList__Grid grid grid-cols-3 items-center justify-between'
+            : 'RemoteFlows__BreakdownList__Grid grid grid-cols-2 items-center justify-between',
         )}
       >
-        <div className={cn('flex items-center gap-2', isNested && 'pl-3')}>
+        <div
+          className={cn(
+            'RemoteFlows__BreakdownList__LabelContainer flex items-center gap-2',
+            isNested && 'pl-3',
+          )}
+        >
           {!isNested && (
             <span
               className='RemoteFlows__BreakdownList__Bullet w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0'
@@ -411,7 +416,7 @@ function BreakdownListItem({
           {isCollapsible ? (
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className='flex items-center gap-2 hover:bg-gray-100 rounded p-1'
+              className='RemoteFlows__BreakdownList__CollapseButton flex items-center gap-2 hover:bg-gray-100 rounded p-1'
             >
               <span
                 className={cn(
@@ -423,7 +428,7 @@ function BreakdownListItem({
                 {item.label}
               </span>
               <ChevronDown
-                className={`h-3 w-3 text-muted-foreground transition-transform ${
+                className={`RemoteFlows__BreakdownList__ChevronDown h-3 w-3 text-muted-foreground transition-transform ${
                   isOpen ? 'rotate-180' : ''
                 }`}
               />
@@ -456,7 +461,7 @@ function BreakdownListItem({
               <button className='RemoteFlows__BreakdownList__InfoButton p-1 hover:bg-gray-100 rounded'>
                 <Info
                   className={cn(
-                    'text-muted-foreground',
+                    'RemoteFlows__BreakdownList__InfoButton__Icon text-muted-foreground',
                     isNested ? 'h-3 w-3' : 'h-4 w-4',
                   )}
                 />

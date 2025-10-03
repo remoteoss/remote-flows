@@ -79,16 +79,16 @@ const SummaryHeader = ({
   title: string;
 }) => {
   return (
-    <div className='flex items-center justify-between w-full'>
-      <div className='flex flex-row items-center gap-6'>
-        <div className='flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
-          <Globe className='h-6 w-6 text-[#000000]' />
+    <div className='RemoteFlows__SummaryResults__Header flex items-center justify-between w-full'>
+      <div className='RemoteFlows__SummaryHeader__Container flex flex-row items-center gap-6'>
+        <div className='RemoteFlows__SummaryHeader__IconContainer flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
+          <Globe className='RemoteFlows__SummaryHeader__Icon h-6 w-6 text-[#000000]' />
         </div>
-        <div className='space-y-1'>
-          <h2 className='text-lg font-medium leading-none text-[#181818]'>
+        <div className='RemoteFlows__SummaryHeader__Content space-y-1'>
+          <h2 className='RemoteFlows__SummaryHeader__Title text-lg font-medium leading-none text-[#181818]'>
             {title}
           </h2>
-          <p className='text-xs text-[#71717A]'>
+          <p className='RemoteFlows__SummaryHeader__Currency text-xs text-[#71717A]'>
             Employer billing currency: {currency.code}
           </p>
         </div>
@@ -120,22 +120,36 @@ const MultiColumnAccordion = ({
       type='single'
       collapsible
       defaultValue={defaultValue}
-      className={cn('w-full', className)}
+      className={cn(
+        'RemoteFlows__SummaryResults__MultiColumnAccordion w-full',
+        className,
+      )}
     >
-      <AccordionItem value={defaultValue} className='border-none'>
-        <AccordionTrigger className='hover:no-underline px-0 py-3 [&>svg]:hidden group'>
-          <div className={cn('grid items-center w-full', gridCols)}>
-            <div className='flex items-center gap-2'>
+      <AccordionItem
+        value={defaultValue}
+        className='RemoteFlows__SummaryResults__AccordionItem border-none'
+      >
+        <AccordionTrigger className='RemoteFlows__SummaryResults__AccordionTrigger hover:no-underline px-0 py-3 [&>svg]:hidden group'>
+          <div
+            className={cn(
+              'RemoteFlows__SummaryResults__AccordionHeader grid items-center w-full',
+              gridCols,
+            )}
+          >
+            <div className='RemoteFlows__SummaryResults__AccordionHeader__LabelContainer flex items-center gap-2'>
               {label}
-              <ChevronDown className='h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180' />
+              <ChevronDown className='RemoteFlows__SummaryResults__ChevronDown h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180' />
             </div>
             {columns.length === 1 ? (
-              <span className='text-xs text-[#27272A] text-right'>
+              <span className='RemoteFlows__SummaryResults__ColumnHeader text-xs text-[#27272A] text-right'>
                 {columns[0]}
               </span>
             ) : (
               columns.map((column, index) => (
-                <span key={index} className='text-xs text-[#27272A] text-right'>
+                <span
+                  key={index}
+                  className='RemoteFlows__SummaryResults__ColumnHeader text-xs text-[#27272A] text-right'
+                >
                   {column}
                 </span>
               ))
@@ -143,20 +157,26 @@ const MultiColumnAccordion = ({
           </div>
         </AccordionTrigger>
 
-        <AccordionContent className='px-0 pb-4'>
-          <div className='space-y-3'>
+        <AccordionContent className='RemoteFlows__SummaryResults__AccordionContent px-0 pb-4'>
+          <div className='RemoteFlows__SummaryResults__AccordionRows space-y-3'>
             {rows.map((row, index) => (
-              <div key={index} className={cn('grid items-center', gridCols)}>
+              <div
+                key={index}
+                className={cn(
+                  'RemoteFlows__SummaryResults__AccordionRow grid items-center',
+                  gridCols,
+                )}
+              >
                 <div className='flex items-center gap-2'>{row.label}</div>
                 {columns.length === 1 ? (
-                  <span className='text-sm text-[#09090B] text-right'>
+                  <span className='RemoteFlows__SummaryResults__RowValue text-sm text-[#09090B] text-right'>
                     {row.values[0]}
                   </span>
                 ) : (
                   row.values.map((value, valueIndex) => (
                     <span
                       key={valueIndex}
-                      className='text-sm text-[#09090B] text-right'
+                      className='RemoteFlows__SummaryResults__RowValue text-sm text-[#09090B] text-right'
                     >
                       {value}
                     </span>
@@ -179,7 +199,7 @@ const CostForAllEmployees = ({
   return (
     <MultiColumnAccordion
       label={
-        <span className='text-sm font-medium text-[#0F172A]'>
+        <span className='RemoteFlows__CostForAllEmployees__Label text-sm font-medium text-[#0F172A]'>
           Cost for all employees
         </span>
       }
@@ -188,8 +208,10 @@ const CostForAllEmployees = ({
         {
           label: (
             <>
-              <span className='w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
-              <span className='text-sm text-[#09090B]'>Monthly cost</span>
+              <span className='RemoteFlows__CostForAllEmployees__Bullet w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
+              <span className='RemoteFlows__CostForAllEmployees__MonthlyLabel text-sm text-[#09090B]'>
+                Monthly cost
+              </span>
             </>
           ),
           values: [employeesCost.monthlyTotal],
@@ -197,8 +219,10 @@ const CostForAllEmployees = ({
         {
           label: (
             <>
-              <span className='w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
-              <span className='text-sm text-[#09090B]'>Annual cost</span>
+              <span className='RemoteFlows__CostForAllEmployees__Bullet w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
+              <span className='RemoteFlows__CostForAllEmployees__AnnualLabel text-sm text-[#09090B]'>
+                Annual cost
+              </span>
             </>
           ),
           values: [employeesCost.annualTotal],
@@ -221,7 +245,7 @@ const CostsPerCountry = ({
   return (
     <MultiColumnAccordion
       label={
-        <span className='text-sm font-medium text-[#0F172A]'>
+        <span className='RemoteFlows__CostsPerCountry__Label text-sm font-medium text-[#0F172A]'>
           Cost per country
         </span>
       }
@@ -229,8 +253,10 @@ const CostsPerCountry = ({
       rows={costsPerCountry.map((cost) => ({
         label: (
           <>
-            <span className='w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
-            <span className='text-sm text-[#09090B]'>{cost.country.name}</span>
+            <span className='RemoteFlows__CostsPerCountry__Bullet w-1 h-1 bg-[#09090B] rounded-full flex-shrink-0' />
+            <span className='RemoteFlows__CostsPerCountry__CountryName text-sm text-[#09090B]'>
+              {cost.country.name}
+            </span>
           </>
         ),
         values: [cost.monthlyCost, cost.annualCost],
@@ -275,24 +301,30 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
         onValueChange={setAccordionValue}
         className='RemoteFlows__SummaryResults__Accordion w-full'
       >
-        <AccordionItem value='summary' className='border-border'>
+        <AccordionItem
+          value='summary'
+          className='RemoteFlows__SummaryResults__AccordionItem border-border'
+        >
           <div
-            className={cn({
-              RemoteFlows__Separator: accordionValue === 'summary',
-            })}
+            className={cn(
+              'RemoteFlows__SummaryResults__AccordionTriggerContainer',
+              {
+                RemoteFlows__Separator: accordionValue === 'summary',
+              },
+            )}
           >
             <AccordionTrigger
               iconClassName='size-6'
-              className='hover:no-underline px-0 py-4'
+              className='RemoteFlows__SummaryResults__MainAccordionTrigger hover:no-underline px-0 py-4'
             >
               <SummaryHeader currency={currency} title='Summary Overview' />
             </AccordionTrigger>
           </div>
-          <AccordionContent className='px-0 pb-4 mt-6'>
+          <AccordionContent className='RemoteFlows__SummaryResults__MainAccordionContent px-0 pb-4 mt-6'>
             <div className='RemoteFlows__Separator'>
               <CostForAllEmployees employeesCost={employeesCost} />
             </div>
-            <div className='mt-6'>
+            <div className='RemoteFlows__SummaryResults__CostsPerCountryContainer mt-6'>
               <CostsPerCountry costsPerCountry={costsPerCountry} />
             </div>
           </AccordionContent>
