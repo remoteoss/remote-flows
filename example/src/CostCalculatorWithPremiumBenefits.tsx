@@ -5,6 +5,7 @@ import type {
   CostCalculatorFlowProps,
   CostCalculatorEstimationResponse,
   CostCalculatorEstimation,
+  NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import {
   buildCostCalculatorEstimationPayload,
@@ -32,6 +33,7 @@ import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
 import { downloadFile } from './utils';
+import { AlertError } from './AlertError';
 import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
@@ -109,7 +111,6 @@ const DrawerEstimationForm = ({
   defaultValues,
   'data-testid': dataSelector,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   isDrawerOpen: boolean;
@@ -128,7 +129,6 @@ const DrawerEstimationForm = ({
   };
   'data-testid'?: string;
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
-  onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
 }) => {
   const triggerElement = isValidElement(Trigger) ? (
@@ -156,7 +156,6 @@ const DrawerEstimationForm = ({
               options={options}
               defaultValues={defaultValues}
               onSubmit={onSubmit}
-              onError={onError}
               onSuccess={onSuccess}
             />
           </Layout>
@@ -173,7 +172,6 @@ const EditEstimationForm = ({
   selectedEstimation,
   setIsDrawerOpen,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   isDrawerOpen: boolean;
@@ -214,7 +212,6 @@ const EditEstimationForm = ({
       isDrawerOpen={isDrawerOpen}
       setIsDrawerOpen={setIsDrawerOpen}
       onSubmit={onSubmit}
-      onError={onError}
       onSuccess={onSuccess}
     />
   );
@@ -225,7 +222,6 @@ const AddEstimateButton = ({
   buttonProps,
   defaultValues,
   onSubmit,
-  onError,
   onSuccess,
   isDrawerOpen,
   setIsDrawerOpen,
@@ -264,7 +260,6 @@ const AddEstimateButton = ({
         description: 'Estimate the cost of another hire through Remote',
       }}
       onSubmit={onSubmit}
-      onError={onError}
       onSuccess={onSuccess}
     />
   );
@@ -340,13 +335,11 @@ const ActionToolbar = ({
 
 const AddEstimateForm = ({
   onSubmit,
-  onError,
   onSuccess,
   defaultValues,
   options,
 }: {
   onSubmit: (payload: CostCalculatorEstimationSubmitValues) => void;
-  onError: (error: EstimationError) => void;
   onSuccess: (response: CostCalculatorEstimationResponse) => void;
   defaultValues?: CostCalculatorFlowProps['defaultValues'] & {
     selectedCurrency?: string;
@@ -357,6 +350,7 @@ const AddEstimateForm = ({
   };
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<NormalizedFieldError[]>([]);
   return (
     <CostCalculatorFlow
       estimationOptions={{ ...estimationOptions, title: options.title }}
@@ -421,21 +415,23 @@ const AddEstimateForm = ({
           <Card>
             <CostCalculatorForm
               onSubmit={onSubmit}
-              onError={(error) => {
-                setErrorMessage(
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (error as any)?.error?.error?.message || 'An error occurred',
-                );
-                onError(error);
+              onErrorWithFields={({
+                error,
+                fieldErrors,
+              }: {
+                error: Error;
+                fieldErrors: NormalizedFieldError[];
+              }) => {
+                setErrorMessage(error?.message || 'An error occurred');
+                setFieldErrors(fieldErrors);
               }}
               onSuccess={onSuccess}
             />
             {errorMessage && (
               <div className='flex justify-center mt-10 text-red-600 text-center mb-4'>
-                {errorMessage}
+                <AlertError errors={{ apiError: errorMessage, fieldErrors }} />
               </div>
             )}
-
             <div className='flex justify-center mt-10'>
               <CostCalculatorSubmitButton
                 className='submit-button'
@@ -454,7 +450,6 @@ const AddEstimateForm = ({
 const InitialForm = ({
   options,
   onSubmit,
-  onError,
   onSuccess,
 }: {
   options: {
@@ -470,7 +465,6 @@ const InitialForm = ({
       <AddEstimateForm
         options={options}
         onSubmit={onSubmit}
-        onError={onError}
         onSuccess={onSuccess}
       />
     </>

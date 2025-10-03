@@ -32,6 +32,7 @@ const wrapper = ({ children }: PropsWithChildren) => (
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
+const mockOnErrorWithFields = vi.fn();
 const onResetHandler = vi.fn();
 
 const defaultProps = {
@@ -48,6 +49,7 @@ function renderComponent(
     defaultValues: defaultProps.defaultValues,
   },
   onReset: typeof onResetHandler = onResetHandler,
+  onErrorWithFields?: typeof mockOnErrorWithFields,
 ) {
   return render(
     <CostCalculatorFlow
@@ -60,7 +62,10 @@ function renderComponent(
           <div>
             <CostCalculatorForm
               onSubmit={mockOnSubmit}
-              onError={mockOnError}
+              onError={!onErrorWithFields ? mockOnError : undefined}
+              onErrorWithFields={
+                onErrorWithFields ? onErrorWithFields : undefined
+              }
               onSuccess={mockOnSuccess}
             />
             <CostCalculatorSubmitButton>
@@ -211,6 +216,48 @@ describe('CostCalculatorFlow', () => {
 
     await waitFor(() => {
       expect(mockOnError).toHaveBeenCalled();
+    });
+  });
+
+  it('should call onErrorWithFields callback when estimation fails', async () => {
+    server.use(
+      http.post('*/v1/cost-calculator/estimation', () => {
+        return HttpResponse.json(
+          {
+            errors: {
+              employer_currency_slug: ['Missing field'],
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+    renderComponent(undefined, undefined, mockOnErrorWithFields);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    await waitFor(() => {
+      expect(mockOnErrorWithFields).toHaveBeenCalled();
+    });
+
+    expect(mockOnErrorWithFields).toHaveBeenCalledWith({
+      rawError: {
+        errors: {
+          employer_currency_slug: ['Missing field'],
+        },
+      },
+      error: new Error('Something went wrong. Please try again later.'),
+      fieldErrors: [
+        {
+          field: 'employer_currency_slug',
+          messages: ['Missing field'],
+          userFriendlyLabel: 'Currency',
+        },
+      ],
     });
   });
 

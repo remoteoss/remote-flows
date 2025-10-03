@@ -8,6 +8,13 @@ import {
   CostCalculatorEstimationSubmitValues,
   EstimationError,
 } from '@/src/flows/CostCalculator/types';
+import {
+  FieldError,
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
+import { prettifyFormValues } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type CostCalculatorFormProps = Partial<{
   /**
@@ -28,6 +35,18 @@ type CostCalculatorFormProps = Partial<{
    */
   onError: (error: EstimationError) => void;
   /**
+   * Enhanced callback function to handle errors with field-level details.
+   * @param error - The error object with field errors.
+   */
+  onErrorWithFields?: ({
+    error,
+    fieldErrors,
+  }: {
+    error: Error;
+    fieldErrors: NormalizedFieldError[];
+    rawError: Record<string, unknown>;
+  }) => void;
+  /**
    * Whether to reset the form when the form is successfully submitted.
    */
   shouldResetForm?: boolean;
@@ -42,6 +61,7 @@ export function CostCalculatorForm({
   onSubmit,
   onError,
   onSuccess,
+  onErrorWithFields,
   shouldResetForm,
   resetFields,
 }: CostCalculatorFormProps) {
@@ -85,30 +105,72 @@ export function CostCalculatorForm({
         values,
       ) as CostCalculatorEstimationSubmitValues;
 
+      if (costCalculatorBag?.meta?.fields) {
+        costCalculatorBag.meta.fields = prettifyFormValues(
+          values,
+          costCalculatorBag.fields,
+        );
+        costCalculatorBag.meta.fields['employer_currency_slug'] =
+          costCalculatorBag.meta.fields['currency'];
+      }
+
       const costCalculatorResults =
         await costCalculatorBag?.onSubmit(parsedValues);
 
       // if this rejects, catch will handle it
       await onSubmit?.(parsedValues);
 
-      if (costCalculatorResults?.error) {
-        onError?.(costCalculatorResults.error);
-      } else if (costCalculatorResults?.data) {
+      if (costCalculatorResults?.data && !costCalculatorResults.error) {
         const responseWithTitle = {
           data: {
             ...costCalculatorResults.data.data,
-            employments: costCalculatorResults.data.data.employments?.map(
-              (employment) => ({
-                ...employment,
-                title: parsedValues.estimation_title,
-              }),
-            ),
+            employments: (
+              costCalculatorResults as $TSFixMe
+            ).data.data.employments?.map((employment: $TSFixMe) => ({
+              ...employment,
+              title: parsedValues.estimation_title,
+            })),
           },
         };
         await onSuccess?.(responseWithTitle);
+      } else {
+        throw {
+          data: null,
+          error: costCalculatorResults?.error,
+          fieldErrors: costCalculatorResults?.fieldErrors,
+          rawError: costCalculatorResults?.rawError,
+        };
       }
     } catch (err) {
-      onError?.(err as EstimationError);
+      // Handles here the errors caused by the API
+      const error = err as {
+        data: null;
+        error: EstimationError;
+        fieldErrors: FieldError[];
+        rawError: Record<string, unknown>;
+      };
+
+      const fieldErrors = error.fieldErrors;
+
+      if (onErrorWithFields) {
+        // Create field metadata for better error messages
+        const fieldsMeta = costCalculatorBag?.meta?.fields;
+
+        // Normalize field errors with user-friendly labels
+        const normalizedFieldErrors = normalizeFieldErrors(
+          fieldErrors,
+          fieldsMeta,
+        );
+
+        onErrorWithFields({
+          error: error.error as Error,
+          rawError: error.rawError as Record<string, unknown>,
+          fieldErrors: normalizedFieldErrors,
+        });
+      } else {
+        // Fall back to the original error handler
+        onError?.(error.error);
+      }
     }
   };
 

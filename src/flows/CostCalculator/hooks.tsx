@@ -1,22 +1,17 @@
-import {
-  CostCalculatorEstimateResponse,
-  MinimalRegion,
-  PostCreateEstimationError,
-} from '@/src/client';
+import { MinimalRegion } from '@/src/client';
 import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
-  EstimationError,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import type { JSFModify, Result } from '@/src/flows/types';
+import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/yupValidationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
 import {
@@ -25,13 +20,13 @@ import {
   useCostCalculatorEstimation,
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
-import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField, Meta } from '@/src/types/remoteFlows';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 import {
   FieldSetField,
   FieldSetProps,
 } from '@/src/components/form/fields/FieldSetField';
-
+import { mutationToPromise } from '@/src/lib/mutations';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
 type CostCalculatorCountry = {
@@ -129,6 +124,11 @@ export const useCostCalculator = (
     estimationOptions: defaultEstimationOptions,
   },
 ) => {
+  const fieldsMetaRef = useRef<{
+    fields: Meta;
+  }>({
+    fields: {},
+  });
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -153,6 +153,8 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  const { mutateAsync: costCalculatorEstimationMutationAsync } =
+    mutationToPromise(costCalculatorEstimationMutation);
   const employeeBillingCurrency = selectedCountry?.currency;
 
   const salaryField = options?.jsfModify?.fields?.salary;
@@ -341,44 +343,10 @@ export const useCostCalculator = (
    * Submit the estimation form with the given values.
    * @param values
    */
-  async function onSubmit(
-    values: CostCalculatorEstimationSubmitValues,
-  ): Promise<Result<CostCalculatorEstimateResponse, EstimationError>> {
-    try {
-      await validationSchema.validate(values, { abortEarly: false });
-    } catch (err) {
-      return {
-        data: null,
-        error: err as ValidationError,
-      };
-    }
-
-    return new Promise((resolve, reject) => {
-      costCalculatorEstimationMutation.mutate(
-        buildPayload(values, estimationOptions, version),
-        {
-          onSuccess: (response) => {
-            if (response.data) {
-              resolve({
-                data: response.data,
-                error: null,
-              });
-            } else {
-              reject({
-                data: null,
-                error: response.error as PostCreateEstimationError,
-              });
-            }
-          },
-          onError: (error) => {
-            reject({
-              data: null,
-              error: error as PostCreateEstimationError,
-            });
-          },
-        },
-      );
-    });
+  async function onSubmit(values: CostCalculatorEstimationSubmitValues) {
+    return costCalculatorEstimationMutationAsync(
+      buildPayload(values, estimationOptions, version),
+    );
   }
 
   /**
@@ -641,5 +609,12 @@ export const useCostCalculator = (
      * Currencies data useful to get the currency if you have a currencySlug
      */
     currencies,
+
+    /**
+     * Fields metadata
+     */
+    meta: {
+      fields: fieldsMetaRef.current?.fields,
+    },
   };
 };
