@@ -11,9 +11,21 @@ import { ContractOptionsStep } from '@/src/flows/ContractorOnboarding/components
 
 export const ContractorOnboardingFlow = ({
   render,
+  employmentId,
+  externalId,
+  countryCode,
+  skipSteps,
+  initialValues,
   options,
 }: ContractorOnboardingFlowProps) => {
-  const contractorOnboardingBag = useContractorOnboarding({ options });
+  const contractorOnboardingBag = useContractorOnboarding({
+    options,
+    employmentId,
+    externalId,
+    countryCode,
+    skipSteps,
+    initialValues,
+  });
   const formId = useId();
   return (
     <ContractorOnboardingContext.Provider

@@ -224,15 +224,17 @@ type OnboardingFormData = {
 const OnboardingWithProps = ({
   employmentId,
   externalId,
-}: OnboardingFormData) => (
-  <RemoteFlows>
-    <ContractorOnboardingFlow
-      render={OnBoardingRender}
-      employmentId={employmentId}
-      externalId={externalId}
-    />
-  </RemoteFlows>
-);
+}: OnboardingFormData) => {
+  return (
+    <RemoteFlows>
+      <ContractorOnboardingFlow
+        render={OnBoardingRender}
+        employmentId={employmentId}
+        externalId={externalId}
+      />
+    </RemoteFlows>
+  );
+};
 
 export const ContractorOnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
