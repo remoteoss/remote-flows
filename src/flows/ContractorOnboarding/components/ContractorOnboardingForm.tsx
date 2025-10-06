@@ -3,21 +3,19 @@ import { Form } from '@/src/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
-import {
-  BasicInformationFormPayload,
-  BenefitsFormPayload,
-  ContractDetailsFormPayload,
-} from '@/src/flows/Onboarding/types';
+import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { useEffect } from 'react';
+import { PricingPlanFormPayload } from '@/src/flows/ContractorOnboarding/types';
+import { ContractOptionsFormPayload } from '@/src/flows/ContractorOnboarding/types';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
     payload:
       | BasicInformationFormPayload
-      | BenefitsFormPayload
-      | ContractDetailsFormPayload,
+      | PricingPlanFormPayload
+      | ContractOptionsFormPayload,
   ) => void;
   components?: Components;
   fields?: Fields;
