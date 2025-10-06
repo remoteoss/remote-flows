@@ -1,5 +1,7 @@
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
+import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
+import { FlowOptions } from '@/src/flows/types';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -10,8 +12,13 @@ export type ContractorOnboardingRenderProps = {
   contractorOnboardingBag: ReturnType<typeof useContractorOnboarding>;
   /**
    * The components used in the contractor onboarding flow.
+   * @see {@link BasicInformationStep}
+   * @see {@link SelectCountryStep}
    */
-  components: Record<string, React.ComponentType<$TSFixMe>>;
+  components: {
+    BasicInformationStep: typeof BasicInformationStep;
+    SelectCountryStep: typeof SelectCountryStep;
+  };
 };
 
 export type ContractorOnboardingFlowProps = {
@@ -22,4 +29,8 @@ export type ContractorOnboardingFlowProps = {
     contractorOnboardingBag,
     components,
   }: ContractorOnboardingRenderProps) => React.ReactNode;
+  /**
+   * The options for the contractor onboarding flow.
+   */
+  options?: FlowOptions;
 };

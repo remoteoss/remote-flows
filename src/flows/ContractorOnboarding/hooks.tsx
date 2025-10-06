@@ -1,3 +1,4 @@
+import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import { STEPS } from '@/src/flows/ContractorOnboarding/utils';
 import { JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
@@ -6,10 +7,18 @@ const stepToFormSchemaMap: Record<
   keyof typeof STEPS,
   JSONSchemaFormType | null
 > = {
+  select_country: null,
   basic_information: 'employment_basic_information',
 };
 
-export const useContractorOnboarding = () => {
+type useContractorOnboardingProps = Omit<
+  ContractorOnboardingFlowProps,
+  'render'
+>;
+
+export const useContractorOnboarding = ({
+  options,
+}: useContractorOnboardingProps) => {
   const {
     fieldValues,
     stepState,

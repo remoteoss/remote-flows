@@ -1,3 +1,4 @@
+import { SelectCountryStep } from '@/src/flows/ContractorOnboarding/components/SelectCountryStep';
 import { ContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
@@ -6,8 +7,9 @@ import { useId } from 'react';
 
 export const ContractorOnboardingFlow = ({
   render,
+  options,
 }: ContractorOnboardingFlowProps) => {
-  const contractorOnboardingBag = useContractorOnboarding();
+  const contractorOnboardingBag = useContractorOnboarding({ options });
   const formId = useId();
   return (
     <ContractorOnboardingContext.Provider
@@ -17,6 +19,7 @@ export const ContractorOnboardingFlow = ({
         contractorOnboardingBag,
         components: {
           BasicInformationStep: BasicInformationStep,
+          SelectCountryStep: SelectCountryStep,
         },
       })}
     </ContractorOnboardingContext.Provider>
