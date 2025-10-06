@@ -1,5 +1,6 @@
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
+import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
@@ -17,12 +18,18 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link BasicInformationStep}
    * @see {@link SelectCountryStep}
    * @see {@link OnboardingBack}
+   * @see {@link PricingPlanStep}
+   * @see {@link ContractOptionsStep}
+   * @see {@link OnboardingSubmit}
+   * @see {@link OnboardingBack}
    */
   components: {
     BasicInformationStep: typeof BasicInformationStep;
     SelectCountryStep: typeof SelectCountryStep;
     BackButton: typeof OnboardingBack;
     SubmitButton: typeof OnboardingSubmit;
+    PricingPlanStep: typeof PricingPlanStep;
+    ContractOptionsStep: typeof ContractOptionsStep;
   };
 };
 

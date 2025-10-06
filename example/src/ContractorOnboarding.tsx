@@ -12,7 +12,12 @@ import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import './css/main.css';
 
-const STEPS = ['Select Country', 'Basic Information', 'Contract Details'];
+const STEPS = [
+  'Select Country',
+  'Basic Information',
+  'Pricing Plan',
+  'Contract Options',
+];
 
 type MultiStepFormProps = {
   contractorOnboardingBag: ContractorOnboardingRenderProps['contractorOnboardingBag'];
@@ -23,8 +28,14 @@ const MultiStepForm = ({
   components,
   contractorOnboardingBag,
 }: MultiStepFormProps) => {
-  const { BasicInformationStep, SubmitButton, BackButton, SelectCountryStep } =
-    components;
+  const {
+    BasicInformationStep,
+    SubmitButton,
+    BackButton,
+    SelectCountryStep,
+    PricingPlanStep,
+    ContractOptionsStep,
+  } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
     fieldErrors: NormalizedFieldError[];
@@ -95,6 +106,20 @@ const MultiStepForm = ({
           </div>
         </>
       );
+
+    case 'pricing_plan':
+      return (
+        <>
+          <PricingPlanStep />
+        </>
+      );
+
+    case 'contract_options':
+      return (
+        <>
+          <ContractOptionsStep />
+        </>
+      );
   }
 };
 
@@ -139,21 +164,18 @@ const OnBoardingRender = ({
 type OnboardingFormData = {
   countryCode?: string;
   companyId: string;
-  type: 'employee' | 'contractor';
   employmentId: string;
   externalId?: string;
 };
 
 const OnboardingWithProps = ({
   companyId,
-  type,
   employmentId,
   externalId,
 }: OnboardingFormData) => (
   <RemoteFlows>
     <ContractorOnboardingFlow
       companyId={companyId}
-      type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
@@ -197,26 +219,6 @@ export const ContractorOnboardingForm = () => {
           placeholder='e.g. Your Company ID'
           className='onboarding-form-input'
         />
-      </div>
-      <div className='onboarding-form-group'>
-        <label htmlFor='type' className='onboarding-form-label'>
-          Type:
-        </label>
-        <select
-          id='type'
-          value={formData.type}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              type: e.target.value as 'employee' | 'contractor',
-            }))
-          }
-          required
-          className='onboarding-form-select'
-        >
-          <option value='employee'>Employee</option>
-          <option value='contractor'>Contractor</option>
-        </select>
       </div>
       <div className='onboarding-form-group'>
         <label htmlFor='employmentId' className='onboarding-form-label'>

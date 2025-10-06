@@ -1,2 +1,5 @@
 export { ContractorOnboardingFlow } from './ContractorOnboarding';
-export type { ContractorOnboardingFlowProps } from './types';
+export type {
+  ContractorOnboardingFlowProps,
+  ContractorOnboardingRenderProps,
+} from './types';

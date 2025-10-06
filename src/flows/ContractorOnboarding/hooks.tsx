@@ -35,6 +35,8 @@ const stepToFormSchemaMap: Record<
 > = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  pricing_plan: null,
+  contract_options: null,
 };
 
 const jsonSchemaToEmployment: Partial<
@@ -182,6 +184,8 @@ export const useContractorOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
+      pricing_plan: [],
+      contract_options: [],
     }),
     [selectCountryForm?.fields, basicInformationForm?.fields],
   );
@@ -192,6 +196,8 @@ export const useContractorOnboarding = ({
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    pricing_plan: null,
+    contract_options: null,
   };
 
   const { country, basic_information: employmentBasicInformation = {} } =
@@ -224,6 +230,8 @@ export const useContractorOnboarding = ({
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      pricing_plan: {},
+      contract_options: {},
     };
   }, [selectCountryInitialValues, basicInformationInitialValues]);
 
@@ -412,5 +420,10 @@ export const useContractorOnboarding = ({
      * Initial form values
      */
     initialValues,
+
+    /**
+     * Employment id
+     */
+    employmentId: internalEmploymentId,
   };
 };
