@@ -1,7 +1,11 @@
+import { getInitialValues } from '@/src/components/form/utils';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import { STEPS } from '@/src/flows/ContractorOnboarding/utils';
-import { useCountriesSchemaField } from '@/src/flows/Onboarding/api';
-import { JSONSchemaFormType } from '@/src/flows/types';
+import {
+  useCountriesSchemaField,
+  useJSONSchemaForm,
+} from '@/src/flows/Onboarding/api';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
@@ -72,13 +76,96 @@ export const useContractorOnboarding = ({
       },
     });
 
+  const useJSONSchema = ({
+    form,
+    options: jsonSchemaOptions = {},
+    query = {},
+  }: {
+    form: JSONSchemaFormType;
+    options?: {
+      jsfModify?: JSFModify;
+      queryOptions?: { enabled?: boolean };
+    };
+    query?: Record<string, string>;
+  }) => {
+    // when you write on the fields, the values are stored in the fieldValues state
+    // when values are stored in the stepState is when the user has navigated to the step
+    // and then we have the values from the server and the onboardingInitialValues that the user can inject,
+    const memoizedFieldValues =
+      Object.keys(fieldValues).length > 0
+        ? {
+            //...onboardingInitialValues,
+            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+            ...fieldValues,
+          }
+        : {
+            //...onboardingInitialValues,
+            //...serverEmploymentData,
+          };
+
+    return useJSONSchemaForm({
+      countryCode: internalCountryCode as string,
+      form: form,
+      fieldValues: memoizedFieldValues,
+      query,
+      options: {
+        ...jsonSchemaOptions,
+        queryOptions: {
+          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
+        },
+      },
+    });
+  };
+
+  const isBasicInformationDetailsEnabled = Boolean(
+    internalCountryCode && stepState.currentStep.name === 'basic_information',
+  );
+
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useJSONSchema({
+    form: 'employment_basic_information',
+    options: {
+      jsfModify: options?.jsfModify?.basic_information,
+      queryOptions: {
+        enabled: isBasicInformationDetailsEnabled,
+      },
+    },
+  });
+
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
-      basic_information: [],
+      basic_information: basicInformationForm?.fields || [],
     }),
-    [selectCountryForm?.fields],
+    [selectCountryForm?.fields, basicInformationForm?.fields],
   );
+
+  const selectCountryInitialValues = useMemo(
+    () =>
+      getInitialValues(stepFields.select_country, {
+        country: internalCountryCode || '' /* employmentCountryCode */,
+      }),
+    [
+      stepFields.select_country,
+      internalCountryCode /* employmentCountryCode */,
+    ],
+  );
+
+  const basicInformationInitialValues = useMemo(() => {
+    // TODO: Consider later if we want to add initial values as a prop and employment data
+    const initialValues = {};
+
+    return getInitialValues(stepFields.basic_information, initialValues);
+  }, [stepFields.basic_information]);
+
+  const initialValues = useMemo(() => {
+    return {
+      select_country: selectCountryInitialValues,
+      basic_information: basicInformationInitialValues,
+    };
+  }, [selectCountryInitialValues, basicInformationInitialValues]);
 
   const goTo = (step: keyof typeof STEPS) => {
     goToStep(step);
@@ -105,7 +192,7 @@ export const useContractorOnboarding = ({
     }
   }
 
-  const isLoading = isLoadingCountries;
+  const isLoading = isLoadingCountries || isLoadingBasicInformationForm;
 
   return {
     /**
@@ -193,5 +280,10 @@ export const useContractorOnboarding = ({
 
       return null;
     },
+
+    /**
+     * Initial form values
+     */
+    initialValues,
   };
 };
