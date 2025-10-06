@@ -13,7 +13,11 @@ export type ContractorOnboardingRenderProps = {
    */
   components: Record<string, React.ComponentType<$TSFixMe>>;
 };
+
 export type ContractorOnboardingFlowProps = {
+  /**
+   * The render prop function with the params passed by the useContractorOnboarding hook and the components available to use for this flow
+   */
   render: ({
     contractorOnboardingBag,
     components,
