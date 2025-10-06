@@ -90,13 +90,9 @@ export const useContractorOnboarding = ({
     useEmployment(internalEmploymentId);
 
   const createEmploymentMutation = useCreateEmployment(options);
-  const updateEmploymentMutation = useUpdateEmployment(options);
 
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
-  );
-  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
-    updateEmploymentMutation,
   );
 
   // if the employment is loaded, country code has not been set yet
@@ -300,13 +296,9 @@ export const useContractorOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
-            employmentId: internalEmploymentId,
-            basic_information: parsedValues,
-            pricing_plan_details: {
-              frequency: 'monthly',
-            },
-            external_id: externalId,
+          // TODO: Provisional it seems you cannot update a contractor employment
+          return Promise.resolve({
+            data: { employmentId: internalEmploymentId },
           });
         }
 
