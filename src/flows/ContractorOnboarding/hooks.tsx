@@ -145,5 +145,11 @@ export const useContractorOnboarding = ({
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
     },
+
+    /**
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited, created_awaiting_reserve or created_reserve_paid
+     * @returns {boolean}
+     */
+    isEmploymentReadOnly: false, // TODO: TBD
   };
 };

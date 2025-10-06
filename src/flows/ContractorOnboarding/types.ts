@@ -1,7 +1,9 @@
+import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
+import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
-import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSFModify } from '@/src/flows/types';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -14,10 +16,13 @@ export type ContractorOnboardingRenderProps = {
    * The components used in the contractor onboarding flow.
    * @see {@link BasicInformationStep}
    * @see {@link SelectCountryStep}
+   * @see {@link OnboardingBack}
    */
   components: {
     BasicInformationStep: typeof BasicInformationStep;
     SelectCountryStep: typeof SelectCountryStep;
+    Back: typeof OnboardingBack;
+    Submit: typeof OnboardingSubmit;
   };
 };
 
