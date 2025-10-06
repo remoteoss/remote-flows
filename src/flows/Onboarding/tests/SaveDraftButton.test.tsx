@@ -1,7 +1,4 @@
-import {
-  OnboardingFlow,
-  OnboardingRenderProps,
-} from '@/src/flows/Onboarding/OnboardingFlow';
+import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
   benefitOffersResponse,
@@ -12,7 +9,10 @@ import {
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { fillBasicInformation } from '@/src/flows/Onboarding/tests/helpers';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import {
+  OnboardingFlowProps,
+  OnboardingRenderProps,
+} from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -119,7 +119,7 @@ const defaultProps = {
   countryCode: 'PRT',
   options: {},
   render: mockRender,
-  skipSteps: ['select_country'] as OnboardingFlowParams['skipSteps'],
+  skipSteps: ['select_country'] as OnboardingFlowProps['skipSteps'],
 };
 
 describe('SaveDraftButton', () => {

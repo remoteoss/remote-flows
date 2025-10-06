@@ -20,7 +20,7 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
@@ -40,7 +40,7 @@ import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGross
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 
-type OnboardingHookProps = OnboardingFlowParams;
+type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
