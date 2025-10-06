@@ -5,7 +5,8 @@ import { JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 
 const stepToFormSchemaMap: Record<
   keyof typeof STEPS,
@@ -21,8 +22,12 @@ type useContractorOnboardingProps = Omit<
 >;
 
 export const useContractorOnboarding = ({
+  countryCode,
   options,
 }: useContractorOnboardingProps) => {
+  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
+    countryCode || null,
+  );
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
@@ -79,8 +84,25 @@ export const useContractorOnboarding = ({
     goToStep(step);
   };
 
-  function onSubmit() {
-    console.log('onSubmit');
+  const parseFormValues = (values: FieldValues) => {
+    if (selectCountryForm && stepState.currentStep.name === 'select_country') {
+      return values;
+    }
+
+    return {};
+  };
+
+  function onSubmit(values: FieldValues) {
+    const parsedValues = parseFormValues(values);
+    switch (stepState.currentStep.name) {
+      case 'select_country': {
+        setInternalCountryCode(parsedValues.country);
+        return Promise.resolve({ data: { countryCode: parsedValues.country } });
+      }
+      default: {
+        throw new Error('Invalid step state');
+      }
+    }
   }
 
   const isLoading = isLoadingCountries;
@@ -151,5 +173,25 @@ export const useContractorOnboarding = ({
      * @returns {boolean}
      */
     isEmploymentReadOnly: false, // TODO: TBD
+
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
+    parseFormValues,
+
+    /**
+     * Function to validate form values against the onboarding schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
+    handleValidation: (values: FieldValues) => {
+      if (stepState.currentStep.name === 'select_country') {
+        return selectCountryForm.handleValidation(values);
+      }
+
+      return null;
+    },
   };
 };

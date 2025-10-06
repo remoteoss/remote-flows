@@ -28,6 +28,10 @@ export type ContractorOnboardingRenderProps = {
 
 export type ContractorOnboardingFlowProps = {
   /**
+   * The country code to use for the onboarding.
+   */
+  countryCode?: string;
+  /**
    * The render prop function with the params passed by the useContractorOnboarding hook and the components available to use for this flow
    */
   render: ({
