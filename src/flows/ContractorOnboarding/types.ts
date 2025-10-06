@@ -1,7 +1,7 @@
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
-import { FlowOptions } from '@/src/flows/types';
+import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -32,5 +32,10 @@ export type ContractorOnboardingFlowProps = {
   /**
    * The options for the contractor onboarding flow.
    */
-  options?: FlowOptions;
+  options?: Omit<FlowOptions, 'jsfModify'> & {
+    jsfModify?: {
+      select_country?: JSFModify;
+      basic_information?: JSFModify;
+    };
+  };
 };

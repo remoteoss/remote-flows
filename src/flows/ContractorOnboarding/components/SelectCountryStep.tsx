@@ -62,9 +62,9 @@ export function SelectCountryStep({
     }
   };
 
-  const initialValues =
-    contractorOnboardingBag.stepState.values?.select_country ||
-    contractorOnboardingBag.initialValues.select_country;
+  const initialValues = {};
+  /*  contractorOnboardingBag.stepState.values?.select_country ||
+    contractorOnboardingBag.initialValues.select_country; */
 
   return (
     <ContractorOnboardingForm
