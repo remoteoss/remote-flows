@@ -1,16 +1,30 @@
-import { getInitialValues } from '@/src/components/form/utils';
+import { Employment, EmploymentCreateParams } from '@/src/client/types.gen';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import { STEPS } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
+  useCreateEmployment,
+  useEmployment,
   useJSONSchemaForm,
+  useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
+import { mutationToPromise } from '@/src/lib/mutations';
+import { prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
 import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+
+type useContractorOnboardingProps = Omit<
+  ContractorOnboardingFlowProps,
+  'render'
+>;
 
 const stepToFormSchemaMap: Record<
   keyof typeof STEPS,
@@ -20,18 +34,25 @@ const stepToFormSchemaMap: Record<
   basic_information: 'employment_basic_information',
 };
 
-type useContractorOnboardingProps = Omit<
-  ContractorOnboardingFlowProps,
-  'render'
->;
+const jsonSchemaToEmployment: Partial<
+  Record<JSONSchemaFormType, keyof Employment>
+> = {
+  employment_basic_information: 'basic_information',
+};
 
 export const useContractorOnboarding = ({
   countryCode,
+  externalId,
+  employmentId,
   options,
+  initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
+  const [internalEmploymentId, setInternalEmploymentId] = useState<
+    string | undefined
+  >(employmentId);
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
@@ -63,9 +84,27 @@ export const useContractorOnboarding = ({
     STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
 
-  const formType =
-    stepToFormSchemaMap[stepState.currentStep.name] ||
-    'employment_basic_information';
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmployment(internalEmploymentId);
+
+  const createEmploymentMutation = useCreateEmployment(options);
+  const updateEmploymentMutation = useUpdateEmployment(options);
+
+  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
+    createEmploymentMutation,
+  );
+  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
+    updateEmploymentMutation,
+  );
+
+  // if the employment is loaded, country code has not been set yet
+  // we set the internal country code with the employment country code
+  if (
+    employment?.country?.code &&
+    internalCountryCode !== employment.country.code
+  ) {
+    setInternalCountryCode(employment.country.code);
+  }
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
@@ -75,6 +114,15 @@ export const useContractorOnboarding = ({
         enabled: stepState.currentStep.name === 'select_country',
       },
     });
+
+  const formType =
+    stepToFormSchemaMap[stepState.currentStep.name] ||
+    'employment_basic_information';
+  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
+  const serverEmploymentData = (employment?.[employmentKey] || {}) as Record<
+    string,
+    unknown
+  >;
 
   const useJSONSchema = ({
     form,
@@ -94,13 +142,13 @@ export const useContractorOnboarding = ({
     const memoizedFieldValues =
       Object.keys(fieldValues).length > 0
         ? {
-            //...onboardingInitialValues,
+            ...onboardingInitialValues,
             ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
             ...fieldValues,
           }
         : {
-            //...onboardingInitialValues,
-            //...serverEmploymentData,
+            ...onboardingInitialValues,
+            ...serverEmploymentData,
           };
 
     return useJSONSchemaForm({
@@ -142,23 +190,31 @@ export const useContractorOnboarding = ({
     [selectCountryForm?.fields, basicInformationForm?.fields],
   );
 
+  const { country, basic_information: employmentBasicInformation = {} } =
+    employment || {};
+
+  const employmentCountryCode = country?.code;
+
   const selectCountryInitialValues = useMemo(
     () =>
       getInitialValues(stepFields.select_country, {
-        country: internalCountryCode || '' /* employmentCountryCode */,
+        country: internalCountryCode || employmentCountryCode || '',
       }),
-    [
-      stepFields.select_country,
-      internalCountryCode /* employmentCountryCode */,
-    ],
+    [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
   const basicInformationInitialValues = useMemo(() => {
-    // TODO: Consider later if we want to add initial values as a prop and employment data
-    const initialValues = {};
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...employmentBasicInformation,
+    };
 
     return getInitialValues(stepFields.basic_information, initialValues);
-  }, [stepFields.basic_information]);
+  }, [
+    stepFields.basic_information,
+    employmentBasicInformation,
+    onboardingInitialValues,
+  ]);
 
   const initialValues = useMemo(() => {
     return {
@@ -176,15 +232,69 @@ export const useContractorOnboarding = ({
       return values;
     }
 
+    if (
+      basicInformationForm &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      return parseJSFToValidate(values, basicInformationForm?.fields, {
+        isPartialValidation: false,
+      });
+    }
+
     return {};
   };
 
-  function onSubmit(values: FieldValues) {
+  async function onSubmit(values: FieldValues) {
+    const currentStepName = stepState.currentStep.name;
+    if (currentStepName in fieldsMetaRef.current) {
+      fieldsMetaRef.current[
+        currentStepName as keyof typeof fieldsMetaRef.current
+      ] = prettifyFormValues(values, stepFields[currentStepName]);
+    }
     const parsedValues = parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
         return Promise.resolve({ data: { countryCode: parsedValues.country } });
+      }
+      case 'basic_information': {
+        const isEmploymentNotLoaded =
+          !internalEmploymentId && internalCountryCode;
+        const hasChangedCountry =
+          internalEmploymentId &&
+          internalCountryCode &&
+          employment?.country &&
+          employment?.country.code !== internalCountryCode;
+        if (isEmploymentNotLoaded || hasChangedCountry) {
+          const payload: EmploymentCreateParams = {
+            basic_information: parsedValues,
+            type: 'contractor',
+            country_code: internalCountryCode,
+            external_id: externalId,
+          };
+          try {
+            const response = await createEmploymentMutationAsync(payload);
+            // @ts-expect-error the types from the response are not matching
+            const employmentId = response.data?.data?.employment?.id;
+            setInternalEmploymentId(employmentId);
+
+            return response;
+          } catch (error) {
+            console.error('Error creating onboarding:', error);
+            throw error;
+          }
+        } else if (internalEmploymentId) {
+          return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: parsedValues,
+            pricing_plan_details: {
+              frequency: 'monthly',
+            },
+            external_id: externalId,
+          });
+        }
+
+        return;
       }
       default: {
         throw new Error('Invalid step state');
@@ -192,7 +302,8 @@ export const useContractorOnboarding = ({
     }
   }
 
-  const isLoading = isLoadingCountries || isLoadingBasicInformationForm;
+  const isLoading =
+    isLoadingCountries || isLoadingBasicInformationForm || isLoadingEmployment;
 
   return {
     /**
@@ -276,6 +387,18 @@ export const useContractorOnboarding = ({
     handleValidation: (values: FieldValues) => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
+      }
+
+      if (
+        basicInformationForm &&
+        stepState.currentStep.name === 'basic_information'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          basicInformationForm?.fields,
+          { isPartialValidation: false },
+        );
+        return basicInformationForm?.handleValidation(parsedValues);
       }
 
       return null;

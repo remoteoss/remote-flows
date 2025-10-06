@@ -31,6 +31,17 @@ export type ContractorOnboardingFlowProps = {
    * The country code to use for the onboarding.
    */
   countryCode?: string;
+
+  /**
+   * The employment id to use for the onboarding.
+   */
+  employmentId?: string;
+
+  /**
+   * Unique reference code for the employment record in a non-Remote system. This optional field links to external data sources.
+   * If not provided, it defaults to null. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  externalId?: string;
   /**
    * The render prop function with the params passed by the useContractorOnboarding hook and the components available to use for this flow
    */
@@ -47,4 +58,11 @@ export type ContractorOnboardingFlowProps = {
       basic_information?: JSFModify;
     };
   };
+
+  /**
+   * Initial values to pre-populate the form fields.
+   * These are flat field values that will be automatically mapped to the correct step.
+   * Server data will override these values. This happens when you pass employmentId and the server returns an employment object.
+   */
+  initialValues?: Record<string, unknown>;
 };
