@@ -4,7 +4,10 @@ import {
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
-import { STEPS } from '@/src/flows/ContractorOnboarding/utils';
+import {
+  STEPS,
+  STEPS_WITHOUT_SELECT_COUNTRY,
+} from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
   useCreateEmployment,
@@ -44,6 +47,7 @@ export const useContractorOnboarding = ({
   countryCode,
   externalId,
   employmentId,
+  skipSteps,
   options,
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
@@ -56,23 +60,15 @@ export const useContractorOnboarding = ({
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
-    contract_details: Meta;
-    benefits: Meta;
   }>({
     select_country: {},
     basic_information: {},
-    contract_details: {},
-    benefits: {},
   });
 
-  const stepFieldsWithFlatFieldsets: Record<
-    keyof typeof STEPS,
-    JSFFieldset | null | undefined
-  > = {
-    select_country: null,
-    // TODO: fix me later
-    basic_information: null,
-  };
+  const stepsToUse = skipSteps?.includes('select_country')
+    ? STEPS_WITHOUT_SELECT_COUNTRY
+    : STEPS;
+
   const {
     fieldValues,
     stepState,
@@ -81,7 +77,7 @@ export const useContractorOnboarding = ({
     nextStep,
     goToStep,
   } = useStepState(
-    STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
 
   const { data: employment, isLoading: isLoadingEmployment } =
@@ -189,6 +185,14 @@ export const useContractorOnboarding = ({
     }),
     [selectCountryForm?.fields, basicInformationForm?.fields],
   );
+
+  const stepFieldsWithFlatFieldsets: Record<
+    keyof typeof STEPS,
+    JSFFieldset | null | undefined
+  > = {
+    select_country: null,
+    basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+  };
 
   const { country, basic_information: employmentBasicInformation = {} } =
     employment || {};

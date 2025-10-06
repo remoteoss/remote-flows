@@ -42,6 +42,12 @@ export type ContractorOnboardingFlowProps = {
    * If not provided, it defaults to null. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   externalId?: string;
+
+  /**
+   * The steps to skip for the onboarding. We only support skipping the select_country step for now.
+   */
+  skipSteps?: ['select_country'];
+
   /**
    * The render prop function with the params passed by the useContractorOnboarding hook and the components available to use for this flow
    */

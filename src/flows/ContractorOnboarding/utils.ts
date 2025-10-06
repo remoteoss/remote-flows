@@ -6,3 +6,10 @@ export const STEPS: Record<StepKeys, Step<StepKeys>> = {
   select_country: { index: 0, name: 'select_country' },
   basic_information: { index: 1, name: 'basic_information' },
 } as const;
+
+export const STEPS_WITHOUT_SELECT_COUNTRY: Record<
+  Exclude<StepKeys, 'select_country'>,
+  Step<Exclude<StepKeys, 'select_country'>>
+> = {
+  basic_information: { index: 0, name: 'basic_information' },
+} as const;
