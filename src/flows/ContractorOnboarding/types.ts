@@ -21,8 +21,8 @@ export type ContractorOnboardingRenderProps = {
   components: {
     BasicInformationStep: typeof BasicInformationStep;
     SelectCountryStep: typeof SelectCountryStep;
-    Back: typeof OnboardingBack;
-    Submit: typeof OnboardingSubmit;
+    BackButton: typeof OnboardingBack;
+    SubmitButton: typeof OnboardingSubmit;
   };
 };
 

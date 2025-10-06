@@ -22,8 +22,8 @@ export const ContractorOnboardingFlow = ({
         components: {
           BasicInformationStep: BasicInformationStep,
           SelectCountryStep: SelectCountryStep,
-          Back: OnboardingBack,
-          Submit: OnboardingSubmit,
+          BackButton: OnboardingBack,
+          SubmitButton: OnboardingSubmit,
         },
       })}
     </ContractorOnboardingContext.Provider>

@@ -63,7 +63,7 @@ const MultiStepForm = ({
           </div>
         </>
       );
-    case 'basic_information':
+    /*  case 'basic_information':
       return (
         <>
           <BasicInformationStep
@@ -94,7 +94,7 @@ const MultiStepForm = ({
             </SubmitButton>
           </div>
         </>
-      );
+      ); */
   }
 };
 
