@@ -18,6 +18,7 @@ export function OnboardingBack({
   const { components } = useFormFields();
 
   const onBackHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    // TODO: TBD if we want to allow back button to be clicked when employment is readonly
     if (!isEmploymentReadOnly) {
       back();
     }

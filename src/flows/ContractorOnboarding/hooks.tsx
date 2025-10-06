@@ -13,7 +13,6 @@ import {
   useCreateEmployment,
   useEmployment,
   useJSONSchemaForm,
-  useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
@@ -425,7 +424,6 @@ export const useContractorOnboarding = ({
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting:
-      createEmploymentMutation.isPending || updateEmploymentMutation.isPending,
+    isSubmitting: createEmploymentMutation.isPending,
   };
 };
