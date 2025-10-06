@@ -6,6 +6,10 @@ import {
   SelectCountryFormPayload,
   NormalizedFieldError,
   ContractorOnboardingFlow,
+  PricingPlanFormPayload,
+  PricingPlanResponse,
+  ContractOptionsFormPayload,
+  ContractOptionsResponse,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -110,14 +114,64 @@ const MultiStepForm = ({
     case 'pricing_plan':
       return (
         <>
-          <PricingPlanStep />
+          <PricingPlanStep
+            onSubmit={(payload: PricingPlanFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: PricingPlanResponse) =>
+              console.log('response', response)
+            }
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              disabled={contractorOnboardingBag.isSubmitting}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Next
+            </SubmitButton>
+          </div>
         </>
       );
 
     case 'contract_options':
       return (
         <>
-          <ContractOptionsStep />
+          <ContractOptionsStep
+            onSubmit={(payload: ContractOptionsFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: ContractOptionsResponse) =>
+              console.log('response', response)
+            }
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              disabled={contractorOnboardingBag.isSubmitting}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Next
+            </SubmitButton>
+          </div>
         </>
       );
   }
@@ -163,19 +217,16 @@ const OnBoardingRender = ({
 
 type OnboardingFormData = {
   countryCode?: string;
-  companyId: string;
   employmentId: string;
   externalId?: string;
 };
 
 const OnboardingWithProps = ({
-  companyId,
   employmentId,
   externalId,
 }: OnboardingFormData) => (
   <RemoteFlows>
     <ContractorOnboardingFlow
-      companyId={companyId}
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
@@ -185,10 +236,7 @@ const OnboardingWithProps = ({
 
 export const ContractorOnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    type: 'contractor',
     employmentId: import.meta.env.VITE_EMPLOYMENT_ID || '', // use your own employment ID
-    companyId:
-      import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -204,22 +252,6 @@ export const ContractorOnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='onboarding-form-container'>
-      <div className='onboarding-form-group'>
-        <label htmlFor='companyId' className='onboarding-form-label'>
-          Company ID:
-        </label>
-        <input
-          id='companyId'
-          type='text'
-          value={formData.companyId}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, companyId: e.target.value }))
-          }
-          required
-          placeholder='e.g. Your Company ID'
-          className='onboarding-form-input'
-        />
-      </div>
       <div className='onboarding-form-group'>
         <label htmlFor='employmentId' className='onboarding-form-label'>
           Employment ID:

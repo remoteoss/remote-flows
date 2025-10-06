@@ -6,6 +6,7 @@ import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks'
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -80,3 +81,11 @@ export type ContractorOnboardingFlowProps = {
    */
   initialValues?: Record<string, unknown>;
 };
+
+export type PricingPlanFormPayload = $TSFixMe;
+
+export type PricingPlanResponse = $TSFixMe;
+
+export type ContractOptionsFormPayload = $TSFixMe;
+
+export type ContractOptionsResponse = $TSFixMe;

@@ -5,10 +5,10 @@ import {
 } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
-
-type PricingPlanFormPayload = $TSFixMe;
-
-type PricingPlanResponse = $TSFixMe;
+import {
+  PricingPlanFormPayload,
+  PricingPlanResponse,
+} from '@/src/flows/ContractorOnboarding/types';
 
 type PricingPlanStepProps = {
   /*
