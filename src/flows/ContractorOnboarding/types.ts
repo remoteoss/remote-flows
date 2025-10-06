@@ -1,3 +1,4 @@
+import { ContractOptionsStep } from '@/src/flows/ContractorOnboarding/components/ContractOptionsStep';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';

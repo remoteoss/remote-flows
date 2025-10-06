@@ -6,19 +6,19 @@ import {
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 
-type PricingPlanFormPayload = $TSFixMe;
+type ContractOptionsFormPayload = $TSFixMe;
 
-type PricingPlanResponse = $TSFixMe;
+type ContractOptionsResponse = $TSFixMe;
 
-type PricingPlanStepProps = {
+type ContractOptionsStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: PricingPlanFormPayload) => void | Promise<void>;
+  onSubmit?: (payload: ContractOptionsFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: PricingPlanResponse) => void | Promise<void>;
+  onSuccess?: (data: ContractOptionsResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -33,11 +33,11 @@ type PricingPlanStepProps = {
   }) => void;
 };
 
-export function PricingPlanStep({
+export function ContractOptionsStep({
   onSubmit,
   onSuccess,
   onError,
-}: PricingPlanStepProps) {
+}: ContractOptionsStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
   const handleSubmit = async (payload: $TSFixMe) => {
@@ -54,7 +54,7 @@ export function PricingPlanStep({
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.pricing_plan,
+          contractorOnboardingBag.meta?.fields?.contract_options,
         );
 
         onError?.({
@@ -73,8 +73,8 @@ export function PricingPlanStep({
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.pricing_plan ||
-    contractorOnboardingBag.initialValues.pricing_plan;
+    contractorOnboardingBag.stepState.values?.contract_options ||
+    contractorOnboardingBag.initialValues.contract_options;
 
   return (
     <ContractorOnboardingForm

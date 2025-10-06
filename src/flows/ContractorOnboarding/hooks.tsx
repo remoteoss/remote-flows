@@ -62,9 +62,13 @@ export const useContractorOnboarding = ({
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
+    pricing_plan: Meta;
+    contract_options: Meta;
   }>({
     select_country: {},
     basic_information: {},
+    pricing_plan: {},
+    contract_options: {},
   });
 
   const stepsToUse = skipSteps?.includes('select_country')

@@ -6,6 +6,8 @@ import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/
 import { BasicInformationStep } from '@/src/flows/ContractorOnboarding/components/BasicInformationStep';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { useId } from 'react';
+import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
+import { ContractOptionsStep } from '@/src/flows/ContractorOnboarding/components/ContractOptionsStep';
 
 export const ContractorOnboardingFlow = ({
   render,
@@ -24,6 +26,8 @@ export const ContractorOnboardingFlow = ({
           SelectCountryStep: SelectCountryStep,
           BackButton: OnboardingBack,
           SubmitButton: OnboardingSubmit,
+          PricingPlanStep: PricingPlanStep,
+          ContractOptionsStep: ContractOptionsStep,
         },
       })}
     </ContractorOnboardingContext.Provider>
