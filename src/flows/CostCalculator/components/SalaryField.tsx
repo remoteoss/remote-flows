@@ -50,12 +50,30 @@ export const SalaryField = ({
     : 'salary_conversion';
 
   useEffect(() => {
-    if (shouldSwapOrder && defaultValue) {
-      setValue('salary_conversion', defaultValue);
-      setValue('salary_converted', 'salary_conversion');
-    }
-  }, [shouldSwapOrder, defaultValue, setValue, getValues]);
+    if (shouldSwapOrder) {
+      const currentValue = getValues(props.name);
 
+      if (currentValue) {
+        setValue('salary_conversion', currentValue);
+        setValue('salary_converted', 'salary_conversion');
+      } else if (defaultValue) {
+        // Fallback to defaultValue if no current value
+        setValue('salary_conversion', defaultValue);
+        setValue('salary_converted', 'salary_conversion');
+      }
+    } else {
+      const conversionValue = getValues('salary_conversion');
+
+      if (conversionValue) {
+        setValue(props.name, conversionValue);
+        setValue('salary_converted', props.name);
+      } else if (defaultValue) {
+        // Fallback to defaultValue if no conversion value
+        setValue(props.name, defaultValue);
+        setValue('salary_converted', props.name);
+      }
+    }
+  }, [shouldSwapOrder, defaultValue, setValue, getValues, props.name]);
   return (
     <CurrencyConversionField
       {...props}

@@ -159,23 +159,6 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
-  it('should preserve salary value when currency changes', async () => {
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
-    });
-
-    const salaryInput = screen.getByRole('textbox', { name: /salary/i });
-    fireEvent.change(salaryInput, { target: { value: '75000' } });
-
-    expect(salaryInput).toHaveValue('75000');
-
-    await fillSelect('Currency', 'EUR');
-
-    expect(salaryInput).toHaveValue('75000');
-  });
-
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
@@ -1119,5 +1102,93 @@ describe('CostCalculatorFlow', () => {
     });
 
     expect(mockOnSubmit).not.toHaveBeenCalled();
+  });
+
+  describe('Salary value preservation during currency changes', () => {
+    it('should preserve salary value when switching from no conversion to conversion', async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      });
+
+      // Start with USD (no conversion needed)
+      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      fireEvent.change(salaryInput, { target: { value: '75000' } });
+      expect(salaryInput).toHaveValue('75000');
+
+      // Switch to EUR (conversion needed)
+      await fillSelect('Currency', 'EUR');
+
+      // The value should be preserved in the conversion field
+      expect(salaryInput).toHaveValue('75000');
+    });
+
+    it('should preserve salary value when switching from conversion to no conversion', async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      });
+
+      // Start with EUR (conversion needed)
+      await fillSelect('Currency', 'EUR');
+
+      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      fireEvent.change(salaryInput, { target: { value: '65000' } });
+      expect(salaryInput).toHaveValue('65000');
+
+      // Switch back to USD (no conversion needed)
+      await fillSelect('Currency', 'USD');
+
+      // The value should be preserved in the original field
+      expect(salaryInput).toHaveValue('65000');
+    });
+
+    it('should preserve salary value when switching between different conversion currencies', async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      });
+
+      // Start with EUR
+      await fillSelect('Currency', 'EUR');
+
+      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      fireEvent.change(salaryInput, { target: { value: '55000' } });
+      expect(salaryInput).toHaveValue('55000');
+
+      // Switch to GBP (still conversion needed)
+      await fillSelect('Currency', 'GBP');
+
+      // The value should be preserved
+      expect(salaryInput).toHaveValue('55000');
+    });
+
+    it('should preserve salary value when country changes trigger currency changes', async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+      });
+
+      // Start with US (USD)
+      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      fireEvent.change(salaryInput, { target: { value: '80000' } });
+      expect(salaryInput).toHaveValue('80000');
+
+      // Change country to Spain (EUR)
+      await fillSelect('Country', 'Spain');
+
+      // The value should be preserved
+      expect(salaryInput).toHaveValue('80000');
+
+      // Change back to US
+      await fillSelect('Country', 'United States');
+
+      // The value should still be preserved
+      expect(salaryInput).toHaveValue('80000');
+    });
   });
 });
