@@ -29,6 +29,23 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
+const createSalaryFieldComponent =
+  (
+    defaultSalary: string | undefined,
+    version: CostCalculatorVersion | undefined,
+    shouldSwapOrder: boolean,
+  ) =>
+  (props: JSFField & { currencies: { from: string; to: string } }) => {
+    return (
+      <SalaryField
+        {...props}
+        shouldSwapOrder={shouldSwapOrder}
+        conversionType={version === 'marketing' ? 'no_spread' : 'spread'}
+        defaultValue={defaultSalary}
+      />
+    );
+  };
+
 type CostCalculatorCountry = {
   value: string;
   label: string;
@@ -129,6 +146,7 @@ export const useCostCalculator = (
   }>({
     fields: {},
   });
+
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion,
   );
@@ -197,6 +215,7 @@ export const useCostCalculator = (
 
   const showManagementField = estimationOptions.showManagementFee;
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
+
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
     const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
@@ -215,20 +234,11 @@ export const useCostCalculator = (
                   ?.description,
             },
             currencies: { from, to },
-            Component: (
-              props: JSFField & { currencies: { from: string; to: string } },
-            ) => {
-              return (
-                <SalaryField
-                  {...props}
-                  shouldSwapOrder={shouldSwapOrder}
-                  conversionType={
-                    version === 'marketing' ? 'no_spread' : 'spread'
-                  }
-                  defaultValue={defaultSalary}
-                />
-              );
-            },
+            Component: createSalaryFieldComponent(
+              defaultSalary,
+              version,
+              shouldSwapOrder,
+            ),
           },
         },
         hiring_budget: {

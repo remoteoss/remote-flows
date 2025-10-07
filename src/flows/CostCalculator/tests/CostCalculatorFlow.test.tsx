@@ -159,6 +159,23 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should preserve salary value when currency changes', async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+    fireEvent.change(salaryInput, { target: { value: '75000' } });
+
+    expect(salaryInput).toHaveValue('75000');
+
+    await fillSelect('Currency', 'EUR');
+
+    expect(salaryInput).toHaveValue('75000');
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
