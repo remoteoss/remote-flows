@@ -42,6 +42,9 @@ import type {
   PostConvertRawCurrencyConverterData,
   PostConvertRawCurrencyConverterResponse,
   PostConvertRawCurrencyConverterError,
+  GetShowContractorContractDetailsCountryData,
+  GetShowContractorContractDetailsCountryResponse,
+  GetShowContractorContractDetailsCountryError,
   GetIndexEmploymentData,
   GetIndexEmploymentResponse,
   GetIndexEmploymentError,
@@ -895,6 +898,35 @@ export const postConvertRawCurrencyConverter = <
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+};
+
+/**
+ * Show contractor contract details
+ * Returns the contract details JSON Schema for contractors given a country
+ */
+export const getShowContractorContractDetailsCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowContractorContractDetailsCountryData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetShowContractorContractDetailsCountryResponse,
+    GetShowContractorContractDetailsCountryError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/countries/{country_code}/contractor-contract-details',
+    ...options,
   });
 };
 

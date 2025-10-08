@@ -6793,6 +6793,59 @@ export type PostConvertRawCurrencyConverterResponses = {
 export type PostConvertRawCurrencyConverterResponse =
   PostConvertRawCurrencyConverterResponses[keyof PostConvertRawCurrencyConverterResponses];
 
+export type GetShowContractorContractDetailsCountryData = {
+  body?: never;
+  path: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes
+     */
+    country_code: string;
+  };
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
+  url: '/v1/countries/{country_code}/contractor-contract-details';
+};
+
+export type GetShowContractorContractDetailsCountryErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowContractorContractDetailsCountryError =
+  GetShowContractorContractDetailsCountryErrors[keyof GetShowContractorContractDetailsCountryErrors];
+
+export type GetShowContractorContractDetailsCountryResponses = {
+  /**
+   * Success
+   */
+  200: ContractorContractDetailsResponse;
+};
+
+export type GetShowContractorContractDetailsCountryResponse =
+  GetShowContractorContractDetailsCountryResponses[keyof GetShowContractorContractDetailsCountryResponses];
+
 export type GetIndexEmploymentData = {
   body?: never;
   headers: {
