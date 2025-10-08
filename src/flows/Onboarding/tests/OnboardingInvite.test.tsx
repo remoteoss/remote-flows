@@ -1,7 +1,4 @@
-import {
-  OnboardingFlow,
-  OnboardingRenderProps,
-} from '@/src/flows/Onboarding/OnboardingFlow';
+import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
   benefitOffersResponse,
@@ -10,6 +7,7 @@ import {
   contractDetailsSchema,
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
+import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

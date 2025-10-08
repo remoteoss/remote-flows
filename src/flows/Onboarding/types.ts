@@ -2,9 +2,54 @@ import {
   EmploymentCreateParams,
   Employment as EmploymentResponse,
 } from '@/src/client';
+import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
+import { OnboardingBack } from '@/src/flows/Onboarding/components/OnboardingBack';
+import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
+import { ContractDetailsStep } from '@/src/flows/Onboarding/components/ContractDetailsStep';
+import { OnboardingSubmit } from '@/src/flows/Onboarding/components/OnboardingSubmit';
+import { BenefitsStep } from '@/src/flows/Onboarding/components/BenefitsStep';
+import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
+import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
+import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
+import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 
-export type OnboardingFlowParams = {
+export type OnboardingRenderProps = {
+  /**
+   * The onboarding bag returned by the useOnboarding hook.
+   * This bag contains all the methods and properties needed to handle the onboarding flow.
+   * @see {@link useOnboarding}
+   */
+  onboardingBag: ReturnType<typeof useOnboarding>;
+  /**
+   * The components used in the onboarding flow.
+   * This includes different steps, submit button, back button.
+   * @see {@link BasicInformationStep}
+   * @see {@link ContractDetailsStep}
+   * @see {@link OnboardingSubmit}
+   * @see {@link OnboardingBack}
+   * @see {@link OnboardingInvite}
+   * @see {@link BenefitsStep}
+   * @see {@link OnboardingCreateReserve}
+   * @see {@link InvitationSection}
+   * @see {@link SelectCountryStep}
+   * @see {@link ReviewStep}
+   * @see {@link SaveDraftButton}
+   */
+  components: {
+    SubmitButton: typeof OnboardingSubmit;
+    BackButton: typeof OnboardingBack;
+    BasicInformationStep: typeof BasicInformationStep;
+    OnboardingInvite: typeof OnboardingInvite;
+    ContractDetailsStep: typeof ContractDetailsStep;
+    BenefitsStep: typeof BenefitsStep;
+    SelectCountryStep: typeof SelectCountryStep;
+    ReviewStep: typeof ReviewStep;
+    SaveDraftButton: typeof SaveDraftButton;
+  };
+};
+
+export type OnboardingFlowProps = {
   /**
    * The country code to use for the onboarding.
    */
@@ -47,6 +92,13 @@ export type OnboardingFlowParams = {
       benefits?: JSFModify;
     };
   };
+  /**
+   * The render prop function with the params passed by the useOnboarding hook and the components available to use for this flow
+   */
+  render: ({
+    onboardingBag,
+    components,
+  }: OnboardingRenderProps) => React.ReactNode;
 };
 
 export type SelectCountryFormPayload = {

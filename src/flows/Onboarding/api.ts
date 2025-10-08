@@ -25,7 +25,7 @@ import {
 import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
@@ -255,7 +255,7 @@ export const useJSONSchemaForm = ({
 export const useBenefitOffersSchema = (
   employmentId: string,
   fieldValues: FieldValues,
-  options: OnboardingFlowParams['options'],
+  options: OnboardingFlowProps['options'],
 ) => {
   const jsonSchemaQueryParam = options?.jsonSchemaVersion
     ?.benefit_offers_form_schema
@@ -308,7 +308,7 @@ export const useBenefitOffersSchema = (
  * @returns
  */
 export const useCreateEmployment = (
-  options?: OnboardingFlowParams['options'],
+  options?: OnboardingFlowProps['options'],
 ) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema
@@ -335,7 +335,7 @@ export const useCreateEmployment = (
 };
 
 export const useUpdateEmployment = (
-  options?: OnboardingFlowParams['options'],
+  options?: OnboardingFlowProps['options'],
 ) => {
   const { client } = useClient();
   const jsonSchemaQueryParams = {
@@ -375,7 +375,7 @@ export const useUpdateEmployment = (
 };
 
 export const useUpdateBenefitsOffers = (
-  options?: OnboardingFlowParams['options'],
+  options?: OnboardingFlowProps['options'],
 ) => {
   const { client } = useClient();
   return useMutation({

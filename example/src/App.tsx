@@ -43,6 +43,8 @@ import CostCalculatorWithPremiumBenefitsCode from './CostCalculatorWithPremiumBe
 import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithReplaceableComponents?raw';
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
+import { ContractorOnboardingForm } from './ContractorOnboarding';
+import ContractorOnboardingCode from './ContractorOnboarding?raw';
 
 const costCalculatorDemos = [
   {
@@ -138,6 +140,13 @@ const additionalDemos = [
         sourceCode: '',
       },
     ],
+  },
+  {
+    id: 'contract-onboarding',
+    title: 'Contract Onboarding',
+    description: 'Onboarding flow of a new contractor',
+    component: ContractorOnboardingForm,
+    sourceCode: ContractorOnboardingCode,
   },
 ];
 
