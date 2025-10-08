@@ -357,8 +357,6 @@ export const useContractorOnboarding = ({
     isLoadingEmployment ||
     isLoadingContractorOnboardingDetailsForm;
 
-  console.log({ stepFields });
-
   return {
     /**
      * Loading state indicating if the flow is loading data
