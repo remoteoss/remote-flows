@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.20.1
+
+### Patch Changes
+
+- salary conversions when we swap currencies (#493) [#493](https://github.com/remoteoss/remote-flows/pull/493)
+
+
 ## 0.20.0
 
 ### Minor Changes
