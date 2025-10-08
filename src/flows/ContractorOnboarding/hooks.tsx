@@ -22,7 +22,7 @@ import {
   useEmployment,
   useJSONSchemaForm,
 } from '@/src/flows/Onboarding/api';
-import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
@@ -143,6 +143,7 @@ export const useContractorOnboarding = ({
     options?: {
       jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
+      jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
     query?: Record<string, string>;
   }) => {
@@ -193,6 +194,7 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
+      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
