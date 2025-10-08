@@ -14,6 +14,7 @@ import {
   useCreateEmployment,
   useEmployment,
   useJSONSchemaForm,
+  useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
@@ -345,6 +346,20 @@ export const useContractorOnboarding = ({
 
         return;
       }
+      case 'contract_details': {
+        return Promise.resolve({});
+        /* const payload: EmploymentFullParams = {
+          contract_details: parsedValues,
+          pricing_plan_details: {
+            frequency: 'monthly',
+          },
+        };
+        return updateEmploymentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          external_id: externalId,
+          ...payload,
+        }); */
+      }
       default: {
         throw new Error('Invalid step state');
       }
@@ -451,6 +466,18 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return basicInformationForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        contractorOnboardingDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractorOnboardingDetailsForm?.fields,
+          { isPartialValidation: false },
+        );
+        return contractorOnboardingDetailsForm?.handleValidation(parsedValues);
       }
 
       return null;
