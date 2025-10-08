@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.20.1
+
+### Patch Changes
+
+- c160ced: - Fix bug in the salary field on the `CostCalculatorFlow` when changing country or billing currency [#493](https://github.com/remoteoss/remote-flows/pull/493)
+
 ## 0.20.0
 
 ### Minor Changes

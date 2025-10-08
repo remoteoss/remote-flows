@@ -39,6 +39,31 @@ export const countries = {
       availability: 'active',
       original_country_slug: 'spain-d3f6d510-2fdf-4b9d-8520-2b581a862411',
     },
+    {
+      code: 'USA',
+      name: 'United States',
+      currency: {
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+        slug: 'usd-33441af1-a601-4a22-8f52-1ec090f10b4a',
+      },
+      region_slug: 'USA',
+      child_regions: [
+        {
+          slug: 'CA',
+          name: 'California',
+        },
+        {
+          slug: 'NY',
+          name: 'New York',
+        },
+      ],
+      has_additional_fields: true,
+      availability: 'active',
+      original_country_slug:
+        'united-states-d3f6d510-2fdf-4b9d-8520-2b581a862411',
+    },
   ],
 };
 
@@ -52,6 +77,10 @@ export const currencies = {
       {
         code: 'EUR',
         slug: 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+      },
+      {
+        code: 'GBP',
+        slug: 'gbp-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
       },
     ],
   },
