@@ -3,7 +3,10 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { useContractorOnboardingDetailsSchema } from '@/src/flows/ContractorOnboarding/api';
+import {
+  useContractorDetailsData,
+  useContractorOnboardingDetailsSchema,
+} from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
@@ -197,6 +200,22 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const isContractorDetailsEnabled = Boolean(
+    internalCountryCode && stepState.currentStep.name === 'contract_details',
+  );
+
+  const {
+    data: contractorDetailsData,
+    isLoading: isLoadingContractorDetailsData,
+  } = useContractorDetailsData({
+    countryCode: internalCountryCode as string,
+    options: {
+      queryOptions: {
+        enabled: isContractorDetailsEnabled,
+      },
+    },
+  });
+
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
@@ -251,9 +270,11 @@ export const useContractorOnboarding = ({
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
+    // TODO: after we save contract details, we need to check if this is correct
     const initialValues = {
       ...onboardingInitialValues,
       ...employmentContractDetails,
+      ...contractorDetailsData,
     };
 
     return getInitialValues(stepFields.contract_details, initialValues);
@@ -261,6 +282,7 @@ export const useContractorOnboarding = ({
     stepFields.contract_details,
     employmentContractDetails,
     onboardingInitialValues,
+    contractorDetailsData,
   ]);
 
   const initialValues = useMemo(() => {
@@ -369,7 +391,8 @@ export const useContractorOnboarding = ({
     isLoadingCountries ||
     isLoadingBasicInformationForm ||
     isLoadingEmployment ||
-    isLoadingContractorOnboardingDetailsForm;
+    isLoadingContractorOnboardingDetailsForm ||
+    isLoadingContractorDetailsData;
 
   return {
     /**

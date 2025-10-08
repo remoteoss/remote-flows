@@ -1,10 +1,48 @@
+import { getShowContractorContractDetailsCountry } from '@/src/client';
 import { convertToCents } from '@/src/components/form/utils';
+import { useClient } from '@/src/context';
 import { FlowOptions } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+
+export const useContractorDetailsData = ({
+  countryCode,
+  options,
+}: {
+  countryCode: string;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+}) => {
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion
+    ?.contractor_contract_details_form_schema
+    ? {
+        json_schema_version:
+          options.jsonSchemaVersion.contractor_contract_details_form_schema,
+      }
+    : {};
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['contractor-details-data'],
+    retry: false,
+    queryFn: async () => {
+      return getShowContractorContractDetailsCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { country_code: countryCode },
+        query: {
+          ...jsonSchemaQueryParam,
+        },
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+};
 
 export const useContractorOnboardingDetailsSchema = ({
   countryCode,
@@ -220,7 +258,6 @@ export const useContractorOnboardingDetailsSchema = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      console.log('data', data);
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {
         const { schema } = modify(jsfSchema, options.jsfModify);
