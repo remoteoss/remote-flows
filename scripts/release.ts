@@ -166,41 +166,20 @@ function generateChangesetContent(commits: Commit[]): Changeset | null {
   if (groups.major.length > 0) finalVersionBump = 'major';
   else if (groups.minor.length > 0) finalVersionBump = 'minor';
 
+  // Generate simple changeset content (no markdown headers)
   const changesetItems: string[] = [];
 
-  if (groups.major.length > 0) {
-    changesetItems.push('## Breaking Changes');
-    groups.major.forEach((commit) => {
-      const prText = commit.prNumber
-        ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
-        : '';
-      changesetItems.push(`- ${commit.description}${prText}`);
-    });
-  }
-
-  if (groups.minor.length > 0) {
-    changesetItems.push('## Features');
-    groups.minor.forEach((commit) => {
-      const prText = commit.prNumber
-        ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
-        : '';
-      changesetItems.push(`- ${commit.description}${prText}`);
-    });
-  }
-
-  if (groups.patch.length > 0) {
-    changesetItems.push('## Bug Fixes & Improvements');
-    groups.patch.forEach((commit) => {
-      const prText = commit.prNumber
-        ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
-        : '';
-      changesetItems.push(`- ${commit.description}${prText}`);
-    });
-  }
+  // Add all commits as simple bullet points
+  parsedCommits.forEach((commit) => {
+    const prText = commit.prNumber
+      ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
+      : '';
+    changesetItems.push(`- ${commit.description}${prText}`);
+  });
 
   return {
     versionBump: finalVersionBump,
-    content: changesetItems.join('\n\n'),
+    content: changesetItems.join('\n'),
   };
 }
 
@@ -241,50 +220,71 @@ async function main(): Promise<void> {
     return;
   }
 
-  // Generate changeset file
-  const timestamp = Date.now();
-  const filename = `auto-changeset-${timestamp}.md`;
-  const changesetContent = `---
-'@remoteoss/remote-flows': ${changeset.versionBump}
----
+  // Manual version bumping and changelog generation
+  console.log('📦 Updating version and changelog...');
+
+  // Read current package.json
+  const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+  const currentVersion = packageJson.version;
+  const [major, minor, patch] = currentVersion.split('.').map(Number);
+
+  // Bump version based on changeset
+  let newVersion: string;
+  if (changeset.versionBump === 'major') {
+    newVersion = `${major + 1}.0.0`;
+  } else if (changeset.versionBump === 'minor') {
+    newVersion = `${major}.${minor + 1}.0`;
+  } else {
+    newVersion = `${major}.${minor}.${patch + 1}`;
+  }
+
+  // Update package.json
+  packageJson.version = newVersion;
+  writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
+
+  // Generate changelog entry to match existing format
+  const versionType =
+    changeset.versionBump === 'major'
+      ? 'Major'
+      : changeset.versionBump === 'minor'
+        ? 'Minor'
+        : 'Patch';
+  const changelogEntry = `## ${newVersion}
+
+### ${versionType} Changes
 
 ${changeset.content}
+
 `;
 
-  writeFileSync(`.changeset/${filename}`, changesetContent);
-  console.log(`✅ Created changeset: ${filename}`);
-
-  console.log('📦 Running changesets version...');
+  // Read existing changelog
+  let changelog = '';
   try {
-    // First, let's see what changesets exist
-    console.log('📋 Current changesets:');
-    execSync('ls -la .changeset/', { stdio: 'inherit' });
-
-    // Run changesets version with verbose output
-    execSync('npx @changesets/cli version --verbose', { stdio: 'inherit' });
-
-    console.log('✅ Changesets version completed successfully');
-  } catch (error) {
-    console.error('❌ Changesets version failed:', error);
-
-    // Let's see what the actual error is
-    console.log('🔍 Debugging changesets...');
-    try {
-      execSync('npx @changesets/cli --help', { stdio: 'inherit' });
-    } catch (helpError) {
-      console.error('❌ Changesets CLI not found:', helpError);
-    }
-
-    console.log('Continuing anyway...');
+    changelog = readFileSync('CHANGELOG.md', 'utf8');
+  } catch {
+    changelog = '# @remoteoss/remote-flows\n\n';
   }
-  // Get the new version
-  const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
-    version: string;
-  };
-  const newVersion = packageJson.version;
+
+  // Add new entry at the top (after the header)
+  const lines = changelog.split('\n');
+  // Look for any version line (## followed by version number)
+  const headerEndIndex = lines.findIndex((line) =>
+    line.match(/^## \d+\.\d+\.\d+/),
+  );
+  if (headerEndIndex === -1) {
+    changelog = changelog + '\n' + changelogEntry;
+  } else {
+    lines.splice(headerEndIndex, 0, changelogEntry);
+    changelog = lines.join('\n');
+  }
+
+  writeFileSync('CHANGELOG.md', changelog);
+
+  console.log(`✅ Updated version to ${newVersion}`);
+  console.log(`✅ Updated CHANGELOG.md`);
 
   // Create release branch
-  const branchName = `changeset-${newVersion}`;
+  const branchName = `release-${newVersion}`;
   console.log(`🌿 Creating release branch: ${branchName}`);
 
   execSync(`git checkout -b ${branchName}`, { stdio: 'inherit' });
