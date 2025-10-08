@@ -231,6 +231,11 @@ const OnboardingWithProps = ({
         render={OnBoardingRender}
         employmentId={employmentId}
         externalId={externalId}
+        options={{
+          jsonSchemaVersion: {
+            contractor_contract_details_form_schema: 2,
+          },
+        }}
       />
     </RemoteFlows>
   );

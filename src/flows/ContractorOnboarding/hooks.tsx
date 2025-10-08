@@ -1,11 +1,15 @@
-import { Employment, EmploymentCreateParams } from '@/src/client/types.gen';
+import {
+  CreateContractDocument,
+  Employment,
+  EmploymentCreateParams,
+} from '@/src/client/types.gen';
 import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import {
-  useContractorDetailsData,
   useContractorOnboardingDetailsSchema,
+  useCreateContractorContractDocument,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -93,10 +97,15 @@ export const useContractorOnboarding = ({
     useEmployment(internalEmploymentId);
 
   const createEmploymentMutation = useCreateEmployment(options);
+  const createContractorContractDocumentMutation =
+    useCreateContractorContractDocument();
 
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
+
+  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+    mutationToPromise(createContractorContractDocumentMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -197,22 +206,8 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
       },
-    },
-  });
-
-  const isContractorDetailsEnabled = Boolean(
-    internalCountryCode && stepState.currentStep.name === 'contract_details',
-  );
-
-  const {
-    data: contractorDetailsData,
-    isLoading: isLoadingContractorDetailsData,
-  } = useContractorDetailsData({
-    countryCode: internalCountryCode as string,
-    options: {
-      queryOptions: {
-        enabled: isContractorDetailsEnabled,
-      },
+      jsfModify: options?.jsfModify?.contract_details,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
@@ -274,7 +269,6 @@ export const useContractorOnboarding = ({
     const initialValues = {
       ...onboardingInitialValues,
       ...employmentContractDetails,
-      ...contractorDetailsData,
     };
 
     return getInitialValues(stepFields.contract_details, initialValues);
@@ -282,7 +276,6 @@ export const useContractorOnboarding = ({
     stepFields.contract_details,
     employmentContractDetails,
     onboardingInitialValues,
-    contractorDetailsData,
   ]);
 
   const initialValues = useMemo(() => {
@@ -368,18 +361,13 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
-        return Promise.resolve({});
-        /* const payload: EmploymentFullParams = {
-          contract_details: parsedValues,
-          pricing_plan_details: {
-            frequency: 'monthly',
-          },
+        const payload: CreateContractDocument = {
+          contract_document: parsedValues,
         };
-        return updateEmploymentMutationAsync({
+        return createContractorContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
-          external_id: externalId,
-          ...payload,
-        }); */
+          payload,
+        });
       }
       default: {
         throw new Error('Invalid step state');
@@ -391,8 +379,7 @@ export const useContractorOnboarding = ({
     isLoadingCountries ||
     isLoadingBasicInformationForm ||
     isLoadingEmployment ||
-    isLoadingContractorOnboardingDetailsForm ||
-    isLoadingContractorDetailsData;
+    isLoadingContractorOnboardingDetailsForm;
 
   return {
     /**
