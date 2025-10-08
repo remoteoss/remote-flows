@@ -6,19 +6,19 @@ import {
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
-  ContractOptionsFormPayload,
-  ContractOptionsResponse,
+  ContractDetailsFormPayload,
+  ContractDetailsResponse,
 } from '@/src/flows/ContractorOnboarding/types';
 
-type ContractOptionsStepProps = {
+type ContractDetailsStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: ContractOptionsFormPayload) => void | Promise<void>;
+  onSubmit?: (payload: ContractDetailsFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: ContractOptionsResponse) => void | Promise<void>;
+  onSuccess?: (data: ContractDetailsResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -33,11 +33,11 @@ type ContractOptionsStepProps = {
   }) => void;
 };
 
-export function ContractOptionsStep({
+export function ContractDetailsStep({
   onSubmit,
   onSuccess,
   onError,
-}: ContractOptionsStepProps) {
+}: ContractDetailsStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
   const handleSubmit = async (payload: $TSFixMe) => {
@@ -73,8 +73,8 @@ export function ContractOptionsStep({
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.contract_options ||
-    contractorOnboardingBag.initialValues.contract_options;
+    contractorOnboardingBag.stepState.values?.contract_details ||
+    contractorOnboardingBag.initialValues.contract_details;
 
   return (
     <ContractorOnboardingForm

@@ -334,6 +334,9 @@ import type {
   PostCreateEstimationCsvData,
   PostCreateEstimationCsvResponse,
   PostCreateEstimationCsvError,
+  PostCreateContractDocumentData,
+  PostCreateContractDocumentResponse,
+  PostCreateContractDocumentError,
   PostTriggerWebhookCallbackData,
   PostTriggerWebhookCallbackResponse,
   PostTriggerWebhookCallbackError,
@@ -421,6 +424,9 @@ import type {
   PatchUpdateEmploymentCustomFieldValueData,
   PatchUpdateEmploymentCustomFieldValueResponse,
   PatchUpdateEmploymentCustomFieldValueError,
+  PostSignContractDocumentData,
+  PostSignContractDocumentResponse,
+  PostSignContractDocumentError,
   GetCurrentIdentityData,
   GetCurrentIdentityResponse,
   GetCurrentIdentityError,
@@ -484,9 +490,6 @@ import type {
   PostCreateCompanyData,
   PostCreateCompanyResponse,
   PostCreateCompanyError,
-  PostSignContractDocumentData,
-  PostSignContractDocumentResponse,
-  PostSignContractDocumentError,
   PostSendBackTimesheetData,
   PostSendBackTimesheetResponse,
   PostSendBackTimesheetError,
@@ -3877,6 +3880,7 @@ export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
 
 /**
  * Creates a CSV cost estimation of employments
+ * Creates CSV cost estimation of employments
  */
 export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
   options?: Options<PostCreateEstimationCsvData, ThrowOnError>,
@@ -3905,6 +3909,38 @@ export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/cost-calculator/estimation-csv',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Create a contract document for a contractor
+ */
+export const postCreateContractDocument = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateContractDocumentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostCreateContractDocumentResponse,
+    PostCreateContractDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contract-documents',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4842,6 +4878,36 @@ export const patchUpdateEmploymentCustomFieldValue = <
 };
 
 /**
+ * Sign a document for a contractor
+ */
+export const postSignContractDocument = <ThrowOnError extends boolean = false>(
+  options: Options<PostSignContractDocumentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostSignContractDocumentResponse,
+    PostSignContractDocumentError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
  * Get token identity
  * Shows information about the entities that can be controlled by the current auth token.
  *
@@ -5458,36 +5524,6 @@ export const postCreateCompany = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/v1/companies',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-};
-
-/**
- * Sign a document for a contractor
- */
-export const postSignContractDocument = <ThrowOnError extends boolean = false>(
-  options: Options<PostSignContractDocumentData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).post<
-    PostSignContractDocumentResponse,
-    PostSignContractDocumentError,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/{contract_document_id}/sign',
     ...options,
     headers: {
       'Content-Type': 'application/json',

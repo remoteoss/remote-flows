@@ -3,6 +3,7 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
+import { useContractorOnboardingDetailsSchema } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
@@ -34,8 +35,8 @@ const stepToFormSchemaMap: Record<
 > = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  contract_details: null,
   pricing_plan: null,
-  contract_options: null,
 };
 
 const jsonSchemaToEmployment: Partial<
@@ -166,6 +167,10 @@ export const useContractorOnboarding = ({
     internalCountryCode && stepState.currentStep.name === 'basic_information',
   );
 
+  const isContractorOnboardingDetailsEnabled = Boolean(
+    internalCountryCode && stepState.currentStep.name === 'contract_details',
+  );
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -179,14 +184,31 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const {
+    data: contractorOnboardingDetailsForm,
+    isLoading: isLoadingContractorOnboardingDetailsForm,
+  } = useContractorOnboardingDetailsSchema({
+    countryCode: internalCountryCode as string,
+    fieldValues: fieldValues,
+    options: {
+      queryOptions: {
+        enabled: isContractorOnboardingDetailsEnabled,
+      },
+    },
+  });
+
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: [],
-      contract_options: [],
+      contract_details: contractorOnboardingDetailsForm?.fields || [],
     }),
-    [selectCountryForm?.fields, basicInformationForm?.fields],
+    [
+      selectCountryForm?.fields,
+      basicInformationForm?.fields,
+      contractorOnboardingDetailsForm?.fields,
+    ],
   );
 
   const stepFieldsWithFlatFieldsets: Record<
@@ -196,11 +218,14 @@ export const useContractorOnboarding = ({
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
-    contract_options: null,
+    contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
   };
 
-  const { country, basic_information: employmentBasicInformation = {} } =
-    employment || {};
+  const {
+    country,
+    basic_information: employmentBasicInformation = {},
+    contract_details: employmentContractDetails = {},
+  } = employment || {};
 
   const employmentCountryCode = country?.code;
 
@@ -225,14 +250,31 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const contractDetailsInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...employmentContractDetails,
+    };
+
+    return getInitialValues(stepFields.contract_details, initialValues);
+  }, [
+    stepFields.contract_details,
+    employmentContractDetails,
+    onboardingInitialValues,
+  ]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      contract_details: contractDetailsInitialValues,
       pricing_plan: {},
-      contract_options: {},
     };
-  }, [selectCountryInitialValues, basicInformationInitialValues]);
+  }, [
+    selectCountryInitialValues,
+    basicInformationInitialValues,
+    contractDetailsInitialValues,
+  ]);
 
   const goTo = (step: keyof typeof STEPS) => {
     goToStep(step);
@@ -310,7 +352,12 @@ export const useContractorOnboarding = ({
   }
 
   const isLoading =
-    isLoadingCountries || isLoadingBasicInformationForm || isLoadingEmployment;
+    isLoadingCountries ||
+    isLoadingBasicInformationForm ||
+    isLoadingEmployment ||
+    isLoadingContractorOnboardingDetailsForm;
+
+  console.log({ stepFields });
 
   return {
     /**
