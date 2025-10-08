@@ -300,7 +300,7 @@ ${changeset.content}
   console.log(`🔗 Creating PR...`);
   try {
     execSync(
-      `gh pr create --title "Release v${newVersion}" --body "Release v${newVersion} prepared. Review and merge to release." --base main --head ${branchName}`,
+      `gh pr create --title "${newVersion}" --base main --head ${branchName}`,
       { stdio: 'inherit' },
     );
     console.log(`✅ Created PR: Release v${newVersion}`);
