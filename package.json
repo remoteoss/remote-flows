@@ -13,6 +13,7 @@
     "openapi-ts": "openapi-ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "type-check": "tsc --noEmit"
   },
