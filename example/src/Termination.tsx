@@ -182,7 +182,7 @@ export const Termination = () => {
   const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
   const proxyURL = window.location.origin;
   return (
-    <RemoteFlows proxy={{ url: proxyURL }}>
+    <RemoteFlows proxy={{ url: proxyURL }} authType='jwt'>
       <TerminationFlow
         employmentId={EMPLOYMENT_ID}
         render={TerminationForm}
