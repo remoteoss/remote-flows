@@ -35,7 +35,7 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -231,6 +231,7 @@ export const useOnboarding = ({
     options?: {
       jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
+      jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
     query?: Record<string, string>;
   }) => {
@@ -259,6 +260,7 @@ export const useOnboarding = ({
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
+        jsonSchemaVersion: jsonSchemaOptions.jsonSchemaVersion,
       },
     });
   };
@@ -285,6 +287,7 @@ export const useOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
+      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
@@ -383,6 +386,7 @@ export const useOnboarding = ({
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
+        jsonSchemaVersion: options?.jsonSchemaVersion,
       },
     });
 
