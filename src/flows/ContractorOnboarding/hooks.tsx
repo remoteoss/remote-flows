@@ -311,6 +311,19 @@ export const useContractorOnboarding = ({
       });
     }
 
+    if (
+      contractorOnboardingDetailsForm &&
+      stepState.currentStep.name === 'contract_details'
+    ) {
+      return parseJSFToValidate(
+        values,
+        contractorOnboardingDetailsForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
+    }
+
     return {};
   };
 

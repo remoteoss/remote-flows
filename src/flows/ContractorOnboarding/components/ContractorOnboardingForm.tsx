@@ -8,14 +8,14 @@ import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { useEffect } from 'react';
 import { PricingPlanFormPayload } from '@/src/flows/ContractorOnboarding/types';
-import { ContractOptionsFormPayload } from '@/src/flows/ContractorOnboarding/types';
+import { ContractDetailsFormPayload } from '@/src/flows/ContractorOnboarding/types';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
     payload:
       | BasicInformationFormPayload
       | PricingPlanFormPayload
-      | ContractOptionsFormPayload,
+      | ContractDetailsFormPayload,
   ) => void;
   components?: Components;
   fields?: Fields;

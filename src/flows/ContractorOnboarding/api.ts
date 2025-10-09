@@ -24,16 +24,14 @@ export const useCreateContractorContractDocument = () => {
   return useMutation({
     mutationFn: async ({
       employmentId,
-      ...payload
+      payload,
     }: {
       employmentId: string;
       payload: CreateContractDocument;
     }) => {
       return postCreateContractDocument({
         client: client as Client,
-        body: {
-          contract_document: payload,
-        },
+        body: payload,
         path: {
           employment_id: employmentId,
         },
