@@ -1,8 +1,7 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
 const express = require('express');
-const { getToken, buildGatewayURL } = require('./api/get_token.js');
-const { createProxyMiddleware } = require('./api/proxy.js');
+const { setupRoutes } = require('./api/routes.js');
 const { createServer: createViteServer } = require('vite');
 
 dotenv.config();
@@ -19,8 +18,7 @@ const startServer = async () => {
   app.use(express.json());
 
   // API route example
-  app.get('/api/token', getToken);
-  app.use('/v1', createProxyMiddleware());
+  setupRoutes(app);
 
   app.use(vite.middlewares);
 

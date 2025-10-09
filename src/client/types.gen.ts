@@ -1234,9 +1234,9 @@ export type CompanyCreationResponse = {
  */
 export type ContractDocumentResponse = {
   data: {
-    contract_document?: {
-      content?: Blob | File;
-      name?: string;
+    contract_document: {
+      content: Blob | File;
+      name: string;
     };
   };
 };
@@ -2477,6 +2477,27 @@ export type ProductPrice = {
 };
 
 /**
+ * Response for contractor contract details
+ */
+export type ContractorContractDetailsResponse = {
+  /**
+   * Contractor contract details response data
+   */
+  data?: {
+    /**
+     * Contract details schema object with variable fields based on country
+     */
+    schema: {
+      [key: string]: unknown;
+    };
+    /**
+     * JSON schema version number
+     */
+    version: number;
+  };
+};
+
+/**
  * Response schema listing many offboardings
  */
 export type ListOffboardingResponse = {
@@ -3292,6 +3313,19 @@ export type IdentityCustomerAccessTokenResponse = {
   data: {
     company: IdentityCompany;
     user: IdentityUser;
+  };
+};
+
+/**
+ * Parameters for creating a contract document
+ */
+export type CreateContractDocument = {
+  /**
+   *   Contract document parameters. Its properties may vary depending on the country.
+   *
+   */
+  contract_document: {
+    [key: string]: unknown;
   };
 };
 
@@ -6065,6 +6099,13 @@ export type Expense = {
 };
 
 /**
+ * ContractDocument schema
+ */
+export type ContractDocument = {
+  id: string;
+};
+
+/**
  * Contractor Invoice
  */
 export type ContractorInvoice = {
@@ -6149,6 +6190,15 @@ export type EmploymentId = string;
 export type ContractAmendmentResponse = {
   data?: {
     contract_amendment: ContractAmendment;
+  };
+};
+
+/**
+ * Contract document response
+ */
+export type CreateContractDocumentResponse = {
+  data: {
+    contract_document: ContractDocument;
   };
 };
 
@@ -6742,6 +6792,59 @@ export type PostConvertRawCurrencyConverterResponses = {
 
 export type PostConvertRawCurrencyConverterResponse =
   PostConvertRawCurrencyConverterResponses[keyof PostConvertRawCurrencyConverterResponses];
+
+export type GetShowContractorContractDetailsCountryData = {
+  body?: never;
+  path: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes
+     */
+    country_code: string;
+  };
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
+  url: '/v1/countries/{country_code}/contractor-contract-details';
+};
+
+export type GetShowContractorContractDetailsCountryErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowContractorContractDetailsCountryError =
+  GetShowContractorContractDetailsCountryErrors[keyof GetShowContractorContractDetailsCountryErrors];
+
+export type GetShowContractorContractDetailsCountryResponses = {
+  /**
+   * Success
+   */
+  200: ContractorContractDetailsResponse;
+};
+
+export type GetShowContractorContractDetailsCountryResponse =
+  GetShowContractorContractDetailsCountryResponses[keyof GetShowContractorContractDetailsCountryResponses];
 
 export type GetIndexEmploymentData = {
   body?: never;
@@ -11743,6 +11846,49 @@ export type PostCreateEstimationCsvResponses = {
 export type PostCreateEstimationCsvResponse =
   PostCreateEstimationCsvResponses[keyof PostCreateEstimationCsvResponses];
 
+export type PostCreateContractDocumentData = {
+  /**
+   * CreateContractDocumentParams
+   */
+  body: CreateContractDocument;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contract-documents';
+};
+
+export type PostCreateContractDocumentErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateContractDocumentError =
+  PostCreateContractDocumentErrors[keyof PostCreateContractDocumentErrors];
+
+export type PostCreateContractDocumentResponses = {
+  /**
+   * Success
+   */
+  200: CreateContractDocumentResponse;
+};
+
+export type PostCreateContractDocumentResponse =
+  PostCreateContractDocumentResponses[keyof PostCreateContractDocumentResponses];
+
 export type PostTriggerWebhookCallbackData = {
   /**
    * Webhook Trigger Params
@@ -13203,6 +13349,49 @@ export type PatchUpdateEmploymentCustomFieldValueResponses = {
 export type PatchUpdateEmploymentCustomFieldValueResponse =
   PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
 
+export type PostSignContractDocumentData = {
+  /**
+   * SignContractDocument
+   */
+  body: SignContractDocument;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+    /**
+     * Document ID
+     */
+    contract_document_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign';
+};
+
+export type PostSignContractDocumentErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+};
+
+export type PostSignContractDocumentError =
+  PostSignContractDocumentErrors[keyof PostSignContractDocumentErrors];
+
+export type PostSignContractDocumentResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostSignContractDocumentResponse =
+  PostSignContractDocumentResponses[keyof PostSignContractDocumentResponses];
+
 export type GetCurrentIdentityData = {
   body?: never;
   headers: {
@@ -14361,49 +14550,6 @@ export type PostCreateCompanyResponses = {
 
 export type PostCreateCompanyResponse =
   PostCreateCompanyResponses[keyof PostCreateCompanyResponses];
-
-export type PostSignContractDocumentData = {
-  /**
-   * SignContractDocument
-   */
-  body: SignContractDocument;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-    /**
-     * Document ID
-     */
-    contract_document_id: string;
-  };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/{contract_document_id}/sign';
-};
-
-export type PostSignContractDocumentErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-};
-
-export type PostSignContractDocumentError =
-  PostSignContractDocumentErrors[keyof PostSignContractDocumentErrors];
-
-export type PostSignContractDocumentResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
-
-export type PostSignContractDocumentResponse =
-  PostSignContractDocumentResponses[keyof PostSignContractDocumentResponses];
 
 export type PostSendBackTimesheetData = {
   /**

@@ -1,21 +1,4 @@
-const ENVIRONMENTS = {
-  local: 'http://localhost:4000/api/eor',
-  partners: 'https://gateway.partners.remote-sandbox.com',
-  production: 'https://gateway.remote.com',
-  sandbox: 'https://gateway.remote-sandbox.com',
-  staging: 'https://gateway.niceremote.com',
-};
-
-function buildGatewayURL() {
-  const {
-    VITE_CLIENT_ID,
-    VITE_CLIENT_SECRET,
-    VITE_REMOTE_GATEWAY,
-    VITE_REFRESH_TOKEN,
-  } = process.env;
-
-  return ENVIRONMENTS[VITE_REMOTE_GATEWAY];
-}
+const { buildGatewayURL } = require('./utils.js');
 
 async function fetchAccessToken() {
   const {
@@ -87,4 +70,4 @@ async function getToken(req, res) {
   }
 }
 
-module.exports = { getToken, buildGatewayURL, fetchAccessToken };
+module.exports = { getToken, fetchAccessToken };

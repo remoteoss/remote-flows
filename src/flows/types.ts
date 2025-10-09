@@ -78,5 +78,6 @@ export type FlowOptions = {
       [key in JSONSchemaFormType]?: number;
     };
     benefit_offers_form_schema?: number;
+    contractor_contract_details_form_schema?: number;
   };
 };
