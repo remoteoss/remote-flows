@@ -4,7 +4,7 @@ import {
 } from '@remoteoss/remote-flows';
 import { ReactNode, useMemo } from 'react';
 
-const fetchToken = () => {
+const fetchCompanyToken = () => {
   return fetch('/api/token')
     .then((res) => res.json())
     .then((data) => ({
@@ -27,7 +27,7 @@ const fetchClientToken = () => {
   });
 };
 
-const fetchJWTToken = () => {
+const fetchCompanyManagerToken = () => {
   return fetch('/api/jwt-token')
     .then((res) => res.json())
     .then((data) => ({
@@ -44,7 +44,7 @@ type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
   children: ReactNode;
   auth?: RemoteFlowsSDKProps['auth'];
   isClientToken?: boolean;
-  authType?: 'token' | 'jwt' | 'client';
+  authType?: 'refresh-token' | 'company-manager' | 'client';
 };
 
 export const RemoteFlows = ({
@@ -54,14 +54,14 @@ export const RemoteFlows = ({
   ...props
 }: RemoteFlowsProps) => {
   const auth = useMemo(() => {
-    if (authType === 'jwt') {
-      return fetchJWTToken;
+    if (authType === 'company-manager') {
+      return fetchCompanyManagerToken;
     }
     if (authType === 'client' || isClientToken) {
       return fetchClientToken;
     }
 
-    return fetchToken;
+    return fetchCompanyToken;
   }, [authType, isClientToken]);
   return (
     <RemoteFlowsAuth
