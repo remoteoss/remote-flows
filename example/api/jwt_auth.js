@@ -11,7 +11,7 @@ async function generateJWTToken() {
     VITE_CLIENT_ID,
     VITE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
-    VITE_USER_ID, // New environment variable for user ID
+    VITE_USER_ID,
   } = process.env;
 
   if (
@@ -27,13 +27,15 @@ async function generateJWTToken() {
 
   const gatewayUrl = buildGatewayURL();
   const now = Math.floor(Date.now() / 1000);
+  const exp = now + 5 * 60;
 
   const payload = {
-    iss: VITE_CLIENT_ID, // Partner client ID
-    sub: `urn:remote-api:company-manager:user:${VITE_USER_ID}`, // User ID
-    aud: `${gatewayUrl}/auth`, // Audience
-    exp: now + 60 * 60, // 60 minutes from now
-    scope: DEFAULT_SCOPES, // Scopes
+    iss: VITE_CLIENT_ID,
+    sub: `urn:remote-api:company-manager:user:${VITE_USER_ID}`,
+    aud: `${gatewayUrl}/auth`,
+    exp: exp,
+    scope: DEFAULT_SCOPES,
+    iat: now,
   };
 
   try {
@@ -47,22 +49,27 @@ async function generateJWTToken() {
 }
 
 async function fetchAccessTokenWithJWT() {
-  const { VITE_REMOTE_GATEWAY } = process.env;
+  const { VITE_REMOTE_GATEWAY, VITE_CLIENT_ID, VITE_CLIENT_SECRET } =
+    process.env;
   const gatewayUrl = buildGatewayURL();
 
   try {
     const jwtToken = await generateJWTToken();
+    const encodedCredentials = btoa(`${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`);
+
+    const body = new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwtToken,
+      scope: DEFAULT_SCOPES,
+    });
 
     const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${encodedCredentials}`,
       },
-      body: new URLSearchParams({
-        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        assertion: jwtToken,
-        scope: DEFAULT_SCOPES,
-      }),
+      body,
     });
 
     if (!response.ok) {
