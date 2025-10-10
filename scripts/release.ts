@@ -296,14 +296,34 @@ ${changeset.content}
 
   console.log(`✅ Created release branch: ${branchName}`);
 
-  // Auto-create PR
+  // Auto-create PR with changelog content as body
   console.log(`🔗 Creating PR...`);
   try {
+    // Create PR with changelog content as the body
+    const prBody = `## ${newVersion}
+
+### ${versionType} Changes
+
+${changeset.content}
+
+---
+
+This release was automatically generated from conventional commits.`;
+
     execSync(
-      `gh pr create --title "${newVersion}" --base main --head ${branchName}`,
+      `gh pr create --title "${newVersion}" --body "${prBody}" --base main --head ${branchName}`,
       { stdio: 'inherit' },
     );
     console.log(`✅ Created PR: Release v${newVersion}`);
+
+    // Open the PR in the browser
+    console.log(`🌐 Opening PR in browser...`);
+    try {
+      execSync(`gh pr view ${branchName} --web`, { stdio: 'inherit' });
+      console.log(`✅ Opened PR in browser`);
+    } catch {
+      console.log(`⚠️  Could not open PR in browser automatically`);
+    }
   } catch {
     console.log(
       `⚠️  Could not create PR automatically. Please create it manually.`,

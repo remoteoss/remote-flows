@@ -1,5 +1,21 @@
 # @remoteoss/remote-flows
 
+## 0.22.0
+
+### Minor Changes
+
+- Add jsonSchemaVersion support to onboarding forms (#500) [#500](https://github.com/remoteoss/remote-flows/pull/500)
+- Refactor API to add JWT authentication support (#499) [#499](https://github.com/remoteoss/remote-flows/pull/499)
+
+
+## 0.21.0
+
+### Minor Changes
+
+- Add jsonSchemaVersion support to onboarding forms (#500) [#500](https://github.com/remoteoss/remote-flows/pull/500)
+- Refactor API to add JWT authentication support (#499) [#499](https://github.com/remoteoss/remote-flows/pull/499)
+
+
 ## 0.20.1
 
 ### Patch Changes
