@@ -314,6 +314,16 @@ ${changeset.content}
   console.log(`✅ Updated version to ${newVersion}`);
   console.log(`✅ Updated CHANGELOG.md`);
 
+  // Format files with prettier before creating PR
+  console.log(`🎨 Formatting files with prettier...`);
+  try {
+    execSync('npm run format', { stdio: 'inherit' });
+    console.log(`✅ Files formatted with prettier`);
+  } catch (error) {
+    console.log(`⚠️  Prettier formatting failed: ${error.message}`);
+    console.log(`Continuing with release...`);
+  }
+
   // Create release branch
   const branchName = `release-${newVersion}`;
   console.log(`🌿 Creating release branch: ${branchName}`);
