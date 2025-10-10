@@ -25,6 +25,33 @@ interface Changeset {
   content: string;
 }
 
+async function getLatestPublishedVersion(): Promise<string> {
+  try {
+    console.log('📦 Checking latest published version on npm...');
+    const response = await fetch(
+      'https://registry.npmjs.org/@remoteoss/remote-flows/latest',
+    );
+
+    if (!response.ok) {
+      throw new Error(`NPM API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const publishedVersion = data.version;
+    console.log(`📦 Latest published version: ${publishedVersion}`);
+    return publishedVersion;
+  } catch (error) {
+    console.log(
+      `⚠️  Could not fetch latest version from npm: ${error.message}`,
+    );
+    console.log('📦 Falling back to local package.json version');
+
+    // Fallback to local version
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+    return packageJson.version;
+  }
+}
+
 function getCommitsSinceLastRelease(): Commit[] {
   console.log('Getting commits since last release');
   try {
@@ -186,6 +213,9 @@ function generateChangesetContent(commits: Commit[]): Changeset | null {
 async function main(): Promise<void> {
   console.log('🚀 Preparing release...');
 
+  // Get the latest published version from npm
+  const latestPublishedVersion = await getLatestPublishedVersion();
+
   // Try GitHub API first, fallback to git log
   const commits = await getCommitsFromGitHubAPI();
   console.log(`📊 Found ${commits.length} commits since last release`);
@@ -223,10 +253,8 @@ async function main(): Promise<void> {
   // Manual version bumping and changelog generation
   console.log('📦 Updating version and changelog...');
 
-  // Read current package.json
-  const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-  const currentVersion = packageJson.version;
-  const [major, minor, patch] = currentVersion.split('.').map(Number);
+  // Use the latest published version as the base
+  const [major, minor, patch] = latestPublishedVersion.split('.').map(Number);
 
   // Bump version based on changeset
   let newVersion: string;
@@ -238,7 +266,10 @@ async function main(): Promise<void> {
     newVersion = `${major}.${minor}.${patch + 1}`;
   }
 
-  // Update package.json
+  console.log(`📈 Version bump: ${latestPublishedVersion} → ${newVersion}`);
+
+  // Read current package.json and update it
+  const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
   packageJson.version = newVersion;
   writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
 
@@ -296,14 +327,34 @@ ${changeset.content}
 
   console.log(`✅ Created release branch: ${branchName}`);
 
-  // Auto-create PR
+  // Auto-create PR with changelog content as body
   console.log(`🔗 Creating PR...`);
   try {
+    // Create PR with changelog content as the body
+    const prBody = `## ${newVersion}
+
+### ${versionType} Changes
+
+${changeset.content}
+
+---
+
+This release was automatically generated from conventional commits.`;
+
     execSync(
-      `gh pr create --title "${newVersion}" --base main --head ${branchName}`,
+      `gh pr create --title "${newVersion}" --body "${prBody}" --base main --head ${branchName}`,
       { stdio: 'inherit' },
     );
     console.log(`✅ Created PR: Release v${newVersion}`);
+
+    // Open the PR in the browser
+    console.log(`🌐 Opening PR in browser...`);
+    try {
+      execSync(`gh pr view ${branchName} --web`, { stdio: 'inherit' });
+      console.log(`✅ Opened PR in browser`);
+    } catch {
+      console.log(`⚠️  Could not open PR in browser automatically`);
+    }
   } catch {
     console.log(
       `⚠️  Could not create PR automatically. Please create it manually.`,
