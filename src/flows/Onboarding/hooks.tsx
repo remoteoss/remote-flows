@@ -280,22 +280,41 @@ export const useOnboarding = ({
 
   const taxServicingCountriesField =
     options?.jsfModify?.basic_information?.fields?.tax_servicing_countries;
+  const taxServicingCountriesFieldPresentation =
+    taxServicingCountriesField &&
+    typeof taxServicingCountriesField === 'object' &&
+    'presentation' in taxServicingCountriesField
+      ? (
+          taxServicingCountriesField as {
+            presentation?: {
+              enableCustomTaxServicingComponent?: boolean;
+            };
+          }
+        ).presentation
+      : undefined;
 
-  const customBasicInformationFields = useMemo(
-    () => ({
+  const customBasicInformationFields = useMemo(() => {
+    const enableCustomTaxServicingComponent =
+      taxServicingCountriesFieldPresentation?.enableCustomTaxServicingComponent !==
+      false;
+
+    return {
       fields: {
         tax_servicing_countries: {
           ...taxServicingCountriesField,
           presentation: {
-            Component: (props: JSFField) => {
-              return <TaxServicingCountriesField {...props} />;
-            },
+            ...taxServicingCountriesFieldPresentation,
+            enableCustomTaxServicingComponent,
+            ...(enableCustomTaxServicingComponent && {
+              Component: (props: JSFField) => {
+                return <TaxServicingCountriesField {...props} />;
+              },
+            }),
           },
         },
       },
-    }),
-    [taxServicingCountriesField],
-  );
+    };
+  }, [taxServicingCountriesField, taxServicingCountriesFieldPresentation]);
 
   const {
     data: basicInformationForm,
