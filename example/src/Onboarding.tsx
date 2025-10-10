@@ -270,6 +270,19 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
+      options={{
+        jsfModify: {
+          basic_information: {
+            fields: {
+              tax_servicing_countries: {
+                presentation: {
+                  enableCustomTaxServicingComponent: true,
+                },
+              },
+            },
+          },
+        },
+      }}
     />
   </RemoteFlows>
 );

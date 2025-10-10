@@ -39,6 +39,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
+import { TaxServicingCountriesField } from '@/src/flows/Onboarding/components/TaxServicingCountries';
 
 type OnboardingHookProps = OnboardingFlowParams;
 
@@ -277,13 +278,57 @@ export const useOnboarding = ({
         Boolean(employmentId)),
   );
 
+  const taxServicingCountriesField =
+    options?.jsfModify?.basic_information?.fields?.tax_servicing_countries;
+  const taxServicingCountriesFieldPresentation =
+    taxServicingCountriesField &&
+    typeof taxServicingCountriesField === 'object' &&
+    'presentation' in taxServicingCountriesField
+      ? (
+          taxServicingCountriesField as {
+            presentation?: {
+              enableCustomTaxServicingComponent?: boolean;
+            };
+          }
+        ).presentation
+      : undefined;
+
+  const customBasicInformationFields = useMemo(() => {
+    const enableCustomTaxServicingComponent =
+      taxServicingCountriesFieldPresentation?.enableCustomTaxServicingComponent !==
+      false;
+
+    return {
+      fields: {
+        tax_servicing_countries: {
+          ...taxServicingCountriesField,
+          presentation: {
+            ...taxServicingCountriesFieldPresentation,
+            enableCustomTaxServicingComponent,
+            ...(enableCustomTaxServicingComponent && {
+              Component: (props: JSFField) => {
+                return <TaxServicingCountriesField {...props} />;
+              },
+            }),
+          },
+        },
+      },
+    };
+  }, [taxServicingCountriesField, taxServicingCountriesFieldPresentation]);
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'employment_basic_information',
     options: {
-      jsfModify: options?.jsfModify?.basic_information,
+      jsfModify: {
+        ...options?.jsfModify?.basic_information,
+        fields: {
+          ...options?.jsfModify?.basic_information?.fields,
+          ...customBasicInformationFields.fields,
+        },
+      },
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -312,7 +357,7 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
-  const customFields = useMemo(
+  const customContractDetailsFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -380,7 +425,7 @@ export const useOnboarding = ({
           ...options?.jsfModify?.contract_details,
           fields: {
             ...options?.jsfModify?.contract_details?.fields,
-            ...customFields.fields,
+            ...customContractDetailsFields.fields,
           },
         },
         queryOptions: {
