@@ -5,7 +5,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 
 const fetchCompanyToken = () => {
-  return fetch('/api/token')
+  return fetch('/api/fetch-refresh-token')
     .then((res) => res.json())
     .then((data) => ({
       accessToken: data.access_token,
@@ -28,7 +28,7 @@ const fetchClientToken = () => {
 };
 
 const fetchCompanyManagerToken = () => {
-  return fetch('/api/jwt-token')
+  return fetch('/api/fetch-company-manager')
     .then((res) => res.json())
     .then((data) => ({
       accessToken: data.access_token,
