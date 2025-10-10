@@ -1,5 +1,6 @@
 const axios = require('axios');
-const { buildGatewayURL, fetchAccessToken } = require('./get_token.js');
+const { fetchAccessToken } = require('./get_token.js');
+const { buildGatewayURL } = require('./utils.js');
 
 /**
  * Create a proxy request to the gateway with authentication

@@ -2,10 +2,10 @@ import {
   RemoteFlows as RemoteFlowsAuth,
   RemoteFlowsSDKProps,
 } from '@remoteoss/remote-flows';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 
-const fetchToken = () => {
-  return fetch('/api/token')
+const fetchCompanyToken = () => {
+  return fetch('/api/fetch-refresh-token')
     .then((res) => res.json())
     .then((data) => ({
       accessToken: data.access_token,
@@ -27,21 +27,46 @@ const fetchClientToken = () => {
   });
 };
 
+const fetchCompanyManagerToken = () => {
+  return fetch('/api/fetch-company-manager')
+    .then((res) => res.json())
+    .then((data) => ({
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+    }))
+    .catch((error) => {
+      console.error({ error });
+      throw error;
+    });
+};
+
 type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
   children: ReactNode;
   auth?: RemoteFlowsSDKProps['auth'];
   isClientToken?: boolean;
+  authType?: 'refresh-token' | 'company-manager' | 'client';
 };
 
 export const RemoteFlows = ({
   children,
   isClientToken,
+  authType,
   ...props
 }: RemoteFlowsProps) => {
+  const auth = useMemo(() => {
+    if (authType === 'company-manager') {
+      return fetchCompanyManagerToken;
+    }
+    if (authType === 'client' || isClientToken) {
+      return fetchClientToken;
+    }
+
+    return fetchCompanyToken;
+  }, [authType, isClientToken]);
   return (
     <RemoteFlowsAuth
       environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
-      auth={!isClientToken ? fetchToken : fetchClientToken}
+      auth={auth}
       authId={!isClientToken ? 'default' : 'client'}
       {...props}
     >
