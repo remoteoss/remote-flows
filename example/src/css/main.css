@@ -1096,69 +1096,13 @@ button.reset-button {
     color: #4b5563;
   }
 
-  /* Code blocks (if present) */
-  code {
-    background-color: #f1f5f9;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
-    color: #dc2626;
-  }
-
-  pre {
-    background-color: #f1f5f9;
-    padding: 12px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin: 12px 0;
-
-    code {
-      background: none;
-      padding: 0;
-      color: #1e293b;
-    }
-  }
-
-  /* Blockquotes (if present) */
-  blockquote {
-    border-left: 4px solid #e5e7eb;
-    padding-left: 16px;
-    margin: 16px 0;
-    color: #6b7280;
-    font-style: italic;
-  }
-
-  /* Horizontal rules */
-  hr {
-    border: none;
-    border-top: 1px solid #e5e7eb;
-    margin: 24px 0;
-  }
-
   /* Wysiwyg classes from Zendesk */
   .wysiwyg-text-align-justify {
     text-align: justify;
   }
 
-  .wysiwyg-text-align-left {
-    text-align: left;
-  }
-
-  .wysiwyg-text-align-center {
-    text-align: center;
-  }
-
-  .wysiwyg-text-align-right {
-    text-align: right;
-  }
-
   .wysiwyg-font-size-small {
     font-size: 13px;
-  }
-
-  .wysiwyg-font-size-large {
-    font-size: 18px;
   }
 
   /* Responsive adjustments */
