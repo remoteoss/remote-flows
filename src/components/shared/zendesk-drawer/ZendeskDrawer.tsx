@@ -60,7 +60,7 @@ export const ZendeskDrawer = ({
       direction='right'
     >
       <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
-      <DrawerContent className='h-full w-[480px] mt-0 ml-auto RemoteFlows_ZendeskDrawer'>
+      <DrawerContent className='h-full w-[540px] mt-0 ml-auto RemoteFlows_ZendeskDrawer'>
         <div className='h-full flex flex-col'>
           <DrawerHeader>
             <DrawerTitle>{data?.title}</DrawerTitle>
