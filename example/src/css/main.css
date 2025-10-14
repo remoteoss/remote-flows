@@ -886,24 +886,276 @@ button.reset-button {
 }
 
 .RemoteFlows_ZendeskDrawer__Content {
+  /* Base paragraph styling */
   p {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: #374151;
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    color: #1e293b;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: 28px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 24px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 6px;
+  }
+
+  h3 {
+    font-size: 20px;
+    color: #374151;
+  }
+
+  h4 {
+    font-size: 18px;
+    color: #4b5563;
+  }
+
+  h5 {
+    font-size: 16px;
+    color: #4b5563;
+  }
+
+  h6 {
+    font-size: 14px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* First heading shouldn't have top margin */
+  h1:first-child,
+  h2:first-child,
+  h3:first-child,
+  h4:first-child,
+  h5:first-child,
+  h6:first-child {
+    margin-top: 0;
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    padding-left: 8px;
+    margin-left: 24px;
+    margin-bottom: 12px;
+    line-height: 1.6;
   }
 
   ul {
-    padding-left: 8px;
     list-style-type: disc;
-    margin-left: 24px;
-    margin-bottom: 8px;
+  }
+
+  ol {
+    list-style-type: decimal;
   }
 
   li {
     padding-left: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    color: #374151;
   }
 
   li:last-child {
     margin-bottom: 0;
+  }
+
+  /* Nested lists */
+  ul ul,
+  ol ol,
+  ul ol,
+  ol ul {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 12px 0;
+  }
+
+  /* Tables */
+  table {
+    border: 0;
+    margin: 16px -4px;
+    width: 100% !important;
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+
+    td {
+      border: 0;
+      padding: 12px;
+      vertical-align: top;
+      min-width: 150px;
+    }
+
+    tr {
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    tr:last-child {
+      border-bottom: none;
+    }
+
+    /* Header rows with only strong tags */
+    tr:has(td strong:only-child) {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+  }
+
+  /* Better handling of country flags and headers */
+  td {
+    &:first-child {
+      font-weight: 500;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    &:last-child {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+  }
+
+  td p {
+    margin-bottom: 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Callout/Note boxes */
+  .callout {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-left: 4px solid #ffc107;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #856404;
+  }
+
+  /* Links */
+  a {
+    color: #3b82f6;
+    text-decoration: underline;
+    text-decoration-color: rgba(59, 130, 246, 0.3);
+    transition: all 0.2s ease;
+    word-break: break-word; /* Prevent long URLs from breaking layout */
+
+    &:hover {
+      text-decoration-color: #3b82f6;
+      color: #2563eb;
+    }
+
+    &:focus {
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+
+  /* Strong/Bold text */
+  strong {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  /* Emphasis/Italic text */
+  em {
+    font-style: italic;
+    color: #4b5563;
+  }
+
+  /* Wysiwyg classes from Zendesk */
+  .wysiwyg-text-align-justify {
+    text-align: justify;
+  }
+
+  .wysiwyg-font-size-small {
+    font-size: 13px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 24px;
+    }
+    h2 {
+      font-size: 20px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    h4 {
+      font-size: 16px;
+    }
+    h5 {
+      font-size: 15px;
+    }
+    h6 {
+      font-size: 13px;
+    }
+
+    table {
+      font-size: 14px;
+      margin: 16px -8px;
+
+      td {
+        padding: 8px;
+        min-width: 120px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 22px;
+    }
+    h2 {
+      font-size: 18px;
+    }
+    h3 {
+      font-size: 16px;
+    }
+
+    table {
+      font-size: 13px;
+
+      td {
+        padding: 6px;
+        min-width: 100px;
+      }
+    }
   }
 }
 
