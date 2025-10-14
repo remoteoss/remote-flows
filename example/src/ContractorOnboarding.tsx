@@ -121,10 +121,11 @@ const MultiStepForm = ({
             onSuccess={(response: ContractDetailsResponse) =>
               console.log('response', response)
             }
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
+            onError={({ error, fieldErrors }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
+          <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
               className='back-button'
@@ -157,6 +158,7 @@ const MultiStepForm = ({
               setErrors({ apiError: error.message, fieldErrors })
             }
           />
+          <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
               className='back-button'

@@ -70,12 +70,12 @@ export const useContractorOnboarding = ({
     select_country: Meta;
     basic_information: Meta;
     pricing_plan: Meta;
-    contract_options: Meta;
+    contract_details: Meta;
   }>({
     select_country: {},
     basic_information: {},
     pricing_plan: {},
-    contract_options: {},
+    contract_details: {},
   });
 
   const stepsToUse = skipSteps?.includes('select_country')

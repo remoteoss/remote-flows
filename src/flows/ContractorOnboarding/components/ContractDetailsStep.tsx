@@ -54,7 +54,7 @@ export function ContractDetailsStep({
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.contract_options,
+          contractorOnboardingBag.meta?.fields?.contract_details,
         );
 
         onError?.({
