@@ -284,10 +284,10 @@ export const useOnboarding = ({
     form: 'employment_basic_information',
     options: {
       jsfModify: options?.jsfModify?.basic_information,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
-      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 

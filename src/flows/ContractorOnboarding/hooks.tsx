@@ -1,8 +1,16 @@
-import { Employment, EmploymentCreateParams } from '@/src/client/types.gen';
+import {
+  CreateContractDocument,
+  Employment,
+  EmploymentCreateParams,
+} from '@/src/client/types.gen';
 import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
+import {
+  useContractorOnboardingDetailsSchema,
+  useCreateContractorContractDocument,
+} from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
@@ -14,7 +22,7 @@ import {
   useEmployment,
   useJSONSchemaForm,
 } from '@/src/flows/Onboarding/api';
-import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
@@ -34,8 +42,8 @@ const stepToFormSchemaMap: Record<
 > = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  contract_details: null,
   pricing_plan: null,
-  contract_options: null,
 };
 
 const jsonSchemaToEmployment: Partial<
@@ -62,12 +70,12 @@ export const useContractorOnboarding = ({
     select_country: Meta;
     basic_information: Meta;
     pricing_plan: Meta;
-    contract_options: Meta;
+    contract_details: Meta;
   }>({
     select_country: {},
     basic_information: {},
     pricing_plan: {},
-    contract_options: {},
+    contract_details: {},
   });
 
   const stepsToUse = skipSteps?.includes('select_country')
@@ -89,10 +97,15 @@ export const useContractorOnboarding = ({
     useEmployment(internalEmploymentId);
 
   const createEmploymentMutation = useCreateEmployment(options);
+  const createContractorContractDocumentMutation =
+    useCreateContractorContractDocument();
 
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
+
+  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+    mutationToPromise(createContractorContractDocumentMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -130,6 +143,7 @@ export const useContractorOnboarding = ({
     options?: {
       jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
+      jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
     query?: Record<string, string>;
   }) => {
@@ -166,6 +180,10 @@ export const useContractorOnboarding = ({
     internalCountryCode && stepState.currentStep.name === 'basic_information',
   );
 
+  const isContractorOnboardingDetailsEnabled = Boolean(
+    internalCountryCode && stepState.currentStep.name === 'contract_details',
+  );
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -176,6 +194,22 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+    },
+  });
+
+  const {
+    data: contractorOnboardingDetailsForm,
+    isLoading: isLoadingContractorOnboardingDetailsForm,
+  } = useContractorOnboardingDetailsSchema({
+    countryCode: internalCountryCode as string,
+    fieldValues: fieldValues,
+    options: {
+      queryOptions: {
+        enabled: isContractorOnboardingDetailsEnabled,
+      },
+      jsfModify: options?.jsfModify?.contract_details,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
@@ -184,9 +218,13 @@ export const useContractorOnboarding = ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: [],
-      contract_options: [],
+      contract_details: contractorOnboardingDetailsForm?.fields || [],
     }),
-    [selectCountryForm?.fields, basicInformationForm?.fields],
+    [
+      selectCountryForm?.fields,
+      basicInformationForm?.fields,
+      contractorOnboardingDetailsForm?.fields,
+    ],
   );
 
   const stepFieldsWithFlatFieldsets: Record<
@@ -196,11 +234,14 @@ export const useContractorOnboarding = ({
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
-    contract_options: null,
+    contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
   };
 
-  const { country, basic_information: employmentBasicInformation = {} } =
-    employment || {};
+  const {
+    country,
+    basic_information: employmentBasicInformation = {},
+    contract_details: employmentContractDetails = {},
+  } = employment || {};
 
   const employmentCountryCode = country?.code;
 
@@ -225,14 +266,31 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const contractDetailsInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...employmentContractDetails,
+    };
+
+    return getInitialValues(stepFields.contract_details, initialValues);
+  }, [
+    stepFields.contract_details,
+    employmentContractDetails,
+    onboardingInitialValues,
+  ]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      contract_details: contractDetailsInitialValues,
       pricing_plan: {},
-      contract_options: {},
     };
-  }, [selectCountryInitialValues, basicInformationInitialValues]);
+  }, [
+    selectCountryInitialValues,
+    basicInformationInitialValues,
+    contractDetailsInitialValues,
+  ]);
 
   const goTo = (step: keyof typeof STEPS) => {
     goToStep(step);
@@ -250,6 +308,19 @@ export const useContractorOnboarding = ({
       return parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
+    }
+
+    if (
+      contractorOnboardingDetailsForm &&
+      stepState.currentStep.name === 'contract_details'
+    ) {
+      return parseJSFToValidate(
+        values,
+        contractorOnboardingDetailsForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     return {};
@@ -303,6 +374,15 @@ export const useContractorOnboarding = ({
 
         return;
       }
+      case 'contract_details': {
+        const payload: CreateContractDocument = {
+          contract_document: parsedValues,
+        };
+        return createContractorContractDocumentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          payload,
+        });
+      }
       default: {
         throw new Error('Invalid step state');
       }
@@ -310,7 +390,10 @@ export const useContractorOnboarding = ({
   }
 
   const isLoading =
-    isLoadingCountries || isLoadingBasicInformationForm || isLoadingEmployment;
+    isLoadingCountries ||
+    isLoadingBasicInformationForm ||
+    isLoadingEmployment ||
+    isLoadingContractorOnboardingDetailsForm;
 
   return {
     /**
@@ -406,6 +489,18 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return basicInformationForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        contractorOnboardingDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          contractorOnboardingDetailsForm?.fields,
+          { isPartialValidation: false },
+        );
+        return contractorOnboardingDetailsForm?.handleValidation(parsedValues);
       }
 
       return null;

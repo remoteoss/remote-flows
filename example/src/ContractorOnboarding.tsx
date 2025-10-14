@@ -8,8 +8,8 @@ import {
   ContractorOnboardingFlow,
   PricingPlanFormPayload,
   PricingPlanResponse,
-  ContractOptionsFormPayload,
-  ContractOptionsResponse,
+  ContractorOnboardingContractDetailsFormPayload,
+  ContractorOnboardingContractDetailsResponse,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -19,8 +19,8 @@ import './css/main.css';
 const STEPS = [
   'Select Country',
   'Basic Information',
+  'Contract Details',
   'Pricing Plan',
-  'Contract Options',
 ];
 
 type MultiStepFormProps = {
@@ -38,7 +38,7 @@ const MultiStepForm = ({
     BackButton,
     SelectCountryStep,
     PricingPlanStep,
-    ContractOptionsStep,
+    ContractDetailsStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -111,20 +111,21 @@ const MultiStepForm = ({
         </>
       );
 
-    case 'pricing_plan':
+    case 'contract_details':
       return (
         <>
-          <PricingPlanStep
-            onSubmit={(payload: PricingPlanFormPayload) =>
-              console.log('payload', payload)
-            }
-            onSuccess={(response: PricingPlanResponse) =>
-              console.log('response', response)
-            }
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
+          <ContractDetailsStep
+            onSubmit={(
+              payload: ContractorOnboardingContractDetailsFormPayload,
+            ) => console.log('payload', payload)}
+            onSuccess={(
+              response: ContractorOnboardingContractDetailsResponse,
+            ) => console.log('response', response)}
+            onError={({ error, fieldErrors }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
+          <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
               className='back-button'
@@ -143,20 +144,21 @@ const MultiStepForm = ({
         </>
       );
 
-    case 'contract_options':
+    case 'pricing_plan':
       return (
         <>
-          <ContractOptionsStep
-            onSubmit={(payload: ContractOptionsFormPayload) =>
+          <PricingPlanStep
+            onSubmit={(payload: PricingPlanFormPayload) =>
               console.log('payload', payload)
             }
-            onSuccess={(response: ContractOptionsResponse) =>
+            onSuccess={(response: PricingPlanResponse) =>
               console.log('response', response)
             }
             onError={({ error, fieldErrors }) =>
               setErrors({ apiError: error.message, fieldErrors })
             }
           />
+          <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
               className='back-button'
@@ -226,7 +228,7 @@ const OnboardingWithProps = ({
   externalId,
 }: OnboardingFormData) => {
   return (
-    <RemoteFlows>
+    <RemoteFlows authType='company-manager'>
       <ContractorOnboardingFlow
         render={OnBoardingRender}
         employmentId={employmentId}

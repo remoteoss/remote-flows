@@ -1,9 +1,10 @@
-import { ContractOptionsStep } from '@/src/flows/ContractorOnboarding/components/ContractOptionsStep';
+import { CreateContractDocumentResponse } from '@/src/client/types.gen';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
-import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
+import { BasicInformationStep } from '@/src/flows/ContractorOnboarding/components/BasicInformationStep';
+import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -21,7 +22,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link SelectCountryStep}
    * @see {@link OnboardingBack}
    * @see {@link PricingPlanStep}
-   * @see {@link ContractOptionsStep}
+   * @see {@link ContractDetailsStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
    */
@@ -31,7 +32,7 @@ export type ContractorOnboardingRenderProps = {
     BackButton: typeof OnboardingBack;
     SubmitButton: typeof OnboardingSubmit;
     PricingPlanStep: typeof PricingPlanStep;
-    ContractOptionsStep: typeof ContractOptionsStep;
+    ContractDetailsStep: typeof ContractDetailsStep;
   };
 };
 
@@ -71,6 +72,7 @@ export type ContractorOnboardingFlowProps = {
     jsfModify?: {
       select_country?: JSFModify;
       basic_information?: JSFModify;
+      contract_details?: JSFModify;
     };
   };
 
@@ -86,6 +88,24 @@ export type PricingPlanFormPayload = $TSFixMe;
 
 export type PricingPlanResponse = $TSFixMe;
 
-export type ContractOptionsFormPayload = $TSFixMe;
+export type ContractorOnboardingContractDetailsFormPayload = {
+  services_and_deliverables: string;
+  service_duration: {
+    expiration_date?: string;
+    provisional_start_date: string;
+  };
+  termination: {
+    contractor_notice_period_amount: number;
+    company_notice_period_amount: number;
+  };
+  payment_terms: {
+    payment_terms_type: string;
+    invoicing_frequency: string;
+    compensation_gross_amount: string;
+    compensation_currency_code?: string;
+    period_unit: string;
+  };
+};
 
-export type ContractOptionsResponse = $TSFixMe;
+export type ContractorOnboardingContractDetailsResponse =
+  CreateContractDocumentResponse;
