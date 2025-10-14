@@ -12,10 +12,7 @@ import {
 
 import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  OnboardingFlow,
-  OnboardingRenderProps,
-} from '@/src/flows/Onboarding/OnboardingFlow';
+import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
   contractDetailsSchema,
@@ -41,6 +38,7 @@ import {
   generateUniqueEmploymentId,
 } from '@/src/flows/Onboarding/tests/helpers';
 import userEvent from '@testing-library/user-event';
+import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 
 const queryClient = new QueryClient();
 

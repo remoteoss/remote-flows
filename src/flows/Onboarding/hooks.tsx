@@ -20,7 +20,7 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
-import { OnboardingFlowParams } from '@/src/flows/Onboarding/types';
+import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
@@ -40,7 +40,7 @@ import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGross
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 
-type OnboardingHookProps = OnboardingFlowParams;
+type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
@@ -235,25 +235,25 @@ export const useOnboarding = ({
     };
     query?: Record<string, string>;
   }) => {
+    const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
     // when values are stored in the stepState is when the user has navigated to the step
     // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const memoizedFieldValues =
-      Object.keys(fieldValues).length > 0
-        ? {
-            ...onboardingInitialValues,
-            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-            ...fieldValues,
-          }
-        : {
-            ...onboardingInitialValues,
-            ...serverEmploymentData,
-          };
+    const mergedFormValues = hasUserEnteredAnyValues
+      ? {
+          ...onboardingInitialValues,
+          ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+          ...fieldValues,
+        }
+      : {
+          ...onboardingInitialValues,
+          ...serverEmploymentData,
+        };
 
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues: memoizedFieldValues,
+      fieldValues: mergedFormValues,
       query,
       options: {
         ...jsonSchemaOptions,
@@ -284,10 +284,10 @@ export const useOnboarding = ({
     form: 'employment_basic_information',
     options: {
       jsfModify: options?.jsfModify?.basic_information,
+      jsonSchemaVersion: options?.jsonSchemaVersion,
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
-      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
