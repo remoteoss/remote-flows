@@ -150,7 +150,7 @@ export const useContractorOnboarding = ({
     // when you write on the fields, the values are stored in the fieldValues state
     // when values are stored in the stepState is when the user has navigated to the step
     // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const memoizedFieldValues =
+    const hasUserEnteredAnyValue =
       Object.keys(fieldValues).length > 0
         ? {
             ...onboardingInitialValues,
@@ -165,7 +165,7 @@ export const useContractorOnboarding = ({
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues: memoizedFieldValues,
+      fieldValues: hasUserEnteredAnyValue,
       query,
       options: {
         ...jsonSchemaOptions,
