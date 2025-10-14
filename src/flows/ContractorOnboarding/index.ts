@@ -4,6 +4,6 @@ export type {
   ContractorOnboardingRenderProps,
   PricingPlanFormPayload,
   PricingPlanResponse,
-  ContractDetailsFormPayload,
-  ContractDetailsResponse,
+  ContractorOnboardingContractDetailsFormPayload,
+  ContractorOnboardingContractDetailsResponse,
 } from './types';

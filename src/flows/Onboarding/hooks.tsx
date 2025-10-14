@@ -288,7 +288,6 @@ export const useOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
-      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 

@@ -88,7 +88,7 @@ export type PricingPlanFormPayload = $TSFixMe;
 
 export type PricingPlanResponse = $TSFixMe;
 
-export type ContractDetailsFormPayload = {
+export type ContractorOnboardingContractDetailsFormPayload = {
   services_and_deliverables: string;
   service_duration: {
     expiration_date?: string;
@@ -107,4 +107,5 @@ export type ContractDetailsFormPayload = {
   };
 };
 
-export type ContractDetailsResponse = CreateContractDocumentResponse;
+export type ContractorOnboardingContractDetailsResponse =
+  CreateContractDocumentResponse;

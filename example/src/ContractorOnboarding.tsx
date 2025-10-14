@@ -8,8 +8,8 @@ import {
   ContractorOnboardingFlow,
   PricingPlanFormPayload,
   PricingPlanResponse,
-  ContractDetailsFormPayload,
-  ContractDetailsResponse,
+  ContractorOnboardingContractDetailsFormPayload,
+  ContractorOnboardingContractDetailsResponse,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -115,12 +115,12 @@ const MultiStepForm = ({
       return (
         <>
           <ContractDetailsStep
-            onSubmit={(payload: ContractDetailsFormPayload) =>
-              console.log('payload', payload)
-            }
-            onSuccess={(response: ContractDetailsResponse) =>
-              console.log('response', response)
-            }
+            onSubmit={(
+              payload: ContractorOnboardingContractDetailsFormPayload,
+            ) => console.log('payload', payload)}
+            onSuccess={(
+              response: ContractorOnboardingContractDetailsResponse,
+            ) => console.log('response', response)}
             onError={({ error, fieldErrors }) => {
               setErrors({ apiError: error.message, fieldErrors });
             }}
