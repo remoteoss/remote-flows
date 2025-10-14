@@ -226,7 +226,7 @@ const OnboardingWithProps = ({
   externalId,
 }: OnboardingFormData) => {
   return (
-    <RemoteFlows>
+    <RemoteFlows authType='company-manager'>
       <ContractorOnboardingFlow
         render={OnBoardingRender}
         employmentId={employmentId}
