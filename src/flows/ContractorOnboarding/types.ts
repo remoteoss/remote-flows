@@ -3,8 +3,8 @@ import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/Onbo
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
 import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
-import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
-import { ContractDetailsStep } from '@/src/flows/Onboarding/components/ContractDetailsStep';
+import { BasicInformationStep } from '@/src/flows/ContractorOnboarding/components/BasicInformationStep';
+import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -22,7 +22,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link SelectCountryStep}
    * @see {@link OnboardingBack}
    * @see {@link PricingPlanStep}
-   * @see {@link ContractOptionsStep}
+   * @see {@link ContractDetailsStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
    */
