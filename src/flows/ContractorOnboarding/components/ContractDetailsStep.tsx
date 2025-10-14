@@ -6,19 +6,23 @@ import {
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
-  ContractDetailsFormPayload,
-  ContractDetailsResponse,
+  ContractorOnboardingContractDetailsFormPayload,
+  ContractorOnboardingContractDetailsResponse,
 } from '@/src/flows/ContractorOnboarding/types';
 
 type ContractDetailsStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: ContractDetailsFormPayload) => void | Promise<void>;
+  onSubmit?: (
+    payload: ContractorOnboardingContractDetailsFormPayload,
+  ) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: ContractDetailsResponse) => void | Promise<void>;
+  onSuccess?: (
+    data: ContractorOnboardingContractDetailsResponse,
+  ) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
