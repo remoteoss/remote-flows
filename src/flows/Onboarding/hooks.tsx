@@ -235,25 +235,25 @@ export const useOnboarding = ({
     };
     query?: Record<string, string>;
   }) => {
+    const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
     // when values are stored in the stepState is when the user has navigated to the step
     // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const hasUserEnteredAnyValue =
-      Object.keys(fieldValues).length > 0
-        ? {
-            ...onboardingInitialValues,
-            ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-            ...fieldValues,
-          }
-        : {
-            ...onboardingInitialValues,
-            ...serverEmploymentData,
-          };
+    const mergedFormValues = hasUserEnteredAnyValues
+      ? {
+          ...onboardingInitialValues,
+          ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+          ...fieldValues,
+        }
+      : {
+          ...onboardingInitialValues,
+          ...serverEmploymentData,
+        };
 
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues: hasUserEnteredAnyValue,
+      fieldValues: mergedFormValues,
       query,
       options: {
         ...jsonSchemaOptions,
