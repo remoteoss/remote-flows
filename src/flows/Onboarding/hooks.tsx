@@ -260,6 +260,7 @@ export const useOnboarding = ({
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
+        jsonSchemaVersion: jsonSchemaOptions.jsonSchemaVersion,
       },
     });
   };
@@ -287,6 +288,7 @@ export const useOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
+      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 

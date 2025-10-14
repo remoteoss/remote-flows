@@ -48,7 +48,7 @@ async function generateJWTToken() {
   }
 }
 
-async function fetchAccessTokenWithJWT() {
+async function fetchCompanyManagerToken() {
   const { VITE_REMOTE_GATEWAY, VITE_CLIENT_ID, VITE_CLIENT_SECRET } =
     process.env;
   const gatewayUrl = buildGatewayURL();
@@ -85,9 +85,9 @@ async function fetchAccessTokenWithJWT() {
 }
 
 // Express route handler
-async function getJWTToken(req, res) {
+async function getCompanyManagerToken(req, res) {
   try {
-    const { accessToken, expiresIn } = await fetchAccessTokenWithJWT();
+    const { accessToken, expiresIn } = await fetchCompanyManagerToken();
 
     return res.status(200).json({
       access_token: accessToken,
@@ -101,4 +101,8 @@ async function getJWTToken(req, res) {
   }
 }
 
-module.exports = { getJWTToken, generateJWTToken, fetchAccessTokenWithJWT };
+module.exports = {
+  getCompanyManagerToken,
+  generateJWTToken,
+  fetchCompanyManagerToken,
+};
