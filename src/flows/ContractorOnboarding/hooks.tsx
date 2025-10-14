@@ -267,7 +267,6 @@ export const useContractorOnboarding = ({
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
-    // TODO: after we save contract details, we need to check if this is correct
     const initialValues = {
       ...onboardingInitialValues,
       ...employmentContractDetails,

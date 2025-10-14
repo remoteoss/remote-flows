@@ -1,3 +1,4 @@
+import { CreateContractDocumentResponse } from '@/src/client/types.gen';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
@@ -87,6 +88,23 @@ export type PricingPlanFormPayload = $TSFixMe;
 
 export type PricingPlanResponse = $TSFixMe;
 
-export type ContractDetailsFormPayload = $TSFixMe;
+export type ContractDetailsFormPayload = {
+  services_and_deliverables: string;
+  service_duration: {
+    expiration_date?: string;
+    provisional_start_date: string;
+  };
+  termination: {
+    contractor_notice_period_amount: number;
+    company_notice_period_amount: number;
+  };
+  payment_terms: {
+    payment_terms_type: string;
+    invoicing_frequency: string;
+    compensation_gross_amount: string;
+    compensation_currency_code?: string;
+    period_unit: string;
+  };
+};
 
-export type ContractDetailsResponse = $TSFixMe;
+export type ContractDetailsResponse = CreateContractDocumentResponse;
