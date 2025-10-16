@@ -10,7 +10,9 @@ import {
 import {
   useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
+  useGetContractDocumentSignatureSchema,
   useGetShowContractDocument,
+  useSignContractDocument,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -106,6 +108,7 @@ export const useContractorOnboarding = ({
   const createEmploymentMutation = useCreateEmployment(options);
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
+  const signContractDocumentMutation = useSignContractDocument();
 
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
@@ -113,6 +116,10 @@ export const useContractorOnboarding = ({
 
   const { mutateAsync: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
+
+  const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
+    signContractDocumentMutation,
+  );
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -220,6 +227,14 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
+    fieldValues: fieldValues,
+    options: {
+      queryOptions: {
+        enabled: stepState.currentStep.name === 'contract_preview',
+      },
+    },
+  });
   const { data: documentPreviewPdf, isLoading: isLoadingDocumentPreviewForm } =
     useGetShowContractDocument({
       employmentId: internalEmploymentId as string,
@@ -237,12 +252,13 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
-      contract_preview: [],
+      contract_preview: signatureSchemaForm?.fields || [],
     }),
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
       contractorOnboardingDetailsForm?.fields,
+      signatureSchemaForm?.fields,
     ],
   );
 
@@ -359,7 +375,14 @@ export const useContractorOnboarding = ({
       );
     }
 
-    // TODO: TBD not sure if contract preview needs to be parsed
+    if (
+      signatureSchemaForm &&
+      stepState.currentStep.name === 'contract_preview'
+    ) {
+      return parseJSFToValidate(values, signatureSchemaForm?.fields, {
+        isPartialValidation: false,
+      });
+    }
 
     return {};
   };
@@ -425,6 +448,16 @@ export const useContractorOnboarding = ({
         const contractDocumentId = response.data?.data?.contract_document?.id;
         setInternalContractDocumentId(contractDocumentId);
         return response;
+      }
+
+      case 'contract_preview': {
+        return signContractDocumentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          contractDocumentId: internalContractDocumentId as string,
+          payload: {
+            signature: values.signature,
+          },
+        });
       }
       default: {
         throw new Error('Invalid step state');
@@ -547,6 +580,18 @@ export const useContractorOnboarding = ({
         return contractorOnboardingDetailsForm?.handleValidation(parsedValues);
       }
 
+      if (
+        signatureSchemaForm &&
+        stepState.currentStep.name === 'contract_preview'
+      ) {
+        const parsedValues = parseJSFToValidate(
+          values,
+          signatureSchemaForm?.fields,
+          { isPartialValidation: false },
+        );
+        return signatureSchemaForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
 
@@ -565,7 +610,8 @@ export const useContractorOnboarding = ({
      */
     isSubmitting:
       createEmploymentMutation.isPending ||
-      createContractorContractDocumentMutation.isPending,
+      createContractorContractDocumentMutation.isPending ||
+      signContractDocumentMutation.isPending,
 
     /**
      * Document preview PDF data
