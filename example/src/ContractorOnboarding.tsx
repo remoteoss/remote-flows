@@ -149,7 +149,6 @@ const MultiStepForm = ({
     case 'contract_preview':
       return (
         <>
-          <p>hello</p>
           <ContractPreviewStep
             onSubmit={(payload: ContractPreviewFormPayload) =>
               console.log('payload', payload)
