@@ -1,4 +1,8 @@
-import { CreateContractDocumentResponse } from '@/src/client/types.gen';
+import {
+  CreateContractDocumentResponse,
+  SignContractDocument,
+  SuccessResponse,
+} from '@/src/client/types.gen';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
@@ -113,6 +117,6 @@ export type ContractorOnboardingContractDetailsFormPayload = {
 export type ContractorOnboardingContractDetailsResponse =
   CreateContractDocumentResponse;
 
-export type ContractPreviewFormPayload = $TSFixMe;
+export type ContractPreviewFormPayload = SignContractDocument;
 
-export type ContractPreviewResponse = $TSFixMe;
+export type ContractPreviewResponse = SuccessResponse;

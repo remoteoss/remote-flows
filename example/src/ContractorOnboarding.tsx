@@ -10,6 +10,8 @@ import {
   PricingPlanResponse,
   ContractorOnboardingContractDetailsFormPayload,
   ContractorOnboardingContractDetailsResponse,
+  ContractPreviewResponse,
+  ContractPreviewFormPayload,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -153,6 +155,12 @@ const MultiStepForm = ({
             onSubmit={(payload: ContractPreviewFormPayload) =>
               console.log('payload', payload)
             }
+            onSuccess={(response: ContractPreviewResponse) =>
+              console.log('response', response)
+            }
+            onError={({ error, fieldErrors }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
           <AlertError errors={errors} />
           <div className='buttons-container'>
