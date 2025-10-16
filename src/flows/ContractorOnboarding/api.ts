@@ -1,5 +1,6 @@
 import {
   CreateContractDocument,
+  getShowContractDocument,
   getShowContractorContractDetailsCountry,
   postCreateContractDocument,
 } from '@/src/client';
@@ -12,6 +13,37 @@ import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+
+/**
+ * Get the contract document for a given employment and contract document ID
+ * @param employmentId - The employment ID
+ * @param contractDocumentId - The contract document ID
+ * @returns The contract document
+ */
+export const useGetShowContractDocument = ({
+  employmentId,
+  contractDocumentId,
+  options,
+}: {
+  employmentId: string;
+  contractDocumentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contract-document', employmentId, contractDocumentId],
+    queryFn: async () => {
+      return getShowContractDocument({
+        client: client as Client,
+        path: { employment_id: employmentId, id: contractDocumentId },
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => {
+      return data?.data;
+    },
+  });
+};
 
 /**
  * Saves the contractor details data

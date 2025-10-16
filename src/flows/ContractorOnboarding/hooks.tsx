@@ -10,6 +10,7 @@ import {
 import {
   useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
+  useGetShowContractDocument,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -26,7 +27,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
-import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
 import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -44,6 +45,7 @@ const stepToFormSchemaMap: Record<
   basic_information: 'employment_basic_information',
   contract_details: null,
   pricing_plan: null,
+  contract_preview: null,
 };
 
 const jsonSchemaToEmployment: Partial<
@@ -66,16 +68,21 @@ export const useContractorOnboarding = ({
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
+  const [internalContractDocumentId, setInternalContractDocumentId] = useState<
+    string | undefined
+  >(undefined);
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
-    pricing_plan: Meta;
     contract_details: Meta;
+    contract_preview: Meta;
+    pricing_plan: Meta;
   }>({
     select_country: {},
     basic_information: {},
-    pricing_plan: {},
     contract_details: {},
+    contract_preview: {},
+    pricing_plan: {},
   });
 
   const stepsToUse = skipSteps?.includes('select_country')
@@ -213,12 +220,24 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const { data: documentPreviewPdf, isLoading: isLoadingDocumentPreviewForm } =
+    useGetShowContractDocument({
+      employmentId: internalEmploymentId as string,
+      contractDocumentId: internalContractDocumentId as string,
+      options: {
+        queryOptions: {
+          enabled: Boolean(internalContractDocumentId),
+        },
+      },
+    });
+
   const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
+      contract_preview: [],
     }),
     [
       selectCountryForm?.fields,
@@ -235,6 +254,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
+    contract_preview: null,
   };
 
   const {
@@ -279,17 +299,33 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const contractPreviewInitialValues = useMemo(() => {
+    // TODO: TBD not sure if contract preview needs to be populated with anything
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...employmentContractDetails,
+    };
+
+    return getInitialValues(stepFields.contract_preview, initialValues);
+  }, [
+    stepFields.contract_preview,
+    employmentContractDetails,
+    onboardingInitialValues,
+  ]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_details: contractDetailsInitialValues,
+      contract_preview: contractPreviewInitialValues,
       pricing_plan: {},
     };
   }, [
     selectCountryInitialValues,
     basicInformationInitialValues,
     contractDetailsInitialValues,
+    contractPreviewInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
@@ -322,6 +358,8 @@ export const useContractorOnboarding = ({
         },
       );
     }
+
+    // TODO: TBD not sure if contract preview needs to be parsed
 
     return {};
   };
@@ -378,10 +416,15 @@ export const useContractorOnboarding = ({
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
         };
-        return createContractorContractDocumentMutationAsync({
-          employmentId: internalEmploymentId as string,
-          payload,
-        });
+        const response: $TSFixMe =
+          await createContractorContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload,
+          });
+
+        const contractDocumentId = response.data?.data?.contract_document?.id;
+        setInternalContractDocumentId(contractDocumentId);
+        return response;
       }
       default: {
         throw new Error('Invalid step state');
@@ -393,7 +436,8 @@ export const useContractorOnboarding = ({
     isLoadingCountries ||
     isLoadingBasicInformationForm ||
     isLoadingEmployment ||
-    isLoadingContractorOnboardingDetailsForm;
+    isLoadingContractorOnboardingDetailsForm ||
+    isLoadingDocumentPreviewForm;
 
   return {
     /**
@@ -519,6 +563,13 @@ export const useContractorOnboarding = ({
     /**
      * Loading state indicating if the onboarding mutation is in progress
      */
-    isSubmitting: createEmploymentMutation.isPending,
+    isSubmitting:
+      createEmploymentMutation.isPending ||
+      createContractorContractDocumentMutation.isPending,
+
+    /**
+     * Document preview PDF data
+     */
+    documentPreviewPdf,
   };
 };

@@ -8,6 +8,7 @@ import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -23,6 +24,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link OnboardingBack}
    * @see {@link PricingPlanStep}
    * @see {@link ContractDetailsStep}
+   * @see {@link ContractPreviewStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
    */
@@ -33,6 +35,7 @@ export type ContractorOnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     PricingPlanStep: typeof PricingPlanStep;
     ContractDetailsStep: typeof ContractDetailsStep;
+    ContractPreviewStep: typeof ContractPreviewStep;
   };
 };
 
@@ -109,3 +112,7 @@ export type ContractorOnboardingContractDetailsFormPayload = {
 
 export type ContractorOnboardingContractDetailsResponse =
   CreateContractDocumentResponse;
+
+export type ContractPreviewFormPayload = $TSFixMe;
+
+export type ContractPreviewResponse = $TSFixMe;

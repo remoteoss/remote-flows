@@ -20,6 +20,7 @@ const STEPS = [
   'Select Country',
   'Basic Information',
   'Contract Details',
+  'Contract Preview',
   'Pricing Plan',
 ];
 
@@ -39,6 +40,7 @@ const MultiStepForm = ({
     SelectCountryStep,
     PricingPlanStep,
     ContractDetailsStep,
+    ContractPreviewStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -124,6 +126,34 @@ const MultiStepForm = ({
             onError={({ error, fieldErrors }) => {
               setErrors({ apiError: error.message, fieldErrors });
             }}
+          />
+          <AlertError errors={errors} />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              disabled={contractorOnboardingBag.isSubmitting}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Next
+            </SubmitButton>
+          </div>
+        </>
+      );
+
+    case 'contract_preview':
+      return (
+        <>
+          <p>hello</p>
+          <ContractPreviewStep
+            onSubmit={(payload: ContractPreviewFormPayload) =>
+              console.log('payload', payload)
+            }
           />
           <AlertError errors={errors} />
           <div className='buttons-container'>
