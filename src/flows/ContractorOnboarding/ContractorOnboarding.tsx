@@ -8,6 +8,7 @@ import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/On
 import { useId } from 'react';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
 import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
+import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 
 export const ContractorOnboardingFlow = ({
   render,
@@ -40,6 +41,7 @@ export const ContractorOnboardingFlow = ({
           SubmitButton: OnboardingSubmit,
           PricingPlanStep: PricingPlanStep,
           ContractDetailsStep: ContractDetailsStep,
+          ContractPreviewStep: ContractPreviewStep,
         },
       })}
     </ContractorOnboardingContext.Provider>
