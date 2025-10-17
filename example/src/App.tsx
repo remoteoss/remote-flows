@@ -26,7 +26,7 @@ import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
 import { CostCalculatorWithResults } from './CostCalculatorWithResults';
 import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
-import { Termination } from './Termination';
+import { TerminationForm } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -103,7 +103,7 @@ const additionalDemos = [
     id: 'termination',
     title: 'Termination Flow',
     description: 'Process for terminating employments',
-    component: Termination,
+    component: TerminationForm,
     sourceCode: TerminationCode,
   },
   {
