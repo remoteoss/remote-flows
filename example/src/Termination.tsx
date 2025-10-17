@@ -208,7 +208,7 @@ export const TerminationWithProps = ({
 
 export const TerminationForm = () => {
   const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: '', // use your own employment ID
+    employmentId: '765e8c80-bd4c-4335-8e83-ac5de37652ea', // use your own employment ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
