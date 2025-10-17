@@ -9,6 +9,7 @@ import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import './css/main.css';
+import { useState } from 'react';
 
 const STEPS = [
   'Employee Communication',
@@ -127,7 +128,7 @@ const MultiStepForm = ({
   }
 };
 
-const TerminationForm = ({
+const TerminationRender = ({
   terminationBag,
   components,
 }: TerminationRenderProps) => {
@@ -178,14 +179,17 @@ const TerminationForm = ({
   );
 };
 
-export const Termination = () => {
-  const EMPLOYMENT_ID = '7df92706-59ef-44a1-91f6-a275b9149994'; // Replace with your actual employment ID
+export const TerminationWithProps = ({
+  employmentId,
+}: {
+  employmentId: string;
+}) => {
   const proxyURL = window.location.origin;
   return (
     <RemoteFlows proxy={{ url: proxyURL }}>
       <TerminationFlow
-        employmentId={EMPLOYMENT_ID}
-        render={TerminationForm}
+        employmentId={employmentId}
+        render={TerminationRender}
         options={{
           jsfModify: {
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
@@ -199,5 +203,44 @@ export const Termination = () => {
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
+  );
+};
+
+export const TerminationForm = () => {
+  const [formData, setFormData] = useState<{ employmentId: string }>({
+    employmentId: '', // use your own employment ID
+  });
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowOnboarding(true);
+  };
+
+  if (showOnboarding) {
+    return <TerminationWithProps {...formData} />;
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className='onboarding-form-container'>
+      <div className='onboarding-form-group'>
+        <label htmlFor='employmentId' className='onboarding-form-label'>
+          Employment ID:
+        </label>
+        <input
+          id='employmentId'
+          type='text'
+          value={formData.employmentId}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
+          }
+          placeholder='Enter employment ID'
+          className='onboarding-form-input'
+        />
+      </div>
+      <button type='submit' className='onboarding-form-button'>
+        Start Termination
+      </button>
+    </form>
   );
 };
