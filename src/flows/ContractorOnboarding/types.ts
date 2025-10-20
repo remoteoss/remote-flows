@@ -1,4 +1,8 @@
-import { CreateContractDocumentResponse } from '@/src/client/types.gen';
+import {
+  CreateContractDocumentResponse,
+  SignContractDocument,
+  SuccessResponse,
+} from '@/src/client/types.gen';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
@@ -8,6 +12,7 @@ import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -23,6 +28,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link OnboardingBack}
    * @see {@link PricingPlanStep}
    * @see {@link ContractDetailsStep}
+   * @see {@link ContractPreviewStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
    */
@@ -33,6 +39,7 @@ export type ContractorOnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     PricingPlanStep: typeof PricingPlanStep;
     ContractDetailsStep: typeof ContractDetailsStep;
+    ContractPreviewStep: typeof ContractPreviewStep;
   };
 };
 
@@ -109,3 +116,7 @@ export type ContractorOnboardingContractDetailsFormPayload = {
 
 export type ContractorOnboardingContractDetailsResponse =
   CreateContractDocumentResponse;
+
+export type ContractPreviewFormPayload = SignContractDocument;
+
+export type ContractPreviewResponse = SuccessResponse;

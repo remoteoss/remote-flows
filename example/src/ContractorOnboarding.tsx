@@ -10,6 +10,8 @@ import {
   PricingPlanResponse,
   ContractorOnboardingContractDetailsFormPayload,
   ContractorOnboardingContractDetailsResponse,
+  ContractPreviewResponse,
+  ContractPreviewFormPayload,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -20,6 +22,7 @@ const STEPS = [
   'Select Country',
   'Basic Information',
   'Contract Details',
+  'Contract Preview',
   'Pricing Plan',
 ];
 
@@ -39,6 +42,7 @@ const MultiStepForm = ({
     SelectCountryStep,
     PricingPlanStep,
     ContractDetailsStep,
+    ContractPreviewStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -121,6 +125,39 @@ const MultiStepForm = ({
             onSuccess={(
               response: ContractorOnboardingContractDetailsResponse,
             ) => console.log('response', response)}
+            onError={({ error, fieldErrors }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
+          />
+          <AlertError errors={errors} />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              disabled={contractorOnboardingBag.isSubmitting}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Next
+            </SubmitButton>
+          </div>
+        </>
+      );
+
+    case 'contract_preview':
+      return (
+        <>
+          <ContractPreviewStep
+            onSubmit={(payload: ContractPreviewFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: ContractPreviewResponse) =>
+              console.log('response', response)
+            }
             onError={({ error, fieldErrors }) => {
               setErrors({ apiError: error.message, fieldErrors });
             }}
