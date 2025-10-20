@@ -106,7 +106,7 @@ const CreditRiskSections = ({
   }
 };
 
-function Review({ meta }: { meta: Meta }) {
+export function ReviewMeta({ meta }: { meta: Meta }) {
   return (
     <div className='onboarding-values'>
       {Object.entries(meta).map(([key, value]) => {
@@ -182,7 +182,7 @@ export const MyOnboardingInviteButton = ({
   return null;
 };
 
-export const ReviewStep = ({
+export const ReviewOnboardingStep = ({
   onboardingBag,
   components,
   errors,
@@ -208,7 +208,7 @@ export const ReviewStep = ({
   return (
     <div className='onboarding-review'>
       <h2 className='title'>Basic Information</h2>
-      <Review meta={onboardingBag.meta.fields.basic_information} />
+      <ReviewMeta meta={onboardingBag.meta.fields.basic_information} />
       <button
         className='back-button'
         onClick={() => onboardingBag.goTo('basic_information')}
@@ -217,7 +217,7 @@ export const ReviewStep = ({
         Edit Basic Information
       </button>
       <h2 className='title'>Contract Details</h2>
-      <Review meta={onboardingBag.meta.fields.contract_details} />
+      <ReviewMeta meta={onboardingBag.meta.fields.contract_details} />
       <button
         className='back-button'
         onClick={() => onboardingBag.goTo('contract_details')}
@@ -226,7 +226,7 @@ export const ReviewStep = ({
         Edit Contract Details
       </button>
       <h2 className='title'>Benefits</h2>
-      <Review meta={onboardingBag.meta.fields.benefits} />
+      <ReviewMeta meta={onboardingBag.meta.fields.benefits} />
 
       <button
         className='back-button'
@@ -273,4 +273,3 @@ export const ReviewStep = ({
     </div>
   );
 };
-export default ReviewStep;

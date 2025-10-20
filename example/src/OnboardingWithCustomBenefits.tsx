@@ -10,7 +10,7 @@ import {
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import ReviewStep from './ReviewStep';
+import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -209,7 +209,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
       );
     case 'review':
       return (
-        <ReviewStep
+        <ReviewOnboardingStep
           onboardingBag={onboardingBag}
           components={components}
           errors={errors}

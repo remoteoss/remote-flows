@@ -16,6 +16,7 @@ import {
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
 
 const STEPS = [
@@ -214,7 +215,11 @@ const MultiStepForm = ({
         </>
       );
     case 'review': {
-      return <h1>hello review</h1>;
+      return (
+        <ReviewContractorOnboardingStep
+          onboardingBag={contractorOnboardingBag}
+        />
+      );
     }
   }
 };
