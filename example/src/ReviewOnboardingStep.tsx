@@ -106,31 +106,47 @@ const CreditRiskSections = ({
   }
 };
 
-export function ReviewMeta({ meta }: { meta: Meta }) {
+export function ReviewMeta({
+  meta,
+  isNested = false,
+}: {
+  meta: Meta;
+  isNested?: boolean;
+}) {
   return (
-    <div className='onboarding-values'>
+    <div className={isNested ? 'onboarding-values' : 'onboarding-values pl-3'}>
       {Object.entries(meta).map(([key, value]) => {
         const label = value?.label;
         const prettyValue = value?.prettyValue;
 
-        // Skip if there's no label or prettyValue is undefined or empty string
-        if (!label || prettyValue === undefined || prettyValue === '') {
-          return null;
+        // If this has a label and prettyValue, it's a field - render it
+        if (label && prettyValue !== undefined && prettyValue !== '') {
+          // Handle boolean prettyValue
+          const displayValue =
+            typeof prettyValue === 'boolean'
+              ? prettyValue
+                ? 'Yes'
+                : 'No'
+              : prettyValue;
+
+          return (
+            <pre key={key}>
+              {label}: {displayValue}
+            </pre>
+          );
         }
 
-        // Handle boolean prettyValue
-        const displayValue =
-          typeof prettyValue === 'boolean'
-            ? prettyValue
-              ? 'Yes'
-              : 'No'
-            : prettyValue;
+        // If this is an object without label/prettyValue, it's a fieldset
+        // Recursively render its nested fields with indentation
+        if (value && typeof value === 'object' && !label && !prettyValue) {
+          return (
+            <div key={key}>
+              <ReviewMeta meta={value as Meta} isNested />
+            </div>
+          );
+        }
 
-        return (
-          <pre key={key}>
-            {label}: {displayValue}
-          </pre>
-        );
+        return null;
       })}
     </div>
   );
