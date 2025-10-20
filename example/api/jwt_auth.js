@@ -85,6 +85,7 @@ async function fetchCompanyManagerToken() {
     const data = await response.json();
     return { accessToken: data.access_token, expiresIn: data.expires_in };
   } catch (error) {
+    console.error('Error fetching JWT access token:', error);
     throw new Error(`Failed to fetch access token with JWT: ${error.message}`);
   }
 }
