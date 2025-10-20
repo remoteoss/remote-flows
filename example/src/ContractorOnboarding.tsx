@@ -213,6 +213,9 @@ const MultiStepForm = ({
           </div>
         </>
       );
+    case 'review': {
+      return <h1>hello review</h1>;
+    }
   }
 };
 

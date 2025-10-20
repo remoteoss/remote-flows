@@ -48,6 +48,7 @@ const stepToFormSchemaMap: Record<
   contract_details: null,
   pricing_plan: null,
   contract_preview: null,
+  review: null,
 };
 
 const jsonSchemaToEmployment: Partial<
@@ -253,6 +254,7 @@ export const useContractorOnboarding = ({
       pricing_plan: [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
+      review: [],
     }),
     [
       selectCountryForm?.fields,
@@ -271,6 +273,7 @@ export const useContractorOnboarding = ({
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     contract_preview: null,
+    review: null,
   };
 
   const {
@@ -384,6 +387,11 @@ export const useContractorOnboarding = ({
       });
     }
 
+    if (stepState.currentStep.name === 'pricing_plan') {
+      // TODO: TBD not sure if pricing plan needs to be validated
+      return values;
+    }
+
     return {};
   };
 
@@ -459,6 +467,12 @@ export const useContractorOnboarding = ({
           },
         });
       }
+
+      case 'pricing_plan': {
+        // TODO: TBD
+        return Promise.resolve({ data: { pricingPlan: values } });
+      }
+
       default: {
         throw new Error('Invalid step state');
       }
@@ -590,6 +604,15 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return signatureSchemaForm?.handleValidation(parsedValues);
+      }
+
+      if (stepState.currentStep.name === 'pricing_plan') {
+        // TODO: TBD not sure if pricing plan needs to be validated
+        console.log('validate pricing plan');
+        return {
+          formErrors: {},
+          yupError: null,
+        };
       }
 
       return null;

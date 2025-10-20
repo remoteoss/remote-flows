@@ -29,10 +29,15 @@ async function generateJWTToken() {
   const now = Math.floor(Date.now() / 1000);
   const exp = now + 5 * 60;
 
+  const aud =
+    VITE_REMOTE_GATEWAY === 'local'
+      ? `${gatewayUrl}/oauth`
+      : `${gatewayUrl}/auth`;
+
   const payload = {
     iss: VITE_CLIENT_ID,
     sub: `urn:remote-api:company-manager:user:${VITE_USER_ID}`,
-    aud: `${gatewayUrl}/auth`,
+    aud,
     exp: exp,
     scope: DEFAULT_SCOPES,
     iat: now,
@@ -94,7 +99,6 @@ async function getCompanyManagerToken(req, res) {
       expires_in: expiresIn,
     });
   } catch (error) {
-    console.error('Error fetching JWT access token:', error);
     return res
       .status(500)
       .json({ error: 'Failed to retrieve JWT access token' });
