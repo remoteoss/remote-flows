@@ -388,7 +388,7 @@ export const useContractorOnboarding = ({
     }
 
     if (stepState.currentStep.name === 'pricing_plan') {
-      // TODO: TBD not sure if pricing plan needs to be validated
+      // TODO: TBD
       return values;
     }
 
@@ -607,8 +607,7 @@ export const useContractorOnboarding = ({
       }
 
       if (stepState.currentStep.name === 'pricing_plan') {
-        // TODO: TBD not sure if pricing plan needs to be validated
-        console.log('validate pricing plan');
+        // TODO: TBD
         return {
           formErrors: {},
           yupError: null,
