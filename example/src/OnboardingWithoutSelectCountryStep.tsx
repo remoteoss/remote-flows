@@ -11,7 +11,7 @@ import {
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import ReviewStep from './ReviewStep';
+import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { AlertError } from './AlertError';
 import './css/main.css';
@@ -220,7 +220,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       );
     case 'review':
       return (
-        <ReviewStep
+        <ReviewOnboardingStep
           onboardingBag={onboardingBag}
           components={components}
           setErrors={setErrors}
