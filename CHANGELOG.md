@@ -6,6 +6,7 @@
 
 - Add jsonSchemaVersion support to onboarding forms (#500) [#500](https://github.com/remoteoss/remote-flows/pull/500)
 - Refactor API to add JWT authentication support (#499) [#499](https://github.com/remoteoss/remote-flows/pull/499)
+- Sanitize the description for the statements (#510)[#510](https://github.com/remoteoss/remote-flows/pull/510)
 
 ## 0.20.1
 
