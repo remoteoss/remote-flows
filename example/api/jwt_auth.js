@@ -29,15 +29,10 @@ async function generateJWTToken() {
   const now = Math.floor(Date.now() / 1000);
   const exp = now + 5 * 60;
 
-  const aud =
-    VITE_REMOTE_GATEWAY === 'local'
-      ? `${gatewayUrl}/oauth`
-      : `${gatewayUrl}/auth`;
-
   const payload = {
     iss: VITE_CLIENT_ID,
     sub: `urn:remote-api:company-manager:user:${VITE_USER_ID}`,
-    aud,
+    aud: `${gatewayUrl}/auth`,
     exp: exp,
     scope: DEFAULT_SCOPES,
     iat: now,
