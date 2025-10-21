@@ -123,6 +123,12 @@ export const useContractorOnboarding = ({
     employmentStatus &&
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus);
 
+  const invitedStatus: 'invited' | 'not_invited' = useMemo(() => {
+    const isInvited = employmentStatus === 'invited';
+
+    return isInvited ? 'invited' : 'not_invited';
+  }, [employmentStatus]);
+
   const createEmploymentMutation = useCreateEmployment(options);
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
@@ -668,5 +674,16 @@ export const useContractorOnboarding = ({
      * @returns {boolean}
      */
     isEmploymentReadOnly,
+    /**
+     * let's the user know if the employment is invited or not
+     * @returns {'invited' | 'not_invited'}
+     */
+    invitedStatus,
+
+    /**
+     * Employment data
+     * @returns {Employment}
+     */
+    employment,
   };
 };
