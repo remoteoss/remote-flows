@@ -1,11 +1,29 @@
-import { ContractorOnboardingRenderProps } from '@remoteoss/remote-flows';
+import {
+  ContractorOnboardingRenderProps,
+  NormalizedFieldError,
+} from '@remoteoss/remote-flows';
 import { ReviewMeta } from './ReviewOnboardingStep';
+import { AlertError } from './AlertError';
 
 export const ReviewContractorOnboardingStep = ({
   onboardingBag,
+  components,
+  errors,
+  setErrors,
 }: {
   onboardingBag: ContractorOnboardingRenderProps['contractorOnboardingBag'];
+  components: ContractorOnboardingRenderProps['components'];
+  errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  };
+  setErrors: (errors: {
+    apiError: string;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 }) => {
+  const { OnboardingInvite, BackButton } = components;
+
   return (
     <div className='onboarding-review'>
       <h2 className='title'>Basic Information</h2>
@@ -43,6 +61,32 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Contract Preview
       </button>
+
+      <div className='buttons-container'>
+        <BackButton
+          className='back-button'
+          disabled={onboardingBag.isEmploymentReadOnly}
+        >
+          Back
+        </BackButton>
+        <OnboardingInvite
+          className='submit-button'
+          disabled={!onboardingBag.canInvite}
+          render={() => {
+            return 'Invite Contractor';
+          }}
+          onSuccess={() => {
+            console.log('Contractor invited');
+          }}
+          onError={({ error }: { error: Error }) => {
+            setErrors({
+              apiError: error.message,
+              fieldErrors: [],
+            });
+          }}
+        />
+        <AlertError errors={errors} />
+      </div>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { useId } from 'react';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
 import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
+import { OnboardingInvite } from '@/src/flows/ContractorOnboarding/components/OnboardingInvite';
 
 export const ContractorOnboardingFlow = ({
   render,
@@ -42,6 +43,7 @@ export const ContractorOnboardingFlow = ({
           PricingPlanStep: PricingPlanStep,
           ContractDetailsStep: ContractDetailsStep,
           ContractPreviewStep: ContractPreviewStep,
+          OnboardingInvite: OnboardingInvite,
         },
       })}
     </ContractorOnboardingContext.Provider>
