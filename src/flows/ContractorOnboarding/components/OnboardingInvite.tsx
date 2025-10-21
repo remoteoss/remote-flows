@@ -57,10 +57,6 @@ export function OnboardingInvite({
             data: response.data as SuccessResponse,
             employmentStatus: 'invited',
           });
-          /*   setCreditScore?.((prev) => ({
-            ...prev,
-            showInviteSuccessful: true,
-          })); */
           contractorOnboardingBag.refetchEmployment();
           return;
         }
