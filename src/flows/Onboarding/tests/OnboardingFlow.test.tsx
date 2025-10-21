@@ -586,6 +586,12 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
@@ -600,11 +606,11 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    /* await waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
         employmentResponse.data.employment.personal_email,
       );
-    }); */
+    });
   });
 
   it('should submit the basic information step', async () => {
