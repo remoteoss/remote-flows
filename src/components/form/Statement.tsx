@@ -1,5 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { useFormFields } from '@/src/context';
+import { sanitizeHtml } from '@/src/lib/utils';
 import { AlertCircle } from 'lucide-react';
 
 export type StatementProps = {
@@ -17,7 +18,7 @@ export function Statement({ title, description, severity }: StatementProps) {
       <CustomStatement
         data={{
           title,
-          description,
+          description: sanitizeHtml(description),
           severity,
         }}
       />
@@ -28,7 +29,11 @@ export function Statement({ title, description, severity }: StatementProps) {
     <Alert variant='warning'>
       <AlertCircle className='h-4 w-4' />
       {title && <AlertTitle>{title}</AlertTitle>}
-      {description && <AlertDescription>{description}</AlertDescription>}
+      {description && (
+        <AlertDescription
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+        />
+      )}
     </Alert>
   );
 }
