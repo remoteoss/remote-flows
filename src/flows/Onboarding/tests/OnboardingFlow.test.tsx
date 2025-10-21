@@ -129,6 +129,7 @@ describe('OnboardingFlow', () => {
               onSuccess={mockOnSuccess}
               onError={mockOnError}
             />
+            <BackButton>Back</BackButton>
             <SubmitButton disabled={onboardingBag.isSubmitting}>
               Next Step
             </SubmitButton>
@@ -357,7 +358,7 @@ describe('OnboardingFlow', () => {
           ],
         });
       }),
-      http.get('*/v1/countries/PRT/employment_basic_information*', () => {
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
@@ -481,7 +482,72 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it.skip('should fill the first step, go to the second step and go back to the first step', async () => {
+  it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
+    const postSpy = vi.fn();
+
+    server.use(
+      http.post('*/v1/employments', async ({ request }) => {
+        const requestBody = await request.json();
+        postSpy(requestBody);
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    // Wait for select country step
+    await fillCountry('Portugal');
+
+    await fillBasicInformation({
+      fullName: 'John Doe Portugal',
+      personalEmail: 'john.portugal@example.com',
+      workEmail: 'john.portugal@remote.com',
+      jobTitle: 'Software Engineer',
+    });
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      expect(postSpy).toHaveBeenCalledTimes(1);
+    });
+    expect(postSpy.mock.calls[0][0]).toMatchObject({
+      country_code: 'PRT',
+      type: 'employee',
+    });
+
+    let backButton = screen.getByRole('button', { name: 'Back' });
+    backButton.click();
+    await screen.findByText(/Step: Basic Information/i);
+
+    backButton = screen.getByRole('button', { name: 'Back' });
+    backButton.click();
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillCountry('Spain');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify second POST was called with Spain
+    await waitFor(() => {
+      expect(postSpy).toHaveBeenCalledTimes(2);
+    });
+    expect(postSpy.mock.calls[1][0]).toMatchObject({
+      country_code: 'ESP',
+      type: 'employee',
+    });
+  });
+
+  it('should fill the first step, go to the second step and go back to the first step', async () => {
     mockRender.mockImplementation(
       ({ onboardingBag, components }: OnboardingRenderProps) => {
         const currentStepIndex = onboardingBag.stepState.currentStep.index;
