@@ -111,6 +111,7 @@ export function SelectField({
                           key={option.value}
                           value={option.value}
                           className='RemoteFlows__SelectField__SelectItem'
+                          disabled={option.disabled}
                         >
                           {option.label}
                         </SelectItem>
