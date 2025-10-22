@@ -13,6 +13,7 @@ import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCount
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
+import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -31,6 +32,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link ContractPreviewStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
+   * @see {@link OnboardingInvite}
    */
   components: {
     BasicInformationStep: typeof BasicInformationStep;
@@ -40,6 +42,7 @@ export type ContractorOnboardingRenderProps = {
     PricingPlanStep: typeof PricingPlanStep;
     ContractDetailsStep: typeof ContractDetailsStep;
     ContractPreviewStep: typeof ContractPreviewStep;
+    OnboardingInvite: typeof OnboardingInvite;
   };
 };
 

@@ -25,6 +25,10 @@ import {
   useEmployment,
   useJSONSchemaForm,
 } from '@/src/flows/Onboarding/api';
+import {
+  disabledInviteButtonEmploymentStatus,
+  reviewStepAllowedEmploymentStatus,
+} from '@/src/flows/Onboarding/utils';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -103,8 +107,27 @@ export const useContractorOnboarding = ({
     stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
 
-  const { data: employment, isLoading: isLoadingEmployment } =
-    useEmployment(internalEmploymentId);
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmployment(internalEmploymentId);
+
+  const { status: employmentStatus } = employment || {};
+
+  const isEmploymentReadOnly =
+    employmentStatus &&
+    reviewStepAllowedEmploymentStatus.includes(employmentStatus);
+
+  const canInvite =
+    employmentStatus &&
+    !disabledInviteButtonEmploymentStatus.includes(employmentStatus);
+
+  const invitedStatus: 'invited' | 'not_invited' = useMemo(() => {
+    const isInvited = employmentStatus === 'invited';
+
+    return isInvited ? 'invited' : 'not_invited';
+  }, [employmentStatus]);
 
   const createEmploymentMutation = useCreateEmployment(options);
   const createContractorContractDocumentMutation =
@@ -550,12 +573,6 @@ export const useContractorOnboarding = ({
     },
 
     /**
-     * let's the user know that the employment cannot be edited, happens when employment.status is invited, created_awaiting_reserve or created_reserve_paid
-     * @returns {boolean}
-     */
-    isEmploymentReadOnly: false, // TODO: TBD
-
-    /**
      * Function to parse form values before submission
      * @param values - Form values to parse
      * @returns Parsed form values
@@ -630,6 +647,12 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId,
 
     /**
+     * Function to refetch the employment data
+     * @returns {void}
+     */
+    refetchEmployment: refetchEmployment,
+
+    /**
      * Loading state indicating if the onboarding mutation is in progress
      */
     isSubmitting:
@@ -641,5 +664,28 @@ export const useContractorOnboarding = ({
      * Document preview PDF data
      */
     documentPreviewPdf,
+
+    /**
+     * let's the user know if the company can invite employees
+     * @returns {boolean}
+     */
+    canInvite,
+
+    /**
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited
+     * @returns {boolean}
+     */
+    isEmploymentReadOnly,
+    /**
+     * let's the user know if the employment is invited or not
+     * @returns {'invited' | 'not_invited'}
+     */
+    invitedStatus,
+
+    /**
+     * Employment data
+     * @returns {Employment}
+     */
+    employment,
   };
 };

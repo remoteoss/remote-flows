@@ -218,6 +218,9 @@ const MultiStepForm = ({
       return (
         <ReviewContractorOnboardingStep
           onboardingBag={contractorOnboardingBag}
+          components={components}
+          errors={errors}
+          setErrors={setErrors}
         />
       );
     }
