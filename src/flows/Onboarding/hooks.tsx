@@ -161,6 +161,7 @@ export const useOnboarding = ({
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
   if (
+    employmentId &&
     employment?.country?.code &&
     internalCountryCode !== employment.country.code
   ) {

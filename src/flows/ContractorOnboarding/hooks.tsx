@@ -125,6 +125,7 @@ export const useContractorOnboarding = ({
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
   if (
+    employmentId &&
     employment?.country?.code &&
     internalCountryCode !== employment.country.code
   ) {
@@ -416,6 +417,7 @@ export const useContractorOnboarding = ({
           internalCountryCode &&
           employment?.country &&
           employment?.country.code !== internalCountryCode;
+
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const payload: EmploymentCreateParams = {
             basic_information: parsedValues,
