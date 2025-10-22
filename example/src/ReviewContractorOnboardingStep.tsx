@@ -2,7 +2,7 @@ import {
   ContractorOnboardingRenderProps,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
-import { ReviewMeta } from './ReviewOnboardingStep';
+import { InviteSection, ReviewMeta } from './ReviewOnboardingStep';
 import { AlertError } from './AlertError';
 
 export const ReviewContractorOnboardingStep = ({
@@ -23,6 +23,8 @@ export const ReviewContractorOnboardingStep = ({
   }) => void;
 }) => {
   const { OnboardingInvite, BackButton } = components;
+
+  const invitedStatus = onboardingBag.invitedStatus;
 
   return (
     <div className='onboarding-review'>
@@ -61,6 +63,31 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Contract Preview
       </button>
+
+      {invitedStatus === 'not_invited' && (
+        <InviteSection
+          title={`Ready to invite ${onboardingBag.employment?.basic_information?.name as string} to Remote?`}
+          description="If you're ready to invite this employee to onboard with Remote, click the button below."
+        />
+      )}
+
+      {invitedStatus === 'invited' && (
+        <div className='invite-successful'>
+          <h2>You’re all set!</h2>
+          <p>
+            {onboardingBag.employment?.basic_information?.name as string} at{' '}
+            {
+              onboardingBag.employment?.basic_information
+                ?.personal_email as string
+            }{' '}
+            has been invited to Remote. We’ll let you know once they complete
+            their onboarding process
+          </p>
+          <div>
+            <button type='submit'>Go to dashboard</button>
+          </div>
+        </div>
+      )}
 
       <div className='buttons-container'>
         <BackButton
