@@ -275,12 +275,18 @@ const OnboardingWithProps = ({
   employmentId,
   externalId,
 }: OnboardingFormData) => {
+  const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
     <RemoteFlows authType='company-manager'>
       <ContractorOnboardingFlow
         render={OnBoardingRender}
         employmentId={employmentId}
         externalId={externalId}
+        initialValues={{
+          service_duration: {
+            provisional_start_date: provisionalStartDate,
+          },
+        }}
       />
     </RemoteFlows>
   );
