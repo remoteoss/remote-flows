@@ -423,7 +423,6 @@ export const useContractorOnboarding = ({
         pricing_plan: {},
         review: {},
       });
-      console.log('going to review');
       goToStep('review');
     }
   }, [
