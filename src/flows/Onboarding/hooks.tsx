@@ -160,12 +160,9 @@ export const useOnboarding = ({
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
-  useEffect(() => {
-    // Only set country code from employment once, when we don't have one yet
-    if (employmentId && employment?.country?.code && !internalCountryCode) {
-      setInternalCountryCode(employment.country.code);
-    }
-  }, [employmentId, employment?.country?.code, internalCountryCode]);
+  if (employmentId && employment?.country?.code && !internalCountryCode) {
+    setInternalCountryCode(employment.country.code);
+  }
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);

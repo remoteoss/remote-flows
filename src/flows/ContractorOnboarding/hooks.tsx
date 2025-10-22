@@ -35,7 +35,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 type useContractorOnboardingProps = Omit<
@@ -147,12 +147,9 @@ export const useContractorOnboarding = ({
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
-  useEffect(() => {
-    // Only set country code from employment once, when we don't have one yet
-    if (employmentId && employment?.country?.code && !internalCountryCode) {
-      setInternalCountryCode(employment.country.code);
-    }
-  }, [employmentId, employment?.country?.code, internalCountryCode]);
+  if (employmentId && employment?.country?.code && !internalCountryCode) {
+    setInternalCountryCode(employment.country.code);
+  }
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
