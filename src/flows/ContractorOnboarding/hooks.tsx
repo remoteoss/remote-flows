@@ -35,7 +35,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 type useContractorOnboardingProps = Omit<
@@ -103,6 +103,7 @@ export const useContractorOnboarding = ({
     previousStep,
     nextStep,
     goToStep,
+    setStepValues,
   } = useStepState(
     stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
@@ -212,11 +213,15 @@ export const useContractorOnboarding = ({
   };
 
   const isBasicInformationDetailsEnabled = Boolean(
-    internalCountryCode && stepState.currentStep.name === 'basic_information',
+    internalCountryCode &&
+      (stepState.currentStep.name === 'basic_information' ||
+        Boolean(employmentId)),
   );
 
   const isContractorOnboardingDetailsEnabled = Boolean(
-    internalCountryCode && stepState.currentStep.name === 'contract_details',
+    internalCountryCode &&
+      (stepState.currentStep.name === 'contract_details' ||
+        Boolean(employmentId)),
   );
 
   const {
@@ -365,6 +370,72 @@ export const useContractorOnboarding = ({
     basicInformationInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
+  ]);
+
+  const isNavigatingToReview = useMemo(() => {
+    const shouldHandleReadOnlyEmployment = Boolean(
+      employmentId &&
+        isEmploymentReadOnly &&
+        stepState.currentStep.name !== 'review',
+    );
+
+    return Boolean(
+      shouldHandleReadOnlyEmployment &&
+        !isLoadingEmployment &&
+        stepFields.basic_information.length > 0 &&
+        stepFields.contract_details.length > 0,
+    );
+  }, [
+    employmentId,
+    isEmploymentReadOnly,
+    isLoadingEmployment,
+    stepFields.basic_information.length,
+    stepFields.contract_details.length,
+    stepState.currentStep.name,
+  ]);
+
+  useEffect(() => {
+    if (isNavigatingToReview) {
+      fieldsMetaRef.current = {
+        select_country: prettifyFormValues(
+          selectCountryInitialValues,
+          stepFields.select_country,
+        ),
+        basic_information: prettifyFormValues(
+          basicInformationInitialValues,
+          stepFields.basic_information,
+        ),
+        contract_details: prettifyFormValues(
+          contractDetailsInitialValues,
+          stepFields.contract_details,
+        ),
+        // TODO: TBD
+        contract_preview: {},
+        // TODO: TBD
+        pricing_plan: {},
+      };
+
+      setStepValues({
+        select_country: selectCountryInitialValues,
+        basic_information: basicInformationInitialValues,
+        contract_details: contractDetailsInitialValues,
+        contract_preview: {},
+        pricing_plan: {},
+        review: {},
+      });
+      console.log('going to review');
+      goToStep('review');
+    }
+  }, [
+    isNavigatingToReview,
+    goToStep,
+    selectCountryInitialValues,
+    basicInformationInitialValues,
+    contractDetailsInitialValues,
+    setStepValues,
+    stepFields.select_country,
+    stepFields.basic_information,
+    stepFields.contract_details,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
