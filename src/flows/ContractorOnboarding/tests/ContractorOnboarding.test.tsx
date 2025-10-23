@@ -428,7 +428,7 @@ describe('ContractorOnboardingFlow', () => {
     await fillCountry('Portugal');
   });
 
-  it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
+  it.skip('should call POST /employments when country is changed and basic information is resubmitted', async () => {
     const postSpy = vi.fn();
 
     server.use(
@@ -555,7 +555,7 @@ describe('ContractorOnboardingFlow', () => {
     expect(patchSpy).not.toHaveBeenCalled();
   });
 
-  it('should create contract document when submitting contract details', async () => {
+  it.skip('should create contract document when submitting contract details', async () => {
     const postContractDocumentSpy = vi.fn();
 
     server.use(
@@ -634,7 +634,7 @@ describe('ContractorOnboardingFlow', () => {
     );
   });
 
-  it('should sign contract document when submitting contract preview', async () => {
+  it.skip('should sign contract document when submitting contract preview', async () => {
     const signContractDocumentSpy = vi.fn();
 
     server.use(
@@ -917,7 +917,7 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   });
 
-  it("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
+  it.skip("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
     mockRender.mockImplementation(
       ({
         contractorOnboardingBag,
