@@ -914,7 +914,7 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
   });
 
-  it.only("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
+  it("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
     mockRender.mockImplementation(
       ({
         contractorOnboardingBag,
