@@ -9,6 +9,7 @@
 - Sanitize the description for the statements (#510)[#510](https://github.com/remoteoss/remote-flows/pull/510)
 - Fix change country in both onboardings (#514)[#514](https://github.com/remoteoss/remote-flows/pull/514)
 - Add disabled attribute to select.option field (#513)[#513](https://github.com/remoteoss/remote-flows/pull/513)
+- Sanitize benefit tooltips in the `ÈstimateResults`(#517)[#517](https://github.com/remoteoss/remote-flows/pull/517)
 
 ## 0.20.1
 
