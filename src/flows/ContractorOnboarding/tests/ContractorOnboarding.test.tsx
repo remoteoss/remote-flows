@@ -25,7 +25,10 @@ import {
 import { fillSelect } from '@/src/tests/testHelpers';
 import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboarding/types';
 import { fireEvent } from '@testing-library/react';
-import { generateUniqueEmploymentId } from '@/src/flows/ContractorOnboarding/tests/helpers';
+import {
+  fillBasicInformation,
+  generateUniqueEmploymentId,
+} from '@/src/flows/ContractorOnboarding/tests/helpers';
 
 const queryClient = new QueryClient();
 
@@ -425,7 +428,7 @@ describe('ContractorOnboardingFlow', () => {
     await fillCountry('Portugal');
   });
 
-  it.only('should call POST /employments when country is changed and basic information is resubmitted', async () => {
+  it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
     const postSpy = vi.fn();
 
     server.use(
@@ -440,9 +443,11 @@ describe('ContractorOnboardingFlow', () => {
 
     await fillCountry('Portugal');
 
-    // Fill basic information
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    await fillBasicInformation({
+      fullName: 'John Doe Portugal',
+      personalEmail: 'john.portugal@example.com',
+      workEmail: 'john.portugal@remote.com',
+      jobTitle: 'Software Engineer',
     });
 
     let nextButton = screen.getByText(/Next Step/i);
@@ -537,6 +542,10 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
@@ -599,10 +608,16 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    // TODO: fill contract details manually
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -814,6 +829,8 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
+    await fillBasicInformation();
+
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
@@ -883,6 +900,8 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();

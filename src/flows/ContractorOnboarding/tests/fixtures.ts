@@ -165,9 +165,9 @@ export const mockBasicInformationSchema = {
           blockedDates: [],
           inputType: 'date',
           meta: {
-            mot: 20,
+            mot: 0,
           },
-          minDate: '2025-11-11',
+          minDate: '2025-05-01',
           softBlockedDates: [],
         },
       },
@@ -232,7 +232,7 @@ export const mockBasicInformationSchema = {
           },
         ],
         title: 'What is the main job category that the employee performs?',
-        type: 'string',
+        type: ['string', 'null'],
         'x-jsf-presentation': {
           inputType: 'select',
         },
@@ -477,7 +477,7 @@ export const mockBasicInformationSchema = {
           ],
         },
         title: 'What region(s) is the employee working for?',
-        type: 'array',
+        type: ['array', 'null'],
         uniqueItems: true,
         'x-jsf-presentation': {
           $meta: {
@@ -2623,8 +2623,6 @@ export const mockBasicInformationSchema = {
       'job_title',
       'provisional_start_date',
       'has_seniority_date',
-      'tax_servicing_countries',
-      'tax_job_category',
     ],
     type: 'object',
     'x-jsf-logic': {

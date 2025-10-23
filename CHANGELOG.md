@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 0.21.0
+
+### Minor Changes
+
+- Add jsonSchemaVersion support to onboarding forms (#500) [#500](https://github.com/remoteoss/remote-flows/pull/500)
+- Refactor API to add JWT authentication support (#499) [#499](https://github.com/remoteoss/remote-flows/pull/499)
+- Sanitize the description for the statements (#510)[#510](https://github.com/remoteoss/remote-flows/pull/510)
+- Fix change country in both onboardings (#514)[#514](https://github.com/remoteoss/remote-flows/pull/514)
+- Add disabled attribute to select.option field (#513)[#513](https://github.com/remoteoss/remote-flows/pull/513)
+- Sanitize benefit tooltips in the `ÈstimateResults`(#517)[#517](https://github.com/remoteoss/remote-flows/pull/517)
+
 ## 0.20.1
 
 ### Patch Changes
