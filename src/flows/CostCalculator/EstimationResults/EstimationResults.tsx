@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/src/components/ui/accordion';
-import { cn, formatCurrency } from '@/src/lib/utils';
+import { cn, formatCurrency, sanitizeHtml } from '@/src/lib/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { BasicTooltip } from '@/src/components/ui/basic-tooltip';
@@ -449,7 +449,11 @@ function BreakdownListItem({
             <BasicTooltip
               content={
                 <>
-                  <span>{item.tooltip}</span>{' '}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(item.tooltip),
+                    }}
+                  />{' '}
                   {item.zendeskId && (
                     <ZendeskTriggerButton zendeskId={Number(item.zendeskId)}>
                       Learn more
