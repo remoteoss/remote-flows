@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -13,71 +14,21 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      - name: Check if version changed
-        id: version-check
-        run: |
-          # Get current version from package.json
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-
-          # Get last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          LAST_VERSION=${LAST_TAG#v}
-
-          echo "Current version: $CURRENT_VERSION"
-          echo "Last released version: $LAST_VERSION"
-
-          if [ "$CURRENT_VERSION" != "$LAST_VERSION" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-            echo "Version changed from $LAST_VERSION to $CURRENT_VERSION"
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No version change detected"
-          fi
-
-      - name: Build and test
-        if: steps.version-check.outputs.changed == 'true'
-        run: |
-          npm run build
-          npm run test
-
-      - name: Publish to npm
-        if: steps.version-check.outputs.changed == 'true'
-        run: npm publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create git tag
-        if: steps.version-check.outputs.changed == 'true'
-        run: |
-          git tag v${{ steps.version-check.outputs.version }}
-          git push origin v${{ steps.version-check.outputs.version }}
-
-      - name: Create GitHub release
-        if: steps.version-check.outputs.changed == 'true'
-        run: |
-          # Get the changelog content for this version
-          CHANGELOG_CONTENT=$(awk '/^## \[/ {p=0} p; /^## \['"${{ steps.version-check.outputs.version }}"'\]/ {p=1}' CHANGELOG.md | sed '1d' | head -n -1)
-
-          gh release create v${{ steps.version-check.outputs.version }} \
-            --title "Release v${{ steps.version-check.outputs.version }}" \
-            --notes "$CHANGELOG_CONTENT"
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: No release needed
-        if: steps.version-check.outputs.changed == 'false'
-        run: |
-          echo "No version change detected. Skipping release."
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

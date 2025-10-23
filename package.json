@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "0.21.0",
+  "version": "0.20.1",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check && npm run test",
@@ -13,8 +13,11 @@
     "openapi-ts": "openapi-ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "changeset:add": "changeset add",
+    "changeset:version": "changeset version",
     "prepare": "npm run build",
-    "release": "tsx scripts/release.ts",
+    "prerelease": "npm run ci",
+    "release": "changeset publish",
     "type-check": "tsc --noEmit"
   },
   "engines": {
@@ -132,7 +135,6 @@
     "msw": "^2.7.3",
     "prettier": "^3.5.1",
     "tsup": "^8.4.0",
-    "tsx": "^4.19.2",
     "typescript-eslint": "^8.26.1",
     "vitest": "^3.0.8"
   }
