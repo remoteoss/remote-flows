@@ -3619,7 +3619,13 @@ export const mockSignatureSchema = {};
 
 export const mockContractDocumentPreviewResponse = {};
 
-export const mockContractDocumentCreatedResponse = {};
+export const mockContractDocumentCreatedResponse = {
+  data: {
+    contract_document: {
+      id: 'f4f32dbf-4d15-42ef-a960-fea60ab3b68c',
+    },
+  },
+};
 
 export const mockContractDocumentSignedResponse = {};
 

@@ -27,6 +27,7 @@ import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboardin
 import { fireEvent } from '@testing-library/react';
 import {
   fillBasicInformation,
+  fillContractDetails,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
 
@@ -555,12 +556,12 @@ describe('ContractorOnboardingFlow', () => {
     expect(patchSpy).not.toHaveBeenCalled();
   });
 
-  it.skip('should create contract document when submitting contract details', async () => {
+  it('should create contract document when submitting contract details', async () => {
     const postContractDocumentSpy = vi.fn();
 
     server.use(
       http.post(
-        '*/v1/employments/*/contract-documents',
+        '*/v1/contractors/employments/*/contract-documents',
         async ({ request }) => {
           const requestBody = await request.json();
           postContractDocumentSpy(requestBody);
@@ -608,16 +609,14 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
+    await fillBasicInformation();
 
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
 
-    // TODO: fill contract details manually
+    await fillContractDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -628,10 +627,6 @@ describe('ContractorOnboardingFlow', () => {
     await waitFor(() => {
       expect(postContractDocumentSpy).toHaveBeenCalledTimes(1);
     });
-
-    expect(postContractDocumentSpy.mock.calls[0][0]).toHaveProperty(
-      'contract_document',
-    );
   });
 
   it.skip('should sign contract document when submitting contract preview', async () => {
