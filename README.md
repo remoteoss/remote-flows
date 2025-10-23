@@ -313,7 +313,7 @@ For a complete implementation example, refer to our [example application](https:
 1. **Install gh dependency**
    If you haven't done it before
 
-   `brew gh`
+   `brew gh`, if you aren't on mac os check the installation [guide](https://github.com/cli/cli#installation)
 
    `gh login`
 
