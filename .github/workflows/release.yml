@@ -57,7 +57,7 @@ jobs:
         if: steps.version-check.outputs.changed == 'true'
         run: npm publish --access public
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tag
         if: steps.version-check.outputs.changed == 'true'
