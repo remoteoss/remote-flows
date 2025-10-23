@@ -69,10 +69,10 @@ jobs:
         if: steps.version-check.outputs.changed == 'true'
         run: |
           # Get the changelog content for this version
-          CHANGELOG_CONTENT=$(awk '/^## \[/ {p=0} p; /^## \['"${{ steps.version-check.outputs.version }}"'\]/ {p=1}' CHANGELOG.md | sed '1d' | head -n -1)
+          CHANGELOG_CONTENT=$(awk '/^## [0-9]/ {if (p) exit} /^## '"${{ steps.version-check.outputs.version }}"'$/ {p=1; next} p' CHANGELOG.md)
 
           gh release create v${{ steps.version-check.outputs.version }} \
-            --title "Release v${{ steps.version-check.outputs.version }}" \
+            --title "v${{ steps.version-check.outputs.version }}" \
             --notes "$CHANGELOG_CONTENT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
