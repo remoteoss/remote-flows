@@ -2664,21 +2664,69 @@ export const mockBasicInformationSchema = {
 export const mockContractorEmploymentResponse = {
   data: {
     employment: {
-      id: 'fb33c6c7-941c-4316-a9ba-e12dfef05daa',
-      type: 'contractor',
-      company_id: 'f751a113-fcac-467e-aa42-70f163eae9e2',
-      country_code: 'ESP',
-      updated_at: '2025-10-22T17:57:22',
-      personal_email: 'ggarciaseco@gmail.com',
-      external_id: null,
-      job_title: 'pm',
-      probation_period_end_date: null,
-      provisional_start_date: '2025-11-26',
-      created_at: '2025-10-22T17:57:21',
+      short_id: 'VJ5JWS',
       seniority_date: null,
-      manager_id: null,
-      department_id: null,
-      user_status: 'created',
+      company_id: 'f751a113-fcac-467e-aa42-70f163eae9e2',
+      personal_email: 'ggarciaseco@gmail.com',
+      files: [],
+      personal_details: null,
+      pricing_plan_details: {
+        frequency: 'monthly',
+      },
+      updated_at: '2025-10-22T17:57:22',
+      manager_email: null,
+      billing_address_details: null,
+      emergency_contact_details: null,
+      created_at: '2025-10-22T17:57:21',
+      provisional_start_date: '2025-11-26',
+      eligible_for_onboarding_cancellation: true,
+      work_email: 'gabriel.garcia@remote.com',
+      user_id: '8e323d4c-0e1a-441a-8a66-b337a1ec5409',
+      job_title: 'pm',
+      active_contract_id: '8e703546-8c09-43d0-9d34-285260cbb329',
+      manager: null,
+      full_name: 'Gabriel',
+      onboarding_tasks: {
+        administrative_details: {
+          status: 'pending',
+          description: 'Information we need for tax purposes.',
+        },
+        personal_details: {
+          status: 'pending',
+          description: 'Personal details, such as name and date of birth.',
+        },
+        contract_details: {
+          status: 'pending',
+          description:
+            'Employee-specific details for their employment agreement.',
+        },
+        address_details: {
+          status: 'pending',
+          description: 'Primary residence.',
+        },
+        emergency_contact_details: {
+          status: 'pending',
+          description: 'Who should be called in an emergency.',
+        },
+        pricing_plan_details: {
+          status: 'completed',
+          description:
+            'How often Remote will bill employers for management fees.',
+        },
+        billing_address_details: {
+          status: 'pending',
+          description: "Address associated with the employee's bank account.",
+        },
+        employment_document_details: {
+          status: 'pending',
+          description: 'We need some additional documents.',
+        },
+      },
+      employment_model: 'contractor',
+      status: 'created',
+      manager_employment_id: null,
+      department: null,
+      bank_account_details: [],
       basic_information: {
         name: 'Gabriel',
         manager: null,
@@ -2690,11 +2738,33 @@ export const mockContractorEmploymentResponse = {
         tax_servicing_countries: ['Turkey'],
         work_email: 'gabriel.garcia@remote.com',
       },
+      department_id: null,
+      id: 'fb33c6c7-941c-4316-a9ba-e12dfef05daa',
       employment_lifecycle_stage: 'employment_creation',
-      full_name: 'Gabriel',
-      short_id: 'VJ5JWS',
-      eligible_for_onboarding_cancellation: true,
-      active_contract_id: '8e703546-8c09-43d0-9d34-285260cbb329',
+      work_address_details: {},
+      administrative_details: null,
+      country: {
+        code: 'ESP',
+        name: 'Spain',
+        alpha_2_code: 'ES',
+        supported_json_schemas: [
+          'employment_basic_information',
+          'emergency_contact',
+          'contract_details',
+          'administrative_details',
+          'employment_basic_information',
+          'emergency_contact',
+          'address_details',
+        ],
+      },
+      contract_details: null,
+      external_id: null,
+      type: 'contractor',
+      user_status: 'created',
+      address_details: null,
+      termination_date: null,
+      probation_period_end_date: null,
+      manager_id: null,
     },
   },
 };
@@ -3547,3 +3617,13 @@ export const mockContractorContractDetailsSchema = {
     },
   },
 };
+
+export const mockSignatureSchema = {};
+
+export const mockContractDocumentPreviewResponse = {};
+
+export const mockContractDocumentCreatedResponse = {};
+
+export const mockContractDocumentSignedResponse = {};
+
+export const inviteResponse = {};
