@@ -428,7 +428,7 @@ describe('ContractorOnboardingFlow', () => {
     await fillCountry('Portugal');
   });
 
-  it.skip('should call POST /employments when country is changed and basic information is resubmitted', async () => {
+  it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
     const postSpy = vi.fn();
 
     server.use(
