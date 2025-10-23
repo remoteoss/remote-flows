@@ -310,24 +310,25 @@ For a complete implementation example, refer to our [example application](https:
 
 ## Release Process
 
-1. **Create a changeset**
-   Run the following command and fill in the required fields:
+1. **Install gh dependency**
+   If you haven't done it before
+
+   `brew gh`, if you aren't on mac os check the installation [guide](https://github.com/cli/cli#installation)
+
+   `gh login`
+
+2. **Run the release script**
+   Run the following command
 
    ```bash
-   npm changeset:add
+   npm run release
    ```
 
-2. **Open a Pull Request**
-   Commit the changeset and open a PR with your changes.
+3. **Review Pull Request created**
+   Review the automatic PR that the script create
 
-3. **Merge the PR**
-   Once your PR is merged, GitHub will automatically open a new PR containing the release changes.
-
-4. **Review the Release PR**
-   Review the generated release PR, edit it if necessary (e.g., adjust changelog or version), and then merge it.
-
-5. **Publish**
-   After the release PR is merged, the npm package will be published automatically.
+4. **Merge the PR && Publish**
+   Once your PR is merged, GitHub will automatically publish the version
 
 ## Internals
 
