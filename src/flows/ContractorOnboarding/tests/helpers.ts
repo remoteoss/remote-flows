@@ -172,3 +172,28 @@ export async function fillContractDetails(
     await fillSelect('Compensation period unit', newValues?.periodUnit);
   }
 }
+
+export async function fillSignature(
+  values?: Partial<{
+    signature: string;
+  }>,
+) {
+  const defaultValues = {
+    signature: 'John Doe',
+  };
+
+  const newValues = {
+    ...defaultValues,
+    ...values,
+  };
+
+  await waitFor(() => {
+    expect(screen.getByLabelText(/Full Legal Name/i)).toBeInTheDocument();
+  });
+
+  if (newValues?.signature) {
+    fireEvent.change(screen.getByLabelText(/Full Legal Name/i), {
+      target: { value: newValues?.signature },
+    });
+  }
+}
