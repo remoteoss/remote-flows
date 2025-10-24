@@ -3,10 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
-import {
-  TerminationRenderProps,
-  TerminationFlow,
-} from '@/src/flows/Termination/TerminationFlow';
+import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -19,6 +16,7 @@ import { http, HttpResponse } from 'msw';
 import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { TerminationRenderProps } from '@/src/flows/Termination/types';
 
 const queryClient = new QueryClient();
 
@@ -643,5 +641,22 @@ describe('TerminationFlow', () => {
     const errors = await screen.findAllByText(/Required field/i);
 
     expect(errors.length).toBeGreaterThan(0);
+  });
+
+  it('should pre-populate the form with the initial values', async () => {
+    render(
+      <TerminationFlow
+        {...defaultProps}
+        initialValues={{
+          personal_email: 'ggarciaseco@gmail.com',
+        }}
+      />,
+      { wrapper },
+    );
+    await screen.findByText(/Step: Employee Communication/i);
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(employeePersonalEmail).toHaveValue('ggarciaseco@gmail.com');
   });
 });
