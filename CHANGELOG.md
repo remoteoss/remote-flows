@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.21.1
+
+### Patch Changes
+
+- skip internal links (#520) [#520](https://github.com/remoteoss/remote-flows/pull/520)
+- add tests (#522) [#522](https://github.com/remoteoss/remote-flows/pull/522)
+
 ## 0.21.0
 
 ### Minor Changes
