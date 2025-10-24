@@ -82,11 +82,15 @@ if (DOMPurify.isSupported) {
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
     const target = node.getAttribute('target');
 
-    // set value of target to be _blank with rel, or keep as _self if already set
     if (node.tagName === 'A' && (!target || target !== '_self')) {
-      node.setAttribute('target', '_blank');
-      const rel = node.getAttribute('rel');
-      node.setAttribute('rel', appendSecureRelValue(rel));
+      const href = node.getAttribute('href');
+
+      // Skip internal anchors (#section), relative URLs, and non-http protocols
+      if (href && !href.startsWith('#') && /^https?:\/\//i.test(href)) {
+        node.setAttribute('target', '_blank');
+        const rel = node.getAttribute('rel');
+        node.setAttribute('rel', appendSecureRelValue(rel));
+      }
     }
   });
 }

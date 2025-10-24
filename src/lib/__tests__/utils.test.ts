@@ -17,6 +17,14 @@ describe('utils lib', () => {
 
       expect(result).toContain('target="_blank"');
     });
+
+    it("should not add target='_blank' and rel='noopener noreferrer' to internal links", () => {
+      const htmlWithExternalLink = '<a href="#hello">Link</a>';
+      const result = sanitizeHtml(htmlWithExternalLink);
+
+      expect(result).not.toContain('target="_blank"');
+      expect(result).not.toContain('rel="noopener noreferrer"');
+    });
   });
 
   describe('prettifyFormValues', () => {
