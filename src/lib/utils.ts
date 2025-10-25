@@ -99,6 +99,26 @@ export const sanitizeHtml = (html: string) => {
   return DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
 };
 
+export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  // Add onerror handler to all img tags to hide them if they fail to load
+  const images = doc.querySelectorAll('img');
+  images.forEach((img) => {
+    img.setAttribute('onerror', "this.style.display='none'");
+  });
+
+  const modifiedHtml = doc.body.innerHTML;
+
+  // Sanitize with DOMPurify, allowing onerror attribute
+  // Note: The global afterSanitizeAttributes hook (defined above) will still apply
+  // to add target="_blank" and rel="noopener noreferrer" to external links
+  return DOMPurify.sanitize(modifiedHtml, {
+    ADD_ATTR: ['target', 'onerror'],
+  });
+};
+
 /**
  * Function to prettify form values. Returns a pretty value and label for each field.
  * @param values - Form values to prettify
