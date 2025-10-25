@@ -1,5 +1,9 @@
 import { Fields } from '@remoteoss/json-schema-form';
-import { prettifyFormValues, sanitizeHtml } from '../utils';
+import {
+  prettifyFormValues,
+  sanitizeHtml,
+  sanitizeHtmlWithImageErrorHandling,
+} from '../utils';
 
 describe('utils lib', () => {
   describe('sanitizeHtml', () => {
@@ -24,6 +28,84 @@ describe('utils lib', () => {
 
       expect(result).not.toContain('target="_blank"');
       expect(result).not.toContain('rel="noopener noreferrer"');
+    });
+  });
+
+  describe('sanitizeHtmlWithImageErrorHandling', () => {
+    it('should add onerror handler to image tags', () => {
+      const html = '<img src="test.jpg" alt="Test image">';
+      const result = sanitizeHtmlWithImageErrorHandling(html);
+
+      expect(result).toContain('onerror="this.style.display=\'none\'"');
+      expect(result).toContain('src="test.jpg"');
+      expect(result).toContain('alt="Test image"');
+    });
+
+    it('should add onerror handler to multiple images', () => {
+      const html = `
+        <img src="image1.jpg" alt="Image 1">
+        <p>Some text</p>
+        <img src="image2.jpg" alt="Image 2">
+      `;
+      const result = sanitizeHtmlWithImageErrorHandling(html);
+
+      // Count occurrences of onerror handler
+      const matches = result.match(/onerror="this\.style\.display='none'"/g);
+      expect(matches).toHaveLength(2);
+    });
+
+    it('should replace existing malicious onerror handlers', () => {
+      const maliciousHtml = '<img src="x" onerror="alert(\'XSS\')">';
+      const result = sanitizeHtmlWithImageErrorHandling(maliciousHtml);
+
+      expect(result).toContain('onerror="this.style.display=\'none\'"');
+      expect(result).not.toContain('alert');
+      expect(result).not.toContain('XSS');
+    });
+
+    it('should still sanitize dangerous scripts', () => {
+      const html =
+        '<script>alert("xss")</script><img src="test.jpg"><p>Safe content</p>';
+      const result = sanitizeHtmlWithImageErrorHandling(html);
+
+      expect(result).not.toContain('<script>');
+      expect(result).not.toContain('alert("xss")');
+      expect(result).toContain('<img');
+      expect(result).toContain('<p>Safe content</p>');
+    });
+
+    it('should preserve other image attributes', () => {
+      const html =
+        '<img src="test.jpg" alt="Test" width="100" height="200" class="image-class">';
+      const result = sanitizeHtmlWithImageErrorHandling(html);
+
+      expect(result).toContain('src="test.jpg"');
+      expect(result).toContain('alt="Test"');
+      expect(result).toContain('width="100"');
+      expect(result).toContain('height="200"');
+      expect(result).toContain('class="image-class"');
+      expect(result).toContain('onerror="this.style.display=\'none\'"');
+    });
+
+    it('should handle HTML with images and external links', () => {
+      const html = `
+        <a href="https://example.com">External Link</a>
+        <img src="test.jpg" alt="Test">
+        <a href="#internal">Internal Link</a>
+      `;
+      const result = sanitizeHtmlWithImageErrorHandling(html);
+
+      // Check image has onerror
+      expect(result).toContain('onerror="this.style.display=\'none\'"');
+
+      // Check external link has security attributes (from global hook)
+      expect(result).toContain('target="_blank"');
+      expect(result).toContain('rel="noopener noreferrer"');
+
+      // Check internal link doesn't have target="_blank"
+      const internalLinkMatch = result.match(/<a href="#internal"[^>]*>/);
+      expect(internalLinkMatch).toBeTruthy();
+      expect(internalLinkMatch![0]).not.toContain('target="_blank"');
     });
   });
 
