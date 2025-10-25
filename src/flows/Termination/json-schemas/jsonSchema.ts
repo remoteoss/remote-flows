@@ -1,3 +1,6 @@
+import { additionalInformationSchema } from '@/src/flows/Termination/json-schemas/additionalInformation';
+import { paidTimeOffSchema } from '@/src/flows/Termination/json-schemas/paidTimeOff';
+
 export const jsonSchema = {
   data: {
     version: 7,
@@ -80,30 +83,7 @@ export const jsonSchema = {
             },
           },
         },
-        {
-          if: {
-            properties: {
-              agrees_to_pto_amount: {
-                const: 'no',
-              },
-            },
-            required: ['agrees_to_pto_amount'],
-          },
-          then: {
-            properties: {
-              agrees_to_pto_amount_notes: {
-                type: 'string',
-              },
-            },
-            required: ['agrees_to_pto_amount_notes'],
-          },
-          else: {
-            properties: {
-              agrees_to_pto_amount_notes: false,
-              timesheet_file: false,
-            },
-          },
-        },
+        ...paidTimeOffSchema.data.schema.allOf,
       ],
       properties: {
         confidential: {
@@ -382,57 +362,8 @@ export const jsonSchema = {
             inputType: 'date',
           },
         },
-        agrees_to_pto_amount: {
-          description: '',
-          oneOf: [
-            {
-              const: 'yes',
-              description: '',
-              title: 'Yes',
-            },
-            {
-              const: 'no',
-              description: '',
-              title: 'No',
-            },
-          ],
-          title: 'Are these paid time off records correct?',
-          type: 'string',
-          'x-jsf-presentation': {
-            direction: 'column',
-            inputType: 'radio',
-          },
-        },
-        agrees_to_pto_amount_notes: {
-          description:
-            'Please provide details regarding any additional days taken, including specific dates, or any other inaccuracy in the time off data.',
-          maxLength: 1000,
-          title: 'Provide time off details',
-          type: ['string', 'null'],
-          'x-jsf-presentation': {
-            inputType: 'textarea',
-          },
-        },
-        timesheet_file: {
-          description:
-            'Upload a timesheet exported from your HR software. This way we can compare and confirm the total number of Paid time off.',
-          title: 'Timesheet document',
-          type: ['string', 'null'],
-          'x-jsf-presentation': {
-            inputType: 'file',
-            accept: '.pdf',
-          },
-        },
-        acknowledge_termination_procedure: {
-          description: '',
-          title:
-            'I, {{requesterName}} have read and agree to the procedures as defined in the termination form.',
-          type: 'boolean',
-          'x-jsf-presentation': {
-            direction: 'column',
-            inputType: 'checkbox',
-          },
-        },
+        ...paidTimeOffSchema.data.schema.properties,
+        ...additionalInformationSchema.data.schema.properties,
       },
       required: [
         'confidential',
@@ -443,8 +374,8 @@ export const jsonSchema = {
         'risk_assessment_reasons',
         'will_challenge_termination',
         'proposed_termination_date',
-        'agrees_to_pto_amount',
-        'acknowledge_termination_procedure',
+        ...paidTimeOffSchema.data.schema.required,
+        ...additionalInformationSchema.data.schema.required,
       ],
       type: 'object',
       'x-jsf-order': [
@@ -463,10 +394,8 @@ export const jsonSchema = {
         'will_challenge_termination_description',
         'proposed_termination_date_info',
         'proposed_termination_date',
-        'agrees_to_pto_amount',
-        'agrees_to_pto_amount_notes',
-        'timesheet_file',
-        'acknowledge_termination_procedure',
+        ...paidTimeOffSchema.data.schema['x-jsf-order'],
+        ...additionalInformationSchema.data.schema['x-jsf-order'],
       ],
     },
   },
