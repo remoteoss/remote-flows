@@ -30,6 +30,23 @@ export const paidTimeOffSchema = {
         },
       ],
       properties: {
+        timeoff_statement: {
+          type: 'null',
+          title: 'Timeoff statement',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+            statement: {
+              title: 'Make sure these paid time off records are correct',
+              description:
+                'You must pay the employee for any unused accrued paid time off, so please check these records carefully.',
+              inputType: 'statement',
+              severity: 'warning',
+            },
+            meta: {
+              ignoreValue: true,
+            },
+          },
+        },
         agrees_to_pto_amount: {
           description: '',
           oneOf: [
@@ -75,6 +92,7 @@ export const paidTimeOffSchema = {
       required: ['agrees_to_pto_amount'],
       type: 'object',
       'x-jsf-order': [
+        'timeoff_statement',
         'agrees_to_pto_amount',
         'agrees_to_pto_amount_notes',
         'timesheet_file',
