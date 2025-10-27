@@ -1,7 +1,9 @@
 import {
+  getIndexLeavePoliciesSummary,
   getIndexTimeoff,
   getShowEmployment,
   TimeoffStatus,
+  TimeoffType,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
@@ -47,9 +49,11 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
 export const useTimeOffQuery = ({
   employmentId,
   status,
+  timeoffType,
 }: {
   employmentId?: string;
   status?: TimeoffStatus;
+  timeoffType?: TimeoffType;
 }) => {
   const { client } = useClient();
   return useQuery({
@@ -64,7 +68,38 @@ export const useTimeOffQuery = ({
         query: {
           employment_id: employmentId,
           status: status,
+          timeoff_type: timeoffType,
         },
+      });
+    },
+    select: ({ data }) => data,
+  });
+};
+
+/**
+ * Hook to retrieve time off balance for a specific employment.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch time off balance for.
+ * @returns {UseQueryResult<any, unknown>} - The result of the query, including the time off balance.
+ *
+ */
+export const useTimeOffLeavePoliciesSummaryQuery = ({
+  employmentId,
+}: {
+  employmentId?: string;
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['timeoff-balance', employmentId],
+    retry: false,
+    queryFn: () => {
+      return getIndexLeavePoliciesSummary({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { employment_id: employmentId as string },
       });
     },
     select: ({ data }) => data,
