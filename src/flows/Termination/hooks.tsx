@@ -19,6 +19,7 @@ import { useMemo } from 'react';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
+import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -105,6 +106,17 @@ export const useTermination = ({
             )?.['x-jsf-presentation']?.className,
           },
         ),
+        paid_time_off_info: {
+          ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe),
+          presentation: {
+            ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe)?.[
+              'x-jsf-presentation'
+            ],
+            Component: () => {
+              return <PaidTimeOff />;
+            },
+          },
+        },
       },
     };
   }, [options?.jsfModify]);
@@ -121,6 +133,8 @@ export const useTermination = ({
       },
       step: stepState.currentStep.name,
     });
+
+  console.log({ formValues });
 
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
 

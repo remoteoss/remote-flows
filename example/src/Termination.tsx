@@ -200,6 +200,9 @@ export const TerminationWithProps = ({
             },
           },
         }}
+        initialValues={{
+          confidential: 'no',
+        }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
