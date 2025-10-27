@@ -7,13 +7,15 @@ import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { TerminationFormValues } from '@/src/flows/Termination/types';
+import {
+  TerminationFlowProps,
+  TerminationFormValues,
+} from '@/src/flows/Termination/types';
 import omit from 'lodash.omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
-import { JSFModify } from '@/src/flows/types';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
 import { useMemo } from 'react';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
@@ -48,16 +50,12 @@ function buildInitialValues(
   return initialValues;
 }
 
-type TerminationHookProps = {
-  employmentId: string;
-  options?: {
-    jsfModify?: JSFModify;
-  };
-};
+type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
 export const useTermination = ({
   employmentId,
   options,
+  initialValues: terminationInitialValues,
 }: TerminationHookProps) => {
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
@@ -218,6 +216,7 @@ export const useTermination = ({
     ...stepState.values?.termination_details,
     ...stepState.values?.paid_time_off,
     ...stepState.values?.additional_information,
+    ...terminationInitialValues,
   });
 
   return {

@@ -186,7 +186,7 @@ export const TerminationWithProps = ({
 }) => {
   const proxyURL = window.location.origin;
   return (
-    <RemoteFlows proxy={{ url: proxyURL }}>
+    <RemoteFlows proxy={{ url: proxyURL }} authType='company-manager'>
       <TerminationFlow
         employmentId={employmentId}
         render={TerminationRender}
@@ -202,6 +202,8 @@ export const TerminationWithProps = ({
         }}
         initialValues={{
           confidential: 'no',
+          customer_informed_employee: 'no',
+          personal_email: 'ggarciaseco@gmail.com',
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
