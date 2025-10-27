@@ -201,7 +201,7 @@ export const TerminationWithProps = ({
           },
         }}
         initialValues={{
-          personal_email: 'ggarciaseco@gmail.com',
+          personal_email: 'john.doe@example.com',
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
