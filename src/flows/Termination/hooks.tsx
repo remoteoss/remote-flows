@@ -132,8 +132,6 @@ export const useTermination = ({
       step: stepState.currentStep.name,
     });
 
-  console.log({ formValues });
-
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
 
   const createTermination = useCreateTermination();

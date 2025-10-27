@@ -204,6 +204,15 @@ export const TerminationWithProps = ({
           confidential: 'no',
           customer_informed_employee: 'no',
           personal_email: 'ggarciaseco@gmail.com',
+          additional_comments: 'dsdfsfddffdfddfsdsfadsfsd',
+          proposed_termination_date: '2025-10-30',
+          reason_description: 'dsxcadfsdsdfaaafdsfdda',
+          risk_assessment_reasons: [
+            'sick_leave',
+            'member_of_union_or_works_council',
+          ],
+          termination_reason: 'performance',
+          will_challenge_termination: 'no',
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
