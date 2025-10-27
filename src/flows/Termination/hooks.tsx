@@ -22,6 +22,7 @@ import { createInformationField } from '@/src/components/form/jsf-utils/createFi
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
+import { useEmployment } from '@/src/flows/Onboarding/api';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -60,10 +61,24 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const formValues = {
-    ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-    ...fieldValues,
-  };
+  const { data: employment } = useEmployment(employmentId);
+
+  const initialValues = buildInitialValues({
+    ...stepState.values?.employee_communication,
+    ...stepState.values?.termination_details,
+    ...stepState.values?.paid_time_off,
+    ...stepState.values?.additional_information,
+    ...terminationInitialValues,
+  });
+
+  const formValues = useMemo(
+    () => ({
+      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+      ...fieldValues,
+      ...initialValues,
+    }),
+    [stepState.values, stepState.currentStep.name, fieldValues, initialValues],
+  );
 
   const customFields = useMemo(() => {
     return {
@@ -111,13 +126,24 @@ export const useTermination = ({
               'x-jsf-presentation'
             ],
             Component: () => {
-              return <PaidTimeOff />;
+              return (
+                <PaidTimeOff
+                  employeeName={employment?.basic_information?.name as string}
+                  proposedTerminationDate={formValues.proposed_termination_date}
+                />
+              );
             },
           },
         },
       },
     };
-  }, [options?.jsfModify]);
+  }, [
+    employment?.basic_information?.name,
+    formValues.proposed_termination_date,
+    options?.jsfModify?.fields?.paid_time_off_info,
+    options?.jsfModify?.fields?.proposed_termination_date_info,
+    options?.jsfModify?.fields?.risk_assesment_info,
+  ]);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
@@ -208,14 +234,6 @@ export const useTermination = ({
   function next() {
     nextStep();
   }
-
-  const initialValues = buildInitialValues({
-    ...stepState.values?.employee_communication,
-    ...stepState.values?.termination_details,
-    ...stepState.values?.paid_time_off,
-    ...stepState.values?.additional_information,
-    ...terminationInitialValues,
-  });
 
   return {
     /**
