@@ -648,7 +648,7 @@ describe('TerminationFlow', () => {
       <TerminationFlow
         {...defaultProps}
         initialValues={{
-          personal_email: 'ggarciaseco@gmail.com',
+          personal_email: 'john.doe@example.com',
         }}
       />,
       { wrapper },
@@ -657,6 +657,6 @@ describe('TerminationFlow', () => {
     const employeePersonalEmail = screen.getByLabelText(
       /Employee's personal email/i,
     );
-    expect(employeePersonalEmail).toHaveValue('ggarciaseco@gmail.com');
+    expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
   });
 });
