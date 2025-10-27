@@ -201,6 +201,7 @@ export const TerminationWithProps = ({
           },
         }}
         initialValues={{
+<<<<<<< HEAD
           confidential: 'no',
           customer_informed_employee: 'no',
           personal_email: 'john.doe@example.com',
@@ -213,6 +214,9 @@ export const TerminationWithProps = ({
           ],
           termination_reason: 'performance',
           will_challenge_termination: 'no',
+=======
+          personal_email: 'john.doe@example.com',
+>>>>>>> pbyr-3055-prefill-termination-like-the-onboarding
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
