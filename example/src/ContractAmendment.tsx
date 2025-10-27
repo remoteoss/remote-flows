@@ -122,7 +122,7 @@ export function ContractAmendment() {
   return (
     <RemoteFlows
       components={components}
-      proxy={{ url: 'http://localhost:3001/' }}
+      proxy={{ url: window.location.origin }}
     >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
