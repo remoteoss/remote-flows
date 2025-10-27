@@ -1,6 +1,6 @@
 import { getShowHelpCenterArticle } from '@/src/client';
 import { useClient } from '@/src/context';
-import { sanitizeHtml } from '@/src/lib/utils';
+import { sanitizeHtmlWithImageErrorHandling } from '@/src/lib/utils';
 import { Client } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 
@@ -30,7 +30,7 @@ export const useZendeskArticle = (
       if (article) {
         return {
           ...article,
-          body: sanitizeHtml(article.body || ''),
+          body: sanitizeHtmlWithImageErrorHandling(article.body || ''),
         };
       }
       return article;

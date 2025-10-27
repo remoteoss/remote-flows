@@ -203,7 +203,7 @@ export const TerminationWithProps = ({
         initialValues={{
           confidential: 'no',
           customer_informed_employee: 'no',
-          personal_email: 'ggarciaseco@gmail.com',
+          personal_email: 'john.doe@example.com',
           additional_comments: 'dsdfsfddffdfddfsdsfadsfsd',
           proposed_termination_date: '2025-10-30',
           reason_description: 'dsxcadfsdsdfaaafdsfdda',

@@ -277,7 +277,10 @@ const OnboardingWithProps = ({
 }: OnboardingFormData) => {
   const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
-    <RemoteFlows authType='company-manager'>
+    <RemoteFlows
+      authType='company-manager'
+      proxy={{ url: window.location.origin }}
+    >
       <ContractorOnboardingFlow
         render={OnBoardingRender}
         employmentId={employmentId}
