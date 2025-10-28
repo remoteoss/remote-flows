@@ -5,12 +5,10 @@ import { beforeEach, describe, it, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
-import {
-  TerminationRenderProps,
-  TerminationFlow,
-} from '@/src/flows/Termination/TerminationFlow';
+import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
 import { render, screen } from '@testing-library/react';
 import { timeoff } from '@/src/flows/Termination/tests/fixtures';
+import { TerminationRenderProps } from '@/src/flows/Termination/types';
 
 const queryClient = new QueryClient();
 
