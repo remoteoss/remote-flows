@@ -11,14 +11,20 @@ const rowBorder =
 const SummaryRow = ({
   children,
   withBorder = false,
+  className = '',
 }: {
   children: React.ReactNode;
   withBorder?: boolean;
+  className?: string;
 }) => {
-  return <div className={cn(rowBase, withBorder && rowBorder)}>{children}</div>;
+  return (
+    <div className={cn(rowBase, withBorder && rowBorder, className)}>
+      {children}
+    </div>
+  );
 };
 
-const SummaryTimeOff = ({
+export const SummaryTimeOff = ({
   entitledDays,
   takenDays,
   bookedDays,
@@ -69,6 +75,11 @@ const SummaryTimeOff = ({
       <SummaryRow>
         <label>Total days remaining unused</label>
         <p className='font-bold'>{remainingDays} days</p>
+      </SummaryRow>
+      <SummaryRow className='mb-2 py-0'>
+        <p className='text-xs text-[#222E39]'>
+          Expiration date of unused days: {formattedProposedTerminationDate}
+        </p>
       </SummaryRow>
     </div>
   );
