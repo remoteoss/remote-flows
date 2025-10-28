@@ -8,8 +8,9 @@ import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
-import './css/main.css';
 import { useState } from 'react';
+import { SummaryTimeOff } from '@remoteoss/remote-flows/internals';
+import './css/main.css';
 
 const STEPS = [
   'Employee Communication',
@@ -142,6 +143,15 @@ const TerminationRender = ({
 
   return (
     <>
+      <SummaryTimeOff
+        entitledDays={22}
+        takenDays={8}
+        bookedDays={14}
+        approvedDaysBeforeTermination={2}
+        approvedDaysAfterTermination={4}
+        remainingDays={0}
+        proposedTerminationDate='2025-10-31'
+      />
       <div className='steps-navigation'>
         <ul>
           {STEPS.map((step, index) => (

@@ -66,3 +66,6 @@ export {
 } from './components/ui/select';
 export { ScrollArea } from './components/ui/scroll-area';
 export * from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+
+// TODO: Provisional to style it better
+export { SummaryTimeOff } from './flows/Termination/components/PaidTimeOff/PaidTimeOff';

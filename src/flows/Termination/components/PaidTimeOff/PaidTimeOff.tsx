@@ -5,13 +5,14 @@ import {
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-const SummaryTimeOff = ({
+export const SummaryTimeOff = ({
   entitledDays,
   takenDays,
   bookedDays,
   approvedDaysBeforeTermination,
   approvedDaysAfterTermination,
   remainingDays,
+  proposedTerminationDate,
 }: {
   entitledDays: number;
   takenDays: number;
@@ -19,16 +20,43 @@ const SummaryTimeOff = ({
   approvedDaysBeforeTermination: number;
   approvedDaysAfterTermination: number;
   remainingDays: number;
+  proposedTerminationDate: string;
 }) => {
+  const formattedProposedTerminationDate = new Date(
+    proposedTerminationDate,
+  ).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
   return (
     <div>
-      <h4>Entitled Days</h4>
-      <p>Entitled: {entitledDays}</p>
-      <p>Taken: {takenDays}</p>
-      <p>Booked: {bookedDays}</p>
-      <p>Approved Days Before Termination: {approvedDaysBeforeTermination}</p>
-      <p>Approved Days After Termination: {approvedDaysAfterTermination}</p>
-      <p>Remaining Days: {remainingDays}</p>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>Number of days entitled to per year</label>
+        <p className='font-bold'>{entitledDays} days</p>
+      </div>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>Total days booked</label>
+        <p className='font-bold'>{bookedDays} days</p>
+      </div>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>Number of days already used</label>
+        <p className='font-bold'>{takenDays} days</p>
+      </div>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>
+          Approved for use before {formattedProposedTerminationDate}
+        </label>
+        <p className='font-bold'>{approvedDaysBeforeTermination} days</p>
+      </div>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>Approved for use after {formattedProposedTerminationDate}</label>
+        <p className='font-bold'>{approvedDaysAfterTermination} days</p>
+      </div>
+      <div className='flex justify-between items-center py-2 text-xs'>
+        <label>Total days remaining unused</label>
+        <p className='font-bold'>{remainingDays} days</p>
+      </div>
     </div>
   );
 };
@@ -82,6 +110,7 @@ export const PaidTimeOff = ({
           approvedDaysBeforeTermination={0}
           approvedDaysAfterTermination={0}
           remainingDays={0}
+          proposedTerminationDate={proposedTerminationDate}
         />
       )}
     </div>
