@@ -3,9 +3,23 @@ import {
   useTimeOffQuery,
 } from '@/src/common/api';
 import { useTerminationContext } from '@/src/flows/Termination/context';
+import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-export const SummaryTimeOff = ({
+const rowBase = 'flex justify-between items-center py-2 text-xs';
+const rowBorder = 'border-b border-b-1 border-b-[#E4E4E7]';
+
+const SummaryRow = ({
+  children,
+  withBorder = false,
+}: {
+  children: React.ReactNode;
+  withBorder?: boolean;
+}) => {
+  return <div className={cn(rowBase, withBorder && rowBorder)}>{children}</div>;
+};
+
+const SummaryTimeOff = ({
   entitledDays,
   takenDays,
   bookedDays,
@@ -31,32 +45,32 @@ export const SummaryTimeOff = ({
   });
   return (
     <div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p className='font-bold'>{entitledDays} days</p>
-      </div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      </SummaryRow>
+      <SummaryRow>
         <label>Total days booked</label>
         <p className='font-bold'>{bookedDays} days</p>
-      </div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      </SummaryRow>
+      <SummaryRow>
         <label>Number of days already used</label>
         <p className='font-bold'>{takenDays} days</p>
-      </div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      </SummaryRow>
+      <SummaryRow>
         <label>
           Approved for use before {formattedProposedTerminationDate}
         </label>
         <p className='font-bold'>{approvedDaysBeforeTermination} days</p>
-      </div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      </SummaryRow>
+      <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
         <p className='font-bold'>{approvedDaysAfterTermination} days</p>
-      </div>
-      <div className='flex justify-between items-center py-2 text-xs'>
+      </SummaryRow>
+      <SummaryRow>
         <label>Total days remaining unused</label>
         <p className='font-bold'>{remainingDays} days</p>
-      </div>
+      </SummaryRow>
     </div>
   );
 };
