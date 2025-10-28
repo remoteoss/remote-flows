@@ -74,8 +74,8 @@ export const useTermination = ({
   const formValues = useMemo(
     () => ({
       ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
-      ...fieldValues,
       ...initialValues,
+      ...fieldValues,
     }),
     [stepState.values, stepState.currentStep.name, fieldValues, initialValues],
   );
