@@ -95,7 +95,7 @@ export const PaidTimeOff = ({
     year: 'numeric',
   });
   return (
-    <div>
+    <div className='py-3'>
       <h3 className='RemoteFlows__PaidTimeOffTitle mb-2'>Paid time off</h3>
       <p className='RemoteFlows__PaidTimeOffDescription text-sm mb-2'>
         The proposed termination date for {employeeName} is{' '}
