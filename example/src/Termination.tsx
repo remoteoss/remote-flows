@@ -9,7 +9,6 @@ import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { useState } from 'react';
-import { SummaryTimeOff } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
 const STEPS = [
@@ -82,25 +81,6 @@ const MultiStepForm = ({
     case 'paid_time_off':
       return (
         <>
-          <TimeOff
-            render={({ employment, timeoff }) => {
-              const username = employment?.data?.employment?.basic_information
-                ?.name as string;
-              const days = timeoff?.data?.total_count || 0;
-
-              // if days is 0 or > 1 'days' else 'day
-              const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
-              return (
-                <>
-                  <p>
-                    We have recorded {days} {daysLiteral} of paid time off for{' '}
-                    {username}
-                  </p>
-                  <a href='#'>See {username}'s timeoff breakdown</a>
-                </>
-              );
-            }}
-          />
           <PaidTimeOffStep
             onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
           />
@@ -143,15 +123,6 @@ const TerminationRender = ({
 
   return (
     <>
-      <SummaryTimeOff
-        entitledDays={22}
-        takenDays={8}
-        bookedDays={14}
-        approvedDaysBeforeTermination={2}
-        approvedDaysAfterTermination={4}
-        remainingDays={0}
-        proposedTerminationDate='2025-10-31'
-      />
       <div className='steps-navigation'>
         <ul>
           {STEPS.map((step, index) => (

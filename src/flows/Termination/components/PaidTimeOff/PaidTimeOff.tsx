@@ -6,8 +6,10 @@ import { useTerminationContext } from '@/src/flows/Termination/context';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-const rowBase = 'flex justify-between items-center py-2 text-xs';
-const rowBorder = 'border-b border-b-1 border-b-[#E4E4E7]';
+const rowBase =
+  'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
+const rowBorder =
+  'RemoteFlows__SummaryRowBorder border-b border-b-1 border-b-[#E4E4E7]';
 
 const SummaryRow = ({
   children,
@@ -106,8 +108,8 @@ export const PaidTimeOff = ({
   });
   return (
     <div>
-      <h3>Paid time off</h3>
-      <p>
+      <h3 className='RemoteFlows__PaidTimeOffTitle mb-2'>Paid time off</h3>
+      <p className='RemoteFlows__PaidTimeOffDescription text-sm mb-2'>
         The proposed termination date for {employeeName} is{' '}
         {formattedProposedTerminationDate}. You will need to pay them for any
         unused accrued days. Below is a breakdown of their time off entitlement
