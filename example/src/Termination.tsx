@@ -52,7 +52,6 @@ const MultiStepForm = ({
     AdditionalDetailsStep,
     SubmitButton,
     Back,
-    TimeOff,
   } = components;
   switch (terminationBag.stepState.currentStep.name) {
     case 'employee_communication':
