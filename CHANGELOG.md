@@ -1,5 +1,25 @@
 # @remoteoss/remote-flows
 
+## 0.22.0
+
+### Minor Changes
+
+- fix proxy links (#526) [#526](https://github.com/remoteoss/remote-flows/pull/526)
+- add image error handling (#527) [#527](https://github.com/remoteoss/remote-flows/pull/527)
+- remove changesets dependency and bump version (#528) [#528](https://github.com/remoteoss/remote-flows/pull/528)
+- add statement (#529) [#529](https://github.com/remoteoss/remote-flows/pull/529)
+- Add initial values support to Termination flow component (#524) [#524](https://github.com/remoteoss/remote-flows/pull/524)
+
+## 0.22.0
+
+### Minor Changes
+
+- fix proxy links (#526) [#526](https://github.com/remoteoss/remote-flows/pull/526)
+- add image error handling (#527) [#527](https://github.com/remoteoss/remote-flows/pull/527)
+- remove changesets dependency and bump version (#528) [#528](https://github.com/remoteoss/remote-flows/pull/528)
+- add statement (#529) [#529](https://github.com/remoteoss/remote-flows/pull/529)
+- Add initial values support to Termination flow component (#524) [#524](https://github.com/remoteoss/remote-flows/pull/524)
+
 ## 0.21.1
 
 ### Patch Changes
