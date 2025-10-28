@@ -255,6 +255,14 @@ async function main(): Promise<void> {
   packageJson.version = newVersion;
   writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
 
+  // Update package-lock.json
+  try {
+    execSync('npm install', { stdio: 'pipe' });
+    console.log('✅ Updated package-lock.json');
+  } catch (error) {
+    console.log(`⚠️  Failed to update package-lock.json: ${error.message}`);
+  }
+
   // Generate changelog entry to match existing format
   const versionType =
     changeset.versionBump === 'major'
