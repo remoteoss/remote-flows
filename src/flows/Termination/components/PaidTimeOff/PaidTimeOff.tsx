@@ -1,7 +1,4 @@
-import {
-  useTimeOffLeavePoliciesSummaryQuery,
-  useTimeOffQuery,
-} from '@/src/common/api';
+import { useTimeOffLeavePoliciesSummaryQuery } from '@/src/common/api';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -89,16 +86,7 @@ export const PaidTimeOff = ({
   const { data: leavePoliciesSummary } = useTimeOffLeavePoliciesSummaryQuery({
     employmentId: terminationBag.employmentId,
   });
-  const { data: timeoff } = useTimeOffQuery({
-    employmentId: terminationBag.employmentId,
-    timeoffType: 'paid_time_off',
-  });
 
-  const { data: takenTimeoff } = useTimeOffQuery({
-    employmentId: terminationBag.employmentId,
-    timeoffType: 'paid_time_off',
-    status: 'taken',
-  });
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
   ).toLocaleDateString('en-US', {
@@ -121,8 +109,8 @@ export const PaidTimeOff = ({
             (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
               .days || 0
           }
-          takenDays={takenTimeoff?.data?.total_count || 0}
-          bookedDays={timeoff?.data?.total_count || 0}
+          takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
+          bookedDays={0}
           approvedDaysBeforeTermination={0}
           approvedDaysAfterTermination={0}
           remainingDays={0}

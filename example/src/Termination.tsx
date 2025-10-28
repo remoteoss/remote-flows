@@ -201,8 +201,10 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
+  //const PARTNERS_EMPLOYMENT_ID = '765e8c80-bd4c-4335-8e83-ac5de37652ea';
+  const LOCAL_EMPLOYMENT_ID = '33112809-4307-49a3-9653-dda668656e7e';
   const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: '765e8c80-bd4c-4335-8e83-ac5de37652ea', // use your own employment ID
+    employmentId: LOCAL_EMPLOYMENT_ID, // use your own employment ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
