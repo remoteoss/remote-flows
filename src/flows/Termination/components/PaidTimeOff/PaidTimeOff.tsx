@@ -1,7 +1,20 @@
-import { useTimeOffLeavePoliciesSummaryQuery } from '@/src/common/api';
+import {
+  useTimeOffLeavePoliciesSummaryQuery,
+  useTimeOffQuery,
+} from '@/src/common/api';
+import { Button } from '@/src/components/ui/button';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/src/components/ui/drawer';
+import { useState } from 'react';
+import capitalize from 'lodash.capitalize';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -85,6 +98,69 @@ export const SummaryTimeOff = ({
   );
 };
 
+export const DrawerTimeOff = ({
+  employeeName,
+  employmentId,
+}: {
+  employeeName: string;
+  employmentId: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const { data: timeoff } = useTimeOffQuery<{
+    bookedDays: number;
+    timeoffs: {
+      status: string;
+      duration: number;
+      startDate: string;
+      endDate: string;
+    }[];
+  }>({
+    employmentId: employmentId,
+    timeoffType: 'paid_time_off',
+    options: {
+      enabled: open,
+      select: (data) => {
+        return {
+          bookedDays: data?.data?.total_count || 0,
+          timeoffs:
+            data?.data?.timeoffs?.map((timeoff) => {
+              return {
+                status: capitalize(timeoff?.status),
+                duration: timeoff?.timeoff_days.length,
+                startDate: timeoff?.start_date,
+                endDate: timeoff?.end_date,
+              };
+            }) || [],
+        };
+      },
+    },
+  });
+
+  return (
+    <Drawer direction='right' open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+          variant='link'
+          className='text-xs text-[#3B82F6] font-bold p-0'
+        >
+          See detailed time off breakdown ↗
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className='h-full w-[540px] mt-0 ml-auto RemoteFlows_ZendeskDrawer'>
+        <div className='h-full flex flex-col'>
+          <DrawerHeader>
+            <DrawerTitle>{employeeName} paid time off breakdown</DrawerTitle>
+          </DrawerHeader>
+          <p>{timeoff?.bookedDays} days booked</p>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
 export const PaidTimeOff = ({
   employeeName,
   proposedTerminationDate,
@@ -114,20 +190,26 @@ export const PaidTimeOff = ({
         unused accrued days. Below is a breakdown of their time off entitlement
         and usage for the current annual leave period:
       </p>
-      {leavePoliciesSummary && (
-        <SummaryTimeOff
-          entitledDays={
-            (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
-              .days || 0
-          }
-          takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
-          bookedDays={0}
-          approvedDaysBeforeTermination={0}
-          approvedDaysAfterTermination={0}
-          remainingDays={0}
-          proposedTerminationDate={proposedTerminationDate}
+      <div className='mb-2'>
+        {leavePoliciesSummary && (
+          <SummaryTimeOff
+            entitledDays={
+              (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
+                .days || 0
+            }
+            takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
+            bookedDays={0}
+            approvedDaysBeforeTermination={0}
+            approvedDaysAfterTermination={0}
+            remainingDays={0}
+            proposedTerminationDate={proposedTerminationDate}
+          />
+        )}
+        <DrawerTimeOff
+          employeeName={employeeName}
+          employmentId={terminationBag.employmentId}
         />
-      )}
+      </div>
     </div>
   );
 };

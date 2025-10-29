@@ -2,6 +2,7 @@ import {
   getIndexLeavePoliciesSummary,
   getIndexTimeoff,
   getShowEmployment,
+  ListTimeoffResponse,
   TimeoffStatus,
   TimeoffType,
 } from '@/src/client';
@@ -46,14 +47,19 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
  * @returns {UseQueryResult<any, unknown>} - The result of the query, including the time off data.
  *
  */
-export const useTimeOffQuery = ({
+export const useTimeOffQuery = <TData = ListTimeoffResponse>({
   employmentId,
   status,
   timeoffType,
+  options,
 }: {
   employmentId?: string;
   status?: TimeoffStatus;
   timeoffType?: TimeoffType;
+  options?: {
+    enabled?: boolean;
+    select?: (data: ListTimeoffResponse | undefined) => TData;
+  };
 }) => {
   const { client } = useClient();
   return useQuery({
@@ -72,7 +78,8 @@ export const useTimeOffQuery = ({
         },
       });
     },
-    select: ({ data }) => data,
+    select: ({ data }) => (options?.select?.(data) ?? data) as TData,
+    enabled: options?.enabled,
   });
 };
 

@@ -66,3 +66,4 @@ export {
 } from './components/ui/select';
 export { ScrollArea } from './components/ui/scroll-area';
 export * from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+export { PaidTimeOff } from './flows/Termination/components/PaidTimeOff/PaidTimeOff';
