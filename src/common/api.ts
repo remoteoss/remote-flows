@@ -93,8 +93,12 @@ export const useTimeOffQuery = <TData = ListTimeoffResponse>({
  */
 export const usePaidTimeoffBreakdownQuery = ({
   employmentId,
+  options,
 }: {
   employmentId?: string;
+  options?: {
+    enabled?: boolean;
+  };
 }) => {
   return useTimeOffQuery<{
     bookedDays: number;
@@ -104,7 +108,27 @@ export const usePaidTimeoffBreakdownQuery = ({
       startDate: string;
       endDate: string;
     }[];
-  }>({ employmentId });
+  }>({
+    employmentId,
+    timeoffType: 'paid_time_off',
+    options: {
+      enabled: options?.enabled,
+      select: (data) => {
+        return {
+          bookedDays: data?.data?.total_count || 0,
+          timeoffs:
+            data?.data?.timeoffs?.map((timeoff) => {
+              return {
+                status: timeoff?.status,
+                duration: timeoff?.timeoff_days.length,
+                startDate: timeoff?.start_date,
+                endDate: timeoff?.end_date,
+              };
+            }) || [],
+        };
+      },
+    },
+  });
 };
 
 /**

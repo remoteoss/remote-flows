@@ -15,6 +15,9 @@ import {
 } from '@/src/components/ui/drawer';
 import { useState } from 'react';
 
+const pluralizeDays = (count: number) =>
+  `${count} ${count === 1 ? 'day' : 'days'}`;
+
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
 const rowBorder =
@@ -64,29 +67,33 @@ export const SummaryTimeOff = ({
     <div>
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
-        <p className='font-bold'>{entitledDays} days</p>
+        <p className='font-bold'>{pluralizeDays(entitledDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days booked</label>
-        <p className='font-bold'>{bookedDays} days</p>
+        <p className='font-bold'>{pluralizeDays(bookedDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
-        <p className='font-bold'>{takenDays} days</p>
+        <p className='font-bold'>{pluralizeDays(takenDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>
           Approved for use before {formattedProposedTerminationDate}
         </label>
-        <p className='font-bold'>{approvedDaysBeforeTermination} days</p>
+        <p className='font-bold'>
+          {pluralizeDays(approvedDaysBeforeTermination)}
+        </p>
       </SummaryRow>
       <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
-        <p className='font-bold'>{approvedDaysAfterTermination} days</p>
+        <p className='font-bold'>
+          {pluralizeDays(approvedDaysAfterTermination)}
+        </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days remaining unused</label>
-        <p className='font-bold'>{remainingDays} days</p>
+        <p className='font-bold'>{pluralizeDays(remainingDays)}</p>
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
         <p className='text-xs text-[#222E39]'>
@@ -107,7 +114,12 @@ export const DrawerTimeOff = ({
   const [open, setOpen] = useState(false);
   const { data: timeoff } = usePaidTimeoffBreakdownQuery({
     employmentId,
+    options: {
+      enabled: open,
+    },
   });
+
+  console.log(timeoff);
 
   return (
     <Drawer direction='right' open={open} onOpenChange={setOpen}>
@@ -127,7 +139,7 @@ export const DrawerTimeOff = ({
           <DrawerHeader>
             <DrawerTitle>{employeeName} paid time off breakdown</DrawerTitle>
           </DrawerHeader>
-          <p>{timeoff?.bookedDays} days booked</p>
+          <p>{pluralizeDays(timeoff?.bookedDays || 0)} booked</p>
         </div>
       </DrawerContent>
     </Drawer>
