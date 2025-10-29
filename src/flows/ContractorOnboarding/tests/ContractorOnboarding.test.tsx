@@ -318,7 +318,7 @@ describe('ContractorOnboardingFlow', () => {
           ],
         });
       }),
-      http.get('*/v1/countries/*/employment_basic_information*', () => {
+      http.get('*/v1/countries/*/contractor_basic_information*', () => {
         return HttpResponse.json(mockBasicInformationSchema);
       }),
       http.get('*/v1/countries/*/contractor-contract-details*', () => {
