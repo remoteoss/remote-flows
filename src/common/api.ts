@@ -84,6 +84,30 @@ export const useTimeOffQuery = <TData = ListTimeoffResponse>({
 };
 
 /**
+ * Hook to retrieve paid time off breakdown for a specific employment.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch paid time off breakdown for.
+ * @returns {UseQueryResult<any, unknown>} - The result of the query, including the paid time off breakdown.
+ *
+ */
+export const usePaidTimeoffBreakdownQuery = ({
+  employmentId,
+}: {
+  employmentId?: string;
+}) => {
+  return useTimeOffQuery<{
+    bookedDays: number;
+    timeoffs: {
+      status: string;
+      duration: number;
+      startDate: string;
+      endDate: string;
+    }[];
+  }>({ employmentId });
+};
+
+/**
  * Hook to retrieve time off balance for a specific employment.
  *
  * @param {Object} params - The parameters for the query.

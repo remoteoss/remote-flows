@@ -1,6 +1,6 @@
 import {
+  usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
-  useTimeOffQuery,
 } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
 import { useTerminationContext } from '@/src/flows/Termination/context';
@@ -14,7 +14,6 @@ import {
   DrawerTitle,
 } from '@/src/components/ui/drawer';
 import { useState } from 'react';
-import capitalize from 'lodash.capitalize';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -106,34 +105,8 @@ export const DrawerTimeOff = ({
   employmentId: string;
 }) => {
   const [open, setOpen] = useState(false);
-  const { data: timeoff } = useTimeOffQuery<{
-    bookedDays: number;
-    timeoffs: {
-      status: string;
-      duration: number;
-      startDate: string;
-      endDate: string;
-    }[];
-  }>({
-    employmentId: employmentId,
-    timeoffType: 'paid_time_off',
-    options: {
-      enabled: open,
-      select: (data) => {
-        return {
-          bookedDays: data?.data?.total_count || 0,
-          timeoffs:
-            data?.data?.timeoffs?.map((timeoff) => {
-              return {
-                status: capitalize(timeoff?.status),
-                duration: timeoff?.timeoff_days.length,
-                startDate: timeoff?.start_date,
-                endDate: timeoff?.end_date,
-              };
-            }) || [],
-        };
-      },
-    },
+  const { data: timeoff } = usePaidTimeoffBreakdownQuery({
+    employmentId,
   });
 
   return (
