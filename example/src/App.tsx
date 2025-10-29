@@ -143,7 +143,7 @@ const additionalDemos = [
   },
   {
     id: 'contract-onboarding',
-    title: 'Contract Onboarding',
+    title: 'Contractor Onboarding',
     description: 'Onboarding flow of a new contractor',
     component: ContractorOnboardingForm,
     sourceCode: ContractorOnboardingCode,
