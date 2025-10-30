@@ -47,6 +47,16 @@ export const paidTimeOffSchema = {
             },
           },
         },
+        paid_time_off_info: {
+          type: 'null',
+          title: 'Paid time off info',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+          meta: {
+            ignoreValue: true,
+          },
+        },
         agrees_to_pto_amount: {
           description: '',
           oneOf: [
@@ -93,6 +103,7 @@ export const paidTimeOffSchema = {
       type: 'object',
       'x-jsf-order': [
         'timeoff_statement',
+        'paid_time_off_info',
         'agrees_to_pto_amount',
         'agrees_to_pto_amount_notes',
         'timesheet_file',

@@ -8,8 +8,8 @@ import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
-import './css/main.css';
 import { useState } from 'react';
+import './css/main.css';
 
 const STEPS = [
   'Employee Communication',
@@ -52,7 +52,6 @@ const MultiStepForm = ({
     AdditionalDetailsStep,
     SubmitButton,
     Back,
-    TimeOff,
   } = components;
   switch (terminationBag.stepState.currentStep.name) {
     case 'employee_communication':
@@ -81,25 +80,6 @@ const MultiStepForm = ({
     case 'paid_time_off':
       return (
         <>
-          <TimeOff
-            render={({ employment, timeoff }) => {
-              const username = employment?.data?.employment?.basic_information
-                ?.name as string;
-              const days = timeoff?.data?.total_count || 0;
-
-              // if days is 0 or > 1 'days' else 'day
-              const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
-              return (
-                <>
-                  <p>
-                    We have recorded {days} {daysLiteral} of paid time off for{' '}
-                    {username}
-                  </p>
-                  <a href='#'>See {username}'s timeoff breakdown</a>
-                </>
-              );
-            }}
-          />
           <PaidTimeOffStep
             onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
           />
@@ -201,7 +181,20 @@ export const TerminationWithProps = ({
           },
         }}
         initialValues={{
+          confidential: 'no',
+          customer_informed_employee: 'no',
           personal_email: 'john.doe@example.com',
+          additional_comments:
+            'Employee has been notified. Please process final paycheck and benefits termination.',
+          proposed_termination_date: '2025-10-30',
+          reason_description:
+            'Performance did not meet expectations despite multiple coaching sessions and performance improvement plan.',
+          risk_assessment_reasons: [
+            'sick_leave',
+            'member_of_union_or_works_council',
+          ],
+          termination_reason: 'performance',
+          will_challenge_termination: 'no',
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
@@ -210,8 +203,10 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
+  const PARTNERS_EMPLOYMENT_ID = '765e8c80-bd4c-4335-8e83-ac5de37652ea';
+  //const LOCAL_EMPLOYMENT_ID = '33112809-4307-49a3-9653-dda668656e7e';
   const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: '765e8c80-bd4c-4335-8e83-ac5de37652ea', // use your own employment ID
+    employmentId: PARTNERS_EMPLOYMENT_ID, // use your own employment ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
