@@ -6,10 +6,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
-import {
-  ZendeskTriggerButton,
-  PaidTimeOff,
-} from '@remoteoss/remote-flows/internals';
+import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { useState } from 'react';
 import './css/main.css';
@@ -60,10 +57,6 @@ const MultiStepForm = ({
     case 'employee_communication':
       return (
         <>
-          <PaidTimeOff
-            employeeName='John Doe'
-            proposedTerminationDate='2025-10-31'
-          />
           <EmployeeComunicationStep
             onSubmit={(payload) =>
               onSubmitStep(payload, 'employee_communication')

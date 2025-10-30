@@ -18,6 +18,7 @@ import {
   zendeskArticles,
   SummaryResults,
   convertFromCents,
+  ZendeskTriggerButton,
 } from '@remoteoss/remote-flows';
 import {
   Drawer,
@@ -26,7 +27,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
   Card,
-  ZendeskTriggerButton,
   cn,
 } from '@remoteoss/remote-flows/internals';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
