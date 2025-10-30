@@ -83,6 +83,20 @@ export const useTimeOffQuery = <TData = ListTimeoffResponse>({
   });
 };
 
+const formatDateRange = (startDate: string, endDate: string) => {
+  const start = new Date(startDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  const end = new Date(endDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  return `${start} → ${end}`;
+};
+
 /**
  * Hook to retrieve paid time off breakdown for a specific employment.
  *
@@ -107,6 +121,7 @@ export const usePaidTimeoffBreakdownQuery = ({
       duration: number;
       startDate: string;
       endDate: string;
+      formattedDate: string;
     }[];
   }>({
     employmentId,
@@ -123,6 +138,10 @@ export const usePaidTimeoffBreakdownQuery = ({
                 duration: timeoff?.timeoff_days.length,
                 startDate: timeoff?.start_date,
                 endDate: timeoff?.end_date,
+                formattedDate: formatDateRange(
+                  timeoff?.start_date,
+                  timeoff?.end_date,
+                ),
               };
             }) || [],
         };

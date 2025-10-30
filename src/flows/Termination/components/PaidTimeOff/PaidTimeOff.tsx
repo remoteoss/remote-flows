@@ -13,6 +13,14 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/src/components/ui/drawer';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
 import { useState } from 'react';
 
 const pluralizeDays = (count: number) =>
@@ -132,12 +140,36 @@ export const DrawerTimeOff = ({
           See detailed time off breakdown ↗
         </Button>
       </DrawerTrigger>
-      <DrawerContent className='h-full w-[540px] mt-0 ml-auto RemoteFlows_ZendeskDrawer'>
+      <DrawerContent className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'>
         <div className='h-full flex flex-col'>
           <DrawerHeader>
             <DrawerTitle>{employeeName} paid time off breakdown</DrawerTitle>
           </DrawerHeader>
-          <p>{pluralizeDays(timeoff?.bookedDays || 0)} booked</p>
+          <div className='mb-2'>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[250px]'>Dates</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {timeoff?.timeoffs.map((timeoff) => (
+                  <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
+                    <TableCell className='font-medium w-[250px]'>
+                      {timeoff.formattedDate}
+                    </TableCell>
+                    <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
+                    <TableCell>{timeoff.status}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <p className='text-xs'>
+            Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
+          </p>
         </div>
       </DrawerContent>
     </Drawer>
