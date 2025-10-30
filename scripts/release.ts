@@ -169,7 +169,6 @@ function parseConventionalCommit(commit: Commit): ParsedCommit | null {
 }
 
 function generateChangesetContent(commits: Commit[]): Changeset | null {
-  console.log('Generating changeset content for commits:', commits);
   const parsedCommits = commits
     .map(parseConventionalCommit)
     .filter((commit): commit is ParsedCommit => commit !== null);
@@ -322,6 +321,14 @@ ${changeset.content}
   } catch (error) {
     console.log(`⚠️  Prettier formatting failed: ${error.message}`);
     console.log(`Continuing with release...`);
+  }
+
+  // Update package-lock.json
+  try {
+    execSync('npm install', { stdio: 'inherit' });
+    console.log('✅ Updated package-lock.json');
+  } catch (error) {
+    console.log(`⚠️  Failed to update package-lock.json: ${error.message}`);
   }
 
   // Create release branch
