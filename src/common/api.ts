@@ -2,6 +2,7 @@ import {
   getIndexLeavePoliciesSummary,
   getIndexTimeoff,
   getShowEmployment,
+  ListTimeoffResponse,
   TimeoffStatus,
   TimeoffType,
 } from '@/src/client';
@@ -46,14 +47,19 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
  * @returns {UseQueryResult<any, unknown>} - The result of the query, including the time off data.
  *
  */
-export const useTimeOffQuery = ({
+export const useTimeOffQuery = <TData = ListTimeoffResponse>({
   employmentId,
   status,
   timeoffType,
+  options,
 }: {
   employmentId?: string;
   status?: TimeoffStatus;
   timeoffType?: TimeoffType;
+  options?: {
+    enabled?: boolean;
+    select?: (data: ListTimeoffResponse | undefined) => TData;
+  };
 }) => {
   const { client } = useClient();
   return useQuery({
@@ -72,7 +78,75 @@ export const useTimeOffQuery = ({
         },
       });
     },
-    select: ({ data }) => data,
+    select: ({ data }) => (options?.select?.(data) ?? data) as TData,
+    enabled: options?.enabled,
+  });
+};
+
+const formatDateRange = (startDate: string, endDate: string) => {
+  const start = new Date(startDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  const end = new Date(endDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  return `${start} → ${end}`;
+};
+
+/**
+ * Hook to retrieve paid time off breakdown for a specific employment.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch paid time off breakdown for.
+ * @returns {UseQueryResult<any, unknown>} - The result of the query, including the paid time off breakdown.
+ *
+ */
+export const usePaidTimeoffBreakdownQuery = ({
+  employmentId,
+  options,
+}: {
+  employmentId?: string;
+  options?: {
+    enabled?: boolean;
+  };
+}) => {
+  return useTimeOffQuery<{
+    bookedDays: number;
+    timeoffs: {
+      status: string;
+      duration: number;
+      startDate: string;
+      endDate: string;
+      formattedDate: string;
+    }[];
+  }>({
+    employmentId,
+    timeoffType: 'paid_time_off',
+    options: {
+      enabled: options?.enabled,
+      select: (data) => {
+        return {
+          bookedDays: data?.data?.total_count || 0,
+          timeoffs:
+            data?.data?.timeoffs?.map((timeoff) => {
+              return {
+                status: timeoff?.status,
+                duration: timeoff?.timeoff_days.length,
+                startDate: timeoff?.start_date,
+                endDate: timeoff?.end_date,
+                formattedDate: formatDateRange(
+                  timeoff?.start_date,
+                  timeoff?.end_date,
+                ),
+              };
+            }) || [],
+        };
+      },
+    },
   });
 };
 

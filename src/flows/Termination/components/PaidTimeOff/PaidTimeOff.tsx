@@ -1,7 +1,30 @@
-import { useTimeOffLeavePoliciesSummaryQuery } from '@/src/common/api';
+import {
+  usePaidTimeoffBreakdownQuery,
+  useTimeOffLeavePoliciesSummaryQuery,
+} from '@/src/common/api';
+import { Button } from '@/src/components/ui/button';
 import { useTerminationContext } from '@/src/flows/Termination/context';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/src/components/ui/drawer';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/src/components/ui/table';
+import { useState } from 'react';
+
+const pluralizeDays = (count: number) =>
+  `${count} ${count === 1 ? 'day' : 'days'}`;
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -24,7 +47,7 @@ const SummaryRow = ({
   );
 };
 
-export const SummaryTimeOff = ({
+const SummaryTimeOff = ({
   entitledDays,
   takenDays,
   bookedDays,
@@ -52,29 +75,33 @@ export const SummaryTimeOff = ({
     <div>
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
-        <p className='font-bold'>{entitledDays} days</p>
+        <p className='font-bold'>{pluralizeDays(entitledDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days booked</label>
-        <p className='font-bold'>{bookedDays} days</p>
+        <p className='font-bold'>{pluralizeDays(bookedDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
-        <p className='font-bold'>{takenDays} days</p>
+        <p className='font-bold'>{pluralizeDays(takenDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>
           Approved for use before {formattedProposedTerminationDate}
         </label>
-        <p className='font-bold'>{approvedDaysBeforeTermination} days</p>
+        <p className='font-bold'>
+          {pluralizeDays(approvedDaysBeforeTermination)}
+        </p>
       </SummaryRow>
       <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
-        <p className='font-bold'>{approvedDaysAfterTermination} days</p>
+        <p className='font-bold'>
+          {pluralizeDays(approvedDaysAfterTermination)}
+        </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days remaining unused</label>
-        <p className='font-bold'>{remainingDays} days</p>
+        <p className='font-bold'>{pluralizeDays(remainingDays)}</p>
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
         <p className='text-xs text-[#222E39]'>
@@ -82,6 +109,70 @@ export const SummaryTimeOff = ({
         </p>
       </SummaryRow>
     </div>
+  );
+};
+
+const DrawerTimeOff = ({
+  employeeName,
+  employmentId,
+}: {
+  employeeName: string;
+  employmentId: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const { data: timeoff } = usePaidTimeoffBreakdownQuery({
+    employmentId,
+    options: {
+      enabled: open,
+    },
+  });
+
+  return (
+    <Drawer direction='right' open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+          variant='link'
+          className='text-xs text-[#3B82F6] font-bold p-0'
+        >
+          See detailed time off breakdown ↗
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'>
+        <div className='h-full flex flex-col'>
+          <DrawerHeader>
+            <DrawerTitle>{employeeName} paid time off breakdown</DrawerTitle>
+          </DrawerHeader>
+          <div className='mb-2'>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[250px]'>Dates</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {timeoff?.timeoffs.map((timeoff) => (
+                  <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
+                    <TableCell className='font-medium w-[250px]'>
+                      {timeoff.formattedDate}
+                    </TableCell>
+                    <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
+                    <TableCell>{timeoff.status}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <p className='text-xs'>
+            Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
+          </p>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
@@ -114,20 +205,26 @@ export const PaidTimeOff = ({
         unused accrued days. Below is a breakdown of their time off entitlement
         and usage for the current annual leave period:
       </p>
-      {leavePoliciesSummary && (
-        <SummaryTimeOff
-          entitledDays={
-            (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
-              .days || 0
-          }
-          takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
-          bookedDays={0}
-          approvedDaysBeforeTermination={0}
-          approvedDaysAfterTermination={0}
-          remainingDays={0}
-          proposedTerminationDate={proposedTerminationDate}
+      <div className='mb-2'>
+        {leavePoliciesSummary && (
+          <SummaryTimeOff
+            entitledDays={
+              (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
+                .days || 0
+            }
+            takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
+            bookedDays={0}
+            approvedDaysBeforeTermination={0}
+            approvedDaysAfterTermination={0}
+            remainingDays={0}
+            proposedTerminationDate={proposedTerminationDate}
+          />
+        )}
+        <DrawerTimeOff
+          employeeName={employeeName}
+          employmentId={terminationBag.employmentId}
         />
-      )}
+      </div>
     </div>
   );
 };

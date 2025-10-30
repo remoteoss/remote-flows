@@ -6,7 +6,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
-import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
+import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { useState } from 'react';
 import './css/main.css';
@@ -203,7 +203,7 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
-  const PARTNERS_EMPLOYMENT_ID = '765e8c80-bd4c-4335-8e83-ac5de37652ea';
+  const PARTNERS_EMPLOYMENT_ID = '85ab2f01-34e7-4a04-967d-46b1710c42b2';
   //const LOCAL_EMPLOYMENT_ID = '33112809-4307-49a3-9653-dda668656e7e';
   const [formData, setFormData] = useState<{ employmentId: string }>({
     employmentId: PARTNERS_EMPLOYMENT_ID, // use your own employment ID

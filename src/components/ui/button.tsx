@@ -10,21 +10,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 RemoteFlows_ButtonDefault',
         destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/90',
-        outline: 'border border-input bg-background shadow-xs',
+          'bg-destructive text-white shadow-xs hover:bg-destructive/90 RemoteFlows_ButtonDestructive',
+        outline:
+          'border border-input bg-background shadow-xs RemoteFlows_ButtonOutline',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-link-button-primary underline-offset-4 hover:underline button-link',
+          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 RemoteFlows_ButtonSecondary',
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground RemoteFlows_ButtonGhost',
+        link: 'text-link-button-primary underline-offset-4 hover:underline button-link RemoteFlows_ButtonLink',
       },
       size: {
-        default: 'h-9 px-4 py-7 has-[>svg]:px-3',
-        sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
-        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
-        link: 'px-0',
+        default: 'h-9 px-4 py-7 has-[>svg]:px-3 RemoteFlows_ButtonDefault',
+        sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 RemoteFlows_ButtonSm',
+        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4 RemoteFlows_ButtonLg',
+        icon: 'size-9 RemoteFlows_ButtonIcon',
+        link: 'px-0 RemoteFlows_ButtonLink',
       },
     },
     defaultVariants: {
