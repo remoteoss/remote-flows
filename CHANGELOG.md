@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 0.23.0
+
+### Minor Changes
+
+- improve UI layout and standardize button labels (#534) [#534](https://github.com/remoteoss/remote-flows/pull/534)
+- use contractor basic info
+- simplify version checking output (#532) [#532](https://github.com/remoteoss/remote-flows/pull/532)
+- create new paid_time_off field (#530) [#530](https://github.com/remoteoss/remote-flows/pull/530)
+
 ## 0.22.0
 
 ### Minor Changes
