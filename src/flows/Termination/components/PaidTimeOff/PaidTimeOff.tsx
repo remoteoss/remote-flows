@@ -47,7 +47,7 @@ const SummaryRow = ({
   );
 };
 
-export const SummaryTimeOff = ({
+const SummaryTimeOff = ({
   entitledDays,
   takenDays,
   bookedDays,
@@ -112,7 +112,7 @@ export const SummaryTimeOff = ({
   );
 };
 
-export const DrawerTimeOff = ({
+const DrawerTimeOff = ({
   employeeName,
   employmentId,
 }: {
