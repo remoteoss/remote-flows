@@ -163,7 +163,7 @@ export const useContractorOnboarding = ({
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
-    'employment_basic_information';
+    'contractor_basic_information';
   const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
   const serverEmploymentData = (employment?.[employmentKey] || {}) as Record<
     string,
@@ -228,7 +228,7 @@ export const useContractorOnboarding = ({
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
-    form: 'employment_basic_information',
+    form: 'contractor_basic_information',
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {

@@ -13,11 +13,13 @@ import {
   ContractPreviewResponse,
   ContractPreviewFormPayload,
 } from '@remoteoss/remote-flows';
+import { Card } from '@remoteoss/remote-flows/internals';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
+import './css/contractor-onboarding.css';
 
 const STEPS = [
   'Select Country',
@@ -72,7 +74,7 @@ const MultiStepForm = ({
               fieldErrors: NormalizedFieldError[];
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
-          <div className='buttons-container'>
+          <div className='contractor-onboarding-buttons-container'>
             <SubmitButton
               className='submit-button'
               disabled={contractorOnboardingBag.isSubmitting}
@@ -98,19 +100,19 @@ const MultiStepForm = ({
             }
           />
           <AlertError errors={errors} />
-          <div className='buttons-container'>
+          <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Previous Step
+              Back
             </BackButton>
             <SubmitButton
               className='submit-button'
               disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Create Employment & Continue
+              Continue
             </SubmitButton>
           </div>
         </>
@@ -131,19 +133,19 @@ const MultiStepForm = ({
             }}
           />
           <AlertError errors={errors} />
-          <div className='buttons-container'>
+          <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Previous Step
+              Back
             </BackButton>
             <SubmitButton
               className='submit-button'
               disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Next
+              Continue
             </SubmitButton>
           </div>
         </>
@@ -164,19 +166,19 @@ const MultiStepForm = ({
             }}
           />
           <AlertError errors={errors} />
-          <div className='buttons-container'>
+          <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Previous Step
+              Back
             </BackButton>
             <SubmitButton
               className='submit-button'
               disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Next
+              Continue
             </SubmitButton>
           </div>
         </>
@@ -197,19 +199,19 @@ const MultiStepForm = ({
             }
           />
           <AlertError errors={errors} />
-          <div className='buttons-container'>
+          <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Previous Step
+              Back
             </BackButton>
             <SubmitButton
               className='submit-button'
               disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Next
+              Continue
             </SubmitButton>
           </div>
         </>
@@ -233,70 +235,85 @@ const OnBoardingRender = ({
 }: MultiStepFormProps) => {
   const currentStepIndex = contractorOnboardingBag.stepState.currentStep.index;
 
-  const stepTitle = STEPS[currentStepIndex];
-
-  if (contractorOnboardingBag.isLoading) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <>
-      <div className='steps-navigation'>
+      <div className='steps-contractor-onboarding-navigation'>
         <ul>
           {STEPS.map((step, index) => (
             <li
               key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
+              className={`step-contractor-onboarding-item ${index === currentStepIndex ? 'active' : ''}`}
             >
-              {step}
+              {index + 1}. {step}
             </li>
           ))}
         </ul>
       </div>
 
-      <div className='card' style={{ marginBottom: '20px' }}>
-        <h1 className='heading'>{stepTitle}</h1>
-        <MultiStepForm
-          contractorOnboardingBag={contractorOnboardingBag}
-          components={components}
-        />
-      </div>
+      {contractorOnboardingBag.isLoading ? (
+        <div className='contractor-onboarding-form'>
+          <p>Loading...</p>
+        </div>
+      ) : (
+        <div className='contractor-onboarding-form'>
+          <MultiStepForm
+            contractorOnboardingBag={contractorOnboardingBag}
+            components={components}
+          />
+        </div>
+      )}
     </>
   );
 };
 
-type OnboardingFormData = {
+const Header = () => {
+  return (
+    <div className='contractor-onboarding-header'>
+      <h1>Contractor Onboarding</h1>
+      <p>Adding a new contractor is simple and fast.</p>
+    </div>
+  );
+};
+
+type ContractorOnboardingFormData = {
   countryCode?: string;
-  employmentId: string;
+  employmentId?: string;
   externalId?: string;
 };
 
-const OnboardingWithProps = ({
+export const ContractorOnboardingWithProps = ({
   employmentId,
   externalId,
-}: OnboardingFormData) => {
+}: ContractorOnboardingFormData) => {
   const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
-    <RemoteFlows
-      authType='company-manager'
-      proxy={{ url: window.location.origin }}
-    >
-      <ContractorOnboardingFlow
-        render={OnBoardingRender}
-        employmentId={employmentId}
-        externalId={externalId}
-        initialValues={{
-          service_duration: {
-            provisional_start_date: provisionalStartDate,
-          },
-        }}
-      />
-    </RemoteFlows>
+    <div className='contractor-onboarding-container'>
+      <RemoteFlows
+        authType='company-manager'
+        proxy={{ url: window.location.origin }}
+      >
+        <div className='contractor-onboarding-content'>
+          <Header />
+          <Card className='px-0 py-0'>
+            <ContractorOnboardingFlow
+              render={OnBoardingRender}
+              employmentId={employmentId}
+              externalId={externalId}
+              initialValues={{
+                service_duration: {
+                  provisional_start_date: provisionalStartDate,
+                },
+              }}
+            />
+          </Card>
+        </div>
+      </RemoteFlows>
+    </div>
   );
 };
 
 export const ContractorOnboardingForm = () => {
-  const [formData, setFormData] = useState<OnboardingFormData>({
+  const [formData, setFormData] = useState<ContractorOnboardingFormData>({
     employmentId: import.meta.env.VITE_EMPLOYMENT_ID || '', // use your own employment ID
     externalId: '',
   });
@@ -308,7 +325,7 @@ export const ContractorOnboardingForm = () => {
   };
 
   if (showOnboarding) {
-    return <OnboardingWithProps {...formData} />;
+    return <ContractorOnboardingWithProps {...formData} />;
   }
 
   return (

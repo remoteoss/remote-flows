@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
@@ -25,6 +26,12 @@ import { useState } from 'react';
 
 const pluralizeDays = (count: number) =>
   `${count} ${count === 1 ? 'day' : 'days'}`;
+=======
+import { useTimeOffLeavePoliciesSummaryQuery } from '@/src/common/api';
+import { useTerminationContext } from '@/src/flows/Termination/context';
+import { cn } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+>>>>>>> main
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -47,7 +54,11 @@ const SummaryRow = ({
   );
 };
 
+<<<<<<< HEAD
 const SummaryTimeOff = ({
+=======
+export const SummaryTimeOff = ({
+>>>>>>> main
   entitledDays,
   takenDays,
   bookedDays,
@@ -75,6 +86,7 @@ const SummaryTimeOff = ({
     <div>
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
+<<<<<<< HEAD
         <p className='font-bold'>{pluralizeDays(entitledDays)}</p>
       </SummaryRow>
       <SummaryRow>
@@ -84,11 +96,23 @@ const SummaryTimeOff = ({
       <SummaryRow>
         <label>Number of days already used</label>
         <p className='font-bold'>{pluralizeDays(takenDays)}</p>
+=======
+        <p className='font-bold'>{entitledDays} days</p>
+      </SummaryRow>
+      <SummaryRow>
+        <label>Total days booked</label>
+        <p className='font-bold'>{bookedDays} days</p>
+      </SummaryRow>
+      <SummaryRow>
+        <label>Number of days already used</label>
+        <p className='font-bold'>{takenDays} days</p>
+>>>>>>> main
       </SummaryRow>
       <SummaryRow>
         <label>
           Approved for use before {formattedProposedTerminationDate}
         </label>
+<<<<<<< HEAD
         <p className='font-bold'>
           {pluralizeDays(approvedDaysBeforeTermination)}
         </p>
@@ -102,6 +126,17 @@ const SummaryTimeOff = ({
       <SummaryRow>
         <label>Total days remaining unused</label>
         <p className='font-bold'>{pluralizeDays(remainingDays)}</p>
+=======
+        <p className='font-bold'>{approvedDaysBeforeTermination} days</p>
+      </SummaryRow>
+      <SummaryRow withBorder>
+        <label>Approved for use after {formattedProposedTerminationDate}</label>
+        <p className='font-bold'>{approvedDaysAfterTermination} days</p>
+      </SummaryRow>
+      <SummaryRow>
+        <label>Total days remaining unused</label>
+        <p className='font-bold'>{remainingDays} days</p>
+>>>>>>> main
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
         <p className='text-xs text-[#222E39]'>
@@ -112,6 +147,7 @@ const SummaryTimeOff = ({
   );
 };
 
+<<<<<<< HEAD
 const DrawerTimeOff = ({
   employeeName,
   employmentId,
@@ -176,6 +212,8 @@ const DrawerTimeOff = ({
   );
 };
 
+=======
+>>>>>>> main
 export const PaidTimeOff = ({
   employeeName,
   proposedTerminationDate,
@@ -205,6 +243,7 @@ export const PaidTimeOff = ({
         unused accrued days. Below is a breakdown of their time off entitlement
         and usage for the current annual leave period:
       </p>
+<<<<<<< HEAD
       <div className='mb-2'>
         {leavePoliciesSummary && (
           <SummaryTimeOff
@@ -225,6 +264,22 @@ export const PaidTimeOff = ({
           employmentId={terminationBag.employmentId}
         />
       </div>
+=======
+      {leavePoliciesSummary && (
+        <SummaryTimeOff
+          entitledDays={
+            (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
+              .days || 0
+          }
+          takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
+          bookedDays={0}
+          approvedDaysBeforeTermination={0}
+          approvedDaysAfterTermination={0}
+          remainingDays={0}
+          proposedTerminationDate={proposedTerminationDate}
+        />
+      )}
+>>>>>>> main
     </div>
   );
 };

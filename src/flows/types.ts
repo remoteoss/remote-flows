@@ -53,6 +53,8 @@ export type JSONSchemaFormType =
   | 'administrative_details'
   | 'bank_account_details'
   | 'employment_basic_information'
+  | 'contractor_basic_information'
+  | 'contractor_contract_details'
   | 'billing_address_details'
   | 'contract_details'
   | 'emergency_contact'

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embbeded solution.
+Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embedded solution.
 
 ## Table of Contents
 
