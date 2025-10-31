@@ -24,7 +24,7 @@ export function createInformationField(
   },
 ): JSFFieldConfig {
   return {
-    presentation: {
+    'x-jsf-presentation': {
       inputType: 'hidden',
       Component: () => (
         <div

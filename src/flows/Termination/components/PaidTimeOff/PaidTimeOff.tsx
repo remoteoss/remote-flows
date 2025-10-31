@@ -1,9 +1,5 @@
-import {
-  usePaidTimeoffBreakdownQuery,
-  useTimeOffLeavePoliciesSummaryQuery,
-} from '@/src/common/api';
+import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
-import { useTerminationContext } from '@/src/flows/Termination/context';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
@@ -21,7 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/src/components/ui/table';
-import { useState } from 'react';
+import { UseQueryResult } from '@tanstack/react-query';
+import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 
 const pluralizeDays = (count: number) =>
   `${count} ${count === 1 ? 'day' : 'days'}`;
@@ -114,29 +111,20 @@ const SummaryTimeOff = ({
 
 const DrawerTimeOff = ({
   employeeName,
-  employmentId,
+  timeoffQuery,
+  onOpenChange,
+  open,
 }: {
   employeeName: string;
-  employmentId: string;
+  timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;
+  onOpenChange: () => void;
+  open: boolean;
 }) => {
-  const [open, setOpen] = useState(false);
-  const { data: timeoff } = usePaidTimeoffBreakdownQuery({
-    employmentId,
-    options: {
-      enabled: open,
-    },
-  });
-
+  const { data: timeoff } = timeoffQuery || {};
   return (
-    <Drawer direction='right' open={open} onOpenChange={setOpen}>
+    <Drawer direction='right' open={open} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>
-        <Button
-          onClick={() => {
-            setOpen(true);
-          }}
-          variant='link'
-          className='text-xs text-[#3B82F6] font-bold p-0'
-        >
+        <Button variant='link' className='text-xs text-[#3B82F6] font-bold p-0'>
           See detailed time off breakdown ↗
         </Button>
       </DrawerTrigger>
@@ -176,26 +164,18 @@ const DrawerTimeOff = ({
   );
 };
 
+type PaidTimeOffProps = PaidTimeOffRenderProps;
+
 export const PaidTimeOff = ({
   employeeName,
   proposedTerminationDate,
-}: {
-  employeeName: string;
-  proposedTerminationDate: string;
-}) => {
-  const { terminationBag } = useTerminationContext();
-
-  const { data: leavePoliciesSummary } = useTimeOffLeavePoliciesSummaryQuery({
-    employmentId: terminationBag.employmentId,
-  });
-
-  const formattedProposedTerminationDate = new Date(
-    proposedTerminationDate,
-  ).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  leavePoliciesSummaryQuery,
+  formattedProposedTerminationDate,
+  timeoffQuery,
+  onOpenChange,
+  open,
+}: PaidTimeOffProps) => {
+  const { data: leavePoliciesSummary } = leavePoliciesSummaryQuery || {};
   return (
     <div className='py-3'>
       <h3 className='RemoteFlows__PaidTimeOffTitle mb-2'>Paid time off</h3>
@@ -222,7 +202,9 @@ export const PaidTimeOff = ({
         )}
         <DrawerTimeOff
           employeeName={employeeName}
-          employmentId={terminationBag.employmentId}
+          timeoffQuery={timeoffQuery}
+          onOpenChange={onOpenChange}
+          open={open}
         />
       </div>
     </div>

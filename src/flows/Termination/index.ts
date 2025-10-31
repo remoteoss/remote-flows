@@ -6,3 +6,4 @@ export type {
   TerminationFlowProps,
   TerminationRenderProps,
 } from './types';
+export type { PaidTimeOffRenderProps } from './components/PaidTimeOff/types';
