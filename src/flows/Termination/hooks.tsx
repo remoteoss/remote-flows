@@ -23,6 +23,7 @@ import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 import { useEmployment } from '@/src/flows/Onboarding/api';
+import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -121,15 +122,25 @@ export const useTermination = ({
         ),
         paid_time_off_info: {
           ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe),
-          presentation: {
+          'x-jsf-presentation': {
             ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe)?.[
               'x-jsf-presentation'
             ],
             Component: () => {
+              const CustomComponent = (
+                options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe
+              )?.['x-jsf-presentation']?.Component;
+
               return (
-                <PaidTimeOff
+                <PaidTimeOffContainer
                   employeeName={employment?.basic_information?.name as string}
                   proposedTerminationDate={formValues.proposed_termination_date}
+                  render={(props) => {
+                    if (CustomComponent) {
+                      return <CustomComponent {...props} />;
+                    }
+                    return <PaidTimeOff {...props} />;
+                  }}
                 />
               );
             },

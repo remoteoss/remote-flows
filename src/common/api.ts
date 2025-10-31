@@ -97,6 +97,17 @@ const formatDateRange = (startDate: string, endDate: string) => {
   return `${start} → ${end}`;
 };
 
+export type PaidTimeoffBreakdownResponse = {
+  bookedDays: number;
+  timeoffs: {
+    status: string;
+    duration: number;
+    startDate: string;
+    endDate: string;
+    formattedDate: string;
+  }[];
+};
+
 /**
  * Hook to retrieve paid time off breakdown for a specific employment.
  *
@@ -114,16 +125,7 @@ export const usePaidTimeoffBreakdownQuery = ({
     enabled?: boolean;
   };
 }) => {
-  return useTimeOffQuery<{
-    bookedDays: number;
-    timeoffs: {
-      status: string;
-      duration: number;
-      startDate: string;
-      endDate: string;
-      formattedDate: string;
-    }[];
-  }>({
+  return useTimeOffQuery<PaidTimeoffBreakdownResponse>({
     employmentId,
     timeoffType: 'paid_time_off',
     options: {
