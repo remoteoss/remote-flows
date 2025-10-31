@@ -34,11 +34,12 @@ type PromiseResult<D, E> = SuccessResponse<D> | ErrorResponse<E>;
  * @returns Array of field errors with field name and messages
  */
 export function extractFieldErrors(error: any): FieldError[] {
-  if (!error || !error.errors || typeof error.errors !== 'object') return [];
+  const errors = error.error || error;
+  if (!errors || !errors.errors || typeof errors.errors !== 'object') return [];
 
   const fieldErrors: FieldError[] = [];
 
-  Object.entries(error.errors).forEach(([key, value]) => {
+  Object.entries(errors.errors).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       fieldErrors.push({
         field: key,
