@@ -106,6 +106,14 @@ export type StatementComponentProps = {
   data: StatementProps;
 };
 
+export type DrawerComponentProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: React.ReactNode;
+  trigger: React.ReactElement;
+  children: React.ReactNode;
+};
+
 export type FieldSetToggleComponentProps = {
   isExpanded: boolean;
   onToggle: () => void;
@@ -123,6 +131,7 @@ export type Components = {
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
+  drawer?: React.ComponentType<DrawerComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
