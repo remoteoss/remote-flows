@@ -22,7 +22,7 @@ export const Drawer = ({
   title,
   trigger,
   children,
-  className = 'h-full w-[540px] mt-0 ml-auto px-4',
+  className = '',
   direction = 'right',
 }: DrawerProps) => {
   const { components } = useFormFields();
@@ -48,7 +48,12 @@ export const Drawer = ({
       direction={direction}
     >
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent className={cn(className, 'RemoteFlows__Drawer')}>
+      <DrawerContent
+        className={cn(
+          className,
+          'RemoteFlows__Drawer h-full w-[540px] mt-0 ml-auto px-4',
+        )}
+      >
         <div className='h-full flex flex-col'>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
