@@ -10,7 +10,6 @@ export type PaidTimeOffRenderProps = {
   formattedProposedTerminationDate: string;
   employeeName: string;
   proposedTerminationDate: string;
-  employmentId: string;
   onOpenChange: () => void;
   open: boolean;
   timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;

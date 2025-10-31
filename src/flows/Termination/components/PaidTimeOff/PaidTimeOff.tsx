@@ -116,7 +116,6 @@ const DrawerTimeOff = ({
   open,
 }: {
   employeeName: string;
-  employmentId: string;
   timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;
   onOpenChange: () => void;
   open: boolean;
@@ -172,7 +171,6 @@ export const PaidTimeOff = ({
   proposedTerminationDate,
   leavePoliciesSummaryQuery,
   formattedProposedTerminationDate,
-  employmentId,
   timeoffQuery,
   onOpenChange,
   open,
@@ -204,7 +202,6 @@ export const PaidTimeOff = ({
         )}
         <DrawerTimeOff
           employeeName={employeeName}
-          employmentId={employmentId}
           timeoffQuery={timeoffQuery}
           onOpenChange={onOpenChange}
           open={open}

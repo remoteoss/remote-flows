@@ -43,7 +43,6 @@ export const PaidTimeOffContainer = ({
     formattedProposedTerminationDate,
     employeeName,
     proposedTerminationDate,
-    employmentId: terminationBag.employmentId,
     open,
     onOpenChange,
   });
