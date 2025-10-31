@@ -1,5 +1,3 @@
-// In src/components/ui/data-drawer/DataDrawer.tsx
-
 import { useFormFields } from '@/src/context';
 import { DrawerComponentProps } from '@/src/types/remoteFlows';
 import {

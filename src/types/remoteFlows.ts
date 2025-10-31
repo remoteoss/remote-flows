@@ -111,7 +111,7 @@ export type DrawerComponentProps = {
   onOpenChange: (open: boolean) => void;
   title: React.ReactNode;
   trigger: React.ReactElement;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export type FieldSetToggleComponentProps = {
