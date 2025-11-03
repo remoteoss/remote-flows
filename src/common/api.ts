@@ -237,6 +237,7 @@ export const useSummaryTimeOffDataQuery = ({
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,
+    error: leavePoliciesSummaryQuery.error || bookedTimeQuery.error,
   };
 };
 

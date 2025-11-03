@@ -189,7 +189,14 @@ export const PaidTimeOff = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
-  } = summaryData?.data || {};
+  } = summaryData?.data || {
+    entitledDays: 0,
+    bookedDays: 0,
+    usedDays: 0,
+    approvedDaysBeforeTermination: 0,
+    approvedDaysAfterTermination: 0,
+    remainingDays: 0,
+  };
   return (
     <div className='RemoteFlows__PaidTimeOff__Container py-3'>
       <h3 className='RemoteFlows__PaidTimeOff__Title mb-2'>Paid time off</h3>
