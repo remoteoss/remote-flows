@@ -128,7 +128,6 @@ export const useTermination = ({
             ...(
               options?.jsfModify?.fields?.proposed_termination_date as $TSFixMe
             )?.['x-jsf-presentation'],
-            // how to substract 1 day from the current date?
             minDate: format(new Date(), 'yyyy-MM-dd'),
           },
         },
