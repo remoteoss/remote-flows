@@ -7,7 +7,7 @@ import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import {
-  timeoff,
+  approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
 
@@ -31,7 +31,7 @@ describe('PaidTimeOff', () => {
     queryClient.clear(); // Clear query cache between tests
     server.use(
       http.get('*/v1/timeoff*', () => {
-        return HttpResponse.json(timeoff);
+        return HttpResponse.json(approvedTimeoffs);
       }),
       http.get('*/v1/leave-policies/summary/*', () => {
         return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
@@ -88,9 +88,9 @@ describe('PaidTimeOff', () => {
     expect(summaryData).toHaveTextContent('Booked: 4 days');
     expect(summaryData).toHaveTextContent('Used: 3 days');
     expect(summaryData).toHaveTextContent(
-      'Approved before termination: 0 days',
+      'Approved before termination: 2 days',
     );
-    expect(summaryData).toHaveTextContent('Approved after termination: 0 days');
+    expect(summaryData).toHaveTextContent('Approved after termination: 2 days');
     expect(summaryData).toHaveTextContent('Remaining: 16 days');
   });
 });
