@@ -230,7 +230,7 @@ export const useSummaryTimeOffDataQuery = ({
       usedDays,
       approvedDaysBeforeTermination,
       approvedDaysAfterTermination,
-      remainingDays,
+      remainingDays: remainingDays < 0 ? 0 : remainingDays,
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,

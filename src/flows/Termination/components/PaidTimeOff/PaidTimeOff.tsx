@@ -71,33 +71,41 @@ const SummaryTimeOff = ({
     <div>
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
-        <p className='font-bold'>{pluralizeDays(entitledDays)}</p>
+        <p data-testid='entitled-days' className='font-bold'>
+          {pluralizeDays(entitledDays)}
+        </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days booked</label>
-        <p className='font-bold'>{pluralizeDays(bookedDays)}</p>
+        <p data-testid='booked-days' className='font-bold'>
+          {pluralizeDays(bookedDays)}
+        </p>
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
-        <p className='font-bold'>{pluralizeDays(usedDays)}</p>
+        <p data-testid='used-days' className='font-bold'>
+          {pluralizeDays(usedDays)}
+        </p>
       </SummaryRow>
       <SummaryRow>
         <label>
           Approved for use before {formattedProposedTerminationDate}
         </label>
-        <p className='font-bold'>
+        <p data-testid='approved-days-before-termination' className='font-bold'>
           {pluralizeDays(approvedDaysBeforeTermination)}
         </p>
       </SummaryRow>
       <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
-        <p className='font-bold'>
+        <p data-testid='approved-days-after-termination' className='font-bold'>
           {pluralizeDays(approvedDaysAfterTermination)}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days remaining unused</label>
-        <p className='font-bold'>{pluralizeDays(remainingDays)}</p>
+        <p data-testid='remaining-days' className='font-bold'>
+          {pluralizeDays(remainingDays)}
+        </p>
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
         <p className='text-xs text-[#222E39]'>
@@ -201,7 +209,7 @@ export const PaidTimeOff = ({
               bookedDays={bookedDays}
               approvedDaysBeforeTermination={approvedDaysBeforeTermination}
               approvedDaysAfterTermination={approvedDaysAfterTermination}
-              remainingDays={remainingDays < 0 ? 0 : remainingDays}
+              remainingDays={remainingDays}
               proposedTerminationDate={proposedTerminationDate}
             />
           )}

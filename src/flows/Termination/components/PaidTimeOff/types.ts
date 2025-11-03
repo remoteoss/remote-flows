@@ -29,6 +29,7 @@ export type PaidTimeOffRenderProps = {
 };
 
 export type PaidTimeOffContainerProps = {
+  employmentId: string;
   proposedTerminationDate: string;
   employeeName: string;
   render: (props: PaidTimeOffRenderProps) => React.ReactNode;

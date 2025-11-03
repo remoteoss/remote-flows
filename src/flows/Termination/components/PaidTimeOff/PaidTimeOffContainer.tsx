@@ -5,19 +5,18 @@ import {
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api';
 import { PaidTimeOffContainerProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
-import { useTerminationContext } from '@/src/flows/Termination/context';
 import { useState } from 'react';
 
 export const PaidTimeOffContainer = ({
   proposedTerminationDate,
   employeeName,
+  employmentId,
   render,
 }: PaidTimeOffContainerProps) => {
   const [open, setOpen] = useState(false);
-  const { terminationBag } = useTerminationContext();
 
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
-    employmentId: terminationBag.employmentId,
+    employmentId: employmentId,
   });
 
   const formattedProposedTerminationDate = new Date(
@@ -29,7 +28,7 @@ export const PaidTimeOffContainer = ({
   });
 
   const timeoffQuery = usePaidTimeoffBreakdownQuery({
-    employmentId: terminationBag.employmentId,
+    employmentId: employmentId,
     options: {
       enabled: open,
     },
@@ -37,12 +36,12 @@ export const PaidTimeOffContainer = ({
 
   const bookedTimeBeforeAndAfterTerminationQuery =
     useBookedTimeoffBeforeAndAfterTerminationQuery({
-      employmentId: terminationBag.employmentId,
+      employmentId: employmentId,
       date: proposedTerminationDate,
     });
 
   const summaryData = useSummaryTimeOffDataQuery({
-    employmentId: terminationBag.employmentId,
+    employmentId: employmentId,
     proposedTerminationDate,
   });
 

@@ -8,7 +8,7 @@ export const timeoffLeavePoliciesSummaryResponse = {
       used: {
         type: 'limited',
         hours: 0,
-        days: 0,
+        days: 3,
       },
       balance: {
         type: 'limited',
@@ -30,6 +30,11 @@ export const timeoffLeavePoliciesSummaryResponse = {
         type: 'limited',
         hours: 0,
         days: 0,
+      },
+      booked: {
+        type: 'limited',
+        hours: 0,
+        days: 3,
       },
       taken: {
         type: 'limited',
