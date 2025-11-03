@@ -1,13 +1,7 @@
 import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
-import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/src/components/ui/drawer';
+import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import {
   Table,
   TableBody,
@@ -129,44 +123,42 @@ const DrawerTimeOff = ({
 }) => {
   const { data: timeoff } = timeoffQuery || {};
   return (
-    <Drawer direction='right' open={open} onOpenChange={onOpenChange}>
-      <DrawerTrigger asChild>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      title={`${employeeName} paid time off breakdown`}
+      trigger={
         <Button variant='link' className='text-xs text-[#3B82F6] font-bold p-0'>
           See detailed time off breakdown ↗
         </Button>
-      </DrawerTrigger>
-      <DrawerContent className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'>
-        <div className='h-full flex flex-col'>
-          <DrawerHeader>
-            <DrawerTitle>{employeeName} paid time off breakdown</DrawerTitle>
-          </DrawerHeader>
-          <div className='mb-2'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className='w-[250px]'>Dates</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {timeoff?.timeoffs.map((timeoff) => (
-                  <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
-                    <TableCell className='font-medium w-[250px]'>
-                      {timeoff.formattedDate}
-                    </TableCell>
-                    <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
-                    <TableCell>{timeoff.status}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <p className='text-xs'>
-            Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
-          </p>
-        </div>
-      </DrawerContent>
+      }
+      className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'
+    >
+      <div className='mb-2'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='w-[250px]'>Dates</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {timeoff?.timeoffs.map((timeoff) => (
+              <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
+                <TableCell className='font-medium w-[250px]'>
+                  {timeoff.formattedDate}
+                </TableCell>
+                <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
+                <TableCell>{timeoff.status}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <p className='text-xs'>
+        Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
+      </p>
     </Drawer>
   );
 };
