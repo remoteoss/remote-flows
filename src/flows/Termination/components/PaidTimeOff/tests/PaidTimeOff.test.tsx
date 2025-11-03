@@ -11,13 +11,7 @@ import {
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
+let queryClient: QueryClient;
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
@@ -27,6 +21,13 @@ const wrapper = ({ children }: PropsWithChildren) => (
 
 describe('PaidTimeOff', () => {
   beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
     vi.clearAllMocks();
     queryClient.clear(); // Clear query cache between tests
     server.use(
