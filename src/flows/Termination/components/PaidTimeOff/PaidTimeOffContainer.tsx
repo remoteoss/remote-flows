@@ -1,21 +1,30 @@
 import {
+  useBookedTimeoffBeforeAndAfterTerminationQuery,
   usePaidTimeoffBreakdownQuery,
+  useSummaryTimeOffDataQuery,
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api';
 import { PaidTimeOffContainerProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
-import { useTerminationContext } from '@/src/flows/Termination/context';
 import { useState } from 'react';
 
+/**
+ * PaidTimeOffContainer component
+ *
+ * This is a container component that manages paid time off (PTO) data retrieval and state
+ * for the termination flow. It aggregates multiple time off-related queries and formats
+ * the termination date for display.
+ *
+ */
 export const PaidTimeOffContainer = ({
   proposedTerminationDate,
   employeeName,
+  employmentId,
   render,
 }: PaidTimeOffContainerProps) => {
   const [open, setOpen] = useState(false);
-  const { terminationBag } = useTerminationContext();
 
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
-    employmentId: terminationBag.employmentId,
+    employmentId: employmentId,
   });
 
   const formattedProposedTerminationDate = new Date(
@@ -27,10 +36,21 @@ export const PaidTimeOffContainer = ({
   });
 
   const timeoffQuery = usePaidTimeoffBreakdownQuery({
-    employmentId: terminationBag.employmentId,
+    employmentId: employmentId,
     options: {
       enabled: open,
     },
+  });
+
+  const bookedTimeBeforeAndAfterTerminationQuery =
+    useBookedTimeoffBeforeAndAfterTerminationQuery({
+      employmentId: employmentId,
+      date: proposedTerminationDate,
+    });
+
+  const summaryData = useSummaryTimeOffDataQuery({
+    employmentId: employmentId,
+    proposedTerminationDate,
   });
 
   const onOpenChange = () => {
@@ -40,9 +60,11 @@ export const PaidTimeOffContainer = ({
   return render({
     leavePoliciesSummaryQuery,
     timeoffQuery,
+    bookedTimeBeforeAndAfterTerminationQuery,
     formattedProposedTerminationDate,
     employeeName,
     proposedTerminationDate,
+    summaryData,
     open,
     onOpenChange,
   });

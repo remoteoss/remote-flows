@@ -6,7 +6,6 @@ import { PaidTimeOffForm } from '@/src/flows/Termination/PaidTimeOffForm';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
 import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetailsForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
-import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { JSFModify } from '@/src/flows/types';
 
 export type TerminationFormValues = {
@@ -42,7 +41,6 @@ export type TerminationRenderProps = {
    * The components used in the termination flow.
    * This includes different steps, submit button, back button and timeoff.
    * @see {@link TerminationSubmit}
-   * @see {@link TimeOff}
    * @see {@link TerminationBack}
    * @see {@link EmployeeCommunicationForm}
    * @see {@link TerminationDetailsForm}
@@ -51,7 +49,6 @@ export type TerminationRenderProps = {
    */
   components: {
     SubmitButton: typeof TerminationSubmit;
-    TimeOff: typeof TimeOff;
     Back: typeof TerminationBack;
     EmployeeComunicationStep: typeof EmployeeCommunicationForm;
     TerminationDetailsStep: typeof TerminationDetailsForm;

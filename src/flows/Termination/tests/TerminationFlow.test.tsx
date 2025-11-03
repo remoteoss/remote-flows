@@ -13,10 +13,15 @@ import {
   selectDayInCalendar,
 } from '@/src/tests/testHelpers';
 import { http, HttpResponse } from 'msw';
-import { terminationResponse } from '@/src/flows/Termination/tests/fixtures';
+import {
+  terminationResponse,
+  approvedTimeoffs,
+  timeoffLeavePoliciesSummaryResponse,
+} from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
+import { employment } from '@/src/tests/fixtures';
 
 const queryClient = new QueryClient();
 
@@ -47,7 +52,6 @@ describe('TerminationFlow', () => {
       AdditionalDetailsStep,
       SubmitButton,
       Back,
-      TimeOff,
     } = components;
     switch (terminationBag.stepState.currentStep.name) {
       case 'employee_communication':
@@ -84,25 +88,6 @@ describe('TerminationFlow', () => {
       case 'paid_time_off':
         return (
           <>
-            <TimeOff
-              render={({ employment, timeoff }: $TSFixMe) => {
-                const username = employment?.data?.employment?.basic_information
-                  ?.name as string;
-                const days = timeoff?.data?.total_count || 0;
-
-                // if days is 0 or > 1 'days' else 'day
-                const daysLiteral = days > 1 || days === 0 ? 'days' : 'day';
-                return (
-                  <>
-                    <p>
-                      We have recorded {days} {daysLiteral} of paid time off for{' '}
-                      {username}
-                    </p>
-                    <a href='#'>See {username}'s timeoff breakdown</a>
-                  </>
-                );
-              }}
-            />
             <PaidTimeOffStep
               onSubmit={(payload: $TSFixMe) =>
                 onSubmitStep(payload, 'paid_time_off')
@@ -169,6 +154,15 @@ describe('TerminationFlow', () => {
     vi.clearAllMocks();
 
     server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json(employment);
+      }),
+      http.get('*/v1/timeoff*', () => {
+        return HttpResponse.json(approvedTimeoffs);
+      }),
+      http.get('*/v1/timeoff-leave-policies-summary*', () => {
+        return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
+      }),
       http.post('*/v1/offboardings', async (req) => {
         offboardingRequest = (await req.request.json()) as Record<
           string,
