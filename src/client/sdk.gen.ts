@@ -78,6 +78,9 @@ import type {
   GetGetIdentityVerificationDataIdentityVerificationData,
   GetGetIdentityVerificationDataIdentityVerificationResponse,
   GetGetIdentityVerificationDataIdentityVerificationError,
+  GetIndexSubscriptionData,
+  GetIndexSubscriptionResponse,
+  GetIndexSubscriptionError,
   GetIndexWebhookEventData,
   GetIndexWebhookEventResponse,
   GetIndexWebhookEventError,
@@ -472,6 +475,9 @@ import type {
   PostTokenOAuth2TokenData,
   PostTokenOAuth2TokenResponse,
   PostTokenOAuth2TokenError,
+  PostManageContractorPlusSubscriptionSubscriptionData,
+  PostManageContractorPlusSubscriptionSubscriptionResponse,
+  PostManageContractorPlusSubscriptionSubscriptionError,
   GetIndexTimeoffData,
   GetIndexTimeoffResponse,
   GetIndexTimeoffError,
@@ -939,7 +945,7 @@ export const getShowContractorContractDetailsCountry = <
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -948,7 +954,7 @@ export const getShowContractorContractDetailsCountry = <
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -980,7 +986,7 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -989,7 +995,7 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -1265,6 +1271,34 @@ export const getGetIdentityVerificationDataIdentityVerification = <
       },
     ],
     url: '/v1/identity-verification/{employment_id}',
+    ...options,
+  });
+};
+
+/**
+ * List contractor subscriptions
+ * Endpoint that can be used to list contractor subscriptions.
+ *
+ */
+export const getIndexSubscription = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexSubscriptionData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexSubscriptionResponse,
+    GetIndexSubscriptionError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions',
     ...options,
   });
 };
@@ -2529,7 +2563,7 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Contract Amendments](#tag/Contract-Amendments) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -2538,7 +2572,7 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -2811,6 +2845,8 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - administrative_details
  * - bank_account_details
  * - employment_basic_information
+ * - contractor_basic_information
+ * - contractor_contract_details
  * - billing_address_details
  * - contract_details
  * - emergency_contact
@@ -3442,7 +3478,7 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -3451,7 +3487,7 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -3496,7 +3532,7 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -3505,7 +3541,7 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
@@ -3556,7 +3592,7 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -3565,7 +3601,7 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
@@ -3951,6 +3987,8 @@ export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
 
 /**
  * Create a contract document for a contractor
+ * Create a contract document for a contractor.
+ *
  */
 export const postCreateContractDocument = <
   ThrowOnError extends boolean = false,
@@ -4216,7 +4254,7 @@ export const postCreateDecline = <ThrowOnError extends boolean = false>(
  * see the **Show form schema** endpoint under the [Contract Amendments](#tag/Contract-Amendments) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -4225,7 +4263,7 @@ export const postCreateDecline = <ThrowOnError extends boolean = false>(
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -5306,7 +5344,7 @@ export const getDownloadByIdExpenseReceipt = <
 
 /**
  * Token
- * Endpoint to exchange tokens in the Authorization Code, Client Credentials and Refresh Token flows
+ * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
  */
 export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
   options?: Options<PostTokenOAuth2TokenData, ThrowOnError>,
@@ -5323,6 +5361,45 @@ export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
       },
     ],
     url: '/auth/oauth2/token',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+};
+
+/**
+ * Manage contractor plus subscription
+ * Endpoint that can be used to upgrade, assign or downgrade a contractor's subscription.
+ * This can be used when company admins desire to assign someone to the Contractor Plus plan,
+ * but also to change the contractor's subscription between Plus and Standard.
+ *
+ */
+export const postManageContractorPlusSubscriptionSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostManageContractorPlusSubscriptionSubscriptionData,
+    ThrowOnError
+  >,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PostManageContractorPlusSubscriptionSubscriptionResponse,
+    PostManageContractorPlusSubscriptionSubscriptionError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
     ...options,
     headers: {
       'Content-Type': 'application/json',

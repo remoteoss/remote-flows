@@ -222,6 +222,15 @@ export type DeclinedWorkAuthozation = {
   status: 'declined_by_manager';
 };
 
+/**
+ * Free trial relating to a company's product
+ */
+export type FreeTrial = {
+  end_date?: NullableDate;
+  start_date?: NullableDate;
+  status: 'active' | 'expired' | 'eligible' | 'ineligible';
+};
+
 export type CreateSsoConfigurationResponse = {
   data: CreateSsoConfigurationResult;
 };
@@ -653,7 +662,8 @@ export type EmploymentShowResponse = {
 export type OAuth2TokenParams =
   | AuthorizationCodeParams
   | ClientCredentialsParams
-  | RefreshTokenParams;
+  | RefreshTokenParams
+  | AssertionTokenParams;
 
 /**
  * Sent back timesheet response
@@ -894,7 +904,7 @@ export type RefreshTokenParams = {
  * see the **Show form schema** endpoint under the [Show benefit renewal request schema](#tag/Benefit-Renewal-Requests) category.
  *
  * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) should be considered in order to avoid
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
  * compliance issues and to have the latest version of a country requirements.
  *
  * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
@@ -903,7 +913,7 @@ export type RefreshTokenParams = {
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://remote.com/resources/api/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  */
@@ -919,6 +929,11 @@ export type CompanyDepartment = {
   id: string;
   name: string;
 };
+
+export type ContractorOfRecordPlanSummary = {
+  minimum_fee: ExMoneyValue;
+  percentage_fee: Decimal;
+} | null;
 
 export type ClientCredentialsResponse = BaseTokenResponse;
 
@@ -1724,6 +1739,7 @@ export type CreateWebhookCallbackParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.partner_offboarded'
     | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -1795,6 +1811,7 @@ export type CreateWebhookCallbackParams = {
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
+    | 'timesheet.in_calibration'
     | 'travel_letter.approved_by_manager'
     | 'travel_letter.approved_by_remote'
     | 'travel_letter.declined_by_manager'
@@ -1885,6 +1902,38 @@ export type DataSyncEvent = {
   data_type: 'benefits' | 'kdb' | 'countries' | 'help-center-articles';
   inserted_at: string;
   status: 'pass' | 'fail';
+};
+
+/**
+ *   The assertion token is a JWT token that contains the following claims:
+ *
+ * - `sub`: The subject of the token, in one of the following formats:
+ *
+ * - `urn:remote-api:employment:<employment_id>`
+ * - `urn:remote-api:employee:employment:<employment_id>`
+ * - `urn:remote-api:company-manager:user:<user_id>`
+ *
+ * - `iss`: The issuer of the token, which is the client ID
+ * - `aud`: The audience of the token, which is the OAuth audience
+ * - `exp`: The expiration time of the token
+ * - `iat`: The issued at time of the token
+ * - `scope`: The scope of the token
+ *
+ * the scope is optional and if not provided, the token will have all the scopes for the subject.
+ * the scope must be valid for the subject, otherwise the token will be rejected.
+ *
+ * the assertion must be signed with the client secret.
+ *
+ */
+export type AssertionTokenParams = {
+  /**
+   * The assertion token
+   */
+  assertion: string;
+  /**
+   * The Assertion flow grant type
+   */
+  grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 };
 
 /**
@@ -2090,6 +2139,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.partner_offboarded'
     | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -2161,6 +2211,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
+    | 'timesheet.in_calibration'
     | 'travel_letter.approved_by_manager'
     | 'travel_letter.approved_by_remote'
     | 'travel_letter.declined_by_manager'
@@ -3562,6 +3613,14 @@ export type LeavePolicySummary = {
    */
   balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
   /**
+   * Includes all upcoming requested time off.
+   */
+  booked: {
+    days: number;
+    hours: number;
+    type: 'limited';
+  };
+  /**
    * The current entitlement is the accrued time entitled for the employee plus any other extra entitlements (such as carryover).
    */
   current_entitlement:
@@ -3655,7 +3714,7 @@ export type CreateCompanyParams = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `address_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   address_details?: {
@@ -3664,7 +3723,7 @@ export type CreateCompanyParams = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `bank_account_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   bank_account_details?: {
@@ -3994,6 +4053,13 @@ export type SuccessResponse = {
 };
 
 /**
+ * Defines the operation that must be executed: upgrade or downgrade
+ */
+export type ManageContractorPlusSubscriptionOperationsParams = {
+  operation: 'upgrade' | 'downgrade';
+};
+
+/**
  * The visibility scope of the custom field
  */
 export type CustomFieldVisibilityScope = 'company_admin_only' | 'everyone';
@@ -4236,7 +4302,7 @@ export type Company = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `address_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   address_details: {
@@ -4245,7 +4311,7 @@ export type Company = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `bank_account_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   bank_account_details?: {
@@ -4344,6 +4410,52 @@ export type TimesheetStatus =
   | 'in_calibration'
   | 'processed';
 
+export type ContractorSubscriptionsSummary = {
+  active_contractors_count: number;
+  billable_contractors?: Array<{
+    slug?: Slug;
+    user?: {
+      name?: string;
+      profile_picture?: string;
+      slug?: Slug;
+    };
+  }>;
+  billable_contractors_count: number;
+  company_product: {
+    slug?: UuidSlug;
+  };
+  company_product_discount: {
+    expiration_date?: _Date;
+    percent?: Decimal;
+  };
+  contractor_of_record_plan?: ContractorOfRecordPlanSummary;
+  currency: Currency;
+  eligibility_questionnaire?: {
+    is_blocking: boolean;
+    questions: {
+      [key: string]: unknown;
+    };
+    responses: {
+      [key: string]: unknown;
+    };
+    slug: UuidSlug;
+    submitted_at: DateTime;
+    type: 'contractor_of_record';
+  } | null;
+  free_trial: FreeTrial;
+  is_termination_fees_enabled?: boolean;
+  next_invoice_date: _Date;
+  price: {
+    amount?: number;
+  };
+  product: Product;
+  summary_period: string;
+  total_amount: number | null;
+  total_discount?: number;
+  total_in_advance?: number;
+  total_prorated?: number;
+};
+
 /**
  * Detailed breakdown of an employment's time off balance.
  *
@@ -4401,6 +4513,19 @@ export type TimeoffEntitlement = {
 export type TooManyRequestsResponse = {
   message?: string;
 };
+
+export type EligibilityQuestionnaire = {
+  is_blocking: boolean;
+  questions: {
+    [key: string]: unknown;
+  };
+  responses: {
+    [key: string]: unknown;
+  };
+  slug: UuidSlug;
+  submitted_at: DateTime;
+  type: 'contractor_of_record';
+} | null;
 
 /**
  * Recurring Incentive response
@@ -4524,6 +4649,7 @@ export type WebhookCallback = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.partner_offboarded'
     | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -4595,6 +4721,7 @@ export type WebhookCallback = {
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
+    | 'timesheet.in_calibration'
     | 'travel_letter.approved_by_manager'
     | 'travel_letter.approved_by_remote'
     | 'travel_letter.declined_by_manager'
@@ -4706,7 +4833,7 @@ export type UpdateCompanyParams = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `address_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   address_details?: {
@@ -4715,7 +4842,7 @@ export type UpdateCompanyParams = {
   /**
    * Fields can vary depending on the country. Please, check the required fields structure using the [Show form schema endpoint](#operation/get_show_form_country).
    * Use the desired country and `bank_account_details` as the form name for the placeholders.
-   * The response complies with the [JSON Schema](https://remote.com/resources/api/how-json-schemas-work) specification.
+   * The response complies with the [JSON Schema](https://developer.remote.com/docs/how-json-schemas-work) specification.
    *
    */
   bank_account_details?: {
@@ -5078,6 +5205,14 @@ export type ParamsToCreateExpense = {
  * Unique ID of related department, if any. Otherwise, null.
  */
 export type DepartmentId = string | null;
+
+/**
+ * a money amount and its currency
+ */
+export type ExMoneyValue = {
+  amount?: string;
+  currency?: string;
+};
 
 export type CreateProbationCompletionLetterParams = {
   /**
@@ -5486,6 +5621,7 @@ export type UpdateWebhookCallbackParams = {
     | 'company.eor_hiring.no_reserve_payment_requested'
     | 'company.eor_hiring.referred'
     | 'company.eor_hiring.verification_completed'
+    | 'company.partner_offboarded'
     | 'company.pricing_plan.updated'
     | 'contract_amendment.canceled'
     | 'contract_amendment.deleted'
@@ -5557,6 +5693,7 @@ export type UpdateWebhookCallbackParams = {
     | 'timeoff.taken'
     | 'timeoff.updated'
     | 'timesheet.submitted'
+    | 'timesheet.in_calibration'
     | 'travel_letter.approved_by_manager'
     | 'travel_letter.approved_by_remote'
     | 'travel_letter.declined_by_manager'
@@ -5632,6 +5769,8 @@ export type ProbationExtensionResponse = {
     probation_extension: ProbationExtension;
   };
 };
+
+export type Decimal = string;
 
 export type ListEmploymentContractResponse = {
   data: {
@@ -5924,6 +6063,13 @@ export type TimeoffStatus =
   | 'requested'
   | 'taken'
   | 'cancel_requested';
+
+/**
+ * Summaries of contractor subscriptions
+ */
+export type ContractorSubscriptionSummariesResponse = {
+  data: Array<ContractorSubscriptionsSummary>;
+};
 
 /**
  * Create Benefit Renewal Request Response
@@ -7430,6 +7576,46 @@ export type GetGetIdentityVerificationDataIdentityVerificationResponses = {
 
 export type GetGetIdentityVerificationDataIdentityVerificationResponse =
   GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
+
+export type GetIndexSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions';
+};
+
+export type GetIndexSubscriptionErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetIndexSubscriptionError =
+  GetIndexSubscriptionErrors[keyof GetIndexSubscriptionErrors];
+
+export type GetIndexSubscriptionResponses = {
+  /**
+   * Success
+   */
+  200: ContractorSubscriptionSummariesResponse;
+};
+
+export type GetIndexSubscriptionResponse =
+  GetIndexSubscriptionResponses[keyof GetIndexSubscriptionResponses];
 
 export type GetIndexWebhookEventData = {
   body?: never;
@@ -14138,6 +14324,45 @@ export type PostTokenOAuth2TokenResponses = {
 
 export type PostTokenOAuth2TokenResponse =
   PostTokenOAuth2TokenResponses[keyof PostTokenOAuth2TokenResponses];
+
+export type PostManageContractorPlusSubscriptionSubscriptionData = {
+  /**
+   * Manage Contractor Plus subscription params
+   */
+  body: ManageContractorPlusSubscriptionOperationsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription';
+};
+
+export type PostManageContractorPlusSubscriptionSubscriptionErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+};
+
+export type PostManageContractorPlusSubscriptionSubscriptionError =
+  PostManageContractorPlusSubscriptionSubscriptionErrors[keyof PostManageContractorPlusSubscriptionSubscriptionErrors];
+
+export type PostManageContractorPlusSubscriptionSubscriptionResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostManageContractorPlusSubscriptionSubscriptionResponse =
+  PostManageContractorPlusSubscriptionSubscriptionResponses[keyof PostManageContractorPlusSubscriptionSubscriptionResponses];
 
 export type GetIndexTimeoffData = {
   body?: never;
