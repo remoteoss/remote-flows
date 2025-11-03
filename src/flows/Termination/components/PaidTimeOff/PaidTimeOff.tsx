@@ -191,9 +191,9 @@ export const PaidTimeOff = ({
     remainingDays,
   } = summaryData?.data || {};
   return (
-    <div className='py-3'>
-      <h3 className='RemoteFlows__PaidTimeOffTitle mb-2'>Paid time off</h3>
-      <p className='RemoteFlows__PaidTimeOffDescription text-sm mb-2'>
+    <div className='RemoteFlows__PaidTimeOff__Container py-3'>
+      <h3 className='RemoteFlows__PaidTimeOff__Title mb-2'>Paid time off</h3>
+      <p className='RemoteFlows__PaidTimeOff__Description text-sm mb-2'>
         The proposed termination date for {employeeName} is{' '}
         {formattedProposedTerminationDate}. You will need to pay them for any
         unused accrued days. Below is a breakdown of their time off entitlement

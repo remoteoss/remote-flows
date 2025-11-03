@@ -44,7 +44,7 @@ describe('PaidTimeOff', () => {
       <PaidTimeOffContainer
         employmentId='test-id'
         employeeName='John Doe'
-        proposedTerminationDate='2024-12-15'
+        proposedTerminationDate='2025-12-15'
         render={(props) => {
           return (
             <div>

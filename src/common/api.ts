@@ -213,7 +213,10 @@ export const useSummaryTimeOffDataQuery = ({
   });
 
   const entitledDays =
-    leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.days || 0;
+    (leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
+      'limited' &&
+      leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.days) ||
+    0;
   const bookedDays =
     leavePoliciesSummaryQuery.data?.data?.[0].booked?.days || 0;
   const usedDays = leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0;
