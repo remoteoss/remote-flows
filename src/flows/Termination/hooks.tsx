@@ -1,11 +1,13 @@
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import omitBy from 'lodash.omitby';
+import isNull from 'lodash.isnull';
+import { format } from 'date-fns';
+import { useMemo } from 'react';
 import {
   CreateOffboardingParams,
   TerminationDetailsParams,
 } from '@/src/client';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
-import omitBy from 'lodash.omitby';
-import isNull from 'lodash.isnull';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
   TerminationFlowProps,
@@ -17,7 +19,6 @@ import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
-import { useMemo } from 'react';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
@@ -120,6 +121,17 @@ export const useTermination = ({
             )?.['x-jsf-presentation']?.className,
           },
         ),
+        proposed_termination_date: {
+          ...(options?.jsfModify?.fields
+            ?.proposed_termination_date as $TSFixMe),
+          'x-jsf-presentation': {
+            ...(
+              options?.jsfModify?.fields?.proposed_termination_date as $TSFixMe
+            )?.['x-jsf-presentation'],
+            // how to substract 1 day from the current date?
+            minDate: format(new Date(), 'yyyy-MM-dd'),
+          },
+        },
         paid_time_off_info: {
           ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe),
           'x-jsf-presentation': {
