@@ -5,7 +5,7 @@
 ### Minor Changes
 
 - extract PaidTimeOff logic into a container component (#538) [#538](https://github.com/remoteoss/remote-flows/pull/538)
-- format errors
+- format errors for contractor onboarding (#540) [#540](https://github.com/remoteoss/remote-flows/pull/540)
 - normalize drawer component with shared implementation (#539) [#539](https://github.com/remoteoss/remote-flows/pull/539)
 - correct time off API to reflect user-requested dates (#541) [#541](https://github.com/remoteoss/remote-flows/pull/541)
 
