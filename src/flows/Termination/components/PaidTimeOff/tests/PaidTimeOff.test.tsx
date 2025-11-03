@@ -85,12 +85,12 @@ describe('PaidTimeOff', () => {
 
     const summaryData = screen.getByTestId('summary-data');
     expect(summaryData).toHaveTextContent('Entitled: 23 days');
-    expect(summaryData).toHaveTextContent('Booked: 3 days');
+    expect(summaryData).toHaveTextContent('Booked: 4 days');
     expect(summaryData).toHaveTextContent('Used: 3 days');
     expect(summaryData).toHaveTextContent(
       'Approved before termination: 0 days',
     );
     expect(summaryData).toHaveTextContent('Approved after termination: 0 days');
-    expect(summaryData).toHaveTextContent('Remaining: 17 days');
+    expect(summaryData).toHaveTextContent('Remaining: 16 days');
   });
 });

@@ -2,7 +2,6 @@ import { TerminationContext } from '@/src/flows/Termination/context';
 import { useId } from 'react';
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
-import { TimeOff } from '@/src/flows/Termination/TimeOff';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
 import { EmployeeCommunicationForm } from '@/src/flows/Termination/EmployeeComunicationForm';
 import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetailsForm';
@@ -34,7 +33,6 @@ export const TerminationFlow = ({
         terminationBag,
         components: {
           SubmitButton: TerminationSubmit,
-          TimeOff: TimeOff,
           Back: TerminationBack,
           EmployeeComunicationStep: EmployeeCommunicationForm,
           TerminationDetailsStep: TerminationDetailsForm,

@@ -15,7 +15,7 @@ import {
 import { http, HttpResponse } from 'msw';
 import {
   terminationResponse,
-  timeoff,
+  approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
@@ -158,7 +158,7 @@ describe('TerminationFlow', () => {
         return HttpResponse.json(employment);
       }),
       http.get('*/v1/timeoff*', () => {
-        return HttpResponse.json(timeoff);
+        return HttpResponse.json(approvedTimeoffs);
       }),
       http.get('*/v1/timeoff-leave-policies-summary*', () => {
         return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);

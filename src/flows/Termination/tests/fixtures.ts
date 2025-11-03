@@ -1,5 +1,119 @@
-export const timeoff = {
-  data: { total_count: 0, current_page: 1, total_pages: 0, timeoffs: [] },
+export const approvedTimeoffs = {
+  data: {
+    total_count: 4,
+    current_page: 1,
+    total_pages: 0,
+    timeoffs: [
+      {
+        id: '3268d0c6-193b-4894-b972-ae325fb504b2',
+        status: 'approved',
+        automatic: false,
+        timezone: 'Europe/Madrid',
+        cancelled_at: null,
+        start_date: '2025-12-14',
+        employment_id: '85ab2f01-34e7-4a04-967d-46b1710c42b2',
+        cancel_reason: null,
+        end_date: '2025-12-14',
+        notes: null,
+        approved_at: '2025-12-14T10:53:00Z',
+        timeoff_type: 'paid_time_off',
+        timeoff_days: [
+          {
+            hours: 8,
+            day: '2025-12-14',
+          },
+        ],
+        approver_id: '6e815fa2-6eb9-4a82-9b56-170d15f1b8b4',
+        leave_policy: {
+          name: 'Paid time off',
+          leave_policy_variant_slug: 'paid_time_off',
+          leave_type: 'paid_time_off',
+        },
+      },
+      {
+        id: '3268d0c6-193b-4894-b972-ae325fb504b2',
+        status: 'approved',
+        automatic: false,
+        timezone: 'Europe/Madrid',
+        cancelled_at: null,
+        start_date: '2025-12-15',
+        employment_id: '85ab2f01-34e7-4a04-967d-46b1710c42b2',
+        cancel_reason: null,
+        end_date: '2025-12-15',
+        notes: null,
+        approved_at: '2025-12-15T10:53:00Z',
+        timeoff_type: 'paid_time_off',
+        timeoff_days: [
+          {
+            hours: 8,
+            day: '2025-12-15',
+          },
+        ],
+        approver_id: '6e815fa2-6eb9-4a82-9b56-170d15f1b8b4',
+        leave_policy: {
+          name: 'Paid time off',
+          leave_policy_variant_slug: 'paid_time_off',
+          leave_type: 'paid_time_off',
+        },
+      },
+      {
+        id: '3268d0c6-193b-4894-b972-ae325fb504b2',
+        status: 'approved',
+        automatic: false,
+        timezone: 'Europe/Madrid',
+        cancelled_at: null,
+        start_date: '2025-12-16',
+        employment_id: '85ab2f01-34e7-4a04-967d-46b1710c42b2',
+        cancel_reason: null,
+        end_date: '2025-12-16',
+        notes: null,
+        approved_at: '2025-12-16T10:53:00Z',
+        timeoff_type: 'paid_time_off',
+        timeoff_days: [
+          {
+            hours: 8,
+            day: '2025-12-16',
+          },
+        ],
+        approver_id: '6e815fa2-6eb9-4a82-9b56-170d15f1b8b4',
+        leave_policy: {
+          name: 'Paid time off',
+          leave_policy_variant_slug: 'paid_time_off',
+          leave_type: 'paid_time_off',
+        },
+      },
+      {
+        id: '3268d0c6-193b-4894-b972-ae325fb504b2',
+        status: 'approved',
+        automatic: false,
+        timezone: 'Europe/Madrid',
+        cancelled_at: null,
+        start_date: '2025-12-17',
+        employment_id: '85ab2f01-34e7-4a04-967d-46b1710c42b2',
+        cancel_reason: null,
+        end_date: '2025-12-17',
+        notes: null,
+        approved_at: '2025-12-17T10:53:00Z',
+        timeoff_type: 'paid_time_off',
+        timeoff_days: [
+          {
+            hours: 8,
+            day: '2025-12-17',
+          },
+          {
+            hours: 4,
+            day: '2025-12-18',
+          },
+        ],
+        approver_id: '6e815fa2-6eb9-4a82-9b56-170d15f1b8b4',
+        leave_policy: {
+          name: 'Paid time off',
+          leave_policy_variant_slug: 'paid_time_off',
+          leave_type: 'paid_time_off',
+        },
+      },
+    ],
+  },
 };
 
 export const timeoffLeavePoliciesSummaryResponse = {
@@ -34,7 +148,7 @@ export const timeoffLeavePoliciesSummaryResponse = {
       booked: {
         type: 'limited',
         hours: 0,
-        days: 3,
+        days: 4,
       },
       taken: {
         type: 'limited',
