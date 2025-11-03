@@ -2,6 +2,65 @@ export const timeoff = {
   data: { total_count: 0, current_page: 1, total_pages: 0, timeoffs: [] },
 };
 
+export const timeoffLeavePoliciesSummaryResponse = {
+  data: [
+    {
+      used: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      balance: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      leave_policy: {
+        name: 'Paid time off',
+        unit: 'days',
+        description: null,
+        leave_type: 'paid_time_off',
+      },
+      upcoming_requested: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      upcoming_approved: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      taken: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      pending_approval: {
+        type: 'limited',
+        hours: 0,
+        days: 0,
+      },
+      current_entitlement: {
+        type: 'limited',
+        hours: 0,
+        days: 23,
+      },
+      annual_entitlement: {
+        type: 'limited',
+        hours: 0,
+        days: 23,
+      },
+      annual_balance: {
+        type: 'limited',
+        hours: 0,
+        days: 23,
+      },
+      working_hours_per_day: 8,
+    },
+  ],
+};
+
 export const terminationResponse = {
   data: {
     offboarding: {
