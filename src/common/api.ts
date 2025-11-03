@@ -157,6 +157,16 @@ export type BookedTimeoffBeforeDateResponse = {
   bookedDaysAfterTermination: number;
 };
 
+/**
+ * Hook to retrieve booked time off data before and after a specific date for a specific employment.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch booked time off data for.
+ * @param {string} [params.date] - The date to fetch booked time off data for.
+ * @returns {BookedTimeoffBeforeDateResponse} - The booked time off data before and after the specific date.
+ *
+ * This hooks it's not taking into account unlimited time off or half days yet or even we you request several days in one request.
+ */
 export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
   employmentId,
   date,
@@ -197,6 +207,17 @@ export type SummaryTimeOffDataResponse = {
   remainingDays: number;
 };
 
+/**
+ * Hook to retrieve summary time off data for a specific employment.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch summary time off data for.
+ * @param {string} [params.proposedTerminationDate] - The proposed termination date to fetch summary time off data for.
+ * @returns {SummaryTimeOffDataResponse} - The summary time off data.
+ *
+ * This hook doesn't take into account unlimited time off or half days yet.
+ *
+ */
 export const useSummaryTimeOffDataQuery = ({
   employmentId,
   proposedTerminationDate,

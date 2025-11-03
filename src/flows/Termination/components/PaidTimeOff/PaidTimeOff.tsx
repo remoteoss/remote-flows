@@ -171,8 +171,15 @@ const DrawerTimeOff = ({
   );
 };
 
-type PaidTimeOffProps = PaidTimeOffRenderProps;
+export type PaidTimeOffProps = PaidTimeOffRenderProps;
 
+/**
+ * PaidTimeOff component
+ *
+ * This component is used to display the paid time off summary and details.
+ * It displays the summary data and a button to open the details drawer.
+ * When the details drawer is open, it displays the paid time off breakdown.
+ */
 export const PaidTimeOff = ({
   employeeName,
   proposedTerminationDate,

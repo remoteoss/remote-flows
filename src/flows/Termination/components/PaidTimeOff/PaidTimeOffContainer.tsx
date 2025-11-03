@@ -7,6 +7,14 @@ import {
 import { PaidTimeOffContainerProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 import { useState } from 'react';
 
+/**
+ * PaidTimeOffContainer component
+ *
+ * This is a container component that manages paid time off (PTO) data retrieval and state
+ * for the termination flow. It aggregates multiple time off-related queries and formats
+ * the termination date for display.
+ *
+ */
 export const PaidTimeOffContainer = ({
   proposedTerminationDate,
   employeeName,
