@@ -56,6 +56,7 @@ export type PaidTimeOffRenderProps = {
     data: SummaryTimeOffDataResponse;
     isLoading: boolean;
     isError: boolean;
+    error: Error | null;
   };
 };
 
