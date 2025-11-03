@@ -1,7 +1,6 @@
 import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   Drawer,
   DrawerTrigger,
@@ -46,7 +45,7 @@ const SummaryRow = ({
 
 const SummaryTimeOff = ({
   entitledDays,
-  takenDays,
+  usedDays,
   bookedDays,
   approvedDaysBeforeTermination,
   approvedDaysAfterTermination,
@@ -54,7 +53,7 @@ const SummaryTimeOff = ({
   proposedTerminationDate,
 }: {
   entitledDays: number;
-  takenDays: number;
+  usedDays: number;
   bookedDays: number;
   approvedDaysBeforeTermination: number;
   approvedDaysAfterTermination: number;
@@ -80,7 +79,7 @@ const SummaryTimeOff = ({
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
-        <p className='font-bold'>{pluralizeDays(takenDays)}</p>
+        <p className='font-bold'>{pluralizeDays(usedDays)}</p>
       </SummaryRow>
       <SummaryRow>
         <label>
@@ -169,13 +168,20 @@ type PaidTimeOffProps = PaidTimeOffRenderProps;
 export const PaidTimeOff = ({
   employeeName,
   proposedTerminationDate,
-  leavePoliciesSummaryQuery,
+  summaryData,
   formattedProposedTerminationDate,
   timeoffQuery,
   onOpenChange,
   open,
 }: PaidTimeOffProps) => {
-  const { data: leavePoliciesSummary } = leavePoliciesSummaryQuery || {};
+  const {
+    entitledDays,
+    bookedDays,
+    usedDays,
+    approvedDaysBeforeTermination,
+    approvedDaysAfterTermination,
+    remainingDays,
+  } = summaryData?.data || {};
   return (
     <div className='py-3'>
       <h3 className='RemoteFlows__PaidTimeOffTitle mb-2'>Paid time off</h3>
@@ -186,20 +192,19 @@ export const PaidTimeOff = ({
         and usage for the current annual leave period:
       </p>
       <div className='mb-2'>
-        {leavePoliciesSummary && (
-          <SummaryTimeOff
-            entitledDays={
-              (leavePoliciesSummary?.data?.[0].annual_entitlement as $TSFixMe)
-                .days || 0
-            }
-            takenDays={leavePoliciesSummary?.data?.[0].taken.days || 0}
-            bookedDays={0}
-            approvedDaysBeforeTermination={0}
-            approvedDaysAfterTermination={0}
-            remainingDays={0}
-            proposedTerminationDate={proposedTerminationDate}
-          />
-        )}
+        {!summaryData?.isLoading &&
+          !summaryData?.isError &&
+          summaryData?.data && (
+            <SummaryTimeOff
+              entitledDays={entitledDays}
+              usedDays={usedDays}
+              bookedDays={bookedDays}
+              approvedDaysBeforeTermination={approvedDaysBeforeTermination}
+              approvedDaysAfterTermination={approvedDaysAfterTermination}
+              remainingDays={remainingDays < 0 ? 0 : remainingDays}
+              proposedTerminationDate={proposedTerminationDate}
+            />
+          )}
         <DrawerTimeOff
           employeeName={employeeName}
           timeoffQuery={timeoffQuery}

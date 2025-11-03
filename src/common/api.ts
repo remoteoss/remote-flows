@@ -152,6 +152,91 @@ export const usePaidTimeoffBreakdownQuery = ({
   });
 };
 
+export type BookedTimeoffBeforeDateResponse = {
+  bookedDaysBeforeTermination: number;
+  bookedDaysAfterTermination: number;
+};
+
+export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
+  employmentId,
+  date,
+  options,
+}: {
+  employmentId: string;
+  date: string;
+  options?: { enabled: boolean };
+}) => {
+  return useTimeOffQuery<BookedTimeoffBeforeDateResponse>({
+    employmentId,
+    timeoffType: 'paid_time_off',
+    status: 'approved',
+    options: {
+      enabled: options?.enabled,
+      select: (data) => {
+        return {
+          bookedDaysBeforeTermination:
+            data?.data?.timeoffs?.filter((timeoff) => {
+              return new Date(timeoff?.start_date) <= new Date(date);
+            }).length || 0,
+          bookedDaysAfterTermination:
+            data?.data?.timeoffs?.filter((timeoff) => {
+              return new Date(timeoff?.start_date) > new Date(date);
+            }).length || 0,
+        };
+      },
+    },
+  });
+};
+
+export type SummaryTimeOffDataResponse = {
+  entitledDays: number;
+  bookedDays: number;
+  usedDays: number;
+  approvedDaysBeforeTermination: number;
+  approvedDaysAfterTermination: number;
+  remainingDays: number;
+};
+
+export const useSummaryTimeOffDataQuery = ({
+  employmentId,
+  proposedTerminationDate,
+}: {
+  employmentId: string;
+  proposedTerminationDate: string;
+}) => {
+  const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
+    employmentId,
+  });
+  const bookedTimeQuery = useBookedTimeoffBeforeAndAfterTerminationQuery({
+    employmentId,
+    date: proposedTerminationDate,
+  });
+
+  const entitledDays =
+    leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.days || 0;
+  const bookedDays =
+    leavePoliciesSummaryQuery.data?.data?.[0].booked?.days || 0;
+  const usedDays = leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0;
+  const approvedDaysBeforeTermination =
+    bookedTimeQuery.data?.bookedDaysBeforeTermination || 0;
+  const approvedDaysAfterTermination =
+    bookedTimeQuery.data?.bookedDaysAfterTermination || 0;
+  const remainingDays = entitledDays - bookedDays - usedDays;
+
+  return {
+    data: {
+      entitledDays,
+      bookedDays,
+      usedDays,
+      approvedDaysBeforeTermination,
+      approvedDaysAfterTermination,
+      remainingDays,
+    },
+    isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
+    isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,
+  };
+};
+
 /**
  * Hook to retrieve time off balance for a specific employment.
  *

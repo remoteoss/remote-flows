@@ -1,5 +1,9 @@
 import { ListLeavePoliciesSummaryResponse } from '@/src/client';
-import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
+import {
+  BookedTimeoffBeforeDateResponse,
+  PaidTimeoffBreakdownResponse,
+  SummaryTimeOffDataResponse,
+} from '@/src/common/api';
 import { UseQueryResult } from '@tanstack/react-query';
 
 export type PaidTimeOffRenderProps = {
@@ -13,6 +17,15 @@ export type PaidTimeOffRenderProps = {
   onOpenChange: () => void;
   open: boolean;
   timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;
+  bookedTimeBeforeAndAfterTerminationQuery: UseQueryResult<
+    BookedTimeoffBeforeDateResponse | undefined,
+    Error
+  >;
+  summaryData: {
+    data: SummaryTimeOffDataResponse;
+    isLoading: boolean;
+    isError: boolean;
+  };
 };
 
 export type PaidTimeOffContainerProps = {

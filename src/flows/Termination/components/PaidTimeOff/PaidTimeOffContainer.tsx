@@ -1,5 +1,7 @@
 import {
+  useBookedTimeoffBeforeAndAfterTerminationQuery,
   usePaidTimeoffBreakdownQuery,
+  useSummaryTimeOffDataQuery,
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api';
 import { PaidTimeOffContainerProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
@@ -33,6 +35,17 @@ export const PaidTimeOffContainer = ({
     },
   });
 
+  const bookedTimeBeforeAndAfterTerminationQuery =
+    useBookedTimeoffBeforeAndAfterTerminationQuery({
+      employmentId: terminationBag.employmentId,
+      date: proposedTerminationDate,
+    });
+
+  const summaryData = useSummaryTimeOffDataQuery({
+    employmentId: terminationBag.employmentId,
+    proposedTerminationDate,
+  });
+
   const onOpenChange = () => {
     setOpen((open) => !open);
   };
@@ -40,9 +53,11 @@ export const PaidTimeOffContainer = ({
   return render({
     leavePoliciesSummaryQuery,
     timeoffQuery,
+    bookedTimeBeforeAndAfterTerminationQuery,
     formattedProposedTerminationDate,
     employeeName,
     proposedTerminationDate,
+    summaryData,
     open,
     onOpenChange,
   });
