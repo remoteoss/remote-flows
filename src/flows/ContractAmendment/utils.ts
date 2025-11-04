@@ -37,8 +37,7 @@ export function buildInitialValues(
     (initialValuesAcc, field) => {
       // @ts-expect-error error
       if (employmentFields.includes(field)) {
-        const contractDetails = employment?.contract_details
-          ?.contract_details as Record<string, unknown>;
+        const contractDetails = employment?.contract_details;
         // @ts-expect-error error
         initialValuesAcc[field] = contractDetails[field];
       }
