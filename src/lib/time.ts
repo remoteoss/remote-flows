@@ -86,15 +86,6 @@ function convertToTotalHours(days: number, hours: number): number {
 }
 
 /**
- * Converts days and hours into total hours based on standard work day
- */
-const getHoursFromDaysAndHours = (daysAndHours: DaysAndHours): number => {
-  const { hours, days } = daysAndHours;
-
-  return convertToTotalHours(days, hours);
-};
-
-/**
  * Formats a time duration as decimal days with the specified suffix format.
  */
 function formatAsDays(
@@ -133,7 +124,10 @@ export function formatAsDecimal(
   const decimal = getDaysAndHoursAsDecimal(daysAndHours);
 
   if (shouldDisplayAsHours(decimal)) {
-    return formatAsHours(getHoursFromDaysAndHours(daysAndHours), suffixFormat);
+    return formatAsHours(
+      convertToTotalHours(daysAndHours.days, daysAndHours.hours),
+      suffixFormat,
+    );
   }
 
   return formatAsDays(decimal, suffixFormat);
