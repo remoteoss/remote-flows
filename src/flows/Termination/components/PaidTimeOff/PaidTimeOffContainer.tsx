@@ -48,6 +48,7 @@ export const PaidTimeOffContainer = ({
       date: proposedTerminationDate,
     });
 
+  // computed summary data
   const summaryData = useSummaryTimeOffDataQuery({
     employmentId: employmentId,
     proposedTerminationDate,
@@ -59,12 +60,30 @@ export const PaidTimeOffContainer = ({
 
   return render({
     leavePoliciesSummaryQuery,
-    timeoffQuery,
+    timeoffQuery: timeoffQuery || {
+      data: {
+        bookedDays: 0,
+        timeoffs: [],
+      },
+    },
     bookedTimeBeforeAndAfterTerminationQuery,
     formattedProposedTerminationDate,
     employeeName,
     proposedTerminationDate,
-    summaryData,
+    summaryData: summaryData ?? {
+      data: {
+        entitledDays: '0 days',
+        bookedDays: '0 days',
+        usedDays: '0 days',
+        approvedDaysBeforeTermination: '0 days',
+        approvedDaysAfterTermination: '0 days',
+        remainingDays: '0 days',
+        isUnlimitedPto: false,
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    },
     open,
     onOpenChange,
   });

@@ -23,8 +23,8 @@ import { createInformationField } from '@/src/components/form/jsf-utils/createFi
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
-import { useEmployment } from '@/src/flows/Onboarding/api';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
+import { useEmploymentQuery } from '@/src/common/api';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -63,7 +63,7 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const { data: employment } = useEmployment(employmentId);
+  const { data: employment } = useEmploymentQuery({ employmentId });
 
   const initialValues = buildInitialValues({
     ...stepState.values?.employee_communication,
@@ -161,11 +161,12 @@ export const useTermination = ({
       },
     };
   }, [
+    options?.jsfModify?.fields?.risk_assesment_info,
+    options?.jsfModify?.fields?.proposed_termination_date_info,
+    options?.jsfModify?.fields?.proposed_termination_date,
+    options?.jsfModify?.fields?.paid_time_off_info,
     employment?.basic_information?.name,
     formValues.proposed_termination_date,
-    options?.jsfModify?.fields?.paid_time_off_info,
-    options?.jsfModify?.fields?.proposed_termination_date_info,
-    options?.jsfModify?.fields?.risk_assesment_info,
     employmentId,
   ]);
 

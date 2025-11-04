@@ -1,6 +1,6 @@
 import {
   CreateContractAmendmentParams,
-  EmploymentShowResponse,
+  Employment,
   getShowContractAmendmentSchema,
   postAutomatableContractAmendment,
   postCreateContractAmendment,
@@ -26,7 +26,7 @@ import { FlowOptions } from '@/src/flows/types';
 
 type ContractAmendmentSchemaParams = {
   countryCode: string;
-  employment: EmploymentShowResponse | undefined;
+  employment: Employment | undefined;
   fieldValues: FieldValues | undefined;
   options?: ContractAmendmentParams['options'];
 };
@@ -53,7 +53,7 @@ const useContractAmendmentSchemaQuery = ({
           Authorization: ``,
         },
         query: {
-          employment_id: employment?.data?.employment?.id as string,
+          employment_id: employment?.id as string,
           country_code: countryCode,
           ...jsonSchemaQueryParam,
         },
@@ -195,9 +195,8 @@ export const useContractAmendment = ({
     );
 
     const payload = {
-      employment_id: employment?.data.employment?.id as string,
-      amendment_contract_id: employment?.data.employment
-        ?.active_contract_id as string,
+      employment_id: employment?.id as string,
+      amendment_contract_id: employment?.active_contract_id as string,
       contract_amendment: {
         ...parsedValues,
       },

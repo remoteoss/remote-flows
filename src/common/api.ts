@@ -8,6 +8,7 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
+import { Employment } from '@/src/flows/Onboarding/types';
 import {
   convertTotalHoursToDaysAndHours,
   convertToTotalHours,
@@ -40,7 +41,8 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
         path: { employment_id: employmentId },
       });
     },
-    select: ({ data }) => data,
+    enabled: !!employmentId,
+    select: ({ data }) => data?.data?.employment,
   });
 };
 
@@ -228,7 +230,36 @@ export type SummaryTimeOffDataResponse = {
   approvedDaysBeforeTermination: string;
   approvedDaysAfterTermination: string;
   remainingDays: string;
+  isUnlimitedPto: boolean;
 };
+
+function getMinimumStatutoryDays(employment?: Employment) {
+  const availablePto = employment?.contract_details?.available_pto as number;
+  const ptoType = employment?.contract_details?.available_pto_type as
+    | 'unlimited'
+    | 'fixed';
+  const countryCode = employment?.country?.code;
+
+  // Special handling for countries without statutory minimums
+  if (countryCode === 'USA' && ptoType === 'unlimited') {
+    // USA has no minimum, but Remote recommends 20
+    return {
+      value: availablePto === 0 ? 20 : availablePto,
+    };
+  }
+
+  // For most countries with unlimited PTO, available_pto IS the statutory minimum
+  if (ptoType === 'unlimited' && availablePto > 0) {
+    return {
+      value: availablePto,
+    };
+  }
+
+  // For fixed PTO, it's just the entitlement
+  return {
+    value: availablePto,
+  };
+}
 
 /**
  * Hook to retrieve summary time off data for a specific employment.
@@ -248,6 +279,10 @@ export const useSummaryTimeOffDataQuery = ({
   employmentId: string;
   proposedTerminationDate: string;
 }) => {
+  const employmentQuery = useEmploymentQuery({ employmentId });
+  const { value: minimumStatutoryDays } = getMinimumStatutoryDays(
+    employmentQuery.data,
+  );
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
     employmentId,
   });
@@ -256,8 +291,6 @@ export const useSummaryTimeOffDataQuery = ({
     date: proposedTerminationDate,
   });
 
-  // the entitled Days when it's unlimited we're assigning 0 days and hours, we need to handle this case
-  // with data from the BE which we don't have yet.
   const entitledDays =
     leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
     'limited'
@@ -267,7 +300,7 @@ export const useSummaryTimeOffDataQuery = ({
           hours:
             leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.hours,
         }
-      : { days: 0, hours: 0 };
+      : { days: minimumStatutoryDays, hours: 0 };
 
   const bookedDays = {
     days: leavePoliciesSummaryQuery.data?.data?.[0].booked.days || 0,
@@ -285,15 +318,19 @@ export const useSummaryTimeOffDataQuery = ({
   const approvedDaysAfterTermination = bookedTimeQuery.data
     ?.bookedDaysAfterTermination || { days: 0, hours: 0 };
 
-  const remainingTotalHours =
-    convertToTotalHours(entitledDays.days, entitledDays.hours) -
-    convertToTotalHours(bookedDays.days, bookedDays.hours) -
-    convertToTotalHours(usedDays.days, usedDays.hours);
+  const totalEntitledHours = convertToTotalHours(
+    entitledDays.days,
+    entitledDays.hours,
+  );
+  const totalUsedHours = convertToTotalHours(usedDays.days, usedDays.hours);
+  const totalBookedHours = convertToTotalHours(
+    bookedDays.days,
+    bookedDays.hours,
+  );
 
-  const remainingDays =
-    remainingTotalHours < 0
-      ? { days: 0, hours: 0 }
-      : convertTotalHoursToDaysAndHours(remainingTotalHours);
+  const remainingHours = totalEntitledHours - totalUsedHours - totalBookedHours;
+
+  const remainingDays = convertTotalHoursToDaysAndHours(remainingHours);
 
   return {
     data: {
@@ -318,6 +355,9 @@ export const useSummaryTimeOffDataQuery = ({
         days: remainingDays.days,
         hours: remainingDays.hours,
       }),
+      isUnlimitedPto:
+        employmentQuery.data?.contract_details?.available_pto_type ===
+        'unlimited',
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,

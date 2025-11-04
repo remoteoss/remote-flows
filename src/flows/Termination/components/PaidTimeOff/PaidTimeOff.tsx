@@ -43,6 +43,7 @@ const SummaryTimeOff = ({
   approvedDaysAfterTermination,
   remainingDays,
   proposedTerminationDate,
+  isUnlimitedPto,
 }: {
   entitledDays: string;
   usedDays: string;
@@ -51,6 +52,7 @@ const SummaryTimeOff = ({
   approvedDaysAfterTermination: string;
   remainingDays: string;
   proposedTerminationDate: string;
+  isUnlimitedPto: boolean;
 }) => {
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
@@ -64,7 +66,7 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {entitledDays}
+          {entitledDays} {isUnlimitedPto ? '(unlimited)' : ''}
         </p>
       </SummaryRow>
       <SummaryRow>
@@ -119,7 +121,7 @@ const DrawerTimeOff = ({
   onOpenChange: () => void;
   open: boolean;
 }) => {
-  const { data: timeoff } = timeoffQuery || {};
+  const { data: timeoff } = timeoffQuery;
   return (
     <Drawer
       open={open}
@@ -152,6 +154,8 @@ const DrawerTimeOff = ({
                     number: timeoff.duration,
                     singular: 'day',
                     plural: 'days',
+                    followCopyGuidelines: false,
+                    showNumber: true,
                   })}
                 </TableCell>
                 <TableCell>{timeoff.status}</TableCell>
@@ -166,6 +170,8 @@ const DrawerTimeOff = ({
           number: timeoff?.bookedDays,
           singular: 'day',
           plural: 'days',
+          followCopyGuidelines: false,
+          showNumber: true,
         })}{' '}
         booked
       </p>
@@ -198,14 +204,8 @@ export const PaidTimeOff = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
-  } = summaryData?.data || {
-    entitledDays: 0,
-    bookedDays: 0,
-    usedDays: 0,
-    approvedDaysBeforeTermination: 0,
-    approvedDaysAfterTermination: 0,
-    remainingDays: 0,
-  };
+    isUnlimitedPto,
+  } = summaryData.data;
   return (
     <div className='RemoteFlows__PaidTimeOff__Container py-3'>
       <h3 className='RemoteFlows__PaidTimeOff__Title mb-2'>Paid time off</h3>
@@ -227,6 +227,7 @@ export const PaidTimeOff = ({
               approvedDaysAfterTermination={approvedDaysAfterTermination}
               remainingDays={remainingDays}
               proposedTerminationDate={proposedTerminationDate}
+              isUnlimitedPto={isUnlimitedPto}
             />
           )}
         <DrawerTimeOff
