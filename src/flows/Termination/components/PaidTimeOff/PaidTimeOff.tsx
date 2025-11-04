@@ -152,6 +152,8 @@ const DrawerTimeOff = ({
                     number: timeoff.duration,
                     singular: 'day',
                     plural: 'days',
+                    followCopyGuidelines: false,
+                    showNumber: true,
                   })}
                 </TableCell>
                 <TableCell>{timeoff.status}</TableCell>
@@ -166,6 +168,8 @@ const DrawerTimeOff = ({
           number: timeoff?.bookedDays,
           singular: 'day',
           plural: 'days',
+          followCopyGuidelines: false,
+          showNumber: true,
         })}{' '}
         booked
       </p>
