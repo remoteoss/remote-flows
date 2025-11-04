@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.25.0
+
+### Minor Changes
+
+- add helpCenter link support to FieldSetField component (#545) [#545](https://github.com/remoteoss/remote-flows/pull/545)
+- parse minDate as ISO string to ensure correct date handling (#544) [#544](https://github.com/remoteoss/remote-flows/pull/544)
+
 ## 0.24.0
 
 ### Minor Changes
