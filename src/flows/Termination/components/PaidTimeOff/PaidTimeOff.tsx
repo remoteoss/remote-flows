@@ -66,7 +66,7 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {entitledDays} {isUnlimitedPto ? '(unlimited)' : ''}
+          {isUnlimitedPto ? 'Unlimited' : entitledDays}
         </p>
       </SummaryRow>
       <SummaryRow>
