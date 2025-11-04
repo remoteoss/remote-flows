@@ -8,7 +8,12 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
-import { formatAsDecimal } from '@/src/lib/time';
+import {
+  convertTotalHoursToDaysAndHours,
+  convertToTotalHours,
+  DaysAndHours,
+  formatAsDecimal,
+} from '@/src/lib/time';
 import { Client } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 
@@ -154,8 +159,8 @@ export const usePaidTimeoffBreakdownQuery = ({
 };
 
 export type BookedTimeoffBeforeDateResponse = {
-  bookedDaysBeforeTermination: number;
-  bookedDaysAfterTermination: number;
+  bookedDaysBeforeTermination: DaysAndHours;
+  bookedDaysAfterTermination: DaysAndHours;
 };
 
 /**
@@ -166,7 +171,7 @@ export type BookedTimeoffBeforeDateResponse = {
  * @param {string} [params.date] - The date to fetch booked time off data for.
  * @returns {BookedTimeoffBeforeDateResponse} - The booked time off data before and after the specific date.
  *
- * This hooks it's not taking into account unlimited time off or half days yet or even we you request several days in one request.
+ * This hook accounts for partial days and multiple timeoff_days per request.
  */
 export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
   employmentId,
@@ -184,15 +189,32 @@ export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
     options: {
       enabled: options?.enabled,
       select: (data) => {
+        let totalHoursBeforeTermination = 0;
+        let totalHoursAfterTermination = 0;
+
+        data?.data?.timeoffs?.forEach((timeoff) => {
+          // Sum all hours from timeoff_days
+          const totalHours =
+            timeoff?.timeoff_days?.reduce(
+              (sum, day) => sum + (day?.hours || 0),
+              0,
+            ) || 0;
+
+          // Check if the timeoff starts before or after the termination date
+          if (new Date(timeoff?.start_date) <= new Date(date)) {
+            totalHoursBeforeTermination += totalHours;
+          } else {
+            totalHoursAfterTermination += totalHours;
+          }
+        });
+
         return {
-          bookedDaysBeforeTermination:
-            data?.data?.timeoffs?.filter((timeoff) => {
-              return new Date(timeoff?.start_date) <= new Date(date);
-            }).length || 0,
-          bookedDaysAfterTermination:
-            data?.data?.timeoffs?.filter((timeoff) => {
-              return new Date(timeoff?.start_date) > new Date(date);
-            }).length || 0,
+          bookedDaysBeforeTermination: convertTotalHoursToDaysAndHours(
+            totalHoursBeforeTermination,
+          ),
+          bookedDaysAfterTermination: convertTotalHoursToDaysAndHours(
+            totalHoursAfterTermination,
+          ),
         };
       },
     },
@@ -234,6 +256,8 @@ export const useSummaryTimeOffDataQuery = ({
     date: proposedTerminationDate,
   });
 
+  // the entitled Days when it's unlimited we're assigning 0 days and hours, we need to handle this case
+  // with data from the BE which we don't have yet.
   const entitledDays =
     leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
     'limited'
@@ -244,20 +268,32 @@ export const useSummaryTimeOffDataQuery = ({
             leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.hours,
         }
       : { days: 0, hours: 0 };
+
   const bookedDays = {
     days: leavePoliciesSummaryQuery.data?.data?.[0].booked.days || 0,
     hours: leavePoliciesSummaryQuery.data?.data?.[0].booked.hours || 0,
   };
+
   const usedDays = {
     days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
     hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
   };
-  const approvedDaysBeforeTermination =
-    bookedTimeQuery.data?.bookedDaysBeforeTermination || 0;
-  const approvedDaysAfterTermination =
-    bookedTimeQuery.data?.bookedDaysAfterTermination || 0;
-  const remainingDays = entitledDays.days - bookedDays.days - usedDays.days;
-  const hours = entitledDays.hours - bookedDays.hours - usedDays.hours;
+
+  const approvedDaysBeforeTermination = bookedTimeQuery.data
+    ?.bookedDaysBeforeTermination || { days: 0, hours: 0 };
+
+  const approvedDaysAfterTermination = bookedTimeQuery.data
+    ?.bookedDaysAfterTermination || { days: 0, hours: 0 };
+
+  const remainingTotalHours =
+    convertToTotalHours(entitledDays.days, entitledDays.hours) -
+    convertToTotalHours(bookedDays.days, bookedDays.hours) -
+    convertToTotalHours(usedDays.days, usedDays.hours);
+
+  const remainingDays =
+    remainingTotalHours < 0
+      ? { days: 0, hours: 0 }
+      : convertTotalHoursToDaysAndHours(remainingTotalHours);
 
   return {
     data: {
@@ -271,16 +307,16 @@ export const useSummaryTimeOffDataQuery = ({
       }),
       usedDays: formatAsDecimal({ days: usedDays.days, hours: usedDays.hours }),
       approvedDaysBeforeTermination: formatAsDecimal({
-        days: approvedDaysBeforeTermination,
-        hours: 0,
+        days: approvedDaysBeforeTermination.days,
+        hours: approvedDaysBeforeTermination.hours,
       }),
       approvedDaysAfterTermination: formatAsDecimal({
-        days: approvedDaysAfterTermination,
-        hours: 0,
+        days: approvedDaysAfterTermination.days,
+        hours: approvedDaysAfterTermination.hours,
       }),
       remainingDays: formatAsDecimal({
-        days: remainingDays < 0 ? 0 : remainingDays,
-        hours: hours < 0 ? 0 : hours,
+        days: remainingDays.days,
+        hours: remainingDays.hours,
       }),
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,

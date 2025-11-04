@@ -1,6 +1,6 @@
 import { getSingularPluralUnit } from '@/src/lib/i18n';
 
-type DaysAndHours = {
+export type DaysAndHours = {
   hours: number;
   days: number;
 };
@@ -81,8 +81,17 @@ function formatAsHours(
 /**
  *  Converts days and hours into total hours based on standard work day
  */
-function convertToTotalHours(days: number, hours: number): number {
+export function convertToTotalHours(days: number, hours: number): number {
   return days * DEFAULT_WORK_HOURS + hours;
+}
+
+export function convertTotalHoursToDaysAndHours(
+  totalHours: number,
+): DaysAndHours {
+  return {
+    days: Math.floor(totalHours / DEFAULT_WORK_HOURS),
+    hours: totalHours % DEFAULT_WORK_HOURS,
+  };
 }
 
 /**
