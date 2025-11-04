@@ -90,7 +90,9 @@ describe('PaidTimeOff', () => {
     expect(summaryData).toHaveTextContent(
       'Approved before termination: 2 days',
     );
-    expect(summaryData).toHaveTextContent('Approved after termination: 2 days');
+    expect(summaryData).toHaveTextContent(
+      'Approved after termination: 2.5 days',
+    );
     expect(summaryData).toHaveTextContent('Remaining: 16 days');
   });
 });
