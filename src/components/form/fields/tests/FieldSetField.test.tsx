@@ -8,6 +8,14 @@ vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
 }));
 
+vi.mock('@/src/components/shared/zendesk-drawer/ZendeskTriggerButton', () => ({
+  ZendeskTriggerButton: ({ zendeskId, children, className }: $TSFixMe) => (
+    <button className={className} data-testid={`zendesk-button-${zendeskId}`}>
+      {children}
+    </button>
+  ),
+}));
+
 const defaultProps = {
   name: 'test-fieldset',
   title: 'Test Fieldset',
@@ -216,6 +224,56 @@ describe('FieldSetField', () => {
           expect.anything(),
         );
       });
+    });
+  });
+
+  describe('helpCenter link support', () => {
+    it('should render helpCenter link when provided with outset variant', () => {
+      renderWithFormContext({
+        variant: 'outset',
+        meta: {
+          helpCenter: {
+            callToAction: 'Learn more about this',
+            id: 12345,
+            url: 'https://zendesk.example.com/article/12345',
+            label: 'Help Center',
+          },
+        },
+      });
+
+      const helpLink = screen.getByRole('button', {
+        name: 'Learn more about this',
+      });
+      expect(helpLink).toBeInTheDocument();
+    });
+
+    it('should not render helpCenter link in outset variant when not provided', () => {
+      renderWithFormContext({
+        variant: 'outset',
+      });
+
+      expect(
+        screen.queryByRole('button', { name: 'Learn more about this' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should render helpCenter link in inset variant header when provided', () => {
+      renderWithFormContext({
+        variant: 'inset',
+        meta: {
+          helpCenter: {
+            callToAction: 'Need help?',
+            id: 54321,
+            url: 'https://zendesk.example.com/article/54321',
+            label: 'Help',
+          },
+        },
+      });
+
+      const helpLinks = screen.getAllByRole('button', {
+        name: 'Need help?',
+      });
+      expect(helpLinks.length).toBe(1);
     });
   });
 });

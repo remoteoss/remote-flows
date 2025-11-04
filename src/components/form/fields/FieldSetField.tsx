@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useFormContext } from 'react-hook-form';
+import { Fragment, useEffect, useRef } from 'react';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn, sanitizeHtml } from '@/src/lib/utils';
-import { SupportedTypes } from './types';
 import {
   $TSFixMe,
   Components,
   FieldSetToggleComponentProps,
 } from '@/src/types/remoteFlows';
 import { Statement, StatementProps } from '@/src/components/form/Statement';
-import { useFormContext } from 'react-hook-form';
-import { Fragment, useEffect, useRef } from 'react';
 import { useFormFields } from '@/src/context';
 import { Button } from '@/src/components/ui/button';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { SupportedTypes } from './types';
 
 type FieldBase = {
   label: string;
   name: string;
   description: string;
-  Component?: React.ComponentType<any>;
+  Component?: React.ComponentType<$TSFixMe>;
   inputType: SupportedTypes;
   multiple?: boolean;
 };
@@ -58,6 +58,14 @@ export type FieldSetProps = {
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
   variant: 'outset' | 'inset';
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: number;
+      url: string;
+      label: string;
+    };
+  } & Record<string, $TSFixMe>;
 };
 
 const DefaultToggleButton = ({
@@ -91,7 +99,9 @@ export function FieldSetField({
   extra,
   variant = 'outset',
   features,
+  meta,
 }: FieldSetProps) {
+  const { helpCenter } = meta || {};
   const { watch, setValue, trigger, formState } = useFormContext();
   const { components: formComponents } = useFormFields();
 
@@ -171,32 +181,50 @@ export function FieldSetField({
       >
         {label}
       </legend>
-      {variant === 'inset' && (
-        <div
-          className='RemoteFlows__FieldSetField__Header'
-          id={headerId}
-          data-state={isExpanded ? 'expanded' : 'collapsed'}
-          aria-expanded={isExpanded}
+      {helpCenter?.callToAction && helpCenter?.id && variant === 'outset' && (
+        <ZendeskTriggerButton
+          className='RemoteFlows__FieldSetField__HelpCenterLink mb-3'
+          zendeskId={helpCenter.id}
         >
-          <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
-          {features?.toggle?.enabled && (
-            <ToggleComponent
-              isExpanded={isExpanded}
-              onToggle={toggleExpanded}
-              aria-expanded={isExpanded}
-              aria-controls={contentId}
-              aria-label={`${isExpanded ? 'Hide' : 'Show'} ${label}`}
-              className={cn(
-                'RemoteFlows__FieldSetField__Toggle',
-                features.toggle?.className,
-              )}
+          {helpCenter.callToAction}
+        </ZendeskTriggerButton>
+      )}
+      {variant === 'inset' && (
+        <>
+          <div
+            className='RemoteFlows__FieldSetField__Header'
+            id={headerId}
+            data-state={isExpanded ? 'expanded' : 'collapsed'}
+            aria-expanded={isExpanded}
+          >
+            <h3 className={cn('RemoteFlows__FieldSetField__Title')}>{label}</h3>
+            {features?.toggle?.enabled && (
+              <ToggleComponent
+                isExpanded={isExpanded}
+                onToggle={toggleExpanded}
+                aria-expanded={isExpanded}
+                aria-controls={contentId}
+                aria-label={`${isExpanded ? 'Hide' : 'Show'} ${label}`}
+                className={cn(
+                  'RemoteFlows__FieldSetField__Toggle',
+                  features.toggle?.className,
+                )}
+              >
+                {isExpanded
+                  ? (features.toggle.labels?.collapse ?? 'Remove')
+                  : (features.toggle.labels?.expand ?? 'Define')}
+              </ToggleComponent>
+            )}
+          </div>
+          {helpCenter?.callToAction && helpCenter?.id && (
+            <ZendeskTriggerButton
+              className='RemoteFlows__FieldSetField__HelpCenterLink mb-3'
+              zendeskId={helpCenter.id}
             >
-              {isExpanded
-                ? (features.toggle.labels?.collapse ?? 'Remove')
-                : (features.toggle.labels?.expand ?? 'Define')}
-            </ToggleComponent>
+              {helpCenter.callToAction}
+            </ZendeskTriggerButton>
           )}
-        </div>
+        </>
       )}
       {isExpanded && (
         <div id={contentId} aria-labelledby={headerId} role='region'>
@@ -229,7 +257,7 @@ export function FieldSetField({
 
               if (field.Component) {
                 const { Component } = field as {
-                  Component: React.ComponentType<any>;
+                  Component: React.ComponentType<$TSFixMe>;
                 };
                 return <Component key={field.name} {...field} />;
               }

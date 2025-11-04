@@ -314,7 +314,7 @@ export const ContractorOnboardingWithProps = ({
 
 export const ContractorOnboardingForm = () => {
   const [formData, setFormData] = useState<ContractorOnboardingFormData>({
-    employmentId: import.meta.env.VITE_EMPLOYMENT_ID || '', // use your own employment ID
+    employmentId: import.meta.env.VITE_ONBOARDING_EMPLOYMENT_ID || '', // use your own employment ID
     externalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
