@@ -8,6 +8,7 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
+import { formatAsDecimal } from '@/src/lib/time';
 import { Client } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 
@@ -234,27 +235,53 @@ export const useSummaryTimeOffDataQuery = ({
   });
 
   const entitledDays =
-    (leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
-      'limited' &&
-      leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.days) ||
-    0;
-  const bookedDays =
-    leavePoliciesSummaryQuery.data?.data?.[0].booked?.days || 0;
-  const usedDays = leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0;
+    leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
+    'limited'
+      ? {
+          days: leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement
+            .days,
+          hours:
+            leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.hours,
+        }
+      : { days: 0, hours: 0 };
+  const bookedDays = {
+    days: leavePoliciesSummaryQuery.data?.data?.[0].booked.days || 0,
+    hours: leavePoliciesSummaryQuery.data?.data?.[0].booked.hours || 0,
+  };
+  const usedDays = {
+    days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
+    hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
+  };
   const approvedDaysBeforeTermination =
     bookedTimeQuery.data?.bookedDaysBeforeTermination || 0;
   const approvedDaysAfterTermination =
     bookedTimeQuery.data?.bookedDaysAfterTermination || 0;
-  const remainingDays = entitledDays - bookedDays - usedDays;
+  const remainingDays = entitledDays.days - bookedDays.days - usedDays.days;
+  const hours = entitledDays.hours - bookedDays.hours - usedDays.hours;
 
   return {
     data: {
-      entitledDays,
-      bookedDays,
-      usedDays,
-      approvedDaysBeforeTermination,
-      approvedDaysAfterTermination,
-      remainingDays: remainingDays < 0 ? 0 : remainingDays,
+      entitledDays: formatAsDecimal({
+        days: entitledDays.days,
+        hours: entitledDays.hours,
+      }),
+      bookedDays: formatAsDecimal({
+        days: bookedDays.days,
+        hours: bookedDays.hours,
+      }),
+      usedDays: formatAsDecimal({ days: usedDays.days, hours: usedDays.hours }),
+      approvedDaysBeforeTermination: formatAsDecimal({
+        days: approvedDaysBeforeTermination,
+        hours: 0,
+      }),
+      approvedDaysAfterTermination: formatAsDecimal({
+        days: approvedDaysAfterTermination,
+        hours: 0,
+      }),
+      remainingDays: formatAsDecimal({
+        days: remainingDays < 0 ? 0 : remainingDays,
+        hours: hours < 0 ? 0 : hours,
+      }),
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,

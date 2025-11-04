@@ -12,9 +12,7 @@ import {
 } from '@/src/components/ui/table';
 import { UseQueryResult } from '@tanstack/react-query';
 import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
-
-const pluralizeDays = (count: number) =>
-  `${count} ${count === 1 ? 'day' : 'days'}`;
+import { getSingularPluralUnit } from '@/src/lib/i18n';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -66,19 +64,19 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {pluralizeDays(entitledDays)}
+          {entitledDays}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days booked</label>
         <p data-testid='booked-days' className='font-bold'>
-          {pluralizeDays(bookedDays)}
+          {bookedDays}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
         <p data-testid='used-days' className='font-bold'>
-          {pluralizeDays(usedDays)}
+          {usedDays}
         </p>
       </SummaryRow>
       <SummaryRow>
@@ -86,19 +84,19 @@ const SummaryTimeOff = ({
           Approved for use before {formattedProposedTerminationDate}
         </label>
         <p data-testid='approved-days-before-termination' className='font-bold'>
-          {pluralizeDays(approvedDaysBeforeTermination)}
+          {approvedDaysBeforeTermination}
         </p>
       </SummaryRow>
       <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
         <p data-testid='approved-days-after-termination' className='font-bold'>
-          {pluralizeDays(approvedDaysAfterTermination)}
+          {approvedDaysAfterTermination}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days remaining unused</label>
         <p data-testid='remaining-days' className='font-bold'>
-          {pluralizeDays(remainingDays)}
+          {remainingDays}
         </p>
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
@@ -149,7 +147,13 @@ const DrawerTimeOff = ({
                 <TableCell className='font-medium w-[250px]'>
                   {timeoff.formattedDate}
                 </TableCell>
-                <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
+                <TableCell>
+                  {getSingularPluralUnit({
+                    number: timeoff.duration,
+                    singular: 'day',
+                    plural: 'days',
+                  })}
+                </TableCell>
                 <TableCell>{timeoff.status}</TableCell>
               </TableRow>
             ))}
@@ -157,7 +161,13 @@ const DrawerTimeOff = ({
         </Table>
       </div>
       <p className='text-xs'>
-        Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
+        Total of{' '}
+        {getSingularPluralUnit({
+          number: timeoff?.bookedDays,
+          singular: 'day',
+          plural: 'days',
+        })}{' '}
+        booked
       </p>
     </Drawer>
   );
