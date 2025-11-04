@@ -280,7 +280,7 @@ export const useSummaryTimeOffDataQuery = ({
   proposedTerminationDate: string;
 }) => {
   const employmentQuery = useEmploymentQuery({ employmentId });
-  const { value: minimumStatutoryDays } = getMinimumStatutoryDays(
+  const { value: minimumStatutoryDays = 0 } = getMinimumStatutoryDays(
     employmentQuery.data,
   );
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
