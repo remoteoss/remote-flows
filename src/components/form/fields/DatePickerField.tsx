@@ -22,7 +22,7 @@ import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 export type DatePickerFieldProps = JSFField & {
   onChange?: (value: any) => void;
@@ -45,7 +45,7 @@ export function DatePickerField({
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
     minDateValue = getMinStartDate(rest.meta.mot);
   } else if (minDate) {
-    minDateValue = new Date(minDate);
+    minDateValue = parse(minDate, 'yyyy-MM-dd', new Date());
   }
 
   return (
