@@ -222,12 +222,12 @@ export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
 };
 
 export type SummaryTimeOffDataResponse = {
-  entitledDays: number;
-  bookedDays: number;
-  usedDays: number;
-  approvedDaysBeforeTermination: number;
-  approvedDaysAfterTermination: number;
-  remainingDays: number;
+  entitledDays: string;
+  bookedDays: string;
+  usedDays: string;
+  approvedDaysBeforeTermination: string;
+  approvedDaysAfterTermination: string;
+  remainingDays: string;
 };
 
 /**

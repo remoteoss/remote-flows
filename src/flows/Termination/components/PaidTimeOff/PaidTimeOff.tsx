@@ -44,12 +44,12 @@ const SummaryTimeOff = ({
   remainingDays,
   proposedTerminationDate,
 }: {
-  entitledDays: number;
-  usedDays: number;
-  bookedDays: number;
-  approvedDaysBeforeTermination: number;
-  approvedDaysAfterTermination: number;
-  remainingDays: number;
+  entitledDays: string;
+  usedDays: string;
+  bookedDays: string;
+  approvedDaysBeforeTermination: string;
+  approvedDaysAfterTermination: string;
+  remainingDays: string;
   proposedTerminationDate: string;
 }) => {
   const formattedProposedTerminationDate = new Date(
