@@ -3,6 +3,7 @@ import {
   getIndexTimeoff,
   getShowEmployment,
   ListTimeoffResponse,
+  Timeoff,
   TimeoffStatus,
   TimeoffType,
 } from '@/src/client';
@@ -165,6 +166,29 @@ export type BookedTimeoffBeforeDateResponse = {
   bookedDaysAfterTermination: DaysAndHours;
 };
 
+function getAllTimeoffHoursBeforeDate(
+  timeoffs: Timeoff[],
+  terminationDate: Date,
+): { before: number; after: number } {
+  let before = 0;
+  let after = 0;
+
+  timeoffs.forEach((timeoff) => {
+    timeoff.timeoff_days?.forEach((day) => {
+      const dayDate = new Date(day.day);
+      if (dayDate <= terminationDate) {
+        // Day is on or before termination
+        before += day.hours || 0;
+      } else {
+        // Day is after termination
+        after += day.hours || 0;
+      }
+    });
+  });
+
+  return { before, after };
+}
+
 /**
  * Hook to retrieve booked time off data before and after a specific date for a specific employment.
  *
@@ -191,37 +215,31 @@ export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
     options: {
       enabled: options?.enabled,
       select: (data) => {
-        let totalHoursBeforeTermination = 0;
-        let totalHoursAfterTermination = 0;
-
-        data?.data?.timeoffs?.forEach((timeoff) => {
-          // Sum all hours from timeoff_days
-          const totalHours =
-            timeoff?.timeoff_days?.reduce(
-              (sum, day) => sum + (day?.hours || 0),
-              0,
-            ) || 0;
-
-          // Check if the timeoff starts before or after the termination date
-          if (new Date(timeoff?.start_date) <= new Date(date)) {
-            totalHoursBeforeTermination += totalHours;
-          } else {
-            totalHoursAfterTermination += totalHours;
-          }
-        });
+        const { before, after } = getAllTimeoffHoursBeforeDate(
+          data?.data?.timeoffs || [],
+          new Date(date),
+        );
 
         return {
-          bookedDaysBeforeTermination: convertTotalHoursToDaysAndHours(
-            totalHoursBeforeTermination,
-          ),
-          bookedDaysAfterTermination: convertTotalHoursToDaysAndHours(
-            totalHoursAfterTermination,
-          ),
+          bookedDaysBeforeTermination: convertTotalHoursToDaysAndHours(before),
+          bookedDaysAfterTermination: convertTotalHoursToDaysAndHours(after),
         };
       },
     },
   });
 };
+
+function formatTimeoffValues(
+  values: Record<string, DaysAndHours>,
+): Record<string, string> {
+  return Object.entries(values).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key]: formatAsDecimal(value),
+    }),
+    {},
+  );
+}
 
 export type SummaryTimeOffDataResponse = {
   entitledDays: string;
@@ -332,29 +350,18 @@ export const useSummaryTimeOffDataQuery = ({
 
   const remainingDays = convertTotalHoursToDaysAndHours(remainingHours);
 
+  const formattedValues = formatTimeoffValues({
+    entitledDays,
+    bookedDays,
+    usedDays,
+    approvedDaysBeforeTermination,
+    approvedDaysAfterTermination,
+    remainingDays,
+  });
+
   return {
     data: {
-      entitledDays: formatAsDecimal({
-        days: entitledDays.days,
-        hours: entitledDays.hours,
-      }),
-      bookedDays: formatAsDecimal({
-        days: bookedDays.days,
-        hours: bookedDays.hours,
-      }),
-      usedDays: formatAsDecimal({ days: usedDays.days, hours: usedDays.hours }),
-      approvedDaysBeforeTermination: formatAsDecimal({
-        days: approvedDaysBeforeTermination.days,
-        hours: approvedDaysBeforeTermination.hours,
-      }),
-      approvedDaysAfterTermination: formatAsDecimal({
-        days: approvedDaysAfterTermination.days,
-        hours: approvedDaysAfterTermination.hours,
-      }),
-      remainingDays: formatAsDecimal({
-        days: remainingDays.days,
-        hours: remainingDays.hours,
-      }),
+      ...formattedValues,
       isUnlimitedPto:
         employmentQuery.data?.contract_details?.available_pto_type ===
         'unlimited',
