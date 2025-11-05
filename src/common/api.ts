@@ -357,7 +357,7 @@ export const useSummaryTimeOffDataQuery = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
-  }) as SummaryTimeOffDataResponse;
+  }) as Omit<SummaryTimeOffDataResponse, 'isUnlimitedPto'>;
 
   return {
     data: {
