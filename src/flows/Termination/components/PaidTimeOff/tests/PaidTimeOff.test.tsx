@@ -95,4 +95,96 @@ describe('PaidTimeOff', () => {
     );
     expect(summaryData).toHaveTextContent('Remaining: 16 days');
   });
+
+  it('should render the PaidTimeOff component with unlimited PTO', async () => {
+    server.use(
+      http.get('*/v1/leave-policies/summary/*', () => {
+        return HttpResponse.json({
+          data: [
+            {
+              ...timeoffLeavePoliciesSummaryResponse.data[0],
+              annual_entitlement: {
+                type: 'unlimited',
+                // Note: hours and days are not sent when type is 'unlimited'
+              },
+            },
+          ],
+        });
+      }),
+      http.get('*/v1/employments/test-id', () => {
+        return HttpResponse.json({
+          data: {
+            employment: {
+              id: 'test-id',
+              contract_details: {
+                available_pto_type: 'unlimited',
+                available_pto: 20, // Statutory minimum for this country
+              },
+              country: {
+                code: 'ES', // Spain - uses statutory minimum when unlimited
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    render(
+      <PaidTimeOffContainer
+        employmentId='test-id'
+        employeeName='Jane Smith'
+        proposedTerminationDate='2025-12-15'
+        render={(props) => {
+          return (
+            <div>
+              <h3>Paid time off - Unlimited</h3>
+              <p>Employee: {props.employeeName}</p>
+              {props.summaryData?.isLoading && <div>Loading...</div>}
+              {props.summaryData?.isError && <div>Error loading data</div>}
+              {!props.summaryData?.isLoading && !props.summaryData?.isError && (
+                <div data-testid='unlimited-summary-data'>
+                  <p>
+                    Is Unlimited:{' '}
+                    {props.summaryData?.data?.isUnlimitedPto ? 'Yes' : 'No'}
+                  </p>
+                  <p>Entitled: {props.summaryData?.data?.entitledDays}</p>
+                  <p>Booked: {props.summaryData?.data?.bookedDays}</p>
+                  <p>Used: {props.summaryData?.data?.usedDays}</p>
+                  <p>
+                    Approved before termination:{' '}
+                    {props.summaryData?.data?.approvedDaysBeforeTermination}
+                  </p>
+                  <p>
+                    Approved after termination:{' '}
+                    {props.summaryData?.data?.approvedDaysAfterTermination}
+                  </p>
+                  <p>Remaining: {props.summaryData?.data?.remainingDays}</p>
+                </div>
+              )}
+            </div>
+          );
+        }}
+      />,
+      { wrapper },
+    );
+
+    // Wait for the data to load
+    await waitFor(() => {
+      expect(screen.getByTestId('unlimited-summary-data')).toBeInTheDocument();
+    });
+
+    const summaryData = screen.getByTestId('unlimited-summary-data');
+    expect(summaryData).toHaveTextContent('Is Unlimited: Yes');
+    expect(summaryData).toHaveTextContent('Entitled: 20 days'); // Uses available_pto value from employment
+    expect(summaryData).toHaveTextContent('Booked: 4 days');
+    expect(summaryData).toHaveTextContent('Used: 3 days');
+    expect(summaryData).toHaveTextContent(
+      'Approved before termination: 2 days',
+    );
+    expect(summaryData).toHaveTextContent(
+      'Approved after termination: 2.5 days',
+    );
+    // Remaining: 20 - 4 - 3 = 13 days
+    expect(summaryData).toHaveTextContent('Remaining: 13 days');
+  });
 });
