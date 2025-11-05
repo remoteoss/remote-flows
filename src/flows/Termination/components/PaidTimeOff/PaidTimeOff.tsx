@@ -2,14 +2,7 @@ import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/src/components/ui/table';
+import { Table } from '@/src/components/shared/table/Table';
 import { UseQueryResult } from '@tanstack/react-query';
 import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 import { getSingularPluralUnit } from '@/src/lib/i18n';
@@ -110,6 +103,31 @@ const SummaryTimeOff = ({
   );
 };
 
+const TIMEOFF_COLUMNS = [
+  {
+    id: 'formattedDate',
+    label: 'Dates',
+    className: 'w-[250px]',
+    cellClassName: 'font-medium',
+  },
+  {
+    id: 'duration',
+    label: 'Duration',
+    render: (value: number) =>
+      getSingularPluralUnit({
+        number: value,
+        singular: 'day',
+        plural: 'days',
+        followCopyGuidelines: false,
+        showNumber: true,
+      }),
+  },
+  {
+    id: 'status',
+    label: 'Status',
+  },
+];
+
 const DrawerTimeOff = ({
   employeeName,
   timeoffQuery,
@@ -154,34 +172,7 @@ const DrawerTimeOff = ({
         <span className='font-bold'>{currentEntitlementDays}</span>
       </p>
       <div className='mb-2'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className='w-[250px]'>Dates</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {timeoff?.timeoffs.map((timeoff) => (
-              <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
-                <TableCell className='font-medium w-[250px]'>
-                  {timeoff.formattedDate}
-                </TableCell>
-                <TableCell>
-                  {getSingularPluralUnit({
-                    number: timeoff.duration,
-                    singular: 'day',
-                    plural: 'days',
-                    followCopyGuidelines: false,
-                    showNumber: true,
-                  })}
-                </TableCell>
-                <TableCell>{timeoff.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <Table data={timeoff?.timeoffs} columns={TIMEOFF_COLUMNS} />
       </div>
       <p className='text-xs'>
         Total of{' '}
