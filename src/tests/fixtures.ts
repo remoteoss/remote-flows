@@ -18,7 +18,7 @@ export const employment = {
       contract_details: {
         annual_gross_salary: 35000000,
         annual_training_hours_ack: 'acknowledged',
-        available_pto: 22,
+        available_pto: 23,
         available_pto_type: 'unlimited',
         benefits: {
           business_travel_insurance:

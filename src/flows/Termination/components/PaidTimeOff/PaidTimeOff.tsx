@@ -36,7 +36,6 @@ const SummaryRow = ({
 };
 
 const SummaryTimeOff = ({
-  entitledDays,
   usedDays,
   bookedDays,
   approvedDaysBeforeTermination,
@@ -44,8 +43,8 @@ const SummaryTimeOff = ({
   remainingDays,
   proposedTerminationDate,
   isUnlimitedPto,
+  currentEntitlementDays,
 }: {
-  entitledDays: string;
   usedDays: string;
   bookedDays: string;
   approvedDaysBeforeTermination: string;
@@ -53,6 +52,7 @@ const SummaryTimeOff = ({
   remainingDays: string;
   proposedTerminationDate: string;
   isUnlimitedPto: boolean;
+  currentEntitlementDays: string;
 }) => {
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
@@ -66,7 +66,7 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {isUnlimitedPto ? 'Unlimited' : entitledDays}
+          {isUnlimitedPto ? 'Unlimited' : currentEntitlementDays}
         </p>
       </SummaryRow>
       <SummaryRow>
@@ -113,13 +113,21 @@ const SummaryTimeOff = ({
 const DrawerTimeOff = ({
   employeeName,
   timeoffQuery,
+  entitledDays,
+  countryName,
+  currentEntitlementDays,
+  formattedProposedTerminationDate,
   onOpenChange,
   open,
 }: {
   employeeName: string;
   timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;
+  entitledDays: string;
+  countryName: string;
+  currentEntitlementDays: string;
   onOpenChange: () => void;
   open: boolean;
+  formattedProposedTerminationDate: string;
 }) => {
   const { data: timeoff } = timeoffQuery;
   return (
@@ -134,6 +142,17 @@ const DrawerTimeOff = ({
       }
       className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'
     >
+      <p className='text-[#09090B] font-medium mb-4'>
+        This list is for your information only.
+      </p>
+      <p className='text-xs text-[#09090B] mb-1 flex items-center justify-between gap-2'>
+        <span>Annual entitlement for {countryName}</span>
+        <span className='font-bold'>{entitledDays}</span>
+      </p>
+      <p className='text-xs text-[#09090B] mb-6 flex items-center justify-between gap-2'>
+        <span>Entitlement up to {formattedProposedTerminationDate}</span>
+        <span className='font-bold'>{currentEntitlementDays}</span>
+      </p>
       <div className='mb-2'>
         <Table>
           <TableHeader>
@@ -194,6 +213,7 @@ export const PaidTimeOff = ({
   summaryData,
   formattedProposedTerminationDate,
   timeoffQuery,
+  employment,
   onOpenChange,
   open,
 }: PaidTimeOffProps) => {
@@ -204,6 +224,7 @@ export const PaidTimeOff = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
+    currentEntitlementDays,
     isUnlimitedPto,
   } = summaryData.data;
   return (
@@ -220,9 +241,9 @@ export const PaidTimeOff = ({
           !summaryData?.isError &&
           summaryData?.data && (
             <SummaryTimeOff
-              entitledDays={entitledDays}
               usedDays={usedDays}
               bookedDays={bookedDays}
+              currentEntitlementDays={currentEntitlementDays}
               approvedDaysBeforeTermination={approvedDaysBeforeTermination}
               approvedDaysAfterTermination={approvedDaysAfterTermination}
               remainingDays={remainingDays}
@@ -233,7 +254,11 @@ export const PaidTimeOff = ({
         <DrawerTimeOff
           employeeName={employeeName}
           timeoffQuery={timeoffQuery}
+          entitledDays={entitledDays}
+          currentEntitlementDays={currentEntitlementDays}
+          countryName={employment?.country?.name ?? 'Unknown'}
           onOpenChange={onOpenChange}
+          formattedProposedTerminationDate={formattedProposedTerminationDate}
           open={open}
         />
       </div>

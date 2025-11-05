@@ -147,6 +147,7 @@ export const useTermination = ({
                   employeeName={employment?.basic_information?.name as string}
                   proposedTerminationDate={formValues.proposed_termination_date}
                   employmentId={employmentId}
+                  employment={employment}
                   render={(props) => {
                     if (CustomComponent) {
                       return <CustomComponent {...props} />;
@@ -165,9 +166,9 @@ export const useTermination = ({
     options?.jsfModify?.fields?.proposed_termination_date_info,
     options?.jsfModify?.fields?.proposed_termination_date,
     options?.jsfModify?.fields?.paid_time_off_info,
-    employment?.basic_information?.name,
     formValues.proposed_termination_date,
     employmentId,
+    employment,
   ]);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =

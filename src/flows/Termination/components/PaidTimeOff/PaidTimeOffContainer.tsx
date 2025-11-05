@@ -19,6 +19,7 @@ export const PaidTimeOffContainer = ({
   proposedTerminationDate,
   employeeName,
   employmentId,
+  employment,
   render,
 }: PaidTimeOffContainerProps) => {
   const [open, setOpen] = useState(false);
@@ -52,6 +53,7 @@ export const PaidTimeOffContainer = ({
   const summaryData = useSummaryTimeOffDataQuery({
     employmentId: employmentId,
     proposedTerminationDate,
+    employment: employment,
   });
 
   const onOpenChange = () => {
@@ -84,6 +86,7 @@ export const PaidTimeOffContainer = ({
       isError: false,
       error: null,
     },
+    employment: employment,
     open,
     onOpenChange,
   });

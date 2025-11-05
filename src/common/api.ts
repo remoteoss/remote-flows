@@ -162,7 +162,13 @@ export const usePaidTimeoffBreakdownQuery = ({
 };
 
 export type BookedTimeoffBeforeDateResponse = {
+  /*
+   * The number of days booked before termination.
+   */
   bookedDaysBeforeTermination: DaysAndHours;
+  /*
+   * The number of days booked after termination.
+   */
   bookedDaysAfterTermination: DaysAndHours;
 };
 
@@ -242,12 +248,37 @@ function formatTimeoffValues(
 }
 
 export type SummaryTimeOffDataResponse = {
+  /*
+   * The number of days entitled to per year.
+   */
   entitledDays: string;
+  /*
+   * The number of days booked.
+   */
   bookedDays: string;
+  /*
+   * The number of days used.
+   */
   usedDays: string;
+  /*
+   * The number of days current entitlement, better than entitledDays because it takes into account the accrued value.
+   */
+  currentEntitlementDays: string;
+  /*
+   * The number of days approved before termination.
+   */
   approvedDaysBeforeTermination: string;
+  /*
+   * The number of days approved after termination.
+   */
   approvedDaysAfterTermination: string;
+  /*
+   * The number of days remaining.
+   */
   remainingDays: string;
+  /*
+   * Whether the PTO is unlimited or not.
+   */
   isUnlimitedPto: boolean;
 };
 
@@ -293,14 +324,14 @@ function getMinimumStatutoryDays(employment?: Employment) {
 export const useSummaryTimeOffDataQuery = ({
   employmentId,
   proposedTerminationDate,
+  employment,
 }: {
   employmentId: string;
   proposedTerminationDate: string;
+  employment?: Employment;
 }) => {
-  const employmentQuery = useEmploymentQuery({ employmentId });
-  const { value: minimumStatutoryDays = 0 } = getMinimumStatutoryDays(
-    employmentQuery.data,
-  );
+  const { value: minimumStatutoryDays = 0 } =
+    getMinimumStatutoryDays(employment);
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
     employmentId,
   });
@@ -325,6 +356,19 @@ export const useSummaryTimeOffDataQuery = ({
     hours: leavePoliciesSummaryQuery.data?.data?.[0].booked.hours || 0,
   };
 
+  const currentEntitlementDays =
+    leavePoliciesSummaryQuery.data?.data?.[0].current_entitlement.type ===
+    'limited'
+      ? {
+          days:
+            leavePoliciesSummaryQuery.data?.data?.[0].current_entitlement
+              .days || 0,
+          hours:
+            leavePoliciesSummaryQuery.data?.data?.[0].current_entitlement
+              .hours || 0,
+        }
+      : { days: minimumStatutoryDays, hours: 0 };
+
   const usedDays = {
     days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
     hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
@@ -336,9 +380,9 @@ export const useSummaryTimeOffDataQuery = ({
   const approvedDaysAfterTermination = bookedTimeQuery.data
     ?.bookedDaysAfterTermination || { days: 0, hours: 0 };
 
-  const totalEntitledHours = convertToTotalHours(
-    entitledDays.days,
-    entitledDays.hours,
+  const totalCurrentEntitlementHours = convertToTotalHours(
+    currentEntitlementDays.days,
+    currentEntitlementDays.hours,
   );
   const totalUsedHours = convertToTotalHours(usedDays.days, usedDays.hours);
   const totalBookedHours = convertToTotalHours(
@@ -346,7 +390,8 @@ export const useSummaryTimeOffDataQuery = ({
     bookedDays.hours,
   );
 
-  const remainingHours = totalEntitledHours - totalUsedHours - totalBookedHours;
+  const remainingHours =
+    totalCurrentEntitlementHours - totalUsedHours - totalBookedHours;
 
   const remainingDays = convertTotalHoursToDaysAndHours(remainingHours);
 
@@ -357,14 +402,14 @@ export const useSummaryTimeOffDataQuery = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
+    currentEntitlementDays,
   }) as Omit<SummaryTimeOffDataResponse, 'isUnlimitedPto'>;
 
   return {
     data: {
       ...formattedValues,
       isUnlimitedPto:
-        employmentQuery.data?.contract_details?.available_pto_type ===
-        'unlimited',
+        employment?.contract_details?.available_pto_type === 'unlimited',
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,
