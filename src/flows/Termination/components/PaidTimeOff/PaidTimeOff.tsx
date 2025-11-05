@@ -12,9 +12,7 @@ import {
 } from '@/src/components/ui/table';
 import { UseQueryResult } from '@tanstack/react-query';
 import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
-
-const pluralizeDays = (count: number) =>
-  `${count} ${count === 1 ? 'day' : 'days'}`;
+import { getSingularPluralUnit } from '@/src/lib/i18n';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -45,14 +43,16 @@ const SummaryTimeOff = ({
   approvedDaysAfterTermination,
   remainingDays,
   proposedTerminationDate,
+  isUnlimitedPto,
 }: {
-  entitledDays: number;
-  usedDays: number;
-  bookedDays: number;
-  approvedDaysBeforeTermination: number;
-  approvedDaysAfterTermination: number;
-  remainingDays: number;
+  entitledDays: string;
+  usedDays: string;
+  bookedDays: string;
+  approvedDaysBeforeTermination: string;
+  approvedDaysAfterTermination: string;
+  remainingDays: string;
   proposedTerminationDate: string;
+  isUnlimitedPto: boolean;
 }) => {
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
@@ -66,19 +66,19 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {pluralizeDays(entitledDays)}
+          {isUnlimitedPto ? 'Unlimited' : entitledDays}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days booked</label>
         <p data-testid='booked-days' className='font-bold'>
-          {pluralizeDays(bookedDays)}
+          {bookedDays}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Number of days already used</label>
         <p data-testid='used-days' className='font-bold'>
-          {pluralizeDays(usedDays)}
+          {usedDays}
         </p>
       </SummaryRow>
       <SummaryRow>
@@ -86,19 +86,19 @@ const SummaryTimeOff = ({
           Approved for use before {formattedProposedTerminationDate}
         </label>
         <p data-testid='approved-days-before-termination' className='font-bold'>
-          {pluralizeDays(approvedDaysBeforeTermination)}
+          {approvedDaysBeforeTermination}
         </p>
       </SummaryRow>
       <SummaryRow withBorder>
         <label>Approved for use after {formattedProposedTerminationDate}</label>
         <p data-testid='approved-days-after-termination' className='font-bold'>
-          {pluralizeDays(approvedDaysAfterTermination)}
+          {approvedDaysAfterTermination}
         </p>
       </SummaryRow>
       <SummaryRow>
         <label>Total days remaining unused</label>
         <p data-testid='remaining-days' className='font-bold'>
-          {pluralizeDays(remainingDays)}
+          {remainingDays}
         </p>
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
@@ -121,7 +121,7 @@ const DrawerTimeOff = ({
   onOpenChange: () => void;
   open: boolean;
 }) => {
-  const { data: timeoff } = timeoffQuery || {};
+  const { data: timeoff } = timeoffQuery;
   return (
     <Drawer
       open={open}
@@ -149,7 +149,15 @@ const DrawerTimeOff = ({
                 <TableCell className='font-medium w-[250px]'>
                   {timeoff.formattedDate}
                 </TableCell>
-                <TableCell>{pluralizeDays(timeoff.duration)}</TableCell>
+                <TableCell>
+                  {getSingularPluralUnit({
+                    number: timeoff.duration,
+                    singular: 'day',
+                    plural: 'days',
+                    followCopyGuidelines: false,
+                    showNumber: true,
+                  })}
+                </TableCell>
                 <TableCell>{timeoff.status}</TableCell>
               </TableRow>
             ))}
@@ -157,7 +165,15 @@ const DrawerTimeOff = ({
         </Table>
       </div>
       <p className='text-xs'>
-        Total of {pluralizeDays(timeoff?.bookedDays || 0)} booked
+        Total of{' '}
+        {getSingularPluralUnit({
+          number: timeoff?.bookedDays,
+          singular: 'day',
+          plural: 'days',
+          followCopyGuidelines: false,
+          showNumber: true,
+        })}{' '}
+        booked
       </p>
     </Drawer>
   );
@@ -188,14 +204,8 @@ export const PaidTimeOff = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
-  } = summaryData?.data || {
-    entitledDays: 0,
-    bookedDays: 0,
-    usedDays: 0,
-    approvedDaysBeforeTermination: 0,
-    approvedDaysAfterTermination: 0,
-    remainingDays: 0,
-  };
+    isUnlimitedPto,
+  } = summaryData.data;
   return (
     <div className='RemoteFlows__PaidTimeOff__Container py-3'>
       <h3 className='RemoteFlows__PaidTimeOff__Title mb-2'>Paid time off</h3>
@@ -217,6 +227,7 @@ export const PaidTimeOff = ({
               approvedDaysAfterTermination={approvedDaysAfterTermination}
               remainingDays={remainingDays}
               proposedTerminationDate={proposedTerminationDate}
+              isUnlimitedPto={isUnlimitedPto}
             />
           )}
         <DrawerTimeOff

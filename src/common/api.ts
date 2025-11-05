@@ -3,11 +3,19 @@ import {
   getIndexTimeoff,
   getShowEmployment,
   ListTimeoffResponse,
+  Timeoff,
   TimeoffStatus,
   TimeoffType,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
+import { Employment } from '@/src/flows/Onboarding/types';
+import {
+  convertTotalHoursToDaysAndHours,
+  convertToTotalHours,
+  DaysAndHours,
+  formatAsDecimal,
+} from '@/src/lib/time';
 import { Client } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 
@@ -34,7 +42,8 @@ export const useEmploymentQuery = ({ employmentId }: UseEmployment) => {
         path: { employment_id: employmentId },
       });
     },
-    select: ({ data }) => data,
+    enabled: !!employmentId,
+    select: ({ data }) => data?.data?.employment,
   });
 };
 
@@ -153,9 +162,32 @@ export const usePaidTimeoffBreakdownQuery = ({
 };
 
 export type BookedTimeoffBeforeDateResponse = {
-  bookedDaysBeforeTermination: number;
-  bookedDaysAfterTermination: number;
+  bookedDaysBeforeTermination: DaysAndHours;
+  bookedDaysAfterTermination: DaysAndHours;
 };
+
+function getAllTimeoffHoursBeforeDate(
+  timeoffs: Timeoff[],
+  terminationDate: Date,
+): { before: number; after: number } {
+  let before = 0;
+  let after = 0;
+
+  timeoffs.forEach((timeoff) => {
+    timeoff.timeoff_days?.forEach((day) => {
+      const dayDate = new Date(day.day);
+      if (dayDate <= terminationDate) {
+        // Day is on or before termination
+        before += day.hours || 0;
+      } else {
+        // Day is after termination
+        after += day.hours || 0;
+      }
+    });
+  });
+
+  return { before, after };
+}
 
 /**
  * Hook to retrieve booked time off data before and after a specific date for a specific employment.
@@ -165,7 +197,7 @@ export type BookedTimeoffBeforeDateResponse = {
  * @param {string} [params.date] - The date to fetch booked time off data for.
  * @returns {BookedTimeoffBeforeDateResponse} - The booked time off data before and after the specific date.
  *
- * This hooks it's not taking into account unlimited time off or half days yet or even we you request several days in one request.
+ * This hook accounts for partial days and multiple timeoff_days per request.
  */
 export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
   employmentId,
@@ -183,29 +215,69 @@ export const useBookedTimeoffBeforeAndAfterTerminationQuery = ({
     options: {
       enabled: options?.enabled,
       select: (data) => {
+        const { before, after } = getAllTimeoffHoursBeforeDate(
+          data?.data?.timeoffs || [],
+          new Date(date),
+        );
+
         return {
-          bookedDaysBeforeTermination:
-            data?.data?.timeoffs?.filter((timeoff) => {
-              return new Date(timeoff?.start_date) <= new Date(date);
-            }).length || 0,
-          bookedDaysAfterTermination:
-            data?.data?.timeoffs?.filter((timeoff) => {
-              return new Date(timeoff?.start_date) > new Date(date);
-            }).length || 0,
+          bookedDaysBeforeTermination: convertTotalHoursToDaysAndHours(before),
+          bookedDaysAfterTermination: convertTotalHoursToDaysAndHours(after),
         };
       },
     },
   });
 };
 
+function formatTimeoffValues(
+  values: Record<string, DaysAndHours>,
+): Record<string, string> {
+  return Object.entries(values).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key]: formatAsDecimal(value),
+    }),
+    {},
+  );
+}
+
 export type SummaryTimeOffDataResponse = {
-  entitledDays: number;
-  bookedDays: number;
-  usedDays: number;
-  approvedDaysBeforeTermination: number;
-  approvedDaysAfterTermination: number;
-  remainingDays: number;
+  entitledDays: string;
+  bookedDays: string;
+  usedDays: string;
+  approvedDaysBeforeTermination: string;
+  approvedDaysAfterTermination: string;
+  remainingDays: string;
+  isUnlimitedPto: boolean;
 };
+
+function getMinimumStatutoryDays(employment?: Employment) {
+  const availablePto = employment?.contract_details?.available_pto as number;
+  const ptoType = employment?.contract_details?.available_pto_type as
+    | 'unlimited'
+    | 'fixed';
+  const countryCode = employment?.country?.code;
+
+  // Special handling for countries without statutory minimums
+  if (countryCode === 'USA' && ptoType === 'unlimited') {
+    // USA has no minimum, but Remote recommends 20
+    return {
+      value: availablePto === 0 ? 20 : availablePto,
+    };
+  }
+
+  // For most countries with unlimited PTO, available_pto IS the statutory minimum
+  if (ptoType === 'unlimited' && availablePto > 0) {
+    return {
+      value: availablePto,
+    };
+  }
+
+  // For fixed PTO, it's just the entitlement
+  return {
+    value: availablePto,
+  };
+}
 
 /**
  * Hook to retrieve summary time off data for a specific employment.
@@ -225,6 +297,10 @@ export const useSummaryTimeOffDataQuery = ({
   employmentId: string;
   proposedTerminationDate: string;
 }) => {
+  const employmentQuery = useEmploymentQuery({ employmentId });
+  const { value: minimumStatutoryDays = 0 } = getMinimumStatutoryDays(
+    employmentQuery.data,
+  );
   const leavePoliciesSummaryQuery = useTimeOffLeavePoliciesSummaryQuery({
     employmentId,
   });
@@ -234,27 +310,61 @@ export const useSummaryTimeOffDataQuery = ({
   });
 
   const entitledDays =
-    (leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
-      'limited' &&
-      leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.days) ||
-    0;
-  const bookedDays =
-    leavePoliciesSummaryQuery.data?.data?.[0].booked?.days || 0;
-  const usedDays = leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0;
-  const approvedDaysBeforeTermination =
-    bookedTimeQuery.data?.bookedDaysBeforeTermination || 0;
-  const approvedDaysAfterTermination =
-    bookedTimeQuery.data?.bookedDaysAfterTermination || 0;
-  const remainingDays = entitledDays - bookedDays - usedDays;
+    leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
+    'limited'
+      ? {
+          days: leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement
+            .days,
+          hours:
+            leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.hours,
+        }
+      : { days: minimumStatutoryDays, hours: 0 };
+
+  const bookedDays = {
+    days: leavePoliciesSummaryQuery.data?.data?.[0].booked.days || 0,
+    hours: leavePoliciesSummaryQuery.data?.data?.[0].booked.hours || 0,
+  };
+
+  const usedDays = {
+    days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
+    hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
+  };
+
+  const approvedDaysBeforeTermination = bookedTimeQuery.data
+    ?.bookedDaysBeforeTermination || { days: 0, hours: 0 };
+
+  const approvedDaysAfterTermination = bookedTimeQuery.data
+    ?.bookedDaysAfterTermination || { days: 0, hours: 0 };
+
+  const totalEntitledHours = convertToTotalHours(
+    entitledDays.days,
+    entitledDays.hours,
+  );
+  const totalUsedHours = convertToTotalHours(usedDays.days, usedDays.hours);
+  const totalBookedHours = convertToTotalHours(
+    bookedDays.days,
+    bookedDays.hours,
+  );
+
+  const remainingHours = totalEntitledHours - totalUsedHours - totalBookedHours;
+
+  const remainingDays = convertTotalHoursToDaysAndHours(remainingHours);
+
+  const formattedValues = formatTimeoffValues({
+    entitledDays,
+    bookedDays,
+    usedDays,
+    approvedDaysBeforeTermination,
+    approvedDaysAfterTermination,
+    remainingDays,
+  }) as Omit<SummaryTimeOffDataResponse, 'isUnlimitedPto'>;
 
   return {
     data: {
-      entitledDays,
-      bookedDays,
-      usedDays,
-      approvedDaysBeforeTermination,
-      approvedDaysAfterTermination,
-      remainingDays: remainingDays < 0 ? 0 : remainingDays,
+      ...formattedValues,
+      isUnlimitedPto:
+        employmentQuery.data?.contract_details?.available_pto_type ===
+        'unlimited',
     },
     isLoading: leavePoliciesSummaryQuery.isLoading || bookedTimeQuery.isLoading,
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,

@@ -186,7 +186,7 @@ export const TerminationWithProps = ({
           personal_email: 'john.doe@example.com',
           additional_comments:
             'Employee has been notified. Please process final paycheck and benefits termination.',
-          proposed_termination_date: '2025-10-30',
+          proposed_termination_date: new Date().toISOString(),
           reason_description:
             'Performance did not meet expectations despite multiple coaching sessions and performance improvement plan.',
           risk_assessment_reasons: [
