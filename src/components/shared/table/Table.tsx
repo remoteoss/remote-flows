@@ -11,8 +11,8 @@ import {
 import { cn } from '@/src/lib/utils';
 import React from 'react';
 
-export type ColumnDef<T> = {
-  id: string;
+export type ColumnDef<T = $TSFixMe> = {
+  id: keyof T;
   label: React.ReactNode;
   className?: string;
   cellClassName?: string;
@@ -47,7 +47,7 @@ export const Table = React.forwardRef<
         <TableRow>
           {columns.map((column) => (
             <TableHead
-              key={column.id}
+              key={String(column.id)}
               className={cn('RemoteFlows__TableHead', column.className)}
             >
               {column.label}
@@ -60,7 +60,7 @@ export const Table = React.forwardRef<
           <TableRow key={getRowKey(row, rowIndex)}>
             {columns.map((column) => (
               <TableCell
-                key={column.id}
+                key={String(column.id)}
                 className={cn(
                   'RemoteFlows__TableCell',
                   column.className,

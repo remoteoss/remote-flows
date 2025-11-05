@@ -6,6 +6,7 @@ import { Table } from '@/src/components/shared/table/Table';
 import { UseQueryResult } from '@tanstack/react-query';
 import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 import { getSingularPluralUnit } from '@/src/lib/i18n';
+import { ColumnDef } from '@/src/components/shared/table/Table';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -103,7 +104,13 @@ const SummaryTimeOff = ({
   );
 };
 
-const TIMEOFF_COLUMNS = [
+type TimeoffRow = {
+  formattedDate: string;
+  duration: number;
+  status: string;
+};
+
+const TIMEOFF_COLUMNS: ColumnDef<TimeoffRow>[] = [
   {
     id: 'formattedDate',
     label: 'Dates',
