@@ -5,10 +5,19 @@ export const additionalInformationSchema = {
       additionalProperties: false,
       allOf: [],
       properties: {
+        acknowledge_termination_procedure_info: {
+          type: 'null',
+          title: 'Acknowledge termination procedure info',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+          meta: {
+            ignoreValue: true,
+          },
+        },
         acknowledge_termination_procedure: {
           description: '',
-          title:
-            'I, {{requesterName}} have read and agree to the procedures as defined in the termination form.',
+          title: 'I agree to the procedures in this form',
           type: 'boolean',
           'x-jsf-presentation': {
             direction: 'column',

@@ -25,6 +25,8 @@ import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
 import { useEmploymentQuery } from '@/src/common/api';
+import { AcknowledgeInformationContainer } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInfomationContainer';
+import { AcknowledgeInformation } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformation';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -159,6 +161,33 @@ export const useTermination = ({
             },
           },
         },
+        acknowledge_termination_procedure_info: {
+          ...(options?.jsfModify?.fields
+            ?.acknowledge_termination_procedure_info as $TSFixMe),
+          'x-jsf-presentation': {
+            ...(
+              options?.jsfModify?.fields
+                ?.acknowledge_termination_procedure_info as $TSFixMe
+            )?.['x-jsf-presentation'],
+            Component: () => {
+              const CustomComponent = (
+                options?.jsfModify?.fields
+                  ?.acknowledge_termination_procedure_info as $TSFixMe
+              )?.['x-jsf-presentation']?.Component;
+
+              return (
+                <AcknowledgeInformationContainer
+                  render={(props) => {
+                    if (CustomComponent) {
+                      return <CustomComponent {...props} />;
+                    }
+                    return <AcknowledgeInformation {...props} />;
+                  }}
+                />
+              );
+            },
+          },
+        },
       },
     };
   }, [
@@ -166,9 +195,10 @@ export const useTermination = ({
     options?.jsfModify?.fields?.proposed_termination_date_info,
     options?.jsfModify?.fields?.proposed_termination_date,
     options?.jsfModify?.fields?.paid_time_off_info,
+    options?.jsfModify?.fields?.acknowledge_termination_procedure_info,
+    employment,
     formValues.proposed_termination_date,
     employmentId,
-    employment,
   ]);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
