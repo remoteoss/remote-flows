@@ -2,20 +2,26 @@ import {
   CreateContractDocument,
   getShowContractDocument,
   getShowContractorContractDetailsCountry,
+  getIndexSubscription,
+  ManageContractorPlusSubscriptionOperationsParams,
   postCreateContractDocument,
+  postManageContractorPlusSubscriptionSubscription,
   postSignContractDocument,
   SignContractDocument,
 } from '@/src/client';
 import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
+import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import { FlowOptions } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
+import { formatCurrency } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 
 /**
  * Get the contract document signature schema
@@ -99,6 +105,58 @@ export const useGetShowContractDocument = ({
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
       return data?.data;
+    },
+  });
+};
+
+/**
+ * Get the contractor subscriptions for the given employment id
+ * @param employmentId - The employment ID
+ * @returns The contractor subscriptions available
+ */
+export const useGetContractorSubscriptions = ({
+  employmentId,
+  options,
+}: {
+  employmentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contractor-subscriptions', employmentId],
+    queryFn: async () => {
+      return getIndexSubscription({
+        client: client as Client,
+        path: { employment_id: employmentId },
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => {
+      return data?.data;
+    },
+  });
+};
+
+/**
+ * Upgrade or downgrade contractor subscription
+ */
+export const usePostManageContractorSubscriptions = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      payload,
+    }: {
+      employmentId: string;
+      payload: ManageContractorPlusSubscriptionOperationsParams;
+    }) => {
+      return postManageContractorPlusSubscriptionSubscription({
+        client: client as Client,
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+      });
     },
   });
 };
@@ -202,4 +260,50 @@ export const useContractorOnboardingDetailsSchema = ({
       };
     },
   });
+};
+
+export const useContractorSubscriptionSchemaField = (
+  employmentId: string,
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+) => {
+  const { data: contractorSubscriptions, isLoading: isLoading } =
+    useGetContractorSubscriptions({
+      employmentId: employmentId,
+      options: {
+        queryOptions: options?.queryOptions,
+      },
+    });
+
+  const { schema: selectContractorSubscriptionSchema } = modify(
+    selectContractorSubscriptionStepSchema.data.schema,
+    options?.jsfModify || {},
+  );
+
+  const form = createHeadlessForm(selectContractorSubscriptionSchema);
+
+  if (contractorSubscriptions) {
+    const field = form.fields.find((field) => field.name === 'subscription');
+    if (field) {
+      const options = contractorSubscriptions
+        .filter((opts) => opts.product.identifier !== corProductIdentifier)
+        .map((opts) => {
+          let formattedPrice = '';
+          if (opts.price.amount) {
+            formattedPrice = formatCurrency(
+              opts.price.amount,
+              opts.currency.symbol,
+            );
+          }
+          const label = `${opts.product.name} - ${formattedPrice}`;
+          const value = opts.product.identifier;
+          return { label, value };
+        });
+      field.options = options;
+    }
+  }
+
+  return {
+    isLoading,
+    form,
+  };
 };

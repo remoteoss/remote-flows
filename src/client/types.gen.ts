@@ -222,15 +222,6 @@ export type DeclinedWorkAuthozation = {
   status: 'declined_by_manager';
 };
 
-/**
- * Free trial relating to a company's product
- */
-export type FreeTrial = {
-  end_date?: NullableDate;
-  start_date?: NullableDate;
-  status: 'active' | 'expired' | 'eligible' | 'ineligible';
-};
-
 export type CreateSsoConfigurationResponse = {
   data: CreateSsoConfigurationResult;
 };
@@ -929,11 +920,6 @@ export type CompanyDepartment = {
   id: string;
   name: string;
 };
-
-export type ContractorOfRecordPlanSummary = {
-  minimum_fee: ExMoneyValue;
-  percentage_fee: Decimal;
-} | null;
 
 export type ClientCredentialsResponse = BaseTokenResponse;
 
@@ -2406,6 +2392,7 @@ export type ProbationCompletionLetter = {
  */
 export type Product = {
   frequency: string;
+  identifier?: string;
   name: string;
   tier: string;
 };
@@ -4411,16 +4398,6 @@ export type TimesheetStatus =
   | 'processed';
 
 export type ContractorSubscriptionsSummary = {
-  active_contractors_count: number;
-  billable_contractors?: Array<{
-    slug?: Slug;
-    user?: {
-      name?: string;
-      profile_picture?: string;
-      slug?: Slug;
-    };
-  }>;
-  billable_contractors_count: number;
   company_product: {
     slug?: UuidSlug;
   };
@@ -4428,28 +4405,12 @@ export type ContractorSubscriptionsSummary = {
     expiration_date?: _Date;
     percent?: Decimal;
   };
-  contractor_of_record_plan?: ContractorOfRecordPlanSummary;
   currency: Currency;
-  eligibility_questionnaire?: {
-    is_blocking: boolean;
-    questions: {
-      [key: string]: unknown;
-    };
-    responses: {
-      [key: string]: unknown;
-    };
-    slug: UuidSlug;
-    submitted_at: DateTime;
-    type: 'contractor_of_record';
-  } | null;
-  free_trial: FreeTrial;
   is_termination_fees_enabled?: boolean;
-  next_invoice_date: _Date;
   price: {
     amount?: number;
   };
   product: Product;
-  summary_period: string;
   total_amount: number | null;
   total_discount?: number;
   total_in_advance?: number;
@@ -4513,19 +4474,6 @@ export type TimeoffEntitlement = {
 export type TooManyRequestsResponse = {
   message?: string;
 };
-
-export type EligibilityQuestionnaire = {
-  is_blocking: boolean;
-  questions: {
-    [key: string]: unknown;
-  };
-  responses: {
-    [key: string]: unknown;
-  };
-  slug: UuidSlug;
-  submitted_at: DateTime;
-  type: 'contractor_of_record';
-} | null;
 
 /**
  * Recurring Incentive response
@@ -5205,14 +5153,6 @@ export type ParamsToCreateExpense = {
  * Unique ID of related department, if any. Otherwise, null.
  */
 export type DepartmentId = string | null;
-
-/**
- * a money amount and its currency
- */
-export type ExMoneyValue = {
-  amount?: string;
-  currency?: string;
-};
 
 export type CreateProbationCompletionLetterParams = {
   /**
