@@ -154,7 +154,8 @@ const DrawerTimeOff = ({
   open: boolean;
   formattedProposedTerminationDate: string;
 }) => {
-  const { data: timeoff } = timeoffQuery;
+  const { data: timeoff, isLoading } = timeoffQuery;
+
   return (
     <Drawer
       open={open}
@@ -167,31 +168,51 @@ const DrawerTimeOff = ({
       }
       className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'
     >
-      <p className='text-[#09090B] font-medium mb-4'>
-        This list is for your information only.
-      </p>
-      <p className='text-xs text-[#09090B] mb-1 flex items-center justify-between gap-2'>
-        <span>Annual entitlement for {countryName}</span>
-        <span className='font-bold'>{entitledDays}</span>
-      </p>
-      <p className='text-xs text-[#09090B] mb-6 flex items-center justify-between gap-2'>
-        <span>Entitlement up to {formattedProposedTerminationDate}</span>
-        <span className='font-bold'>{currentEntitlementDays}</span>
-      </p>
-      <div className='mb-2'>
-        <Table data={timeoff?.timeoffs} columns={TIMEOFF_COLUMNS} />
-      </div>
-      <p className='text-xs'>
-        Total of{' '}
-        {getSingularPluralUnit({
-          number: timeoff?.bookedDays,
-          singular: 'day',
-          plural: 'days',
-          followCopyGuidelines: false,
-          showNumber: true,
-        })}{' '}
-        booked
-      </p>
+      {!isLoading && (
+        <>
+          {Array.isArray(timeoff?.timeoffs) && timeoff?.timeoffs?.length > 0 ? (
+            <>
+              <p className='text-[#09090B] font-medium mb-4'>
+                This list is for your information only.
+              </p>
+              <p className='text-xs text-[#09090B] mb-1 flex items-center justify-between gap-2'>
+                <span>Annual entitlement for {countryName}</span>
+                <span className='font-bold'>{entitledDays}</span>
+              </p>
+              <p className='text-xs text-[#09090B] mb-6 flex items-center justify-between gap-2'>
+                <span>
+                  Entitlement up to {formattedProposedTerminationDate}
+                </span>
+                <span className='font-bold'>{currentEntitlementDays}</span>
+              </p>
+              <div className='mb-2'>
+                <Table data={timeoff?.timeoffs} columns={TIMEOFF_COLUMNS} />
+              </div>
+              <p className='text-xs'>
+                Total of{' '}
+                {getSingularPluralUnit({
+                  number: timeoff?.bookedDays,
+                  singular: 'day',
+                  plural: 'days',
+                  followCopyGuidelines: false,
+                  showNumber: true,
+                })}{' '}
+                booked
+              </p>
+            </>
+          ) : (
+            <>
+              <p className='font-medium mb-1 text-[#09090B]'>
+                No recorded time off
+              </p>
+              <p className='text-sm text-[#09090B]'>
+                According to our records, {employeeName} has not taken any time
+                off this year.
+              </p>
+            </>
+          )}
+        </>
+      )}
     </Drawer>
   );
 };
