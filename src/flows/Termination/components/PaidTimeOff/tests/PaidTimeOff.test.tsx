@@ -10,6 +10,8 @@ import {
   approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
+import { employment } from '@/src/tests/fixtures';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +57,10 @@ describe('PaidTimeOff', () => {
               {!props.summaryData?.isLoading && !props.summaryData?.isError && (
                 <div data-testid='summary-data'>
                   <p>Entitled: {props.summaryData?.data?.entitledDays} days</p>
+                  <p>
+                    Current Entitlement:{' '}
+                    {props.summaryData?.data?.currentEntitlementDays} days
+                  </p>
                   <p>Booked: {props.summaryData?.data?.bookedDays} days</p>
                   <p>Used: {props.summaryData?.data?.usedDays} days</p>
                   <p>
@@ -84,7 +90,12 @@ describe('PaidTimeOff', () => {
     });
 
     const summaryData = screen.getByTestId('summary-data');
-    expect(summaryData).toHaveTextContent('Entitled: 23 days');
+    expect(summaryData).toHaveTextContent(
+      `Entitled: ${timeoffLeavePoliciesSummaryResponse.data[0].annual_entitlement.days} days`,
+    );
+    expect(summaryData).toHaveTextContent(
+      `Current Entitlement: ${timeoffLeavePoliciesSummaryResponse.data[0].current_entitlement.days} days`,
+    );
     expect(summaryData).toHaveTextContent('Booked: 4 days');
     expect(summaryData).toHaveTextContent('Used: 3 days');
     expect(summaryData).toHaveTextContent(
@@ -107,30 +118,19 @@ describe('PaidTimeOff', () => {
                 type: 'unlimited',
                 // Note: hours and days are not sent when type is 'unlimited'
               },
+              current_entitlement: {
+                type: 'unlimited',
+                // Note: hours and days are not sent when type is 'unlimited'
+              },
             },
           ],
-        });
-      }),
-      http.get('*/v1/employments/test-id', () => {
-        return HttpResponse.json({
-          data: {
-            employment: {
-              id: 'test-id',
-              contract_details: {
-                available_pto_type: 'unlimited',
-                available_pto: 20, // Statutory minimum for this country
-              },
-              country: {
-                code: 'ES', // Spain - uses statutory minimum when unlimited
-              },
-            },
-          },
         });
       }),
     );
 
     render(
       <PaidTimeOffContainer
+        employment={employment.data.employment as $TSFixMe}
         employmentId='test-id'
         employeeName='Jane Smith'
         proposedTerminationDate='2025-12-15'
@@ -148,6 +148,10 @@ describe('PaidTimeOff', () => {
                     {props.summaryData?.data?.isUnlimitedPto ? 'Yes' : 'No'}
                   </p>
                   <p>Entitled: {props.summaryData?.data?.entitledDays}</p>
+                  <p>
+                    Current Entitlement:{' '}
+                    {props.summaryData?.data?.currentEntitlementDays}
+                  </p>
                   <p>Booked: {props.summaryData?.data?.bookedDays}</p>
                   <p>Used: {props.summaryData?.data?.usedDays}</p>
                   <p>
@@ -175,7 +179,12 @@ describe('PaidTimeOff', () => {
 
     const summaryData = screen.getByTestId('unlimited-summary-data');
     expect(summaryData).toHaveTextContent('Is Unlimited: Yes');
-    expect(summaryData).toHaveTextContent('Entitled: 20 days'); // Uses available_pto value from employment
+    expect(summaryData).toHaveTextContent(
+      `Entitled: ${employment.data.employment.contract_details.available_pto} days`,
+    );
+    expect(summaryData).toHaveTextContent(
+      `Current Entitlement: ${employment.data.employment.contract_details.available_pto} days`,
+    );
     expect(summaryData).toHaveTextContent('Booked: 4 days');
     expect(summaryData).toHaveTextContent('Used: 3 days');
     expect(summaryData).toHaveTextContent(
@@ -184,7 +193,7 @@ describe('PaidTimeOff', () => {
     expect(summaryData).toHaveTextContent(
       'Approved after termination: 2.5 days',
     );
-    // Remaining: 20 - 4 - 3 = 13 days
-    expect(summaryData).toHaveTextContent('Remaining: 13 days');
+    // Remaining: 23 - 4 - 3 = 16 days
+    expect(summaryData).toHaveTextContent('Remaining: 16 days');
   });
 });

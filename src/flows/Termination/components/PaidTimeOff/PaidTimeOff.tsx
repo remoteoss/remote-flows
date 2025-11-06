@@ -2,17 +2,11 @@ import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/src/components/ui/table';
+import { Table } from '@/src/components/shared/table/Table';
 import { UseQueryResult } from '@tanstack/react-query';
 import { PaidTimeOffRenderProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 import { getSingularPluralUnit } from '@/src/lib/i18n';
+import { ColumnDef } from '@/src/components/shared/table/Table';
 
 const rowBase =
   'RemoteFlows__SummaryRow flex justify-between items-center py-2 text-xs';
@@ -36,7 +30,6 @@ const SummaryRow = ({
 };
 
 const SummaryTimeOff = ({
-  entitledDays,
   usedDays,
   bookedDays,
   approvedDaysBeforeTermination,
@@ -44,8 +37,8 @@ const SummaryTimeOff = ({
   remainingDays,
   proposedTerminationDate,
   isUnlimitedPto,
+  currentEntitlementDays,
 }: {
-  entitledDays: string;
   usedDays: string;
   bookedDays: string;
   approvedDaysBeforeTermination: string;
@@ -53,6 +46,7 @@ const SummaryTimeOff = ({
   remainingDays: string;
   proposedTerminationDate: string;
   isUnlimitedPto: boolean;
+  currentEntitlementDays: string;
 }) => {
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
@@ -66,7 +60,7 @@ const SummaryTimeOff = ({
       <SummaryRow withBorder>
         <label>Number of days entitled to per year</label>
         <p data-testid='entitled-days' className='font-bold'>
-          {isUnlimitedPto ? 'Unlimited' : entitledDays}
+          {isUnlimitedPto ? 'Unlimited' : currentEntitlementDays}
         </p>
       </SummaryRow>
       <SummaryRow>
@@ -110,16 +104,55 @@ const SummaryTimeOff = ({
   );
 };
 
+type TimeoffRow = {
+  formattedDate: string;
+  duration: number;
+  status: string;
+};
+
+const TIMEOFF_COLUMNS: ColumnDef<TimeoffRow>[] = [
+  {
+    id: 'formattedDate',
+    label: 'Dates',
+    className: 'w-[250px]',
+    cellClassName: 'font-medium',
+  },
+  {
+    id: 'duration',
+    label: 'Duration',
+    render: (value: number) =>
+      getSingularPluralUnit({
+        number: value,
+        singular: 'day',
+        plural: 'days',
+        followCopyGuidelines: false,
+        showNumber: true,
+      }),
+  },
+  {
+    id: 'status',
+    label: 'Status',
+  },
+];
+
 const DrawerTimeOff = ({
   employeeName,
   timeoffQuery,
+  entitledDays,
+  countryName,
+  currentEntitlementDays,
+  formattedProposedTerminationDate,
   onOpenChange,
   open,
 }: {
   employeeName: string;
   timeoffQuery: UseQueryResult<PaidTimeoffBreakdownResponse | undefined, Error>;
+  entitledDays: string;
+  countryName: string;
+  currentEntitlementDays: string;
   onOpenChange: () => void;
   open: boolean;
+  formattedProposedTerminationDate: string;
 }) => {
   const { data: timeoff, isLoading } = timeoffQuery;
 
@@ -139,35 +172,21 @@ const DrawerTimeOff = ({
         <>
           {Array.isArray(timeoff?.timeoffs) && timeoff?.timeoffs?.length > 0 ? (
             <>
+              <p className='text-[#09090B] font-medium mb-4'>
+                This list is for your information only.
+              </p>
+              <p className='text-xs text-[#09090B] mb-1 flex items-center justify-between gap-2'>
+                <span>Annual entitlement for {countryName}</span>
+                <span className='font-bold'>{entitledDays}</span>
+              </p>
+              <p className='text-xs text-[#09090B] mb-6 flex items-center justify-between gap-2'>
+                <span>
+                  Entitlement up to {formattedProposedTerminationDate}
+                </span>
+                <span className='font-bold'>{currentEntitlementDays}</span>
+              </p>
               <div className='mb-2'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className='w-[250px]'>Dates</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {timeoff?.timeoffs.map((timeoff) => (
-                      <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
-                        <TableCell className='font-medium w-[250px]'>
-                          {timeoff.formattedDate}
-                        </TableCell>
-                        <TableCell>
-                          {getSingularPluralUnit({
-                            number: timeoff.duration,
-                            singular: 'day',
-                            plural: 'days',
-                            followCopyGuidelines: false,
-                            showNumber: true,
-                          })}
-                        </TableCell>
-                        <TableCell>{timeoff.status}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <Table data={timeoff?.timeoffs} columns={TIMEOFF_COLUMNS} />
               </div>
               <p className='text-xs'>
                 Total of{' '}
@@ -213,6 +232,7 @@ export const PaidTimeOff = ({
   summaryData,
   formattedProposedTerminationDate,
   timeoffQuery,
+  employment,
   onOpenChange,
   open,
 }: PaidTimeOffProps) => {
@@ -223,6 +243,7 @@ export const PaidTimeOff = ({
     approvedDaysBeforeTermination,
     approvedDaysAfterTermination,
     remainingDays,
+    currentEntitlementDays,
     isUnlimitedPto,
   } = summaryData.data;
   return (
@@ -239,9 +260,9 @@ export const PaidTimeOff = ({
           !summaryData?.isError &&
           summaryData?.data && (
             <SummaryTimeOff
-              entitledDays={entitledDays}
               usedDays={usedDays}
               bookedDays={bookedDays}
+              currentEntitlementDays={currentEntitlementDays}
               approvedDaysBeforeTermination={approvedDaysBeforeTermination}
               approvedDaysAfterTermination={approvedDaysAfterTermination}
               remainingDays={remainingDays}
@@ -252,7 +273,11 @@ export const PaidTimeOff = ({
         <DrawerTimeOff
           employeeName={employeeName}
           timeoffQuery={timeoffQuery}
+          entitledDays={entitledDays}
+          currentEntitlementDays={currentEntitlementDays}
+          countryName={employment?.country?.name ?? 'Unknown'}
           onOpenChange={onOpenChange}
+          formattedProposedTerminationDate={formattedProposedTerminationDate}
           open={open}
         />
       </div>

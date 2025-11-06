@@ -1,4 +1,4 @@
-import { ListLeavePoliciesSummaryResponse } from '@/src/client';
+import { Employment, ListLeavePoliciesSummaryResponse } from '@/src/client';
 import {
   BookedTimeoffBeforeDateResponse,
   PaidTimeoffBreakdownResponse,
@@ -58,9 +58,15 @@ export type PaidTimeOffRenderProps = {
     isError: boolean;
     error: Error | null;
   };
+  /**
+   * The employment data.
+   * @see {@link Employment}
+   */
+  employment?: Employment;
 };
 
 export type PaidTimeOffContainerProps = {
+  employment?: Employment;
   employmentId: string;
   proposedTerminationDate: string;
   employeeName: string;
