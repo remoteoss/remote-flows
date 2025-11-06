@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 0.26.0
+
+### Minor Changes
+
+- handle unlimited time off (#547) [#547](https://github.com/remoteoss/remote-flows/pull/547)
+- empty state (#551) [#551](https://github.com/remoteoss/remote-flows/pull/551)
+- add current entitlement days calculation and enhance drawer (#549) [#549](https://github.com/remoteoss/remote-flows/pull/549)
+
 ## 0.25.0
 
 ### Minor Changes
