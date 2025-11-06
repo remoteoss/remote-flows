@@ -10,6 +10,7 @@ import { HelpCenterArticle } from '@/src/client';
 import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
 import { ENVIRONMENTS } from '../environments';
+import { ColumnDef } from '@/src/components/shared/table/Table';
 
 type AuthResponse = {
   accessToken: string;
@@ -47,6 +48,14 @@ export type JSFField = {
   maxLength?: number;
   multiple?: boolean;
   meta?: Record<string, unknown>;
+};
+
+export type TableComponentProps<T = $TSFixMe> = {
+  data: T[] | undefined;
+  columns: ColumnDef<T>[];
+  className?: string;
+  headerRowClassName?: string;
+  bodyRowClassName?: string | ((row: T, index: number) => string);
 };
 
 /**
@@ -112,6 +121,7 @@ export type DrawerComponentProps = {
   title: React.ReactNode;
   trigger: React.ReactElement;
   children?: React.ReactNode;
+  direction?: 'left' | 'right';
 };
 
 export type FieldSetToggleComponentProps = {
@@ -132,6 +142,7 @@ export type Components = {
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
   drawer?: React.ComponentType<DrawerComponentProps>;
+  table?: React.ComponentType<TableComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
