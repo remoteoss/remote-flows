@@ -134,47 +134,61 @@ const DrawerTimeOff = ({
       }
       className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'
     >
-      <div className='mb-2'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className='w-[250px]'>Dates</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {timeoff?.timeoffs.map((timeoff) => (
-              <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
-                <TableCell className='font-medium w-[250px]'>
-                  {timeoff.formattedDate}
-                </TableCell>
-                <TableCell>
-                  {getSingularPluralUnit({
-                    number: timeoff.duration,
-                    singular: 'day',
-                    plural: 'days',
-                    followCopyGuidelines: false,
-                    showNumber: true,
-                  })}
-                </TableCell>
-                <TableCell>{timeoff.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <p className='text-xs'>
-        Total of{' '}
-        {getSingularPluralUnit({
-          number: timeoff?.bookedDays,
-          singular: 'day',
-          plural: 'days',
-          followCopyGuidelines: false,
-          showNumber: true,
-        })}{' '}
-        booked
-      </p>
+      {Array.isArray(timeoff?.timeoffs) && timeoff?.timeoffs?.length > 0 ? (
+        <>
+          <div className='mb-2'>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='w-[250px]'>Dates</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {timeoff?.timeoffs.map((timeoff) => (
+                  <TableRow key={`${timeoff.startDate}-${timeoff.endDate}`}>
+                    <TableCell className='font-medium w-[250px]'>
+                      {timeoff.formattedDate}
+                    </TableCell>
+                    <TableCell>
+                      {getSingularPluralUnit({
+                        number: timeoff.duration,
+                        singular: 'day',
+                        plural: 'days',
+                        followCopyGuidelines: false,
+                        showNumber: true,
+                      })}
+                    </TableCell>
+                    <TableCell>{timeoff.status}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <p className='text-xs'>
+            Total of{' '}
+            {getSingularPluralUnit({
+              number: timeoff?.bookedDays,
+              singular: 'day',
+              plural: 'days',
+              followCopyGuidelines: false,
+              showNumber: true,
+            })}{' '}
+            booked
+          </p>
+        </>
+      ) : (
+        <>
+          <p className='font-medium mb-1 text-[#09090B]'>
+            No recorded time off
+          </p>
+          <p className='text-sm text-[#09090B]'>
+            According to our records, {employeeName} has not taken any time off
+            this year.
+          </p>
+        </>
+      )}
     </Drawer>
   );
 };
