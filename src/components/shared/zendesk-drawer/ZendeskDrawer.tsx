@@ -8,16 +8,13 @@ import {
   DrawerTitle,
 } from '@/src/components/ui/drawer';
 import { useFormFields } from '@/src/context';
+import { buildZendeskURL } from '@/src/components/shared/zendesk-drawer/utils';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactElement;
   zendeskId: number;
   open: boolean;
   onClose: () => void;
-};
-
-const buildZendeskURL = (zendeskId: number) => {
-  return `https://support.remote.com/hc/en-us/articles/${zendeskId}`;
 };
 
 export const ZendeskDrawer = ({
