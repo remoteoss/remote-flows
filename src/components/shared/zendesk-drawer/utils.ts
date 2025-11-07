@@ -41,7 +41,17 @@ export const zendeskArticles = {
    * https://support.remote.com/hc/en-us/articles/5831900985613
    */
   terminationNoticePeriods: 5831900985613,
+  /**
+   * Involuntary Offboarding Service Charge
+   * Access: Private (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/4406932229133
+   */
   involuntaryOffboardingServiceCharge: 4406932229133,
+  /**
+   * Reconciliation Invoice
+   * Access: Public (Everyone can access)
+   * https://support.remote.com/hc/en-us/articles/17604014808589
+   */
   reconciliationInvoice: 17604014808589,
 };
 
