@@ -1,7 +1,16 @@
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
+/**
+ * The acknowledge information fees component props
+ */
 export type AcknowledgeInformationFeesProps = {
+  /**
+   * The Zendesk ID for the involuntary offboarding service charge
+   */
   involuntaryOffboardingServiceChargeZendeskId: number;
+  /**
+   * The Zendesk ID for the reconciliation invoice
+   */
   reconciliationInvoiceZendeskId: number;
 };
 

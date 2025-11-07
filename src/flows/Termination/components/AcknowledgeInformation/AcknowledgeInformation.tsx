@@ -1,6 +1,9 @@
 import { Card } from '@/src/components/ui/card';
 import { AcknowledgeInformationContainerRenderProps } from '@/src/flows/Termination/components/AcknowledgeInformation/types';
 
+/**
+ * The acknowledge information component props
+ */
 export type AcknowledgeInformationProps =
   AcknowledgeInformationContainerRenderProps;
 
