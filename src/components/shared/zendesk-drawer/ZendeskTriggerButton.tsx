@@ -11,6 +11,9 @@ interface ZendeskTriggerButtonProps {
   external?: boolean;
 }
 
+const baseClassName =
+  'RemoteFlows__ZendeskTriggerButton text-blue-500 hover:underline inline-block text-xs bg-transparent border-none cursor-pointer p-0';
+
 export function ZendeskTriggerButton({
   zendeskId,
   className,
@@ -26,9 +29,6 @@ export function ZendeskTriggerButton({
     }
     onClick?.(zendeskId);
   };
-
-  const baseClassName =
-    'RemoteFlows__ZendeskTriggerButton text-blue-500 hover:underline inline-block mt-1 text-xs bg-transparent border-none cursor-pointer p-0';
 
   if (external) {
     return (

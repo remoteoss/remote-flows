@@ -41,6 +41,8 @@ export const zendeskArticles = {
    * https://support.remote.com/hc/en-us/articles/5831900985613
    */
   terminationNoticePeriods: 5831900985613,
+  involuntaryOffboardingServiceCharge: 4406932229133,
+  reconciliationInvoice: 17604014808589,
 };
 
 export const buildZendeskURL = (zendeskId: number) => {

@@ -195,6 +195,7 @@ export const TerminationWithProps = ({
           ],
           termination_reason: 'performance',
           will_challenge_termination: 'no',
+          agrees_to_pto_amount: 'yes',
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
