@@ -105,6 +105,7 @@ export const useTermination = ({
             the employment agreement, and other factors. We'll use those factors
             to determine the required notice period.
             <ZendeskTriggerButton
+              external
               zendeskId={zendeskArticles.terminationNoticePeriods}
               className={cn(
                 'text-sm',
