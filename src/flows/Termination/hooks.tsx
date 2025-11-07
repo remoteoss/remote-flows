@@ -27,6 +27,7 @@ import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTim
 import { useEmploymentQuery } from '@/src/common/api';
 import { AcknowledgeInformationContainer } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInfomationContainer';
 import { AcknowledgeInformation } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformation';
+import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -188,6 +189,35 @@ export const useTermination = ({
             },
           },
         },
+        acknowledge_termination_procedure_fees_info: {
+          ...(options?.jsfModify?.fields
+            ?.acknowledge_termination_procedure_fees_info as $TSFixMe),
+          'x-jsf-presentation': {
+            ...(
+              options?.jsfModify?.fields
+                ?.acknowledge_termination_procedure_fees_info as $TSFixMe
+            )?.['x-jsf-presentation'],
+            Component: () => {
+              const zendeskIds = {
+                involuntaryOffboardingServiceChargeZendeskId:
+                  zendeskArticles.involuntaryOffboardingServiceCharge,
+                reconciliationInvoiceZendeskId:
+                  zendeskArticles.reconciliationInvoice,
+              };
+
+              const CustomComponent = (
+                options?.jsfModify?.fields
+                  ?.acknowledge_termination_procedure_fees_info as $TSFixMe
+              )?.['x-jsf-presentation']?.Component;
+
+              if (CustomComponent) {
+                return <CustomComponent {...zendeskIds} />;
+              }
+
+              return <AcknowledgeInformationFees {...zendeskIds} />;
+            },
+          },
+        },
       },
     };
   }, [
@@ -196,6 +226,7 @@ export const useTermination = ({
     options?.jsfModify?.fields?.proposed_termination_date,
     options?.jsfModify?.fields?.paid_time_off_info,
     options?.jsfModify?.fields?.acknowledge_termination_procedure_info,
+    options?.jsfModify?.fields?.acknowledge_termination_procedure_fees_info,
     employment,
     formValues.proposed_termination_date,
     employmentId,

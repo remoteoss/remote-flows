@@ -24,10 +24,21 @@ export const additionalInformationSchema = {
             inputType: 'checkbox',
           },
         },
+        acknowledge_termination_procedure_fees_info: {
+          type: 'null',
+          title: 'Acknowledge termination procedure fees info',
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
       },
       required: ['acknowledge_termination_procedure'],
       type: 'object',
-      'x-jsf-order': ['acknowledge_termination_procedure'],
+      'x-jsf-order': [
+        'acknowledge_termination_procedure_info',
+        'acknowledge_termination_procedure',
+        'acknowledge_termination_procedure_fees_info',
+      ],
     },
   },
 };
