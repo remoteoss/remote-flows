@@ -6,4 +6,6 @@ export const zendeskArticles = {
   remoteFxRate: 33271144977421,
   terminationEmployeeCommunication: 4411585179661,
   terminationNoticePeriods: 5831900985613,
+  involuntaryOffboardingServiceCharge: 4406932229133,
+  reconciliationInvoice: 17604014808589,
 };

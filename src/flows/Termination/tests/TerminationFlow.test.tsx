@@ -328,9 +328,7 @@ describe('TerminationFlow', () => {
       ...values,
     };
     if (newValues?.ackowledgeTermination) {
-      await fillCheckbox(
-        'I, ze have read and agree to the procedures as defined in the termination form.',
-      );
+      await fillCheckbox('I agree to the procedures in this form');
     }
   }
 
