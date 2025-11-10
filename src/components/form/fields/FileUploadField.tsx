@@ -4,7 +4,11 @@ import * as React from 'react';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
-import { useFormContext } from 'react-hook-form';
+import {
+  ControllerRenderProps,
+  FieldValues,
+  useFormContext,
+} from 'react-hook-form';
 import { FileUploader } from '../../ui/file-uploader';
 import {
   FormControl,
@@ -45,6 +49,8 @@ export type FileUploadFieldProps = JSFField & {
   onChange?: (value: any) => void;
   multiple?: boolean;
   component?: Components['file'];
+  maxSize?: number;
+  accept?: string;
 };
 
 export function FileUploadField({
@@ -54,10 +60,21 @@ export function FileUploadField({
   multiple,
   onChange,
   component,
+  accept,
+  maxSize,
   ...rest
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+
+  const handleOnChange = async (
+    event: any,
+    field: ControllerRenderProps<FieldValues, string>,
+  ) => {
+    const files = await convertFilesToBase64(event);
+    field.onChange(files);
+    onChange?.(files);
+  };
 
   return (
     <FormField
@@ -71,6 +88,8 @@ export function FileUploadField({
             description,
             label,
             multiple,
+            accept,
+            maxSize,
             ...rest,
           };
           return (
@@ -78,11 +97,7 @@ export function FileUploadField({
               field={{
                 ...field,
                 value: null,
-                onChange: async (value: any) => {
-                  const files = await convertFilesToBase64(value);
-                  field.onChange(files);
-                  onChange?.(files);
-                },
+                onChange: async (value: any) => handleOnChange(value, field),
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
@@ -99,15 +114,10 @@ export function FileUploadField({
             </FormLabel>
             <FormControl>
               <FileUploader
-                onChange={async (
-                  event: React.ChangeEvent<HTMLInputElement>,
-                ) => {
-                  const files = await convertFilesToBase64(event);
-                  field.onChange(files);
-                  onChange?.(files);
-                }}
+                onChange={(evt) => handleOnChange(evt, field)}
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
+                accept={accept}
               />
             </FormControl>
             {description && (

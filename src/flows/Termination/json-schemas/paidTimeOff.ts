@@ -1,3 +1,5 @@
+import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
+
 export const paidTimeOffSchema = {
   data: {
     version: 7,
@@ -95,7 +97,8 @@ export const paidTimeOffSchema = {
           type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'file',
-            accept: '.pdf',
+            accept: FILE_TYPES.document,
+            max_size: MAX_FILE_SIZE,
           },
         },
       },

@@ -1,3 +1,5 @@
+import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
+
 export const terminationDetailsSchema = {
   data: {
     version: 7,
@@ -113,8 +115,9 @@ export const terminationDetailsSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'file',
-            accept: '.pdf',
+            accept: FILE_TYPES.document,
             multiple: true,
+            max_size: MAX_FILE_SIZE,
           },
         },
         risk_assesment_info: {

@@ -7,12 +7,14 @@ type FileUploaderProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   multiple?: boolean;
+  accept?: string;
 };
 
 export function FileUploader({
   onChange,
   className,
   multiple,
+  accept,
 }: FileUploaderProps) {
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +46,7 @@ export function FileUploader({
         className='hidden'
         aria-label='File upload'
         multiple={multiple}
+        accept={accept}
       />
       <Button type='button' onClick={handleClick} className='gap-2'>
         <Upload className='h-4 w-4' />
