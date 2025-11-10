@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.27.0
+
+### Minor Changes
+
+- add acknowledge information step to termination flow (#554) [#554](https://github.com/remoteoss/remote-flows/pull/554)
+- add external link mode to ZendeskTriggerButton (#555) [#555](https://github.com/remoteoss/remote-flows/pull/555)
+
 ## 0.26.0
 
 ### Minor Changes
