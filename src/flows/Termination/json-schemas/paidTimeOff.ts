@@ -98,7 +98,7 @@ export const paidTimeOffSchema = {
           'x-jsf-presentation': {
             inputType: 'file',
             accept: FILE_TYPES.document,
-            max_size: MAX_FILE_SIZE,
+            maxSize: MAX_FILE_SIZE, // maxFileSize doesn't seem to work for some reason, maybe @remoteoss/json-schema-form related
           },
         },
       },
