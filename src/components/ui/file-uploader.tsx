@@ -3,6 +3,15 @@ import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
+// Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
+const getAcceptedFormats = (accept?: string) => {
+  if (!accept) return null;
+  return accept
+    .split(',')
+    .map((ext) => ext.trim().toUpperCase())
+    .join(', ');
+};
+
 type FileUploaderProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
@@ -37,6 +46,8 @@ export function FileUploader({
     setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
 
+  const acceptedFormats = getAcceptedFormats(accept);
+
   return (
     <div className={cn('flex flex-col items-start gap-4', className)}>
       <input
@@ -52,6 +63,12 @@ export function FileUploader({
         <Upload className='h-4 w-4' />
         Choose File
       </Button>
+      {acceptedFormats && (
+        <div className='text-sm text-gray-600'>
+          Accepted formats:{' '}
+          <span className='font-medium'>{acceptedFormats}</span>
+        </div>
+      )}
       {files.length === 0 && (
         <div className='text-sm'>
           {!multiple ? (
