@@ -117,7 +117,7 @@ export const terminationDetailsSchema = {
             inputType: 'file',
             accept: FILE_TYPES.document,
             multiple: true,
-            maxSize: MAX_FILE_SIZE, // maxFileSize doesn't seem to work for some reason, found that this was fixed in v1
+            maxSize: MAX_FILE_SIZE, // maxFileSize doesn't seem to work for some reason, found that this was fixed in @remoteoss/json-schema-form v1
           },
         },
         risk_assesment_info: {
