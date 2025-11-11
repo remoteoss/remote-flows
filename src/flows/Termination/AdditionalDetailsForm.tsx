@@ -5,11 +5,6 @@ import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type AdditionalDetailsFormProps = {
   /*
-   * The name of the person who initiates the termination, used to personalize the label of the
-   * acknowledge_termination_procedure field.
-   */
-  requesterName: string;
-  /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
   onSubmit?: (payload: TerminationFormValues) => void | Promise<void>;
@@ -25,7 +20,6 @@ type AdditionalDetailsFormProps = {
 };
 
 export function AdditionalDetailsForm({
-  requesterName,
   onSubmit,
   onSuccess,
   onError,
@@ -33,9 +27,11 @@ export function AdditionalDetailsForm({
   const { terminationBag } = useTerminationContext();
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(
-      terminationBag?.parseFormValues(values) as TerminationFormValues,
-    );
+    const parsedValues = terminationBag?.parseFormValues(
+      values,
+      true,
+    ) as TerminationFormValues;
+    await onSubmit?.(parsedValues);
     const terminationResult = await terminationBag?.onSubmit(values);
 
     if (terminationResult?.error) {
@@ -47,18 +43,7 @@ export function AdditionalDetailsForm({
     }
   };
 
-  const updatedFields = terminationBag?.fields.map((field) => {
-    if (field.name === 'acknowledge_termination_procedure') {
-      return {
-        ...field,
-        label: (field.label as string).replace(
-          '{{requesterName}}',
-          requesterName,
-        ),
-      };
-    }
-    return field;
-  });
-
-  return <TerminationForm fields={updatedFields} onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm fields={terminationBag?.fields} onSubmit={handleSubmit} />
+  );
 }

@@ -10,6 +10,9 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
+  EmployeeCommunicationFormValues,
+  PaidTimeOffFormValues,
+  TerminationDetailsFormValues,
   TerminationFlowProps,
   TerminationFormValues,
 } from '@/src/flows/Termination/types';
@@ -367,25 +370,35 @@ export const useTermination = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: (values: Partial<TerminationFormValues>) => {
-      if (entireTerminationSchema) {
-        const parsedValues = parseJSFToValidate(
-          values,
-          entireTerminationSchema?.fields,
-          { isPartialValidation: true },
-        );
-        setFieldValues(parsedValues as TerminationFormValues);
-      }
-    },
+    checkFieldUpdates: setFieldValues,
     /**
      * Function to parse form values before submission
      * @param values - Form values to parse
      * @returns Parsed form values
      */
-    parseFormValues: (values: TerminationFormValues) => {
-      return parseJSFToValidate(values, entireTerminationSchema.fields, {
-        isPartialValidation: true,
-      });
+    parseFormValues: (
+      values: TerminationFormValues,
+      includeAllFields: boolean = false,
+    ):
+      | EmployeeCommunicationFormValues
+      | TerminationDetailsFormValues
+      | PaidTimeOffFormValues
+      | TerminationFormValues => {
+      if (includeAllFields) {
+        return parseJSFToValidate(values, entireTerminationSchema.fields, {
+          isPartialValidation: true,
+        }) as TerminationFormValues;
+      }
+
+      if (terminationHeadlessForm) {
+        return parseJSFToValidate(values, terminationHeadlessForm?.fields, {
+          isPartialValidation: true,
+        }) as
+          | EmployeeCommunicationFormValues
+          | TerminationDetailsFormValues
+          | PaidTimeOffFormValues;
+      }
+      return {} as $TSFixMe;
     },
     /**
      * Function to handle form submission
