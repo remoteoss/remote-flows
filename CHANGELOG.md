@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 0.28.0
+
+### Minor Changes
+
+- expand accepted file types and add file size validation (#557) [#557](https://github.com/remoteoss/remote-flows/pull/557)
+- prevent runtime exceptions (#561) [#561](https://github.com/remoteoss/remote-flows/pull/561)
+
 ## 0.27.0
 
 ### Minor Changes
