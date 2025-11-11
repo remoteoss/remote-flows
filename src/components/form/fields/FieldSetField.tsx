@@ -165,8 +165,6 @@ export function FieldSetField({
   const contentId = `${name}-content`;
   const headerId = `${name}-header`;
 
-  console.log('fields', fields);
-
   return (
     <fieldset
       className={cn(
