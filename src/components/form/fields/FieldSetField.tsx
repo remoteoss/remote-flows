@@ -243,13 +243,6 @@ export function FieldSetField({
                     {}),
                 };
               }
-              let FieldComponent =
-                baseFields[
-                  field.type as Exclude<
-                    SupportedTypes,
-                    'fieldset' | 'fieldset-flat'
-                  >
-                ];
 
               if (field.isVisible === false || field.deprecated) {
                 return null; // Skip hidden or deprecated fields
@@ -261,6 +254,38 @@ export function FieldSetField({
                 };
                 return <Component key={field.name} {...field} />;
               }
+
+              // Handle nested fieldsets
+              if (field.type === 'fieldset') {
+                return (
+                  <FieldSetField
+                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    {...field}
+                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    components={components}
+                  />
+                );
+              }
+
+              if (field.type === 'fieldset-flat') {
+                return (
+                  <FieldSetField
+                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    {...field}
+                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    components={components}
+                    isFlatFieldset
+                  />
+                );
+              }
+
+              let FieldComponent =
+                baseFields[
+                  field.type as Exclude<
+                    SupportedTypes,
+                    'fieldset' | 'fieldset-flat'
+                  >
+                ];
 
               if (field.type === 'select' && field.multiple) {
                 FieldComponent = baseFields['multi-select'];

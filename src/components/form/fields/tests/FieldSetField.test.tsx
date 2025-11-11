@@ -276,4 +276,77 @@ describe('FieldSetField', () => {
       expect(helpLinks.length).toBe(1);
     });
   });
+
+  describe('nested fieldsets', () => {
+    it('should render nested fieldset without throwing runtime exceptions', () => {
+      renderWithFormContext({
+        fields: [
+          {
+            name: 'nested',
+            label: 'Nested Section',
+            description: 'Nested',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(screen.getByText('Nested Section')).toBeInTheDocument();
+    });
+
+    it('should render flat nested fieldset', () => {
+      renderWithFormContext({
+        fields: [
+          {
+            name: 'flat-nested',
+            label: 'Flat Nested',
+            description: 'Flat',
+            type: 'fieldset-flat',
+            inputType: 'fieldset-flat',
+            fields: [],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(screen.getByText('Flat Nested')).toBeInTheDocument();
+    });
+
+    it('should skip hidden and deprecated nested fieldsets', () => {
+      renderWithFormContext({
+        fields: [
+          {
+            name: 'visible',
+            label: 'Visible',
+            description: '',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [],
+          } as $TSFixMe,
+          {
+            name: 'hidden',
+            label: 'Hidden',
+            description: 'Hidden',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [],
+            isVisible: false,
+          } as $TSFixMe,
+          {
+            name: 'deprecated',
+            label: 'Deprecated',
+            description: 'Deprecated',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [],
+            deprecated: true,
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(screen.getByText('Visible')).toBeInTheDocument();
+      expect(screen.queryByText('Hidden')).not.toBeInTheDocument();
+      expect(screen.queryByText('Deprecated')).not.toBeInTheDocument();
+    });
+  });
 });
