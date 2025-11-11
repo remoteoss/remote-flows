@@ -4,7 +4,11 @@ import * as React from 'react';
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
-import { useFormContext } from 'react-hook-form';
+import {
+  ControllerRenderProps,
+  FieldValues,
+  useFormContext,
+} from 'react-hook-form';
 import { FileUploader } from '../../ui/file-uploader';
 import {
   FormControl,
@@ -24,11 +28,7 @@ const toBase64 = (file: File): Promise<string> => {
   });
 };
 
-const convertFilesToBase64 = async (
-  event: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const files = event.target.files ? Array.from(event.target.files) : [];
-
+const convertFilesToBase64 = async (files: File[]) => {
   const base64Files = await Promise.all(
     files.map(async (file) => {
       const base64 = await toBase64(file);
@@ -41,10 +41,25 @@ const convertFilesToBase64 = async (
   return base64Files;
 };
 
+const validateFileSize = (files: File[], maxSize?: number): string | null => {
+  if (!maxSize) return null;
+
+  for (const file of files) {
+    if (file.size > maxSize) {
+      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+      const fileSizeMB = Math.round(file.size / (1024 * 1024));
+      return `File "${file.name}" exceeds maximum size of ${maxSizeMB}MB (file is ${fileSizeMB}MB)`;
+    }
+  }
+  return null;
+};
+
 export type FileUploadFieldProps = JSFField & {
   onChange?: (value: any) => void;
   multiple?: boolean;
   component?: Components['file'];
+  maxSize?: number;
+  accept?: string;
 };
 
 export function FileUploadField({
@@ -54,10 +69,30 @@ export function FileUploadField({
   multiple,
   onChange,
   component,
+  accept,
+  maxSize,
   ...rest
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
-  const { control } = useFormContext();
+  const { control, setError, clearErrors } = useFormContext();
+
+  const handleOnChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: ControllerRenderProps<FieldValues, string>,
+  ) => {
+    const files = event.target.files ? Array.from(event.target.files) : [];
+
+    const sizeError = validateFileSize(files, maxSize);
+    if (sizeError) {
+      setError(name, { message: sizeError });
+      return;
+    }
+
+    clearErrors(name);
+    const base64Files = await convertFilesToBase64(files);
+    field.onChange(base64Files);
+    onChange?.(base64Files);
+  };
 
   return (
     <FormField
@@ -71,6 +106,8 @@ export function FileUploadField({
             description,
             label,
             multiple,
+            accept,
+            maxFileSize: maxSize,
             ...rest,
           };
           return (
@@ -78,11 +115,7 @@ export function FileUploadField({
               field={{
                 ...field,
                 value: null,
-                onChange: async (value: any) => {
-                  const files = await convertFilesToBase64(value);
-                  field.onChange(files);
-                  onChange?.(files);
-                },
+                onChange: async (value: any) => handleOnChange(value, field),
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
@@ -99,15 +132,10 @@ export function FileUploadField({
             </FormLabel>
             <FormControl>
               <FileUploader
-                onChange={async (
-                  event: React.ChangeEvent<HTMLInputElement>,
-                ) => {
-                  const files = await convertFilesToBase64(event);
-                  field.onChange(files);
-                  onChange?.(files);
-                }}
+                onChange={(evt) => handleOnChange(evt, field)}
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
+                accept={accept}
               />
             </FormControl>
             {description && (

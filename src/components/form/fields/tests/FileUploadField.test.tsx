@@ -168,4 +168,44 @@ describe('FileUploadField Component', () => {
       screen.queryByTestId('context-file-upload-field'),
     ).not.toBeInTheDocument();
   });
+
+  it('displays error when file exceeds max size limit', async () => {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const largeFile = new File(['x'.repeat(10 * 1024 * 1024)], 'large.txt', {
+      type: 'text/plain',
+    }); // 10MB file
+
+    renderWithFormContext({ ...defaultProps, maxSize, onChange: mockOnChange });
+
+    const fileInput = screen.getByLabelText('File upload');
+    fireEvent.change(fileInput, { target: { files: [largeFile] } });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'File "large.txt" exceeds maximum size of 5MB (file is 10MB)',
+        ),
+      ).toBeInTheDocument();
+    });
+    expect(mockOnChange).not.toHaveBeenCalled();
+  });
+
+  it('accepts file within max size limit', async () => {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const smallFile = new File(['test content'], 'small.txt', {
+      type: 'text/plain',
+    }); // Small file
+
+    renderWithFormContext({ ...defaultProps, maxSize, onChange: mockOnChange });
+
+    const fileInput = screen.getByLabelText('File upload');
+    fireEvent.change(fileInput, { target: { files: [smallFile] } });
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledOnce();
+      expect(mockOnChange.mock.calls[0][0]).toEqual([
+        { name: 'small.txt', content: expect.any(String) },
+      ]);
+    });
+  });
 });

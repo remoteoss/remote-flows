@@ -1,3 +1,5 @@
+import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
+
 export const terminationDetailsSchema = {
   data: {
     version: 7,
@@ -113,8 +115,9 @@ export const terminationDetailsSchema = {
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'file',
-            accept: '.pdf',
+            accept: FILE_TYPES.document,
             multiple: true,
+            maxSize: MAX_FILE_SIZE, // maxFileSize doesn't seem to work for some reason, found that this was fixed in @remoteoss/json-schema-form v1
           },
         },
         risk_assesment_info: {

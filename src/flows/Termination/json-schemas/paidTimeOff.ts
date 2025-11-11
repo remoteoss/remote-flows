@@ -1,3 +1,5 @@
+import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
+
 export const paidTimeOffSchema = {
   data: {
     version: 7,
@@ -95,7 +97,8 @@ export const paidTimeOffSchema = {
           type: ['string', 'null'],
           'x-jsf-presentation': {
             inputType: 'file',
-            accept: '.pdf',
+            accept: FILE_TYPES.document,
+            maxSize: MAX_FILE_SIZE, // maxFileSize doesn't seem to work for some reason, found that this was fixed in @remoteoss/json-schema-form v1
           },
         },
       },
