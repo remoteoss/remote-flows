@@ -3,6 +3,9 @@ import type {
   TerminationRenderProps,
   TerminationFormValues,
   OffboardingResponse,
+  PaidTimeOffFormValues,
+  EmployeeCommunicationFormValues,
+  TerminationDetailsFormValues,
 } from '@remoteoss/remote-flows';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
@@ -29,7 +32,10 @@ type MultiStepFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
   components: TerminationRenderProps['components'];
   onSubmitStep: (
-    payload: TerminationFormValues,
+    payload:
+      | EmployeeCommunicationFormValues
+      | TerminationDetailsFormValues
+      | PaidTimeOffFormValues,
     step: string,
   ) => void | Promise<void>;
   onSubmitForm: (payload: TerminationFormValues) => void | Promise<void>;
@@ -58,7 +64,7 @@ const MultiStepForm = ({
       return (
         <>
           <EmployeeComunicationStep
-            onSubmit={(payload) =>
+            onSubmit={(payload: EmployeeCommunicationFormValues) =>
               onSubmitStep(payload, 'employee_communication')
             }
           />
@@ -69,7 +75,9 @@ const MultiStepForm = ({
       return (
         <>
           <TerminationDetailsStep
-            onSubmit={(payload) => onSubmitStep(payload, 'termination_details')}
+            onSubmit={(payload: TerminationDetailsFormValues) =>
+              onSubmitStep(payload, 'termination_details')
+            }
           />
           <div className='buttons-container mt-3'>
             <Back className='back-button'>Back</Back>
@@ -81,7 +89,9 @@ const MultiStepForm = ({
       return (
         <>
           <PaidTimeOffStep
-            onSubmit={(payload) => onSubmitStep(payload, 'paid_time_off')}
+            onSubmit={(payload: PaidTimeOffFormValues) =>
+              onSubmitStep(payload, 'paid_time_off')
+            }
           />
           <div className='buttons-container mt-3'>
             <Back className='back-button'>Back</Back>
@@ -94,8 +104,7 @@ const MultiStepForm = ({
       return (
         <>
           <AdditionalDetailsStep
-            requesterName='ze'
-            onSubmit={(payload) => onSubmitForm(payload)}
+            onSubmit={(payload: TerminationFormValues) => onSubmitForm(payload)}
             onSuccess={onSuccess}
             onError={onError}
           />

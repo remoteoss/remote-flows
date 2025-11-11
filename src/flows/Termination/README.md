@@ -164,7 +164,6 @@ const MultiStepForm = ({
       return (
         <>
           <AdditionalDetailsStep
-            requesterName='ze'
             onSubmit={(payload) => onSubmitForm(payload)}
             onSuccess={onSuccess}
             onError={onError}
@@ -297,12 +296,11 @@ It renders the paid timeoff step and its respective fields.
 
 It renders the additional details step and its respective fields.
 
-| Prop            | Type                                       | Required | Description                                                                                                                              |
-| --------------- | ------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `requesterName` | `string`                                   | Yes      | Replaces the {{requesterName}} placeholder for the acknowledge field in the last step, should be the person who requests the termination |
-| `onSubmit`      | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before submitting the form to Remote                                                                 |
-| `onSuccess`     | `(response: OffboardingResponse) => void`  | No       | Callback with the successful termination data                                                                                            |
-| `onError`       | `(error: Error) => void`                   | No       | Error handling callback                                                                                                                  |
+| Prop        | Type                                       | Required | Description                                                              |
+| ----------- | ------------------------------------------ | -------- | ------------------------------------------------------------------------ |
+| `onSubmit`  | `(payload: TerminationFormValues) => void` | No       | Callback with the form values. Runs before submitting the form to Remote |
+| `onSuccess` | `(response: OffboardingResponse) => void`  | No       | Callback with the successful termination data                            |
+| `onError`   | `(error: Error) => void`                   | No       | Error handling callback                                                  |
 
 ### SubmitButton
 

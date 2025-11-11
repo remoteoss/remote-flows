@@ -99,7 +99,7 @@ export async function fillCheckbox(checkboxName: string) {
 
 export async function selectDayInCalendar(day: string, fieldName: string) {
   const user = userEvent.setup();
-  const datePickerButton = screen.getByTestId(
+  const datePickerButton = await screen.findByTestId(
     `date-picker-button-${fieldName}`,
   );
   await user.click(datePickerButton);
