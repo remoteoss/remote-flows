@@ -458,7 +458,9 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
 };
 
 export const useCountriesSchemaField = (
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+    queryOptions?: { enabled?: boolean };
+  },
 ) => {
   const { data: countries, isLoading } = useCountries(options?.queryOptions);
 

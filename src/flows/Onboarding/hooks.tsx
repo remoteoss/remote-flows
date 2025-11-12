@@ -8,6 +8,7 @@ import { Fields } from '@remoteoss/json-schema-form';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
+  getContractDetailsSchemaVersion,
   reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
@@ -190,7 +191,6 @@ export const useOnboarding = ({
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
       jsfModify: options?.jsfModify?.select_country,
-      jsonSchemaVersion: options?.jsonSchemaVersion,
       queryOptions: {
         enabled: stepState.currentStep.name === 'select_country',
       },
@@ -366,6 +366,12 @@ export const useOnboarding = ({
     ],
   );
 
+  const effectiveContractDetailsJsonSchemaVersion =
+    getContractDetailsSchemaVersion(
+      internalCountryCode,
+      options?.jsonSchemaVersion,
+    );
+
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
       form: 'contract_details',
@@ -383,7 +389,7 @@ export const useOnboarding = ({
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
-        jsonSchemaVersion: options?.jsonSchemaVersion,
+        jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
       },
     });
 

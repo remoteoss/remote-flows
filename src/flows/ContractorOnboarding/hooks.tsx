@@ -155,7 +155,6 @@ export const useContractorOnboarding = ({
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
       jsfModify: options?.jsfModify?.select_country,
-      jsonSchemaVersion: options?.jsonSchemaVersion,
       queryOptions: {
         enabled: stepState.currentStep.name === 'select_country',
       },

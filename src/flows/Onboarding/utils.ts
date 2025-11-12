@@ -1,4 +1,5 @@
 import { Employment } from '@/src/flows/Onboarding/types';
+import { FlowOptions } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
 
 type StepKeys =
@@ -45,3 +46,43 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'invited',
 ];
+
+const COUNTRY_CONTRACT_DETAILS_SCHEMA_VERSION_MAP: Record<string, number> = {
+  DEU: 1, // Germany
+};
+
+const getContractDetailsSchemaVersionByCountry = (
+  countryCode: string | null,
+): number | undefined => {
+  if (!countryCode) return undefined;
+  return COUNTRY_CONTRACT_DETAILS_SCHEMA_VERSION_MAP[countryCode];
+};
+
+export const getContractDetailsSchemaVersion = (
+  countryCode: string | null,
+  jsonSchemaVersion: FlowOptions['jsonSchemaVersion'],
+): FlowOptions['jsonSchemaVersion'] | undefined => {
+  const countrySpecificContractDetailsVersion =
+    getContractDetailsSchemaVersionByCountry(countryCode);
+
+  // TODO: We need to improve the options.jsonSchemaVersion, we need to be to pass different json_schema_versions for different countries
+  const effectiveContractDetailsJsonSchemaVersion = jsonSchemaVersion
+    ? {
+        ...jsonSchemaVersion,
+        form_schema: {
+          ...jsonSchemaVersion.form_schema,
+          contract_details:
+            countrySpecificContractDetailsVersion ??
+            jsonSchemaVersion.form_schema?.contract_details,
+        },
+      }
+    : countrySpecificContractDetailsVersion
+      ? {
+          form_schema: {
+            contract_details: countrySpecificContractDetailsVersion,
+          },
+        }
+      : undefined;
+
+  return effectiveContractDetailsJsonSchemaVersion;
+};
