@@ -11,6 +11,8 @@ import {
   useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
+  usePostManageContractorSubscriptions,
+  useContractorSubscriptionSchemaField,
   useGetShowContractDocument,
   useSignContractDocument,
 } from '@/src/flows/ContractorOnboarding/api';
@@ -54,6 +56,11 @@ const stepToFormSchemaMap: Record<
   contract_preview: null,
   review: null,
 };
+
+import {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
 
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
@@ -134,6 +141,8 @@ export const useContractorOnboarding = ({
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
   const signContractDocumentMutation = useSignContractDocument();
+  const manageContractorSubscriptionMutation =
+    usePostManageContractorSubscriptions();
 
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
@@ -145,6 +154,9 @@ export const useContractorOnboarding = ({
   const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
     signContractDocumentMutation,
   );
+
+  const { mutateAsync: manageContractorSubscriptionMutationAsync } =
+    mutationToPromise(manageContractorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -160,6 +172,16 @@ export const useContractorOnboarding = ({
         enabled: stepState.currentStep.name === 'select_country',
       },
     });
+
+  const {
+    form: selectContractorSubscriptionForm,
+    isLoading: isLoadingContractorSubscriptions,
+  } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
+    jsonSchemaVersion: options?.jsonSchemaVersion,
+    queryOptions: {
+      enabled: stepState.currentStep.name === 'pricing_plan',
+    },
+  });
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -276,7 +298,7 @@ export const useContractorOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
-      pricing_plan: [],
+      pricing_plan: selectContractorSubscriptionForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -284,6 +306,7 @@ export const useContractorOnboarding = ({
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
+      selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
     ],
@@ -357,19 +380,36 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const pricingPlanInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...employmentContractDetails,
+    };
+
+    return getInitialValues(
+      stepFields.pricing_plan,
+      (initialValues?.pricing_plan ?? {}) as Record<string, unknown>,
+    );
+  }, [
+    stepFields.pricing_plan,
+    employmentContractDetails,
+    onboardingInitialValues,
+  ]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
-      pricing_plan: {},
+      pricing_plan: pricingPlanInitialValues,
     };
   }, [
     selectCountryInitialValues,
     basicInformationInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
+    pricingPlanInitialValues,
   ]);
 
   const isNavigatingToReview = useMemo(() => {
@@ -478,7 +518,6 @@ export const useContractorOnboarding = ({
     }
 
     if (stepState.currentStep.name === 'pricing_plan') {
-      // TODO: TBD
       return values;
     }
 
@@ -558,10 +597,23 @@ export const useContractorOnboarding = ({
           },
         });
       }
-
       case 'pricing_plan': {
-        // TODO: TBD
-        return Promise.resolve({ data: { pricingPlan: values } });
+        if (values.subscription == contractorStandardProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'downgrade',
+            },
+          });
+        } else if (values.subscription == contractorPlusProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'upgrade',
+            },
+          });
+        }
+        return Promise.reject({ error: 'invalid selection' });
       }
 
       default: {
@@ -575,6 +627,7 @@ export const useContractorOnboarding = ({
     isLoadingBasicInformationForm ||
     isLoadingEmployment ||
     isLoadingContractorOnboardingDetailsForm ||
+    isLoadingContractorSubscriptions ||
     isLoadingDocumentPreviewForm;
 
   return {

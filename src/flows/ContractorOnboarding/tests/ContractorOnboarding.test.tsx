@@ -18,6 +18,8 @@ import {
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
   mockContractDocumentSignedResponse,
+  mockContractorSubscriptionResponse,
+  mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
@@ -27,6 +29,7 @@ import { fireEvent } from '@testing-library/react';
 import {
   fillBasicInformation,
   fillContractDetails,
+  fillContractorSubscription,
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
@@ -256,8 +259,8 @@ describe('ContractorOnboardingFlow', () => {
         [0]: 'Select Country',
         [1]: 'Basic Information',
         [2]: 'Contract Details',
-        [3]: 'Contract Preview',
-        [4]: 'Pricing Plan',
+        [3]: 'Pricing Plan',
+        [4]: 'Contract Preview',
         [5]: 'Review',
       };
 
@@ -327,6 +330,18 @@ describe('ContractorOnboardingFlow', () => {
       http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
         return HttpResponse.json(mockContractDocumentPreviewResponse);
       }),
+      http.get(
+        '*/v1/contractors/employments/*/contractor-subscriptions',
+        () => {
+          return HttpResponse.json(mockContractorSubscriptionResponse);
+        },
+      ),
+      http.post(
+        '*/v1/contractors/employments/*/contractor-plus-subscription',
+        () => {
+          return HttpResponse.json(mockManageSubscriptionResponse);
+        },
+      ),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),
@@ -375,8 +390,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -514,8 +529,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -581,8 +596,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -617,6 +632,13 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Contract Details/i);
 
     await fillContractDetails();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -654,8 +676,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -694,6 +716,13 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
     await screen.findByText(/Step: Contract Preview/i);
 
     await fillSignature();
@@ -701,8 +730,6 @@ describe('ContractorOnboardingFlow', () => {
     // Mock signature field would be here in real scenario
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
-
-    await screen.findByText(/Step: Pricing Plan/i);
 
     // Verify contract was signed
     await waitFor(() => {
@@ -741,8 +768,8 @@ describe('ContractorOnboardingFlow', () => {
           const steps: Record<number, string> = {
             [0]: 'Basic Information',
             [1]: 'Contract Details',
-            [2]: 'Contract Preview',
-            [3]: 'Pricing Plan',
+            [2]: 'Pricing Plan',
+            [3]: 'Contract Preview',
             [4]: 'Review',
           };
 
@@ -797,8 +824,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -870,8 +897,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -926,8 +953,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
@@ -966,14 +993,16 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Preview/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillSignature();
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findByText(/Step: Contract Preview/i);
+
+    await fillSignature();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -1008,8 +1037,8 @@ describe('ContractorOnboardingFlow', () => {
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
           [1]: 'Contract Details',
-          [2]: 'Contract Preview',
-          [3]: 'Pricing Plan',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
           [4]: 'Review',
         };
 
