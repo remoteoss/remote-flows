@@ -17,10 +17,10 @@ import {
   approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
-import { getYearMonthDate } from '@/src/common/dates';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
+import { getYearMonthDate } from '@/src/common/dates';
 
 const queryClient = new QueryClient();
 
@@ -161,6 +161,9 @@ describe('TerminationFlow', () => {
       http.get('*/v1/timeoff-leave-policies-summary*', () => {
         return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
       }),
+      http.get('*/v1/leave-policies/summary/*', () => {
+        return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
+      }),
       http.post('*/v1/offboardings', async (req) => {
         offboardingRequest = (await req.request.json()) as Record<
           string,
@@ -169,10 +172,6 @@ describe('TerminationFlow', () => {
         return HttpResponse.json(terminationResponse);
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   async function fillEmployeeCommunication(
@@ -419,6 +418,8 @@ describe('TerminationFlow', () => {
   it('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
+    const proposedTerminationDate = currentDate.day.toString();
+
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
@@ -446,8 +447,9 @@ describe('TerminationFlow', () => {
       'employee_communication',
     );
     await screen.findByText(/Step: Termination Details/i);
-
-    await fillTerminationDetails();
+    await fillTerminationDetails({
+      proposedTerminationDate: proposedTerminationDate,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -459,7 +461,7 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
-        proposed_termination_date: dynamicDate,
+        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -508,7 +510,7 @@ describe('TerminationFlow', () => {
       customer_informed_employee_date: dynamicDate,
       customer_informed_employee_description: 'Whatever text',
       personal_email: 'ze@remote.com',
-      proposed_termination_date: dynamicDate,
+      proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
       reason_description: 'whatever text',
       risk_assessment_reasons: ['sick_leave'],
       termination_reason: 'gross_misconduct',
@@ -538,7 +540,7 @@ describe('TerminationFlow', () => {
           note: 'Whatever text',
         },
         personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
+        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -550,6 +552,8 @@ describe('TerminationFlow', () => {
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {
+    const currentDate = getYearMonthDate(new Date());
+    const proposedTerminationDate = currentDate.day.toString();
     server.use(
       http.post('*/v1/offboardings', async () => {
         return HttpResponse.json(
@@ -569,7 +573,9 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Termination Details/i);
 
-    await fillTerminationDetails();
+    await fillTerminationDetails({
+      proposedTerminationDate: proposedTerminationDate,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
