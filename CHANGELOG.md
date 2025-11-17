@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 0.29.0
+
+### Minor Changes
+
+- add JSDoc comments to component props (#558) [#558](https://github.com/remoteoss/remote-flows/pull/558)
+- improve type safety and remove requesterName prop (#560) [#560](https://github.com/remoteoss/remote-flows/pull/560)
+- Override json_schema_version for DEU contract details (#564) [#564](https://github.com/remoteoss/remote-flows/pull/564)
+- fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
+- improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
+
 ## 0.28.0
 
 ### Minor Changes
