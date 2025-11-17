@@ -1,12 +1,15 @@
 import { useTerminationContext } from './context';
-import { TerminationFormValues } from '@/src/flows/Termination/types';
+import {
+  EmployeeCommunicationFormValues,
+  TerminationFormValues,
+} from '@/src/flows/Termination/types';
 import { TerminationForm } from '@/src/flows/Termination/TerminationForm';
 
 type EmployeeComunicationProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: TerminationFormValues) => void | Promise<void>;
+  onSubmit?: (payload: EmployeeCommunicationFormValues) => void | Promise<void>;
 };
 
 export function EmployeeCommunicationForm({
@@ -15,7 +18,9 @@ export function EmployeeCommunicationForm({
   const { terminationBag } = useTerminationContext();
   const handleSubmit = async (values: TerminationFormValues) => {
     await onSubmit?.(
-      terminationBag?.parseFormValues(values) as TerminationFormValues,
+      terminationBag?.parseFormValues(
+        values,
+      ) as EmployeeCommunicationFormValues,
     );
     terminationBag?.next();
   };

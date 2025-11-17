@@ -102,7 +102,6 @@ describe('TerminationFlow', () => {
         return (
           <>
             <AdditionalDetailsStep
-              requesterName='ze'
               onSubmit={(payload: $TSFixMe) => onSubmitForm(payload)}
               onSuccess={onSuccess}
               onError={onError}
@@ -434,14 +433,11 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep).toHaveBeenCalledWith(
       {
-        acknowledge_termination_procedure: false,
         confidential: 'no',
         customer_informed_employee: 'yes',
         customer_informed_employee_date: dynamicDate,
         customer_informed_employee_description: 'Whatever text',
         personal_email: 'ze@remote.com',
-        risk_assessment_reasons: [],
-        termination_reason_files: [],
       },
       'employee_communication',
     );
@@ -459,12 +455,6 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
-        acknowledge_termination_procedure: false,
-        confidential: 'no',
-        customer_informed_employee: 'yes',
-        customer_informed_employee_date: dynamicDate,
-        customer_informed_employee_description: 'Whatever text',
-        personal_email: 'ze@remote.com',
         proposed_termination_date: dynamicDate,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
@@ -490,19 +480,7 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitStep.mock.calls[2]).toEqual([
       {
-        acknowledge_termination_procedure: false,
         agrees_to_pto_amount: 'yes',
-        confidential: 'no',
-        customer_informed_employee: 'yes',
-        customer_informed_employee_date: dynamicDate,
-        customer_informed_employee_description: 'Whatever text',
-        personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
-        reason_description: 'whatever text',
-        risk_assessment_reasons: ['sick_leave'],
-        termination_reason: 'gross_misconduct',
-        termination_reason_files: [],
-        will_challenge_termination: 'no',
       },
       'paid_time_off',
     ]);
