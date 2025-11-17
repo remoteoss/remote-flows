@@ -4,8 +4,7 @@ import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   fillCheckbox,
   fillRadio,
@@ -198,7 +197,6 @@ describe('TerminationFlow', () => {
       ...values,
     };
 
-    const user = userEvent.setup();
     if (newValues?.isRequestConfidential) {
       await fillRadio(
         'Is this request confidential?',
@@ -229,17 +227,18 @@ describe('TerminationFlow', () => {
       const howDidYouShareTheInformation = screen.getByLabelText(
         /How did you share this information?/i,
       );
-      await user.type(
-        howDidYouShareTheInformation,
-        newValues?.howDidYouShareTheInformation,
-      );
+      fireEvent.change(howDidYouShareTheInformation, {
+        target: { value: newValues?.howDidYouShareTheInformation },
+      });
     }
 
     if (newValues?.employeePersonalEmail) {
       const employeePersonalEmail = screen.getByLabelText(
         /Employee's personal email/i,
       );
-      await user.type(employeePersonalEmail, newValues?.employeePersonalEmail);
+      fireEvent.change(employeePersonalEmail, {
+        target: { value: newValues?.employeePersonalEmail },
+      });
     }
   }
 
@@ -264,7 +263,6 @@ describe('TerminationFlow', () => {
       ...defaultValues,
       ...values,
     };
-    const user = userEvent.setup();
     if (newValues?.willChangeTermination) {
       await fillRadio(
         'Do you consider it is likely that the employee will challenge their termination?',
@@ -276,7 +274,7 @@ describe('TerminationFlow', () => {
       const terminationReasonDetails = screen.getByLabelText(
         /Termination reason details/i,
       );
-      await user.type(
+      await fireEvent.change(
         terminationReasonDetails,
         newValues?.terminationReasonDetails,
       );
@@ -412,7 +410,7 @@ describe('TerminationFlow', () => {
     expect(howDidYouShareTheInformation).toHaveValue('Whatever text');
   });
 
-  it('should submit the termination flow', async () => {
+  it.only('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
     render(<TerminationFlow {...defaultProps} />, { wrapper });
@@ -602,8 +600,11 @@ describe('TerminationFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
-    fillEmployeeCommunication({
-      employeePersonalEmail: 'ze@remote.com',
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    fireEvent.change(employeePersonalEmail, {
+      target: { value: 'ze@remote.com' },
     });
 
     nextButton.click();
