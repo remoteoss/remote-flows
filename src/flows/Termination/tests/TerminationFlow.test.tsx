@@ -214,6 +214,13 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(
+            `date-picker-button-customer_informed_employee_date`,
+          ),
+        ).toBeInTheDocument();
+      });
       await selectDayInCalendar(
         newValues?.whenWasEmployeeInformed,
         'customer_informed_employee_date',
@@ -274,10 +281,9 @@ describe('TerminationFlow', () => {
       const terminationReasonDetails = screen.getByLabelText(
         /Termination reason details/i,
       );
-      await fireEvent.change(
-        terminationReasonDetails,
-        newValues?.terminationReasonDetails,
-      );
+      fireEvent.change(terminationReasonDetails, {
+        target: { value: newValues?.terminationReasonDetails },
+      });
     }
 
     if (newValues?.terminationReason) {
@@ -410,7 +416,7 @@ describe('TerminationFlow', () => {
     expect(howDidYouShareTheInformation).toHaveValue('Whatever text');
   });
 
-  it.only('should submit the termination flow', async () => {
+  it('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
     render(<TerminationFlow {...defaultProps} />, { wrapper });
