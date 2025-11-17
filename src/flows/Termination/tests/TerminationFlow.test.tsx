@@ -4,8 +4,7 @@ import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
   fillCheckbox,
   fillRadio,
@@ -18,10 +17,10 @@ import {
   approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
-import { getYearMonthDate } from '@/src/common/dates';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
+import { getYearMonthDate } from '@/src/common/dates';
 
 const queryClient = new QueryClient();
 
@@ -162,6 +161,9 @@ describe('TerminationFlow', () => {
       http.get('*/v1/timeoff-leave-policies-summary*', () => {
         return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
       }),
+      http.get('*/v1/leave-policies/summary/*', () => {
+        return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
+      }),
       http.post('*/v1/offboardings', async (req) => {
         offboardingRequest = (await req.request.json()) as Record<
           string,
@@ -198,7 +200,6 @@ describe('TerminationFlow', () => {
       ...values,
     };
 
-    const user = userEvent.setup();
     if (newValues?.isRequestConfidential) {
       await fillRadio(
         'Is this request confidential?',
@@ -216,6 +217,13 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
+      await waitFor(() => {
+        expect(
+          screen.getByTestId(
+            `date-picker-button-customer_informed_employee_date`,
+          ),
+        ).toBeInTheDocument();
+      });
       await selectDayInCalendar(
         newValues?.whenWasEmployeeInformed,
         'customer_informed_employee_date',
@@ -229,17 +237,18 @@ describe('TerminationFlow', () => {
       const howDidYouShareTheInformation = screen.getByLabelText(
         /How did you share this information?/i,
       );
-      await user.type(
-        howDidYouShareTheInformation,
-        newValues?.howDidYouShareTheInformation,
-      );
+      fireEvent.change(howDidYouShareTheInformation, {
+        target: { value: newValues?.howDidYouShareTheInformation },
+      });
     }
 
     if (newValues?.employeePersonalEmail) {
       const employeePersonalEmail = screen.getByLabelText(
         /Employee's personal email/i,
       );
-      await user.type(employeePersonalEmail, newValues?.employeePersonalEmail);
+      fireEvent.change(employeePersonalEmail, {
+        target: { value: newValues?.employeePersonalEmail },
+      });
     }
   }
 
@@ -264,7 +273,6 @@ describe('TerminationFlow', () => {
       ...defaultValues,
       ...values,
     };
-    const user = userEvent.setup();
     if (newValues?.willChangeTermination) {
       await fillRadio(
         'Do you consider it is likely that the employee will challenge their termination?',
@@ -276,10 +284,9 @@ describe('TerminationFlow', () => {
       const terminationReasonDetails = screen.getByLabelText(
         /Termination reason details/i,
       );
-      await user.type(
-        terminationReasonDetails,
-        newValues?.terminationReasonDetails,
-      );
+      fireEvent.change(terminationReasonDetails, {
+        target: { value: newValues?.terminationReasonDetails },
+      });
     }
 
     if (newValues?.terminationReason) {
@@ -415,6 +422,8 @@ describe('TerminationFlow', () => {
   it('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
+    const proposedTerminationDate = currentDate.day.toString();
+
     render(<TerminationFlow {...defaultProps} />, { wrapper });
 
     await screen.findByText(/Step: Employee Communication/i);
@@ -442,8 +451,9 @@ describe('TerminationFlow', () => {
       'employee_communication',
     );
     await screen.findByText(/Step: Termination Details/i);
-
-    await fillTerminationDetails();
+    await fillTerminationDetails({
+      proposedTerminationDate: proposedTerminationDate,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -455,7 +465,7 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
-        proposed_termination_date: dynamicDate,
+        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -504,7 +514,7 @@ describe('TerminationFlow', () => {
       customer_informed_employee_date: dynamicDate,
       customer_informed_employee_description: 'Whatever text',
       personal_email: 'ze@remote.com',
-      proposed_termination_date: dynamicDate,
+      proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
       reason_description: 'whatever text',
       risk_assessment_reasons: ['sick_leave'],
       termination_reason: 'gross_misconduct',
@@ -534,7 +544,7 @@ describe('TerminationFlow', () => {
           note: 'Whatever text',
         },
         personal_email: 'ze@remote.com',
-        proposed_termination_date: dynamicDate,
+        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -546,6 +556,8 @@ describe('TerminationFlow', () => {
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {
+    const currentDate = getYearMonthDate(new Date());
+    const proposedTerminationDate = currentDate.day.toString();
     server.use(
       http.post('*/v1/offboardings', async () => {
         return HttpResponse.json(
@@ -565,7 +577,9 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Termination Details/i);
 
-    await fillTerminationDetails();
+    await fillTerminationDetails({
+      proposedTerminationDate: proposedTerminationDate,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -602,8 +616,11 @@ describe('TerminationFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
-    fillEmployeeCommunication({
-      employeePersonalEmail: 'ze@remote.com',
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    fireEvent.change(employeePersonalEmail, {
+      target: { value: 'ze@remote.com' },
     });
 
     nextButton.click();

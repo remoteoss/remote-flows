@@ -108,8 +108,8 @@ export async function selectDayInCalendar(day: string, fieldName: string) {
   });
   const calendar = screen.getByRole('dialog');
   expect(calendar).toBeInTheDocument();
-  const dateButton = screen.getByRole('button', {
-    name: new RegExp(day, 'i'),
+  const dateButton = within(calendar).getByRole('button', {
+    name: new RegExp(`^${day}$`, 'i'), // Also use ^ and $ for exact match
   });
   await user.click(dateButton);
   await waitFor(() => {
