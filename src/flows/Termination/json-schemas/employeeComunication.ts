@@ -121,7 +121,8 @@ export const employeeComunicationSchema = {
           },
         },
         customer_informed_employee_description: {
-          description: '',
+          description:
+            'Please be as specific as you can. Include details about the employee’s response, if applicable.',
           maxLength: 1000,
           title: 'How did you share this information?',
           type: ['string', 'null'],

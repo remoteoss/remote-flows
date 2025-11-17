@@ -51,7 +51,7 @@ const SummaryTimeOff = ({
   const formattedProposedTerminationDate = new Date(
     proposedTerminationDate,
   ).toLocaleDateString('en-US', {
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
@@ -97,7 +97,7 @@ const SummaryTimeOff = ({
       </SummaryRow>
       <SummaryRow className='mb-2 py-0'>
         <p className='text-xs text-[#222E39]'>
-          Expiration date of unused days: {formattedProposedTerminationDate}
+          Unused days expire on {formattedProposedTerminationDate}
         </p>
       </SummaryRow>
     </div>
