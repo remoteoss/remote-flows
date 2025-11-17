@@ -174,6 +174,10 @@ describe('TerminationFlow', () => {
     );
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   async function fillEmployeeCommunication(
     values?: Partial<{
       employeePersonalEmail: string;
