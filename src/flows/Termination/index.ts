@@ -5,6 +5,10 @@ export type {
   TerminationFormValues,
   TerminationFlowProps,
   TerminationRenderProps,
+  EmployeeCommunicationFormValues,
+  TerminationDetailsFormValues,
+  PaidTimeOffFormValues,
+  AdditionalDetailsFormValues,
 } from './types';
 export type { PaidTimeOffProps } from './components/PaidTimeOff/PaidTimeOff';
 export type { AcknowledgeInformationFeesProps } from './components/AcknowledgeInformation/AcknowledgeInformationFees';

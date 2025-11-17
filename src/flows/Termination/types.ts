@@ -8,16 +8,15 @@ import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetai
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
 import { JSFModify } from '@/src/flows/types';
 
-export type TerminationFormValues = {
-  acknowledge_termination_procedure: boolean;
-  additional_comments: string;
-  agrees_to_pto_amount: string;
-  agrees_to_pto_amount_notes: string | null;
+export type EmployeeCommunicationFormValues = {
   confidential: string;
   customer_informed_employee: string;
   customer_informed_employee_date: string | null;
   customer_informed_employee_description: string | null;
   personal_email: string;
+};
+
+export type TerminationDetailsFormValues = {
   proposed_termination_date: string;
   reason_description: string;
   risk_assessment_reasons: TerminationDetailsParams['risk_assessment_reasons'];
@@ -25,10 +24,25 @@ export type TerminationFormValues = {
     | TerminationDetailsParams['termination_reason']
     | undefined;
   termination_reason_files: TerminationDetailsParams['termination_reason_files'];
-  timesheet_file: TerminationDetailsParams['timesheet_file'];
+  additional_comments: string | null;
   will_challenge_termination: string;
   will_challenge_termination_description: string | null;
 };
+
+export type PaidTimeOffFormValues = {
+  agrees_to_pto_amount: string;
+  agrees_to_pto_amount_notes: string | null;
+  timesheet_file: TerminationDetailsParams['timesheet_file'];
+};
+
+export type AdditionalDetailsFormValues = {
+  acknowledge_termination_procedure: boolean;
+};
+
+export type TerminationFormValues = EmployeeCommunicationFormValues &
+  TerminationDetailsFormValues &
+  PaidTimeOffFormValues &
+  AdditionalDetailsFormValues;
 
 export type TerminationRenderProps = {
   /**
