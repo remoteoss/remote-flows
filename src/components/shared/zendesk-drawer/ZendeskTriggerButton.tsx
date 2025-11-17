@@ -4,10 +4,25 @@ import { buildZendeskURL } from './utils';
 import { useState } from 'react';
 
 interface ZendeskTriggerButtonProps {
+  /**
+   * The Zendesk ID for the help article
+   */
   zendeskId: number;
+  /**
+   * The class name for the button
+   */
   className?: string;
+  /**
+   * The callback function to be called when the button is clicked
+   */
   onClick?: (zendeskId: number) => void;
+  /**
+   * The children to be rendered inside the button
+   */
   children?: React.ReactNode;
+  /**
+   * Whether to open the help article in a new tab
+   */
   external?: boolean;
 }
 
