@@ -38,7 +38,7 @@ export const paidTimeOffSchema = {
           'x-jsf-presentation': {
             inputType: 'hidden',
             statement: {
-              title: 'Make sure these paid time off records are correct',
+              title: 'Check remaining paid time off',
               description:
                 'You must pay the employee for any unused accrued paid time off, so please check these records carefully.',
               inputType: 'statement',

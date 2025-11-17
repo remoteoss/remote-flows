@@ -221,7 +221,8 @@ export const terminationDetailsSchema = {
           },
         },
         proposed_termination_date: {
-          description: '',
+          description:
+            'Please note that we cannot commit to a termination date until we conduct a full review of the information you submit.',
           format: 'date',
           maxLength: 255,
           title: 'Proposed termination date',
