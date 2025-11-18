@@ -45,6 +45,7 @@ export type JSFField = {
   }>;
   defaultValue?: string | number;
   minDate?: string;
+  maxDate?: string;
   maxLength?: number;
   multiple?: boolean;
   meta?: Record<string, unknown>;
