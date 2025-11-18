@@ -47,8 +47,8 @@ const mockRender = vi.fn(
       [0]: 'Select Country',
       [1]: 'Basic Information',
       [2]: 'Contract Details',
-      [3]: 'Contract Preview',
-      [4]: 'Pricing Plan',
+      [3]: 'Pricing Plan',
+      [4]: 'Contract Preview',
       [5]: 'Review',
     };
 

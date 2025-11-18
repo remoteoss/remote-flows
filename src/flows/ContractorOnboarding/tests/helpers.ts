@@ -81,6 +81,10 @@ export async function fillBasicInformation(
   }
 }
 
+export async function fillContractorSubscription() {
+  await fillRadio('Payment terms', 'Monthly Contractor Subscription');
+}
+
 export async function fillContractDetails(
   values?: Partial<{
     serviceAndDeliverables: string;

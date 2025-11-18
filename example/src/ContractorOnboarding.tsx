@@ -25,8 +25,8 @@ const STEPS = [
   'Select Country',
   'Basic Information',
   'Contract Details',
-  'Contract Preview',
   'Pricing Plan',
+  'Contract Preview',
 ];
 
 type MultiStepFormProps = {
@@ -300,6 +300,10 @@ export const ContractorOnboardingWithProps = ({
               employmentId={employmentId}
               externalId={externalId}
               initialValues={{
+                pricing_plan: {
+                  subscription:
+                    'urn:remotecom:resource:product:contractor:standard:monthly',
+                },
                 service_duration: {
                   provisional_start_date: provisionalStartDate,
                 },
