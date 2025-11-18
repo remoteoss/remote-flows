@@ -1,7 +1,7 @@
 import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
-import { format } from 'date-fns';
+import { format, isFuture, parseISO, subDays } from 'date-fns';
 import { useMemo } from 'react';
 import {
   CreateOffboardingParams,
@@ -21,6 +21,7 @@ import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { STEPS } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
+import { terminationDetailsSchema } from '@/src/flows/Termination/json-schemas/terminationDetails';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 import { cn, ZendeskTriggerButton } from '@/src/internals';
@@ -34,6 +35,7 @@ import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/A
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
+  hasFutureStartDate: boolean,
 ): TerminationFormValues {
   const initialValues: TerminationFormValues = {
     confidential: '',
@@ -54,6 +56,9 @@ function buildInitialValues(
     risk_assessment_reasons: [],
     timesheet_file: undefined,
     ...stepsInitialValues,
+    ...(hasFutureStartDate
+      ? { termination_reason: 'cancellation_before_start_date' }
+      : {}),
   };
 
   return initialValues;
@@ -71,13 +76,21 @@ export const useTermination = ({
 
   const { data: employment } = useEmploymentQuery({ employmentId });
 
-  const initialValues = buildInitialValues({
-    ...stepState.values?.employee_communication,
-    ...stepState.values?.termination_details,
-    ...stepState.values?.paid_time_off,
-    ...stepState.values?.additional_information,
-    ...terminationInitialValues,
-  });
+  const hasFutureStartDate = Boolean(
+    employment?.provisional_start_date &&
+      isFuture(parseISO(employment.provisional_start_date)),
+  );
+
+  const initialValues = buildInitialValues(
+    {
+      ...stepState.values?.employee_communication,
+      ...stepState.values?.termination_details,
+      ...stepState.values?.paid_time_off,
+      ...stepState.values?.additional_information,
+      ...terminationInitialValues,
+    },
+    hasFutureStartDate,
+  );
 
   const formValues = useMemo(
     () => ({
@@ -89,6 +102,19 @@ export const useTermination = ({
   );
 
   const customFields = useMemo(() => {
+    const originalTerminationReasonOptions =
+      terminationDetailsSchema.data.schema.properties.termination_reason.oneOf;
+
+    const terminationReasonOptions = hasFutureStartDate
+      ? originalTerminationReasonOptions.filter(
+          (option: $TSFixMe) =>
+            option.const === 'cancellation_before_start_date',
+        )
+      : originalTerminationReasonOptions.filter(
+          (option: $TSFixMe) =>
+            option.const !== 'cancellation_before_start_date',
+        );
+
     return {
       fields: {
         risk_assesment_info: createInformationField(
@@ -100,6 +126,10 @@ export const useTermination = ({
             )?.['x-jsf-presentation']?.className,
           },
         ),
+        termination_reason: {
+          ...(options?.jsfModify?.fields?.termination_reason as $TSFixMe),
+          oneOf: terminationReasonOptions,
+        },
         proposed_termination_date_info: createInformationField(
           'Proposed termination date',
           <>
@@ -136,7 +166,25 @@ export const useTermination = ({
               options?.jsfModify?.fields?.proposed_termination_date as $TSFixMe
             )?.['x-jsf-presentation'],
             minDate: format(new Date(), 'yyyy-MM-dd'),
+            ...(formValues.termination_reason ===
+              'cancellation_before_start_date' &&
+            employment?.provisional_start_date
+              ? {
+                  maxDate: format(
+                    subDays(parseISO(employment.provisional_start_date), 1),
+                    'yyyy-MM-dd',
+                  ),
+                }
+              : {}),
           },
+          ...(formValues.termination_reason === 'cancellation_before_start_date'
+            ? {
+                'x-jsf-errorMessage': {
+                  maximum:
+                    "The proposed termination date must be before the employee's start date.",
+                },
+              }
+            : {}),
         },
         paid_time_off_info: {
           ...(options?.jsfModify?.fields?.paid_time_off_info as $TSFixMe),
@@ -226,6 +274,7 @@ export const useTermination = ({
     };
   }, [
     options?.jsfModify?.fields?.risk_assesment_info,
+    options?.jsfModify?.fields?.termination_reason,
     options?.jsfModify?.fields?.proposed_termination_date_info,
     options?.jsfModify?.fields?.proposed_termination_date,
     options?.jsfModify?.fields?.paid_time_off_info,
@@ -233,6 +282,8 @@ export const useTermination = ({
     options?.jsfModify?.fields?.acknowledge_termination_procedure_fees_info,
     employment,
     formValues.proposed_termination_date,
+    formValues.termination_reason,
+    hasFutureStartDate,
     employmentId,
   ]);
 

@@ -22,7 +22,7 @@ import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 
 export type DatePickerFieldProps = JSFField & {
   onChange?: (value: any) => void;
@@ -34,6 +34,7 @@ export function DatePickerField({
   label,
   name,
   minDate,
+  maxDate,
   onChange,
   component,
   ...rest
@@ -45,7 +46,12 @@ export function DatePickerField({
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
     minDateValue = getMinStartDate(rest.meta.mot);
   } else if (minDate) {
-    minDateValue = parse(minDate, 'yyyy-MM-dd', new Date());
+    minDateValue = new Date(`${minDate}T00:00:00`);
+  }
+
+  let maxDateValue: Date | undefined;
+  if (maxDate) {
+    maxDateValue = new Date(`${maxDate}T23:59:59`);
   }
 
   return (
@@ -62,6 +68,7 @@ export function DatePickerField({
             name,
             onChange,
             ...(minDateValue && { minDate: minDateValue.toISOString() }),
+            ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
             ...rest,
           };
           return (
@@ -125,9 +132,11 @@ export function DatePickerField({
                       );
                     },
                   }}
-                  {...(minDateValue && {
-                    disabled: (date: Date) => date < minDateValue,
-                  })}
+                  disabled={(date: Date) => {
+                    if (minDateValue && date < minDateValue) return true;
+                    if (maxDateValue && date > maxDateValue) return true;
+                    return false;
+                  }}
                 />
               </PopoverContent>
             </Popover>

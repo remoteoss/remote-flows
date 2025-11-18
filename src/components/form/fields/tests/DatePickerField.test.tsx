@@ -224,4 +224,61 @@ describe('DatePickerField Component', () => {
     // The component should still render correctly
     expect(screen.getByText('Test Field')).toBeInTheDocument();
   });
+
+  describe('DatePickerField - maxDate functionality', () => {
+    it('passes maxDate to custom date picker component', () => {
+      const maxDate = '2024-12-31';
+      const CustomDatePickerField = vi
+        .fn()
+        .mockImplementation(() => (
+          <div data-testid='custom-date-picker-field'>Custom Date Picker</div>
+        ));
+
+      (useFormFields as any).mockReturnValue({
+        components: { date: CustomDatePickerField },
+      });
+
+      renderWithFormContext({
+        ...defaultProps,
+        maxDate,
+      });
+
+      expect(CustomDatePickerField).toHaveBeenCalled();
+      const call = CustomDatePickerField.mock.calls[0][0];
+
+      // Verify maxDate is passed as ISO string
+      expect(call.fieldData.maxDate).toBe(
+        new Date('2024-12-31T23:59:59').toISOString(),
+      );
+    });
+
+    it('handles both minDate and maxDate together', () => {
+      const minDate = '2024-01-01';
+      const maxDate = '2024-12-31';
+      const CustomDatePickerField = vi
+        .fn()
+        .mockImplementation(() => (
+          <div data-testid='custom-date-picker-field'>Custom Date Picker</div>
+        ));
+
+      (useFormFields as any).mockReturnValue({
+        components: { date: CustomDatePickerField },
+      });
+
+      renderWithFormContext({
+        ...defaultProps,
+        minDate,
+        maxDate,
+      });
+
+      const call = CustomDatePickerField.mock.calls[0][0];
+
+      expect(call.fieldData.minDate).toBe(
+        new Date('2024-01-01T00:00:00').toISOString(),
+      );
+      expect(call.fieldData.maxDate).toBe(
+        new Date('2024-12-31T23:59:59').toISOString(),
+      );
+    });
+  });
 });

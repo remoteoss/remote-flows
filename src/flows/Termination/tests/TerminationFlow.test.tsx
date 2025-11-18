@@ -21,6 +21,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
+import { format } from 'date-fns';
 
 const queryClient = new QueryClient();
 
@@ -645,5 +646,37 @@ describe('TerminationFlow', () => {
       /Employee's personal email/i,
     );
     expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
+  });
+
+  it('should only show cancellation_before_start_date option when employment has future start date', async () => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 30);
+    const futureDateString = format(futureDate, 'yyyy-MM-dd');
+
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          data: {
+            employment: {
+              ...employment.data.employment,
+              provisional_start_date: futureDateString,
+            },
+          },
+        });
+      }),
+    );
+
+    render(<TerminationFlow {...defaultProps} />, { wrapper });
+
+    await screen.findByText(/Step: Employee Communication/i);
+    await fillEmployeeCommunication();
+    screen.getByText(/Next Step/i).click();
+    await screen.findByText(/Step: Termination Details/i);
+
+    // Verify it was selected by querying the select-value slot
+    const selectValue = document.querySelector('[data-slot="select-value"]');
+    expect(selectValue?.textContent).toMatch(
+      /Decision to cancel hiring before the employee starts/i,
+    );
   });
 });
