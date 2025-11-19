@@ -35,6 +35,11 @@ export const useClient = () => {
   };
 };
 
+/**
+ * useUserId returns the userId passed in the auth function
+ * @returns The userId passed in the auth function
+ 
+ */
 export const useUserId = () => {
   const context = useContext(RemoteFlowContext);
   if (!context) {
