@@ -204,7 +204,12 @@ describe('FileUploadField Component', () => {
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();
       expect(mockOnChange.mock.calls[0][0]).toEqual([
-        { name: 'small.txt', content: expect.any(String) },
+        {
+          name: 'small.txt',
+          content: expect.any(String),
+          size: expect.any(Number),
+          type: expect.any(String),
+        },
       ]);
     });
   });

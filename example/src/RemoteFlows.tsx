@@ -3,6 +3,7 @@ import {
   RemoteFlowsSDKProps,
 } from '@remoteoss/remote-flows';
 import { ReactNode, useMemo } from 'react';
+import { ErrorBoundary } from './ErrorBoundary';
 
 const fetchCompanyToken = () => {
   return fetch('/api/fetch-refresh-token')
@@ -65,13 +66,15 @@ export const RemoteFlows = ({
     return fetchCompanyToken;
   }, [authType, isClientToken]);
   return (
-    <RemoteFlowsAuth
-      environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
-      auth={auth}
-      authId={!isClientToken ? 'default' : 'client'}
-      {...props}
-    >
-      {children}
-    </RemoteFlowsAuth>
+    <ErrorBoundary>
+      <RemoteFlowsAuth
+        environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
+        auth={auth}
+        authId={!isClientToken ? 'default' : 'client'}
+        {...props}
+      >
+        {children}
+      </RemoteFlowsAuth>
+    </ErrorBoundary>
   );
 };
