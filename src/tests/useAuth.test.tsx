@@ -2,7 +2,6 @@ import { createClient } from '@hey-api/client-fetch';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { Mock } from 'vitest';
 import { client } from '../client/client.gen';
 import { useAuth } from '../useAuth';
 
@@ -13,13 +12,9 @@ type AuthResponse = {
 
 // Mock the createClient function - now captures and returns the config passed to it
 vi.mock('@hey-api/client-fetch', () => ({
-  createClient: vi.fn().mockReturnValue({
-    getConfig: () => ({
-      auth: vi.fn(),
-      baseUrl: '',
-      headers: {},
-    }),
-  }),
+  createClient: vi.fn((config) => ({
+    getConfig: () => config,
+  })),
 }));
 
 // Mock the client.getConfig
@@ -95,26 +90,9 @@ describe('useAuth', () => {
 
   it('should fetch new token when session is empty', async () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
-    const mockAuthFn = vi.fn().mockResolvedValue('test-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
-    });
-
-    // Wait for the query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
     });
 
     let token: string | undefined;
@@ -130,26 +108,9 @@ describe('useAuth', () => {
 
   it('should use existing token if not expired', async () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
-    const mockAuthFn = vi.fn().mockResolvedValue('test-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
-    });
-
-    // Wait for the query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
     });
 
     // First call to set the token
@@ -183,29 +144,8 @@ describe('useAuth', () => {
         expiresIn: 3600,
       });
 
-    const mockAuthFn = vi
-      .fn()
-      .mockResolvedValueOnce('expired-token')
-      .mockResolvedValueOnce('new-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
-
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
-    });
-
-    // Wait for the first query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
     });
 
     // First call sets expired token
@@ -213,14 +153,6 @@ describe('useAuth', () => {
       const authFn = result.current.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
-    });
-
-    // Wait for the second query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
     });
 
     // Second call should fetch new token
@@ -354,26 +286,6 @@ describe('useAuth', () => {
     const mockClientAuth = vi.fn().mockResolvedValue(clientAuthResponse);
     const mockServerAuth = vi.fn().mockResolvedValue(serverAuthResponse);
 
-    const mockClientAuthFn = vi.fn().mockResolvedValue('client-token');
-    const mockServerAuthFn = vi.fn().mockResolvedValue('server-token');
-
-    // Mock createClient to return different auth functions for different calls
-    (createClient as Mock)
-      .mockReturnValueOnce({
-        getConfig: () => ({
-          auth: mockClientAuthFn,
-          baseUrl: '',
-          headers: {},
-        }),
-      })
-      .mockReturnValueOnce({
-        getConfig: () => ({
-          auth: mockServerAuthFn,
-          baseUrl: '',
-          headers: {},
-        }),
-      });
-
     // Render first hook with 'client' authId
     const { result: clientResult } = renderHook(
       () => useAuth({ auth: mockClientAuth, authId: 'client' }),
@@ -385,18 +297,6 @@ describe('useAuth', () => {
       () => useAuth({ auth: mockServerAuth, authId: 'default' }),
       { wrapper },
     );
-
-    // Prefetch queries for both auth types with their respective query keys
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth', 'client'],
-        queryFn: mockClientAuth,
-      });
-      await queryClient.prefetchQuery({
-        queryKey: ['auth', 'default'],
-        queryFn: mockServerAuth,
-      });
-    });
 
     // Get token from client auth
     let clientToken: string | undefined;
