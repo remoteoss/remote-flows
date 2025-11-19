@@ -12,7 +12,6 @@ import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { useState } from 'react';
-import { TerminationSuccessful } from './TerminationSuccesful';
 import './css/main.css';
 
 const STEPS = [
@@ -123,19 +122,8 @@ const TerminationRender = ({
   components,
 }: TerminationRenderProps) => {
   const currentStepIndex = terminationBag.stepState.currentStep.index;
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const stepTitle = STEPS[currentStepIndex];
-  const employmentId = terminationBag.employmentId;
-
-  if (isSuccess) {
-    return (
-      <TerminationSuccessful
-        employmentId={employmentId}
-        employment={terminationBag.employment}
-      />
-    );
-  }
 
   if (terminationBag.isLoading) {
     return <div>Loading termination...</div>;
@@ -171,10 +159,7 @@ const TerminationRender = ({
           onSubmitStep={(payload, step) =>
             console.log('onSubmitStep', payload, step)
           }
-          onSubmitForm={(payload) => {
-            console.log('onSubmitForm', payload);
-            setIsSuccess(true);
-          }}
+          onSubmitForm={(payload) => console.log('onSubmitForm', payload)}
           onError={(error) => console.log('onError', error)}
           onSuccess={(response) => console.log('onSuccess', response)}
         />
@@ -228,9 +213,10 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
-  const EMPLOYMENT_ID = import.meta.env.VITE_TERMINATION_EMPLOYMENT_ID;
+  const PARTNERS_EMPLOYMENT_ID = '85ab2f01-34e7-4a04-967d-46b1710c42b2';
+  //const LOCAL_EMPLOYMENT_ID = '33112809-4307-49a3-9653-dda668656e7e';
   const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: EMPLOYMENT_ID, // use your own employment ID
+    employmentId: PARTNERS_EMPLOYMENT_ID, // use your own employment ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
