@@ -19,10 +19,10 @@ export const useFormFields = () => {
 
 export const RemoteFlowContext = createContext<{
   client: Client | null;
-  ownerId?: string;
+  userId?: string;
 }>({
   client: null,
-  ownerId: undefined,
+  userId: undefined,
 });
 
 export const useClient = () => {
@@ -35,10 +35,10 @@ export const useClient = () => {
   };
 };
 
-export const useOwnerId = () => {
+export const useUserId = () => {
   const context = useContext(RemoteFlowContext);
   if (!context) {
-    throw new Error('useOwnerId must be used within a RemoteFlowContext');
+    throw new Error('useUserId must be used within a RemoteFlowContext');
   }
-  return context.ownerId;
+  return context.userId;
 };

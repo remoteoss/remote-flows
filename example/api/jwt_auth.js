@@ -85,7 +85,7 @@ async function fetchCompanyManagerToken() {
     return {
       accessToken: data.access_token,
       expiresIn: data.expires_in,
-      ownerId: VITE_USER_ID,
+      userId: VITE_USER_ID,
     };
   } catch (error) {
     throw new Error(`Failed to fetch access token with JWT: ${error.message}`);
@@ -95,13 +95,12 @@ async function fetchCompanyManagerToken() {
 // Express route handler
 async function getCompanyManagerToken(req, res) {
   try {
-    const { accessToken, expiresIn, ownerId } =
-      await fetchCompanyManagerToken();
+    const { accessToken, expiresIn, userId } = await fetchCompanyManagerToken();
 
     return res.status(200).json({
       access_token: accessToken,
       expires_in: expiresIn,
-      owner_id: ownerId,
+      user_id: userId,
     });
   } catch (error) {
     console.error('Error fetching JWT access token:', error);

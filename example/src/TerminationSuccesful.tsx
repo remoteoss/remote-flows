@@ -1,4 +1,4 @@
-import { useMagicLink, useOwnerId } from '@remoteoss/remote-flows';
+import { useMagicLink, useUserId } from '@remoteoss/remote-flows';
 import type { Employment } from '@remoteoss/remote-flows';
 
 export const TerminationSuccessful = ({
@@ -8,12 +8,12 @@ export const TerminationSuccessful = ({
   employmentId: string;
   employment?: Employment;
 }) => {
-  const ownerId = useOwnerId();
+  const userId = useUserId();
   const magicLink = useMagicLink();
   const handleAddMissingInformation = async () => {
-    if (ownerId) {
+    if (userId) {
       const response = await magicLink.mutateAsync({
-        user_id: ownerId,
+        user_id: userId,
         path: `/dashboard/people/${employmentId}?selectedTab=profile`,
       });
       window.open(response?.data?.data?.url, '_blank');

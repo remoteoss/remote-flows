@@ -31,7 +31,7 @@ export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
-export { useOwnerId } from '@/src/context';
+export { useUserId } from '@/src/context';
 
 export { convertFromCents } from '@/src/components/form/utils';
 

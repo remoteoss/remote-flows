@@ -8,7 +8,7 @@ import { useAuth } from '../useAuth';
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
-  ownerId?: string;
+  userId?: string;
 };
 
 // Mock the createClient function to return the actual config
@@ -327,20 +327,20 @@ describe('useAuth', () => {
     expect(clientToken).not.toBe(serverToken);
   });
 
-  it('should set ownerId when auth response includes it', async () => {
-    const authResponseWithOwnerId = {
+  it('should set userId when auth response includes it', async () => {
+    const authResponseWithUserId = {
       accessToken: 'test-token',
       expiresIn: 3600,
-      ownerId: 'owner-123',
+      userId: 'user-123',
     };
 
-    const mockAuth = vi.fn().mockResolvedValue(authResponseWithOwnerId);
+    const mockAuth = vi.fn().mockResolvedValue(authResponseWithUserId);
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
     });
 
-    expect(result.current.ownerId).toBeUndefined();
+    expect(result.current.userId).toBeUndefined();
 
     await act(async () => {
       const authFn = result.current.client.current.getConfig()
@@ -349,20 +349,20 @@ describe('useAuth', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.ownerId).toBe('owner-123');
+      expect(result.current.userId).toBe('user-123');
     });
 
     expect(mockAuth).toHaveBeenCalledOnce();
   });
 
-  it('should handle auth response without ownerId', async () => {
-    const authResponseWithoutOwnerId = {
+  it('should handle auth response without userId', async () => {
+    const authResponseWithoutUserId = {
       accessToken: 'test-token',
       expiresIn: 3600,
-      // no ownerId
+      // no userId
     };
 
-    const mockAuth = vi.fn().mockResolvedValue(authResponseWithoutOwnerId);
+    const mockAuth = vi.fn().mockResolvedValue(authResponseWithoutUserId);
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
@@ -375,20 +375,20 @@ describe('useAuth', () => {
     });
 
     expect(mockAuth).toHaveBeenCalledOnce();
-    expect(result.current.ownerId).toBeUndefined();
+    expect(result.current.userId).toBeUndefined();
   });
 
-  it('should update ownerId when refetch is called with different owner', async () => {
+  it('should update userId when refetch is called with different owner', async () => {
     const firstAuthResponse = {
       accessToken: 'token-1',
       expiresIn: -1, // Expired immediately to force refetch
-      ownerId: 'owner-1',
+      userId: 'user-1',
     };
 
     const secondAuthResponse = {
       accessToken: 'token-2',
       expiresIn: 3600,
-      ownerId: 'owner-2',
+      userId: 'user-2',
     };
 
     const mockAuth = vi
@@ -408,7 +408,7 @@ describe('useAuth', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.ownerId).toBe('owner-1');
+      expect(result.current.userId).toBe('user-1');
     });
 
     // Second auth call (token expired, should refetch)
@@ -419,7 +419,7 @@ describe('useAuth', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.ownerId).toBe('owner-2');
+      expect(result.current.userId).toBe('user-2');
     });
 
     expect(mockAuth).toHaveBeenCalledTimes(2);

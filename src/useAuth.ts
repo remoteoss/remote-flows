@@ -9,7 +9,7 @@ import { debug } from './lib/utils';
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
-  ownerId?: string;
+  userId?: string;
 };
 
 type Options = Partial<{
@@ -35,18 +35,18 @@ export const useAuth = ({
   options?: Options;
   authId?: 'default' | 'client';
 }) => {
-  const [ownerId, setOwnerId] = useState<string | undefined>();
+  const [userId, setUserId] = useState<string | undefined>();
 
   const session = useRef<{
     accessToken: string;
     expiresAt: number;
-    ownerId?: string;
+    userId?: string;
   } | null>(null);
   const { refetch } = useQuery({
     queryKey: ['auth', authId],
     queryFn: async () => {
       const data = await auth();
-      setOwnerId(data.ownerId);
+      setUserId(data.userId);
       return data;
     },
     enabled: false,
@@ -90,7 +90,7 @@ export const useAuth = ({
               session.current = {
                 accessToken: data.accessToken,
                 expiresAt: Date.now() + data.expiresIn * 1000,
-                ownerId: data.ownerId,
+                userId: data.userId,
               };
             }
           }
@@ -98,6 +98,6 @@ export const useAuth = ({
         },
       }),
     ),
-    ownerId,
+    userId,
   };
 };
