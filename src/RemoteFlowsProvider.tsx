@@ -24,7 +24,7 @@ function RemoteFlowContextWrapper({
   proxy,
   environment,
 }: RemoteFlowContextWrapperProps) {
-  const { client, userId } = useAuth({
+  const remoteApiClient = useAuth({
     auth,
     authId,
     options: {
@@ -33,7 +33,7 @@ function RemoteFlowContextWrapper({
     },
   });
   return (
-    <RemoteFlowContext.Provider value={{ client: client.current, userId }}>
+    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
       {children}
     </RemoteFlowContext.Provider>
   );

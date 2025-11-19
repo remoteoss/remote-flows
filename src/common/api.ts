@@ -3,8 +3,6 @@ import {
   getIndexTimeoff,
   getShowEmployment,
   ListTimeoffResponse,
-  MagicLinkParams,
-  postGenerateMagicLink,
   Timeoff,
   TimeoffStatus,
   TimeoffType,
@@ -19,7 +17,7 @@ import {
   formatAsDecimal,
 } from '@/src/lib/time';
 import { Client } from '@hey-api/client-fetch';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;
 
@@ -446,25 +444,5 @@ export const useTimeOffLeavePoliciesSummaryQuery = ({
       });
     },
     select: ({ data }) => data,
-  });
-};
-
-/**
- * Hook to generate a magic link for a specific employment.
- * @param {MagicLinkParams} params - The parameters for the magic link.
- * @returns {UseQueryResult<any, unknown>} - The result of the query, including the magic link.
- */
-export const useMagicLink = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (params: MagicLinkParams) => {
-      return postGenerateMagicLink({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: params,
-      });
-    },
   });
 };
