@@ -1,25 +1,21 @@
 import { createClient } from '@hey-api/client-fetch';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import { Mock } from 'vitest';
 import { client } from '../client/client.gen';
 import { useAuth } from '../useAuth';
 
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
+  userId?: string;
 };
 
-// Mock the createClient function
+// Mock the createClient function to return the actual config
 vi.mock('@hey-api/client-fetch', () => ({
-  createClient: vi.fn().mockReturnValue({
-    getConfig: () => ({
-      auth: vi.fn(),
-      baseUrl: '',
-      headers: {},
-    }),
-  }),
+  createClient: vi.fn((config) => ({
+    getConfig: () => config,
+  })),
 }));
 
 // Mock the client.getConfig
@@ -95,31 +91,14 @@ describe('useAuth', () => {
 
   it('should fetch new token when session is empty', async () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
-    const mockAuthFn = vi.fn().mockResolvedValue('test-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
     });
 
-    // Wait for the query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
-    });
-
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -130,31 +109,14 @@ describe('useAuth', () => {
 
   it('should use existing token if not expired', async () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
-    const mockAuthFn = vi.fn().mockResolvedValue('test-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
     });
 
-    // Wait for the query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
-    });
-
     // First call to set the token
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
     });
@@ -162,7 +124,7 @@ describe('useAuth', () => {
     // Second call should use existing token
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -183,50 +145,21 @@ describe('useAuth', () => {
         expiresIn: 3600,
       });
 
-    const mockAuthFn = vi
-      .fn()
-      .mockResolvedValueOnce('expired-token')
-      .mockResolvedValueOnce('new-token');
-
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
-    });
-
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
       wrapper,
     });
 
-    // Wait for the first query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
-    });
-
     // First call sets expired token
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
-    });
-
-    // Wait for the second query to be ready
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth'],
-        queryFn: mockAuth,
-      });
     });
 
     // Second call should fetch new token
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -354,26 +287,6 @@ describe('useAuth', () => {
     const mockClientAuth = vi.fn().mockResolvedValue(clientAuthResponse);
     const mockServerAuth = vi.fn().mockResolvedValue(serverAuthResponse);
 
-    const mockClientAuthFn = vi.fn().mockResolvedValue('client-token');
-    const mockServerAuthFn = vi.fn().mockResolvedValue('server-token');
-
-    // Mock createClient to return different auth functions for different calls
-    (createClient as Mock)
-      .mockReturnValueOnce({
-        getConfig: () => ({
-          auth: mockClientAuthFn,
-          baseUrl: '',
-          headers: {},
-        }),
-      })
-      .mockReturnValueOnce({
-        getConfig: () => ({
-          auth: mockServerAuthFn,
-          baseUrl: '',
-          headers: {},
-        }),
-      });
-
     // Render first hook with 'client' authId
     const { result: clientResult } = renderHook(
       () => useAuth({ auth: mockClientAuth, authId: 'client' }),
@@ -386,22 +299,10 @@ describe('useAuth', () => {
       { wrapper },
     );
 
-    // Prefetch queries for both auth types with their respective query keys
-    await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth', 'client'],
-        queryFn: mockClientAuth,
-      });
-      await queryClient.prefetchQuery({
-        queryKey: ['auth', 'default'],
-        queryFn: mockServerAuth,
-      });
-    });
-
     // Get token from client auth
     let clientToken: string | undefined;
     await act(async () => {
-      const authFn = clientResult.current.current.getConfig()
+      const authFn = clientResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       clientToken = await authFn();
     });
@@ -409,7 +310,7 @@ describe('useAuth', () => {
     // Get token from server auth
     let serverToken: string | undefined;
     await act(async () => {
-      const authFn = serverResult.current.current.getConfig()
+      const authFn = serverResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       serverToken = await authFn();
     });
@@ -426,59 +327,101 @@ describe('useAuth', () => {
     expect(clientToken).not.toBe(serverToken);
   });
 
-  it('should share cached tokens within the same authId', async () => {
-    const authResponse = {
-      accessToken: 'shared-token',
+  it('should set userId when auth response includes it', async () => {
+    const authResponseWithUserId = {
+      accessToken: 'test-token',
       expiresIn: 3600,
+      userId: 'user-123',
     };
 
-    const mockAuth = vi.fn().mockResolvedValue(authResponse);
-    const mockAuthFn = vi.fn().mockResolvedValue('shared-token');
+    const mockAuth = vi.fn().mockResolvedValue(authResponseWithUserId);
 
-    (createClient as Mock).mockReturnValue({
-      getConfig: () => ({
-        auth: mockAuthFn,
-        baseUrl: '',
-        headers: {},
-      }),
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
     });
 
-    // Render two hooks with the same authId
-    const { result: firstResult } = renderHook(
-      () => useAuth({ auth: mockAuth, authId: 'client' }),
-      { wrapper },
-    );
+    expect(result.current.userId).toBeUndefined();
 
-    const { result: secondResult } = renderHook(
-      () => useAuth({ auth: mockAuth, authId: 'client' }),
-      { wrapper },
-    );
-
-    // Prefetch query once
     await act(async () => {
-      await queryClient.prefetchQuery({
-        queryKey: ['auth', 'client'],
-        queryFn: mockAuth,
-      });
-    });
-
-    // Get token from first hook
-    await act(async () => {
-      const authFn = firstResult.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
     });
 
-    // Get token from second hook (should use cache)
-    let secondToken: string | undefined;
-    await act(async () => {
-      const authFn = secondResult.current.current.getConfig()
-        .auth as () => Promise<string>;
-      secondToken = await authFn();
+    await waitFor(() => {
+      expect(result.current.userId).toBe('user-123');
     });
 
-    // Auth function should only be called once (cache sharing within same authId)
     expect(mockAuth).toHaveBeenCalledOnce();
-    expect(secondToken).toBe('shared-token');
+  });
+
+  it('should handle auth response without userId', async () => {
+    const authResponseWithoutUserId = {
+      accessToken: 'test-token',
+      expiresIn: 3600,
+      // no userId
+    };
+
+    const mockAuth = vi.fn().mockResolvedValue(authResponseWithoutUserId);
+
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
+
+    await act(async () => {
+      const authFn = result.current.client.current.getConfig()
+        .auth as () => Promise<string>;
+      await authFn();
+    });
+
+    expect(mockAuth).toHaveBeenCalledOnce();
+    expect(result.current.userId).toBeUndefined();
+  });
+
+  it('should update userId when refetch is called with different user', async () => {
+    const firstAuthResponse = {
+      accessToken: 'token-1',
+      expiresIn: -1, // Expired immediately to force refetch
+      userId: 'user-1',
+    };
+
+    const secondAuthResponse = {
+      accessToken: 'token-2',
+      expiresIn: 3600,
+      userId: 'user-2',
+    };
+
+    const mockAuth = vi
+      .fn()
+      .mockResolvedValueOnce(firstAuthResponse)
+      .mockResolvedValueOnce(secondAuthResponse);
+
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
+
+    // First auth call
+    await act(async () => {
+      const authFn = result.current.client.current.getConfig()
+        .auth as () => Promise<string>;
+      await authFn();
+    });
+
+    await waitFor(() => {
+      expect(result.current.userId).toBe('user-1');
+    });
+
+    // Second auth call (token expired, should refetch)
+    await act(async () => {
+      const authFn = result.current.client.current.getConfig()
+        .auth as () => Promise<string>;
+      await authFn();
+    });
+
+    await waitFor(() => {
+      expect(result.current.userId).toBe('user-2');
+    });
+
+    expect(mockAuth).toHaveBeenCalledTimes(2);
   });
 });

@@ -17,8 +17,32 @@ export const useFormFields = () => {
   };
 };
 
-export const RemoteFlowContext = createContext<{ client: Client | null }>({
+export const RemoteFlowContext = createContext<{
+  client: Client | null;
+  userId?: string;
+}>({
   client: null,
+  userId: undefined,
 });
 
-export const useClient = () => useContext(RemoteFlowContext);
+export const useClient = () => {
+  const context = useContext(RemoteFlowContext);
+  if (!context) {
+    throw new Error('useClient must be used within a RemoteFlowContext');
+  }
+  return {
+    client: context.client,
+  };
+};
+
+/**
+ * useUserId returns the userId passed in the auth function
+ * @returns The userId passed in the auth function
+ */
+export const useUserId = () => {
+  const context = useContext(RemoteFlowContext);
+  if (!context) {
+    throw new Error('useUserId must be used within a RemoteFlowContext');
+  }
+  return context.userId;
+};

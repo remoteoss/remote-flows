@@ -49,8 +49,12 @@ async function generateJWTToken() {
 }
 
 async function fetchCompanyManagerToken() {
-  const { VITE_REMOTE_GATEWAY, VITE_CLIENT_ID, VITE_CLIENT_SECRET } =
-    process.env;
+  const {
+    VITE_REMOTE_GATEWAY,
+    VITE_CLIENT_ID,
+    VITE_CLIENT_SECRET,
+    VITE_USER_ID,
+  } = process.env;
   const gatewayUrl = buildGatewayURL();
 
   try {
@@ -78,7 +82,11 @@ async function fetchCompanyManagerToken() {
     }
 
     const data = await response.json();
-    return { accessToken: data.access_token, expiresIn: data.expires_in };
+    return {
+      accessToken: data.access_token,
+      expiresIn: data.expires_in,
+      userId: VITE_USER_ID,
+    };
   } catch (error) {
     throw new Error(`Failed to fetch access token with JWT: ${error.message}`);
   }
@@ -87,11 +95,12 @@ async function fetchCompanyManagerToken() {
 // Express route handler
 async function getCompanyManagerToken(req, res) {
   try {
-    const { accessToken, expiresIn } = await fetchCompanyManagerToken();
+    const { accessToken, expiresIn, userId } = await fetchCompanyManagerToken();
 
     return res.status(200).json({
       access_token: accessToken,
       expires_in: expiresIn,
+      user_id: userId,
     });
   } catch (error) {
     console.error('Error fetching JWT access token:', error);
