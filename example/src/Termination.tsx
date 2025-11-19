@@ -7,11 +7,12 @@ import type {
   EmployeeCommunicationFormValues,
   TerminationDetailsFormValues,
 } from '@remoteoss/remote-flows';
+import { useState } from 'react';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
-import { useState } from 'react';
+import { TerminationSuccessful } from './TerminationSuccesful';
 import './css/main.css';
 
 const STEPS = [
@@ -121,9 +122,19 @@ const TerminationRender = ({
   terminationBag,
   components,
 }: TerminationRenderProps) => {
+  const [isSuccess, setIsSuccess] = useState(false);
   const currentStepIndex = terminationBag.stepState.currentStep.index;
 
   const stepTitle = STEPS[currentStepIndex];
+
+  if (isSuccess) {
+    return (
+      <TerminationSuccessful
+        employment={terminationBag.employment}
+        employmentId={terminationBag.employmentId}
+      />
+    );
+  }
 
   if (terminationBag.isLoading) {
     return <div>Loading termination...</div>;
@@ -159,7 +170,10 @@ const TerminationRender = ({
           onSubmitStep={(payload, step) =>
             console.log('onSubmitStep', payload, step)
           }
-          onSubmitForm={(payload) => console.log('onSubmitForm', payload)}
+          onSubmitForm={(payload) => {
+            console.log('onSubmitForm', payload);
+            setIsSuccess(true);
+          }}
           onError={(error) => console.log('onError', error)}
           onSuccess={(response) => console.log('onSuccess', response)}
         />

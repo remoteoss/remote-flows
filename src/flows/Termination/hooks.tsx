@@ -383,6 +383,10 @@ export const useTermination = ({
      */
     employmentId,
     /**
+     * Employment data
+     */
+    employment,
+    /**
      * Current step state containing the current step and total number of steps
      */
     stepState,
