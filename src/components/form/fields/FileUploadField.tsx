@@ -35,6 +35,8 @@ const convertFilesToBase64 = async (files: File[]) => {
       return {
         name: file.name,
         content: base64.split(',')[1],
+        size: file.size,
+        type: file.type,
       };
     }),
   );
@@ -114,7 +116,7 @@ export function FileUploadField({
             <CustomFileUploadField
               field={{
                 ...field,
-                value: null,
+                value: field.value,
                 onChange: async (value: any) => handleOnChange(value, field),
               }}
               fieldState={fieldState}
@@ -136,6 +138,7 @@ export function FileUploadField({
                 multiple={multiple}
                 className={cn('RemoteFlows__FileUpload__Input')}
                 accept={accept}
+                files={field.value}
               />
             </FormControl>
             {description && (
