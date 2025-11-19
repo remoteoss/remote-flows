@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
@@ -17,6 +17,7 @@ type FileUploaderProps = {
   className?: string;
   multiple?: boolean;
   accept?: string;
+  files?: File[];
 };
 
 export function FileUploader({
@@ -24,9 +25,16 @@ export function FileUploader({
   className,
   multiple,
   accept,
+  files: externalFiles,
 }: FileUploaderProps) {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (externalFiles && externalFiles.length > 0) {
+      setFiles(externalFiles);
+    }
+  }, [externalFiles]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
