@@ -378,7 +378,7 @@ describe('useAuth', () => {
     expect(result.current.userId).toBeUndefined();
   });
 
-  it('should update userId when refetch is called with different owner', async () => {
+  it('should update userId when refetch is called with different user', async () => {
     const firstAuthResponse = {
       accessToken: 'token-1',
       expiresIn: -1, // Expired immediately to force refetch
