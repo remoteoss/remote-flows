@@ -9,14 +9,12 @@ import {
   getShowFormCountry,
   getShowSchema,
   getSupportedCountry,
-  MagicLinkParams,
   patchUpdateEmployment2,
   postConvertRawCurrencyConverter,
   postConvertWithSpreadCurrencyConverter,
   postCreateContractEligibility,
   postCreateEmployment2,
   postCreateRiskReserve,
-  postGenerateMagicLink,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
   putUpdateBenefitOffer,
@@ -402,21 +400,6 @@ export const useUpdateBenefitsOffers = (
         query: {
           ...jsonSchemaQueryParam,
         },
-      });
-    },
-  });
-};
-
-export const useMagicLink = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: (params: MagicLinkParams) => {
-      return postGenerateMagicLink({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: params,
       });
     },
   });
