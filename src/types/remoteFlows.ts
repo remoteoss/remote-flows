@@ -15,6 +15,7 @@ import { ColumnDef } from '@/src/components/shared/table/Table';
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
+  ownerId?: string;
 };
 
 export type JSFFieldset = {

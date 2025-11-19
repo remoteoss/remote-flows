@@ -17,8 +17,28 @@ export const useFormFields = () => {
   };
 };
 
-export const RemoteFlowContext = createContext<{ client: Client | null }>({
+export const RemoteFlowContext = createContext<{
+  client: Client | null;
+  ownerId?: string;
+}>({
   client: null,
+  ownerId: undefined,
 });
 
-export const useClient = () => useContext(RemoteFlowContext);
+export const useClient = () => {
+  const context = useContext(RemoteFlowContext);
+  if (!context) {
+    throw new Error('useClient must be used within a RemoteFlowContext');
+  }
+  return {
+    client: context.client,
+  };
+};
+
+export const useOwnerId = () => {
+  const context = useContext(RemoteFlowContext);
+  if (!context) {
+    throw new Error('useOwnerId must be used within a RemoteFlowContext');
+  }
+  return context.ownerId;
+};

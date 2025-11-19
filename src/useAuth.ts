@@ -2,13 +2,14 @@ import { client } from '@/src/client/client.gen';
 import { ENVIRONMENTS } from '@/src/environments';
 import { createClient } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
 import { debug } from './lib/utils';
 
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
+  ownerId?: string;
 };
 
 type Options = Partial<{
@@ -34,12 +35,21 @@ export const useAuth = ({
   options?: Options;
   authId?: 'default' | 'client';
 }) => {
-  const session = useRef<{ accessToken: string; expiresAt: number } | null>(
-    null,
-  );
+  const [ownerId, setOwnerId] = useState<string | undefined>();
+
+  const session = useRef<{
+    accessToken: string;
+    expiresAt: number;
+    ownerId?: string;
+  } | null>(null);
   const { refetch } = useQuery({
     queryKey: ['auth', authId],
-    queryFn: auth,
+    queryFn: async () => {
+      const data = await auth();
+      console.log('data', data);
+      setOwnerId(data.ownerId);
+      return data;
+    },
     enabled: false,
   });
 
@@ -60,31 +70,35 @@ export const useAuth = ({
     console.error('Invalid proxy URL provided. Using default base URL.');
   }
 
-  return useRef(
-    createClient({
-      ...clientConfig,
-      headers: {
-        ...clientConfig.headers,
-        ...(isValidProxy ? options?.proxy?.headers : {}),
-        'X-Client-Name': 'remote-flows-sdk',
-        'X-Client-Version': npmPackageVersion,
-      },
-      baseUrl: isValidProxy ? options.proxy?.url : baseUrl,
-      auth: async () => {
-        function hasTokenExpired(expiresAt: number | undefined) {
-          return !expiresAt || Date.now() + 60000 > expiresAt;
-        }
-        if (!session.current || hasTokenExpired(session.current.expiresAt)) {
-          const { data } = await refetch();
-          if (data) {
-            session.current = {
-              accessToken: data.accessToken,
-              expiresAt: Date.now() + data.expiresIn * 1000,
-            };
+  return {
+    client: useRef(
+      createClient({
+        ...clientConfig,
+        headers: {
+          ...clientConfig.headers,
+          ...(isValidProxy ? options?.proxy?.headers : {}),
+          'X-Client-Name': 'remote-flows-sdk',
+          'X-Client-Version': npmPackageVersion,
+        },
+        baseUrl: isValidProxy ? options.proxy?.url : baseUrl,
+        auth: async () => {
+          function hasTokenExpired(expiresAt: number | undefined) {
+            return !expiresAt || Date.now() + 60000 > expiresAt;
           }
-        }
-        return session.current?.accessToken;
-      },
-    }),
-  );
+          if (!session.current || hasTokenExpired(session.current.expiresAt)) {
+            const { data } = await refetch();
+            if (data) {
+              session.current = {
+                accessToken: data.accessToken,
+                expiresAt: Date.now() + data.expiresIn * 1000,
+                ownerId: data.ownerId,
+              };
+            }
+          }
+          return session.current?.accessToken;
+        },
+      }),
+    ),
+    ownerId,
+  };
 };
