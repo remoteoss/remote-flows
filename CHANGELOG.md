@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- add plan selection
+- feat(contractor-management): add plan selection (#553)(https://github.com/remoteoss/remote-flows/pull/553)
 - add maxDate support to DatePickerField component (#568) [#568](https://github.com/remoteoss/remote-flows/pull/568)
 - fix files value (#569) [#569](https://github.com/remoteoss/remote-flows/pull/569)
 
