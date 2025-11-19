@@ -34,7 +34,7 @@ const fetchCompanyManagerToken = () => {
     .then((data) => ({
       accessToken: data.access_token,
       expiresIn: data.expires_in,
-      user_id: data.user_id,
+      userId: data.user_id,
     }))
     .catch((error) => {
       console.error({ error });
