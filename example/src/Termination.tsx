@@ -123,7 +123,7 @@ const TerminationRender = ({
   components,
 }: TerminationRenderProps) => {
   const currentStepIndex = terminationBag.stepState.currentStep.index;
-  const [isSuccess, setIsSuccess] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const stepTitle = STEPS[currentStepIndex];
   const employmentId = terminationBag.employmentId;
