@@ -11,11 +11,13 @@ export const TerminationSuccessful = ({
   const ownerId = useOwnerId();
   const magicLink = useMagicLink();
   const handleAddMissingInformation = async () => {
-    const response = await magicLink.mutateAsync({
-      user_id: ownerId,
-      path: `/dashboard/people/${employmentId}?selectedTab=profile`,
-    });
-    window.open(response?.data?.data?.url, '_blank');
+    if (ownerId) {
+      const response = await magicLink.mutateAsync({
+        user_id: ownerId,
+        path: `/dashboard/people/${employmentId}?selectedTab=profile`,
+      });
+      window.open(response?.data?.data?.url, '_blank');
+    }
   };
   return (
     <div>
