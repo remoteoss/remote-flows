@@ -46,7 +46,6 @@ export const useAuth = ({
     queryKey: ['auth', authId],
     queryFn: async () => {
       const data = await auth();
-      console.log('data', data);
       setOwnerId(data.ownerId);
       return data;
     },
