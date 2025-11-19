@@ -1,6 +1,6 @@
 import { createClient } from '@hey-api/client-fetch';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Mock } from 'vitest';
 import { client } from '../client/client.gen';
@@ -119,7 +119,7 @@ describe('useAuth', () => {
 
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -154,7 +154,7 @@ describe('useAuth', () => {
 
     // First call to set the token
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
     });
@@ -162,7 +162,7 @@ describe('useAuth', () => {
     // Second call should use existing token
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -210,7 +210,7 @@ describe('useAuth', () => {
 
     // First call sets expired token
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
     });
@@ -226,7 +226,7 @@ describe('useAuth', () => {
     // Second call should fetch new token
     let token: string | undefined;
     await act(async () => {
-      const authFn = result.current.current.getConfig()
+      const authFn = result.current.client.current.getConfig()
         .auth as () => Promise<string>;
       token = await authFn();
     });
@@ -401,7 +401,7 @@ describe('useAuth', () => {
     // Get token from client auth
     let clientToken: string | undefined;
     await act(async () => {
-      const authFn = clientResult.current.current.getConfig()
+      const authFn = clientResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       clientToken = await authFn();
     });
@@ -409,7 +409,7 @@ describe('useAuth', () => {
     // Get token from server auth
     let serverToken: string | undefined;
     await act(async () => {
-      const authFn = serverResult.current.current.getConfig()
+      const authFn = serverResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       serverToken = await authFn();
     });
@@ -464,7 +464,7 @@ describe('useAuth', () => {
 
     // Get token from first hook
     await act(async () => {
-      const authFn = firstResult.current.current.getConfig()
+      const authFn = firstResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       await authFn();
     });
@@ -472,7 +472,7 @@ describe('useAuth', () => {
     // Get token from second hook (should use cache)
     let secondToken: string | undefined;
     await act(async () => {
-      const authFn = secondResult.current.current.getConfig()
+      const authFn = secondResult.current.client.current.getConfig()
         .auth as () => Promise<string>;
       secondToken = await authFn();
     });
@@ -480,5 +480,38 @@ describe('useAuth', () => {
     // Auth function should only be called once (cache sharing within same authId)
     expect(mockAuth).toHaveBeenCalledOnce();
     expect(secondToken).toBe('shared-token');
+  });
+
+  it('should set ownerId when auth response includes it', async () => {
+    const authResponseWithOwnerId = {
+      accessToken: 'test-token',
+      expiresIn: 3600,
+      ownerId: 'owner-123',
+    };
+
+    const mockAuth = vi.fn().mockResolvedValue(authResponseWithOwnerId);
+
+    // Capture the config when useAuth calls createClient
+    (createClient as Mock).mockImplementationOnce((config) => ({
+      getConfig: () => config,
+    }));
+
+    const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
+      wrapper,
+    });
+
+    expect(result.current.ownerId).toBeUndefined();
+
+    await act(async () => {
+      const clientConfig = result.current.client.current.getConfig();
+      const authFn = clientConfig.auth as () => Promise<string>;
+      await authFn();
+    });
+
+    await waitFor(() => {
+      expect(result.current.ownerId).toBe('owner-123');
+    });
+
+    expect(mockAuth).toHaveBeenCalledOnce();
   });
 });
