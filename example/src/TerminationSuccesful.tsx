@@ -16,7 +16,9 @@ export const TerminationSuccessful = ({
         user_id: userId,
         path: `/dashboard/people/${employmentId}?selectedTab=profile`,
       });
-      window.open(response?.data?.data?.url, '_blank');
+      // When using localhost:3000 with partners env, the redirect url didn't work due to cookies
+      // if that happens, clear them or open the url in incognito mode
+      window.open(response?.data?.data?.url, '_blank', 'noopener,noreferrer');
     }
   };
   return (
