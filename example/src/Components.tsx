@@ -3,7 +3,7 @@ import type {
   Components,
   FieldComponentProps,
   FieldSetToggleComponentProps,
-  FieldFileDataProps,
+  FileComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -268,7 +268,7 @@ const FieldsetToggle = ({
   );
 };
 
-const FileUpload = ({ field, fieldData, fieldState }: FieldFileDataProps) => {
+const FileUpload = ({ field, fieldData, fieldState }: FileComponentProps) => {
   return (
     <div className='input-container'>
       <label htmlFor={field.name}>{fieldData.label}</label>

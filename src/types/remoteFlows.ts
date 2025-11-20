@@ -11,6 +11,8 @@ import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
+import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+import { FieldDataProps } from '@/src/types/field';
 
 type AuthResponse = {
   accessToken: string;
@@ -57,10 +59,6 @@ export type TableComponentProps<T = $TSFixMe> = {
   className?: string;
   headerRowClassName?: string;
   bodyRowClassName?: string | ((row: T, index: number) => string);
-};
-
-export type FieldDataProps = Partial<JSFField> & {
-  metadata?: Record<string, unknown>;
 };
 
 /**
@@ -139,9 +137,17 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
+// We exclude the file type as we're extending the fieldData property in the FileUploadField component
+type TypesWithoutFile = Exclude<SupportedTypes, 'file'>;
+
+export type FileComponentProps = FieldComponentProps & {
+  fieldData: FieldFileDataProps;
+};
+
 export type Components = {
-  [K in SupportedTypes]?: React.ComponentType<FieldComponentProps>;
+  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
 } & {
+  file?: React.ComponentType<FileComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;

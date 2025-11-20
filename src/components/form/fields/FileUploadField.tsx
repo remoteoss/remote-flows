@@ -1,6 +1,7 @@
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { Components, FieldDataProps, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
+import { FieldDataProps } from '@/src/types/field';
 import {
   ControllerRenderProps,
   FieldValues,
@@ -21,7 +22,7 @@ export type FieldFileDataProps = FieldDataProps & {
   accept?: string;
   multiple?: boolean;
   maxFileSize?: number;
-  onRemoveFile?: (file: File) => void;
+  onRemoveFile: (file: File) => void;
 };
 
 const toBase64 = (file: File): Promise<string> => {

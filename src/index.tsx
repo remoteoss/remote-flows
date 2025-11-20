@@ -43,9 +43,8 @@ export type {
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   Meta,
+  FileComponentProps,
 } from '@/src/types/remoteFlows';
-
-export type { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
 
 export type {
   ContractAmendmentAutomatableResponse,
