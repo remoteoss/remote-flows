@@ -10,6 +10,9 @@ const wrapper = ({ children }: PropsWithChildren) => (
 );
 
 describe('useTermination', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
   it('should have fieldValues as combination of initialValues + stepState values + changed fieldValues', async () => {
     const { result } = renderHook(
       () =>
