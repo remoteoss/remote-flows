@@ -32,6 +32,7 @@ import { useEmploymentQuery } from '@/src/common/api';
 import { AcknowledgeInformationContainer } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInfomationContainer';
 import { AcknowledgeInformation } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformation';
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
+import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -75,6 +76,18 @@ export const useTermination = ({
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
   const { data: employment } = useEmploymentQuery({ employmentId });
+
+  const { data: payrollCalendars } = usePayrollCalendars({
+    query: {
+      year: new Date().getFullYear().toString(),
+      countryCode: employment?.country?.code ?? '',
+    },
+    options: {
+      enabled: Boolean(employment?.country?.code),
+    },
+  });
+
+  console.log({ payrollCalendars });
 
   const hasFutureStartDate = Boolean(
     employment?.provisional_start_date &&
