@@ -29,8 +29,15 @@ const convertFilesToBase64 = async (files: File[]) => {
   const base64Files = await Promise.all(
     files.map(async (file) => {
       const base64 = await toBase64(file);
+      // the ...file makes typescript compiler to say we're returning a FILE interface but we aren't
+      // we just return name, size, type and content
+      // File interface makes it easy for everybody to use
+      // if we remove the ...file, typescript will complain about the return type
       return {
         ...file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
         content: base64.split(',')[1],
       };
     }),
