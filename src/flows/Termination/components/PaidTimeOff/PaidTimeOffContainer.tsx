@@ -1,9 +1,11 @@
 import {
-  useBookedTimeoffBeforeAndAfterTerminationQuery,
   usePaidTimeoffBreakdownQuery,
-  useSummaryTimeOffDataQuery,
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api';
+import {
+  useBookedTimeoffBeforeAndAfterTerminationQuery,
+  useSummaryTimeOffDataQuery,
+} from '@/src/flows/Termination/api';
 import { PaidTimeOffContainerProps } from '@/src/flows/Termination/components/PaidTimeOff/types';
 import { useState } from 'react';
 
