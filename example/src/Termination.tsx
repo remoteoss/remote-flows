@@ -12,7 +12,6 @@ import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { useState } from 'react';
-import { components } from './Components';
 import './css/main.css';
 
 const STEPS = [
@@ -176,11 +175,7 @@ export const TerminationWithProps = ({
 }) => {
   const proxyURL = window.location.origin;
   return (
-    <RemoteFlows
-      components={components}
-      proxy={{ url: proxyURL }}
-      authType='company-manager'
-    >
+    <RemoteFlows proxy={{ url: proxyURL }} authType='company-manager'>
       <TerminationFlow
         employmentId={employmentId}
         render={TerminationRender}
