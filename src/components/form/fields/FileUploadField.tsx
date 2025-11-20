@@ -1,6 +1,6 @@
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { $TSFixMe, Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
   FieldValues,
@@ -30,10 +30,8 @@ const convertFilesToBase64 = async (files: File[]) => {
     files.map(async (file) => {
       const base64 = await toBase64(file);
       return {
-        name: file.name,
+        ...file,
         content: base64.split(',')[1],
-        size: file.size,
-        type: file.type,
       };
     }),
   );
@@ -54,7 +52,7 @@ const validateFileSize = (files: File[], maxSize?: number): string | null => {
 };
 
 export type FileUploadFieldProps = JSFField & {
-  onChange?: (value: $TSFixMe) => void;
+  onChange?: (value: File[]) => void;
   multiple?: boolean;
   component?: Components['file'];
   maxSize?: number;
