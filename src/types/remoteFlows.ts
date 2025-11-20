@@ -59,6 +59,10 @@ export type TableComponentProps<T = $TSFixMe> = {
   bodyRowClassName?: string | ((row: T, index: number) => string);
 };
 
+export type FieldDataProps = Partial<JSFField> & {
+  metadata?: Record<string, unknown>;
+};
+
 /**
  * Props for custom field components.
  * All custom field components receive these three props from React Hook Form's Controller.
@@ -81,7 +85,7 @@ export type FieldComponentProps = {
    * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
    * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
    */
-  fieldData: Partial<JSFField> & { metadata?: Record<string, unknown> };
+  fieldData: FieldDataProps;
 };
 
 /**

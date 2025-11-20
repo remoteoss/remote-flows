@@ -45,6 +45,8 @@ export type {
   Meta,
 } from '@/src/types/remoteFlows';
 
+export type { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+
 export type {
   ContractAmendmentAutomatableResponse,
   CostCalculatorEstimateResponse,

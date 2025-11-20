@@ -1,6 +1,6 @@
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, FieldDataProps, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
   FieldValues,
@@ -16,6 +16,13 @@ import {
   FormMessage,
 } from '../../ui/form';
 import { FileUploader } from '@/src/components/ui/file-uploader';
+
+export type FieldFileDataProps = FieldDataProps & {
+  accept?: string;
+  multiple?: boolean;
+  maxFileSize?: number;
+  onRemoveFile?: (file: File) => void;
+};
 
 const toBase64 = (file: File): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
@@ -125,7 +132,7 @@ export function FileUploadField({
       render={({ field, fieldState }) => {
         const CustomFileUploadField = component || components?.file;
         if (CustomFileUploadField) {
-          const customFileUploadFieldProps = {
+          const customFileUploadFieldProps: FieldFileDataProps = {
             name,
             description,
             label,

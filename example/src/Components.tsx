@@ -3,7 +3,9 @@ import type {
   Components,
   FieldComponentProps,
   FieldSetToggleComponentProps,
+  FieldFileDataProps,
 } from '@remoteoss/remote-flows';
+import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -266,6 +268,27 @@ const FieldsetToggle = ({
   );
 };
 
+const FileUpload = ({ field, fieldData, fieldState }: FieldFileDataProps) => {
+  return (
+    <div className='input-container'>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <FileUploader
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e)}
+        onRemoveFile={(file: File) => fieldData.onRemoveFile(file)}
+        files={field.value}
+        multiple={fieldData.multiple}
+        accept={fieldData.accept}
+      />
+      {fieldData.description && (
+        <p className='input-description'>{fieldData.description}</p>
+      )}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -275,5 +298,6 @@ export const components: Components = {
   checkbox: Checkbox,
   countries: Countries,
   fieldsetToggle: FieldsetToggle,
+  file: FileUpload,
   //zendeskDrawer: ZendeskDialog,
 };

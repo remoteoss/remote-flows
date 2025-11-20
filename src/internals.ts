@@ -46,6 +46,8 @@ export {
   DialogFooter,
 } from './components/ui/dialog';
 
+export { FileUploader } from './components/ui/file-uploader';
+
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
