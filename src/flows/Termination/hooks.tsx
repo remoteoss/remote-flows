@@ -19,7 +19,10 @@ import {
 import omit from 'lodash.omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
-import { STEPS } from '@/src/flows/Termination/utils';
+import {
+  calculateMinTerminationDate,
+  STEPS,
+} from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { terminationDetailsSchema } from '@/src/flows/Termination/json-schemas/terminationDetails';
 import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
@@ -80,14 +83,16 @@ export const useTermination = ({
   const { data: payrollCalendars } = usePayrollCalendars({
     query: {
       year: new Date().getFullYear().toString(),
-      countryCode: employment?.country?.code ?? '',
+      countryCode: employment?.country?.code,
     },
     options: {
       enabled: Boolean(employment?.country?.code),
     },
   });
 
-  console.log({ payrollCalendars });
+  const minTerminationDate = calculateMinTerminationDate(payrollCalendars);
+
+  console.log({ minTerminationDate });
 
   const hasFutureStartDate = Boolean(
     employment?.provisional_start_date &&

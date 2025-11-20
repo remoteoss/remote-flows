@@ -27,6 +27,6 @@ export const usePayrollCalendars = ({
         },
       }),
     enabled: options?.enabled,
-    select: (data) => data.data?.data?.payroll_calendars[0],
+    select: (data) => data.data?.data?.payroll_calendars?.[0],
   });
 };
