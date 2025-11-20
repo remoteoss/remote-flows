@@ -111,8 +111,7 @@ describe('FileUploadField Component', () => {
   it('handles onChange in custom file upload component', async () => {
     const CustomFileUploadField = vi.fn().mockImplementation(({ field }) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files ? Array.from(e.target.files) : [];
-        field.onChange(files);
+        field.onChange(e);
       };
 
       return (
