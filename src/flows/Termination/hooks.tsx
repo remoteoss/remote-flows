@@ -97,7 +97,10 @@ export const useTermination = ({
 
   const minTerminationDate = calculateMinTerminationDate(payrollCalendars);
   const minDate = useMemo(
-    () => (isEmployeeInProbationPeriod ? new Date() : minTerminationDate),
+    () =>
+      isEmployeeInProbationPeriod
+        ? format(new Date(), 'yyyy-MM-dd')
+        : format(minTerminationDate, 'yyyy-MM-dd'),
     [isEmployeeInProbationPeriod, minTerminationDate],
   );
 
