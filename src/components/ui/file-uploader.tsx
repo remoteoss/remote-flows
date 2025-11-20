@@ -13,7 +13,7 @@ const getAcceptedFormats = (accept?: string) => {
 };
 
 type FileUploaderProps = {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (files: File[]) => void;
   className?: string;
   multiple?: boolean;
   accept?: string;
@@ -46,12 +46,13 @@ export function FileUploader({
       const newFiles = Array.from(e.target.files);
 
       setFiles(newFiles);
-      onChange(e);
+      onChange(newFiles);
     }
   };
 
   const onRemoveFile = (file: File) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+    onChange(files.filter((f) => f !== file));
   };
 
   const acceptedFormats = getAcceptedFormats(accept);

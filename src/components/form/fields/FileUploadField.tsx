@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
-
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
   FieldValues,
@@ -57,7 +54,7 @@ const validateFileSize = (files: File[], maxSize?: number): string | null => {
 };
 
 export type FileUploadFieldProps = JSFField & {
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   multiple?: boolean;
   component?: Components['file'];
   maxSize?: number;
@@ -79,11 +76,9 @@ export function FileUploadField({
   const { control, setError, clearErrors } = useFormContext();
 
   const handleOnChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    files: File[],
     field: ControllerRenderProps<FieldValues, string>,
   ) => {
-    const files = event.target.files ? Array.from(event.target.files) : [];
-
     const sizeError = validateFileSize(files, maxSize);
     if (sizeError) {
       setError(name, { message: sizeError });
@@ -117,7 +112,7 @@ export function FileUploadField({
               field={{
                 ...field,
                 value: field.value,
-                onChange: async (value: any) => handleOnChange(value, field),
+                onChange: async (value: File[]) => handleOnChange(value, field),
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
