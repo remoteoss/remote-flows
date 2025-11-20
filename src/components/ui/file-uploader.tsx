@@ -51,8 +51,8 @@ export function FileUploader({
   };
 
   const onRemoveFile = (file: File) => {
-    setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
-    onChange(files.filter((f) => f !== file));
+    setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+    onChange(files.filter((f) => f.name !== file.name));
   };
 
   const acceptedFormats = getAcceptedFormats(accept);
