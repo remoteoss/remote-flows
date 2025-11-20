@@ -213,4 +213,45 @@ describe('FileUploadField Component', () => {
       ]);
     });
   });
+
+  it('calls onRemoveFile when custom component removes a file', async () => {
+    const CustomFileUploadField = vi
+      .fn()
+      .mockImplementation(({ fieldData }) => (
+        <button
+          onClick={() => fieldData.onRemoveFile(new File(['test'], 'test.txt'))}
+        >
+          Remove File
+        </button>
+      ));
+
+    (useFormFields as any).mockReturnValue({
+      components: { file: CustomFileUploadField },
+    });
+
+    const TestComponent = () => {
+      const methods = useForm({
+        defaultValues: {
+          [defaultProps.name]: [new File(['test'], 'test.txt')],
+        },
+      });
+      return (
+        <FormProvider {...methods}>
+          <FileUploadField
+            {...defaultProps}
+            component={CustomFileUploadField}
+          />
+        </FormProvider>
+      );
+    };
+
+    render(<TestComponent />);
+
+    const removeButton = screen.getByRole('button', { name: 'Remove File' });
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(CustomFileUploadField).toHaveBeenCalled();
+    });
+  });
 });
