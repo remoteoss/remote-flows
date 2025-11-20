@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
-// Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {
   if (!accept) return null;
   return accept
@@ -13,46 +12,27 @@ const getAcceptedFormats = (accept?: string) => {
 };
 
 type FileUploaderProps = {
-  onChange: (files: File[]) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveFile: (file: File) => void;
   className?: string;
   multiple?: boolean;
   accept?: string;
-  files?: File[];
+  files: File[];
 };
 
 export function FileUploader({
   onChange,
+  onRemoveFile,
   className,
   multiple,
   accept,
-  files: externalFiles,
+  files,
 }: FileUploaderProps) {
-  const [files, setFiles] = useState<File[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (externalFiles && externalFiles.length > 0) {
-      setFiles(externalFiles);
-    }
-  }, [externalFiles]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     inputRef.current?.click();
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
-
-      setFiles(newFiles);
-      onChange(newFiles);
-    }
-  };
-
-  const onRemoveFile = (file: File) => {
-    setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
-    onChange(files.filter((f) => f.name !== file.name));
   };
 
   const acceptedFormats = getAcceptedFormats(accept);
@@ -62,7 +42,7 @@ export function FileUploader({
       <input
         type='file'
         ref={inputRef}
-        onChange={handleChange}
+        onChange={onChange}
         className='hidden'
         aria-label='File upload'
         multiple={multiple}
