@@ -377,8 +377,6 @@ export const useTermination = ({
     nextStep();
   }
 
-  console.log({ formValues, initialValues });
-
   return {
     /**
      * Employment id passed useful to be used between components
