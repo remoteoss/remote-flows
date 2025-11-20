@@ -36,6 +36,7 @@ import { AcknowledgeInformationContainer } from '@/src/flows/Termination/compone
 import { AcknowledgeInformation } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformation';
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
+import { isInProbationPeriod } from '@/src/common/employment';
 
 function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
@@ -90,9 +91,15 @@ export const useTermination = ({
     },
   });
 
-  const minTerminationDate = calculateMinTerminationDate(payrollCalendars);
+  const isEmployeeInProbationPeriod = isInProbationPeriod(
+    employment?.probation_period_end_date,
+  );
 
-  console.log({ minTerminationDate });
+  const minTerminationDate = calculateMinTerminationDate(payrollCalendars);
+  const minDate = useMemo(
+    () => (isEmployeeInProbationPeriod ? new Date() : minTerminationDate),
+    [isEmployeeInProbationPeriod, minTerminationDate],
+  );
 
   const hasFutureStartDate = Boolean(
     employment?.provisional_start_date &&
@@ -183,7 +190,7 @@ export const useTermination = ({
             ...(
               options?.jsfModify?.fields?.proposed_termination_date as $TSFixMe
             )?.['x-jsf-presentation'],
-            minDate: format(new Date(), 'yyyy-MM-dd'),
+            minDate: minDate,
             ...(formValues.termination_reason ===
               'cancellation_before_start_date' &&
             employment?.provisional_start_date
@@ -291,6 +298,7 @@ export const useTermination = ({
       },
     };
   }, [
+    hasFutureStartDate,
     options?.jsfModify?.fields?.risk_assesment_info,
     options?.jsfModify?.fields?.termination_reason,
     options?.jsfModify?.fields?.proposed_termination_date_info,
@@ -298,10 +306,10 @@ export const useTermination = ({
     options?.jsfModify?.fields?.paid_time_off_info,
     options?.jsfModify?.fields?.acknowledge_termination_procedure_info,
     options?.jsfModify?.fields?.acknowledge_termination_procedure_fees_info,
-    employment,
-    formValues.proposed_termination_date,
+    minDate,
     formValues.termination_reason,
-    hasFutureStartDate,
+    formValues.proposed_termination_date,
+    employment,
     employmentId,
   ]);
 
