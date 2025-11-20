@@ -14,7 +14,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../ui/form';
+} from '@/src/components/ui/form';
 import { FileUploader } from '@/src/components/ui/file-uploader';
 
 export type FieldFileDataProps = FieldDataProps & {
@@ -72,7 +72,6 @@ export type FileUploadFieldProps = JSFField & {
   component?: Components['file'];
   maxSize?: number;
   accept?: string;
-  onRemoveFile?: (file: File) => void;
 };
 
 export function FileUploadField({
