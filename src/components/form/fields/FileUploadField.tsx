@@ -100,8 +100,8 @@ export function FileUploadField({
 
     clearErrors(name);
     const base64Files = await convertFilesToBase64(files);
-    field.onChange(base64Files as unknown as File[]);
-    onChange?.(base64Files as unknown as File[]);
+    field.onChange(base64Files);
+    onChange?.(base64Files);
   };
 
   const handleInputChange = async (
