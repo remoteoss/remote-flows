@@ -47,6 +47,7 @@ const convertFilesToBase64 = async (files: File[]) => {
         name: file.name,
         size: file.size,
         type: file.type,
+        lastModified: file.lastModified,
         content: base64.split(',')[1],
       };
     }),
@@ -120,7 +121,7 @@ export function FileUploadField({
     field: ControllerRenderProps<FieldValues, string>,
   ) => {
     const updatedFiles = (field.value as File[]).filter(
-      (f) => f.name !== file.name,
+      (f) => !(f.name === file.name && f.lastModified === file.lastModified),
     );
     await handleFileChange(updatedFiles, field);
   };

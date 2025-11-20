@@ -209,6 +209,7 @@ describe('FileUploadField Component', () => {
           content: expect.any(String),
           size: expect.any(Number),
           type: expect.any(String),
+          lastModified: expect.any(Number),
         },
       ]);
     });
