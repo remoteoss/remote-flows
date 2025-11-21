@@ -1,9 +1,12 @@
-import { Employment, ListLeavePoliciesSummaryResponse } from '@/src/client';
-import {
+import type {
+  Employment,
+  ListLeavePoliciesSummaryResponse,
+} from '@/src/client';
+import type { PaidTimeoffBreakdownResponse } from '@/src/common/api';
+import type {
   BookedTimeoffBeforeDateResponse,
-  PaidTimeoffBreakdownResponse,
   SummaryTimeOffDataResponse,
-} from '@/src/common/api';
+} from '@/src/flows/Termination/api';
 import { UseQueryResult } from '@tanstack/react-query';
 
 export type PaidTimeOffRenderProps = {
