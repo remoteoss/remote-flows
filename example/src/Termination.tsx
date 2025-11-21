@@ -8,7 +8,7 @@ import type {
   TerminationDetailsFormValues,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-import { TerminationReasonsDialog } from './TerminationReasonsDialog';
+// import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
@@ -22,12 +22,12 @@ const STEPS = [
   'Additional Information',
 ];
 
-const TerminationReasonDetailsDescription = () => (
+/* const TerminationReasonDetailsDescription = () => (
   <>
     Make sure you choose an accurate termination reason to avoid unfair or
     unlawful dismissal claims. <TerminationReasonsDialog />
   </>
-);
+); */
 
 type MultiStepFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
