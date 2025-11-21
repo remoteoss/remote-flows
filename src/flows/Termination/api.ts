@@ -309,7 +309,7 @@ export const useTerminationSchema = ({
       return schema[step as keyof typeof schema] ?? defaultSchema;
     },
     select: ({ data }) => {
-      let jsfSchema: Record<string, unknown> = data?.schema || {};
+      let jsfSchema = data?.schema || {};
       if (jsfModify) {
         const { schema } = modify(jsfSchema, jsfModify);
         jsfSchema = schema;

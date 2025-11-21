@@ -23,7 +23,7 @@ export type TerminationDetailsFormValues = {
   termination_reason:
     | TerminationDetailsParams['termination_reason']
     | undefined;
-  termination_reason_files: {
+  termination_reason_files?: {
     name: string;
     content: string;
     type: string;
@@ -37,7 +37,7 @@ export type TerminationDetailsFormValues = {
 export type PaidTimeOffFormValues = {
   agrees_to_pto_amount: string;
   agrees_to_pto_amount_notes: string | null;
-  timesheet_file: {
+  timesheet_file?: {
     name: string;
     content: string;
     type: string;
