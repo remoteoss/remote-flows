@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { getContractDetailsSchemaVersion } from '../utils';
 
 describe('getContractDetailsSchemaVersion', () => {
-  it('should return version 1 for Germany (DEU)', () => {
-    const result = getContractDetailsSchemaVersion('DEU', undefined);
+  it('should return version 1 for all countries', () => {
+    const result = getContractDetailsSchemaVersion(undefined);
 
     expect(result).toEqual({
       form_schema: {
@@ -20,7 +20,7 @@ describe('getContractDetailsSchemaVersion', () => {
       },
     };
 
-    const result = getContractDetailsSchemaVersion('DEU', externalVersion);
+    const result = getContractDetailsSchemaVersion(externalVersion);
 
     expect(result).toEqual({
       form_schema: {
@@ -28,11 +28,5 @@ describe('getContractDetailsSchemaVersion', () => {
         employment_basic_information: 2,
       },
     });
-  });
-
-  it('should return undefined for unknown country', () => {
-    const result = getContractDetailsSchemaVersion('US', undefined);
-
-    expect(result).toBeUndefined();
   });
 });

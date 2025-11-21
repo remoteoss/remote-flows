@@ -173,7 +173,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
           query: {
             skip_benefits: true,
             employment_id: 'test-employment-id',
-            json_schema_version: 2,
+            json_schema_version: 1, // TODO: We're setting 1 for all countries for now and ignoring if someone passes json_schema_version, we need to change the json_schema_version implementation as it not well designed
           },
         });
       });
