@@ -227,10 +227,10 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
-  const PARTNERS_EMPLOYMENT_ID = '85ab2f01-34e7-4a04-967d-46b1710c42b2';
-  //const LOCAL_EMPLOYMENT_ID = '33112809-4307-49a3-9653-dda668656e7e';
+  const TERMINATION_EMPLOYMENT_ID = import.meta.env
+    .VITE_TERMINATION_EMPLOYMENT_ID;
   const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: PARTNERS_EMPLOYMENT_ID, // use your own employment ID
+    employmentId: TERMINATION_EMPLOYMENT_ID, // use your own employment ID
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
