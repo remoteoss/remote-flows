@@ -5,23 +5,17 @@ import {
   parseISO,
   startOfDay,
   setDate,
-<<<<<<< HEAD
   isFuture,
   differenceInHours,
   endOfDay,
   differenceInDays,
-=======
->>>>>>> main
 } from 'date-fns';
 import { PayrollCalendarEor } from '@/src/client';
 import { Step } from '@/src/flows/useStepState';
 import { PAYROLL_CYCLES } from '@/src/common/payroll';
-<<<<<<< HEAD
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 import { formatMonthDayInLocalTime } from '@/src/lib/time';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-=======
->>>>>>> main
 
 export type StepTerminationKeys =
   | 'employee_communication'
@@ -90,7 +84,6 @@ export const calculateMinTerminationDate = (
       return today;
   }
 };
-<<<<<<< HEAD
 
 export const calculateProposedTerminationDateStatement = ({
   minTerminationDate,
@@ -168,5 +161,3 @@ export function buildInitialValues(
 
   return initialValues;
 }
-=======
->>>>>>> main
