@@ -141,3 +141,12 @@ export function formatAsDecimal(
 
   return formatAsDays(decimal, suffixFormat);
 }
+
+export function clampNegativeValuesIfApplicable(
+  daysAndHours: DaysAndHours,
+): DaysAndHours {
+  return {
+    days: Math.max(daysAndHours.days, 0),
+    hours: Math.max(daysAndHours.hours, 0),
+  };
+}
