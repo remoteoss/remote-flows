@@ -1,9 +1,21 @@
-import { Timeoff } from '@/src/client';
+import { Client } from '@hey-api/client-fetch';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-next';
+import {
+  CreateOffboardingParams,
+  postCreateOffboarding,
+  Timeoff,
+} from '@/src/client';
 import {
   useTimeOffLeavePoliciesSummaryQuery,
   useTimeOffQuery,
 } from '@/src/common/api';
+import { useClient } from '@/src/context';
 import { Employment } from '@/src/flows/Onboarding/types';
+import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
+import { schema } from '@/src/flows/Termination/json-schemas/schema';
+import { TerminationFormValues } from '@/src/flows/Termination/types';
+import { JSFModifyNext } from '@/src/flows/types';
 import {
   clampNegativeValuesIfApplicable,
   convertTotalHoursToDaysAndHours,
@@ -11,6 +23,7 @@ import {
   DaysAndHours,
   formatAsDecimal,
 } from '@/src/lib/time';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 function formatTimeoffValues(
   values: Record<string, DaysAndHours>,
@@ -268,4 +281,53 @@ export const useSummaryTimeOffDataQuery = ({
     isError: leavePoliciesSummaryQuery.isError || bookedTimeQuery.isError,
     error: leavePoliciesSummaryQuery.error || bookedTimeQuery.error,
   };
+};
+
+export const useCreateTermination = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (payload: CreateOffboardingParams) => {
+      return postCreateOffboarding({
+        client: client as Client,
+        body: payload,
+      });
+    },
+  });
+};
+
+export const useTerminationSchema = ({
+  formValues,
+  jsfModify,
+  step,
+}: {
+  formValues?: TerminationFormValues;
+  jsfModify?: JSFModifyNext;
+  step?: string;
+}) => {
+  return useQuery<
+    { data?: { schema?: Record<string, unknown> } },
+    Error,
+    $TSFixMe
+  >({
+    queryKey: ['rmt-flows-termination-schema', step],
+    queryFn: () => {
+      return schema[step as keyof typeof schema] ?? defaultSchema;
+    },
+    select: ({ data }) => {
+      let jsfSchema: $TSFixMe = data?.schema || {};
+      if (jsfModify) {
+        const { schema } = modify(jsfSchema, jsfModify);
+        jsfSchema = schema;
+      }
+      try {
+        const form = createHeadlessForm(jsfSchema || {}, {
+          initialValues: formValues as $TSFixMe,
+        });
+        return form;
+      } catch (error) {
+        console.error('❌ createHeadlessForm error:', error);
+        throw error;
+      }
+    },
+  });
 };

@@ -27,7 +27,6 @@ import {
 } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { terminationDetailsSchema } from '@/src/flows/Termination/json-schemas/terminationDetails';
-import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
@@ -39,6 +38,10 @@ import { AcknowledgeInformation } from '@/src/flows/Termination/components/Ackno
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 import { isInProbationPeriod } from '@/src/common/employment';
+import {
+  useCreateTermination,
+  useTerminationSchema,
+} from '@/src/flows/Termination/api';
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
@@ -299,6 +302,7 @@ export const useTermination = ({
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
     useTerminationSchema({
       formValues: formValues,
+      step: stepState.currentStep.name,
       jsfModify: {
         ...options?.jsfModify,
         fields: {
@@ -306,7 +310,6 @@ export const useTermination = ({
           ...customFields?.fields,
         },
       },
-      step: stepState.currentStep.name,
     });
 
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);

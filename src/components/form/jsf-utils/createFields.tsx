@@ -1,8 +1,9 @@
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { FieldType } from '@remoteoss/json-schema-form-next';
 
 type JSFPresentationConfig = {
-  inputType?: string;
+  inputType?: FieldType;
   Component?: React.ComponentType<$TSFixMe>;
   hidden?: boolean;
   [key: string]: unknown;

@@ -6,7 +6,7 @@ import { PaidTimeOffForm } from '@/src/flows/Termination/PaidTimeOffForm';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
 import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetailsForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
-import { JSFModify } from '@/src/flows/types';
+import { JSFModifyNext } from '@/src/flows/types';
 
 export type EmployeeCommunicationFormValues = {
   confidential: string;
@@ -78,7 +78,7 @@ export type TerminationFlowProps = {
     components,
   }: TerminationRenderProps) => React.ReactNode;
   options?: {
-    jsfModify?: JSFModify;
+    jsfModify?: JSFModifyNext;
   };
   initialValues?: Record<string, unknown>;
 };
