@@ -52,7 +52,7 @@ export function createStatementProperty({
 }: {
   title?: React.ReactNode;
   description?: React.ReactNode;
-  severity?: 'warning' | 'error' | 'success' | 'info' | 'neutral' | 'time';
+  severity?: 'warning' | 'error' | 'success' | 'info';
 }) {
   return {
     statement: {
