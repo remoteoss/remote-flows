@@ -20,9 +20,13 @@ import omit from 'lodash.omit';
 import { parseFormRadioValues } from '@/src/flows/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import {
+<<<<<<< HEAD
   buildInitialValues,
   calculateMinTerminationDate,
   calculateProposedTerminationDateStatement,
+=======
+  calculateMinTerminationDate,
+>>>>>>> main
   STEPS,
 } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
@@ -39,6 +43,40 @@ import { AcknowledgeInformation } from '@/src/flows/Termination/components/Ackno
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 import { isInProbationPeriod } from '@/src/common/employment';
+<<<<<<< HEAD
+=======
+
+function buildInitialValues(
+  stepsInitialValues: Partial<TerminationFormValues>,
+  hasFutureStartDate: boolean,
+): TerminationFormValues {
+  const initialValues: TerminationFormValues = {
+    confidential: '',
+    customer_informed_employee: '',
+    customer_informed_employee_date: '',
+    customer_informed_employee_description: '',
+    personal_email: '',
+    termination_reason: undefined,
+    reason_description: '',
+    termination_reason_files: [],
+    will_challenge_termination: '',
+    will_challenge_termination_description: null,
+    agrees_to_pto_amount: '',
+    agrees_to_pto_amount_notes: null,
+    acknowledge_termination_procedure: false,
+    additional_comments: '',
+    proposed_termination_date: '',
+    risk_assessment_reasons: [],
+    timesheet_file: undefined,
+    ...stepsInitialValues,
+    ...(hasFutureStartDate
+      ? { termination_reason: 'cancellation_before_start_date' }
+      : {}),
+  };
+
+  return initialValues;
+}
+>>>>>>> main
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
@@ -280,6 +318,7 @@ export const useTermination = ({
       },
     };
   }, [
+<<<<<<< HEAD
     employment,
     employmentId,
     formValues.proposed_termination_date,
@@ -294,6 +333,21 @@ export const useTermination = ({
     options?.jsfModify?.fields?.risk_assesment_info,
     options?.jsfModify?.fields?.termination_reason,
     proposedTerminationDateStatement,
+=======
+    hasFutureStartDate,
+    options?.jsfModify?.fields?.risk_assesment_info,
+    options?.jsfModify?.fields?.termination_reason,
+    options?.jsfModify?.fields?.proposed_termination_date_info,
+    options?.jsfModify?.fields?.proposed_termination_date,
+    options?.jsfModify?.fields?.paid_time_off_info,
+    options?.jsfModify?.fields?.acknowledge_termination_procedure_info,
+    options?.jsfModify?.fields?.acknowledge_termination_procedure_fees_info,
+    minDate,
+    formValues.termination_reason,
+    formValues.proposed_termination_date,
+    employment,
+    employmentId,
+>>>>>>> main
   ]);
 
   const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
@@ -386,6 +440,8 @@ export const useTermination = ({
     nextStep();
   }
 
+  const isDirty = Boolean(Object.keys(fieldValues).length > 0);
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -395,6 +451,16 @@ export const useTermination = ({
      * Employment data
      */
     employment,
+
+    /**
+     * Current form field values, we use formValues to let the user know about all the current form values
+     */
+    fieldValues: formValues,
+
+    /**
+     * Indicates if the form is dirty
+     */
+    isDirty,
     /**
      * Current step state containing the current step and total number of steps
      */
