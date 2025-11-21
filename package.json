@@ -123,16 +123,16 @@
     "@types/lodash.omitby": "^4.6.9",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
-    "@vitest/coverage-istanbul": "^3.0.8",
+    "@vitest/coverage-istanbul": "^4.0.13",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "jsdom": "^26.0.0",
     "msw": "^2.7.3",
-    "prettier": "^3.5.1",
+    "prettier": "^3.6.2",
     "tsup": "^8.4.0",
     "tsx": "^4.19.2",
     "typescript-eslint": "^8.26.1",
-    "vitest": "^3.0.8"
+    "vitest": "^4.0.13"
   }
 }
