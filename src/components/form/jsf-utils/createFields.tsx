@@ -44,3 +44,21 @@ export function createInformationField(
     },
   };
 }
+
+export function createStatementProperty({
+  title,
+  description,
+  severity,
+}: {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  severity?: 'warning' | 'error' | 'success' | 'info' | 'neutral' | 'time';
+}) {
+  return {
+    statement: {
+      title,
+      description,
+      severity,
+    },
+  };
+}

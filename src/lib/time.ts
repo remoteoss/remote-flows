@@ -1,4 +1,5 @@
 import { getSingularPluralUnit } from '@/src/lib/i18n';
+import { format } from 'date-fns';
 
 export type DaysAndHours = {
   hours: number;
@@ -141,3 +142,6 @@ export function formatAsDecimal(
 
   return formatAsDays(decimal, suffixFormat);
 }
+
+export const formatMonthDayInLocalTime = (datetime: Date) =>
+  format(datetime, 'MMM d');
