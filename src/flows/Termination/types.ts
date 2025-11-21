@@ -23,7 +23,12 @@ export type TerminationDetailsFormValues = {
   termination_reason:
     | TerminationDetailsParams['termination_reason']
     | undefined;
-  termination_reason_files: TerminationDetailsParams['termination_reason_files'];
+  termination_reason_files: {
+    name: string;
+    content: string;
+    type: string;
+    size: number;
+  }[];
   additional_comments: string | null;
   will_challenge_termination: string;
   will_challenge_termination_description: string | null;
@@ -32,7 +37,12 @@ export type TerminationDetailsFormValues = {
 export type PaidTimeOffFormValues = {
   agrees_to_pto_amount: string;
   agrees_to_pto_amount_notes: string | null;
-  timesheet_file: TerminationDetailsParams['timesheet_file'];
+  timesheet_file: {
+    name: string;
+    content: string;
+    type: string;
+    size: number;
+  }[];
 };
 
 export type AdditionalDetailsFormValues = {

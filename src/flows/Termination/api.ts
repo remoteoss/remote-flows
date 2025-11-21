@@ -304,11 +304,7 @@ export const useTerminationSchema = ({
   jsfModify?: JSFModifyNext;
   step?: string;
 }) => {
-  return useQuery<
-    { data?: { schema?: Record<string, unknown> } },
-    Error,
-    $TSFixMe
-  >({
+  return useQuery({
     queryKey: ['rmt-flows-termination-schema', step],
     queryFn: () => {
       return schema[step as keyof typeof schema] ?? defaultSchema;
@@ -319,15 +315,10 @@ export const useTerminationSchema = ({
         const { schema } = modify(jsfSchema, jsfModify);
         jsfSchema = schema;
       }
-      try {
-        const form = createHeadlessForm(jsfSchema || {}, {
-          initialValues: formValues as $TSFixMe,
-        });
-        return form;
-      } catch (error) {
-        console.error('❌ createHeadlessForm error:', error);
-        throw error;
-      }
+      const form = createHeadlessForm(jsfSchema || {}, {
+        initialValues: formValues as unknown as $TSFixMe,
+      });
+      return form;
     },
   });
 };
