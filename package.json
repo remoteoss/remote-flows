@@ -102,7 +102,7 @@
     "postcss": "^8.5.3",
     "react-day-picker": "^8.10.1",
     "react-flagpack": "^2.0.6",
-    "react-hook-form": "^7.54.2",
+    "react-hook-form": "7.54.2",
     "react-pdf": "^10.2.0",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.2",
@@ -116,10 +116,10 @@
     "@arethetypeswrong/cli": "^0.17.3",
     "@eslint/js": "^9.22.0",
     "@hey-api/openapi-ts": "^0.64.4",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jsdom": "^21.1.7",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.2.0",
+    "@testing-library/user-event": "14.6.1",
+    "@types/jsdom": "21.1.7",
     "@types/lodash.capitalize": "^4.2.9",
     "@types/lodash.get": "^4.4.9",
     "@types/lodash.groupby": "^4.6.9",
@@ -129,7 +129,7 @@
     "@types/lodash.omitby": "^4.6.9",
     "@types/node": "^22.13.4",
     "@types/react": "^18.3.0",
-    "@vitest/coverage-istanbul": "^3.0.8",
+    "@vitest/coverage-istanbul": "3.0.8",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
@@ -139,6 +139,6 @@
     "tsup": "^8.4.0",
     "tsx": "^4.19.2",
     "typescript-eslint": "^8.26.1",
-    "vitest": "^3.0.8"
+    "vitest": "3.0.8"
   }
 }
