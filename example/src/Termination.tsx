@@ -203,8 +203,9 @@ export const TerminationWithProps = ({
             },
           },
         }}
-        initialValues={{
-          confidential: 'no',
+        initialValues={
+          {
+            /* confidential: 'no',
           customer_informed_employee: 'no',
           personal_email: 'john.doe@example.com',
           additional_comments:
@@ -218,8 +219,9 @@ export const TerminationWithProps = ({
           ],
           termination_reason: 'performance',
           will_challenge_termination: 'no',
-          agrees_to_pto_amount: 'yes',
-        }}
+          agrees_to_pto_amount: 'yes', */
+          }
+        }
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
