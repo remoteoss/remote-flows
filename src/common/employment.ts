@@ -1,14 +1,9 @@
 import { isFuture, isToday, parseISO } from 'date-fns';
 
-export const isInProbationPeriod = (
-  probationEndDate: string | Date | undefined,
-) => {
+export const isInProbationPeriod = (probationEndDate: string | undefined) => {
   if (!probationEndDate) return false;
 
-  const parsedProbationEndDate =
-    typeof probationEndDate === 'string'
-      ? parseISO(probationEndDate)
-      : probationEndDate;
+  const parsedProbationEndDate = parseISO(probationEndDate);
 
   return isFuture(parsedProbationEndDate) || isToday(parsedProbationEndDate);
 };
