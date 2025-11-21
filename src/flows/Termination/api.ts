@@ -23,7 +23,6 @@ import {
   DaysAndHours,
   formatAsDecimal,
 } from '@/src/lib/time';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 
 function formatTimeoffValues(
   values: Record<string, DaysAndHours>,
@@ -310,13 +309,13 @@ export const useTerminationSchema = ({
       return schema[step as keyof typeof schema] ?? defaultSchema;
     },
     select: ({ data }) => {
-      let jsfSchema: $TSFixMe = data?.schema || {};
+      let jsfSchema: Record<string, unknown> = data?.schema || {};
       if (jsfModify) {
         const { schema } = modify(jsfSchema, jsfModify);
         jsfSchema = schema;
       }
       const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues as unknown as $TSFixMe,
+        initialValues: formValues,
       });
       return form;
     },
