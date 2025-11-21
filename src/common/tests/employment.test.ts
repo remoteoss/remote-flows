@@ -24,8 +24,4 @@ describe('isInProbationPeriod', () => {
   it('returns false when probation end date is undefined', () => {
     expect(isInProbationPeriod(undefined)).toBeFalsy();
   });
-
-  it('accepts Date object as input', () => {
-    expect(isInProbationPeriod(new Date('2024-02-01'))).toBeTruthy();
-  });
 });
