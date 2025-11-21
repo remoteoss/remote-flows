@@ -377,6 +377,8 @@ export const useTermination = ({
     nextStep();
   }
 
+  const isDirty = Boolean(Object.keys(fieldValues).length > 0);
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -386,6 +388,16 @@ export const useTermination = ({
      * Employment data
      */
     employment,
+
+    /**
+     * Current form field values, we use formValues to let the user know about all the current form values
+     */
+    fieldValues: formValues,
+
+    /**
+     * Indicates if the form is dirty
+     */
+    isDirty,
     /**
      * Current step state containing the current step and total number of steps
      */
