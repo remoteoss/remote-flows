@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 0.31.0
+
+### Minor Changes
+
+- Add termination success example (#573) [#573](https://github.com/remoteoss/remote-flows/pull/573)
+- standardize onChange callback to accept File[] array (#574) [#574](https://github.com/remoteoss/remote-flows/pull/574)
+- move termination-specific utilities to dedicated module and clamp negative values (#577) [#577](https://github.com/remoteoss/remote-flows/pull/577)
+- expose fieldValues and isDirty state from useTermination hook (#576) [#576](https://github.com/remoteoss/remote-flows/pull/576)
+- add provisional start date validation and payroll calendar support (#578) [#578](https://github.com/remoteoss/remote-flows/pull/578)
+- add feedback message statements for termination flow (#579) [#579](https://github.com/remoteoss/remote-flows/pull/579)
+- simplify contract details schema version logic (#580) [#580](https://github.com/remoteoss/remote-flows/pull/580)
+
 ## 0.30.0
 
 ### Minor Changes
