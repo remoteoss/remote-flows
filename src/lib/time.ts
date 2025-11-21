@@ -1,4 +1,5 @@
 import { getSingularPluralUnit } from '@/src/lib/i18n';
+import { format } from 'date-fns';
 
 export type DaysAndHours = {
   hours: number;
@@ -150,3 +151,6 @@ export function clampNegativeValuesIfApplicable(
     hours: Math.max(daysAndHours.hours, 0),
   };
 }
+
+export const formatMonthDayInLocalTime = (datetime: Date) =>
+  format(datetime, 'MMM d');

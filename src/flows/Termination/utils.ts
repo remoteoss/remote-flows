@@ -5,10 +5,17 @@ import {
   parseISO,
   startOfDay,
   setDate,
+  isFuture,
+  differenceInHours,
+  endOfDay,
+  differenceInDays,
 } from 'date-fns';
 import { PayrollCalendarEor } from '@/src/client';
 import { Step } from '@/src/flows/useStepState';
 import { PAYROLL_CYCLES } from '@/src/common/payroll';
+import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
+import { formatMonthDayInLocalTime } from '@/src/lib/time';
+import { TerminationFormValues } from '@/src/flows/Termination/types';
 
 export type StepTerminationKeys =
   | 'employee_communication'
@@ -77,3 +84,80 @@ export const calculateMinTerminationDate = (
       return today;
   }
 };
+
+export const calculateProposedTerminationDateStatement = ({
+  minTerminationDate,
+  isEmployeeInProbationPeriod,
+  selectedDate,
+}: {
+  minTerminationDate: Date;
+  isEmployeeInProbationPeriod: boolean;
+  selectedDate?: Date;
+}) => {
+  const hasPassedCutoffDate = isFuture(minTerminationDate);
+  const isShortNotice =
+    selectedDate && differenceInHours(endOfDay(selectedDate), new Date()) < 48;
+  const isMoreThan30Days =
+    selectedDate && differenceInDays(selectedDate, new Date()) >= 30;
+
+  if (isMoreThan30Days || (!selectedDate && !hasPassedCutoffDate)) {
+    return null;
+  }
+
+  if (hasPassedCutoffDate && !isEmployeeInProbationPeriod) {
+    return createStatementProperty({
+      description: `The next available termination dates are ${formatMonthDayInLocalTime(minTerminationDate)} and later. We've already processed the employee's payments until then.`,
+      severity: 'info',
+    });
+  }
+
+  if (hasPassedCutoffDate && isEmployeeInProbationPeriod) {
+    return createStatementProperty({
+      description: `This payroll period's cut-off has passed. While you can offboard the employee after the cut-off, their payment may have already processed. If that's the case, we'll try to recover the payment. But if that isn't possible, we'll send you an invoice for the amount.`,
+      severity: 'info',
+    });
+  }
+
+  if (isShortNotice) {
+    return createStatementProperty({
+      description: `Requests made with less than 48 hours' notice are subject to changes due to the country-specific offboarding laws and case details. If changes are needed, your specialist will guide you accordingly.`,
+      severity: 'info',
+    });
+  }
+
+  return createStatementProperty({
+    description: `Termination dates depend on payroll cutoffs, local laws, and case details. We'll aim for your proposed date but it's possible it will need to change. After you submit your request, a specialist will reach out and guide you through the process.`,
+    severity: 'info',
+  });
+};
+
+export function buildInitialValues(
+  stepsInitialValues: Partial<TerminationFormValues>,
+  hasFutureStartDate: boolean,
+): TerminationFormValues {
+  const initialValues: TerminationFormValues = {
+    confidential: '',
+    customer_informed_employee: '',
+    customer_informed_employee_date: '',
+    customer_informed_employee_description: '',
+    personal_email: '',
+    termination_reason: undefined,
+    reason_description: '',
+    termination_reason_files: [],
+    will_challenge_termination: '',
+    will_challenge_termination_description: null,
+    agrees_to_pto_amount: '',
+    agrees_to_pto_amount_notes: null,
+    acknowledge_termination_procedure: false,
+    additional_comments: '',
+    proposed_termination_date: '',
+    risk_assessment_reasons: [],
+    timesheet_file: undefined,
+    ...stepsInitialValues,
+    ...(hasFutureStartDate
+      ? { termination_reason: 'cancellation_before_start_date' }
+      : {}),
+  };
+
+  return initialValues;
+}
