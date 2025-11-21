@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
-
 import { useFormFields } from '@/src/context';
 import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
@@ -32,11 +29,16 @@ const convertFilesToBase64 = async (files: File[]) => {
   const base64Files = await Promise.all(
     files.map(async (file) => {
       const base64 = await toBase64(file);
+      // the ...file makes typescript compiler to say we're returning a FILE interface but we aren't
+      // we just return name, size, type and content
+      // File interface makes it easy for everybody to use
+      // if we remove the ...file, typescript will complain about the return type
       return {
+        ...file,
         name: file.name,
-        content: base64.split(',')[1],
         size: file.size,
         type: file.type,
+        content: base64.split(',')[1],
       };
     }),
   );
@@ -57,7 +59,7 @@ const validateFileSize = (files: File[], maxSize?: number): string | null => {
 };
 
 export type FileUploadFieldProps = JSFField & {
-  onChange?: (value: any) => void;
+  onChange?: (value: File[]) => void;
   multiple?: boolean;
   component?: Components['file'];
   maxSize?: number;
@@ -79,11 +81,9 @@ export function FileUploadField({
   const { control, setError, clearErrors } = useFormContext();
 
   const handleOnChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    files: File[],
     field: ControllerRenderProps<FieldValues, string>,
   ) => {
-    const files = event.target.files ? Array.from(event.target.files) : [];
-
     const sizeError = validateFileSize(files, maxSize);
     if (sizeError) {
       setError(name, { message: sizeError });
@@ -117,7 +117,7 @@ export function FileUploadField({
               field={{
                 ...field,
                 value: field.value,
-                onChange: async (value: any) => handleOnChange(value, field),
+                onChange: async (value: File[]) => handleOnChange(value, field),
               }}
               fieldState={fieldState}
               fieldData={customFileUploadFieldProps}
