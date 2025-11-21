@@ -11,7 +11,7 @@ import {
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from '@/src/flows/ContractAmendment/types';
 
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '../../client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 type UseEmployment = Pick<ContractAmendmentParams, 'employmentId'>;

@@ -1,6 +1,6 @@
 import { client } from '@/src/client/client.gen';
 import { ENVIRONMENTS } from '@/src/environments';
-import { createClient } from '@hey-api/client-fetch';
+import { createClient } from '@/src/client';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';

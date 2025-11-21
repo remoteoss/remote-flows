@@ -28,7 +28,7 @@ import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';

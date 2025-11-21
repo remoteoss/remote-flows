@@ -1,4 +1,4 @@
-import { createClient } from '@hey-api/client-fetch';
+import { createClient } from '../client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
@@ -11,7 +11,7 @@ type AuthResponse = {
 };
 
 // Mock the createClient function - now captures and returns the config passed to it
-vi.mock('@hey-api/client-fetch', () => ({
+vi.mock('../client', () => ({
   createClient: vi.fn((config) => ({
     getConfig: () => config,
   })),

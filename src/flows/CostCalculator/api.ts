@@ -7,7 +7,7 @@ import {
   postCreateEstimationCsv,
   postCreateEstimationPdf,
 } from '@/src/client';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client';
 import { useClient } from '@/src/context';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';

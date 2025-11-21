@@ -3,7 +3,7 @@ import { CreateOffboardingParams } from '@/src/client/types.gen';
 import { useClient } from '@/src/context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { JSFModify } from '@/src/flows/types';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client';
 import { modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createHeadlessForm } from '@remoteoss/json-schema-form';
