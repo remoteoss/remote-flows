@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useJsonSchemasValidationFormResolverNext } from '@/src/components/form/yupValidationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 
 type TerminationFormProps = {
@@ -15,7 +15,7 @@ type TerminationFormProps = {
 export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
   const { formId, terminationBag } = useTerminationContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
+  const resolver = useJsonSchemasValidationFormResolverNext(
     // @ts-expect-error no matching type
     terminationBag.handleValidation,
   );

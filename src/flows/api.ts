@@ -4,11 +4,11 @@ import { useClient } from '@/src/context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { JSFModify } from '@/src/flows/types';
 import { Client } from '@hey-api/client-fetch';
-import { modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createHeadlessForm } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-next';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useCreateTermination = () => {
   const { client } = useClient();
@@ -31,7 +31,11 @@ export const useTerminationSchema = ({
   jsfModify?: JSFModify;
   step?: string;
 }) => {
-  return useQuery({
+  return useQuery<
+    { data?: { schema?: Record<string, unknown> } },
+    Error,
+    $TSFixMe
+  >({
     queryKey: ['rmt-flows-termination-schema', step],
     queryFn: () => {
       return schema[step as keyof typeof schema] ?? defaultSchema;
@@ -43,7 +47,7 @@ export const useTerminationSchema = ({
         jsfSchema = schema;
       }
       const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues || {},
+        initialValues: formValues as $TSFixMe,
       });
       return form;
     },

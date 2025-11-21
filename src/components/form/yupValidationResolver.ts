@@ -42,3 +42,27 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
     };
   };
 };
+
+export const useJsonSchemasValidationFormResolverNext = <
+  T extends AnyObjectSchema,
+>(
+  handleValidation: (data: FieldValues) => {
+    formErrors: Record<string, string>;
+  },
+): Resolver<InferType<T>> => {
+  return async (data: FieldValues) => {
+    const { formErrors } = await handleValidation(data);
+    console.log('formErrors', formErrors);
+
+    if (Object.keys(formErrors || {}).length > 0) {
+      return {
+        values: {},
+        errors: formErrors,
+      };
+    }
+    return {
+      values: data,
+      errors: {},
+    };
+  };
+};
