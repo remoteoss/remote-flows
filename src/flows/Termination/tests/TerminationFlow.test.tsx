@@ -629,7 +629,7 @@ describe('TerminationFlow', () => {
           personal_email: 'john.doe@example.com',
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
     await screen.findByText(/Step: Employee Communication/i);
     const employeePersonalEmail = screen.getByLabelText(
@@ -656,7 +656,7 @@ describe('TerminationFlow', () => {
       }),
     );
 
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();

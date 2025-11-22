@@ -13,10 +13,8 @@ import {
   OnboardingFlowProps,
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/types';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { TestProviders } from '@/src/tests/testHelpers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
@@ -24,18 +22,6 @@ import { vi } from 'vitest';
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
-  },
-});
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <TestProviders>{children}</TestProviders>
-  </QueryClientProvider>
-);
 
 const mockRender = vi.fn(
   ({ onboardingBag, components }: OnboardingRenderProps) => {
@@ -195,6 +181,7 @@ describe('SaveDraftButton', () => {
   afterEach(() => {
     vi.clearAllMocks();
     mockRender.mockReset();
+    queryClient.clear();
   });
 
   it('should render the SaveDraftButton component with default text', async () => {
@@ -207,7 +194,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should trigger the form validation when save draft is clicked', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -220,7 +207,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should call onSuccess when save draft is successful for basic information step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i); // This should work now
 
@@ -236,7 +223,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should not advance to next step when save draft is clicked', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -262,7 +249,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -292,7 +279,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -336,7 +323,7 @@ describe('SaveDraftButton', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Save Draft/i);
     expect(button).toBeDisabled();
@@ -350,7 +337,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     // Navigate to contract details step
     await screen.findByText(/Step: Basic Information/i);
@@ -382,7 +369,7 @@ describe('SaveDraftButton', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Custom Save Text/i);
     expect(button).toHaveTextContent('Custom Save Text');
@@ -403,11 +390,9 @@ describe('SaveDraftButton', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: MockCustomButton }}>
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <TestProviders components={{ button: MockCustomButton }}>
+        {children}
+      </TestProviders>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {

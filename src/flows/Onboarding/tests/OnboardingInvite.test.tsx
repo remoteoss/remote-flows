@@ -8,10 +8,8 @@ import {
   employmentResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { TestProviders } from '@/src/tests/testHelpers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import {
   render,
   screen,
@@ -22,8 +20,6 @@ import {
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
-
-const queryClient = new QueryClient();
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -137,6 +133,7 @@ describe('OnboardingInvite', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
   });
 
   it('should render the OnboardingInvite component with default "Invite Employee" text', async () => {
@@ -834,11 +831,9 @@ describe('OnboardingInvite', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: MockCustomButton }}>
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <TestProviders components={{ button: MockCustomButton }}>
+        {children}
+      </TestProviders>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {
