@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 vi.mock('@/src/components/error-handling/telemetryLogger');
 vi.mock('@/src/lib/version', () => ({ npmPackageVersion: '1.0.0' }));
@@ -32,7 +33,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
     renderHook(() => useErrorReportingForUnhandledErrors(errorContext, false));
 
     const error = new Error('Rejection');
-    const event = new Event('unhandledrejection') as any;
+    const event = new Event('unhandledrejection') as $TSFixMe;
     event.reason = error;
     event.promise = Promise.reject(error).catch(() => {}); // Catch to prevent actual unhandled rejection
 
