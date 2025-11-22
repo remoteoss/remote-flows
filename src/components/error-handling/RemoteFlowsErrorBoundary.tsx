@@ -14,6 +14,7 @@ interface RemoteFlowsErrorBoundaryProps {
     /**
      * If true, re-throws errors to parent error boundary.
      * If false, shows fallback UI to prevent crashes.
+     * @default false
      */
     useParentErrorBoundary?: boolean;
     /**

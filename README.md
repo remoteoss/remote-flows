@@ -76,14 +76,47 @@ The example app will be available at `http://localhost:3001`. The server handles
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop          | Type                                                        | Required | Description                                                                     |
-| ------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------------------- |
-| `auth`        | `() => Promise<{ accessToken: string, expiresIn: number }>` | Yes      | Function to fetch authentication token                                          |
-| `authId`      | `'default' \| 'client' \|`                                  | No       | Id to differenciate between client token authentication and company based token |
-| `environment` | `'partners' \| 'production' \| 'sandbox' \| 'staging'`      | No       | Environment to use for API calls (defaults to production)                       |
-| `theme`       | `ThemeOptions`                                              | No       | Custom theme configuration                                                      |
-| `components`  | `Components`                                                | No       | Custom field components for form rendering                                      |
-| `proxy`       | `{ url: string, headers?: Record<string, string> }`         | No       | Configuration for API request proxy with optional headers                       |
+| Prop            | Type                                                                                          | Required | Description                                                                     |
+| --------------- | --------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | Yes      | Function to fetch authentication token                                          |
+| `authId`        | `'default' \| 'client' \|`                                                                    | No       | Id to differenciate between client token authentication and company based token |
+| `environment`   | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | Environment to use for API calls (defaults to production)                       |
+| `theme`         | `ThemeOptions`                                                                                | No       | Custom theme configuration                                                      |
+| `components`    | `Components`                                                                                  | No       | Custom field components for form rendering                                      |
+| `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | Configuration for API request proxy with optional headers                       |
+| `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       | Error boundary configuration to prevent crashes and show custom fallback UI     |
+
+#### Error Boundary
+
+The `errorBoundary` prop controls how the SDK handles runtime errors to prevent crashes in your host application.
+
+````tsx
+<RemoteFlows
+  auth={fetchToken}
+  errorBoundary={{
+    useParentErrorBoundary: false,
+    fallback: (error) => (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Something Went Wrong</h2>
+        <p>{error.message}</p>
+        <button onClick={() => window.location.reload()}>
+          Reload Page
+        </button>
+      </div>
+    ),
+  }}
+>
+  {/* Your flows */}
+</RemoteFlows>**Options:**
+
+- `useParentErrorBoundary` (boolean, default: `false`): If `true`, errors are re-thrown to your parent error boundary. If `false`, the SDK shows a fallback UI to prevent crashes.
+- `fallback` (ReactNode | function, optional): Custom UI to display when an error occurs. Only used when `useParentErrorBoundary` is `false`. Can be a React element or a function that receives the error object.
+
+**Behavior:**
+
+- When `useParentErrorBoundary: true` → Errors propagate to your application's error boundary
+- When `useParentErrorBoundary: false` without `fallback` → Shows default error message: "Something went wrong in RemoteFlows. Please refresh the page."
+- When `useParentErrorBoundary: false` with `fallback` → Shows your custom fallback UI
 
 ### Custom Field Components
 
@@ -116,7 +149,7 @@ const CustomInput = ({ field, fieldData, fieldState }: FieldComponentProps) => {
 const CustomButton = ({ children, ...props }: ButtonComponentProps) => {
   return <button {...props}>{children}</button>;
 };
-```
+````
 
 Here's an example of custom field components implementation:
 
