@@ -1,5 +1,3 @@
-// src/components/error-handling/tests/telemetryLogger.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   buildErrorPayload,
   logDebugPayload,
@@ -135,6 +133,24 @@ describe('telemetryLogger', () => {
       expect(consoleSpy).toHaveBeenCalledWith(
         '📮 [RemoteFlows] Error Report (Debug Mode)',
       );
+      consoleSpy.mockRestore();
+    });
+
+    it('should not report telemetry when error is a 404 error', () => {
+      const error = new Error('HTTP 404 Not Found');
+      const sdkVersion = '1.0.0';
+      const context = { flow: 'test' };
+
+      vi.mocked(utils.categorizeError).mockReturnValue('NETWORK_ERROR');
+      vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
+      vi.mocked(utils.parseComponentStack).mockReturnValue([]);
+
+      const consoleSpy = vi.spyOn(console, 'group');
+
+      reportTelemetryError(error, sdkVersion, context, { debugMode: true });
+
+      // Verify console.group was NOT called (error wasn't reported)
+      expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
   });
