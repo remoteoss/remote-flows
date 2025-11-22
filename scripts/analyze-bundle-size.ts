@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { globSync } from 'glob';
 import { filesize } from 'filesize';
@@ -147,13 +147,21 @@ function analyzeBundle(): BundleAnalysis {
     console.log('\n' + JSON.stringify(result, null, 2));
   }
 
-  // Write to file if specified
+  // Write to file if specified, or default to out/bundle-analysis.json
   const outputIndex = process.argv.indexOf('--output');
+  let outputPath: string;
+
   if (outputIndex !== -1 && process.argv[outputIndex + 1]) {
-    const outputPath = process.argv[outputIndex + 1];
-    writeFileSync(outputPath, JSON.stringify(result, null, 2));
-    console.log(chalk.green(`\n✓ Bundle size data written to ${outputPath}`));
+    outputPath = process.argv[outputIndex + 1];
+  } else {
+    // Default output location
+    const outDir = join(process.cwd(), 'out');
+    mkdirSync(outDir, { recursive: true });
+    outputPath = join(outDir, 'bundle-analysis.json');
   }
+
+  writeFileSync(outputPath, JSON.stringify(result, null, 2));
+  console.log(chalk.green(`\n✓ Bundle size data written to ${outputPath}`));
 
   console.log('');
   return result;

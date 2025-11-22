@@ -37,7 +37,7 @@ jobs:
         run: npm run build
 
       - name: Analyze current bundle size
-        run: npm run size -- --output current-bundle.json
+        run: npm run size -- --output out/current-bundle.json
 
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -55,16 +55,16 @@ jobs:
 
       - name: Analyze base bundle size
         working-directory: base
-        run: npm run size -- --output ../base-bundle.json
+        run: npm run size -- --output ../out/base-bundle.json
 
       - name: Compare bundle sizes
         id: compare
         run: |
           # Run comparison and capture output
-          npx tsx scripts/compare-sizes.ts base-bundle.json current-bundle.json > size-report.md 2>&1 || echo "comparison_failed=true" >> $GITHUB_OUTPUT
+          npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || echo "comparison_failed=true" >> $GITHUB_OUTPUT
 
           # Read the report for the PR comment
-          REPORT=$(cat size-report.md)
+          REPORT=$(cat out/size-report.md)
 
           # Set output for PR comment (escape for GitHub Actions)
           echo "report<<EOF" >> $GITHUB_OUTPUT
@@ -119,7 +119,7 @@ jobs:
         with:
           name: bundle-size-analysis
           path: |
-            current-bundle.json
-            base-bundle.json
-            size-report.md
+            out/current-bundle.json
+            out/base-bundle.json
+            out/size-report.md
           retention-days: 30
