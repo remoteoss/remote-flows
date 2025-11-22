@@ -1,6 +1,8 @@
 # @remoteoss/remote-flows
 
-[![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remotecom/b8884fb20051d4c0095a29569d51e34e/raw/remote-flows-bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
+[![npm version](https://img.shields.io/npm/v/@remoteoss/remote-flows.svg)](https://www.npmjs.com/package/@remoteoss/remote-flows) [![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remotecom/b8884fb20051d4c0095a29569d51e34e/raw/remote-flows-bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
+
+> **Note:** This badge reflects the latest published version. Check [npm](https://www.npmjs.com/package/@remoteoss/remote-flows) for current version information.
 
 A React library that provides components for Remote's embedded solution, enabling seamless integration of Remote's employment flows into your application.
 
