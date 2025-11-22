@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
 import { CostCalculatorSubmitButton } from '../CostCalculatorSubmitButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';

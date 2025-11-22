@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import { TerminationBack } from '../TerminationBack';
 import { useTerminationContext } from '../context';
 import { useFormFields } from '@/src/context';
