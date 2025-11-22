@@ -52,6 +52,8 @@ export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 
 export { Badge, badgeVariants } from './components/ui/badge';
 
+export { FileUploader } from './components/ui/file-uploader';
+
 // Add any other UI components you want to share
 export { Input } from './components/ui/input';
 export { Label } from './components/ui/label';
