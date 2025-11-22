@@ -69,16 +69,11 @@ export const logDebugPayload = (
   console.groupEnd();
 };
 
-export function reportTelemetryError(
+export function buildErrorPayload(
   error: Error,
   sdkVersion: string,
   context?: ErrorContextData,
-  options: {
-    debugMode?: boolean;
-  } = {
-    debugMode: false,
-  },
-): void {
+): ErrorPayload {
   const category = categorizeError(error);
   const severity = determineErrorSeverity(error, category);
   const componentStack = parseComponentStack(error, error.stack);
@@ -101,6 +96,21 @@ export function reportTelemetryError(
         typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
     },
   };
+
+  return payload;
+}
+
+export function reportTelemetryError(
+  error: Error,
+  sdkVersion: string,
+  context?: ErrorContextData,
+  options: {
+    debugMode?: boolean;
+  } = {
+    debugMode: false,
+  },
+): void {
+  const payload: ErrorPayload = buildErrorPayload(error, sdkVersion, context);
 
   // Log to console in debug mode
   logDebugPayload(payload, Boolean(options.debugMode));

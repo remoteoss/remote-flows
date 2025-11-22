@@ -77,7 +77,7 @@ export class RemoteFlowsErrorBoundary extends Component<
     const errorContext = this.context?.errorContext;
 
     reportTelemetryError(error, npmPackageVersion, errorContext, {
-      debugMode: true,
+      debugMode: false,
     });
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {

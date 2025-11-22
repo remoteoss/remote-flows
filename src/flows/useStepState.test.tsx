@@ -245,4 +245,13 @@ describe('useStepState', () => {
     });
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
   });
+
+  it('should emit the first step onMount', () => {
+    const onStepChange = vi.fn();
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
+    expect(onStepChange).toHaveBeenCalledTimes(1);
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+  });
 });

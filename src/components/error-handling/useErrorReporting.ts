@@ -3,7 +3,7 @@ import { ErrorContextData } from '@/src/components/error-handling/types';
 import { useEffect, useMemo } from 'react';
 
 export function useErrorReporting(initialContext: ErrorContextData) {
-  const { setErrorContext, updateContext, errorContext } = useErrorContext(); // ✅ Add errorContext
+  const { setErrorContext, updateContext, errorContext } = useErrorContext();
 
   // Set initial context on mount
   useEffect(() => {
