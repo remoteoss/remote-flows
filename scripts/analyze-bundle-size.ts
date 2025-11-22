@@ -6,12 +6,7 @@ import { globSync } from 'glob';
 import { filesize } from 'filesize';
 import chalk from 'chalk';
 import type { BundleAnalysis, FileData, CategoryStats } from './types.js';
-import {
-  DIST_DIR,
-  getFileSize,
-  getGzipSize,
-  categorizeFile,
-} from './utils.js';
+import { DIST_DIR, getFileSize, getGzipSize, categorizeFile } from './utils.js';
 
 function analyzeBundle(): BundleAnalysis {
   console.log(chalk.blue.bold('\n📦 Analyzing bundle size...\n'));
