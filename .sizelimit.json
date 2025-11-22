@@ -1,0 +1,12 @@
+{
+  "limits": {
+    "total": 500000,
+    "totalGzip": 160000,
+    "css": 100000,
+    "cssGzip": 25000,
+    "maxChunkSize": 50000,
+    "maxChunkSizeGzip": 15000
+  },
+  "exclude": ["**/*.map", "**/*.d.ts"],
+  "warningThreshold": 0.9
+}
