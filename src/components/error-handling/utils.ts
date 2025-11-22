@@ -4,6 +4,26 @@ import {
 } from '@/src/components/error-handling/types';
 
 /**
+ * Component names to filter out from stack traces
+ * Includes React internals and JavaScript built-ins
+ */
+const FILTERED_COMPONENT_NAMES = [
+  // React internals
+  'Fragment',
+  'StrictMode',
+  'Suspense',
+  'ErrorBoundary',
+  'Profiler',
+  // JavaScript built-ins
+  'Function',
+  'Object',
+  'Array',
+  'String',
+  'Number',
+  'Boolean',
+] as const;
+
+/**
  * Parses React component stack from error stack trace or error message
  * Extracts component names from stack trace lines and error messages
  */
@@ -36,16 +56,12 @@ export const parseComponentStack = (
     const componentName = atMatch?.[1] || symbolMatch?.[1];
 
     if (componentName && !componentStack.includes(componentName)) {
-      // Filter out React internal component names
-      const reactInternals = [
-        'Fragment',
-        'StrictMode',
-        'Suspense',
-        'ErrorBoundary',
-        'Profiler',
-      ];
-
-      if (!reactInternals.includes(componentName)) {
+      // Filter out React internal and JS built-in names
+      if (
+        !FILTERED_COMPONENT_NAMES.includes(
+          componentName as (typeof FILTERED_COMPONENT_NAMES)[number],
+        )
+      ) {
         componentStack.push(componentName);
       }
     }
@@ -55,116 +71,164 @@ export const parseComponentStack = (
 };
 
 /**
- * Categorizes error based on error message and name
+ * Error pattern matching configuration
+ * Patterns are checked in order - first match wins
+ */
+type ErrorPattern = {
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  messagePatterns: string[];
+  namePatterns: string[];
+};
+
+/**
+ * Configuration for error categorization and severity determination
+ * Order matters - patterns are checked from top to bottom
+ */
+const ERROR_PATTERNS: readonly ErrorPattern[] = [
+  // Priority 1: React rendering errors (most critical)
+  {
+    category: 'RENDER_ERROR',
+    severity: 'critical',
+    messagePatterns: [
+      'element type is invalid',
+      'hydration',
+      'rendered more hooks',
+      'rendered fewer hooks',
+    ],
+    namePatterns: ['invariantviolation'],
+  },
+
+  // Priority 2: Hook errors (critical React violations)
+  {
+    category: 'HOOK_ERROR',
+    severity: 'critical',
+    messagePatterns: ['hook', 'useeffect', 'usestate', 'usecontext'],
+    namePatterns: [],
+  },
+
+  // Priority 3: Network errors
+  {
+    category: 'NETWORK_ERROR',
+    severity: 'error',
+    messagePatterns: ['fetch', 'network', 'http', 'timeout'],
+    namePatterns: ['networkerror'],
+  },
+
+  // Priority 4: State errors (must come before render to avoid "render" keyword collision)
+  {
+    category: 'STATE_ERROR',
+    severity: 'error',
+    messagePatterns: ['state', 'context', 'provider'],
+    namePatterns: [],
+  },
+
+  // Priority 5: Validation errors
+  {
+    category: 'VALIDATION_ERROR',
+    severity: 'error',
+    messagePatterns: ['validation', 'invalid', 'required', 'must'],
+    namePatterns: ['validationerror'],
+  },
+
+  // Priority 6: Lower priority render errors
+  {
+    category: 'RENDER_ERROR',
+    severity: 'critical',
+    messagePatterns: ['render', 'component'],
+    namePatterns: [],
+  },
+
+  // Priority 7: Runtime errors (critical TypeErrors and ReferenceErrors)
+  {
+    category: 'RUNTIME_ERROR',
+    severity: 'critical',
+    messagePatterns: [],
+    namePatterns: ['typeerror', 'referenceerror'],
+  },
+
+  // Priority 8: Range errors (non-critical runtime errors)
+  {
+    category: 'RUNTIME_ERROR',
+    severity: 'error',
+    messagePatterns: [],
+    namePatterns: ['rangeerror'],
+  },
+] as const;
+
+/**
+ * Additional severity patterns that override category-based severity
+ */
+const CRITICAL_MESSAGE_PATTERNS = [
+  'cannot read property',
+  'is not a function',
+  'is not defined',
+] as const;
+
+const WARNING_MESSAGE_PATTERNS = ['warning', 'deprecated'] as const;
+
+/**
+ * Categorizes error based on error message and name using pattern matching
  */
 export const categorizeError = (error: Error): ErrorCategory => {
   const message = error.message.toLowerCase();
   const name = error.name.toLowerCase();
 
-  // React rendering errors
-  if (
-    message.includes('element type is invalid') ||
-    message.includes('render') ||
-    message.includes('hydration') ||
-    message.includes('component') ||
-    name.includes('invariantviolation')
-  ) {
-    return 'RENDER_ERROR';
+  // Early return for warnings to prevent categorization as other error types
+  if (WARNING_MESSAGE_PATTERNS.some((p) => message.includes(p))) {
+    return 'UNKNOWN_ERROR';
   }
 
-  // Network errors
-  if (
-    message.includes('fetch') ||
-    message.includes('network') ||
-    message.includes('http') ||
-    message.includes('timeout') ||
-    name.includes('networkerror')
-  ) {
-    return 'NETWORK_ERROR';
-  }
+  // Check each pattern in priority order
+  for (const pattern of ERROR_PATTERNS) {
+    const matchesMessage = pattern.messagePatterns.some((p) =>
+      message.includes(p),
+    );
+    const matchesName = pattern.namePatterns.some((p) => name.includes(p));
 
-  // Validation errors
-  if (
-    message.includes('validation') ||
-    message.includes('invalid') ||
-    message.includes('required') ||
-    name.includes('validationerror')
-  ) {
-    return 'VALIDATION_ERROR';
-  }
-
-  // Hook errors
-  if (
-    message.includes('hook') ||
-    message.includes('useeffect') ||
-    message.includes('usestate') ||
-    message.includes('rendered more hooks') ||
-    message.includes('rendered fewer hooks')
-  ) {
-    return 'HOOK_ERROR';
-  }
-
-  // State errors
-  if (
-    message.includes('state') ||
-    message.includes('context') ||
-    message.includes('provider')
-  ) {
-    return 'STATE_ERROR';
-  }
-
-  // Runtime errors
-  if (
-    name.includes('typeerror') ||
-    name.includes('referenceerror') ||
-    name.includes('rangeerror')
-  ) {
-    return 'RUNTIME_ERROR';
+    if (matchesMessage || matchesName) {
+      return pattern.category;
+    }
   }
 
   return 'UNKNOWN_ERROR';
 };
 
 /**
- * Determines error severity based on category and message
+ * Determines error severity based on category and message patterns
  */
 export const determineErrorSeverity = (
   error: Error,
   category: ErrorCategory,
 ): ErrorSeverity => {
   const message = error.message.toLowerCase();
+  const name = error.name.toLowerCase();
 
-  // Critical errors that break the app
-  if (
-    category === 'RENDER_ERROR' ||
-    message.includes('element type is invalid') ||
-    message.includes('hydration') ||
-    message.includes('cannot read property') ||
-    message.includes('is not a function')
-  ) {
+  // Check for warning patterns first
+  if (WARNING_MESSAGE_PATTERNS.some((p) => message.includes(p))) {
+    return 'warning';
+  }
+
+  // Check for critical message patterns that override category
+  if (CRITICAL_MESSAGE_PATTERNS.some((p) => message.includes(p))) {
     return 'critical';
   }
 
-  // Network errors are usually errors but not critical
-  if (category === 'NETWORK_ERROR') {
-    return 'error';
+  // Find the exact pattern that matched this error
+  // We need to re-match to get the correct severity for errors with multiple patterns
+  for (const pattern of ERROR_PATTERNS) {
+    if (pattern.category !== category) continue;
+
+    const matchesMessage = pattern.messagePatterns.some((p) =>
+      message.includes(p),
+    );
+    const matchesName = pattern.namePatterns.some((p) => name.includes(p));
+
+    if (matchesMessage || matchesName) {
+      return pattern.severity;
+    }
   }
 
-  // Validation errors are usually just errors
-  if (category === 'VALIDATION_ERROR') {
-    return 'error';
-  }
-
-  // Hook errors are critical
-  if (category === 'HOOK_ERROR') {
-    return 'critical';
-  }
-
-  // State errors can be critical
-  if (category === 'STATE_ERROR') {
-    return 'error';
-  }
-
-  // Default to error
+  // Default to error for unknown categories
   return 'error';
 };
