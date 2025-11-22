@@ -63,7 +63,7 @@ export function RemoteFlows({
   theme,
   proxy,
   environment,
-  errorBoundary = { rethrow: true },
+  errorBoundary = { useParentErrorBoundary: true },
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
     <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>

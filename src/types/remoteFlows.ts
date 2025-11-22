@@ -180,9 +180,9 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
     /**
      * If true, re-throws errors to parent error boundary.
      * If false, shows fallback UI to prevent crashes.
-     * @default true
+     * @default false
      */
-    rethrow?: boolean;
+    useParentErrorBoundary?: boolean;
     /**
      * Custom fallback UI to show when an error occurs.
      * fallback only works when rethrow is false.

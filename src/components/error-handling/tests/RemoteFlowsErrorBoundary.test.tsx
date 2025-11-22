@@ -84,14 +84,16 @@ describe('RemoteFlowsErrorBoundary', () => {
     ).toBeInTheDocument();
   });
 
-  it('should re-throw to parent error boundary when rethrow=true', () => {
+  it('should re-throw to parent error boundary when useParentErrorBoundary=true', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {});
 
     render(
       <ParentErrorBoundary>
-        <RemoteFlowsErrorBoundary errorBoundary={{ rethrow: true }}>
+        <RemoteFlowsErrorBoundary
+          errorBoundary={{ useParentErrorBoundary: true }}
+        >
           <ErrorThrowingComponent />
         </RemoteFlowsErrorBoundary>
       </ParentErrorBoundary>,
@@ -107,14 +109,16 @@ describe('RemoteFlowsErrorBoundary', () => {
     expect(remoteFlowsCalls).toHaveLength(1);
   });
 
-  it('should crash when rethrow=true and no parent boundary', () => {
+  it('should crash when useParentErrorBoundary=true and no parent boundary', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {});
 
     expect(() => {
       render(
-        <RemoteFlowsErrorBoundary errorBoundary={{ rethrow: true }}>
+        <RemoteFlowsErrorBoundary
+          errorBoundary={{ useParentErrorBoundary: true }}
+        >
           <ErrorThrowingComponent />
         </RemoteFlowsErrorBoundary>,
       );

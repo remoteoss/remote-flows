@@ -15,7 +15,7 @@ interface RemoteFlowsErrorBoundaryProps {
      * If true, re-throws errors to parent error boundary.
      * If false, shows fallback UI to prevent crashes.
      */
-    rethrow?: boolean;
+    useParentErrorBoundary?: boolean;
     /**
      * Custom fallback UI to show when an error occurs.
      * fallback only works when rethrow is false.
@@ -63,7 +63,7 @@ export class RemoteFlowsErrorBoundary extends Component<
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
 
-    if (this.props.errorBoundary?.rethrow) {
+    if (this.props.errorBoundary?.useParentErrorBoundary) {
       throw error;
     }
   }
