@@ -27,7 +27,17 @@ interface RemoteFlowsErrorBoundaryProps {
 
 export const FallbackErrorBoundary = () => {
   return (
-    <div>Something went wrong in RemoteFlows. Please refresh the page.</div>
+    <div
+      style={{
+        padding: '20px',
+        border: '1px solid #dc2626',
+        borderRadius: '4px',
+        backgroundColor: '#fef2f2',
+        color: '#991b1b',
+      }}
+    >
+      Something went wrong in RemoteFlows. Please refresh the page.
+    </div>
   );
 };
 
