@@ -14,6 +14,7 @@ import {
 } from './utils.js';
 
 function categorizeFileSimple(filePath: string): 'js' | 'css' | 'other' {
+  const category = categorizeFile(filePath);
   if (category === 'js' || category === 'css') return category;
   return 'other';
 }
