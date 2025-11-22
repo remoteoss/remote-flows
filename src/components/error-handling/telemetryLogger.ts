@@ -106,7 +106,10 @@ export function buildErrorPayload(
  * - For network errors, only report server errors (500, 403, etc.)
  * - Skip client errors like 404
  */
-function shouldReportError(error: Error, payload: ErrorPayload): boolean {
+export function shouldReportError(
+  error: Error,
+  payload: ErrorPayload,
+): boolean {
   // Report all non-network errors
   if (payload.error.category !== 'NETWORK_ERROR') {
     return true;
