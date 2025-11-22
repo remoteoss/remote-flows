@@ -1,46 +1,20 @@
 #!/usr/bin/env tsx
 
-import { readFileSync, statSync } from 'fs';
 import { join } from 'path';
-import { gzipSizeSync } from 'gzip-size';
 import { globSync } from 'glob';
 import { filesize } from 'filesize';
 import chalk from 'chalk';
-import type { SizeLimitConfig, Violation } from './types.js';
+import type { Violation } from './types.js';
+import {
+  DIST_DIR,
+  loadConfig,
+  getFileSize,
+  getGzipSize,
+  categorizeFile,
+} from './utils.js';
 
-const CONFIG_FILE = '.sizelimit.json';
-const DIST_DIR = 'dist';
-
-function loadConfig(): SizeLimitConfig {
-  try {
-    const configPath = join(process.cwd(), CONFIG_FILE);
-    const config = JSON.parse(
-      readFileSync(configPath, 'utf-8'),
-    ) as SizeLimitConfig;
-    return config;
-  } catch (error) {
-    console.error(
-      chalk.red(`Failed to load config from ${CONFIG_FILE}:`),
-      (error as Error).message,
-    );
-    process.exit(1);
-  }
-}
-
-function getFileSize(filePath: string): number {
-  const stats = statSync(filePath);
-  return stats.size;
-}
-
-function getGzipSize(filePath: string): number {
-  const content = readFileSync(filePath);
-  return gzipSizeSync(content);
-}
-
-function categorizeFile(filePath: string): 'js' | 'css' | 'other' {
-  const ext = filePath.substring(filePath.lastIndexOf('.'));
-  if (ext === '.css') return 'css';
-  if (ext === '.js' || ext === '.mjs') return 'js';
+function categorizeFileSimple(filePath: string): 'js' | 'css' | 'other' {
+  if (category === 'js' || category === 'css') return category;
   return 'other';
 }
 
@@ -68,7 +42,7 @@ function checkSizeLimits(): void {
     const filePath = join(distPath, file);
     const raw = getFileSize(filePath);
     const gzip = getGzipSize(filePath);
-    const category = categorizeFile(file);
+    const category = categorizeFileSimple(file);
 
     totalRaw += raw;
     totalGzip += gzip;

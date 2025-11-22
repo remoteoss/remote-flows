@@ -1,33 +1,8 @@
 #!/usr/bin/env tsx
 
-import { readFileSync } from 'fs';
 import { filesize } from 'filesize';
-import type { BundleAnalysis, SizeLimitConfig, ChangeInfo } from './types.js';
-
-function loadBundleData(filePath: string): BundleAnalysis {
-  try {
-    const data = JSON.parse(readFileSync(filePath, 'utf-8')) as BundleAnalysis;
-    return data;
-  } catch (error) {
-    console.error(
-      `Failed to load bundle data from ${filePath}:`,
-      (error as Error).message,
-    );
-    process.exit(1);
-  }
-}
-
-function loadConfig(): SizeLimitConfig {
-  try {
-    const config = JSON.parse(
-      readFileSync('.sizelimit.json', 'utf-8'),
-    ) as SizeLimitConfig;
-    return config;
-  } catch (error) {
-    console.error('Failed to load .sizelimit.json:', (error as Error).message);
-    process.exit(1);
-  }
-}
+import type { BundleAnalysis, ChangeInfo } from './types.js';
+import { loadBundleData, loadConfig } from './utils.js';
 
 function formatChange(current: number, previous: number): ChangeInfo {
   const diff = current - previous;

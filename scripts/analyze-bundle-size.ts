@@ -1,35 +1,17 @@
 #!/usr/bin/env tsx
 
-import { readFileSync, statSync, writeFileSync } from 'fs';
-import { join, extname } from 'path';
-import { gzipSizeSync } from 'gzip-size';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { globSync } from 'glob';
 import { filesize } from 'filesize';
 import chalk from 'chalk';
 import type { BundleAnalysis, FileData, CategoryStats } from './types.js';
-
-const DIST_DIR = 'dist';
-
-function getFileSize(filePath: string): number {
-  const stats = statSync(filePath);
-  return stats.size;
-}
-
-function getGzipSize(filePath: string): number {
-  const content = readFileSync(filePath);
-  return gzipSizeSync(content);
-}
-
-function categorizeFile(
-  filePath: string,
-): 'js' | 'css' | 'types' | 'sourcemap' | 'other' {
-  const ext = extname(filePath);
-  if (ext === '.css') return 'css';
-  if (ext === '.js' || ext === '.mjs') return 'js';
-  if (ext === '.map') return 'sourcemap';
-  if (ext === '.ts' || filePath.endsWith('.d.ts')) return 'types';
-  return 'other';
-}
+import {
+  DIST_DIR,
+  getFileSize,
+  getGzipSize,
+  categorizeFile,
+} from './utils.js';
 
 function analyzeBundle(): BundleAnalysis {
   console.log(chalk.blue.bold('\n📦 Analyzing bundle size...\n'));
