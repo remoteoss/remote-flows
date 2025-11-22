@@ -3,10 +3,9 @@ import { ErrorContextData } from '@/src/components/error-handling/types';
 import { useEffect, useMemo } from 'react';
 
 export function useErrorReporting(initialContext: ErrorContextData) {
-  const { setErrorContext, updateContext } = useErrorContext();
+  const { setErrorContext, updateContext, errorContext } = useErrorContext(); // ✅ Add errorContext
 
   // Set initial context on mount
-  // Note: setContext is stable from useState, doesn't need to be in deps
   useEffect(() => {
     if (initialContext) {
       setErrorContext(initialContext);
@@ -15,7 +14,6 @@ export function useErrorReporting(initialContext: ErrorContextData) {
   }, []);
 
   // Clear context on unmount
-  // Note: setContext is stable, doesn't need to be in deps
   useEffect(() => {
     return () => {
       setErrorContext({});
@@ -38,5 +36,12 @@ export function useErrorReporting(initialContext: ErrorContextData) {
     [],
   );
 
-  return handlers;
+  return {
+    ...handlers,
+    /**
+     * @internal For unit testing only - we access the errorContext in the error boundary directly
+     * Use updateErrorContext() and clearErrorContext() handlers instead.
+     */
+    errorContext,
+  };
 }
