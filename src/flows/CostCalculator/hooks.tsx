@@ -9,7 +9,7 @@ import type {
 import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/yupValidationResolver';
+import { iterateErrors } from '@/src/components/form/validationResolver';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';

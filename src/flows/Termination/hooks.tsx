@@ -27,7 +27,10 @@ import {
 } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { terminationDetailsSchema } from '@/src/flows/Termination/json-schemas/terminationDetails';
-import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
+import {
+  useCreateTermination,
+  useTerminationSchema,
+} from '@/src/flows/Termination/api';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
 import { cn, ZendeskTriggerButton } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
