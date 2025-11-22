@@ -198,7 +198,9 @@ export const TerminationWithProps = ({
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
               termination_reason: {
-                description: <TerminationReasonDetailsDescription />,
+                presentation: {
+                  description: TerminationReasonDetailsDescription,
+                },
               },
             },
           },

@@ -6,7 +6,7 @@ import { PaidTimeOffForm } from '@/src/flows/Termination/PaidTimeOffForm';
 import { TerminationBack } from '@/src/flows/Termination/TerminationBack';
 import { TerminationDetailsForm } from '@/src/flows/Termination/TerminationDetailsForm';
 import { TerminationSubmit } from '@/src/flows/Termination/TerminationSubmit';
-import { JSFModify } from '@/src/flows/types';
+import { JSFModifyNext } from '@/src/flows/types';
 
 export type EmployeeCommunicationFormValues = {
   confidential: string;
@@ -23,7 +23,12 @@ export type TerminationDetailsFormValues = {
   termination_reason:
     | TerminationDetailsParams['termination_reason']
     | undefined;
-  termination_reason_files: TerminationDetailsParams['termination_reason_files'];
+  termination_reason_files?: {
+    name: string;
+    content: string;
+    type: string;
+    size: number;
+  }[];
   additional_comments: string | null;
   will_challenge_termination: string;
   will_challenge_termination_description: string | null;
@@ -32,7 +37,12 @@ export type TerminationDetailsFormValues = {
 export type PaidTimeOffFormValues = {
   agrees_to_pto_amount: string;
   agrees_to_pto_amount_notes: string | null;
-  timesheet_file: TerminationDetailsParams['timesheet_file'];
+  timesheet_file?: {
+    name: string;
+    content: string;
+    type: string;
+    size: number;
+  }[];
 };
 
 export type AdditionalDetailsFormValues = {
@@ -78,7 +88,7 @@ export type TerminationFlowProps = {
     components,
   }: TerminationRenderProps) => React.ReactNode;
   options?: {
-    jsfModify?: JSFModify;
+    jsfModify?: JSFModifyNext;
   };
   initialValues?: Record<string, unknown>;
 };
