@@ -75,11 +75,11 @@ jobs:
         run: |
           # Check if we have comparison data
           if [ "${{ steps.check_script.outputs.exists }}" != "true" ]; then
+            echo "⚠️ Comparison script not found in base branch. Showing current bundle size only."
+            npx tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
+            REPORT=$(cat out/size-report.md)
             echo "report<<EOF" >> $GITHUB_OUTPUT
-            echo "## 📦 Bundle Size Report" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "⚠️ Size comparison not available - script not found in current branch." >> $GITHUB_OUTPUT
-            echo "This is expected for new features. Size limits will still be checked." >> $GITHUB_OUTPUT
+            echo "$REPORT" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
             exit 0
           fi
