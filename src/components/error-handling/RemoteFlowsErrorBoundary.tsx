@@ -13,7 +13,11 @@ type ErrorBoundaryState = {
 
 interface RemoteFlowsErrorBoundaryProps {
   children: ReactNode;
-
+  /**
+   * Debug mode to enable logging of errors to the console.
+   * @default false
+   */
+  debug: boolean;
   /**
    * Error boundary configuration.
    */
@@ -77,7 +81,7 @@ export class RemoteFlowsErrorBoundary extends Component<
     const errorContext = this.context?.errorContext;
 
     reportTelemetryError(error, npmPackageVersion, errorContext, {
-      debugMode: false,
+      debugMode: this.props.debug,
     });
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {

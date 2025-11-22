@@ -100,6 +100,40 @@ export function buildErrorPayload(
   return payload;
 }
 
+/**
+ * Determines if an error should be reported to telemetry
+ * - All non-network errors are reported
+ * - For network errors, only report server errors (500, 403, etc.)
+ * - Skip client errors like 404
+ */
+function shouldReportError(error: Error, payload: ErrorPayload): boolean {
+  // Report all non-network errors
+  if (payload.error.category !== 'NETWORK_ERROR') {
+    return true;
+  }
+
+  // For network errors, check if it's a reportable HTTP status
+  const message = error.message.toLowerCase();
+
+  // Skip 404 errors
+  if (message.includes('404') || message.includes('not found')) {
+    return false;
+  }
+
+  // Report server errors (5xx) and forbidden/unauthorized (403, 401)
+  const reportableStatusPatterns = [
+    /\b5\d{2}\b/, // 5xx server errors
+    /\b403\b/, // Forbidden
+    /\b401\b/, // Unauthorized
+    /\b429\b/, // Too Many Requests
+    /timeout/i, // Timeout errors
+  ];
+
+  // If it matches any reportable pattern, report it
+  // Otherwise, skip it (e.g., 400, 404, etc.)
+  return reportableStatusPatterns.some((pattern) => pattern.test(message));
+}
+
 export function reportTelemetryError(
   error: Error,
   sdkVersion: string,
@@ -112,9 +146,14 @@ export function reportTelemetryError(
 ): void {
   const payload: ErrorPayload = buildErrorPayload(error, sdkVersion, context);
 
-  // Log to console in debug mode
-  logDebugPayload(payload, Boolean(options.debugMode));
+  // Check if this error should be reported to telemetry
+  if (shouldReportError(error, payload)) {
+    // Log to console in debug mode
+    if (options.debugMode) {
+      logDebugPayload(payload, Boolean(options.debugMode));
+    }
 
-  // Send to telemetry API
-  // TODO: Implement actual telemetry API call
+    // Send to telemetry API
+    // TODO: Implement actual telemetry API call
+  }
 }

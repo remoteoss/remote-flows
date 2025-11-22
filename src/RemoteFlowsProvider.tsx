@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
@@ -8,8 +8,7 @@ import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { useAuth } from './useAuth';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
-
-const queryClient = new QueryClient();
+import { getQueryClient } from '@/src/queryConfig';
 
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
@@ -17,6 +16,7 @@ type RemoteFlowContextWrapperProps = {
   environment?: RemoteFlowsSDKProps['environment'];
   proxy?: RemoteFlowsSDKProps['proxy'];
   authId?: RemoteFlowsSDKProps['authId'];
+  debug?: RemoteFlowsSDKProps['debug'];
 };
 
 function RemoteFlowContextWrapper({
@@ -65,10 +65,12 @@ export function RemoteFlows({
   proxy,
   environment,
   errorBoundary = { useParentErrorBoundary: true },
+  debug = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
+  const queryClient = getQueryClient(debug);
   return (
     <ErrorContextProvider>
-      <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
+      <RemoteFlowsErrorBoundary errorBoundary={errorBoundary} debug={debug}>
         <QueryClientProvider client={queryClient}>
           <FormFieldsProvider components={components}>
             <RemoteFlowContextWrapper

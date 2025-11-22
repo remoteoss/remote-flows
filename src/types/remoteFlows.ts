@@ -196,6 +196,11 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * we need to use a different authId.
    */
   authId?: 'default' | 'client';
+  /**
+   * Debug mode to enable logging of telemetry errors to the console.
+   * @default false
+   */
+  debug?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
