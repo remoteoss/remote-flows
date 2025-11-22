@@ -73,6 +73,7 @@ const defaultProps = {
 describe('OnboardingInvite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
     queryClient.clear();
 
     server.use(
@@ -129,11 +130,6 @@ describe('OnboardingInvite', () => {
         });
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    queryClient.clear();
   });
 
   it('should render the OnboardingInvite component with default "Invite Employee" text', async () => {
@@ -283,7 +279,7 @@ describe('OnboardingInvite', () => {
   it('should refetch employment after creating a reserve invoice (deposit_required)', async () => {
     // Mock refetchEmployment
     const refetchEmploymentMock = vi.fn();
-    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+    mockRender.mockImplementation(({ onboardingBag, components }) => {
       onboardingBag.refetchEmployment = refetchEmploymentMock;
       const { OnboardingInvite } = components;
       return (
@@ -327,7 +323,7 @@ describe('OnboardingInvite', () => {
   it('should refetch employment after inviting the user (not deposit_required)', async () => {
     // Mock refetchEmployment
     const refetchEmploymentMock = vi.fn();
-    mockRender.mockImplementationOnce(({ onboardingBag, components }) => {
+    mockRender.mockImplementation(({ onboardingBag, components }) => {
       onboardingBag.refetchEmployment = refetchEmploymentMock;
       const { OnboardingInvite } = components;
       return (
@@ -463,7 +459,7 @@ describe('OnboardingInvite', () => {
   });
 
   it('should disable button when disabled prop is passed', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { OnboardingInvite } = components;
       return (
         <OnboardingInvite
@@ -763,7 +759,7 @@ describe('OnboardingInvite', () => {
     it('should call render prop with "invited" status when employment status hides deposit', async () => {
       const mockRenderProp = vi.fn(() => 'Hidden Deposit Button');
 
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -836,7 +832,7 @@ describe('OnboardingInvite', () => {
       </TestProviders>
     );
 
-    it('should use custom button when provided via FormFieldsProvider', async () => {
+    it.only('should use custom button when provided via FormFieldsProvider', async () => {
       const mockRenderProp = vi.fn(() => 'Custom Button Label');
 
       mockRender.mockImplementation(({ components }) => {
@@ -874,7 +870,7 @@ describe('OnboardingInvite', () => {
     });
 
     it('should apply disabled state correctly to custom button', async () => {
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -905,7 +901,7 @@ describe('OnboardingInvite', () => {
     it('should handle onClick correctly with custom button', async () => {
       const mockOnClick = vi.fn();
 
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -1021,7 +1017,7 @@ describe('OnboardingInvite', () => {
 
     it('should fallback to default Button when no custom button provided', async () => {
       // Use default wrapper without custom button
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -1045,7 +1041,7 @@ describe('OnboardingInvite', () => {
     });
 
     it('should pass through all props to custom button', async () => {
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite

@@ -1,3 +1,4 @@
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
@@ -13,12 +14,16 @@ import {
   OnboardingFlowProps,
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/types';
+import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import { TestProviders } from '@/src/tests/testHelpers';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
+
+const queryClient = new QueryClient();
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -181,7 +186,6 @@ describe('SaveDraftButton', () => {
   afterEach(() => {
     vi.clearAllMocks();
     mockRender.mockReset();
-    queryClient.clear();
   });
 
   it('should render the SaveDraftButton component with default text', async () => {
@@ -310,7 +314,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should disable button when disabled prop is passed', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -356,7 +360,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should show custom children text when provided', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -390,13 +394,17 @@ describe('SaveDraftButton', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <TestProviders components={{ button: MockCustomButton }}>
-        {children}
-      </TestProviders>
+      <ErrorContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={{ button: MockCustomButton }}>
+            {children}
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      </ErrorContextProvider>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {
-      mockRender.mockImplementation(({ components }) => {
+      mockRender.mockImplementationOnce(({ components }) => {
         const { SaveDraftButton } = components;
         return (
           <SaveDraftButton

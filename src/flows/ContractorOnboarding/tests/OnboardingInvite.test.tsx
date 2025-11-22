@@ -72,6 +72,7 @@ const defaultProps = {
 describe('ContractorOnboarding - OnboardingInvite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
     queryClient.clear();
 
     server.use(
@@ -202,21 +203,19 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
 
   it('should refetch employment after inviting the contractor', async () => {
     const refetchEmploymentMock = vi.fn();
-    mockRender.mockImplementationOnce(
-      ({ contractorOnboardingBag, components }) => {
-        contractorOnboardingBag.refetchEmployment = refetchEmploymentMock;
-        const { OnboardingInvite } = components;
-        return (
-          <OnboardingInvite
-            data-testid='onboarding-invite'
-            onSuccess={mockSuccess}
-            onError={mockError}
-            onSubmit={mockSubmit}
-            render={() => 'Invite Contractor'}
-          />
-        );
-      },
-    );
+    mockRender.mockImplementation(({ contractorOnboardingBag, components }) => {
+      contractorOnboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid='onboarding-invite'
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+          render={() => 'Invite Contractor'}
+        />
+      );
+    });
 
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
@@ -231,7 +230,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
 
   describe('button behavior', () => {
     it('should disable button when disabled prop is passed', async () => {
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -277,7 +276,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     });
 
     it('should use default Button when no custom button provided', async () => {
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -370,7 +369,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       });
 
       render(<ContractorOnboardingFlow {...defaultProps} />, {
-        wrapper: TestProviders,
+        wrapper: customWrapper,
       });
 
       const customButton = await screen.findByTestId('custom-button');
@@ -390,7 +389,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     });
 
     it('should apply disabled state correctly to custom button', async () => {
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
@@ -461,7 +460,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     it('should handle onClick correctly with custom button', async () => {
       const mockOnClick = vi.fn();
 
-      mockRender.mockImplementationOnce(({ components }) => {
+      mockRender.mockImplementation(({ components }) => {
         const { OnboardingInvite } = components;
         return (
           <OnboardingInvite
