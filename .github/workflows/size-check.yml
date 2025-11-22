@@ -100,7 +100,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const report = `${{ steps.compare.outputs.report }}`;
+            const report = process.env.SIZE_REPORT;
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
@@ -133,6 +133,8 @@ jobs:
                 body: commentBody
               });
             }
+        env:
+          SIZE_REPORT: ${{ steps.compare.outputs.report }}
 
       - name: Check size limits
         run: npm run size:check
