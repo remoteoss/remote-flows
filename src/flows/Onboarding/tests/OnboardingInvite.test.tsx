@@ -832,7 +832,7 @@ describe('OnboardingInvite', () => {
       </TestProviders>
     );
 
-    it.only('should use custom button when provided via FormFieldsProvider', async () => {
+    it('should use custom button when provided via FormFieldsProvider', async () => {
       const mockRenderProp = vi.fn(() => 'Custom Button Label');
 
       mockRender.mockImplementation(({ components }) => {
