@@ -5,14 +5,6 @@ import { filesize } from 'filesize';
 import type { BundleAnalysis } from './types.js';
 import { loadConfig } from './utils.js';
 
-function getStatusIcon(current: number, limit?: number): string {
-  if (!limit) return '🟢';
-  const percentage = (current / limit) * 100;
-  if (percentage > 100) return '❌';
-  if (percentage > 90) return '🟡';
-  return '🟢';
-}
-
 function formatCurrentSize(currentPath: string): string {
   const current: BundleAnalysis = JSON.parse(
     readFileSync(currentPath, 'utf-8'),
