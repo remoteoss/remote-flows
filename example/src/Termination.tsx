@@ -8,7 +8,7 @@ import type {
   TerminationDetailsFormValues,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
-// import { TerminationReasonsDialog } from './TerminationReasonsDialog';
+import { TerminationReasonsDialog } from './TerminationReasonsDialog';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
@@ -22,12 +22,12 @@ const STEPS = [
   'Additional Information',
 ];
 
-/* const TerminationReasonDetailsDescription = () => (
+const TerminationReasonDetailsDescription = () => (
   <>
     Make sure you choose an accurate termination reason to avoid unfair or
     unlawful dismissal claims. <TerminationReasonsDialog />
   </>
-); */
+);
 
 type MultiStepFormProps = {
   terminationBag: TerminationRenderProps['terminationBag'];
@@ -198,8 +198,9 @@ export const TerminationWithProps = ({
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
               termination_reason: {
-                description:
-                  'Make sure you choose an accurate termination reason to avoid unfair or unlawful dismissal claims.', // TODO: We cannot inject components in the new json-schema-form-next
+                presentation: {
+                  description: TerminationReasonDetailsDescription,
+                },
               },
             },
           },

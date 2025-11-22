@@ -314,10 +314,15 @@ export const useTerminationSchema = ({
         const { schema } = modify(jsfSchema, jsfModify);
         jsfSchema = schema;
       }
-      const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues,
-      });
-      return form;
+      try {
+        const form = createHeadlessForm(jsfSchema || {}, {
+          initialValues: formValues,
+        });
+        return form;
+      } catch (error) {
+        console.error('Error creating headless form', error);
+        return null;
+      }
     },
   });
 };
