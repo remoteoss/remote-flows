@@ -39,22 +39,21 @@ jobs:
       - name: Analyze current bundle size
         run: npm run size -- --output out/current-bundle.json
 
-      - name: Check if comparison script exists
-        id: check_script
-        run: |
-          if [ -f "scripts/compare-sizes.ts" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Comparison script not found. Skipping base branch analysis."
-          fi
-
       - name: Checkout base branch
-        if: steps.check_script.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
           path: base
+
+      - name: Check if comparison script exists on base
+        id: check_script
+        run: |
+          if [ -f "base/scripts/compare-sizes.ts" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Comparison script not found on base branch. Skipping size comparison."
+          fi
 
       - name: Install dependencies (base)
         if: steps.check_script.outputs.exists == 'true'
