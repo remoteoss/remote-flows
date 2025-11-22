@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { TerminationSubmit } from '../TerminationSubmit';
 import { useTerminationContext } from '../context';
 import { useFormFields } from '@/src/context';

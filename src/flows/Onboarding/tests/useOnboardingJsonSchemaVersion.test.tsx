@@ -2,6 +2,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { PropsWithChildren } from 'react';
+import { beforeEach, describe, it, vi, expect } from 'vitest';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';

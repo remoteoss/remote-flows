@@ -3,6 +3,7 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { CreditRiskStatus, Employment } from '@/src/flows/Onboarding/types';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock the context
 vi.mock('@/src/flows/Onboarding/context', () => ({

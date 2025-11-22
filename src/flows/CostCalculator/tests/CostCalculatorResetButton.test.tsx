@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { CostCalculatorResetButton } from '../CostCalculatorResetButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
