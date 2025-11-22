@@ -39,34 +39,47 @@ jobs:
       - name: Analyze current bundle size
         run: npm run size -- --output out/current-bundle.json
 
+      - name: Check if comparison script exists
+        id: check_script
+        run: |
+          if [ -f "scripts/compare-sizes.ts" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Comparison script not found. Skipping base branch analysis."
+          fi
+
       - name: Checkout base branch
+        if: steps.check_script.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
           path: base
 
       - name: Install dependencies (base)
+        if: steps.check_script.outputs.exists == 'true'
         working-directory: base
         run: npm ci
 
       - name: Build base branch
+        if: steps.check_script.outputs.exists == 'true'
         working-directory: base
         run: npm run build
 
       - name: Analyze base bundle size
+        if: steps.check_script.outputs.exists == 'true'
         working-directory: base
         run: npm run size -- --output ../out/base-bundle.json
 
       - name: Compare bundle sizes
         id: compare
         run: |
-          # Check if comparison script exists
-          if [ ! -f "scripts/compare-sizes.ts" ]; then
-            echo "⚠️ Comparison script not found in base branch. Skipping comparison."
+          # Check if we have comparison data
+          if [ "${{ steps.check_script.outputs.exists }}" != "true" ]; then
             echo "report<<EOF" >> $GITHUB_OUTPUT
             echo "## 📦 Bundle Size Report" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
-            echo "⚠️ Size comparison not available - script not found in base branch." >> $GITHUB_OUTPUT
+            echo "⚠️ Size comparison not available - script not found in current branch." >> $GITHUB_OUTPUT
             echo "This is expected for new features. Size limits will still be checked." >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
             exit 0
