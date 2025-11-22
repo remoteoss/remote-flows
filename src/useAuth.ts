@@ -49,10 +49,9 @@ export const useAuth = ({
     : process.env.REMOTE_GATEWAY_URL;
 
   const clientConfig = client.getConfig();
-  const sdkVersion = npmPackageVersion;
 
   if (options?.environment && options?.environment !== 'production') {
-    debug(sdkVersion);
+    debug(npmPackageVersion);
   }
 
   const isValidProxy = !!options?.proxy && isValidUrl(options.proxy.url);
