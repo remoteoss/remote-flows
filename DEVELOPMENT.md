@@ -223,12 +223,14 @@ The repository includes an automated bundle size badge in the README that update
 **Badge Setup**: See [Bundle Size Badge Setup Guide](./docs/BUNDLE_SIZE_BADGE_SETUP.md) for complete setup instructions.
 
 The badge workflow (`.github/workflows/update-badge.yml`):
+
 - Builds and analyzes the bundle on every push to `main`
 - Updates a GitHub Gist with current size and historical data
 - Powers a shields.io badge in the README
 - Tracks the last 50 size measurements for trend analysis
 
 **Badge Colors**:
+
 - 🟢 Green: < 120 KB gzipped
 - 🟡 Yellow: 120-150 KB gzipped
 - 🔴 Red: > 150 KB gzipped
@@ -236,6 +238,7 @@ The badge workflow (`.github/workflows/update-badge.yml`):
 **Testing badge generation locally**:
 
 First, generate the bundle analysis and badge data:
+
 ```bash
 npm run build
 npm run size -- --output out/bundle-analysis.json
@@ -243,6 +246,7 @@ npm run size:badge out/bundle-analysis.json
 ```
 
 This creates `out/size-data.json` with the shields.io endpoint format:
+
 ```json
 {
   "schemaVersion": 1,
@@ -263,6 +267,7 @@ If you need to manually update the GitHub Gist with the latest badge data:
 ```
 
 Or set the token as an environment variable:
+
 ```bash
 export GIST_TOKEN=your_token
 ./scripts/update-gist.sh

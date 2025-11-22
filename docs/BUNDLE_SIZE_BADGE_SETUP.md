@@ -5,6 +5,7 @@ This guide explains how to set up the automatic bundle size badge for the README
 ## Overview
 
 The bundle size badge system:
+
 - Automatically analyzes bundle size on every push to `main`
 - Stores historical size data in a GitHub Gist
 - Updates a shields.io badge in the README
@@ -53,10 +54,12 @@ The bundle size badge system:
 3. Add two secrets:
 
    **Secret 1: BUNDLE_SIZE_GIST_ID**
+
    - Name: `BUNDLE_SIZE_GIST_ID`
    - Value: The Gist ID from step 1 (e.g., `abc123def456`)
 
    **Secret 2: GIST_TOKEN**
+
    - Name: `GIST_TOKEN`
    - Value: The personal access token from step 2
 
@@ -71,6 +74,7 @@ The bundle size badge system:
 4. Replace `remoteoss` with your GitHub username or organization name
 
    Example:
+
    ```markdown
    [![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/acme/abc123def456/raw/bundle-size.json)](https://github.com/acme/remote-flows/actions/workflows/update-badge.yml)
    ```
@@ -78,6 +82,7 @@ The bundle size badge system:
 ### 5. Test the Setup
 
 1. Make a change to the code and push to `main`:
+
    ```bash
    git add .
    git commit -m "Test badge setup"
@@ -85,10 +90,12 @@ The bundle size badge system:
    ```
 
 2. Check the GitHub Actions workflow:
+
    - Go to Actions → "Update Bundle Size Badge"
    - Wait for the workflow to complete
 
 3. Verify the Gist was updated:
+
    - Visit your Gist URL
    - The `bundle-size.json` file should now contain real data
 
@@ -99,6 +106,7 @@ The bundle size badge system:
 ## Badge Colors
 
 The badge color automatically changes based on size:
+
 - 🟢 **Green** (brightgreen): < 120 KB gzipped
 - 🟡 **Yellow**: 120-150 KB gzipped
 - 🔴 **Red**: > 150 KB gzipped
@@ -156,21 +164,25 @@ cat out/size-data.json
 ## Troubleshooting
 
 ### Badge shows "invalid"
+
 - Check that the Gist is public (not secret)
 - Verify the Gist URL in README is correct
 - Check that the Gist contains valid JSON
 
 ### Badge shows "calculating..."
+
 - The workflow hasn't run yet or failed
 - Check Actions → "Update Bundle Size Badge" for errors
 - Verify the secrets are configured correctly
 
 ### Workflow fails with 404 on Gist update
+
 - Check that `BUNDLE_SIZE_GIST_ID` is correct
 - Verify that `GIST_TOKEN` has the `gist` scope
 - Ensure the token hasn't expired
 
 ### Badge doesn't update after push
+
 - Clear shields.io cache by visiting:
   `https://img.shields.io/endpoint?url=YOUR_GIST_URL&bust=TIMESTAMP`
 - Wait a few minutes for GitHub/shields.io caches to clear
@@ -210,6 +222,7 @@ const trimmedHistory = history.slice(-100);
 ### Rotating the Personal Access Token
 
 If you need to rotate the token:
+
 1. Create a new token with `gist` scope
 2. Update the `GIST_TOKEN` secret in repository settings
 3. The old token can be deleted

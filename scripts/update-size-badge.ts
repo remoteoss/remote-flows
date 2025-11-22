@@ -25,7 +25,6 @@ interface BadgeData {
   color: string;
 }
 
-
 /**
  * Get badge color based on gzipped size and limits from .sizelimit.json
  * @param gzipSize - Size in bytes
@@ -33,7 +32,11 @@ interface BadgeData {
  * @param warningThreshold - Threshold for warning color (0-1)
  * @returns Color name for shields.io badge
  */
-function getBadgeColor(gzipSize: number, limit: number, warningThreshold: number): string {
+function getBadgeColor(
+  gzipSize: number,
+  limit: number,
+  warningThreshold: number,
+): string {
   const warningSize = limit * warningThreshold;
 
   if (gzipSize < warningSize) {
@@ -59,12 +62,17 @@ function formatBadgeSize(size: number): string {
  */
 function updateSizeBadge() {
   // Read the bundle analysis
-  const analysisPath = process.argv[2] || join(process.cwd(), 'out', 'bundle-analysis.json');
-  const analysis: BundleAnalysis = JSON.parse(readFileSync(analysisPath, 'utf-8'));
+  const analysisPath =
+    process.argv[2] || join(process.cwd(), 'out', 'bundle-analysis.json');
+  const analysis: BundleAnalysis = JSON.parse(
+    readFileSync(analysisPath, 'utf-8'),
+  );
 
   // Read size limits configuration
   const sizeLimitPath = join(process.cwd(), '.sizelimit.json');
-  const sizeLimitConfig: SizeLimitConfig = JSON.parse(readFileSync(sizeLimitPath, 'utf-8'));
+  const sizeLimitConfig: SizeLimitConfig = JSON.parse(
+    readFileSync(sizeLimitPath, 'utf-8'),
+  );
 
   // Create badge data using limits from .sizelimit.json
   const badgeData: BadgeData = {
@@ -74,7 +82,7 @@ function updateSizeBadge() {
     color: getBadgeColor(
       analysis.total.gzip,
       sizeLimitConfig.limits.totalGzip,
-      sizeLimitConfig.warningThreshold
+      sizeLimitConfig.warningThreshold,
     ),
   };
 
