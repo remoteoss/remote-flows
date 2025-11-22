@@ -85,6 +85,7 @@ export function RemoteFlows({
               authId={authId}
               proxy={proxy}
               environment={environment}
+              debug={debug}
             >
               <ThemeProvider theme={theme}>{children}</ThemeProvider>
             </RemoteFlowContextWrapper>
