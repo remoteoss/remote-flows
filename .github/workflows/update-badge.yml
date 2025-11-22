@@ -58,8 +58,8 @@ jobs:
           PACKAGE_VERSION: ${{ steps.package-version.outputs.version }}
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          # Read the generated data
-          BADGE_DATA=$(cat out/size-data.json)
+          # Extract just the badge portion for shields.io
+          BADGE_DATA=$(cat out/size-data.json | jq '.badge')
 
           # Update the gist using GitHub API
           curl -X PATCH \
@@ -68,7 +68,7 @@ jobs:
             "https://api.github.com/gists/$GIST_ID" \
             -d "{
               \"files\": {
-                \"bundle-size.json\": {
+                \"remote-flows-bundle-size.json\": {
                   \"content\": $(echo "$BADGE_DATA" | jq -Rs .)
                 }
               }

@@ -1,6 +1,6 @@
 # @remoteoss/remote-flows
 
-[![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remoteoss/b8884fb20051d4c0095a29569d51e34e/raw/bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
+[![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remotecom/b8884fb20051d4c0095a29569d51e34e/raw/remote-flows-bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
 
 A React library that provides components for Remote's embedded solution, enabling seamless integration of Remote's employment flows into your application.
 

@@ -5,6 +5,19 @@ import { join } from 'path';
 import { filesize } from 'filesize';
 import type { BundleAnalysis } from './types.js';
 
+interface SizeLimitConfig {
+  limits: {
+    total: number;
+    totalGzip: number;
+    css: number;
+    cssGzip: number;
+    maxChunkSize: number;
+    maxChunkSizeGzip: number;
+  };
+  exclude: string[];
+  warningThreshold: number;
+}
+
 interface BadgeData {
   schemaVersion: 1;
   label: string;
@@ -30,17 +43,18 @@ interface SizeHistory {
 }
 
 /**
- * Get badge color based on gzipped size
+ * Get badge color based on gzipped size and limits from .sizelimit.json
  * @param gzipSize - Size in bytes
+ * @param limit - Maximum allowed size in bytes
+ * @param warningThreshold - Threshold for warning color (0-1)
  * @returns Color name for shields.io badge
  */
-function getBadgeColor(gzipSize: number): string {
-  const KB_120 = 120 * 1024;
-  const KB_150 = 150 * 1024;
+function getBadgeColor(gzipSize: number, limit: number, warningThreshold: number): string {
+  const warningSize = limit * warningThreshold;
 
-  if (gzipSize < KB_120) {
+  if (gzipSize < warningSize) {
     return 'brightgreen';
-  } else if (gzipSize <= KB_150) {
+  } else if (gzipSize <= limit) {
     return 'yellow';
   } else {
     return 'red';
@@ -64,17 +78,25 @@ function updateSizeBadge() {
   const analysisPath = process.argv[2] || join(process.cwd(), 'out', 'bundle-analysis.json');
   const analysis: BundleAnalysis = JSON.parse(readFileSync(analysisPath, 'utf-8'));
 
+  // Read size limits configuration
+  const sizeLimitPath = join(process.cwd(), '.sizelimit.json');
+  const sizeLimitConfig: SizeLimitConfig = JSON.parse(readFileSync(sizeLimitPath, 'utf-8'));
+
   // Get version and commit info from environment or package.json
   const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'));
   const version = process.env.PACKAGE_VERSION || packageJson.version;
   const commit = process.env.GITHUB_SHA?.substring(0, 8) || 'local';
 
-  // Create badge data
+  // Create badge data using limits from .sizelimit.json
   const badgeData: BadgeData = {
     schemaVersion: 1,
     label: 'bundle size',
     message: formatBadgeSize(analysis.total.gzip),
-    color: getBadgeColor(analysis.total.gzip),
+    color: getBadgeColor(
+      analysis.total.gzip,
+      sizeLimitConfig.limits.totalGzip,
+      sizeLimitConfig.warningThreshold
+    ),
   };
 
   // Load existing history if available
