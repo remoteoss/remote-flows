@@ -25,22 +25,6 @@ interface BadgeData {
   color: string;
 }
 
-interface SizeHistory {
-  lastUpdated: string;
-  currentSize: {
-    total: number;
-    totalGzip: number;
-    css: number;
-    cssGzip: number;
-  };
-  badge: BadgeData;
-  history: Array<{
-    version: string;
-    commit: string;
-    date: string;
-    size: number;
-  }>;
-}
 
 /**
  * Get badge color based on gzipped size and limits from .sizelimit.json
@@ -82,11 +66,6 @@ function updateSizeBadge() {
   const sizeLimitPath = join(process.cwd(), '.sizelimit.json');
   const sizeLimitConfig: SizeLimitConfig = JSON.parse(readFileSync(sizeLimitPath, 'utf-8'));
 
-  // Get version and commit info from environment or package.json
-  const packageJson = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'));
-  const version = process.env.PACKAGE_VERSION || packageJson.version;
-  const commit = process.env.GITHUB_SHA?.substring(0, 8) || 'local';
-
   // Create badge data using limits from .sizelimit.json
   const badgeData: BadgeData = {
     schemaVersion: 1,
@@ -99,54 +78,8 @@ function updateSizeBadge() {
     ),
   };
 
-  // Load existing history if available
-  let existingHistory: SizeHistory | null = null;
-  const historyPath = process.argv[3];
-
-  if (historyPath) {
-    try {
-      existingHistory = JSON.parse(readFileSync(historyPath, 'utf-8'));
-    } catch (error) {
-      // File doesn't exist yet, will create new history
-      console.log('No existing history found, creating new history');
-    }
-  }
-
-  // Create new history entry
-  const newHistoryEntry = {
-    version,
-    commit,
-    date: new Date().toISOString().split('T')[0],
-    size: analysis.total.gzip,
-  };
-
-  // Build history array (keep last 50 entries)
-  const history = existingHistory?.history || [];
-
-  // Only add if it's a different commit
-  const lastEntry = history[history.length - 1];
-  if (!lastEntry || lastEntry.commit !== commit) {
-    history.push(newHistoryEntry);
-  }
-
-  // Keep only last 50 entries
-  const trimmedHistory = history.slice(-50);
-
-  // Create final data structure
-  const sizeData: SizeHistory = {
-    lastUpdated: new Date().toISOString(),
-    currentSize: {
-      total: analysis.total.raw,
-      totalGzip: analysis.total.gzip,
-      css: analysis.categories.css.raw,
-      cssGzip: analysis.categories.css.gzip,
-    },
-    badge: badgeData,
-    history: trimmedHistory,
-  };
-
-  // Output the data
-  console.log(JSON.stringify(sizeData, null, 2));
+  // Output the badge data (shields.io endpoint format)
+  console.log(JSON.stringify(badgeData, null, 2));
 }
 
 // Run the update

@@ -23,8 +23,8 @@ if [ ! -f "out/size-data.json" ]; then
   npx tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
 fi
 
-# Extract just the badge portion for shields.io
-BADGE_DATA=$(cat out/size-data.json | jq '.badge')
+# Read the badge data (shields.io endpoint format)
+BADGE_DATA=$(cat out/size-data.json)
 
 echo "Updating gist $GIST_ID..."
 echo "Badge data:"

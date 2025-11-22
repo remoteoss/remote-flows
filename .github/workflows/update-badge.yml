@@ -58,8 +58,8 @@ jobs:
           PACKAGE_VERSION: ${{ steps.package-version.outputs.version }}
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          # Extract just the badge portion for shields.io
-          BADGE_DATA=$(cat out/size-data.json | jq '.badge')
+          # Read the badge data (shields.io endpoint format)
+          BADGE_DATA=$(cat out/size-data.json)
 
           # Update the gist using GitHub API
           curl -X PATCH \

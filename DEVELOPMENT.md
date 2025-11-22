@@ -234,11 +234,41 @@ The badge workflow (`.github/workflows/update-badge.yml`):
 - 🔴 Red: > 150 KB gzipped
 
 **Testing badge generation locally**:
+
+First, generate the bundle analysis and badge data:
 ```bash
 npm run build
 npm run size -- --output out/bundle-analysis.json
 npm run size:badge out/bundle-analysis.json
 ```
+
+This creates `out/size-data.json` with the shields.io endpoint format:
+```json
+{
+  "schemaVersion": 1,
+  "label": "bundle size",
+  "message": "150.57 KB",
+  "color": "brightgreen"
+}
+```
+
+This format is ready to be uploaded directly to the GitHub Gist for use with the shields.io endpoint badge.
+
+**Manually updating the badge**:
+
+If you need to manually update the GitHub Gist with the latest badge data:
+
+```bash
+./scripts/update-gist.sh YOUR_GIST_TOKEN
+```
+
+Or set the token as an environment variable:
+```bash
+export GIST_TOKEN=your_token
+./scripts/update-gist.sh
+```
+
+This is useful when testing badge changes or when you need to update the badge without pushing to `main`.
 
 ## Release Process
 
