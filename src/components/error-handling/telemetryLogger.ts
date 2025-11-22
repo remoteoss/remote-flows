@@ -199,7 +199,10 @@ export const logDebugPayload = (
   console.log('🏷️  Category:', payload.error.category);
 
   if (payload.error.componentStack && payload.error.componentStack.length > 0) {
-    console.log('🧩 Component Stack:', payload.error.componentStack.join(' → '));
+    console.log(
+      '🧩 Component Stack:',
+      payload.error.componentStack.join(' → '),
+    );
   }
 
   if (payload.context?.flow) {
