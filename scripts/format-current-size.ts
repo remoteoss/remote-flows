@@ -14,7 +14,9 @@ function getStatusIcon(current: number, limit?: number): string {
 }
 
 function formatCurrentSize(currentPath: string): string {
-  const current: BundleAnalysis = JSON.parse(readFileSync(currentPath, 'utf-8'));
+  const current: BundleAnalysis = JSON.parse(
+    readFileSync(currentPath, 'utf-8'),
+  );
   const config = loadConfig();
   const limits = config.limits;
 
@@ -30,9 +32,17 @@ function formatCurrentSize(currentPath: string): string {
 
   report += '\n### Size Limits\n\n';
 
-  const totalGzipPercentage = ((current.total.gzip / limits.totalGzip) * 100).toFixed(1);
-  const totalRawPercentage = ((current.total.raw / limits.total) * 100).toFixed(1);
-  const cssGzipPercentage = ((current.categories.css.gzip / limits.cssGzip) * 100).toFixed(1);
+  const totalGzipPercentage = (
+    (current.total.gzip / limits.totalGzip) *
+    100
+  ).toFixed(1);
+  const totalRawPercentage = ((current.total.raw / limits.total) * 100).toFixed(
+    1,
+  );
+  const cssGzipPercentage = (
+    (current.categories.css.gzip / limits.cssGzip) *
+    100
+  ).toFixed(1);
 
   const totalGzipExceeded = current.total.gzip > limits.totalGzip;
   const totalRawExceeded = current.total.raw > limits.total;
@@ -82,7 +92,8 @@ function formatCurrentSize(currentPath: string): string {
   report += '\n</details>\n';
 
   report += '\n---\n';
-  report += '*⚠️ Size comparison not available - comparison script not found in base branch.*\n';
+  report +=
+    '*⚠️ Size comparison not available - comparison script not found in base branch.*\n';
 
   return report;
 }

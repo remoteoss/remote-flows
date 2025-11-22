@@ -21,23 +21,27 @@ This guide is for internal developers working on the `@remoteoss/remote-flows` p
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/remoteoss/remote-flows.git
 cd remote-flows
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Link the package for local development:
+
 ```bash
 npm link
 npm run dev
 ```
 
 4. Set up the example app:
+
 ```bash
 cd example
 npm install
@@ -45,6 +49,7 @@ npm link @remoteoss/remote-flows
 ```
 
 5. Create `.env` file in the example directory:
+
 ```env
 VITE_CLIENT_ID=your_client_id
 VITE_CLIENT_SECRET=your_client_secret
@@ -54,6 +59,7 @@ VITE_REMOTE_GATEWAY=partners # for sandbox
 ```
 
 6. Start the example app:
+
 ```bash
 npm run dev
 ```
@@ -89,11 +95,13 @@ remote-flows/
 ## Testing
 
 Run the test suite:
+
 ```bash
 npm test
 ```
 
 Run type checking:
+
 ```bash
 npm run type-check
 ```
@@ -109,12 +117,12 @@ Size limits are defined in `.sizelimit.json`:
 ```json
 {
   "limits": {
-    "total": 524288,           // 512 KB (raw)
-    "totalGzip": 131072,       // 128 KB (gzip)
-    "css": 20480,              // 20 KB (raw)
-    "cssGzip": 10240,          // 10 KB (gzip)
-    "maxChunkSize": 262144,    // 256 KB (raw)
-    "maxChunkSizeGzip": 65536  // 64 KB (gzip)
+    "total": 524288, // 512 KB (raw)
+    "totalGzip": 131072, // 128 KB (gzip)
+    "css": 20480, // 20 KB (raw)
+    "cssGzip": 10240, // 10 KB (gzip)
+    "maxChunkSize": 262144, // 256 KB (raw)
+    "maxChunkSizeGzip": 65536 // 64 KB (gzip)
   }
 }
 ```
@@ -122,11 +130,13 @@ Size limits are defined in `.sizelimit.json`:
 ### Analyzing Bundle Size
 
 To analyze the current bundle size:
+
 ```bash
 npm run size
 ```
 
 This will output:
+
 - Total bundle size (raw and gzipped)
 - JavaScript breakdown
 - CSS breakdown
@@ -136,6 +146,7 @@ This will output:
 ### Checking Size Limits
 
 To verify the bundle is within limits:
+
 ```bash
 npm run size:check
 ```
@@ -145,11 +156,13 @@ This command will fail if any limits are exceeded.
 ### Size Comparison
 
 The comparison script compares two bundle analyses:
+
 ```bash
 npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json
 ```
 
 This generates a detailed markdown report showing:
+
 - Size changes (current vs previous)
 - Percentage changes
 - Limit violations
@@ -160,21 +173,27 @@ This generates a detailed markdown report showing:
 ### Workflows
 
 #### CI Workflow (`.github/workflows/ci.yml`)
+
 Runs on every push and pull request:
+
 - Type checking
 - Tests
 - Build
 - Format check
 
 #### Size Check Workflow (`.github/workflows/size-check.yml`)
+
 Runs on pull requests to `main`:
+
 - Analyzes bundle size for both PR and base branch
 - Posts comparison report as PR comment
 - Fails if size limits are exceeded
 - Shows current size when comparison isn't available (e.g., when adding new features)
 
 #### Release Workflow (`.github/workflows/release.yml`)
+
 Runs when a release PR is merged:
+
 - Publishes package to npm
 - Creates GitHub release
 
@@ -187,6 +206,7 @@ When you open a PR, the size-check workflow will automatically:
 3. Compare the two and post a detailed report
 
 The report includes:
+
 - Size changes with percentage differences
 - Current size vs limits
 - Violations (if any)
@@ -226,6 +246,7 @@ We use an automated release workflow. See the main [README.md](./README.md#relea
 ### Working with Flows
 
 Each flow has its own README:
+
 - [Cost Calculator](./src/flows/CostCalculator/README.md)
 - [Termination](./src/flows/Termination/README.md)
 - [Contract Amendment](./src/flows/ContractAmendment/README.md)

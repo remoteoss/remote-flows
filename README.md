@@ -39,7 +39,7 @@ function App() {
   };
 
   return (
-    <RemoteFlows auth={fetchToken} environment="partners">
+    <RemoteFlows auth={fetchToken} environment='partners'>
       <CostCalculator onSuccess={(data) => console.log(data)} />
     </RemoteFlows>
   );
