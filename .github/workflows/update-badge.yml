@@ -1,0 +1,114 @@
+name: Update Bundle Size Badge
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsup.config.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    name: Update bundle size badge
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Analyze bundle size
+        run: npm run size -- --output out/bundle-analysis.json
+
+      - name: Get package version
+        id: package-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate badge and history data
+        id: badge-data
+        run: |
+          # Generate the badge data
+          npx tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
+
+      - name: Update GitHub Gist
+        if: env.GIST_ID != '' && env.GIST_TOKEN != ''
+        env:
+          GIST_ID: ${{ secrets.BUNDLE_SIZE_GIST_ID }}
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+          PACKAGE_VERSION: ${{ steps.package-version.outputs.version }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          # Read the generated data
+          BADGE_DATA=$(cat out/size-data.json)
+
+          # Update the gist using GitHub API
+          curl -X PATCH \
+            -H "Authorization: token $GIST_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/gists/$GIST_ID" \
+            -d "{
+              \"files\": {
+                \"bundle-size.json\": {
+                  \"content\": $(echo "$BADGE_DATA" | jq -Rs .)
+                }
+              }
+            }"
+
+          echo "✓ Updated gist with latest bundle size data"
+
+      - name: Upload badge data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-size-badge
+          path: out/size-data.json
+          retention-days: 90
+
+      - name: Print summary
+        run: |
+          echo "## 📦 Bundle Size Updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          TOTAL_GZIP=$(cat out/bundle-analysis.json | jq -r '.total.gzip')
+          TOTAL_RAW=$(cat out/bundle-analysis.json | jq -r '.total.raw')
+
+          # Format sizes in KB
+          GZIP_KB=$(echo "scale=1; $TOTAL_GZIP / 1024" | bc)
+          RAW_KB=$(echo "scale=1; $TOTAL_RAW / 1024" | bc)
+
+          echo "- **Total (gzipped):** ${GZIP_KB} KB" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total (raw):** ${RAW_KB} KB" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${GITHUB_SHA:0:8}\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Warn if secrets not configured
+        if: env.GIST_ID == '' || env.GIST_TOKEN == ''
+        env:
+          GIST_ID: ${{ secrets.BUNDLE_SIZE_GIST_ID }}
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          echo "::warning::Bundle size badge not updated. Configure BUNDLE_SIZE_GIST_ID and GIST_TOKEN secrets to enable automatic badge updates."
+          echo "## ⚠️ Badge Update Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To enable automatic badge updates, configure these repository secrets:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`BUNDLE_SIZE_GIST_ID\`: Your GitHub Gist ID" >> $GITHUB_STEP_SUMMARY
+          echo "- \`GIST_TOKEN\`: GitHub token with \`gist\` scope" >> $GITHUB_STEP_SUMMARY

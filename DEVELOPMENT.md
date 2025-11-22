@@ -77,6 +77,7 @@ The example app will be available at `http://localhost:3001`.
 - `npm run format` - Format code with Prettier
 - `npm run size` - Analyze bundle size
 - `npm run size:check` - Check if bundle size is within limits
+- `npm run size:badge` - Generate badge and history data
 
 ### Code Structure
 
@@ -214,6 +215,30 @@ The report includes:
 - Full file breakdown in collapsible section
 
 If the comparison script doesn't exist in the base branch (e.g., when adding this feature), it will show the current PR's bundle size instead.
+
+### Bundle Size Badge
+
+The repository includes an automated bundle size badge in the README that updates on every push to `main`.
+
+**Badge Setup**: See [Bundle Size Badge Setup Guide](./docs/BUNDLE_SIZE_BADGE_SETUP.md) for complete setup instructions.
+
+The badge workflow (`.github/workflows/update-badge.yml`):
+- Builds and analyzes the bundle on every push to `main`
+- Updates a GitHub Gist with current size and historical data
+- Powers a shields.io badge in the README
+- Tracks the last 50 size measurements for trend analysis
+
+**Badge Colors**:
+- 🟢 Green: < 120 KB gzipped
+- 🟡 Yellow: 120-150 KB gzipped
+- 🔴 Red: > 150 KB gzipped
+
+**Testing badge generation locally**:
+```bash
+npm run build
+npm run size -- --output out/bundle-analysis.json
+npm run size:badge out/bundle-analysis.json
+```
 
 ## Release Process
 
