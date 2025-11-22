@@ -155,10 +155,12 @@ function analyzeBundle(): BundleAnalysis {
     outputPath = process.argv[outputIndex + 1];
   } else {
     // Default output location
-    const outDir = join(process.cwd(), 'out');
-    mkdirSync(outDir, { recursive: true });
-    outputPath = join(outDir, 'bundle-analysis.json');
+    outputPath = join(process.cwd(), 'out', 'bundle-analysis.json');
   }
+
+  // Ensure the output directory exists
+  const outputDir = join(outputPath, '..');
+  mkdirSync(outputDir, { recursive: true });
 
   writeFileSync(outputPath, JSON.stringify(result, null, 2));
   console.log(chalk.green(`\n✓ Bundle size data written to ${outputPath}`));
