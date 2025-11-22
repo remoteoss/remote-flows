@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 
 import { filesize } from 'filesize';
-import type { BundleAnalysis, ChangeInfo } from './types.js';
-import { loadBundleData, loadConfig } from './utils.js';
+import type { BundleAnalysis, ChangeInfo, SizeLimitConfig } from './types';
+import { loadBundleData, loadConfig } from './utils';
 
 function formatChange(current: number, previous: number): ChangeInfo {
   const diff = current - previous;
@@ -23,14 +23,6 @@ function formatChange(current: number, previous: number): ChangeInfo {
       color: 'green',
     };
   }
-}
-
-function getStatusIcon(current: number, limit?: number): string {
-  if (!limit) return '🟢';
-  const percentage = (current / limit) * 100;
-  if (percentage > 100) return '❌';
-  if (percentage > 90) return '🟡';
-  return '🟢';
 }
 
 function generateMarkdownReport(
@@ -56,17 +48,6 @@ function generateMarkdownReport(
   const cssRawChange = formatChange(
     currentData.categories.css.raw,
     baseData.categories.css.raw,
-  );
-
-  // Status for limits
-  const totalGzipStatus = getStatusIcon(
-    currentData.total.gzip,
-    limits.totalGzip,
-  );
-  const totalRawStatus = getStatusIcon(currentData.total.raw, limits.total);
-  const cssGzipStatus = getStatusIcon(
-    currentData.categories.css.gzip,
-    limits.cssGzip,
   );
 
   let report = `## 📦 Bundle Size Report\n\n`;
