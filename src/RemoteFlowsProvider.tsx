@@ -7,8 +7,12 @@ import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { useAuth } from './useAuth';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
-import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
+import {
+  ErrorContextProvider,
+  useErrorContext,
+} from '@/src/components/error-handling/ErrorContext';
 import { getQueryClient } from '@/src/queryConfig';
+import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
@@ -25,7 +29,10 @@ function RemoteFlowContextWrapper({
   authId,
   proxy,
   environment,
+  debug,
 }: RemoteFlowContextWrapperProps) {
+  const { errorContext } = useErrorContext();
+  useErrorReportingForUnhandledErrors(errorContext, Boolean(debug));
   const remoteApiClient = useAuth({
     auth,
     authId,

@@ -1,24 +1,55 @@
 import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
 import { npmPackageVersion } from '@/src/lib/version';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import type { ErrorContextData } from '@/src/components/error-handling/types';
+
+/**
+ * Global ref to store the current error context
+ * Updated by ErrorContextProvider, accessed by React Query error handlers
+ */
+export const globalErrorContextRef: { current: ErrorContextData } = {
+  current: {},
+};
 
 export const getQueryClient = (debug: boolean) =>
   new QueryClient({
     queryCache: new QueryCache({
-      onError: (error) => {
+      onError: (error, query) => {
         if (error instanceof Error) {
-          reportTelemetryError(error, npmPackageVersion, undefined, {
-            debugMode: debug,
-          });
+          reportTelemetryError(
+            error,
+            npmPackageVersion,
+            {
+              ...globalErrorContextRef.current,
+              metadata: {
+                ...globalErrorContextRef.current.metadata,
+                queryKey: JSON.stringify(query.queryKey),
+              },
+            },
+            {
+              debugMode: debug,
+            },
+          );
         }
       },
     }),
     mutationCache: new MutationCache({
-      onError: (error) => {
+      onError: (error, _variables, _context, mutation) => {
         if (error instanceof Error) {
-          reportTelemetryError(error, npmPackageVersion, undefined, {
-            debugMode: debug,
-          });
+          reportTelemetryError(
+            error,
+            npmPackageVersion,
+            {
+              ...globalErrorContextRef.current,
+              metadata: {
+                ...globalErrorContextRef.current.metadata,
+                mutationKey: JSON.stringify(mutation.options.mutationKey),
+              },
+            },
+            {
+              debugMode: debug,
+            },
+          );
         }
       },
     }),
