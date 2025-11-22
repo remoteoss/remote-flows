@@ -1,16 +1,14 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ZendeskDrawer } from '../ZendeskDrawer';
 import userEvent from '@testing-library/user-event';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('ZendeskDrawer', () => {
-  let queryClient: QueryClient;
-
   const mockArticle = {
     help_center_article: {
       title: 'Test Article',
@@ -26,15 +24,6 @@ describe('ZendeskDrawer', () => {
   };
 
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          // Disable retries to make tests faster and more predictable
-          retry: false,
-        },
-      },
-    });
-
     vi.clearAllMocks();
 
     server.use(
@@ -46,19 +35,11 @@ describe('ZendeskDrawer', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    // Clear all queries after each test
     queryClient.clear();
   });
 
-  // Test wrapper with necessary providers
-  const wrapper = ({ children }: PropsWithChildren) => (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-    </QueryClientProvider>
-  );
-
   it('renders trigger element correctly', () => {
-    render(<ZendeskDrawer {...defaultProps} />, { wrapper });
+    render(<ZendeskDrawer {...defaultProps} />, { wrapper: TestProviders });
     expect(
       screen.getByRole('button', { name: 'Open Drawer' }),
     ).toBeInTheDocument();
@@ -67,7 +48,7 @@ describe('ZendeskDrawer', () => {
   it('calls onClose when drawer is closed', async () => {
     const onClose = vi.fn();
     render(<ZendeskDrawer {...defaultProps} open={true} onClose={onClose} />, {
-      wrapper,
+      wrapper: TestProviders,
     });
 
     await userEvent.keyboard('{Escape}');
@@ -84,7 +65,9 @@ describe('ZendeskDrawer', () => {
       }),
     );
 
-    render(<ZendeskDrawer {...defaultProps} open={true} />, { wrapper });
+    render(<ZendeskDrawer {...defaultProps} open={true} />, {
+      wrapper: TestProviders,
+    });
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
@@ -95,7 +78,9 @@ describe('ZendeskDrawer', () => {
       }),
     );
 
-    render(<ZendeskDrawer {...defaultProps} open={true} />, { wrapper });
+    render(<ZendeskDrawer {...defaultProps} open={true} />, {
+      wrapper: TestProviders,
+    });
 
     // Wait for the error message to appear
     const errorMessage = await screen.findByText('Error loading article');
@@ -116,7 +101,9 @@ describe('ZendeskDrawer', () => {
       }),
     );
 
-    render(<ZendeskDrawer {...defaultProps} open={true} />, { wrapper });
+    render(<ZendeskDrawer {...defaultProps} open={true} />, {
+      wrapper: TestProviders,
+    });
 
     // Wait for the content to load
     const title = await screen.findByText('Test Article');
@@ -133,15 +120,9 @@ describe('ZendeskDrawer', () => {
   it('renders custom zendesk dialog component when provided', () => {
     const CustomComponent = vi.fn(() => null);
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider
-          components={{
-            zendeskDrawer: CustomComponent,
-          }}
-        >
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <TestProviders components={{ zendeskDrawer: CustomComponent }}>
+        {children}
+      </TestProviders>
     );
 
     render(<ZendeskDrawer {...defaultProps} />, { wrapper: customWrapper });
@@ -169,7 +150,7 @@ describe('ZendeskDrawer', () => {
     // First render with drawer closed
     const { rerender } = render(
       <ZendeskDrawer {...defaultProps} open={false} />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
     expect(fetchSpy).not.toHaveBeenCalled();
 
@@ -193,7 +174,9 @@ describe('ZendeskDrawer', () => {
       }),
     );
 
-    render(<ZendeskDrawer {...defaultProps} open={true} />, { wrapper });
+    render(<ZendeskDrawer {...defaultProps} open={true} />, {
+      wrapper: TestProviders,
+    });
 
     // Wait for content to load and check sanitization
     const content = await screen.findByText('Safe content');
@@ -202,34 +185,24 @@ describe('ZendeskDrawer', () => {
   });
 
   describe('ZendeskDrawer with custom component', () => {
-    let queryClient: QueryClient;
     let CustomComponent: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
-      queryClient = new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-          },
-        },
-      });
-
       CustomComponent = vi.fn(() => null);
     });
 
-    const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider
-          components={{
-            zendeskDrawer: CustomComponent,
-          }}
-        >
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
-    );
+    const getCustomWrapper =
+      (customComponent: ReturnType<typeof vi.fn>) =>
+      ({ children }: PropsWithChildren) => (
+        <TestProviders>
+          <FormFieldsProvider components={{ zendeskDrawer: customComponent }}>
+            {children}
+          </FormFieldsProvider>
+        </TestProviders>
+      );
 
     it('passes all required props to custom component', () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       render(<ZendeskDrawer {...defaultProps} />, { wrapper: customWrapper });
 
       expect(CustomComponent).toHaveBeenCalledWith(
@@ -247,6 +220,7 @@ describe('ZendeskDrawer', () => {
     });
 
     it('passes loading state to custom component', () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       server.use(
         http.get('*/v1/help-center-articles/*', async () => {
           await new Promise((resolve) => setTimeout(resolve, 100));
@@ -267,6 +241,7 @@ describe('ZendeskDrawer', () => {
     });
 
     it('passes error state to custom component', async () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       server.use(
         http.get('*/v1/help-center-articles/*', () => {
           return new HttpResponse(null, { status: 500 });
@@ -288,6 +263,7 @@ describe('ZendeskDrawer', () => {
     });
 
     it('passes article data to custom component when loaded', async () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       server.use(
         http.get('*/v1/help-center-articles/*', () => {
           return HttpResponse.json({ data: mockArticle });
@@ -312,6 +288,7 @@ describe('ZendeskDrawer', () => {
     });
 
     it('does not render default drawer when custom component is provided', () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       render(<ZendeskDrawer {...defaultProps} open={true} />, {
         wrapper: customWrapper,
       });
@@ -320,6 +297,7 @@ describe('ZendeskDrawer', () => {
     });
 
     it('calls onClose through custom component', async () => {
+      const customWrapper = getCustomWrapper(CustomComponent);
       const onClose = vi.fn();
 
       CustomComponent.mockImplementation(

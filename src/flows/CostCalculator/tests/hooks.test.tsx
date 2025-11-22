@@ -1,17 +1,10 @@
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
 import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { PropsWithChildren } from 'react';
+import { TestProviders, queryClient } from '@/src/tests/testHelpers';
 import { countries, currencies, estimation, regionFields } from './fixtures';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
 
 describe('useCostCalculator', () => {
   beforeEach(() => {
@@ -34,7 +27,9 @@ describe('useCostCalculator', () => {
   });
 
   it('should load regions when a country with regions is selected', async () => {
-    const { result } = renderHook(() => useCostCalculator(), { wrapper });
+    const { result } = renderHook(() => useCostCalculator(), {
+      wrapper: TestProviders,
+    });
 
     await waitFor(() => {
       const countryField = result.current.fields.find(
@@ -67,7 +62,9 @@ describe('useCostCalculator', () => {
   });
 
   it('should not return errors when valid data is passed to handleValidation', async () => {
-    const { result } = renderHook(() => useCostCalculator(), { wrapper });
+    const { result } = renderHook(() => useCostCalculator(), {
+      wrapper: TestProviders,
+    });
     const validValues = {
       country: 'PRT',
       currency: 'USD',
@@ -86,7 +83,9 @@ describe('useCostCalculator', () => {
   });
 
   it('should return an error when invalid data is passed to handleValidation', async () => {
-    const { result } = renderHook(() => useCostCalculator(), { wrapper });
+    const { result } = renderHook(() => useCostCalculator(), {
+      wrapper: TestProviders,
+    });
     const invalidValues = {
       country: 'PRT',
       currency: 'USD',

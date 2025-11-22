@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
@@ -6,8 +6,13 @@ import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { useAuth } from './useAuth';
-
-const queryClient = new QueryClient();
+import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
+import {
+  ErrorContextProvider,
+  useErrorContext,
+} from '@/src/components/error-handling/ErrorContext';
+import { getQueryClient } from '@/src/queryConfig';
+import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 
 type RemoteFlowContextWrapperProps = {
   auth: RemoteFlowsSDKProps['auth'];
@@ -15,6 +20,7 @@ type RemoteFlowContextWrapperProps = {
   environment?: RemoteFlowsSDKProps['environment'];
   proxy?: RemoteFlowsSDKProps['proxy'];
   authId?: RemoteFlowsSDKProps['authId'];
+  debug?: RemoteFlowsSDKProps['debug'];
 };
 
 function RemoteFlowContextWrapper({
@@ -23,7 +29,10 @@ function RemoteFlowContextWrapper({
   authId,
   proxy,
   environment,
+  debug,
 }: RemoteFlowContextWrapperProps) {
+  const { errorContext } = useErrorContext();
+  useErrorReportingForUnhandledErrors(errorContext, Boolean(debug));
   const remoteApiClient = useAuth({
     auth,
     authId,
@@ -62,19 +71,27 @@ export function RemoteFlows({
   theme,
   proxy,
   environment,
+  errorBoundary = { useParentErrorBoundary: true },
+  debug = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
+  const queryClient = getQueryClient(debug);
   return (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={components}>
-        <RemoteFlowContextWrapper
-          auth={auth}
-          authId={authId}
-          proxy={proxy}
-          environment={environment}
-        >
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </RemoteFlowContextWrapper>
-      </FormFieldsProvider>
-    </QueryClientProvider>
+    <ErrorContextProvider>
+      <RemoteFlowsErrorBoundary errorBoundary={errorBoundary} debug={debug}>
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={components}>
+            <RemoteFlowContextWrapper
+              auth={auth}
+              authId={authId}
+              proxy={proxy}
+              environment={environment}
+              debug={debug}
+            >
+              <ThemeProvider theme={theme}>{children}</ThemeProvider>
+            </RemoteFlowContextWrapper>
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      </RemoteFlowsErrorBoundary>
+    </ErrorContextProvider>
   );
 }

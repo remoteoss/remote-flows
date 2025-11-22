@@ -168,7 +168,9 @@ describe('useAuth', () => {
   });
 
   it('should merge existing client headers with new headers', () => {
-    process.env.VERSION = '1.0.0';
+    vi.mock('../lib/version', () => ({
+      npmPackageVersion: '1.0.0',
+    }));
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
     // Mock the client object

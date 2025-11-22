@@ -3,6 +3,7 @@ import { ENVIRONMENTS } from '@/src/environments';
 import { createClient } from '@hey-api/client-fetch';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
+import { npmPackageVersion } from '@/src/lib/version';
 import { RemoteFlowsSDKProps } from './types/remoteFlows';
 import { debug } from './lib/utils';
 
@@ -48,7 +49,6 @@ export const useAuth = ({
     : process.env.REMOTE_GATEWAY_URL;
 
   const clientConfig = client.getConfig();
-  const npmPackageVersion = process.env.VERSION || 'unknown';
 
   if (options?.environment && options?.environment !== 'production') {
     debug(npmPackageVersion);

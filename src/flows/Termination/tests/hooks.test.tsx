@@ -1,13 +1,6 @@
 import { useTermination } from '@/src/flows/Termination/hooks';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { PropsWithChildren } from 'react';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
+import { TestProviders, queryClient } from '@/src/tests/testHelpers';
 
 describe('useTermination', () => {
   beforeEach(() => {
@@ -21,7 +14,7 @@ describe('useTermination', () => {
           options: {},
           initialValues: {},
         }),
-      { wrapper: wrapper },
+      { wrapper: TestProviders },
     );
 
     // Initially, fieldValues should equal initialValues
@@ -52,7 +45,7 @@ describe('useTermination', () => {
           options: {},
           initialValues: {},
         }),
-      { wrapper: wrapper },
+      { wrapper: TestProviders },
     );
 
     // Initially, isDirty should be false

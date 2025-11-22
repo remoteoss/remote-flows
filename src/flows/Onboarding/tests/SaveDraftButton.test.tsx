@@ -1,3 +1,4 @@
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
@@ -15,6 +16,7 @@ import {
 } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
+import { TestProviders } from '@/src/tests/testHelpers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
@@ -22,12 +24,6 @@ import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -193,7 +189,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should render the SaveDraftButton component with default text', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/);
 
@@ -202,7 +198,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should trigger the form validation when save draft is clicked', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -215,7 +211,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should call onSuccess when save draft is successful for basic information step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i); // This should work now
 
@@ -231,7 +227,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should not advance to next step when save draft is clicked', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -257,7 +253,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -287,7 +283,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -318,7 +314,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should disable button when disabled prop is passed', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -331,7 +327,7 @@ describe('SaveDraftButton', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Save Draft/i);
     expect(button).toBeDisabled();
@@ -345,7 +341,7 @@ describe('SaveDraftButton', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     // Navigate to contract details step
     await screen.findByText(/Step: Basic Information/i);
@@ -364,7 +360,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should show custom children text when provided', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -377,7 +373,7 @@ describe('SaveDraftButton', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Custom Save Text/i);
     expect(button).toHaveTextContent('Custom Save Text');
@@ -398,15 +394,17 @@ describe('SaveDraftButton', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: MockCustomButton }}>
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <ErrorContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={{ button: MockCustomButton }}>
+            {children}
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      </ErrorContextProvider>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {
-      mockRender.mockImplementation(({ components }) => {
+      mockRender.mockImplementationOnce(({ components }) => {
         const { SaveDraftButton } = components;
         return (
           <SaveDraftButton
