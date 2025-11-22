@@ -60,6 +60,18 @@ jobs:
       - name: Compare bundle sizes
         id: compare
         run: |
+          # Check if comparison script exists
+          if [ ! -f "scripts/compare-sizes.ts" ]; then
+            echo "⚠️ Comparison script not found in base branch. Skipping comparison."
+            echo "report<<EOF" >> $GITHUB_OUTPUT
+            echo "## 📦 Bundle Size Report" >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "⚠️ Size comparison not available - script not found in base branch." >> $GITHUB_OUTPUT
+            echo "This is expected for new features. Size limits will still be checked." >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           # Run comparison and capture output
           npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || echo "comparison_failed=true" >> $GITHUB_OUTPUT
 
