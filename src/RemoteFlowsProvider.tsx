@@ -7,6 +7,7 @@ import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { useAuth } from './useAuth';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
 const queryClient = new QueryClient();
 
@@ -66,19 +67,21 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   return (
-    <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={components}>
-          <RemoteFlowContextWrapper
-            auth={auth}
-            authId={authId}
-            proxy={proxy}
-            environment={environment}
-          >
-            <ThemeProvider theme={theme}>{children}</ThemeProvider>
-          </RemoteFlowContextWrapper>
-        </FormFieldsProvider>
-      </QueryClientProvider>
-    </RemoteFlowsErrorBoundary>
+    <ErrorContextProvider>
+      <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={components}>
+            <RemoteFlowContextWrapper
+              auth={auth}
+              authId={authId}
+              proxy={proxy}
+              environment={environment}
+            >
+              <ThemeProvider theme={theme}>{children}</ThemeProvider>
+            </RemoteFlowContextWrapper>
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      </RemoteFlowsErrorBoundary>
+    </ErrorContextProvider>
   );
 }

@@ -15,22 +15,27 @@ import {
 } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
+import { TestProviders } from '@/src/tests/testHelpers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
-const queryClient = new QueryClient();
+const mockSuccess = vi.fn();
+const mockError = vi.fn();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: false },
+    mutations: { retry: false },
+  },
+});
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
+    <TestProviders>{children}</TestProviders>
   </QueryClientProvider>
 );
-
-const mockSuccess = vi.fn();
-const mockError = vi.fn();
 
 const mockRender = vi.fn(
   ({ onboardingBag, components }: OnboardingRenderProps) => {
@@ -193,7 +198,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should render the SaveDraftButton component with default text', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Basic Information/);
 

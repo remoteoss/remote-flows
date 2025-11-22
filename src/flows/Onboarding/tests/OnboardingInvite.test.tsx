@@ -10,6 +10,7 @@ import {
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
+import { TestProviders } from '@/src/tests/testHelpers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render,
@@ -23,12 +24,6 @@ import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -145,7 +140,7 @@ describe('OnboardingInvite', () => {
   });
 
   it('should render the OnboardingInvite component with default "Invite Employee" text', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Select Country/);
@@ -170,7 +165,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Select Country/);
@@ -180,7 +175,7 @@ describe('OnboardingInvite', () => {
   });
 
   it('should call onSubmit and onSuccess when invite is successful', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     const button = screen.getByText(/Invite Employee/i);
     fireEvent.click(button);
@@ -202,7 +197,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Employee/i);
@@ -228,7 +223,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Employee/i);
@@ -272,7 +267,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Select Country/);
@@ -324,7 +319,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     const button = await screen.findByTestId('onboarding-invite');
     fireEvent.click(button);
     await waitFor(() => {
@@ -368,7 +363,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     const button = await screen.findByTestId('onboarding-invite');
     fireEvent.click(button);
     await waitFor(() => {
@@ -404,7 +399,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -453,7 +448,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -489,7 +484,7 @@ describe('OnboardingInvite', () => {
       );
     });
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByTestId('onboarding-invite');
     expect(button).toBeDisabled();
@@ -503,7 +498,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -536,7 +531,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -587,7 +582,7 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
       const button = await screen.findByText(/Invite Employee/i);
       expect(button).toBeInTheDocument();
@@ -633,7 +628,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Create Reserve/i);
     expect(button).toBeInTheDocument();
@@ -681,7 +676,7 @@ describe('OnboardingInvite', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     const button = await screen.findByText(/Invite Employee/i);
     expect(button).toBeInTheDocument();
@@ -735,7 +730,7 @@ describe('OnboardingInvite', () => {
       );
 
       const { unmount } = render(<OnboardingFlow {...defaultProps} />, {
-        wrapper,
+        wrapper: TestProviders,
       });
       await screen.findByText('Custom Invite Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
@@ -761,7 +756,7 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
       await screen.findByText('Custom Reserve Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
         employmentStatus: 'created_awaiting_reserve',
@@ -811,7 +806,7 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
       await screen.findByText('Hidden Deposit Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
@@ -1044,7 +1039,7 @@ describe('OnboardingInvite', () => {
         );
       });
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper });
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
       const button = await screen.findByTestId('onboarding-invite');
       expect(button).toBeInTheDocument();

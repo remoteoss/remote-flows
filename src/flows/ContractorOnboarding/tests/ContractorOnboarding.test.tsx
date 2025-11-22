@@ -1,6 +1,3 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi, afterEach } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
@@ -23,7 +20,11 @@ import {
   mockContractDocumentPreviewResponse,
   inviteResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
-import { fillSelect } from '@/src/tests/testHelpers';
+import {
+  fillSelect,
+  queryClient,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboarding/types';
 import { fireEvent } from '@testing-library/react';
 import {
@@ -33,14 +34,6 @@ import {
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -282,6 +275,7 @@ describe('ContractorOnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
@@ -413,7 +407,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -439,7 +433,9 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   it('should select a country and advance to the next step', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('Portugal');
   });
@@ -455,7 +451,9 @@ describe('ContractorOnboardingFlow', () => {
       }),
     );
 
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await fillCountry('Portugal');
 
@@ -552,7 +550,7 @@ describe('ContractorOnboardingFlow', () => {
         employmentId={generateUniqueEmploymentId()}
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -619,7 +617,7 @@ describe('ContractorOnboardingFlow', () => {
         countryCode='PRT'
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -699,7 +697,7 @@ describe('ContractorOnboardingFlow', () => {
         countryCode='PRT'
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -792,7 +790,7 @@ describe('ContractorOnboardingFlow', () => {
           {...defaultProps}
         />,
         {
-          wrapper,
+          wrapper: TestProviders,
         },
       );
 
@@ -848,7 +846,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -920,7 +918,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -976,7 +974,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -1075,9 +1073,7 @@ describe('ContractorOnboardingFlow', () => {
           },
         }}
       />,
-      {
-        wrapper,
-      },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);

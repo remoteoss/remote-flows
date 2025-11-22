@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 export type Step<T extends string> = {
@@ -18,6 +18,7 @@ type StepState<T extends string, Fields = FieldValues> = {
 
 export const useStepState = <T extends string, Fields = FieldValues>(
   steps: Record<T, Step<T>>,
+  onStepChange?: (step: Step<T>) => void,
 ) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
@@ -31,6 +32,14 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     totalSteps: stepKeys.length,
     values: null,
   });
+
+  // Call onStepChange once when the hook initializes
+  // Note: intentionally no deps to only run on mount and avoid re-renders
+  // when onStepChange/steps references change
+  useEffect(() => {
+    onStepChange?.(steps[stepKeys[0]]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function nextStep() {
     const { index } = stepState.currentStep;
@@ -49,7 +58,8 @@ export const useStepState = <T extends string, Fields = FieldValues>(
           },
         } as { [key in T]: Fields },
       }));
-      setFieldValues({} as Fields); // Reset field values for the next step
+      onStepChange?.(nextStep);
+      setFieldValues({} as Fields);
     }
   }
 
@@ -70,17 +80,18 @@ export const useStepState = <T extends string, Fields = FieldValues>(
           },
         } as { [key in T]: Fields },
       }));
-      setFieldValues({} as Fields); // Reset field values for the previous step
+      onStepChange?.(previousStep);
+      setFieldValues({} as Fields);
     }
   }
 
   function goToStep(step: T) {
-    // to avoid going to a steps that hasn't been filled yet
     if (stepState.values?.[step]) {
       setStepState((previousState) => ({
         ...previousState,
         currentStep: steps[step],
       }));
+      onStepChange?.(steps[step]);
     }
   }
 

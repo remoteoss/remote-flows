@@ -5,9 +5,8 @@ import {
   mockContractorEmploymentResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboarding/types';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import {
   render,
   screen,
@@ -20,14 +19,6 @@ import { PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
 // Mock fixtures - you'll need to create these
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -121,7 +112,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
   });
 
   it('should render the OnboardingInvite component with "Invite Contractor" text', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Select Country/);
@@ -131,7 +124,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
   });
 
   it('should call onSubmit and onSuccess when invite is successful', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Contractor/i);
@@ -157,7 +152,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       }),
     );
 
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Contractor/i);
@@ -182,7 +179,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       }),
     );
 
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const button = screen.getByText(/Invite Contractor/i);
@@ -219,7 +218,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       },
     );
 
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     const button = await screen.findByTestId('onboarding-invite');
     fireEvent.click(button);
 
@@ -244,7 +245,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         );
       });
 
-      render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
 
       const button = await screen.findByTestId('onboarding-invite');
       expect(button).toBeDisabled();
@@ -258,7 +261,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         }),
       );
 
-      render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
 
       const button = await screen.findByText(/Invite Contractor/i);
       expect(button).toBeInTheDocument();
@@ -285,7 +290,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         );
       });
 
-      render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
 
       const button = await screen.findByTestId('onboarding-invite');
       expect(button).toBeInTheDocument();
@@ -310,7 +317,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         );
       });
 
-      render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
 
       await screen.findByText('Custom Contractor Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
@@ -338,11 +347,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: MockCustomButton }}>
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <TestProviders components={{ button: MockCustomButton }}>
+        {children}
+      </TestProviders>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {
@@ -363,7 +370,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       });
 
       render(<ContractorOnboardingFlow {...defaultProps} />, {
-        wrapper: customWrapper,
+        wrapper: TestProviders,
       });
 
       const customButton = await screen.findByTestId('custom-button');

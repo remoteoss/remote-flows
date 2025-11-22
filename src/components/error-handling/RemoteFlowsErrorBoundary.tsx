@@ -1,4 +1,10 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { npmPackageVersion } from '@/src/lib/version';
+import {
+  ErrorContext,
+  ErrorContextValue,
+} from '@/src/components/error-handling/ErrorContext';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -7,6 +13,7 @@ type ErrorBoundaryState = {
 
 interface RemoteFlowsErrorBoundaryProps {
   children: ReactNode;
+
   /**
    * Error boundary configuration.
    */
@@ -61,8 +68,17 @@ export class RemoteFlowsErrorBoundary extends Component<
     };
   }
 
+  static contextType = ErrorContext;
+  declare context: ErrorContextValue | undefined;
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
+
+    const errorContext = this.context?.errorContext;
+
+    reportTelemetryError(error, npmPackageVersion, errorContext, {
+      debugMode: true,
+    });
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {
       throw error;

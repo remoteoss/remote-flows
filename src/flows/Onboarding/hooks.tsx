@@ -22,7 +22,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -40,6 +40,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
+import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
@@ -136,6 +137,40 @@ export const useOnboarding = ({
   externalId,
   initialValues: onboardingInitialValues,
 }: OnboardingHookProps) => {
+  const { updateErrorContext } = useErrorReporting({
+    flow: 'onboarding',
+    metadata: {
+      employmentId,
+      companyId,
+      isUpdating: Boolean(employmentId),
+    },
+  });
+  const stepsToUse = skipSteps?.includes('select_country')
+    ? STEPS_WITHOUT_SELECT_COUNTRY
+    : STEPS;
+
+  const onStepChange = useCallback(
+    (step: Step<keyof typeof STEPS>) => {
+      updateErrorContext({
+        step: step.name,
+      });
+    },
+    [updateErrorContext],
+  );
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+    setStepValues,
+  } = useStepState(
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+    onStepChange,
+  );
+
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
@@ -172,21 +207,6 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
-
-  const {
-    fieldValues,
-    stepState,
-    setFieldValues,
-    previousStep,
-    nextStep,
-    goToStep,
-    setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
@@ -724,13 +744,22 @@ export const useOnboarding = ({
 
   function back() {
     previousStep();
+    updateErrorContext({
+      step: stepState.currentStep.name,
+    });
   }
 
   function next() {
     nextStep();
+    updateErrorContext({
+      step: stepState.currentStep.name,
+    });
   }
 
   function goTo(step: keyof typeof STEPS) {
+    updateErrorContext({
+      step: step,
+    });
     goToStep(step);
   }
 
