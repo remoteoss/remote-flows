@@ -1,5 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
 import { npmPackageVersion } from '@/src/lib/version';
 import {
   ErrorContext,

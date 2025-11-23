@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { TestProviders, client, queryClient } from '@/src/tests/testHelpers';
-import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
 import { useErrorContext } from '@/src/components/error-handling/ErrorContext';
 import React from 'react';
 

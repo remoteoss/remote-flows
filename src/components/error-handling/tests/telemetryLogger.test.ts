@@ -1,7 +1,7 @@
 import {
   buildErrorPayload,
   shouldReportError,
-} from '@/src/components/error-handling/telemetryLogger';
+} from '@/src/components/error-handling/telemetryService';
 import * as utils from '@/src/components/error-handling/utils';
 
 // Mock the utility functions

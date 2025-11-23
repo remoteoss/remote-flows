@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
-import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { client } from '@/src/tests/testHelpers';
 

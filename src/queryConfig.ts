@@ -1,4 +1,4 @@
-import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
 import { npmPackageVersion } from '@/src/lib/version';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import type { ErrorContextData } from '@/src/components/error-handling/types';

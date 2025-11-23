@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { RemoteFlowsErrorBoundary } from '../RemoteFlowsErrorBoundary';
-import { reportTelemetryError } from '../telemetryLogger';
+import { reportTelemetryError } from '../telemetryService';
 import { ErrorContextProvider, useErrorContext } from '../ErrorContext';
 import { client } from '@/src/tests/testHelpers';
 vi.mock('../telemetryLogger');
