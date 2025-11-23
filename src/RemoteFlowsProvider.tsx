@@ -13,40 +13,31 @@ import {
 } from '@/src/components/error-handling/ErrorContext';
 import { getQueryClient } from '@/src/queryConfig';
 import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
+import { Client } from '@hey-api/client-fetch';
 
 type RemoteFlowContextWrapperProps = {
-  auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
   environment?: RemoteFlowsSDKProps['environment'];
-  proxy?: RemoteFlowsSDKProps['proxy'];
-  authId?: RemoteFlowsSDKProps['authId'];
   debug?: RemoteFlowsSDKProps['debug'];
+  client: Client;
 };
 
 function RemoteFlowContextWrapper({
   children,
-  auth,
-  authId,
-  proxy,
   environment,
   debug,
+  client,
 }: RemoteFlowContextWrapperProps) {
   const { errorContext } = useErrorContext();
   useErrorReportingForUnhandledErrors(
     errorContext,
     environment ?? 'production',
+    client,
     Boolean(debug),
   );
-  const remoteApiClient = useAuth({
-    auth,
-    authId,
-    options: {
-      proxy,
-      environment,
-    },
-  });
+
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+    <RemoteFlowContext.Provider value={{ client }}>
       {children}
     </RemoteFlowContext.Provider>
   );
@@ -78,22 +69,34 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
-  const queryClient = getQueryClient(debug, environment);
+  const remoteApiClient = useAuth({
+    auth,
+    authId,
+    options: {
+      proxy,
+      environment,
+    },
+  });
+  const queryClient = getQueryClient(
+    debug,
+    remoteApiClient.current,
+    environment,
+  );
+
   return (
     <ErrorContextProvider>
       <RemoteFlowsErrorBoundary
         errorBoundary={errorBoundary}
         debug={debug}
         environment={environment}
+        client={remoteApiClient.current}
       >
         <QueryClientProvider client={queryClient}>
           <FormFieldsProvider components={components}>
             <RemoteFlowContextWrapper
-              auth={auth}
-              authId={authId}
-              proxy={proxy}
               environment={environment}
               debug={debug}
+              client={remoteApiClient.current}
             >
               <ThemeProvider theme={theme}>{children}</ThemeProvider>
             </RemoteFlowContextWrapper>

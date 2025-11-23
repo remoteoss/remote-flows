@@ -3,6 +3,7 @@ import { npmPackageVersion } from '@/src/lib/version';
 import { useEffect } from 'react';
 import { ErrorContextData } from '@/src/components/error-handling/types';
 import { Environment } from '@/src/environments';
+import { Client } from '@hey-api/client-fetch';
 
 /**
  * Reports unhandled errors to the telemetry API.
@@ -13,6 +14,7 @@ import { Environment } from '@/src/environments';
 export function useErrorReportingForUnhandledErrors(
   errorContext: ErrorContextData,
   environment: Environment,
+  client: Client,
   debug: boolean,
 ) {
   useEffect(() => {
@@ -20,6 +22,7 @@ export function useErrorReportingForUnhandledErrors(
       reportTelemetryError(
         event.error,
         npmPackageVersion,
+        client,
         environment,
         errorContext,
         {
@@ -37,6 +40,7 @@ export function useErrorReportingForUnhandledErrors(
       reportTelemetryError(
         error,
         npmPackageVersion,
+        client,
         environment,
         errorContext,
         {
@@ -52,5 +56,5 @@ export function useErrorReportingForUnhandledErrors(
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleRejection);
     };
-  }, [errorContext, environment, debug]);
+  }, [errorContext, environment, client, debug]);
 }

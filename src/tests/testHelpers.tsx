@@ -7,7 +7,13 @@ import { ErrorContextProvider } from '@/src/components/error-handling/ErrorConte
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { getQueryClient } from '@/src/queryConfig';
 
-export const queryClient = getQueryClient(false, 'testing' as $TSFixMe);
+export const client = {
+  request: vi.fn(),
+  post: vi.fn(),
+  get: vi.fn(),
+} as $TSFixMe;
+
+export const queryClient = getQueryClient(false, client, 'testing' as $TSFixMe);
 
 /**
  * Wrapper component for tests that need ErrorContext, QueryClient, and FormFields providers

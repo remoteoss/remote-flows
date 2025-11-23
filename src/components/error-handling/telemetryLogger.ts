@@ -1,3 +1,4 @@
+import { Client } from '@hey-api/client-fetch';
 import {
   ErrorContextData,
   ErrorPayload,
@@ -8,6 +9,7 @@ import {
   parseComponentStack,
 } from '@/src/components/error-handling/utils';
 import { Environment } from '@/src/environments';
+import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
 
 /**
  * Logs error payload to console in debug mode
@@ -143,6 +145,7 @@ export function shouldReportError(
 export function reportTelemetryError(
   error: Error,
   sdkVersion: string,
+  client: Client,
   environment?: Environment,
   context?: ErrorContextData,
   options: {
@@ -163,6 +166,23 @@ export function reportTelemetryError(
     // Log to console in debug mode
     if (options.debugMode) {
       logDebugPayload(payload, Boolean(options.debugMode));
+    }
+
+    try {
+      postReportErrorsTelemetry({
+        client,
+        body: payload,
+      }).catch((err) => {
+        // Silently fail - don't crash if telemetry reporting fails
+        if (options.debugMode) {
+          console.warn('[RemoteFlows] Failed to report error telemetry:', err);
+        }
+      });
+    } catch (err) {
+      // Silently fail - don't crash if telemetry reporting fails
+      if (options.debugMode) {
+        console.warn('[RemoteFlows] Error telemetry setup failed:', err);
+      }
     }
 
     // Send to telemetry API

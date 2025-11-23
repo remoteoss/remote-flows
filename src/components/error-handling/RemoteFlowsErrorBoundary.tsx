@@ -6,6 +6,7 @@ import {
   ErrorContextValue,
 } from '@/src/components/error-handling/ErrorContext';
 import { Environment } from '@/src/environments';
+import { Client } from '@hey-api/client-fetch';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -24,6 +25,12 @@ interface RemoteFlowsErrorBoundaryProps {
    * If not provided, the SDK will use production environment.
    */
   environment?: Environment;
+
+  /**
+   * Client to use for API calls.
+   * If not provided, the SDK will crash
+   */
+  client: Client;
   /**
    * Error boundary configuration.
    */
@@ -89,6 +96,7 @@ export class RemoteFlowsErrorBoundary extends Component<
     reportTelemetryError(
       error,
       npmPackageVersion,
+      this.props.client,
       this.props.environment,
       errorContext,
       {

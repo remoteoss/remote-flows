@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { client } from '@/src/tests/testHelpers';
 
 vi.mock('@/src/components/error-handling/telemetryLogger');
 vi.mock('@/src/lib/version', () => ({ npmPackageVersion: '1.0.0' }));
@@ -14,7 +15,12 @@ describe('useErrorReportingForUnhandledErrors', () => {
   it('should report uncaught errors', async () => {
     const errorContext = { flow: 'onboarding', step: 'basic_info' };
     renderHook(() =>
-      useErrorReportingForUnhandledErrors(errorContext, 'production', false),
+      useErrorReportingForUnhandledErrors(
+        errorContext,
+        'production',
+        client,
+        false,
+      ),
     );
 
     const error = new Error('Test error');
@@ -24,6 +30,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         error,
         '1.0.0',
+        client,
         'production',
         errorContext,
         { debugMode: false },
@@ -34,7 +41,12 @@ describe('useErrorReportingForUnhandledErrors', () => {
   it('should report unhandled promise rejections', async () => {
     const errorContext = { flow: 'termination' };
     renderHook(() =>
-      useErrorReportingForUnhandledErrors(errorContext, 'production', false),
+      useErrorReportingForUnhandledErrors(
+        errorContext,
+        'production',
+        client,
+        false,
+      ),
     );
 
     const error = new Error('Rejection');
@@ -48,6 +60,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         error,
         '1.0.0',
+        client,
         'production',
         errorContext,
         { debugMode: false },
@@ -58,7 +71,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
   it('should cleanup listeners on unmount', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() =>
-      useErrorReportingForUnhandledErrors({}, 'production', false),
+      useErrorReportingForUnhandledErrors({}, 'production', client, false),
     );
 
     unmount();

@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useQuery } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
-import { TestProviders, queryClient } from '@/src/tests/testHelpers';
+import { TestProviders, client, queryClient } from '@/src/tests/testHelpers';
 import { reportTelemetryError } from '@/src/components/error-handling/telemetryLogger';
 import { useErrorContext } from '@/src/components/error-handling/ErrorContext';
 import React from 'react';
@@ -58,6 +58,7 @@ describe('queryConfig error handling', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         new Error('HTTP 500: Internal Server Error'),
         '1.0.0',
+        client,
         'testing',
         {
           flow: 'onboarding',

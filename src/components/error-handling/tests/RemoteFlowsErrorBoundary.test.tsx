@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { RemoteFlowsErrorBoundary } from '../RemoteFlowsErrorBoundary';
 import { reportTelemetryError } from '../telemetryLogger';
 import { ErrorContextProvider, useErrorContext } from '../ErrorContext';
-import React from 'react';
-
+import { client } from '@/src/tests/testHelpers';
 vi.mock('../telemetryLogger');
 
 const ErrorThrowingComponent = () => {
@@ -42,7 +42,11 @@ describe('RemoteFlowsErrorBoundary', () => {
 
   it('should render children when there is no error', () => {
     render(
-      <RemoteFlowsErrorBoundary environment='production' debug={false}>
+      <RemoteFlowsErrorBoundary
+        client={client}
+        environment='production'
+        debug={false}
+      >
         <NormalComponent />
       </RemoteFlowsErrorBoundary>,
     );
@@ -51,7 +55,11 @@ describe('RemoteFlowsErrorBoundary', () => {
 
   it('should catch errors and report telemetry', () => {
     render(
-      <RemoteFlowsErrorBoundary environment='production' debug={false}>
+      <RemoteFlowsErrorBoundary
+        client={client}
+        environment='production'
+        debug={false}
+      >
         <ErrorThrowingComponent />
       </RemoteFlowsErrorBoundary>,
     );
@@ -59,6 +67,7 @@ describe('RemoteFlowsErrorBoundary', () => {
     expect(reportTelemetryError).toHaveBeenCalledWith(
       new Error('Test error from child component'),
       'unknown',
+      client,
       'production',
       undefined,
       {
@@ -69,7 +78,11 @@ describe('RemoteFlowsErrorBoundary', () => {
 
   it('should show default fallback UI when error occurs', () => {
     render(
-      <RemoteFlowsErrorBoundary environment='production' debug={false}>
+      <RemoteFlowsErrorBoundary
+        client={client}
+        environment='production'
+        debug={false}
+      >
         <ErrorThrowingComponent />
       </RemoteFlowsErrorBoundary>,
     );
@@ -82,6 +95,7 @@ describe('RemoteFlowsErrorBoundary', () => {
   it('should show custom fallback when provided', () => {
     render(
       <RemoteFlowsErrorBoundary
+        client={client}
         environment='production'
         debug={false}
         errorBoundary={{
@@ -99,6 +113,7 @@ describe('RemoteFlowsErrorBoundary', () => {
     expect(() => {
       render(
         <RemoteFlowsErrorBoundary
+          client={client}
           environment='production'
           debug={false}
           errorBoundary={{ useParentErrorBoundary: true }}
@@ -113,7 +128,11 @@ describe('RemoteFlowsErrorBoundary', () => {
     render(
       <ErrorContextProvider>
         <ComponentThatSetsContext>
-          <RemoteFlowsErrorBoundary environment='production' debug={false}>
+          <RemoteFlowsErrorBoundary
+            client={client}
+            environment='production'
+            debug={false}
+          >
             <ErrorThrowingComponent />
           </RemoteFlowsErrorBoundary>
         </ComponentThatSetsContext>
@@ -123,6 +142,7 @@ describe('RemoteFlowsErrorBoundary', () => {
     expect(reportTelemetryError).toHaveBeenCalledWith(
       new Error('Test error from child component'),
       'unknown',
+      client,
       'production',
       {
         flow: 'onboarding',
