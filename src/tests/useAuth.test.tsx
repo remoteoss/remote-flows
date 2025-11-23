@@ -1,9 +1,9 @@
 import { createClient } from '@hey-api/client-fetch';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
-import React from 'react';
 import { client } from '../client/client.gen';
 import { useAuth } from '../useAuth';
+import { TestProviders } from '@/src/tests/testHelpers';
 
 type AuthResponse = {
   accessToken: string;
@@ -46,10 +46,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
-
 describe('useAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -61,7 +57,7 @@ describe('useAuth', () => {
 
     renderHook(
       () => useAuth({ auth: mockAuth, options: { environment: 'partners' } }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     expect(createClient).toHaveBeenCalledWith(
@@ -77,7 +73,7 @@ describe('useAuth', () => {
 
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
-    renderHook(() => useAuth({ auth: mockAuth }), { wrapper });
+    renderHook(() => useAuth({ auth: mockAuth }), { wrapper: TestProviders });
 
     expect(createClient).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -92,7 +88,7 @@ describe('useAuth', () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
-      wrapper,
+      wrapper: TestProviders,
     });
 
     let token: string | undefined;
@@ -110,7 +106,7 @@ describe('useAuth', () => {
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
-      wrapper,
+      wrapper: TestProviders,
     });
 
     // First call to set the token
@@ -145,7 +141,7 @@ describe('useAuth', () => {
       });
 
     const { result } = renderHook(() => useAuth({ auth: mockAuth }), {
-      wrapper,
+      wrapper: TestProviders,
     });
 
     // First call sets expired token
@@ -178,7 +174,7 @@ describe('useAuth', () => {
       },
     });
 
-    renderHook(() => useAuth({ auth: mockAuth }), { wrapper });
+    renderHook(() => useAuth({ auth: mockAuth }), { wrapper: TestProviders });
 
     expect(createClient).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -201,7 +197,7 @@ describe('useAuth', () => {
           auth: mockAuth,
           options: { proxy: { url: proxyUrl } },
         }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     expect(createClient).toHaveBeenCalledWith(
@@ -221,7 +217,7 @@ describe('useAuth', () => {
           auth: mockAuth,
           options: { environment: 'partners', proxy: { url: invalidProxyUrl } },
         }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     expect(createClient).toHaveBeenCalledWith(
@@ -255,7 +251,7 @@ describe('useAuth', () => {
             proxy: { url: proxyUrl, headers: proxyHeaders },
           },
         }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     expect(createClient).toHaveBeenCalledWith(
@@ -289,13 +285,13 @@ describe('useAuth', () => {
     // Render first hook with 'client' authId
     const { result: clientResult } = renderHook(
       () => useAuth({ auth: mockClientAuth, authId: 'client' }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Render second hook with 'default' authId (server auth)
     const { result: serverResult } = renderHook(
       () => useAuth({ auth: mockServerAuth, authId: 'default' }),
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Get token from client auth
