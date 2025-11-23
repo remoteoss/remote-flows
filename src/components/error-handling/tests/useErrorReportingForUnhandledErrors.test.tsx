@@ -4,7 +4,7 @@ import { reportTelemetryError } from '@/src/components/error-handling/telemetryS
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { client } from '@/src/tests/testHelpers';
 
-vi.mock('@/src/components/error-handling/telemetryLogger');
+vi.mock('@/src/components/error-handling/telemetryService');
 vi.mock('@/src/lib/version', () => ({ npmPackageVersion: '1.0.0' }));
 
 describe('useErrorReportingForUnhandledErrors', () => {

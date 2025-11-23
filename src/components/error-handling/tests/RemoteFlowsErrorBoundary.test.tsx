@@ -4,7 +4,7 @@ import { RemoteFlowsErrorBoundary } from '../RemoteFlowsErrorBoundary';
 import { reportTelemetryError } from '../telemetryService';
 import { ErrorContextProvider, useErrorContext } from '../ErrorContext';
 import { client } from '@/src/tests/testHelpers';
-vi.mock('../telemetryLogger');
+vi.mock('../telemetryService');
 
 const ErrorThrowingComponent = () => {
   throw new Error('Test error from child component');

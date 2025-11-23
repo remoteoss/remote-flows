@@ -11,7 +11,7 @@ vi.mock('@/src/components/error-handling/utils', () => ({
   parseComponentStack: vi.fn(),
 }));
 
-describe('telemetryLogger', () => {
+describe('telemetryService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

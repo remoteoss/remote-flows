@@ -7,7 +7,7 @@ import { reportTelemetryError } from '@/src/components/error-handling/telemetryS
 import { useErrorContext } from '@/src/components/error-handling/ErrorContext';
 import React from 'react';
 
-vi.mock('@/src/components/error-handling/telemetryLogger');
+vi.mock('@/src/components/error-handling/telemetryService');
 vi.mock('@/src/lib/version', () => ({ npmPackageVersion: '1.0.0' }));
 
 describe('queryConfig error handling', () => {
