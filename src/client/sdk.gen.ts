@@ -101,6 +101,8 @@ import type {
   GetIndexPricingPlanPartnerTemplateData,
   GetIndexPricingPlanPartnerTemplateResponse,
   GetIndexPricingPlanPartnerTemplateError,
+  PostReportErrorsTelemetryData,
+  PostReportErrorsTelemetryError,
   GetIndexEorPayrollCalendarData,
   GetIndexEorPayrollCalendarResponse,
   GetIndexEorPayrollCalendarError,
@@ -328,6 +330,9 @@ import type {
   PostCreateTokenCompanyTokenData,
   PostCreateTokenCompanyTokenResponse,
   PostCreateTokenCompanyTokenError,
+  GetIndexCompanyLegalEntitiesData,
+  GetIndexCompanyLegalEntitiesResponse,
+  GetIndexCompanyLegalEntitiesError,
   PostCompleteOnboardingEmploymentData,
   PostCompleteOnboardingEmploymentResponse,
   PostCompleteOnboardingEmploymentError,
@@ -1490,6 +1495,35 @@ export const getIndexPricingPlanPartnerTemplate = <
     ],
     url: '/v1/pricing-plan-partner-templates',
     ...options,
+  });
+};
+
+/**
+ * Report SDK errors
+ * Receives error telemetry from the frontend SDK.
+ * Errors are logged to Datadog for monitoring and debugging.
+ *
+ */
+export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
+  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    unknown,
+    PostReportErrorsTelemetryError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/telemetry/errors',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 };
 
@@ -2855,6 +2889,7 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - personal_details
  * - pricing_plan_details
  * - global_payroll_administrative_details
+ * - global_payroll_basic_information
  * - global_payroll_contract_details
  * - global_payroll_personal_details
  * - benefit_renewal_request
@@ -3856,6 +3891,32 @@ export const postCreateTokenCompanyToken = <
       },
     ],
     url: '/v1/companies/{company_id}/create-token',
+    ...options,
+  });
+};
+
+/**
+ * List Company Legal Entitites
+ * Lists all active legal entities for the authorized company specified in the request.
+ *
+ */
+export const getIndexCompanyLegalEntities = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyLegalEntitiesData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetIndexCompanyLegalEntitiesResponse,
+    GetIndexCompanyLegalEntitiesError,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/companies/{company_id}/legal-entities',
     ...options,
   });
 };

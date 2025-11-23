@@ -177,6 +177,14 @@ export type EmploymentCustomFieldValueResponse = {
   };
 };
 
+export type PeriodProperties = {
+  nextPeriodEndDate?: _Date;
+  paymentDate?: _Date;
+  periodEndDate: _Date;
+  periodStartDate: _Date;
+  priorPeriodEndDate?: _Date;
+};
+
 export type EmployeeDetailsResponse = {
   data: {
     /**
@@ -580,6 +588,12 @@ export type ListProductPricesResponse = {
   };
 };
 
+export type TotalPay = {
+  fields?: Array<CustomField>;
+  totalGross: Amount;
+  totalNet: Amount;
+};
+
 /**
  * Incentive response
  */
@@ -972,6 +986,7 @@ export type ContractorInvoiceStatus =
   | 'rejected'
   | 'rejected_by_remote'
   | 'blocked'
+  | 'compliance_review'
   | 'pay_out_scheduled'
   | 'enqueued'
   | 'processing'
@@ -1077,6 +1092,10 @@ export type LimitedDaysandHoursResponse = {
   days: number;
   hours: number;
   type: 'limited';
+};
+
+export type PayProcessingFeatureResponse = {
+  endpoints: PayProcessingFeature;
 };
 
 /**
@@ -1260,10 +1279,20 @@ export type MinimalTimesheetResponse = {
   };
 };
 
+export type PayVarianceResponse = {
+  payVariance?: Array<PayDifference>;
+};
+
 export type BenefitOffersByEmployment = {
   benefit_offers: Array<BenefitOffer>;
   costs: Costs;
   employment: BenefitOffersEmployment;
+};
+
+export type Action = {
+  externalLink?: string;
+  label: string;
+  link: string;
 };
 
 export type InternalServerErrorResponse = ValidationError | MessageResponse;
@@ -1292,6 +1321,13 @@ export type BillingDocumentResponse = {
   data: {
     billing_document: BillingDocument;
   };
+};
+
+export type PayDetailDataResponse = {
+  employeesProcessed: EmployeesProcessed;
+  importantDates: ImportantDates;
+  payment: Payment;
+  totalPay: TotalPay;
 };
 
 /**
@@ -1502,6 +1538,13 @@ export type ClientCredentialsParams = {
   grant_type: 'client_credentials';
 };
 
+export type Stage = {
+  completionDate?: _Date;
+  dueDate?: _Date;
+  label: string;
+  state: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
+};
+
 /**
  * Offboarding response
  */
@@ -1560,6 +1603,26 @@ export type CompanyStructureNode = {
  *
  */
 export type NullableApproverId = string | null;
+
+export type CustomFieldLinkable =
+  | {
+      dataType?: 'String' | 'Date' | 'DateTime';
+      label: string;
+      link?: string;
+      value: string;
+    }
+  | {
+      dataType?: 'Number';
+      label: string;
+      link?: string;
+      value: number;
+    }
+  | {
+      amount: Amount;
+      dataType?: 'Currency';
+      label: string;
+      link?: string;
+    };
 
 /**
  * Description of the basic required and onboarding tasks params to create an employment.
@@ -1988,6 +2051,12 @@ export type Currency = {
   symbol: string;
 };
 
+export type Payment = {
+  bankValueNumber: Amount;
+  fields?: Array<CustomField>;
+  payrollFundedDate: _Date;
+};
+
 export type BenefitRenewalRequestsMinimalBenefitGroup = {
   country_code: string;
   id: string;
@@ -2209,6 +2278,12 @@ export type WebhookTriggerEmploymentParams = {
     | 'work_authorization.declined_by_manager'
     | 'work_authorization.declined_by_remote'
     | 'work_authorization.requested';
+};
+
+export type ListCompanyLegalEntitiesResponse = {
+  data?: {
+    legal_entities: Array<CompanyLegalEntity>;
+  };
 };
 
 /**
@@ -2463,6 +2538,26 @@ export type ListTravelLettersResponse = {
 };
 
 /**
+ * Custom fields support multiple data types (String, Date, DateTime, Number, Currency)
+ */
+export type CustomField =
+  | {
+      dataType?: 'String' | 'Date' | 'DateTime';
+      label: string;
+      value: string;
+    }
+  | {
+      dataType?: 'Number';
+      label: string;
+      value: number;
+    }
+  | {
+      amount: Amount;
+      dataType?: 'Currency';
+      label: string;
+    };
+
+/**
  * Shows a company with its refresh and access tokens. Please contact Remote if you need the tokens when creating a company.
  */
 export type CompanyWithTokensResponse = {
@@ -2610,6 +2705,11 @@ export type PayrollRun = {
 
 export type TimeoffBalanceNotSupportedResponse = ResourceErrorResponse;
 
+export type ReferencedItem = {
+  id: string;
+  label?: string;
+};
+
 /**
  * Information about a list of billing documents
  */
@@ -2719,6 +2819,10 @@ export type ContractorInvoiceScheduleStatus =
   | 'pending_company_action'
   | 'pending_contractor_action'
   | 'generation_failed_unrelated_to_withdrawal_method';
+
+export type PayProgressResponse = {
+  stages?: Array<Stage>;
+};
 
 /**
  * Required params to update an employment in the Sandbox environment.
@@ -3466,6 +3570,32 @@ export type NullableCountry = {
   supported_json_schemas?: Array<string>;
 } | null;
 
+export type PayGroup = {
+  actions?: Actions;
+  /**
+   * Country codes (ISO 3166 alpha-2)
+   */
+  country?: string;
+  /**
+   * Count of off-cycle runs
+   */
+  offCycleCount?: number;
+  /**
+   * The external id for the pay group
+   */
+  payGroupExternalId: string;
+  /**
+   * The pay group name in the vendor system
+   */
+  payGroupName: string;
+  payGroupReferences?: Array<string>;
+  paymentDate: _Date;
+  periodEndDate: _Date;
+  periodStartDate: _Date;
+  runType?: ReferencedItem;
+  status?: Status;
+};
+
 /**
  * Object with required and optional fields, its descriptions and suggested presentation
  */
@@ -3884,6 +4014,12 @@ export type Job = {
   label: string;
 };
 
+export type CustomNumberLinkable = {
+  label: string;
+  link?: string;
+  value: number;
+};
+
 /**
  * Timesheet
  */
@@ -3962,6 +4098,11 @@ export type ListExpenseResponse = {
      */
     total_pages?: number;
   };
+};
+
+export type Amount = {
+  currency: string;
+  value: string;
 };
 
 /**
@@ -4251,9 +4392,23 @@ export type CreateEmploymentCustomFieldResponse = {
   };
 };
 
+export type Status = {
+  label: string;
+  state?: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
+};
+
 export type LeavePolicy = {
   leave_policy_variant_slug: string;
   leave_type: TimeoffType;
+  name: string;
+};
+
+export type CompanyLegalEntity = {
+  global_payroll_enabled: boolean;
+  /**
+   * Company slug
+   */
+  id: string;
   name: string;
 };
 
@@ -4360,6 +4515,12 @@ export type CreateSingleSelectCustomFieldDefinitionParams = {
   required: boolean;
   type: 'single_select';
   visibility_scope: CustomFieldVisibilityScope;
+};
+
+export type EmployeesProcessed = {
+  employeesCalculated: CustomNumberLinkable;
+  employeesInPayGroup: CustomNumberLinkable;
+  fields?: Array<CustomFieldLinkable>;
 };
 
 export type IdentityCompanyAccessTokenResponse = {
@@ -4759,11 +4920,39 @@ export type SendBackTimesheetParams = {
 export type NullableDate = string | null;
 
 /**
+ * Referenced Items will be listed in the same order they are provided
+ */
+export type ReferencedItems = Array<ReferencedItem>;
+
+/**
  * Company currency
  */
 export type CompanyCurrency = {
   code: string;
   slug: string;
+};
+
+export type PayProcessingFeature = {
+  /**
+   * API for details additional data sections
+   */
+  detailsDataPath?: string;
+  /**
+   * API for the main details page
+   */
+  detailsPath?: string;
+  /**
+   * API for the progress section
+   */
+  progressPath?: string;
+  /**
+   * API for the summary section
+   */
+  summaryPath: string;
+  /**
+   * API for variance analysis section
+   */
+  varianceAnalysisPath?: string;
 };
 
 export type UnauthorizedResponse = {
@@ -4948,6 +5137,11 @@ export type IdentityIntegration = {
   name: string;
 };
 
+export type ImportantDates = {
+  fields?: Array<CustomField>;
+  primaryDate?: CustomDate;
+};
+
 /**
  * Time Off Balance response
  */
@@ -5010,6 +5204,40 @@ export type IdsRequiredParams = {
   ids: Array<string>;
 };
 
+export type SdkErrorPayload = {
+  context?: {
+    [key: string]: unknown;
+  } | null;
+  error: {
+    category:
+      | 'RENDER_ERROR'
+      | 'NETWORK_ERROR'
+      | 'VALIDATION_ERROR'
+      | 'STATE_ERROR'
+      | 'HOOK_ERROR'
+      | 'RUNTIME_ERROR'
+      | 'UNKNOWN_ERROR';
+    componentStack?: Array<string> | null;
+    /**
+     * Error message
+     */
+    message: string;
+    /**
+     * Error name
+     */
+    name: string;
+    severity: 'critical' | 'error' | 'warning' | 'info';
+    stack?: string | null;
+  };
+  metadata: {
+    environment: string;
+    sdkVersion: string;
+    timestamp: string;
+    url: string;
+    userAgent: string;
+  };
+};
+
 export type CompanyStructureNodesResponse = {
   data: {
     company_structure_nodes: Array<CompanyStructureNode>;
@@ -5054,6 +5282,11 @@ export type ContractorInvoiceSchedulePeriodicity =
   | 'monthly'
   | 'semi_monthly'
   | 'weekly';
+
+export type ErrorResponse = {
+  details?: string;
+  error?: string;
+};
 
 /**
  * ListEmploymentCustomFieldValueResponse
@@ -5251,6 +5484,10 @@ export type ListWebhookEventsResponse = {
   };
 };
 
+export type PaySummaryResponse = {
+  payGroups?: Array<PayGroup>;
+};
+
 export type ResignationFile = {
   /**
    * The content in base64 encoding
@@ -5402,6 +5639,10 @@ export type TerminationDetailsParams = {
   will_challenge_termination_description?: string;
 };
 
+export type RateLimitResponse = {
+  error?: string;
+};
+
 export type ProbationExtensionFile = {
   /**
    * The content of the file encoded in base64.
@@ -5447,6 +5688,8 @@ export type ParameterError = {
    */
   param: string;
 };
+
+export type Actions = Array<Action>;
 
 export type CreateSsoConfigurationResult = {
   audience_uri: string;
@@ -5996,6 +6239,11 @@ export type TimeTracking = {
   weekend_hours: HoursAndMinutes;
 };
 
+export type CustomDate = {
+  label: string;
+  value: _Date;
+};
+
 export type TimeoffStatus =
   | 'approved'
   | 'cancelled'
@@ -6184,11 +6432,26 @@ export type Expense = {
   title: string;
 };
 
+export type PayDifference = {
+  amountDifference: Amount;
+  percentDifference: number;
+  workerDifference: {
+    label: string;
+    link?: string;
+  };
+};
+
 /**
  * ContractDocument schema
  */
 export type ContractDocument = {
   id: string;
+};
+
+export type PayDetailResponse = {
+  actions?: Actions;
+  periodProperties?: PeriodProperties;
+  runCycles?: ReferencedItems;
 };
 
 /**
@@ -7882,6 +8145,37 @@ export type GetIndexPricingPlanPartnerTemplateResponses = {
 
 export type GetIndexPricingPlanPartnerTemplateResponse =
   GetIndexPricingPlanPartnerTemplateResponses[keyof GetIndexPricingPlanPartnerTemplateResponses];
+
+export type PostReportErrorsTelemetryData = {
+  /**
+   * SDK Error Report
+   */
+  body: SdkErrorPayload;
+  path?: never;
+  query?: never;
+  url: '/v1/telemetry/errors';
+};
+
+export type PostReportErrorsTelemetryErrors = {
+  /**
+   * Bad Request
+   */
+  400: ErrorResponse;
+  /**
+   * Too Many Requests
+   */
+  429: RateLimitResponse;
+};
+
+export type PostReportErrorsTelemetryError =
+  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
+
+export type PostReportErrorsTelemetryResponses = {
+  /**
+   * No Content
+   */
+  204: unknown;
+};
 
 export type GetIndexEorPayrollCalendarData = {
   body?: never;
@@ -11790,6 +12084,42 @@ export type PostCreateTokenCompanyTokenResponses = {
 
 export type PostCreateTokenCompanyTokenResponse =
   PostCreateTokenCompanyTokenResponses[keyof PostCreateTokenCompanyTokenResponses];
+
+export type GetIndexCompanyLegalEntitiesData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/legal-entities';
+};
+
+export type GetIndexCompanyLegalEntitiesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetIndexCompanyLegalEntitiesError =
+  GetIndexCompanyLegalEntitiesErrors[keyof GetIndexCompanyLegalEntitiesErrors];
+
+export type GetIndexCompanyLegalEntitiesResponses = {
+  /**
+   * Success
+   */
+  200: ListCompanyLegalEntitiesResponse;
+};
+
+export type GetIndexCompanyLegalEntitiesResponse =
+  GetIndexCompanyLegalEntitiesResponses[keyof GetIndexCompanyLegalEntitiesResponses];
 
 export type PostCompleteOnboardingEmploymentData = {
   /**
