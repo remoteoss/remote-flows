@@ -1,16 +1,25 @@
 import { createClient } from '@/src/auth/createClient';
-import { client as mockGeneratedClient } from '@/src/client/client.gen';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-vi.mock('@/src/client/client.gen');
+vi.mock('@hey-api/client-fetch', () => ({
+  createClient: vi.fn((config) => ({ ...config })),
+  createConfig: vi.fn((config) => config),
+}));
+
+vi.mock('@/src/client/client.gen', () => ({
+  client: {
+    getConfig: vi.fn(() => ({
+      headers: {},
+    })),
+  },
+}));
+
 vi.mock('@/src/lib/version', () => ({
   npmPackageVersion: '1.0.0',
 }));
+
 vi.mock('@/src/lib/utils', () => ({
   debug: vi.fn(),
-}));
-vi.mock('@hey-api/client-fetch', () => ({
-  createClient: vi.fn((config) => ({ ...config })),
 }));
 
 describe('createClient', () => {
@@ -27,10 +36,6 @@ describe('createClient', () => {
     const mockAuth = vi.fn().mockResolvedValue({
       accessToken: 'token-123',
       expiresIn: 3600,
-    });
-
-    (mockGeneratedClient.getConfig as $TSFixMe).mockReturnValue({
-      headers: {},
     });
 
     const heyApiClient = createClient(mockAuth);
@@ -50,10 +55,6 @@ describe('createClient', () => {
       .mockResolvedValueOnce({ accessToken: 'token-1', expiresIn: 3600 })
       .mockResolvedValueOnce({ accessToken: 'token-2', expiresIn: 3600 });
 
-    (mockGeneratedClient.getConfig as $TSFixMe).mockReturnValue({
-      headers: {},
-    });
-
     const heyApiClient = createClient(mockAuth);
     const authCallback = (heyApiClient as $TSFixMe).auth;
 
@@ -68,10 +69,6 @@ describe('createClient', () => {
   it('should return undefined if auth callback fails', async () => {
     const mockAuth = vi.fn().mockRejectedValue(new Error('Auth failed'));
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    (mockGeneratedClient.getConfig as $TSFixMe).mockReturnValue({
-      headers: {},
-    });
 
     const heyApiClient = createClient(mockAuth);
     const authCallback = (heyApiClient as $TSFixMe).auth;
