@@ -2,16 +2,30 @@ import { reportTelemetryError } from '@/src/components/error-handling/telemetryL
 import { npmPackageVersion } from '@/src/lib/version';
 import { useEffect } from 'react';
 import { ErrorContextData } from '@/src/components/error-handling/types';
+import { Environment } from '@/src/environments';
 
+/**
+ * Reports unhandled errors to the telemetry API.
+ * @param errorContext - The error context.
+ * @param environment - The environment to use for the API call.
+ * @param debug - Whether to enable debug mode.
+ */
 export function useErrorReportingForUnhandledErrors(
   errorContext: ErrorContextData,
+  environment: Environment,
   debug: boolean,
 ) {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
-      reportTelemetryError(event.error, npmPackageVersion, errorContext, {
-        debugMode: debug,
-      });
+      reportTelemetryError(
+        event.error,
+        npmPackageVersion,
+        environment,
+        errorContext,
+        {
+          debugMode: debug,
+        },
+      );
     };
 
     const handleRejection = (event: PromiseRejectionEvent) => {
@@ -20,9 +34,15 @@ export function useErrorReportingForUnhandledErrors(
           ? event.reason
           : new Error(String(event.reason));
 
-      reportTelemetryError(error, npmPackageVersion, errorContext, {
-        debugMode: debug,
-      });
+      reportTelemetryError(
+        error,
+        npmPackageVersion,
+        environment,
+        errorContext,
+        {
+          debugMode: debug,
+        },
+      );
     };
 
     window.addEventListener('error', handleError);
@@ -32,5 +52,5 @@ export function useErrorReportingForUnhandledErrors(
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleRejection);
     };
-  }, [errorContext, debug]);
+  }, [errorContext, environment, debug]);
 }

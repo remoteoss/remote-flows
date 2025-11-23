@@ -13,7 +13,9 @@ describe('useErrorReportingForUnhandledErrors', () => {
 
   it('should report uncaught errors', async () => {
     const errorContext = { flow: 'onboarding', step: 'basic_info' };
-    renderHook(() => useErrorReportingForUnhandledErrors(errorContext, false));
+    renderHook(() =>
+      useErrorReportingForUnhandledErrors(errorContext, 'production', false),
+    );
 
     const error = new Error('Test error');
     window.dispatchEvent(new ErrorEvent('error', { error }));
@@ -22,6 +24,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         error,
         '1.0.0',
+        'production',
         errorContext,
         { debugMode: false },
       );
@@ -30,7 +33,9 @@ describe('useErrorReportingForUnhandledErrors', () => {
 
   it('should report unhandled promise rejections', async () => {
     const errorContext = { flow: 'termination' };
-    renderHook(() => useErrorReportingForUnhandledErrors(errorContext, false));
+    renderHook(() =>
+      useErrorReportingForUnhandledErrors(errorContext, 'production', false),
+    );
 
     const error = new Error('Rejection');
     const event = new Event('unhandledrejection') as $TSFixMe;
@@ -43,6 +48,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         error,
         '1.0.0',
+        'production',
         errorContext,
         { debugMode: false },
       );
@@ -52,7 +58,7 @@ describe('useErrorReportingForUnhandledErrors', () => {
   it('should cleanup listeners on unmount', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() =>
-      useErrorReportingForUnhandledErrors({}, false),
+      useErrorReportingForUnhandledErrors({}, 'production', false),
     );
 
     unmount();

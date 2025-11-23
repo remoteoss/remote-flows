@@ -32,7 +32,11 @@ function RemoteFlowContextWrapper({
   debug,
 }: RemoteFlowContextWrapperProps) {
   const { errorContext } = useErrorContext();
-  useErrorReportingForUnhandledErrors(errorContext, Boolean(debug));
+  useErrorReportingForUnhandledErrors(
+    errorContext,
+    environment ?? 'production',
+    Boolean(debug),
+  );
   const remoteApiClient = useAuth({
     auth,
     authId,
