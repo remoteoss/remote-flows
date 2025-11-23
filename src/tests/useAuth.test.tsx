@@ -26,6 +26,10 @@ vi.mock('../client/client.gen', () => ({
   },
 }));
 
+vi.mock('@/src/lib/version', () => ({
+  npmPackageVersion: '1.0.0',
+}));
+
 // Mock environment variables
 vi.mock('../environments', () => ({
   ENVIRONMENTS: {
@@ -232,7 +236,6 @@ describe('useAuth', () => {
   });
 
   it('should merge proxy headers with existing headers', () => {
-    process.env.VERSION = '1.0.0';
     const mockAuth = vi.fn().mockResolvedValue(mockAuthResponse);
     const proxyUrl = 'https://proxy.example.com';
     const proxyHeaders = {
