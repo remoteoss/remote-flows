@@ -7,6 +7,7 @@ import {
   determineErrorSeverity,
   parseComponentStack,
 } from '@/src/components/error-handling/utils';
+import { Environment } from '@/src/environments';
 
 /**
  * Logs error payload to console in debug mode
@@ -72,6 +73,7 @@ export const logDebugPayload = (
 export function buildErrorPayload(
   error: Error,
   sdkVersion: string,
+  environment: Environment,
   context?: ErrorContextData,
 ): ErrorPayload {
   const category = categorizeError(error);
@@ -94,6 +96,7 @@ export function buildErrorPayload(
       url: typeof window !== 'undefined' ? window.location.href : 'unknown',
       userAgent:
         typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      environment: environment,
     },
   };
 
@@ -140,6 +143,7 @@ export function shouldReportError(
 export function reportTelemetryError(
   error: Error,
   sdkVersion: string,
+  environment?: Environment,
   context?: ErrorContextData,
   options: {
     debugMode?: boolean;
@@ -147,7 +151,12 @@ export function reportTelemetryError(
     debugMode: false,
   },
 ): void {
-  const payload: ErrorPayload = buildErrorPayload(error, sdkVersion, context);
+  const payload: ErrorPayload = buildErrorPayload(
+    error,
+    sdkVersion,
+    environment ?? 'production',
+    context,
+  );
 
   // Check if this error should be reported to telemetry
   if (shouldReportError(error, payload)) {

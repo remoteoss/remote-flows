@@ -28,7 +28,7 @@ describe('telemetryLogger', () => {
       'Component2',
     ]);
 
-    const payload = buildErrorPayload(error, sdkVersion, context);
+    const payload = buildErrorPayload(error, sdkVersion, 'production', context);
 
     expect(payload.error.message).toBe('Test error');
     expect(payload.error.category).toBe('RENDER_ERROR');
@@ -37,6 +37,7 @@ describe('telemetryLogger', () => {
     expect(payload.metadata.sdkVersion).toBe('1.0.0');
     expect(payload.metadata.timestamp).toBeDefined();
     expect(payload.metadata.url).toBe(window.location.href);
+    expect(payload.metadata.environment).toBe('production');
   });
 
   it('should report non-network errors', () => {
@@ -46,7 +47,7 @@ describe('telemetryLogger', () => {
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
     vi.mocked(utils.parseComponentStack).mockReturnValue([]);
 
-    const payload = buildErrorPayload(error, '1.0.0');
+    const payload = buildErrorPayload(error, '1.0.0', 'production');
 
     expect(shouldReportError(error, payload)).toBe(true);
   });
@@ -58,7 +59,7 @@ describe('telemetryLogger', () => {
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
     vi.mocked(utils.parseComponentStack).mockReturnValue([]);
 
-    const payload = buildErrorPayload(error, '1.0.0');
+    const payload = buildErrorPayload(error, '1.0.0', 'production');
 
     expect(shouldReportError(error, payload)).toBe(false);
   });
@@ -70,7 +71,7 @@ describe('telemetryLogger', () => {
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
     vi.mocked(utils.parseComponentStack).mockReturnValue([]);
 
-    const payload = buildErrorPayload(error, '1.0.0');
+    const payload = buildErrorPayload(error, '1.0.0', 'production');
 
     expect(shouldReportError(error, payload)).toBe(true);
   });

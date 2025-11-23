@@ -2,6 +2,7 @@ import { reportTelemetryError } from '@/src/components/error-handling/telemetryL
 import { npmPackageVersion } from '@/src/lib/version';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import type { ErrorContextData } from '@/src/components/error-handling/types';
+import { Environment } from '@/src/environments';
 
 /**
  * Global ref to store the current error context
@@ -11,7 +12,7 @@ export const globalErrorContextRef: { current: ErrorContextData } = {
   current: {},
 };
 
-export const getQueryClient = (debug: boolean) =>
+export const getQueryClient = (debug: boolean, environment?: Environment) =>
   new QueryClient({
     queryCache: new QueryCache({
       onError: (error, query) => {
@@ -19,6 +20,7 @@ export const getQueryClient = (debug: boolean) =>
           reportTelemetryError(
             error,
             npmPackageVersion,
+            environment,
             {
               ...globalErrorContextRef.current,
               metadata: {
@@ -39,6 +41,7 @@ export const getQueryClient = (debug: boolean) =>
           reportTelemetryError(
             error,
             npmPackageVersion,
+            environment,
             {
               ...globalErrorContextRef.current,
               metadata: {

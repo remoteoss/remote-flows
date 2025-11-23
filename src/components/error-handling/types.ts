@@ -1,3 +1,5 @@
+import type { Environment } from '@/src/environments';
+
 /**
  * Error context - basic flow/step information
  */
@@ -46,5 +48,6 @@ export type ErrorPayload = {
     timestamp: string;
     url: string;
     userAgent: string;
+    environment: Environment;
   };
 };

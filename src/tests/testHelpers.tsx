@@ -4,10 +4,10 @@ import { PropsWithChildren } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
-import { Components } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { getQueryClient } from '@/src/queryConfig';
 
-export const queryClient = getQueryClient(false);
+export const queryClient = getQueryClient(false, 'testing' as $TSFixMe);
 
 /**
  * Wrapper component for tests that need ErrorContext, QueryClient, and FormFields providers

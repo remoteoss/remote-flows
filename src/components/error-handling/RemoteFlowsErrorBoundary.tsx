@@ -5,6 +5,7 @@ import {
   ErrorContext,
   ErrorContextValue,
 } from '@/src/components/error-handling/ErrorContext';
+import { Environment } from '@/src/environments';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -18,6 +19,11 @@ interface RemoteFlowsErrorBoundaryProps {
    * @default false
    */
   debug: boolean;
+  /**
+   * Environment to use for API calls.
+   * If not provided, the SDK will use production environment.
+   */
+  environment?: Environment;
   /**
    * Error boundary configuration.
    */
@@ -80,9 +86,15 @@ export class RemoteFlowsErrorBoundary extends Component<
 
     const errorContext = this.context?.errorContext;
 
-    reportTelemetryError(error, npmPackageVersion, errorContext, {
-      debugMode: this.props.debug,
-    });
+    reportTelemetryError(
+      error,
+      npmPackageVersion,
+      this.props.environment,
+      errorContext,
+      {
+        debugMode: this.props.debug,
+      },
+    );
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {
       throw error;

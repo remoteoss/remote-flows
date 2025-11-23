@@ -58,6 +58,7 @@ describe('queryConfig error handling', () => {
       expect(reportTelemetryError).toHaveBeenCalledWith(
         new Error('HTTP 500: Internal Server Error'),
         '1.0.0',
+        'testing',
         {
           flow: 'onboarding',
           step: 'basic_info',

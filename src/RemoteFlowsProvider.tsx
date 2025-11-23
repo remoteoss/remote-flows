@@ -74,10 +74,14 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
-  const queryClient = getQueryClient(debug);
+  const queryClient = getQueryClient(debug, environment);
   return (
     <ErrorContextProvider>
-      <RemoteFlowsErrorBoundary errorBoundary={errorBoundary} debug={debug}>
+      <RemoteFlowsErrorBoundary
+        errorBoundary={errorBoundary}
+        debug={debug}
+        environment={environment}
+      >
         <QueryClientProvider client={queryClient}>
           <FormFieldsProvider components={components}>
             <RemoteFlowContextWrapper
