@@ -40,6 +40,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
+import { ValidationResult } from '@remoteoss/json-schema-form-next';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
@@ -785,7 +786,7 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
+    handleValidation: (values: FieldValues): ValidationResult | null => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }

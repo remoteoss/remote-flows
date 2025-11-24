@@ -1,5 +1,9 @@
+import { JSFFieldset } from '@/src/types/remoteFlows';
 import { modify } from '@remoteoss/json-schema-form';
-import { modify as modifyNext } from '@remoteoss/json-schema-form-next';
+import {
+  FormResult,
+  modify as modifyNext,
+} from '@remoteoss/json-schema-form-next';
 
 type Success<T> = {
   data: T;
@@ -83,5 +87,11 @@ export type FlowOptions = {
     };
     benefit_offers_form_schema?: number;
     contractor_contract_details_form_schema?: number;
+  };
+};
+
+export type JSONSchemaFormResultWithFieldsets = FormResult & {
+  meta: {
+    'x-jsf-fieldsets': JSFFieldset;
   };
 };

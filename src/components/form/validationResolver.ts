@@ -1,5 +1,6 @@
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
+import type { ValidationResult } from '@remoteoss/json-schema-form-next';
 
 // TODO: deprecated only used with old json-schema-form-version
 export function iterateErrors(error: ValidationError) {
@@ -63,20 +64,28 @@ function iterateFormErrors(formErrors: Record<string, string>) {
   );
 }
 
-export const useJsonSchemasValidationFormResolverNext = <
-  T extends AnyObjectSchema,
->(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-  },
-): Resolver<InferType<T>> => {
+export const useJsonSchemasValidationFormResolverNext = (
+  handleValidation: (data: FieldValues) => ValidationResult | null,
+) => {
   return async (data: FieldValues) => {
-    const { formErrors } = await handleValidation(data);
+    const result = await handleValidation(data);
+
+    console.log('result', result);
+
+    // Handle null case - return no errors
+    if (!result) {
+      return {
+        values: data,
+        errors: {},
+      };
+    }
+
+    const { formErrors } = result;
 
     if (Object.keys(formErrors || {}).length > 0) {
       return {
         values: {},
-        errors: iterateFormErrors(formErrors),
+        errors: iterateFormErrors(formErrors as Record<string, string>),
       };
     }
     return {
