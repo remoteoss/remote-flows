@@ -131,6 +131,7 @@ export function FileUploadField({
             />
           );
         }
+
         return (
           <FormItem
             data-field={name}
