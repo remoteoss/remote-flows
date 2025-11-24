@@ -1,6 +1,9 @@
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
-import type { ValidationResult } from '@remoteoss/json-schema-form-next';
+import type {
+  FormErrors,
+  ValidationResult,
+} from '@remoteoss/json-schema-form-next';
 
 // TODO: deprecated only used with old json-schema-form-version
 export function iterateErrors(error: ValidationError) {
@@ -46,17 +49,37 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
   };
 };
 
-function iterateFormErrors(formErrors: Record<string, string>) {
+function iterateFormErrors(formErrors?: FormErrors) {
   return Object.entries(formErrors || {}).reduce(
     (
       allErrors: Record<string, { type: string; message: string }>,
       [fieldName, message],
     ) => {
+      // Extract the error message string from various payload formats
+      let messageString: string;
+
+      if (typeof message === 'string') {
+        // Case 1: Simple string error
+        messageString = message;
+      } else if (
+        typeof message === 'object' &&
+        message !== null &&
+        !Array.isArray(message)
+      ) {
+        // Case 2: Object with 'value' property (e.g., { value: "..." })
+        messageString =
+          ((message as Record<string, string>).value as string) ||
+          JSON.stringify(message);
+      } else {
+        // Case 3: Fallback for arrays or other structures
+        messageString = JSON.stringify(message);
+      }
+
       return {
         ...allErrors,
         [fieldName]: {
           type: 'validation',
-          message,
+          message: messageString,
         },
       };
     },
@@ -69,6 +92,7 @@ export const useJsonSchemasValidationFormResolverNext = (
 ) => {
   return async (data: FieldValues) => {
     const result = await handleValidation(data);
+    console.log('result', result);
 
     // Handle null case - return no errors
     if (!result) {
@@ -81,9 +105,11 @@ export const useJsonSchemasValidationFormResolverNext = (
     const { formErrors } = result;
 
     if (Object.keys(formErrors || {}).length > 0) {
+      const errors = iterateFormErrors(formErrors);
+      console.log('errors formatted', errors);
       return {
         values: {},
-        errors: iterateFormErrors(formErrors as Record<string, string>),
+        errors,
       };
     }
     return {
