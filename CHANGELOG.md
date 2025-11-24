@@ -8,6 +8,7 @@
 - consolidate validation resolvers and add form error iteration support (#585) [#585](https://github.com/remoteoss/remote-flows/pull/585)
 - add support for next version of json-schema-form (#586) [#586](https://github.com/remoteoss/remote-flows/pull/586)
 - add test to validate the select country step when it's empty (#597) [#597](https://github.com/remoteoss/remote-flows/pull/597)
+- migrate internally from field.type to field.inputType, FieldsetField if it doesn't found the component to render we show a fallback (#595) [#595](https://github.com/remoteoss/remote-flows/pull/595)
 
 ## 0.31.0
 
