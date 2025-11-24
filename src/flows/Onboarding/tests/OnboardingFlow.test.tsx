@@ -909,7 +909,7 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(screen.getByText(/Required field/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(1);
     });
 
     await waitFor(() => {
