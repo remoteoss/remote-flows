@@ -70,8 +70,6 @@ export const useJsonSchemasValidationFormResolverNext = (
   return async (data: FieldValues) => {
     const result = await handleValidation(data);
 
-    console.log('result', result);
-
     // Handle null case - return no errors
     if (!result) {
       return {
