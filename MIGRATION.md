@@ -1,14 +1,3 @@
----
-
-## Version History
-
-- **v1.0.0** (2025-11-30) - First major release
-- **v0.32.0** (2025-11-21) - before 1.00
-
----
-
-_Last updated: [2025-11-30]_
-
 # Migration Guide
 
 This guide helps you upgrade between major versions of `@remoteoss/remote-flows`.
@@ -122,3 +111,14 @@ The key change: pass a reference to the component, never invoke it. JSON Schema 
 - Move custom components inside a `presentation` object
 - Pass the component reference (not JSX): `TerminationReasonDetailsDescription` instead of `<TerminationReasonDetailsDescription />`
 - Wrap in the `presentation` object to work with json-schema-form v1
+
+---
+
+## Version History
+
+- **v1.0.0** (2025-11-30) - First major release
+- **v0.32.0** (2025-11-21) - before 1.00
+
+---
+
+_Last updated: [2025-11-30]_
