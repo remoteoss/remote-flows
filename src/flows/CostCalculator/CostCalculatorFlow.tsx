@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
   CostCalculatorVersion,

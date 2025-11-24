@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
 import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/yupValidationResolver';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 
 type TerminationFormProps = {
