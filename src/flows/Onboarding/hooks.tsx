@@ -168,6 +168,7 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
+
   const {
     data: company,
     isLoading: isLoadingCompany,
