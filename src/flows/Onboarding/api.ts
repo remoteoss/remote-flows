@@ -293,11 +293,11 @@ export const useBenefitOffersSchema = (
       let jsfSchema = data?.data?.schema || {};
 
       if (options && options.jsfModify?.benefits) {
-        const { schema } = modifyOld(jsfSchema, options.jsfModify.benefits);
+        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
         jsfSchema = schema;
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessFormOld(jsfSchema, {
+      const result = createHeadlessForm(jsfSchema, {
         // we need to clone the fieldValues to prevent side effects
         // if we don't do this, the benefits get included in the other steps
         initialValues: hasFieldValues ? { ...fieldValues } : {},
