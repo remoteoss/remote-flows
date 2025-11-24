@@ -10,7 +10,7 @@ This guide helps you upgrade between major versions of `@remoteoss/remote-flows`
     - [1. CostCalculatorFlow](#1-costcalculatorflow)
     - [2. RemoteFlows](#2-remoteflows)
     - [3. Internal imports](#3-internal-imports)
-    - [4. TerminationFlow and OnboardingFlow](#4-terminationflow-and-onboardingflow)
+    - [4. TerminationFlow, OnboardingFlow and ContractorOnboardingFlow](#4-terminationflow-onboardingflow-and-contractoronboardingflow)
 
 ## Version 1.0.0
 
@@ -66,7 +66,7 @@ import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows'#### 4. TerminationFlow and OnboardingFlow
 ```
 
-#### 4. TerminationFlow and OnboardingFlow
+#### 4. TerminationFlow, OnboardingFlow and ContractorOnboardingFlow
 
 The `options.jsfModify` syntax has changed for component customization in the json-schema-form v1 upgrade. If you're overriding field descriptions or presentations with components, update the syntax.
 
