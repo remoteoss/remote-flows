@@ -16,7 +16,6 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
   const { formId, terminationBag } = useTerminationContext();
 
   const resolver = useJsonSchemasValidationFormResolverNext(
-    // @ts-expect-error no matching type
     terminationBag.handleValidation,
   );
 
@@ -31,11 +30,11 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
     const subscription = form?.watch((values) => {
       const isAnyFieldDirty = Object.keys(values).some(
         (key) =>
-          values[key as keyof TerminationFormValues] !==
+          values[key as keyof unknown] !==
           terminationBag?.initialValues?.[key as keyof TerminationFormValues],
       );
       if (isAnyFieldDirty) {
-        terminationBag?.checkFieldUpdates(values);
+        terminationBag?.checkFieldUpdates(values as TerminationFormValues);
       }
     });
     return () => subscription?.unsubscribe();
@@ -48,7 +47,9 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
     <Form {...form}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((values) =>
+          onSubmit(values as TerminationFormValues),
+        )}
         className='space-y-4 RemoteFlows__TerminationForm'
       >
         <JSONSchemaFormFields fields={jsonSchemaFields} />

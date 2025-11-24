@@ -1,4 +1,5 @@
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { ValidationResult } from '@remoteoss/json-schema-form-next';
+import { createHeadlessForm } from '@remoteoss/json-schema-form-next';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';
@@ -42,6 +43,7 @@ import {
   useCreateTermination,
   useTerminationSchema,
 } from '@/src/flows/Termination/api';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
@@ -435,7 +437,9 @@ export const useTermination = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: TerminationFormValues) => {
+    handleValidation: (
+      values: TerminationFormValues,
+    ): ValidationResult | null => {
       if (terminationHeadlessForm) {
         const parsedValues = parseJSFToValidate(
           values,
