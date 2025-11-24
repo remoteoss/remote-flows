@@ -309,7 +309,7 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
-  const customFields = useMemo(
+  const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -380,7 +380,7 @@ export const useOnboarding = ({
           ...options?.jsfModify?.contract_details,
           fields: {
             ...options?.jsfModify?.contract_details?.fields,
-            ...customFields.fields,
+            ...contractDetailsCustomFields.fields,
           },
         },
         queryOptions: {

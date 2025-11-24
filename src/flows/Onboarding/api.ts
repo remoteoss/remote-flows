@@ -1,3 +1,4 @@
+// TODO: using json-schema-form-next for the onboarding flow instead of json-schema-form-kit, we'll move to that once I make sure everything works
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
@@ -292,11 +293,11 @@ export const useBenefitOffersSchema = (
       let jsfSchema = data?.data?.schema || {};
 
       if (options && options.jsfModify?.benefits) {
-        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
+        const { schema } = modifyNext(jsfSchema, options.jsfModify.benefits);
         jsfSchema = schema;
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(jsfSchema, {
+      const result = createHeadlessFormNext(jsfSchema, {
         // we need to clone the fieldValues to prevent side effects
         // if we don't do this, the benefits get included in the other steps
         initialValues: hasFieldValues ? { ...fieldValues } : {},
