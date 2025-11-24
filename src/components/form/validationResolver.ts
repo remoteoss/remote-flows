@@ -1,5 +1,9 @@
 import { FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
+import type {
+  FormErrors,
+  ValidationResult,
+} from '@remoteoss/json-schema-form-next';
 
 // TODO: deprecated only used with old json-schema-form-version
 export function iterateErrors(error: ValidationError) {
@@ -45,38 +49,70 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
   };
 };
 
-function iterateFormErrors(formErrors: Record<string, string>) {
+function iterateFormErrors(formErrors?: FormErrors) {
   return Object.entries(formErrors || {}).reduce(
     (
       allErrors: Record<string, { type: string; message: string }>,
       [fieldName, message],
     ) => {
-      return {
-        ...allErrors,
-        [fieldName]: {
-          type: 'validation',
-          message,
-        },
+      // Extract the error message string from various payload formats
+      let messageString: string;
+
+      if (typeof message === 'string') {
+        // Case 1: Simple string error
+        messageString = message;
+      } else if (
+        typeof message === 'object' &&
+        message !== null &&
+        !Array.isArray(message)
+      ) {
+        // Case 2: Object with 'value' property (e.g., { value: "..." })
+        messageString =
+          ((message as Record<string, string>).value as string) ||
+          JSON.stringify(message);
+      } else {
+        // Case 3: Fallback for arrays or other structures
+        messageString = JSON.stringify(message);
+      }
+
+      allErrors[fieldName] = {
+        type: 'validation',
+        message: messageString,
       };
+
+      // Also add errors for nested variants (.value and .filter) in case the field is nested
+      allErrors[`${fieldName}.value`] = {
+        type: 'validation',
+        message: messageString,
+      };
+
+      return allErrors;
     },
     {} as Record<string, { type: string; message: string }>,
   );
 }
 
-export const useJsonSchemasValidationFormResolverNext = <
-  T extends AnyObjectSchema,
->(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-  },
-): Resolver<InferType<T>> => {
+export const useJsonSchemasValidationFormResolverNext = (
+  handleValidation: (data: FieldValues) => ValidationResult | null,
+) => {
   return async (data: FieldValues) => {
-    const { formErrors } = await handleValidation(data);
+    const result = await handleValidation(data);
+
+    // Handle null case - return no errors
+    if (!result) {
+      return {
+        values: data,
+        errors: {},
+      };
+    }
+
+    const { formErrors } = result;
 
     if (Object.keys(formErrors || {}).length > 0) {
+      const errors = iterateFormErrors(formErrors);
       return {
         values: {},
-        errors: iterateFormErrors(formErrors),
+        errors,
       };
     }
     return {
