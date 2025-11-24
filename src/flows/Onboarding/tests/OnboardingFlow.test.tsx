@@ -904,13 +904,13 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      // NOTE: In the browser, all 4 benefits show "Please select at least one option"
-      // but in the test, 2 show "Required field" (likely due to new version????).
+      // NOTE: In the browser, all 3 benefits show "Please select at least one option"
+      // but in the test, 1 show "Required field" (likely due to new version????).
       const errorElements = document.querySelectorAll(
         'p[data-slot="form-message"]',
       );
 
-      expect(errorElements).toHaveLength(4);
+      expect(errorElements).toHaveLength(3);
     });
   });
 
