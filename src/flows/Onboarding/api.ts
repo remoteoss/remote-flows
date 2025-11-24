@@ -1,4 +1,11 @@
 // TODO: using json-schema-form-next for the onboarding flow instead of json-schema-form-kit, we'll move to that once I make sure everything works
+import { Client } from '@hey-api/client-fetch';
+import {
+  modify as modifyOld,
+  createHeadlessForm as createHeadlessFormOld,
+} from '@remoteoss/json-schema-form';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { FieldValues } from 'react-hook-form';
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
@@ -26,17 +33,9 @@ import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
-import {
-  FlowOptions,
-  JSONSchemaFormResultWithFieldsets,
-  JSONSchemaFormType,
-} from '@/src/flows/types';
+import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { Client } from '@hey-api/client-fetch';
-import { modify, createHeadlessForm } from '@remoteoss/json-schema-form-next';
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { FieldValues } from 'react-hook-form';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -185,7 +184,7 @@ export const useJSONSchemaForm = ({
   fieldValues: FieldValues;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
-}): UseQueryResult<JSONSchemaFormResultWithFieldsets, Error> => {
+}) => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
     ? {
@@ -223,7 +222,7 @@ export const useJSONSchemaForm = ({
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
+        const { schema } = modifyOld(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
 
@@ -248,7 +247,7 @@ export const useJSONSchemaForm = ({
         meta: {
           'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
         },
-        ...createHeadlessForm(jsfSchema, {
+        ...createHeadlessFormOld(jsfSchema, {
           initialValues,
         }),
       };
@@ -293,11 +292,11 @@ export const useBenefitOffersSchema = (
       let jsfSchema = data?.data?.schema || {};
 
       if (options && options.jsfModify?.benefits) {
-        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
+        const { schema } = modifyOld(jsfSchema, options.jsfModify.benefits);
         jsfSchema = schema;
       }
       const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(jsfSchema, {
+      const result = createHeadlessFormOld(jsfSchema, {
         // we need to clone the fieldValues to prevent side effects
         // if we don't do this, the benefits get included in the other steps
         initialValues: hasFieldValues ? { ...fieldValues } : {},
@@ -453,12 +452,12 @@ export const useCountriesSchemaField = (
 ) => {
   const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
-  const { schema: selectCountrySchema } = modify(
+  const { schema: selectCountrySchema } = modifyOld(
     selectCountryStepSchema.data.schema,
     options?.jsfModify || {},
   );
 
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+  const selectCountryForm = createHeadlessFormOld(selectCountrySchema);
 
   if (countries) {
     const countryField = selectCountryForm.fields.find(
