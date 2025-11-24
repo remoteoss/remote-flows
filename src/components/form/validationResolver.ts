@@ -75,13 +75,22 @@ function iterateFormErrors(formErrors?: FormErrors) {
         messageString = JSON.stringify(message);
       }
 
-      return {
-        ...allErrors,
-        [fieldName]: {
-          type: 'validation',
-          message: messageString,
-        },
+      allErrors[fieldName] = {
+        type: 'validation',
+        message: messageString,
       };
+
+      // Also add errors for nested variants (.value and .filter) in case the field is nested
+      allErrors[`${fieldName}.value`] = {
+        type: 'validation',
+        message: messageString,
+      };
+      allErrors[`${fieldName}.filter`] = {
+        type: 'validation',
+        message: messageString,
+      };
+
+      return allErrors;
     },
     {} as Record<string, { type: string; message: string }>,
   );

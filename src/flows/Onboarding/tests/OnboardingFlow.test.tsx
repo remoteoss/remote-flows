@@ -905,7 +905,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       const errors = screen.getAllByText(/Please select at least one option/i);
-      expect(errors).toHaveLength(3);
+      expect(errors).toHaveLength(4);
     });
   });
 
