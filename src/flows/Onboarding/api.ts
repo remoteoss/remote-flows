@@ -4,6 +4,7 @@ import {
   modify as modifyOld,
   createHeadlessForm as createHeadlessFormOld,
 } from '@remoteoss/json-schema-form';
+import { modify, createHeadlessForm } from '@remoteoss/json-schema-form-next';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -452,12 +453,12 @@ export const useCountriesSchemaField = (
 ) => {
   const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
-  const { schema: selectCountrySchema } = modifyOld(
+  const { schema: selectCountrySchema } = modify(
     selectCountryStepSchema.data.schema,
     options?.jsfModify || {},
   );
 
-  const selectCountryForm = createHeadlessFormOld(selectCountrySchema);
+  const selectCountryForm = createHeadlessForm(selectCountrySchema);
 
   if (countries) {
     const countryField = selectCountryForm.fields.find(
