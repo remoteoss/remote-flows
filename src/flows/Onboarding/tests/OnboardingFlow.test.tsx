@@ -315,6 +315,8 @@ describe('OnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/companies/:companyId', () => {
@@ -386,11 +388,6 @@ describe('OnboardingFlow', () => {
         return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
   });
 
   async function fillCountry(country: string) {
