@@ -315,6 +315,8 @@ describe('OnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/companies/:companyId', () => {
@@ -388,11 +390,6 @@ describe('OnboardingFlow', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
-  });
-
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 
@@ -462,6 +459,26 @@ describe('OnboardingFlow', () => {
         employmentResponse.data.employment.personal_email,
       );
     });
+  });
+
+  it('should show required field error when submitting select country step without selecting a country', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/i);
+
+    // Try to submit without selecting a country
+    const nextButton = screen.getByText(/Continue/i);
+    nextButton.click();
+
+    // Wait for the validation error to appear
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+
+    // Verify we're still on the select country step
+    expect(screen.getByText(/Step: Select Country/i)).toBeInTheDocument();
   });
 
   it('should select a country and advance to the next step', async () => {
