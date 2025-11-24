@@ -899,18 +899,25 @@ describe('OnboardingFlow', () => {
     // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
 
+    await waitFor(() => {
+      // Wait for at least one benefit field to be rendered
+      expect(screen.getByText(/Meal Benefit/i)).toBeInTheDocument();
+    });
+
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
 
     await waitFor(() => {
-      // NOTE: In the browser, all 3 benefits show "Please select at least one option"
-      // but in the test, 1 show "Required field" (likely due to new version????).
-      const errorElements = document.querySelectorAll(
-        'p[data-slot="form-message"]',
+      expect(screen.getByText(/Required field/i)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      const errorElements = screen.getAllByText(
+        /Please select at least one option./i,
       );
 
-      expect(errorElements).toHaveLength(3);
+      expect(errorElements).toHaveLength(2);
     });
   });
 
