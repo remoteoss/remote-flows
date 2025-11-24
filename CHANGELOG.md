@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 0.32.0
+
+### Minor Changes
+
+- export FileUploader component and add file field support (#584) [#584](https://github.com/remoteoss/remote-flows/pull/584)
+- consolidate validation resolvers and add form error iteration support (#585) [#585](https://github.com/remoteoss/remote-flows/pull/585)
+- add support for next version of json-schema-form (#586) [#586](https://github.com/remoteoss/remote-flows/pull/586)
+- add test to validate the select country step when it's empty (#597) [#597](https://github.com/remoteoss/remote-flows/pull/597)
+
 ## 0.31.0
 
 ### Minor Changes
