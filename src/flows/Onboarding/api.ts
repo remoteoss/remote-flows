@@ -1,11 +1,7 @@
 // TODO: using json-schema-form-next for the onboarding flow instead of json-schema-form-kit, we'll move to that once I make sure everything works
 import { Client } from '@hey-api/client-fetch';
-import {
-  modify as modifyOld,
-  createHeadlessForm as createHeadlessFormOld,
-} from '@remoteoss/json-schema-form';
 import { modify, createHeadlessForm } from '@remoteoss/json-schema-form-next';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
   ConvertCurrencyParams,
@@ -34,7 +30,11 @@ import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
-import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
+import {
+  FlowOptions,
+  JSONSchemaFormResultWithFieldsets,
+  JSONSchemaFormType,
+} from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 
@@ -185,7 +185,7 @@ export const useJSONSchemaForm = ({
   fieldValues: FieldValues;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
-}) => {
+}): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
     ? {
@@ -223,7 +223,7 @@ export const useJSONSchemaForm = ({
     select: ({ data }) => {
       let jsfSchema = data?.data || {};
       if (options && options.jsfModify) {
-        const { schema } = modifyOld(jsfSchema, options.jsfModify);
+        const { schema } = modify(jsfSchema, options.jsfModify);
         jsfSchema = schema;
       }
 
@@ -248,7 +248,7 @@ export const useJSONSchemaForm = ({
         meta: {
           'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
         },
-        ...createHeadlessFormOld(jsfSchema, {
+        ...createHeadlessForm(jsfSchema, {
           initialValues,
         }),
       };
