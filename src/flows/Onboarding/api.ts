@@ -30,6 +30,10 @@ import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import { Client } from '@hey-api/client-fetch';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  modify as modifyNext,
+  createHeadlessForm as createHeadlessFormNext,
+} from '@remoteoss/json-schema-form-next';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 
@@ -448,12 +452,12 @@ export const useCountriesSchemaField = (
 ) => {
   const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
-  const { schema: selectCountrySchema } = modify(
+  const { schema: selectCountrySchema } = modifyNext(
     selectCountryStepSchema.data.schema,
     options?.jsfModify || {},
   );
 
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
+  const selectCountryForm = createHeadlessFormNext(selectCountrySchema);
 
   if (countries) {
     const countryField = selectCountryForm.fields.find(
