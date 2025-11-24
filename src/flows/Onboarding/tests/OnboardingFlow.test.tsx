@@ -849,7 +849,7 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Benefits/i);
   });
 
-  it.only('should show validation errors when submitting benefits step without selecting any benefits', async () => {
+  it('should show validation errors when submitting benefits step without selecting any benefits', async () => {
     server.use(
       http.get('*/v1/employments/*/benefit-offers', () => {
         return HttpResponse.json({
