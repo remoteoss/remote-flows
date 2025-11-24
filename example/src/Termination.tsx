@@ -199,7 +199,7 @@ export const TerminationWithProps = ({
             fields: {
               termination_reason: {
                 presentation: {
-                  description: TerminationReasonDetailsDescription,
+                  description: <TerminationReasonDetailsDescription />,
                 },
               },
             },
