@@ -23,7 +23,6 @@ Welcome to the CostCalculator flow docs
   - [CostCalculatorForm](#costcalculatorform)
   - [CostCalculatorSubmitButton](#costcalculatorsubmitbutton)
   - [CostCalculatorResetButton](#costcalculatorresetbutton)
-  - [CostCalculatorDisclaimer](#costcalculatordisclaimer)
   - [CostCalculatorResults](#costcalculatorresults)
   - [SummaryResults](#summaryresults-component)
   - [useCostCalculator](#usecostcalculator)
@@ -174,7 +173,6 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
   RemoteFlows,
-  CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import './css/main.css';
 
@@ -233,7 +231,6 @@ export function BasicCostCalculatorLabels() {
           },
         }}
       />
-      <CostCalculatorDisclaimer label='Disclaimer' />
     </RemoteFlows>
   );
 }
@@ -648,22 +645,6 @@ It renders the submit button for the form and supports all standard `<button>` e
 ### CostCalculatorResetButton
 
 It renders the reset button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the CostCalculatorFlow component to ensure proper functionality
-
-### CostCalculatorDisclaimer
-
-It renders a disclaimer link that can be placed anywhere in your application.
-
-| Prop    | Type        | Required | Description    |
-| ------- | ----------- | -------- | -------------- |
-| `label` | `ReactNode` | No       | the link label |
-
-### CostCalculatorResults
-
-A component to display cost calculation results.
-
-| Prop             | Type                                 | Required | Description                  |
-| ---------------- | ------------------------------------ | -------- | ---------------------------- |
-| `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation response data |
 
 # SummaryResults Component
 
