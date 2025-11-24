@@ -61,6 +61,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
+import { ValidationResult } from '@remoteoss/json-schema-form-next';
 
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
@@ -702,7 +703,7 @@ export const useContractorOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
+    handleValidation: (values: FieldValues): ValidationResult | null => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
@@ -747,7 +748,6 @@ export const useContractorOnboarding = ({
         // TODO: TBD
         return {
           formErrors: {},
-          yupError: null,
         };
       }
 

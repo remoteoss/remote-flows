@@ -1,7 +1,6 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, vi, afterEach } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
   render,
@@ -282,6 +281,8 @@ describe('ContractorOnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.clearAllMocks();
+    mockRender.mockReset();
 
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
@@ -358,11 +359,6 @@ describe('ContractorOnboardingFlow', () => {
         return HttpResponse.json(inviteResponse);
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
   });
 
   async function fillCountry(country: string) {

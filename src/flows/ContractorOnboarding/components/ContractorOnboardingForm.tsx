@@ -1,7 +1,7 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
+import { useJsonSchemasValidationFormResolverNext } from '@/src/components/form/validationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
@@ -29,8 +29,7 @@ export function ContractorOnboardingForm({
 }: ContractorOnboardingFormProps) {
   const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
+  const resolver = useJsonSchemasValidationFormResolverNext(
     contractorOnboardingBag.handleValidation,
   );
 
