@@ -4711,13 +4711,211 @@ export const benefitOffersSchema = {
     schema: {
       additionalProperties: false,
       properties: {
-        '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+        '59252dd0-ff59-4bf4-8bfb-1c6694881edc': {
+          properties: {
+            value: {
+              oneOf: [
+                {
+                  const: '933f1d6e-caa4-4d97-bc21-2cc749d47c9b',
+                  title: 'Basic Business Travel',
+                  'x-jsf-presentation': {
+                    description:
+                      'Includes coverage for medical emergencies, accidental medical treatment, evacuation, and business equipment protection',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-basic-business-travel',
+                      display_cost: '11.45 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: '6e78db28-492e-41a9-bda2-0a91c884074d',
+                  title: 'Standard Business Travel',
+                  'x-jsf-presentation': {
+                    description:
+                      'Includes coverage for Personal Accident & Disruption, Business Equipment. Excludes Medical & Evacuation',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-standard-business-travel',
+                      display_cost: '11.57 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'de9838bf-c221-4a44-a6d8-0942afe87cb2',
+                  title: 'Premium Business Travel',
+                  'x-jsf-presentation': {
+                    description:
+                      'Includes coverage for Personal Accident & Disruption, Business Equipment, Flight Cancellation, and Compassionate Repatriation.\nExcludes Medical & Evacuation',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-premium-business-travel',
+                      display_cost: '14.47 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'e2457368-b3f6-45b7-b84f-a7ce13367a9f',
+                  title: 'Standard Plus Business Travel',
+                  'x-jsf-presentation': {
+                    description:
+                      'Includes coverage for medical emergencies, accidental medical treatment, evacuation, and business equipment protection. In addition to Personal Accident & Disruption',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-standard-plus-business-travel',
+                      display_cost: '17.59 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: '3dad2dbe-c45f-487a-b5ad-aebca2b7b6b6',
+                  title: 'Premium Plus Business Travel',
+                  'x-jsf-presentation': {
+                    description:
+                      'Includes coverage for medical emergencies, accidental medical treatment, evacuation, and business equipment protection. In addition to Personal Accident & Disruption, Flight Cancellation, Compassionate Repatriation',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-premium-plus-business-travel',
+                      display_cost: '21.77 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'no',
+                  title: "I don't want to offer this benefit.",
+                },
+              ],
+              type: 'string',
+              'x-jsf-errorMessage': {
+                required: 'Please select at least one option.',
+              },
+              'x-jsf-presentation': {
+                inputType: 'radio',
+              },
+            },
+          },
+          required: ['value'],
+          title: 'Business Travel Insurance',
+          type: 'object',
+          'x-jsf-order': ['value'],
+          'x-jsf-presentation': {
+            inputType: 'fieldset',
+            meta: {
+              family: 'travel',
+            },
+          },
+        },
+        '6ad57bf8-43d6-46c3-989d-b8d6b08d1cdc': {
+          properties: {
+            value: {
+              oneOf: [
+                {
+                  const: '28e4703e-90b3-49fc-80de-e155262adf43',
+                  title: 'Basic Mental Health Program',
+                  'x-jsf-presentation': {
+                    description:
+                      'Platform access for comprehensive mental health support via Oliva: wellbeing profile, curated self-help content, access to therapy and professional coaching, 24/7 helpline. Improve productivity, wellbeing, and reduce absences.',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-basic-mental-health-program',
+                      display_cost: '3.00 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'd71d79dd-17b6-484f-803b-c525d2858150',
+                  title: 'Standard Mental Health Program',
+                  'x-jsf-presentation': {
+                    description:
+                      '1 therapy or coaching session per year, plus platform access and comprehensive mental health support via Oliva: therapy in 35+ languages, wellbeing profile, curated self-help content, 24/7 helpline. Improve productivity, wellbeing, and reduce absences.',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-standard-mental-health-program',
+                      display_cost: '8.47 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: '46a09875-fbec-4dd7-9183-a7d0b66cdf13',
+                  title: 'Plus Mental Health Program',
+                  'x-jsf-presentation': {
+                    description:
+                      '3 therapy or coaching sessions per year, plus platform access and comprehensive mental health support via Oliva: therapy in 35+ languages, wellbeing profile, curated self-help content, 24/7 helpline. Improve productivity, wellbeing, and reduce absences.',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-plus-mental-health-program',
+                      display_cost: '15.70 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'cb335511-9399-4435-be7c-43f9ebc42bf5',
+                  title: 'Premium Mental Health Program',
+                  'x-jsf-presentation': {
+                    description:
+                      '6 therapy or coaching sessions per year, plus platform access and comprehensive mental health support via Oliva: therapy in 35+ languages, wellbeing profile, curated self-help content, 24/7 helpline. Improve productivity, wellbeing, and reduce absences.',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-premium-mental-health-program',
+                      display_cost: '22.70 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: '52270de1-f013-403d-be05-5f4421526372',
+                  title: 'Platinum Mental Health Program',
+                  'x-jsf-presentation': {
+                    description:
+                      '12 therapy or coaching sessions per year, plus platform access and comprehensive mental health support via Oliva: therapy in 35+ languages, wellbeing profile, curated self-help content, 24/7 helpline. Improve productivity, wellbeing, and reduce absences.',
+                    meta: {
+                      details_url:
+                        'https://remote.com/benefits-guide/employee-benefits-platinum-mental-health-program',
+                      display_cost: '35.83 USD/mo',
+                      display_cost_disclaimer: null,
+                    },
+                  },
+                },
+                {
+                  const: 'no',
+                  title: "I don't want to offer this benefit.",
+                },
+              ],
+              type: 'string',
+              'x-jsf-errorMessage': {
+                required: 'Please select at least one option.',
+              },
+              'x-jsf-presentation': {
+                inputType: 'radio',
+              },
+            },
+          },
+          required: ['value'],
+          title: 'Mental Health Program',
+          type: 'object',
+          'x-jsf-order': ['value'],
+          'x-jsf-presentation': {
+            inputType: 'fieldset',
+            meta: {
+              family: 'mental_wellbeing',
+            },
+          },
+        },
+        'f39f6e26-bee3-4027-bb6f-d51aca0ff57a': {
           allOf: [
             {
               if: {
                 properties: {
                   filter: {
-                    const: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+                    const: '5189e74a-0ff2-4f13-8576-ba7a8ffd9f38',
                   },
                 },
               },
@@ -4726,8 +4924,8 @@ export const benefitOffersSchema = {
                   value: {
                     oneOf: [
                       {
-                        const: '0b097ff7-8b59-49dc-9cba-16543bd6a44c',
-                        title: 'Life Insurance 50K',
+                        const: '6ecf4aa4-bd13-4075-8224-391e9978d806',
+                        title: 'Life Insurance - $50K',
                         'x-jsf-presentation': {
                           description:
                             "Covers Life Insurance only. In the unfortunate event of an employee's demise, their beneficiary will receive a payout equivalent to up to 6 times the employee's annual salary. However, this compensation is capped at a maximum of $50,000. This means that regardless of an employee's salary, the payout will not exceed $50,000.",
@@ -4740,7 +4938,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '425df8c9-7832-412a-afbb-afae3ef32db6',
+                        const: '10d523a6-d6fd-4c5f-87c6-3e966e963466',
                         title: 'Life Insurance - $100K',
                         'x-jsf-presentation': {
                           description:
@@ -4754,7 +4952,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '0b925f7a-8e3d-4936-a3d9-8003b2636937',
+                        const: '7d020a44-5295-4dc5-b10c-55e744b6f52e',
                         title: 'Life Insurance - $200K',
                         'x-jsf-presentation': {
                           description:
@@ -4768,7 +4966,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: 'e6e05143-4e81-4981-9e86-288ef4eb1a4c',
+                        const: '3352f6aa-6a02-47eb-a425-67a6f4fe9286',
                         title: 'Life Insurance - $400K',
                         'x-jsf-presentation': {
                           description:
@@ -4782,7 +4980,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '6fb56cc8-f6be-4525-a467-2fa6698e78c4',
+                        const: 'fbfe8e2a-238a-4e80-aebd-6f1981458cc2',
                         title: 'Life Insurance - $500K',
                         'x-jsf-presentation': {
                           description:
@@ -4796,7 +4994,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '5d190d1e-3627-480b-9c8c-b9767b2100a0',
+                        const: '8391c893-8827-49b4-9e41-a8052183f0dc',
                         title: 'Life Insurance - $600K',
                         'x-jsf-presentation': {
                           description:
@@ -4826,7 +5024,7 @@ export const benefitOffersSchema = {
               if: {
                 properties: {
                   filter: {
-                    const: '3a038ee7-5eda-42d5-8113-35336c0a4b52',
+                    const: '0aebe050-fb70-4c51-9ab7-60ed77d56887',
                   },
                 },
               },
@@ -4835,7 +5033,7 @@ export const benefitOffersSchema = {
                   value: {
                     oneOf: [
                       {
-                        const: '50d0d279-00eb-42be-94a3-d533c512f6a2',
+                        const: 'e85e91d3-eb65-4baa-afc6-c25107a4af53',
                         title:
                           'Life, Accidental Death & Permanent Disability - $50k',
                         'x-jsf-presentation': {
@@ -4850,7 +5048,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '9dfaf128-fecb-4022-8436-7db2620c65f0',
+                        const: '5636eb18-f1f1-41b0-bcee-84c441cb6d16',
                         title:
                           'Life, Accidental Death & Permanent Disability - $100k',
                         'x-jsf-presentation': {
@@ -4865,7 +5063,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '48dedc51-a717-437e-88ac-8e76e9e684fb',
+                        const: 'a9b6eb69-0df3-4c30-8a9c-3deb6a484190',
                         title:
                           'Life, Accidental Death & Permanent Disability - $200k',
                         'x-jsf-presentation': {
@@ -4880,7 +5078,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: 'ca518425-2a77-4ef1-aaad-37d21504d5e0',
+                        const: 'f9a76e3e-7386-4055-89b8-de6ec9213e2f',
                         title:
                           'Life, Accidental Death & Permanent Disability - $400k',
                         'x-jsf-presentation': {
@@ -4895,7 +5093,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: 'ff367cab-d9cb-4aa9-adea-13562a151d7f',
+                        const: '5db85b63-8139-4b95-b6bc-23bfb4d1b988',
                         title:
                           'Life, Accidental Death & Permanent Disability - $500k',
                         'x-jsf-presentation': {
@@ -4910,7 +5108,7 @@ export const benefitOffersSchema = {
                         },
                       },
                       {
-                        const: '8ede3bc9-83ec-439d-b141-f75005781976',
+                        const: '895a7fab-eac7-4ca8-b188-6837d81b946e',
                         title:
                           'Life, Accidental Death & Permanent Disability - $600k',
                         'x-jsf-presentation': {
@@ -4940,14 +5138,14 @@ export const benefitOffersSchema = {
           ],
           properties: {
             filter: {
-              default: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+              default: '5189e74a-0ff2-4f13-8576-ba7a8ffd9f38',
               oneOf: [
                 {
-                  const: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+                  const: '5189e74a-0ff2-4f13-8576-ba7a8ffd9f38',
                   title: 'Basic',
                 },
                 {
-                  const: '3a038ee7-5eda-42d5-8113-35336c0a4b52',
+                  const: '0aebe050-fb70-4c51-9ab7-60ed77d56887',
                   title: 'Comprehensive',
                 },
               ],
@@ -4967,7 +5165,7 @@ export const benefitOffersSchema = {
             },
           },
           required: ['value'],
-          title: 'Life Insurance 2.0',
+          title: 'Life Insurance',
           type: 'object',
           'x-jsf-order': ['filter', 'value'],
           'x-jsf-presentation': {
@@ -4977,94 +5175,13 @@ export const benefitOffersSchema = {
             },
           },
         },
-        '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
-          properties: {
-            value: {
-              oneOf: [
-                {
-                  const: '2ad419c1-7f65-4be0-bcb8-94468d01fe6d',
-                  title: 'Meal Allowance Standard 2025',
-                  'x-jsf-presentation': {
-                    description:
-                      '100% Employer paid Meal Allowance (4,77 EUR per working day)\nPaid on the payslip together with the salary',
-                    meta: {
-                      details_url:
-                        'https://remote.com/benefits-guide/employee-benefits-portugal-meal-allowance',
-                      display_cost: '~100 EUR/mo',
-                      display_cost_disclaimer: null,
-                    },
-                  },
-                },
-                {
-                  const: '4b4514ad-689a-4600-94f1-1ca7be871d2b',
-                  title: 'Meal Allowance Premium 2025',
-                  'x-jsf-presentation': {
-                    description:
-                      '100% Employer-Paid Meal Allowance with Maximum Exempt Amount: Currently costing €6.00 EUR per worked day.\n\nPaid on the payslip together with the salary',
-                    meta: {
-                      details_url:
-                        'https://remote.com/benefits-guide/employee-benefits-portugal-meal-allowance-premium',
-                      display_cost: '~126 EUR/mo',
-                      display_cost_disclaimer: null,
-                    },
-                  },
-                },
-                {
-                  const: '601d28b6-efde-4b8f-b9e2-e394792fc594',
-                  title: 'Meal Card Standard 2025',
-                  'x-jsf-presentation': {
-                    description:
-                      '100% Employer paid – Meal Card (7,63 EUR per working day)\nPaid through Coverflex',
-                    meta: {
-                      details_url:
-                        'https://remote.com/benefits-guide/employee-benefits-portugal-meal-card',
-                      display_cost: '~160 EUR/mo',
-                      display_cost_disclaimer: null,
-                    },
-                  },
-                },
-                {
-                  const: '9d053f8b-e2c2-4aa3-878d-8af9f3e4e842',
-                  title: 'Meal Card Premium 2025',
-                  'x-jsf-presentation': {
-                    description:
-                      '100% Employer-Paid Meal Card with Maximum Exempt Amount: Currently costing €10.20 EUR per worked day.\n\nPaid through Coverflex',
-                    meta: {
-                      details_url:
-                        'https://remote.com/benefits-guide/employee-benefits-portugal-meal-card-premium',
-                      display_cost: '~212 EUR/mo',
-                      display_cost_disclaimer: null,
-                    },
-                  },
-                },
-              ],
-              type: 'string',
-              'x-jsf-errorMessage': {
-                required: 'Please select at least one option.',
-              },
-              'x-jsf-presentation': {
-                inputType: 'radio',
-              },
-            },
-          },
-          required: ['value'],
-          title: 'Meal Benefit',
-          type: 'object',
-          'x-jsf-order': ['value'],
-          'x-jsf-presentation': {
-            inputType: 'fieldset',
-            meta: {
-              family: 'meal',
-            },
-          },
-        },
-        'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+        'faf8f823-e874-477d-b3d3-ddbb91f1236b': {
           allOf: [
             {
               if: {
                 properties: {
                   filter: {
-                    const: '866c0615-a810-429b-b480-3a4f6ca6157d',
+                    const: 'e9511116-f281-42c0-a909-0e650df5f64c',
                   },
                 },
               },
@@ -5073,43 +5190,57 @@ export const benefitOffersSchema = {
                   value: {
                     oneOf: [
                       {
-                        const: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
-                        title: 'Basic Health Plan 2025',
+                        const: 'e4a70886-2412-4849-be4d-a4c289d1926a',
+                        title: 'Allianz Standard (Family)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee only for hospitalization, childbirth, outpatient services, and dental care. Employee covers 20% for dental; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care for the employee and family with private hospital rooms, intensive care, surgeries, and prescriptions up to $1M USD. No dental or vision coverage. Includes basic maternity benefits up to $6K USD, pediatric care, and limited mental health support.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-basic',
-                            display_cost: '45.40 EUR/mo',
+                              'https://remote.com/benefits-guide/allianz-employee-and-family-standard',
+                            display_cost: '184.75 - 369.50 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
                       },
                       {
-                        const: '5c0c0abf-ab5c-44dd-b462-183bd306a1ed',
-                        title: 'Standard Health Plan 2025 (Single)',
+                        const: '33cbe9a5-6957-4c9d-8810-f8fead9d0f0f',
+                        title: 'Allianz Premium (Family)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee only for hospitalization, childbirth, outpatient services, dental care, and vision. Employee covers 20% for dental and vision; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care for the employee and family with private hospital rooms, intensive care, surgeries, and prescriptions up to $1M USD. Includes dental up to $1K USD and vision up to $250 USD. Maternity covered up to $6K USD, with higher mental health limits, pediatric coverage, and prescribed therapy sessions.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-standard',
-                            display_cost: '51.81 EUR/mo',
+                              'https://remote.com/benefits-guide/allianz-employee-and-family-premium',
+                            display_cost: '235.63 - 471.25 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
                       },
                       {
-                        const: '09a2a692-c12c-4b42-8f73-6af44e5573e3',
-                        title: 'Premium Health Plan 2025 (Single)',
+                        const: '9cb71094-5247-4d13-be72-2dab5bf26691',
+                        title: 'Allianz Gold (Family)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee only for hospitalization, childbirth, outpatient services, dental, vision, medications and serious illness. Employee covers 20% for dental, vision, and medications; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care for the employee and family with private hospital rooms, intensive care, surgeries, and prescriptions up to $2.5M USD. Includes dental up to $1K USD and vision up to $250 USD. Maternity covered up to $6K USD, with more therapy sessions, extended pediatric care, and broader outpatient benefits.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-health-premium',
-                            display_cost: '76.33 EUR/mo',
+                              'https://remote.com/benefits-guide/allianz-employee-and-family-gold',
+                            display_cost: '280.25 - 560.50 USD/mo',
+                            display_cost_disclaimer: null,
+                          },
+                        },
+                      },
+                      {
+                        const: '8951f279-cd4f-4f71-a484-3c5083e92f8e',
+                        title: 'Allianz Platinum (Family)',
+                        'x-jsf-presentation': {
+                          description:
+                            'Covers medical care for the employee and family with private hospital rooms, intensive care, surgeries, and prescriptions up to $5M USD. Includes dental up to $2.5K USD and vision up to $500 USD. Maternity covered up to $10K USD, with comprehensive pediatric care, full mental health support, and maximum therapy benefits.',
+                          meta: {
+                            details_url:
+                              'https://remote.com/benefits-guide/allianz-employee-and-family-platinum',
+                            display_cost: '309.75 - 619.50 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
@@ -5127,7 +5258,7 @@ export const benefitOffersSchema = {
               if: {
                 properties: {
                   filter: {
-                    const: '5fd6b1a5-e453-4d9d-bdcc-ccf7fcb19b2d',
+                    const: '7038b6bc-e42d-450e-bbc8-868e8d2c0c53',
                   },
                 },
               },
@@ -5136,43 +5267,57 @@ export const benefitOffersSchema = {
                   value: {
                     oneOf: [
                       {
-                        const: 'b31a505f-22cc-4bcc-8f18-101490934495',
-                        title: 'Basic Health Plan 2025 (Family)',
+                        const: '61c54132-7a77-4473-9ef6-8b39f2205c12',
+                        title: 'Allianz Standard (Employee Only)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee and dependents for hospitalization, childbirth, outpatient services, and dental care. Employee covers 20% for dental; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care with private hospital rooms, intensive care, surgeries, and prescriptions up to $1M USD for employee only. No dental or vision coverage. Includes basic maternity benefits up to $6K USD and limited mental health support.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-basic-family',
-                            display_cost: '~162.74 EUR/mo',
+                              'https://remote.com/benefits-guide/allianz-employee-standard',
+                            display_cost: '123.17 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
                       },
                       {
-                        const: 'bccffede-49fc-47cf-a2b9-ad0defddbc79',
-                        title: 'Standard Health Plan 2025 (Family)',
+                        const: '3f5dbb88-35e4-43e1-9da3-48f09b1dad4a',
+                        title: 'Allianz Premium (Employee Only)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee and dependents for hospitalization, childbirth, outpatient services, dental care, and vision. Employee covers 20% for dental and vision; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care with private hospital rooms, intensive care, surgeries, and prescriptions up to $1M USD for employee only. Includes dental coverage up to $1K USD and vision up to $250 USD. Maternity covered up to $6K USD, with more outpatient mental health and therapy support.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-standard-family',
-                            display_cost: '~187.14 EUR/mo',
+                              'https://remote.com/benefits-guide/allianz-employee-premium',
+                            display_cost: '157.08 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
                       },
                       {
-                        const: '37ef429d-05cc-47b9-993d-280d3dd30bef',
-                        title: 'Premium Health Plan 2025 (Family)',
+                        const: 'a71a7daf-ceb7-43d2-95f8-d855cd91c785',
+                        title: 'Allianz Gold (Employee Only)',
                         'x-jsf-presentation': {
                           description:
-                            'Covers the employee and dependents for hospitalization, childbirth, outpatient services, dental, vision, medications and serious illness. Employee covers 20% for dental, vision, and medications; 10% for all other services, with insurer covering the rest.',
+                            'Covers medical care with private hospital rooms, intensive care, surgeries, and prescriptions up to $2.5M USD for employee only. Includes dental coverage up to $1K USD and vision up to $250 USD. Maternity covered up to $6K USD, plus expanded mental health and therapy benefits.',
                           meta: {
                             details_url:
-                              'https://remote.com/benefits-guide/employee-benefits-portugal-premium-family',
-                            display_cost: '~276.82 EUR/mo',
+                              'https://remote.com/benefits-guide/allianzgoldplan-employeeonly',
+                            display_cost: '186.83 USD/mo',
+                            display_cost_disclaimer: null,
+                          },
+                        },
+                      },
+                      {
+                        const: 'ff3521f1-b6fd-424e-a73b-e1fba4690805',
+                        title: 'Allianz Platinum (Employee Only)',
+                        'x-jsf-presentation': {
+                          description:
+                            'Covers medical care with private hospital rooms, intensive care, surgeries, and prescriptions up to $5M USD for employee only. Includes dental coverage up to $2.5K USD and vision up to $500 USD. Maternity covered up to $10K USD, with the most extensive mental health and therapy benefits.',
+                          meta: {
+                            details_url:
+                              'https://remote.com/benefits-guide/allianzplatinumplan-employeeonly',
+                            display_cost: '206.50 USD/mo',
                             display_cost_disclaimer: null,
                           },
                         },
@@ -5189,15 +5334,15 @@ export const benefitOffersSchema = {
           ],
           properties: {
             filter: {
-              default: '866c0615-a810-429b-b480-3a4f6ca6157d',
+              default: 'e9511116-f281-42c0-a909-0e650df5f64c',
               oneOf: [
                 {
-                  const: '866c0615-a810-429b-b480-3a4f6ca6157d',
-                  title: 'Single',
+                  const: 'e9511116-f281-42c0-a909-0e650df5f64c',
+                  title: 'Family',
                 },
                 {
-                  const: '5fd6b1a5-e453-4d9d-bdcc-ccf7fcb19b2d',
-                  title: 'Family',
+                  const: '7038b6bc-e42d-450e-bbc8-868e8d2c0c53',
+                  title: 'Single',
                 },
               ],
               type: 'string',
@@ -5216,7 +5361,7 @@ export const benefitOffersSchema = {
             },
           },
           required: ['value'],
-          title: 'Health Insurance 2025',
+          title: 'Health Insurance',
           type: 'object',
           'x-jsf-order': ['filter', 'value'],
           'x-jsf-presentation': {
@@ -5228,15 +5373,17 @@ export const benefitOffersSchema = {
         },
       },
       required: [
-        '0e0293ae-eec6-4d0e-9176-51c46eed435e',
-        'baa1ce1d-39ea-4eec-acf0-88fc8a357f54',
-        '072e0edb-bfca-46e8-a449-9eed5cbaba33',
+        'f39f6e26-bee3-4027-bb6f-d51aca0ff57a',
+        'faf8f823-e874-477d-b3d3-ddbb91f1236b',
+        '6ad57bf8-43d6-46c3-989d-b8d6b08d1cdc',
+        '59252dd0-ff59-4bf4-8bfb-1c6694881edc',
       ],
       type: 'object',
       'x-jsf-order': [
-        '0e0293ae-eec6-4d0e-9176-51c46eed435e',
-        'baa1ce1d-39ea-4eec-acf0-88fc8a357f54',
-        '072e0edb-bfca-46e8-a449-9eed5cbaba33',
+        'f39f6e26-bee3-4027-bb6f-d51aca0ff57a',
+        'faf8f823-e874-477d-b3d3-ddbb91f1236b',
+        '6ad57bf8-43d6-46c3-989d-b8d6b08d1cdc',
+        '59252dd0-ff59-4bf4-8bfb-1c6694881edc',
       ],
       'x-jsf-presentation': {
         benefits_service_fee: {
@@ -5244,10 +5391,10 @@ export const benefitOffersSchema = {
           currency: 'USD',
         },
         description:
-          'We offer our employees supplemental benefits - Meal and Health Insurance (In partnership with Advance Care/Tranquilidade and Coverflex)',
+          'In this section, you can select benefits for your new team member. If you have existing team members in the same country, your new hire will receive the same benefits as those currently provided to other team members there, maintaining benefit equality. If this is your first hire in the country, you may select from the available options below. Your choice will become the standard benefits for any future hires in the country.',
         fine_print:
-          'New: Health Insurance is now optional for new hires in Portugal.\r\nPlease note that all local payroll deductions for required coverages are included in the TCE.\r\nAny pricing changes will be communicated in advance of updated billing.',
-        url: 'https://remote.com/benefits-guide/portugal',
+          'Prices are listed in U.S. Dollars (USD). However, when benefits are originally priced in local currencies, these amounts are estimates in USD. The final charge in local currency will be determined using the exchange rate at the time of invoicing. The pricing listed is subject to change based on the age of the employee (age banding) and/or plan changes/renewals. Any pricing changes will be communicated in advance.',
+        url: null,
       },
     },
   },

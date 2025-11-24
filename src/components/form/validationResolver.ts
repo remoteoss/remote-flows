@@ -85,10 +85,6 @@ function iterateFormErrors(formErrors?: FormErrors) {
         type: 'validation',
         message: messageString,
       };
-      allErrors[`${fieldName}.filter`] = {
-        type: 'validation',
-        message: messageString,
-      };
 
       return allErrors;
     },
