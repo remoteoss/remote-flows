@@ -72,50 +72,6 @@ We only changed the `OnboardingFlow`, the onboarding flow will use the library `
 
 This library is a thin wrapper which decides when to use v0 or v1 from `json-schema-form`, if the schema brings the property `x-rmt-meta.jsfVersion`
 
-The `options.jsfModify` syntax has changed for component customization in the json-schema-form v1 upgrade. If you're overriding field descriptions or presentations with components, update the syntax.
-
-The key change: pass a reference to the component, never invoke it. JSON Schema Form v1 will handle the component invocation internally.
-
-**Before (v0.x):**
-
-```tsx
-<TerminationFlow
-  options={{
-    jsfModify: {
-      fields: {
-        termination_reason: {
-          description: <TerminationReasonDetailsDescription />,
-        },
-      },
-    },
-  }}
-/>
-```
-
-**After (v1.0.0):**
-
-```tsx
-<TerminationFlow
-  options={{
-    jsfModify: {
-      fields: {
-        termination_reason: {
-          presentation: {
-            description: TerminationReasonDetailsDescription,
-          },
-        },
-      },
-    },
-  }}
-/>
-```
-
-**What changed:**
-
-- Move custom components inside a `presentation` object
-- Pass the component reference (not JSX): `TerminationReasonDetailsDescription` instead of `<TerminationReasonDetailsDescription />`
-- Wrap in the `presentation` object to work with json-schema-form v1
-
 ---
 
 ## Version History
