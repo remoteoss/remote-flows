@@ -33,9 +33,9 @@ import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import {
-  FlowOptions,
   JSONSchemaFormResultWithFieldsets,
   JSONSchemaFormType,
+  NextFlowOptions,
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { $TSFixMe, JSFFieldset } from '@/src/types/remoteFlows';
@@ -185,7 +185,7 @@ export const useJSONSchemaForm = ({
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
@@ -449,7 +449,7 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
 };
 
 export const useCountriesSchemaField = (
-  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+  options?: Omit<NextFlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };
   },
 ) => {
