@@ -1,4 +1,4 @@
-import { Client } from '@/src/client';
+import { Client } from '@/src/client/client';
 import { createContext, useContext } from 'react';
 import { Components } from './types/remoteFlows';
 

@@ -1,7 +1,7 @@
 import { getShowHelpCenterArticle } from '@/src/client';
 import { useClient } from '@/src/context';
 import { sanitizeHtmlWithImageErrorHandling } from '@/src/lib/utils';
-import { Client } from '@/src/client';
+import { Client } from '@/src/client/client';
 import { useQuery } from '@tanstack/react-query';
 
 export const useZendeskArticle = (
