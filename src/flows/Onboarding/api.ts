@@ -1,5 +1,5 @@
-// TODO: using json-schema-form-next for the onboarding flow instead of json-schema-form-kit, we'll move to that once I make sure everything works
 import { Client } from '@hey-api/client-fetch';
+import { jsonLogicOperators } from '@remoteoss/remote-json-schema-form-kit';
 import { modify, createHeadlessForm } from '@remoteoss/json-schema-form-next';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
@@ -250,6 +250,7 @@ export const useJSONSchemaForm = ({
         },
         ...createHeadlessForm(jsfSchema, {
           initialValues,
+          customJsonLogicOps: jsonLogicOperators,
         }),
       };
     },
