@@ -10,6 +10,7 @@ This guide helps you upgrade between major versions of `@remoteoss/remote-flows`
     - [1. CostCalculatorFlow](#1-costcalculatorflow)
     - [2. RemoteFlows](#2-remoteflows)
     - [3. Internal imports](#3-internal-imports)
+    - [4. handleValidation and parseFormValues](#4-handlevalidation-and-parseformvalues)
 
 ## Version 1.0.0
 
@@ -62,6 +63,34 @@ import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 
 ```tsx
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows'#### 4. TerminationFlow and OnboardingFlow
+```
+
+#### 4. handleValidation and parseFormValues
+
+`handleValidation` and `parseFormValues` method is now async
+
+**Before:**
+
+```tsx
+onboardingBag.handleValidation(values);
+```
+
+**After**
+
+```tsx
+await onboardingBag.handleValidation(values);
+```
+
+**Before:**
+
+```tsx
+onboardingBag.parseFormValues(values);
+```
+
+**After**
+
+```tsx
+await onboardingBag.parseFormValues(values);
 ```
 
 ---
