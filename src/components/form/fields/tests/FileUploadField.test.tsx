@@ -204,14 +204,39 @@ describe('FileUploadField Component', () => {
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();
-      expect(mockOnChange.mock.calls[0][0]).toEqual([
-        {
-          name: 'small.txt',
-          content: expect.any(String),
-          size: expect.any(Number),
-          type: expect.any(String),
-        },
-      ]);
+      expect(mockOnChange.mock.calls[0][0]).toEqual([smallFile]);
+    });
+  });
+
+  it('should preserve existing files when uploading additional files', async () => {
+    const TestComponent = () => {
+      const methods = useForm();
+      return (
+        <FormProvider {...methods}>
+          <FileUploadField {...defaultProps} onChange={mockOnChange} />
+        </FormProvider>
+      );
+    };
+
+    render(<TestComponent />);
+
+    const fileInput = screen.getByLabelText('File upload');
+
+    // Upload first file
+    const file1 = new File(['content1'], 'file1.txt', { type: 'text/plain' });
+    fireEvent.change(fileInput, { target: { files: [file1] } });
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith([file1]);
+    });
+
+    // Upload second file
+    const file2 = new File(['content2'], 'file2.txt', { type: 'text/plain' });
+    fireEvent.change(fileInput, { target: { files: [file2] } });
+
+    await waitFor(() => {
+      // ✅ Should have both files, not just file2
+      expect(mockOnChange).toHaveBeenLastCalledWith([file1, file2]);
     });
   });
 });
