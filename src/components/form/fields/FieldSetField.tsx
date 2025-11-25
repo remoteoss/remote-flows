@@ -256,7 +256,7 @@ export function FieldSetField({
               }
 
               // Handle nested fieldsets
-              /*   if (field.type === 'fieldset') {
+              if (field.type === 'fieldset') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -265,7 +265,7 @@ export function FieldSetField({
                     components={components}
                   />
                 );
-              } */
+              }
 
               if (field.type === 'fieldset-flat') {
                 return (
