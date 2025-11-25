@@ -125,7 +125,7 @@ export const useContractorOnboarding = ({
   skipSteps,
   options,
   initialValues: onboardingInitialValues,
-}: useContractorOnboardingProps) => {
+}: useContractorOnboardingProps): UseContractorOnboardingReturn => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
