@@ -1,4 +1,4 @@
-import { FieldValues, Resolver } from 'react-hook-form';
+import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
 import type {
   FormErrors,
@@ -26,8 +26,10 @@ export function iterateErrors(error: ValidationError) {
   return errors;
 }
 
-// TODO: deprecated only used with old json-schema-form-version
-export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
+// TODO: deprecated only used with cost calculator flow
+export const useJsonSchemasValidationFormYupResolver = <
+  T extends AnyObjectSchema,
+>(
   handleValidation: (data: FieldValues) => {
     formErrors: Record<string, string>;
     yupError: ValidationError;
@@ -49,12 +51,9 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
   };
 };
 
-function iterateFormErrors(formErrors?: FormErrors) {
+function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
   return Object.entries(formErrors || {}).reduce(
-    (
-      allErrors: Record<string, { type: string; message: string }>,
-      [fieldName, message],
-    ) => {
+    (allErrors: FieldErrors, [fieldName, message]) => {
       // Extract the error message string from various payload formats
       let messageString: string;
 
@@ -88,14 +87,41 @@ function iterateFormErrors(formErrors?: FormErrors) {
 
       return allErrors;
     },
-    {} as Record<string, { type: string; message: string }>,
+    {} as FieldErrors,
   );
 }
 
-export const useJsonSchemasValidationFormResolverNext = (
-  handleValidation: (data: FieldValues) => ValidationResult | null,
-) => {
+/**
+ * This one can be used in forms where x-rmt-meta is not present in json schemas
+ */
+export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
+  handleValidation: (data: FieldValues) => {
+    formErrors: Record<string, string>;
+    yupError: ValidationError;
+  },
+): Resolver<InferType<T>> => {
   return async (data: FieldValues) => {
+    const { formErrors } = await handleValidation(data);
+
+    if (Object.keys(formErrors || {}).length > 0) {
+      return {
+        values: {},
+        errors: iterateFormErrors(formErrors),
+      };
+    }
+    return {
+      values: data,
+      errors: {},
+    };
+  };
+};
+
+export const useJsonSchemasValidationFormResolverNext = <
+  T extends FieldValues = FieldValues,
+>(
+  handleValidation: (data: T) => ValidationResult | null,
+): Resolver<T> => {
+  return async (data: T) => {
     const result = await handleValidation(data);
 
     // Handle null case - return no errors
@@ -111,8 +137,8 @@ export const useJsonSchemasValidationFormResolverNext = (
     if (Object.keys(formErrors || {}).length > 0) {
       const errors = iterateFormErrors(formErrors);
       return {
-        values: {},
-        errors,
+        values: {} as T,
+        errors: errors as FieldErrors<T>,
       };
     }
     return {
