@@ -82,7 +82,8 @@ export const useJsonSchemasValidationFormResolver = <
       };
     }
 
-    const { formErrors } = result;
+    // Extract formErrors - handle both new and legacy ValidationResult formats
+    const formErrors = 'formErrors' in result ? result.formErrors : undefined;
 
     if (Object.keys(formErrors || {}).length > 0) {
       const errors = iterateFormErrors(formErrors);
