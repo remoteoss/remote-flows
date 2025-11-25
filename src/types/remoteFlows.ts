@@ -11,6 +11,8 @@ import { SupportedTypes } from '../components/form/fields/types';
 import { StatementProps } from '../components/form/Statement';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
+import { FieldDataProps } from '@/src/types/fields';
+import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
 
 type AuthResponse = {
   accessToken: string;
@@ -81,7 +83,7 @@ export type FieldComponentProps = {
    * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
    * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
    */
-  fieldData: Partial<JSFField> & { metadata?: Record<string, unknown> };
+  fieldData: FieldDataProps;
 };
 
 /**
@@ -135,9 +137,17 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
+// We exclude the file type as we're extending the fieldData property in the FileUploadField component
+type TypesWithoutFile = Exclude<SupportedTypes, 'file'>;
+
+export type FileComponentProps = FieldComponentProps & {
+  fieldData: FieldFileDataProps;
+};
+
 export type Components = {
-  [K in SupportedTypes]?: React.ComponentType<FieldComponentProps>;
+  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
 } & {
+  file?: React.ComponentType<FileComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
@@ -190,12 +200,6 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
      */
     fallback?: ReactNode | ((error: Error) => ReactNode);
   };
-  /**
-   * ID to use for the auth query.
-   * If we navigate from one page to another with a different authentication method,
-   * we need to use a different authId.
-   */
-  authId?: 'default' | 'client';
   /**
    * Debug mode to enable logging of telemetry errors to the console.
    * @default false

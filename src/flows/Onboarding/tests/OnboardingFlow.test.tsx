@@ -27,6 +27,7 @@ import {
   assertRadioValue,
   fillRadio,
   fillSelect,
+  queryClient,
   TestProviders,
 } from '@/src/tests/testHelpers';
 import { NormalizedFieldError } from '@/src/lib/mutations';
@@ -305,6 +306,8 @@ describe('OnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/companies/:companyId', () => {
@@ -378,11 +381,6 @@ describe('OnboardingFlow', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
-  });
-
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 
@@ -452,6 +450,26 @@ describe('OnboardingFlow', () => {
         employmentResponse.data.employment.personal_email,
       );
     });
+  });
+
+  it('should show required field error when submitting select country step without selecting a country', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/i);
+
+    // Try to submit without selecting a country
+    const nextButton = screen.getByText(/Continue/i);
+    nextButton.click();
+
+    // Wait for the validation error to appear
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+
+    // Verify we're still on the select country step
+    expect(screen.getByText(/Step: Select Country/i)).toBeInTheDocument();
   });
 
   it('should select a country and advance to the next step', async () => {
@@ -820,6 +838,66 @@ describe('OnboardingFlow', () => {
 
     // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
+  });
+
+  it('should show validation errors when submitting benefits step without selecting any benefits', async () => {
+    server.use(
+      http.get('*/v1/employments/*/benefit-offers', () => {
+        return HttpResponse.json({
+          data: [],
+        });
+      }),
+    );
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillCountry('Portugal');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentResponse.data.employment.personal_email,
+      );
+    });
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+    });
+
+    // Verify we move to the next step (Benefits)
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      const errors = screen.getAllByText(/Please select at least one option/i);
+      expect(errors).toHaveLength(3);
+    });
   });
 
   it('should go to the third step and check that benefits are initalized correctly', async () => {

@@ -69,8 +69,10 @@ export const RemoteFlows = ({
       <RemoteFlowsAuth
         environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
         auth={auth}
-        authId={!isClientToken ? 'default' : 'client'}
-        debug={true}
+        debug
+        errorBoundary={{
+          useParentErrorBoundary: true,
+        }}
         {...props}
       >
         {children}

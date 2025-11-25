@@ -101,9 +101,9 @@ export function CostCalculatorForm({
 
   const handleSubmit = async (values: CostCalculatorEstimationFormValues) => {
     try {
-      const parsedValues = costCalculatorBag?.parseFormValues(
+      const parsedValues = (await costCalculatorBag?.parseFormValues(
         values,
-      ) as CostCalculatorEstimationSubmitValues;
+      )) as CostCalculatorEstimationSubmitValues;
 
       if (costCalculatorBag?.meta?.fields) {
         costCalculatorBag.meta.fields = prettifyFormValues(
