@@ -40,7 +40,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
-import { ValidationResult } from '@remoteoss/json-schema-form-next';
+import { ValidationResult } from '@remoteoss/json-schema-form-next'; // TODO: change to remote-json-schema-form-kit
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 

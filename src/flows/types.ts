@@ -1,9 +1,6 @@
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { modify } from '@remoteoss/json-schema-form';
-import {
-  FormResult,
-  modify as modifyNext,
-} from '@remoteoss/json-schema-form-next';
+import { modify as modifyOld } from '@remoteoss/json-schema-form';
+import { FormResult } from '@remoteoss/json-schema-form-next'; // TODO: change to remote-json-schema-form-kit
 
 type Success<T> = {
   data: T;
@@ -75,8 +72,7 @@ export type JSONSchemaFormType =
   // Benefits forms
   | 'benefit_renewal_request';
 
-export type JSFModify = Parameters<typeof modify>[1];
-export type JSFModifyNext = Parameters<typeof modifyNext>[1];
+export type JSFModify = Parameters<typeof modifyOld>[1];
 
 export type FlowOptions = {
   jsfModify?: JSFModify;
