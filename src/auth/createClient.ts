@@ -1,4 +1,4 @@
-import { createClient as createHeyApiClient } from '@hey-api/openapi-ts';
+import { createClient as createHeyApiClient } from '@/src/client';
 import { client } from '@/src/client/client.gen';
 import { ENVIRONMENTS } from '@/src/environments';
 import { npmPackageVersion } from '@/src/lib/version';
