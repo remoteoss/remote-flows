@@ -4,7 +4,7 @@ import {
 } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
+import { useJsonSchemasValidationFormResolverNext } from '@/src/components/form/validationResolver';
 import { Form } from '@/src/components/ui/form';
 import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -68,10 +68,7 @@ export function ContractAmendmentForm({
     },
   } = useContractAmendmentContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    handleValidation,
-  );
+  const resolver = useJsonSchemasValidationFormResolverNext(handleValidation);
 
   const form = useForm({
     resolver,
