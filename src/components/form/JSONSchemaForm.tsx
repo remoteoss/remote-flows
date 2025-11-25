@@ -77,13 +77,17 @@ export const JSONSchemaFormFields = ({
           return <Component key={field.name as string} {...field} />;
         }
 
-        let FieldComponent = fieldsMap[field.type as SupportedTypes];
+        let FieldComponent = fieldsMap[field.inputType as SupportedTypes];
 
-        if (field.type === 'select' && field.multiple) {
-          FieldComponent = fieldsMap['multi-select'];
+        if (!FieldComponent) {
+          return (
+            <p className='error'>
+              Field type {field.inputType as string} not supported
+            </p>
+          );
         }
 
-        if (field.type === 'fieldset') {
+        if (field.inputType === 'fieldset') {
           return (
             <FieldComponent
               key={field.name}
@@ -93,7 +97,7 @@ export const JSONSchemaFormFields = ({
           );
         }
 
-        if (field.type === 'fieldset-flat') {
+        if (field.inputType === 'fieldset-flat') {
           return (
             <FieldComponent
               key={field.name}
@@ -104,21 +108,23 @@ export const JSONSchemaFormFields = ({
           );
         }
 
-        return FieldComponent ? (
+        if (field.inputType === 'select' && field.multiple) {
+          FieldComponent = fieldsMap['multi-select'];
+        }
+
+        return (
           <Fragment key={field.name as string}>
             <FieldComponent
               {...field}
-              component={components && components[field.type as SupportedTypes]}
+              component={
+                components && components[field.inputType as SupportedTypes]
+              }
             />
             {field.statement ? (
               <Statement {...(field.statement as StatementProps)} />
             ) : null}
             {field.extra ? field.extra : null}
           </Fragment>
-        ) : (
-          <p className='error'>
-            Field type {field.type as string} not supported
-          </p>
         );
       })}
     </>
