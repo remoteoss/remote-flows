@@ -1,4 +1,5 @@
 import { modify } from '@remoteoss/json-schema-form';
+import { modify as modifyNext } from '@remoteoss/json-schema-form-next';
 
 type Success<T> = {
   data: T;
@@ -71,6 +72,7 @@ export type JSONSchemaFormType =
   | 'benefit_renewal_request';
 
 export type JSFModify = Parameters<typeof modify>[1];
+export type JSFModifyNext = Parameters<typeof modifyNext>[1];
 
 export type FlowOptions = {
   jsfModify?: JSFModify;
