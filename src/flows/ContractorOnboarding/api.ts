@@ -17,7 +17,7 @@ import { FlowOptions } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { formatCurrency } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { Client } from '@/src/client';
+import { Client } from '@/src/client/client';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
