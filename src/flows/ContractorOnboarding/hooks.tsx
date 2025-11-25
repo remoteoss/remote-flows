@@ -99,9 +99,7 @@ export interface UseContractorOnboardingReturn {
   parseFormValues: (
     values: FieldValues,
   ) => Record<string, unknown> | FieldValues;
-  handleValidation: (
-    values: FieldValues,
-  ) => ValidationResult | { yupError: $TSFixMe; formErrors: $TSFixMe } | null;
+  handleValidation: (values: FieldValues) => ValidationResult | null;
   initialValues: {
     select_country: Record<string, unknown>;
     basic_information: Record<string, unknown>;
@@ -798,7 +796,6 @@ export const useContractorOnboarding = ({
         // TODO: TBD
         return {
           formErrors: {},
-          yupError: null,
         };
       }
 
