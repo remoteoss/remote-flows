@@ -32,7 +32,7 @@ import {
   useTerminationSchema,
 } from '@/src/flows/Termination/api';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
-import { cn, ZendeskTriggerButton } from '@/src/internals';
+import { cn } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
@@ -42,6 +42,7 @@ import { AcknowledgeInformation } from '@/src/flows/Termination/components/Ackno
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 import { isInProbationPeriod } from '@/src/common/employment';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
