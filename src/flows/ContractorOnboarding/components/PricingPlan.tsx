@@ -43,9 +43,9 @@ export function PricingPlanStep({
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       await onSubmit?.(
-        contractorOnboardingBag.parseFormValues(payload) as $TSFixMe, // TODO: add type
+        contractorOnboardingBag?.parseFormValues(payload) as $TSFixMe, // TODO: add type
       );
-      const response = await contractorOnboardingBag.onSubmit(payload);
+      const response = await contractorOnboardingBag?.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
         contractorOnboardingBag?.next();
@@ -54,7 +54,7 @@ export function PricingPlanStep({
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.pricing_plan,
+          contractorOnboardingBag?.meta?.fields?.pricing_plan,
         );
 
         onError?.({
@@ -73,8 +73,8 @@ export function PricingPlanStep({
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.pricing_plan ||
-    contractorOnboardingBag.initialValues.pricing_plan;
+    contractorOnboardingBag?.stepState.values?.pricing_plan ||
+    contractorOnboardingBag?.initialValues.pricing_plan;
 
   return (
     <ContractorOnboardingForm

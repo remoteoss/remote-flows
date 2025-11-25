@@ -44,9 +44,9 @@ export function ContractPreviewStep({
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       await onSubmit?.(
-        contractorOnboardingBag.parseFormValues(payload) as $TSFixMe, // TODO: add type
+        contractorOnboardingBag?.parseFormValues(payload) as $TSFixMe, // TODO: add type
       );
-      const response = await contractorOnboardingBag.onSubmit(payload);
+      const response = await contractorOnboardingBag?.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
         contractorOnboardingBag?.next();
@@ -55,7 +55,7 @@ export function ContractPreviewStep({
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.contract_preview,
+          contractorOnboardingBag?.meta?.fields?.contract_preview,
         );
 
         onError?.({
@@ -74,15 +74,15 @@ export function ContractPreviewStep({
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.contract_preview ||
-    contractorOnboardingBag.initialValues.contract_preview;
+    contractorOnboardingBag?.stepState.values?.contract_preview ||
+    contractorOnboardingBag?.initialValues.contract_preview;
 
   return (
     <div className='space-y-4'>
       <PDFPreview
         base64Data={
-          contractorOnboardingBag.documentPreviewPdf?.contract_document
-            .content as unknown as string
+          contractorOnboardingBag?.documentPreviewPdf?.contract_document
+            ?.content as unknown as string
         }
       />
       <ContractorOnboardingForm

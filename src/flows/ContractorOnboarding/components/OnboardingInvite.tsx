@@ -48,9 +48,9 @@ export function OnboardingInvite({
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
-      if (contractorOnboardingBag.employmentId) {
+      if (contractorOnboardingBag?.employmentId) {
         const response = await employmentInviteMutationAsync({
-          employment_id: contractorOnboardingBag.employmentId,
+          employment_id: contractorOnboardingBag?.employmentId,
         });
         if (response.data) {
           await onSuccess?.({

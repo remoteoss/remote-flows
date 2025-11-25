@@ -1,6 +1,6 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
@@ -19,7 +19,7 @@ type ContractorOnboardingFormProps = {
   ) => void;
   components?: Components;
   fields?: Fields;
-  defaultValues: Record<string, unknown>;
+  defaultValues: FieldValues | undefined;
 };
 
 export function ContractorOnboardingForm({
@@ -30,7 +30,7 @@ export function ContractorOnboardingForm({
   const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
-    contractorOnboardingBag.handleValidation,
+    contractorOnboardingBag?.handleValidation,
   );
 
   const form = useForm({
@@ -43,7 +43,7 @@ export function ContractorOnboardingForm({
   useEffect(() => {
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
-    if (contractorOnboardingBag.employmentId) {
+    if (contractorOnboardingBag?.employmentId) {
       contractorOnboardingBag?.checkFieldUpdates(form.getValues());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,7 +53,8 @@ export function ContractorOnboardingForm({
     const subscription = form?.watch((values) => {
       const isAnyFieldDirty = Object.keys(values).some(
         (key) =>
-          values[key as keyof unknown] !== defaultValues[key as keyof unknown],
+          values[key as keyof unknown] !==
+          defaultValues?.[key as keyof unknown],
       );
       if (isAnyFieldDirty) {
         contractorOnboardingBag?.checkFieldUpdates(values);
@@ -70,7 +71,7 @@ export function ContractorOnboardingForm({
   return (
     <Form
       {...form}
-      key={`form-${contractorOnboardingBag.stepState.currentStep.name}`}
+      key={`form-${contractorOnboardingBag?.stepState.currentStep.name}`}
     >
       <form
         id={formId}
@@ -79,9 +80,9 @@ export function ContractorOnboardingForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={contractorOnboardingBag.fields}
-          fieldsets={contractorOnboardingBag.meta.fieldsets}
-          fieldValues={contractorOnboardingBag.fieldValues}
+          fields={contractorOnboardingBag?.fields || []}
+          fieldsets={contractorOnboardingBag?.meta.fieldsets || null}
+          fieldValues={contractorOnboardingBag?.fieldValues}
         />
       </form>
     </Form>

@@ -11,15 +11,13 @@ export function OnboardingBack({
   onClick,
   ...props
 }: PropsWithChildren<OnboardingBackProps>) {
-  const {
-    contractorOnboardingBag: { back, isEmploymentReadOnly },
-  } = useContractorOnboardingContext();
+  const { contractorOnboardingBag } = useContractorOnboardingContext();
 
   const { components } = useFormFields();
 
   const onBackHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    if (!isEmploymentReadOnly) {
-      back();
+    if (!contractorOnboardingBag?.isEmploymentReadOnly) {
+      contractorOnboardingBag?.back?.();
     }
     onClick?.(evt);
   };

@@ -1,4 +1,5 @@
 import {
+  ContractDocumentResponse,
   CreateContractDocument,
   Employment,
   EmploymentCreateParams,
@@ -84,7 +85,7 @@ export interface UseContractorOnboardingReturn {
   back: () => void;
   next: () => void;
   goTo: (step: keyof typeof STEPS) => void;
-  onSubmit: (values: FieldValues) => Promise<unknown>;
+  onSubmit: (values: FieldValues) => Promise<$TSFixMe>;
   fields: Fields;
   meta: {
     fields: {
@@ -110,7 +111,7 @@ export interface UseContractorOnboardingReturn {
   employmentId: string | undefined;
   refetchEmployment: () => void;
   isSubmitting: boolean;
-  documentPreviewPdf: unknown;
+  documentPreviewPdf: ContractDocumentResponse['data'] | undefined;
   canInvite: boolean | undefined;
   isEmploymentReadOnly: boolean | undefined;
   invitedStatus: 'invited' | 'not_invited';
