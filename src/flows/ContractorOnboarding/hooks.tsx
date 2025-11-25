@@ -7,6 +7,7 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
@@ -39,6 +40,10 @@ import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/json-schema-form';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -57,16 +62,62 @@ const stepToFormSchemaMap: Record<
   review: null,
 };
 
-import {
-  contractorStandardProductIdentifier,
-  contractorPlusProductIdentifier,
-} from '@/src/flows/ContractorOnboarding/constants';
-
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
 > = {
   employment_basic_information: 'basic_information',
 };
+
+export interface UseContractorOnboardingReturn {
+  isLoading: boolean;
+  fieldValues: FieldValues;
+  stepState: {
+    currentStep: Step<keyof typeof STEPS>;
+    totalSteps: number;
+    values:
+      | {
+          [key in keyof typeof STEPS]: FieldValues;
+        }
+      | null;
+  };
+  checkFieldUpdates: (values: FieldValues) => void;
+  back: () => void;
+  next: () => void;
+  goTo: (step: keyof typeof STEPS) => void;
+  onSubmit: (values: FieldValues) => Promise<unknown>;
+  fields: Fields;
+  meta: {
+    fields: {
+      select_country: Meta;
+      basic_information: Meta;
+      contract_details: Meta;
+      contract_preview: Meta;
+      pricing_plan: Meta;
+    };
+    fieldsets: JSFFieldset | null | undefined;
+  };
+  parseFormValues: (
+    values: FieldValues,
+  ) => Record<string, unknown> | FieldValues;
+  handleValidation: (
+    values: FieldValues,
+  ) => ValidationResult | { yupError: $TSFixMe; formErrors: $TSFixMe } | null;
+  initialValues: {
+    select_country: Record<string, unknown>;
+    basic_information: Record<string, unknown>;
+    contract_details: Record<string, unknown>;
+    contract_preview: Record<string, unknown>;
+    pricing_plan: Record<string, unknown>;
+  };
+  employmentId: string | undefined;
+  refetchEmployment: () => void;
+  isSubmitting: boolean;
+  documentPreviewPdf: unknown;
+  canInvite: boolean | undefined;
+  isEmploymentReadOnly: boolean | undefined;
+  invitedStatus: 'invited' | 'not_invited';
+  employment: Employment | undefined;
+}
 
 export const useContractorOnboarding = ({
   countryCode,
@@ -75,7 +126,7 @@ export const useContractorOnboarding = ({
   skipSteps,
   options,
   initialValues: onboardingInitialValues,
-}: useContractorOnboardingProps) => {
+}: useContractorOnboardingProps): UseContractorOnboardingReturn => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );

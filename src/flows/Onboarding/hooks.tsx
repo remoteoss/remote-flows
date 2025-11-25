@@ -1,10 +1,10 @@
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
 import { Fields } from '@remoteoss/json-schema-form';
-
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -44,7 +44,6 @@ import {
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
-import { ValidationResult } from '@remoteoss/json-schema-form-next'; // TODO: change to remote-json-schema-form-kit
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 

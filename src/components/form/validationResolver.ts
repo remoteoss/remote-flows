@@ -3,7 +3,7 @@ import type { ValidationError } from 'yup';
 import type {
   FormErrors,
   ValidationResult,
-} from '@remoteoss/json-schema-form-next';
+} from '@remoteoss/remote-json-schema-form-kit';
 
 // TODO: deprecated only used in the CostCalculatorFlow as we're using yup there
 export function iterateErrors(error: ValidationError) {
