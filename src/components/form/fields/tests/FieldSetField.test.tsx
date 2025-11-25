@@ -275,6 +275,23 @@ describe('FieldSetField', () => {
       });
       expect(helpLinks.length).toBe(1);
     });
+
+    it('should render error message for unsupported field type', () => {
+      renderWithFormContext({
+        fields: [
+          {
+            name: 'unsupported',
+            label: 'Test',
+            description: '',
+            inputType: 'unknown-type' as $TSFixMe,
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(
+        screen.getByText(/Field type unknown-type not supported/),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('nested fieldsets', () => {

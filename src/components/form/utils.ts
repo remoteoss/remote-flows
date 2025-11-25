@@ -131,11 +131,17 @@ function prefillReadOnlyFields(values: Record<string, any>, fields: any[]) {
 
     if (
       !Object.prototype.hasOwnProperty.call(values, fieldName!) &&
-      !(field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled)
+      !(
+        field.inputType === supportedTypes.FIELDSET &&
+        field.valueGroupingDisabled
+      )
     )
       return;
 
-    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+    if (
+      field.inputType === supportedTypes.FIELDSET &&
+      field.valueGroupingDisabled
+    ) {
       Object.assign(newValues, prefillReadOnlyFields(values, field.fields));
       return;
     }
@@ -164,7 +170,7 @@ function extractFieldsetFieldsValues(
 ) {
   return fields.reduce<Record<string, any>>((nestedAcc, subField) => {
     const isFieldsetValueGroupingDisabled =
-      subField.type === supportedTypes.FIELDSET &&
+      subField.inputType === supportedTypes.FIELDSET &&
       subField.valueGroupingDisabled;
 
     if (isFieldsetValueGroupingDisabled) {
@@ -289,12 +295,13 @@ export function parseFormValuesToAPI(
   const filteredFields = fields.filter(
     (field) =>
       formValues[field.name!] ||
-      (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled),
+      (field.inputType === supportedTypes.FIELDSET &&
+        field.valueGroupingDisabled),
   );
 
   const parsedFormValues = filteredFields.reduce(
     (acc, field) => {
-      switch (field.type) {
+      switch (field.inputType) {
         case supportedTypes.FIELDSET: {
           const fieldset = field;
           if (fieldset.valueGroupingDisabled) {
@@ -369,7 +376,8 @@ export function parseFormValuesToAPI(
             const formValue = formValues[extraField.name];
             const fieldTransformValueToAPI =
               extraField?.transformValueToAPI ||
-              fieldTypesTransformations[extraField.type]?.transformValueToAPI;
+              fieldTypesTransformations[extraField.inputType]
+                ?.transformValueToAPI;
 
             // logErrorOnMissingComplimentaryParams(field);
 
@@ -388,7 +396,7 @@ export function parseFormValuesToAPI(
           const formValue = formValues[field.name];
           const fieldTransformValueToAPI =
             field?.transformValueToAPI ||
-            fieldTypesTransformations[field.type]?.transformValueToAPI;
+            fieldTypesTransformations[field.inputType]?.transformValueToAPI;
           // logErrorOnMissingComplimentaryParams(field);
           if (fieldTransformValueToAPI) {
             acc[field.name] = fieldTransformValueToAPI(field)(formValue);
@@ -472,7 +480,7 @@ function excludeValuesInvisible(
         return;
       }
 
-      if (field.type === 'fieldset' && field.valueGroupingDisabled) {
+      if (field.inputType === 'fieldset' && field.valueGroupingDisabled) {
         Object.assign(
           valuesAsked,
           excludeValuesInvisible(
@@ -587,7 +595,7 @@ function getInitialDefaultValue(
   const defaultFieldValue = get(defaultValues, field.name);
   const fieldTransformValueFromAPI =
     field?.transformValueFromAPI ||
-    fieldTypesTransformations[field.type]?.transformValueFromAPI;
+    fieldTypesTransformations[field.inputType]?.transformValueFromAPI;
 
   if (fieldTransformValueFromAPI) {
     return fieldTransformValueFromAPI(field)(defaultFieldValue);
@@ -616,7 +624,7 @@ function getInitialDefaultValue(
     excludeString(defaultValueDeprecated) ??
     excludeString(field.default) ??
     initialValueForCheckboxAsBool ??
-    getDefaultValueForType(field.type)
+    getDefaultValueForType(field.inputType)
   );
 }
 
@@ -654,7 +662,10 @@ function getInitialSubFieldValues(
       );
     });
 
-    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+    if (
+      field.inputType === supportedTypes.FIELDSET &&
+      field.valueGroupingDisabled
+    ) {
       Object.assign(initialValue, subFieldValues);
     } else {
       initialValue[field.name!] = subFieldValues;
@@ -684,7 +695,7 @@ export function getInitialValues(
   fields
     .map((field) => applyFieldDynamicProperties(field, defaultFieldValues))
     .forEach((field) => {
-      switch (field.type) {
+      switch (field.inputType) {
         case supportedTypes.FIELDSET: {
           if (field.valueGroupingDisabled) {
             Object.assign(
