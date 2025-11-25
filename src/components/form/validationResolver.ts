@@ -31,7 +31,6 @@ export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
 ): Resolver<InferType<T>> => {
   return async (data: FieldValues) => {
     const { yupError, formErrors } = await handleValidation(data);
-
     if (Object.keys(formErrors || {}).length > 0) {
       return {
         values: {},

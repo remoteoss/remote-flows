@@ -17,11 +17,8 @@ export function EmployeeCommunicationForm({
 }: EmployeeComunicationProps) {
   const { terminationBag } = useTerminationContext();
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(
-      terminationBag?.parseFormValues(
-        values,
-      ) as EmployeeCommunicationFormValues,
-    );
+    const parsedValues = await terminationBag?.parseFormValues(values);
+    await onSubmit?.(parsedValues as EmployeeCommunicationFormValues);
     terminationBag?.next();
   };
 

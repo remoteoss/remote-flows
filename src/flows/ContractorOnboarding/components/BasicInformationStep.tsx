@@ -40,11 +40,9 @@ export function BasicInformationStep({
 
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.(
-        contractorOnboardingBag.parseFormValues(
-          payload,
-        ) as BasicInformationFormPayload,
-      );
+      const parsedValues =
+        await contractorOnboardingBag.parseFormValues(payload);
+      await onSubmit?.(parsedValues as BasicInformationFormPayload);
       const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as EmploymentCreationResponse);

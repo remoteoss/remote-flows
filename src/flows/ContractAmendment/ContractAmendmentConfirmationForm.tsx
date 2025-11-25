@@ -50,7 +50,7 @@ export function ContractAmendmentConfirmationForm({
   });
 
   const handleSubmit = async (values: FieldValues) => {
-    const parsedValues = parseJSFToValidate(values, fields, {
+    const parsedValues = await parseJSFToValidate(values, fields, {
       isPartialValidation: false,
     });
     await onSubmit?.(parsedValues);
