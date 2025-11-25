@@ -1,5 +1,5 @@
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { modify } from '@remoteoss/json-schema-form';
+import { modify } from '@remoteoss/json-schema-form-old';
 import type {
   ModifyConfig,
   FormResult,

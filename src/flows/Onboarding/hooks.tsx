@@ -4,7 +4,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,

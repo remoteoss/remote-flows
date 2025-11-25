@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

@@ -38,7 +38,7 @@ import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -125,7 +125,7 @@ export const useContractorOnboarding = ({
   skipSteps,
   options,
   initialValues: onboardingInitialValues,
-}: useContractorOnboardingProps): UseContractorOnboardingReturn => {
+}: useContractorOnboardingProps) => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );

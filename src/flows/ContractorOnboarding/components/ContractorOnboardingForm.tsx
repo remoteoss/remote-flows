@@ -2,7 +2,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';

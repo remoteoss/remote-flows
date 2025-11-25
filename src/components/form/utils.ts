@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
-import { $TSFixMe, Fields } from '@remoteoss/json-schema-form';
+import { $TSFixMe, Fields } from '@remoteoss/json-schema-form-old';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
 import get from 'lodash.get';
 
