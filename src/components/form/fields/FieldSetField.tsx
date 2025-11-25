@@ -248,15 +248,8 @@ export function FieldSetField({
                 return null; // Skip hidden or deprecated fields
               }
 
-              if (field.Component) {
-                const { Component } = field as {
-                  Component: React.ComponentType<$TSFixMe>;
-                };
-                return <Component key={field.name} {...field} />;
-              }
-
               // Handle nested fieldsets
-              if (field.type === 'fieldset') {
+              if (field.inputType === 'fieldset') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -267,7 +260,7 @@ export function FieldSetField({
                 );
               }
 
-              if (field.type === 'fieldset-flat') {
+              if (field.inputType === 'fieldset-flat') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -278,16 +271,32 @@ export function FieldSetField({
                   />
                 );
               }
-
+              // We need to do the check after checking field.inputType === 'fieldset' or field.inputType === 'fieldset-flat'
+              // circular dependency most likely
               let FieldComponent =
                 baseFields[
-                  field.type as Exclude<
+                  field.inputType as Exclude<
                     SupportedTypes,
                     'fieldset' | 'fieldset-flat'
                   >
                 ];
 
-              if (field.type === 'select' && field.multiple) {
+              if (field.Component) {
+                const { Component } = field as {
+                  Component: React.ComponentType<$TSFixMe>;
+                };
+                return <Component key={field.name} {...field} />;
+              }
+
+              if (!FieldComponent) {
+                return (
+                  <p className='error'>
+                    Field type {field.inputType as string} not supported
+                  </p>
+                );
+              }
+
+              if (field.inputType === 'select' && field.multiple) {
                 FieldComponent = baseFields['multi-select'];
               }
 
@@ -298,7 +307,7 @@ export function FieldSetField({
                   <FieldComponent
                     {...field}
                     name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    component={components?.[field.type as SupportedTypes]}
+                    component={components?.[field.inputType as SupportedTypes]}
                   />
                   {field.extra ? field.extra : null}
                 </Fragment>
