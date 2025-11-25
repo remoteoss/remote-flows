@@ -10,7 +10,6 @@ This guide helps you upgrade between major versions of `@remoteoss/remote-flows`
     - [1. CostCalculatorFlow](#1-costcalculatorflow)
     - [2. RemoteFlows](#2-remoteflows)
     - [3. Internal imports](#3-internal-imports)
-    - [4. TerminationFlow, OnboardingFlow and ContractorOnboardingFlow](#4-terminationflow-onboardingflow-and-contractoronboardingflow)
 
 ## Version 1.0.0
 
@@ -18,8 +17,7 @@ This guide helps you upgrade between major versions of `@remoteoss/remote-flows`
 
 Version 1.0.0 marks the first stable release of `@remoteoss/remote-flows`. This release includes:
 
-- ✅ Upgraded json-schema-form dependency (0.x → 1.x)
-- ✅ TerminationFlow and OnboardingFlow will use the json-schema-form v1, others will keep at v0 to avoid more breaking changes
+- ✅ Fix file uploads, now the FileUpload will only emit files
 - ✅ `ZendeskTriggerButton` import removed from `@remoteoss/remote-flows/internals`
 - ✅ `CostCalculatorResults`, `CostCalculatorDisclaimer`, and `disclaimerUtils` will not be exported
 - ✅ `authId` removed from `RemoteFlows` props
@@ -65,12 +63,6 @@ import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 ```tsx
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows'#### 4. TerminationFlow and OnboardingFlow
 ```
-
-#### 4. OnboardingFlow
-
-We only changed the `OnboardingFlow`, the onboarding flow will use the library `[remoteoss/remote-json-schema-form-kit](https://github.com/remoteoss/remote-json-schema-form-kit)`
-
-This library is a thin wrapper which decides when to use v0 or v1 from `json-schema-form`, if the schema brings the property `x-rmt-meta.jsfVersion`
 
 ---
 
