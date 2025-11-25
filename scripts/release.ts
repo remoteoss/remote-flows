@@ -104,14 +104,9 @@ async function getCommitsFromGitHubAPI(): Promise<Commit[]> {
       encoding: 'utf8',
     }).trim();
 
-    // Get current branch name
-    const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', {
-      encoding: 'utf8',
-    }).trim();
-
     // Get commits using GitHub API
     const response = await fetch(
-      `https://api.github.com/repos/remoteoss/remote-flows/compare/${lastTag}...${currentBranch}`,
+      `https://api.github.com/repos/remoteoss/remote-flows/compare/${lastTag}...main`,
     );
 
     if (!response.ok) {
