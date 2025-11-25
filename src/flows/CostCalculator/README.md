@@ -21,10 +21,9 @@ Welcome to the CostCalculator flow docs
       - [Version Prop](#version-prop)
     - [DefaultValues Properties](#defaultvalues-properties)
   - [CostCalculatorForm](#costcalculatorform)
+  - [EstimationResults](#estimationresults)
   - [CostCalculatorSubmitButton](#costcalculatorsubmitbutton)
   - [CostCalculatorResetButton](#costcalculatorresetbutton)
-  - [CostCalculatorDisclaimer](#costcalculatordisclaimer)
-  - [CostCalculatorResults](#costcalculatorresults)
   - [SummaryResults](#summaryresults-component)
   - [useCostCalculator](#usecostcalculator)
     - [Parameters](#parameters)
@@ -174,7 +173,6 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
   RemoteFlows,
-  CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import './css/main.css';
 
@@ -233,7 +231,6 @@ export function BasicCostCalculatorLabels() {
           },
         }}
       />
-      <CostCalculatorDisclaimer label='Disclaimer' />
     </RemoteFlows>
   );
 }
@@ -646,21 +643,165 @@ It renders the submit button for the form and supports all standard `<button>` e
 
 It renders the reset button for the form and supports all standard `<button>` element props. This component must be used within the render prop of the CostCalculatorFlow component to ensure proper functionality
 
-### CostCalculatorDisclaimer
+### EstimationResults
 
-It renders a disclaimer link that can be placed anywhere in your application.
+The `EstimationResults` component displays detailed cost breakdown for a single estimation, including monthly and annual costs, benefits, employer contributions, and onboarding information.
 
-| Prop    | Type        | Required | Description    |
-| ------- | ----------- | -------- | -------------- |
-| `label` | `ReactNode` | No       | the link label |
+| Prop          | Type                          | Required | Description                                                       |
+| ------------- | ----------------------------- | -------- | ----------------------------------------------------------------- |
+| `estimation`  | `CostCalculatorEstimation`    | Yes      | The estimation data object containing all cost details            |
+| `title`       | `string`                      | Yes      | Display title for the estimation card                             |
+| `components`  | `EstimationResultsComponents` | No       | Custom component overrides for header, footer, and sections       |
+| `onDelete`    | `() => void`                  | Yes      | Callback function triggered when delete action is selected        |
+| `onExportPdf` | `() => void`                  | Yes      | Callback function triggered when export to PDF action is selected |
+| `onEdit`      | `() => void`                  | Yes      | Callback function triggered when edit action is selected          |
 
-### CostCalculatorResults
+#### EstimationResultsComponents
 
-A component to display cost calculation results.
+The `components` prop allows you to override default sections with custom implementations:
 
-| Prop             | Type                                 | Required | Description                  |
-| ---------------- | ------------------------------------ | -------- | ---------------------------- |
-| `employmentData` | `CostCalculatorEstimateResponseData` | Yes      | The estimation response data |
+| Property             | Type                                                                      | Description                              |
+| -------------------- | ------------------------------------------------------------------------- | ---------------------------------------- |
+| `HiringSection`      | `React.ComponentType<{ country, countryBenefitsUrl, countryGuideUrl }>`   | Custom component for hiring information  |
+| `OnboardingTimeline` | `React.ComponentType<{ minimumOnboardingDays, data }>`                    | Custom component for onboarding timeline |
+| `Header`             | `React.ComponentType<{ title, region?, country, onDelete, onExportPdf }>` | Custom component for results header      |
+| `Footer`             | `React.ComponentType`                                                     | Custom component for results footer      |
+
+#### Example Usage
+
+```tsx
+import {
+  RemoteFlows,
+  CostCalculatorFlow,
+  CostCalculatorForm,
+  CostCalculatorSubmitButton,
+  EstimationResults,
+} from '@remoteoss/remote-flows';
+import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
+import { useState } from 'react';
+
+export function CostCalculatorWithEstimationResults() {
+  const [estimation, setEstimation] =
+    useState<CostCalculatorEstimateResponse | null>(null);
+
+  const fetchToken = () => {
+    return fetch('/api/token')
+      .then((res) => res.json())
+      .then((data) => ({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+      }));
+  };
+
+  const handleDelete = () => {
+    setEstimation(null);
+  };
+
+  const handleExportPdf = () => {
+    // Implement PDF export logic
+    console.log('Exporting PDF...');
+  };
+
+  const handleEdit = () => {
+    // Implement edit logic
+    console.log('Editing estimation...');
+  };
+
+  return (
+    <RemoteFlows auth={fetchToken}>
+      <CostCalculatorFlow
+        estimationOptions={{
+          title: 'Employee Cost Estimate',
+          includeBenefits: true,
+          includeCostBreakdowns: true,
+        }}
+        render={(props) => {
+          if (props.isLoading) {
+            return <div>Loading...</div>;
+          }
+          return (
+            <div>
+              <CostCalculatorForm
+                onSuccess={(response) => setEstimation(response)}
+                onError={(error) => console.error(error)}
+              />
+              <CostCalculatorSubmitButton>Calculate</CostCalculatorSubmitButton>
+            </div>
+          );
+        }}
+      />
+      {estimation && (
+        <EstimationResults
+          estimation={estimation.data}
+          title='Cost Estimate'
+          onDelete={handleDelete}
+          onExportPdf={handleExportPdf}
+          onEdit={handleEdit}
+        />
+      )}
+    </RemoteFlows>
+  );
+}
+```
+
+#### Features
+
+The `EstimationResults` component displays:
+
+- **Header**: Country flag, title, region (if applicable), and annual gross salary
+- **Actions Menu**: Edit, Export, and Delete options
+- **Monthly Cost Breakdown**:
+  - Gross monthly salary
+  - Mandatory employer costs (with detailed breakdown)
+  - Benefits (with detailed breakdown)
+  - Monthly management fee (if included)
+- **Annual Cost Breakdown**:
+  - Gross annual salary
+  - Mandatory employer costs (with detailed breakdown)
+  - Benefits (with detailed breakdown)
+  - Extra statutory payments
+  - Annual management fee (if included)
+- **Onboarding Timeline**: Step-by-step onboarding process with estimated days
+- **Hiring Section**: Links to country-specific hiring guides and benefits
+
+#### Currency Display
+
+When the employer currency differs from the employee's regional currency, the component displays both currencies side by side:
+
+- **Employee currency**: Cost in the country's local currency
+- **Employer currency**: Cost converted to the employer's selected currency
+
+#### Customization
+
+You can override specific sections with custom components:
+
+```tsx
+const CustomFooter = () => (
+  <div>
+    <p>Contact us for more details</p>
+  </div>
+);
+
+<EstimationResults
+  estimation={estimation.data}
+  title='Cost Estimate'
+  components={{
+    Footer: CustomFooter,
+  }}
+  onDelete={handleDelete}
+  onExportPdf={handleExportPdf}
+  onEdit={handleEdit}
+/>;
+```
+
+#### Styling
+
+The component uses CSS classes prefixed with `RemoteFlows__EstimationResults__*` for custom styling. Key classes include:
+
+- `RemoteFlows__EstimationResults__Card` - Main container
+- `RemoteFlows__EstimationResults__Header` - Header section
+- `RemoteFlows__EstimationRow__Grid` - Cost breakdown rows
+- `RemoteFlows__BreakdownList` - Nested cost details
 
 # SummaryResults Component
 
