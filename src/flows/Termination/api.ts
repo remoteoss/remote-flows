@@ -19,7 +19,7 @@ import {
   DaysAndHours,
   formatAsDecimal,
 } from '@/src/lib/time';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
