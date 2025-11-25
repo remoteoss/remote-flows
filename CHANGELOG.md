@@ -1,5 +1,26 @@
 # @remoteoss/remote-flows
 
+## 1.0.0
+
+### Major Changes
+
+- Remove `ZendeskTriggerButton` from `remoteoss/remote-flows/internals` (#599) [#599](https://github.com/remoteoss/remote-flows/pull/599)
+- Remove `CostCalculatorResults`, `CostCalculatorDisclaimer`, `CostCalculatorDisclaimer` (#600) [#600](https://github.com/remoteoss/remote-flows/pull/600)
+- Fix `FileUploadField`, `handleValidation` and `parseFormValues` are async (#604) [#604](https://github.com/remoteoss/remote-flows/pull/604)
+- remove `authId` from `RemoteFlows` (#608) [#608][https://github.com/remoteoss/remote-flows/pull/608]
+
+## 0.32.0
+
+### Minor Changes
+
+- export FileUploader component and add file field support (#584) [#584](https://github.com/remoteoss/remote-flows/pull/584)
+- consolidate validation resolvers and add form error iteration support (#585) [#585](https://github.com/remoteoss/remote-flows/pull/585)
+- add support for next version of json-schema-form (#586) [#586](https://github.com/remoteoss/remote-flows/pull/586)
+- add test to validate the select country step when it's empty (#597) [#597](https://github.com/remoteoss/remote-flows/pull/597)
+- migrate internally from field.type to field.inputType, FieldsetField if it doesn't found the component to render we show a fallback (#595) [#595](https://github.com/remoteoss/remote-flows/pull/595)
+- Deprecate `authId` and create a factory to create the `httpClient` (#594) [#594](https://github.com/remoteoss/remote-flows/pull/594)
+- Add `errorBoundary` prop to `RemoteFlows` and setup an ErrorBoundary internally as default (#589) [#589](https://github.com/remoteoss/remote-flows/pull/589)
+
 ## 0.31.0
 
 ### Minor Changes

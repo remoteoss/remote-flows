@@ -39,9 +39,8 @@ export function ContractDetailsStep({
   const { onboardingBag } = useOnboardingContext();
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.(
-        onboardingBag.parseFormValues(payload) as ContractDetailsFormPayload,
-      );
+      const parsedValues = await onboardingBag.parseFormValues(payload);
+      await onSubmit?.(parsedValues as ContractDetailsFormPayload);
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response.data as EmploymentResponse);
