@@ -1,5 +1,5 @@
 import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
-import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
+import type { ValidationError } from 'yup';
 import type {
   FormErrors,
   ValidationResult,
@@ -25,31 +25,6 @@ export function iterateErrors(error: ValidationError) {
 
   return errors;
 }
-
-// TODO: deprecated only used with cost calculator flow
-export const useJsonSchemasValidationFormYupResolver = <
-  T extends AnyObjectSchema,
->(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-    yupError: ValidationError;
-  },
-): Resolver<InferType<T>> => {
-  return async (data: FieldValues) => {
-    const { yupError, formErrors } = await handleValidation(data);
-
-    if (Object.keys(formErrors || {}).length > 0) {
-      return {
-        values: {},
-        errors: iterateErrors(yupError as ValidationError),
-      };
-    }
-    return {
-      values: data,
-      errors: {},
-    };
-  };
-};
 
 function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
   return Object.entries(formErrors || {}).reduce(
