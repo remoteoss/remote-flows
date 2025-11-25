@@ -66,7 +66,11 @@ import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows'#### 4. TerminationFlow and OnboardingFlow
 ```
 
-#### 4. TerminationFlow, OnboardingFlow, ContractorOnboardingFlow and ContractAmendmentFlow
+#### 4. OnboardingFlow
+
+We only changed the `OnboardingFlow`, the onboarding flow will use the library `[remoteoss/remote-json-schema-form-kit](https://github.com/remoteoss/remote-json-schema-form-kit)`
+
+This library is a thin wrapper which decides when to use v0 or v1 from `json-schema-form`, if the schema brings the property `x-rmt-meta.jsfVersion`
 
 The `options.jsfModify` syntax has changed for component customization in the json-schema-form v1 upgrade. If you're overriding field descriptions or presentations with components, update the syntax.
 
