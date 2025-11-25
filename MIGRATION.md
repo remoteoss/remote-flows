@@ -19,6 +19,7 @@ This guide helps you upgrade between major versions of `@remoteoss/remote-flows`
 Version 1.0.0 marks the first stable release of `@remoteoss/remote-flows`. This release includes:
 
 - ✅ Fix file uploads, now the FileUpload will only emit files
+- ✅ `handleValidation` and `parseFormValues` from the flowBags will be async
 - ✅ `ZendeskTriggerButton` import removed from `@remoteoss/remote-flows/internals`
 - ✅ `CostCalculatorResults`, `CostCalculatorDisclaimer`, and `disclaimerUtils` will not be exported
 - ✅ `authId` removed from `RemoteFlows` props
