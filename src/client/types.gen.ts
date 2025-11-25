@@ -1181,6 +1181,7 @@ export type ContractorInvoiceStatus =
   | 'rejected_by_remote'
   | 'blocked'
   | 'compliance_review'
+  | 'compliance_failed'
   | 'pay_out_scheduled'
   | 'enqueued'
   | 'processing'
@@ -3560,8 +3561,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -7202,13 +7203,17 @@ export type EmploymentCreateParams = {
   company_id?: string;
   country_code: string;
   /**
+   * This field is required to create a global payroll employee.
+   */
+  engaged_by_entity_slug?: string;
+  /**
    * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   external_id?: string;
   /**
    * If not provided, it will default to `employee`.
    */
-  type?: 'employee' | 'contractor';
+  type?: 'employee' | 'contractor' | 'global_payroll_employee';
 };
 
 /**

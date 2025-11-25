@@ -2,10 +2,3 @@
 
 export type * from './types.gen';
 export * from './sdk.gen';
-export {
-  createClient,
-  createConfig,
-  type Client,
-  type ClientOptions,
-  type Config,
-} from './client';
