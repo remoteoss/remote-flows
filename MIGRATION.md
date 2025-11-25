@@ -66,7 +66,7 @@ import { ZendeskTriggerButton } from '@remoteoss/remote-flows/internals';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows'#### 4. TerminationFlow and OnboardingFlow
 ```
 
-#### 4. TerminationFlow, OnboardingFlow and ContractorOnboardingFlow
+#### 4. TerminationFlow, OnboardingFlow, ContractorOnboardingFlow and ContractAmendmentFlow
 
 The `options.jsfModify` syntax has changed for component customization in the json-schema-form v1 upgrade. If you're overriding field descriptions or presentations with components, update the syntax.
 
