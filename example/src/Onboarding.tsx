@@ -270,17 +270,6 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
-      options={{
-        jsfModify: {
-          select_country: {
-            fields: {
-              country: {
-                title: 'Country...',
-              },
-            },
-          },
-        },
-      }}
     />
   </RemoteFlows>
 );
