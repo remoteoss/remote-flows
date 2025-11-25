@@ -184,9 +184,27 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
     };
   };
   /**
+   * Error boundary configuration.
+   */
+  errorBoundary?: {
+    /**
+     * If true, re-throws errors to parent error boundary.
+     * If false, shows fallback UI to prevent crashes.
+     * @default false
+     */
+    useParentErrorBoundary?: boolean;
+    /**
+     * Custom fallback UI to show when an error occurs.
+     * fallback only works when rethrow is false.
+     * If not provided, shows default error message.
+     */
+    fallback?: ReactNode | ((error: Error) => ReactNode);
+  };
+  /**
    * ID to use for the auth query.
    * If we navigate from one page to another with a different authentication method,
    * we need to use a different authId.
+   * @deprecated will be removed in a major version, behavior stays the same for now.
    */
   authId?: 'default' | 'client';
 };

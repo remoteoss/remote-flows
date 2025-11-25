@@ -3,9 +3,13 @@ on:
   pull_request:
     branches:
       - main
+      - release/*
+      - release-major-1.0.0 # will delete later
   push:
     branches:
       - main
+      - release/*
+      - release-major-1.0.0 # will delete later
 
 jobs:
   unit-tests:
