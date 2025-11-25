@@ -16,7 +16,6 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
   const { formId, terminationBag } = useTerminationContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
     terminationBag.handleValidation,
   );
 
@@ -35,7 +34,7 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
           terminationBag?.initialValues?.[key as keyof TerminationFormValues],
       );
       if (isAnyFieldDirty) {
-        terminationBag?.checkFieldUpdates(values);
+        terminationBag?.checkFieldUpdates(values as TerminationFormValues);
       }
     });
     return () => subscription?.unsubscribe();

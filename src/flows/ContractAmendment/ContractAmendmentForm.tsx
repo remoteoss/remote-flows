@@ -68,10 +68,7 @@ export function ContractAmendmentForm({
     },
   } = useContractAmendmentContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
-    handleValidation,
-  );
+  const resolver = useJsonSchemasValidationFormResolver(handleValidation);
 
   const form = useForm({
     resolver,

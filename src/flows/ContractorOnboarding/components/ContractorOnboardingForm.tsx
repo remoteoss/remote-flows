@@ -30,7 +30,6 @@ export function ContractorOnboardingForm({
   const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
     contractorOnboardingBag.handleValidation,
   );
 
