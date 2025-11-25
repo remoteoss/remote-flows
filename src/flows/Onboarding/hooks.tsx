@@ -614,7 +614,7 @@ export const useOnboarding = ({
     stepFields.select_country,
   ]);
 
-  const parseFormValues = (values: FieldValues) => {
+  const parseFormValues = async (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
@@ -622,7 +622,7 @@ export const useOnboarding = ({
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return parseJSFToValidate(values, basicInformationForm?.fields, {
+      return await parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -631,7 +631,7 @@ export const useOnboarding = ({
       contractDetailsForm &&
       stepState.currentStep.name === 'contract_details'
     ) {
-      return parseJSFToValidate(values, contractDetailsForm?.fields, {
+      return await parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -648,7 +648,7 @@ export const useOnboarding = ({
       ] = prettifyFormValues(values, stepFields[currentStepName]);
     }
 
-    const parsedValues = parseFormValues(values);
+    const parsedValues = await parseFormValues(values);
     refetchCompany();
     switch (stepState.currentStep.name) {
       case 'select_country': {
@@ -786,12 +786,12 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
+    handleValidation: async (values: FieldValues) => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           benefitOffersSchema?.fields,
           { isPartialValidation: false },
@@ -803,7 +803,7 @@ export const useOnboarding = ({
         basicInformationForm &&
         stepState.currentStep.name === 'basic_information'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           basicInformationForm?.fields,
           { isPartialValidation: false },
@@ -815,7 +815,7 @@ export const useOnboarding = ({
         contractDetailsForm &&
         stepState.currentStep.name === 'contract_details'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           contractDetailsForm?.fields,
           { isPartialValidation: false },
