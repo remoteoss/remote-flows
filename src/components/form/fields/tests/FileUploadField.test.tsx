@@ -235,7 +235,6 @@ describe('FileUploadField Component', () => {
     fireEvent.change(fileInput, { target: { files: [file2] } });
 
     await waitFor(() => {
-      // ✅ Should have both files, not just file2
       expect(mockOnChange).toHaveBeenLastCalledWith([file1, file2]);
     });
   });
