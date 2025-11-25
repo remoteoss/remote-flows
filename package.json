@@ -58,8 +58,10 @@
     "dist"
   ],
   "peerDependencies": {
+    "pdfjs-dist": "^5.4.296",
     "react": "^18 || ^19",
-    "react-dom": "^18 || ^19"
+    "react-dom": "^18 || ^19",
+    "react-pdf": "^10.2.0"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.8.1",
@@ -96,12 +98,10 @@
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
     "lucide-react": "0.477.0",
-    "pdfjs-dist": "^5.4.296",
     "postcss": "^8.5.3",
     "react-day-picker": "^8.10.1",
     "react-flagpack": "^2.0.6",
     "react-hook-form": "^7.54.2",
-    "react-pdf": "^10.2.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.9",
     "tailwindcss-animate": "^1.0.7",
