@@ -7,6 +7,7 @@ import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
 import { Client } from '@hey-api/client-fetch';
+import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 
 const queryClient = new QueryClient();
 
@@ -48,18 +49,21 @@ export function RemoteFlows({
   theme,
   proxy,
   environment,
+  errorBoundary = { useParentErrorBoundary: true },
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   const client = useMemo(
     () => createClient(auth, { environment, proxy }),
     [auth, environment, proxy],
   );
   return (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={components}>
-        <RemoteFlowContextWrapper client={client}>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </RemoteFlowContextWrapper>
-      </FormFieldsProvider>
-    </QueryClientProvider>
+    <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider components={components}>
+          <RemoteFlowContextWrapper client={client}>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </RemoteFlowContextWrapper>
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    </RemoteFlowsErrorBoundary>
   );
 }
