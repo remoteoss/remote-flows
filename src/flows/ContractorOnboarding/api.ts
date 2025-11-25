@@ -13,12 +13,15 @@ import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
-import { FlowOptions } from '@/src/flows/types';
+import { NextFlowOptions } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { formatCurrency } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import {
+  createHeadlessForm,
+  modify,
+} from '@remoteoss/remote-json-schema-form-kit';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
@@ -202,7 +205,7 @@ export const useContractorOnboardingDetailsSchema = ({
 }: {
   countryCode: string;
   fieldValues: FieldValues;
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }) => {
   const jsonSchemaQueryParam = options?.jsonSchemaVersion
@@ -264,7 +267,7 @@ export const useContractorOnboardingDetailsSchema = ({
 
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
   const { data: contractorSubscriptions, isLoading: isLoading } =
     useGetContractorSubscriptions({
