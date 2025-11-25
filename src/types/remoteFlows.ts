@@ -200,13 +200,6 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
      */
     fallback?: ReactNode | ((error: Error) => ReactNode);
   };
-  /**
-   * ID to use for the auth query.
-   * If we navigate from one page to another with a different authentication method,
-   * we need to use a different authId.
-   * @deprecated will be removed in a major version, behavior stays the same for now.
-   */
-  authId?: 'default' | 'client';
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
