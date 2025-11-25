@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../../ui/form';
+import { FieldDataProps } from '@/src/types/fields';
 
 const toBase64 = (file: File): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
@@ -56,6 +57,12 @@ const validateFileSize = (files: File[], maxSize?: number): string | null => {
     }
   }
   return null;
+};
+
+export type FieldFileDataProps = FieldDataProps & {
+  accept?: string;
+  multiple?: boolean;
+  maxFileSize?: number;
 };
 
 export type FileUploadFieldProps = JSFField & {
@@ -103,7 +110,7 @@ export function FileUploadField({
       render={({ field, fieldState }) => {
         const CustomFileUploadField = component || components?.file;
         if (CustomFileUploadField) {
-          const customFileUploadFieldProps = {
+          const customFileUploadFieldProps: FieldFileDataProps = {
             name,
             description,
             label,

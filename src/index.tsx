@@ -43,6 +43,7 @@ export type {
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   Meta,
+  FileComponentProps,
 } from '@/src/types/remoteFlows';
 
 export type {
