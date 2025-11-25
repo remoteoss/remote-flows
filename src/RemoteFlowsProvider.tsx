@@ -1,40 +1,27 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
-import { useAuth } from './useAuth';
+import { createClient } from '@/src/auth/createClient';
+import { Client } from '@hey-api/client-fetch';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 
 const queryClient = new QueryClient();
 
 type RemoteFlowContextWrapperProps = {
-  auth: RemoteFlowsSDKProps['auth'];
   children: React.ReactNode;
-  environment?: RemoteFlowsSDKProps['environment'];
-  proxy?: RemoteFlowsSDKProps['proxy'];
-  authId?: RemoteFlowsSDKProps['authId'];
+  client: Client;
 };
 
 function RemoteFlowContextWrapper({
   children,
-  auth,
-  authId,
-  proxy,
-  environment,
+  client,
 }: RemoteFlowContextWrapperProps) {
-  const remoteApiClient = useAuth({
-    auth,
-    authId,
-    options: {
-      proxy,
-      environment,
-    },
-  });
   return (
-    <RemoteFlowContext.Provider value={{ client: remoteApiClient.current }}>
+    <RemoteFlowContext.Provider value={{ client }}>
       {children}
     </RemoteFlowContext.Provider>
   );
@@ -57,7 +44,6 @@ export function FormFieldsProvider({
 
 export function RemoteFlows({
   auth,
-  authId,
   children,
   components,
   theme,
@@ -65,16 +51,15 @@ export function RemoteFlows({
   environment,
   errorBoundary = { useParentErrorBoundary: true },
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
+  const client = useMemo(
+    () => createClient(auth, { environment, proxy }),
+    [auth, environment, proxy],
+  );
   return (
     <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider components={components}>
-          <RemoteFlowContextWrapper
-            auth={auth}
-            authId={authId}
-            proxy={proxy}
-            environment={environment}
-          >
+          <RemoteFlowContextWrapper client={client}>
             <ThemeProvider theme={theme}>{children}</ThemeProvider>
           </RemoteFlowContextWrapper>
         </FormFieldsProvider>
