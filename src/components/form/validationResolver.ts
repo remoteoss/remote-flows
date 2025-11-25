@@ -91,32 +91,7 @@ function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
   );
 }
 
-/**
- * This one can be used in forms where x-rmt-meta is not present in json schemas
- */
-export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-    yupError: ValidationError;
-  },
-): Resolver<InferType<T>> => {
-  return async (data: FieldValues) => {
-    const { formErrors } = await handleValidation(data);
-
-    if (Object.keys(formErrors || {}).length > 0) {
-      return {
-        values: {},
-        errors: iterateFormErrors(formErrors),
-      };
-    }
-    return {
-      values: data,
-      errors: {},
-    };
-  };
-};
-
-export const useJsonSchemasValidationFormResolverNext = <
+export const useJsonSchemasValidationFormResolver = <
   T extends FieldValues = FieldValues,
 >(
   handleValidation: (data: T) => ValidationResult | null,

@@ -3,7 +3,7 @@ import { Form } from '@/src/components/ui/form';
 import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolverNext } from '@/src/components/form/validationResolver';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { Fields } from '@remoteoss/json-schema-form';
 import {
   BasicInformationFormPayload,
@@ -32,7 +32,7 @@ export function OnboardingForm({
 }: OnboardingFormProps) {
   const { formId, onboardingBag } = useOnboardingContext();
 
-  const resolver = useJsonSchemasValidationFormResolverNext(
+  const resolver = useJsonSchemasValidationFormResolver(
     onboardingBag.handleValidation,
   );
 

@@ -1,6 +1,8 @@
 import { Client } from '@hey-api/client-fetch';
-import { jsonLogicOperators } from '@remoteoss/remote-json-schema-form-kit';
-import { modify, createHeadlessForm } from '@remoteoss/json-schema-form-next';
+import {
+  modify,
+  createHeadlessForm,
+} from '@remoteoss/remote-json-schema-form-kit';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -36,7 +38,7 @@ import {
   JSONSchemaFormType,
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
-import { JSFFieldset } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFieldset } from '@/src/types/remoteFlows';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -192,7 +194,7 @@ export const useJSONSchemaForm = ({
         json_schema_version: options.jsonSchemaVersion.form_schema[form],
       }
     : {};
-  return useQuery({
+  return useQuery<$TSFixMe>({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
     queryFn: async () => {
@@ -250,7 +252,6 @@ export const useJSONSchemaForm = ({
         },
         ...createHeadlessForm(jsfSchema, {
           initialValues,
-          customJsonLogicOps: jsonLogicOperators,
         }),
       };
     },

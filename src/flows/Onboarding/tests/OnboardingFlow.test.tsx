@@ -909,15 +909,11 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(screen.getAllByText(/Required field/i)).toHaveLength(1);
-    });
-
-    await waitFor(() => {
       const errorElements = screen.getAllByText(
         /Please select at least one option./i,
       );
 
-      expect(errorElements).toHaveLength(2);
+      expect(errorElements).toHaveLength(3);
     });
   });
 
