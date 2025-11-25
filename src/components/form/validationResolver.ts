@@ -5,7 +5,7 @@ import type {
   ValidationResult,
 } from '@remoteoss/json-schema-form-next';
 
-// TODO: deprecated only used with old json-schema-form-version
+// TODO: deprecated only used in the CostCalculatorFlow as we're using yup there
 export function iterateErrors(error: ValidationError) {
   const errors = (error as ValidationError).inner.reduce(
     (
