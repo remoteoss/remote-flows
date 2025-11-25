@@ -7,10 +7,7 @@ export {
   CostCalculatorForm,
   CostCalculatorResetButton,
   CostCalculatorSubmitButton,
-  CostCalculatorDisclaimer,
-  CostCalculatorResults,
   useCostCalculator,
-  disclaimerData,
   useCostCalculatorEstimationPdf,
   useCostCalculatorEstimationCsv,
   EstimationResults,
@@ -43,6 +40,7 @@ export type {
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   Meta,
+  FileComponentProps,
 } from '@/src/types/remoteFlows';
 
 export type {

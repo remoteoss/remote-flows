@@ -3,9 +3,12 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  CostCalculatorResults,
+  EstimationResults,
 } from '@remoteoss/remote-flows';
-import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
+import type {
+  CostCalculatorEstimateResponse,
+  CostCalculatorEstimation,
+} from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -65,7 +68,15 @@ export function CostCalculatorWithResults() {
               {estimations.data.employments?.[0].country.name}
             </label>
           </div>
-          <CostCalculatorResults employmentData={estimations.data} />
+          <EstimationResults
+            estimation={
+              estimations.data.employments?.[0] as CostCalculatorEstimation
+            }
+            title={'My first estimate'}
+            onDelete={() => {}}
+            onExportPdf={() => {}}
+            onEdit={() => {}}
+          />
         </>
       )}
     </RemoteFlows>
