@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.0.0
+
+### Major Changes
+
+- major version update
+
 ## 0.32.0
 
 ### Minor Changes
