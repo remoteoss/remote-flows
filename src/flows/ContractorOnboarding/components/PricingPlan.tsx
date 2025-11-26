@@ -48,7 +48,7 @@ export function PricingPlanStep({
       const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
-        contractorOnboardingBag.next();
+        contractorOnboardingBag?.next();
         return;
       }
       if (response?.error) {
