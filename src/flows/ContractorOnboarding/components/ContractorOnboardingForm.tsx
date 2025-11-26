@@ -1,8 +1,8 @@
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { FieldValues, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
-import { Fields } from '@remoteoss/json-schema-form-old';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -19,7 +19,7 @@ type ContractorOnboardingFormProps = {
   ) => void;
   components?: Components;
   fields?: Fields;
-  defaultValues: FieldValues | undefined;
+  defaultValues: Record<string, unknown>;
 };
 
 export function ContractorOnboardingForm({
@@ -44,7 +44,7 @@ export function ContractorOnboardingForm({
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (contractorOnboardingBag.employmentId) {
-      contractorOnboardingBag.checkFieldUpdates(form.getValues());
+      contractorOnboardingBag?.checkFieldUpdates(form.getValues());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -53,11 +53,10 @@ export function ContractorOnboardingForm({
     const subscription = form?.watch((values) => {
       const isAnyFieldDirty = Object.keys(values).some(
         (key) =>
-          values[key as keyof unknown] !==
-          defaultValues?.[key as keyof unknown],
+          values[key as keyof unknown] !== defaultValues[key as keyof unknown],
       );
       if (isAnyFieldDirty) {
-        contractorOnboardingBag.checkFieldUpdates(values);
+        contractorOnboardingBag?.checkFieldUpdates(values);
       }
     });
     return () => subscription?.unsubscribe();
