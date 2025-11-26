@@ -30,7 +30,7 @@ export function ContractorOnboardingForm({
   const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
-    contractorOnboardingBag?.handleValidation,
+    contractorOnboardingBag.handleValidation,
   );
 
   const form = useForm({
@@ -43,8 +43,8 @@ export function ContractorOnboardingForm({
   useEffect(() => {
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
-    if (contractorOnboardingBag?.employmentId) {
-      contractorOnboardingBag?.checkFieldUpdates(form.getValues());
+    if (contractorOnboardingBag.employmentId) {
+      contractorOnboardingBag.checkFieldUpdates(form.getValues());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -57,7 +57,7 @@ export function ContractorOnboardingForm({
           defaultValues?.[key as keyof unknown],
       );
       if (isAnyFieldDirty) {
-        contractorOnboardingBag?.checkFieldUpdates(values);
+        contractorOnboardingBag.checkFieldUpdates(values);
       }
     });
     return () => subscription?.unsubscribe();
@@ -71,7 +71,7 @@ export function ContractorOnboardingForm({
   return (
     <Form
       {...form}
-      key={`form-${contractorOnboardingBag?.stepState.currentStep.name}`}
+      key={`form-${contractorOnboardingBag.stepState.currentStep.name}`}
     >
       <form
         id={formId}
@@ -80,9 +80,9 @@ export function ContractorOnboardingForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={contractorOnboardingBag?.fields || []}
-          fieldsets={contractorOnboardingBag?.meta.fieldsets || null}
-          fieldValues={contractorOnboardingBag?.fieldValues}
+          fields={contractorOnboardingBag.fields}
+          fieldsets={contractorOnboardingBag.meta.fieldsets}
+          fieldValues={contractorOnboardingBag.fieldValues}
         />
       </form>
     </Form>

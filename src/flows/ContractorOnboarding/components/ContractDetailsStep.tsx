@@ -47,9 +47,9 @@ export function ContractDetailsStep({
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       const parsedValues =
-        await contractorOnboardingBag?.parseFormValues(payload);
+        await contractorOnboardingBag.parseFormValues(payload);
       await onSubmit?.(parsedValues as $TSFixMe);
-      const response = await contractorOnboardingBag?.onSubmit(payload);
+      const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
         contractorOnboardingBag?.next();
@@ -58,7 +58,7 @@ export function ContractDetailsStep({
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag?.meta?.fields?.contract_details,
+          contractorOnboardingBag.meta?.fields?.contract_details,
         );
 
         onError?.({
@@ -77,8 +77,8 @@ export function ContractDetailsStep({
   };
 
   const initialValues =
-    contractorOnboardingBag?.stepState.values?.contract_details ||
-    contractorOnboardingBag?.initialValues.contract_details;
+    contractorOnboardingBag.stepState.values?.contract_details ||
+    contractorOnboardingBag.initialValues.contract_details;
 
   return (
     <ContractorOnboardingForm

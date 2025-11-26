@@ -16,8 +16,8 @@ export function OnboardingBack({
   const { components } = useFormFields();
 
   const onBackHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    if (!contractorOnboardingBag?.isEmploymentReadOnly) {
-      contractorOnboardingBag?.back?.();
+    if (!contractorOnboardingBag.isEmploymentReadOnly) {
+      contractorOnboardingBag.back();
     }
     onClick?.(evt);
   };

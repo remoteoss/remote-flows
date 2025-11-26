@@ -41,18 +41,18 @@ export function BasicInformationStep({
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       const parsedValues =
-        await contractorOnboardingBag?.parseFormValues(payload);
+        await contractorOnboardingBag.parseFormValues(payload);
       await onSubmit?.(parsedValues as BasicInformationFormPayload);
-      const response = await contractorOnboardingBag?.onSubmit(payload);
+      const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as EmploymentCreationResponse);
-        contractorOnboardingBag?.next();
+        contractorOnboardingBag.next();
         return;
       }
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
-          contractorOnboardingBag?.meta?.fields?.basic_information,
+          contractorOnboardingBag.meta?.fields?.basic_information,
         );
         onError?.({
           error: response?.error,
@@ -70,8 +70,8 @@ export function BasicInformationStep({
   };
 
   const initialValues =
-    contractorOnboardingBag?.stepState.values?.basic_information ||
-    contractorOnboardingBag?.initialValues.basic_information;
+    contractorOnboardingBag.stepState.values?.basic_information ||
+    contractorOnboardingBag.initialValues.basic_information;
 
   return (
     <ContractorOnboardingForm

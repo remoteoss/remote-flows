@@ -9,10 +9,7 @@ export const ContractorOnboardingContext = createContext<{
   contractorOnboardingBag: null,
 });
 
-export const useContractorOnboardingContext = (): {
-  formId: string | undefined;
-  contractorOnboardingBag: ReturnType<typeof useContractorOnboarding> | null;
-} => {
+export const useContractorOnboardingContext = () => {
   const context = useContext(ContractorOnboardingContext);
   if (!context.formId || !context.contractorOnboardingBag) {
     throw new Error(

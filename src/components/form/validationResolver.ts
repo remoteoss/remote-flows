@@ -69,13 +69,9 @@ function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
 export const useJsonSchemasValidationFormResolver = <
   T extends FieldValues = FieldValues,
 >(
-  handleValidation?: (data: T) => Promise<ValidationResult | null>,
+  handleValidation: (data: T) => Promise<ValidationResult | null>,
 ): Resolver<T> => {
   return async (data: T) => {
-    if (!handleValidation) {
-      throw new Error('handleValidation is required');
-    }
-
     const result = await handleValidation(data);
 
     // Handle null case - return no errors
