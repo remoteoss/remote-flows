@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 /**
  * Assert that a specific radio option is selected within a radio group
@@ -115,4 +115,10 @@ export async function selectDayInCalendar(day: string, fieldName: string) {
   await waitFor(() => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
+}
+
+export async function fillDatePicker(date: string, label: string) {
+  const datePickerInput = await screen.getByLabelText(label);
+  expect(datePickerInput).toBeInTheDocument();
+  await fireEvent.change(datePickerInput, { target: { value: date } });
 }
