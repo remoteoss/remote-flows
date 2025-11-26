@@ -38,7 +38,7 @@ import {
   NextFlowOptions,
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
-import { $TSFixMe, JSFFieldset } from '@/src/types/remoteFlows';
+import { JSFFieldset } from '@/src/types/remoteFlows';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -194,7 +194,7 @@ export const useJSONSchemaForm = ({
         json_schema_version: options.jsonSchemaVersion.form_schema[form],
       }
     : {};
-  return useQuery<$TSFixMe>({
+  return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
     retry: false,
     queryFn: async () => {

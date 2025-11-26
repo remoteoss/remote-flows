@@ -145,7 +145,6 @@ export const CostCalculatorFlow = ({
     },
   });
   const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
     costCalculatorBag.handleValidation,
   );
 

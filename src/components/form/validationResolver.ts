@@ -69,7 +69,7 @@ function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
 export const useJsonSchemasValidationFormResolver = <
   T extends FieldValues = FieldValues,
 >(
-  handleValidation?: (data: T) => ValidationResult | null,
+  handleValidation?: (data: T) => Promise<ValidationResult | null>,
 ): Resolver<T> => {
   return async (data: T) => {
     if (!handleValidation) {

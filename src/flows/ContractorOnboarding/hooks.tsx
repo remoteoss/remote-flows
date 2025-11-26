@@ -1,5 +1,4 @@
 import {
-  ContractDocumentResponse,
   CreateContractDocument,
   Employment,
   EmploymentCreateParams,
@@ -69,55 +68,6 @@ const jsonSchemaToEmployment: Partial<
   employment_basic_information: 'basic_information',
 };
 
-export interface UseContractorOnboardingReturn {
-  isLoading: boolean;
-  fieldValues: FieldValues;
-  stepState: {
-    currentStep: Step<keyof typeof STEPS>;
-    totalSteps: number;
-    values:
-      | {
-          [key in keyof typeof STEPS]: FieldValues;
-        }
-      | null;
-  };
-  checkFieldUpdates: (values: FieldValues) => void;
-  back: () => void;
-  next: () => void;
-  goTo: (step: keyof typeof STEPS) => void;
-  onSubmit: (values: FieldValues) => Promise<$TSFixMe>;
-  fields: Fields;
-  meta: {
-    fields: {
-      select_country: Meta;
-      basic_information: Meta;
-      contract_details: Meta;
-      contract_preview: Meta;
-      pricing_plan: Meta;
-    };
-    fieldsets: JSFFieldset | null | undefined;
-  };
-  parseFormValues: (
-    values: FieldValues,
-  ) => Record<string, unknown> | FieldValues;
-  handleValidation: (values: FieldValues) => ValidationResult | null;
-  initialValues: {
-    select_country: Record<string, unknown>;
-    basic_information: Record<string, unknown>;
-    contract_details: Record<string, unknown>;
-    contract_preview: Record<string, unknown>;
-    pricing_plan: Record<string, unknown>;
-  };
-  employmentId: string | undefined;
-  refetchEmployment: () => void;
-  isSubmitting: boolean;
-  documentPreviewPdf: ContractDocumentResponse['data'] | undefined;
-  canInvite: boolean | undefined;
-  isEmploymentReadOnly: boolean | undefined;
-  invitedStatus: 'invited' | 'not_invited';
-  employment: Employment | undefined;
-}
-
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -125,7 +75,7 @@ export const useContractorOnboarding = ({
   skipSteps,
   options,
   initialValues: onboardingInitialValues,
-}: useContractorOnboardingProps): UseContractorOnboardingReturn => {
+}: useContractorOnboardingProps) => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
@@ -752,7 +702,9 @@ export const useContractorOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (values: FieldValues) => {
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
