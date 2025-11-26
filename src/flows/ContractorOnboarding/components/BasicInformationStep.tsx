@@ -46,7 +46,7 @@ export function BasicInformationStep({
       const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as EmploymentCreationResponse);
-        contractorOnboardingBag.next();
+        contractorOnboardingBag?.next();
         return;
       }
       if (response?.error) {
@@ -54,6 +54,7 @@ export function BasicInformationStep({
           response?.fieldErrors || [],
           contractorOnboardingBag.meta?.fields?.basic_information,
         );
+
         onError?.({
           error: response?.error,
           rawError: response?.rawError,
