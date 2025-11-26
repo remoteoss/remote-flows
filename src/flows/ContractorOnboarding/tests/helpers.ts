@@ -2,7 +2,6 @@ import { fireEvent, waitFor, screen } from '@testing-library/react';
 import {
   fillRadio,
   fillSelect,
-  fillDatePicker,
   fillDatePickerByTestId,
 } from '@/src/tests/testHelpers';
 import { getYearMonthDate } from '@/src/common/dates';
