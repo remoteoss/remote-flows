@@ -49,7 +49,7 @@ export function ContractPreviewStep({
       const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
-        contractorOnboardingBag.next();
+        contractorOnboardingBag?.next();
         return;
       }
       if (response?.error) {
@@ -82,7 +82,7 @@ export function ContractPreviewStep({
       <PDFPreview
         base64Data={
           contractorOnboardingBag.documentPreviewPdf?.contract_document
-            ?.content as unknown as string
+            .content as unknown as string
         }
       />
       <ContractorOnboardingForm
