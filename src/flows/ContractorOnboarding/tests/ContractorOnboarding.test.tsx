@@ -33,12 +33,15 @@ import {
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
+    <FormFieldsProvider components={defaultComponents}>
+      {children}
+    </FormFieldsProvider>
   </QueryClientProvider>
 );
 

@@ -17,33 +17,18 @@ import {
   approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
-import { $TSFixMe, FieldComponentProps } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { format } from 'date-fns';
-
-const DatePickerInput = ({ field, fieldData }: FieldComponentProps) => {
-  return (
-    <>
-      <label htmlFor={field.name}>{fieldData.label}</label>
-      <input
-        type='date'
-        id={field.name}
-        data-testid={`date-picker-input-${`${field.name}_date`}`}
-        onChange={(e) => {
-          field?.onChange?.(e.target.value);
-        }}
-      />
-    </>
-  );
-};
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{ date: DatePickerInput }}>
+    <FormFieldsProvider components={defaultComponents}>
       {children}
     </FormFieldsProvider>
   </QueryClientProvider>

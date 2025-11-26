@@ -1,7 +1,7 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
-import { selectDayInCalendar } from '@/src/tests/testHelpers';
+import { fillDatePicker } from '@/src/tests/testHelpers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,12 +12,15 @@ import {
   ContractAmendmentRenderProps,
 } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
+    <FormFieldsProvider components={defaultComponents}>
+      {children}
+    </FormFieldsProvider>
   </QueryClientProvider>
 );
 
@@ -129,7 +132,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(salaryInput, '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -179,7 +182,7 @@ describe('ContractAmendmentFlow', () => {
     });
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -216,7 +219,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(screen.getByLabelText('Annual gross salary'), '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', {
