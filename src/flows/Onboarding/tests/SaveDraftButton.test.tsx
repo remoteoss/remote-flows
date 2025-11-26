@@ -14,6 +14,7 @@ import {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -389,7 +390,9 @@ describe('SaveDraftButton', () => {
 
     const customWrapper = ({ children }: PropsWithChildren) => (
       <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: MockCustomButton }}>
+        <FormFieldsProvider
+          components={{ ...defaultComponents, button: MockCustomButton }}
+        >
           {children}
         </FormFieldsProvider>
       </QueryClientProvider>

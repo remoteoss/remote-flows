@@ -292,6 +292,32 @@ const FileUploadField = ({
   );
 };
 
+const DatePickerInput = ({
+  field,
+  fieldData,
+  fieldState,
+}: FieldComponentProps) => {
+  return (
+    <div className='input-container'>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <input
+        type='date'
+        id={field.name}
+        data-testid={`date-picker-input-${field.name}`}
+        onChange={(e) => {
+          field?.onChange?.(e.target.value);
+        }}
+      />
+      {fieldData.description && (
+        <p className='input-description'>{fieldData.description}</p>
+      )}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -302,5 +328,6 @@ export const components: Components = {
   countries: Countries,
   fieldsetToggle: FieldsetToggle,
   file: FileUploadField,
+  date: DatePickerInput,
   //zendeskDrawer: ZendeskDialog,
 };
