@@ -33,7 +33,6 @@ const ComponentThatSetsContext = ({
 describe('RemoteFlowsErrorBoundary', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
