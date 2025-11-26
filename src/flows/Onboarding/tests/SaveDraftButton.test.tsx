@@ -1,4 +1,3 @@
-import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
@@ -14,16 +13,11 @@ import {
   OnboardingFlowProps,
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/types';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { TestProviders } from '@/src/tests/testHelpers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
-import { vi } from 'vitest';
-
-const queryClient = new QueryClient();
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
