@@ -1,9 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react';
-<<<<<<< HEAD
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
-=======
->>>>>>> main
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';

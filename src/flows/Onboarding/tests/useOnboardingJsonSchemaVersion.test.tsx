@@ -1,9 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-<<<<<<< HEAD
-import { PropsWithChildren } from 'react';
-=======
->>>>>>> main
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
