@@ -1,4 +1,4 @@
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form-old';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';

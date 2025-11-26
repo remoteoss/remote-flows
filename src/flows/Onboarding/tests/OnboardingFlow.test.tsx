@@ -890,6 +890,11 @@ describe('OnboardingFlow', () => {
     // Verify we move to the next step (Benefits)
     await screen.findByText(/Step: Benefits/i);
 
+    await waitFor(() => {
+      // Wait for at least one benefit field to be rendered
+      expect(screen.getByText(/Meal Benefit/i)).toBeInTheDocument();
+    });
+
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
     nextButton.click();
