@@ -15,8 +15,7 @@ export function CheckBoxFieldDefault({
   fieldState,
   fieldData,
 }: FieldComponentProps) {
-  const { name, label, description, options, multiple, onChange } =
-    fieldData as $TSFixMe;
+  const { name, label, description, options, multiple } = fieldData as $TSFixMe;
 
   return (
     <FormItem
@@ -33,7 +32,7 @@ export function CheckBoxFieldDefault({
                 <Checkbox
                   id={option.value}
                   onCheckedChange={(checked: CheckedState) => {
-                    onChange(checked === true, option.value);
+                    field.onChange(checked === true, option.value);
                   }}
                   checked={field.value?.includes(option.value)}
                   className='RemoteFlows__CheckBox__Input'
@@ -51,7 +50,7 @@ export function CheckBoxFieldDefault({
               <Checkbox
                 id={name}
                 onCheckedChange={(checked: CheckedState) => {
-                  field.onChange(checked);
+                  field.onChange(checked === true, undefined);
                 }}
                 checked={field.value}
                 className='RemoteFlows__CheckBox__Input'

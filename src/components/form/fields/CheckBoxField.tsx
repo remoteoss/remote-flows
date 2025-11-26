@@ -38,17 +38,24 @@ export function CheckBoxField({
         const Component = CustomCheckboxField || CheckBoxFieldDefault;
 
         const handleCheckboxChange = (checked: boolean, optionId?: string) => {
-          const currentValues = field.value ? [...field.value] : [];
-
-          if (checked) {
-            if (optionId && !currentValues.includes(optionId)) {
-              field.onChange([...currentValues, optionId]);
+          if (multiple && optionId) {
+            // Multiple checkboxes: manage as array
+            const currentValues = field.value ? [...field.value] : [];
+            if (checked) {
+              if (!currentValues.includes(optionId)) {
+                field.onChange([...currentValues, optionId]);
+              }
+            } else {
+              field.onChange(
+                currentValues.filter((value) => value !== optionId),
+              );
             }
           } else {
-            field.onChange(currentValues.filter((value) => value !== optionId));
+            // Single checkbox: simple boolean toggle
+            field.onChange(checked);
           }
 
-          // Call the onChange callback with (checked, optionId) for multiple checkboxes
+          // Call the onChange callback with (checked, optionId)
           onChange?.(checked, optionId);
         };
 
@@ -59,13 +66,15 @@ export function CheckBoxField({
           defaultValue,
           multiple,
           options,
-          onChange: handleCheckboxChange,
           ...rest,
         };
 
         return (
           <Component
-            field={field}
+            field={{
+              ...field,
+              onChange: handleCheckboxChange,
+            }}
             fieldState={fieldState}
             fieldData={fieldData}
           />

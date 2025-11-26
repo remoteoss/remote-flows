@@ -1,15 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { boolean } from 'yup';
 import { CheckBoxField, CheckBoxFieldProps } from '../CheckBoxField';
-
-// Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+import { TestProviders } from '@/src/tests/testHelpers';
+import { Components } from '@/src/types/remoteFlows';
 
 describe('CheckBoxField Component', () => {
   const mockOnChange = vi.fn();
@@ -31,7 +25,10 @@ describe('CheckBoxField Component', () => {
   };
 
   // Helper function to render the component with a form context
-  const renderWithFormContext = (props: CheckBoxFieldProps) => {
+  const renderWithFormContext = (
+    props: CheckBoxFieldProps,
+    components?: Components,
+  ) => {
     const TestComponent = () => {
       const methods = useForm();
       return (
@@ -41,12 +38,15 @@ describe('CheckBoxField Component', () => {
       );
     };
 
-    return render(<TestComponent />);
+    return render(
+      <TestProviders components={components}>
+        <TestComponent />
+      </TestProviders>,
+    );
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
   });
 
   it('renders the default implementation correctly', () => {
@@ -57,13 +57,26 @@ describe('CheckBoxField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
-  it('handles checkbox change correctly', () => {
+  it('handles single checkbox change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     const checkbox = screen.getByRole('checkbox');
     fireEvent.click(checkbox);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(true, undefined);
+  });
+
+  it('handles single checkbox unchecked correctly', () => {
+    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+
+    const checkbox = screen.getByRole('checkbox');
+    fireEvent.click(checkbox);
+    fireEvent.click(checkbox);
+
+    expect(mockOnChange).toHaveBeenCalledTimes(2);
+    expect(mockOnChange).toHaveBeenNthCalledWith(1, true, undefined);
+    expect(mockOnChange).toHaveBeenNthCalledWith(2, false, undefined);
   });
 
   it('renders custom checkbox component when provided', () => {
@@ -73,11 +86,10 @@ describe('CheckBoxField Component', () => {
         <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+    renderWithFormContext(
+      { ...defaultProps, onChange: mockOnChange },
+      { checkbox: CustomCheckboxField },
+    );
 
     expect(CustomCheckboxField).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('custom-checkbox-field')).toBeInTheDocument();
@@ -90,11 +102,10 @@ describe('CheckBoxField Component', () => {
         <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+    renderWithFormContext(
+      { ...defaultProps, onChange: mockOnChange },
+      { checkbox: CustomCheckboxField },
+    );
 
     const call = CustomCheckboxField.mock.calls[0][0];
     expect(call.fieldData).toMatchObject(defaultProps);
@@ -102,7 +113,7 @@ describe('CheckBoxField Component', () => {
     expect(call.fieldState).toBeDefined();
   });
 
-  it.only('handles onChange in custom checkbox component', () => {
+  it('handles onChange in custom checkbox component', () => {
     const CustomCheckboxField = vi.fn().mockImplementation(({ field }) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;
@@ -118,17 +129,16 @@ describe('CheckBoxField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+    renderWithFormContext(
+      { ...defaultProps, onChange: mockOnChange },
+      { checkbox: CustomCheckboxField },
+    );
 
     const customCheckbox = screen.getByTestId('custom-checkbox');
     fireEvent.click(customCheckbox);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
-    expect(mockOnChange).toHaveBeenCalledWith(true);
+    expect(mockOnChange).toHaveBeenCalledWith(true, undefined);
   });
 
   it("should render multiple checkboxes when 'multiple' prop is true and 'options' are defined", () => {
@@ -204,15 +214,14 @@ describe('CheckBoxField Component', () => {
         <div data-testid='prop-checkbox-field'>Prop Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxFieldFromContext },
-    });
-
-    renderWithFormContext({
-      ...defaultProps,
-      onChange: mockOnChange,
-      component: CustomCheckboxFieldProp,
-    });
+    renderWithFormContext(
+      {
+        ...defaultProps,
+        onChange: mockOnChange,
+        component: CustomCheckboxFieldProp,
+      },
+      { checkbox: CustomCheckboxFieldFromContext },
+    );
 
     expect(CustomCheckboxFieldProp).toHaveBeenCalled();
     expect(screen.getByTestId('prop-checkbox-field')).toBeInTheDocument();
