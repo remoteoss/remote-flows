@@ -1,6 +1,3 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
 import { server } from '@/src/tests/server';
 import {
   render,
@@ -29,6 +26,8 @@ import {
   assertRadioValue,
   fillRadio,
   fillSelect,
+  queryClient,
+  TestProviders,
 } from '@/src/tests/testHelpers';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { fireEvent } from '@testing-library/react';
@@ -38,14 +37,6 @@ import {
 } from '@/src/flows/Onboarding/tests/helpers';
 import userEvent from '@testing-library/user-event';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -433,7 +424,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -461,7 +452,7 @@ describe('OnboardingFlow', () => {
   });
 
   it('should show required field error when submitting select country step without selecting a country', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
@@ -481,13 +472,13 @@ describe('OnboardingFlow', () => {
   });
 
   it('should select a country and advance to the next step', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('Portugal');
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await fillCountry('Portugal');
 
@@ -509,7 +500,7 @@ describe('OnboardingFlow', () => {
       }),
     );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper });
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     // Wait for select country step
     await fillCountry('Portugal');
@@ -594,7 +585,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
     await screen.findByText(/Step: Basic Information/i);
@@ -659,7 +650,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -703,7 +694,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -725,7 +716,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
@@ -780,7 +771,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -862,7 +853,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -915,7 +906,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1003,7 +994,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1081,7 +1072,7 @@ describe('OnboardingFlow', () => {
         countryCode='PRT'
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -1136,7 +1127,7 @@ describe('OnboardingFlow', () => {
         employmentId={generateUniqueEmploymentId()}
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -1203,7 +1194,7 @@ describe('OnboardingFlow', () => {
           {...defaultProps}
         />,
         {
-          wrapper,
+          wrapper: TestProviders,
         },
       );
 
@@ -1265,7 +1256,7 @@ describe('OnboardingFlow', () => {
       );
 
       render(<OnboardingFlow employmentId={employmentId} {...defaultProps} />, {
-        wrapper,
+        wrapper: TestProviders,
       });
 
       // Should automatically go to review step instead of starting from select country
@@ -1344,7 +1335,7 @@ describe('OnboardingFlow', () => {
         {...defaultProps}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1415,7 +1406,7 @@ describe('OnboardingFlow', () => {
         }}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1491,7 +1482,7 @@ describe('OnboardingFlow', () => {
         }}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1576,7 +1567,7 @@ describe('OnboardingFlow', () => {
         }}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1633,7 +1624,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -1774,7 +1765,7 @@ describe('OnboardingFlow', () => {
           },
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the basic information step to load
@@ -1899,7 +1890,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the basic information step to load
@@ -2024,7 +2015,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -2104,7 +2095,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -2198,7 +2189,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -2309,7 +2300,7 @@ describe('OnboardingFlow', () => {
         countryCode='PRT'
         initialValues={initialValues}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the basic information step to load
@@ -2401,7 +2392,7 @@ describe('OnboardingFlow', () => {
         skipSteps={['select_country']}
         initialValues={initialValues}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the basic information step to load

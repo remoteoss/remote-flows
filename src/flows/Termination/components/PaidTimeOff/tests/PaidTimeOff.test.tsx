@@ -1,8 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
+<<<<<<< HEAD
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
+=======
+>>>>>>> main
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import {
@@ -11,20 +13,7 @@ import {
 } from '@/src/flows/Termination/tests/fixtures';
 import { employment } from '@/src/tests/fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('PaidTimeOff', () => {
   beforeEach(() => {
@@ -80,7 +69,7 @@ describe('PaidTimeOff', () => {
           );
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the data to load
@@ -168,7 +157,7 @@ describe('PaidTimeOff', () => {
           );
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     // Wait for the data to load

@@ -1,15 +1,11 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
 import { http, HttpResponse } from 'msw';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
 import { ZendeskTriggerButton } from '../ZendeskTriggerButton';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('ZendeskTriggerButton', () => {
-  let queryClient: QueryClient;
-
   const mockArticle = {
     help_center_article: {
       title: 'Test Article',
@@ -18,15 +14,8 @@ describe('ZendeskTriggerButton', () => {
   };
 
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-
     vi.clearAllMocks();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/help-center-articles/*', () => {
@@ -35,24 +24,13 @@ describe('ZendeskTriggerButton', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    queryClient.clear();
-  });
-
-  const wrapper = ({ children }: PropsWithChildren) => (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-    </QueryClientProvider>
-  );
-
   describe('when external is false (default)', () => {
     it('renders as a button', () => {
       render(
         <ZendeskTriggerButton zendeskId={123456}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const button = screen.getByRole('button', { name: 'Open Article' });
@@ -65,7 +43,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const button = screen.getByRole('button', { name: 'Open Article' });
@@ -83,7 +61,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} onClick={onClick}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       await userEvent.click(
@@ -97,7 +75,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} className='custom-class'>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const button = screen.getByRole('button', { name: 'Open Article' });
@@ -112,7 +90,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} external={true}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const link = screen.getByRole('link', { name: 'Open Article' });
@@ -124,7 +102,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} external={true}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const link = screen.getByRole('link', { name: 'Open Article' });
@@ -139,7 +117,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} external={true}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const link = screen.getByRole('link', { name: 'Open Article' });
@@ -158,7 +136,7 @@ describe('ZendeskTriggerButton', () => {
         >
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       await userEvent.click(screen.getByRole('link', { name: 'Open Article' }));
@@ -174,7 +152,7 @@ describe('ZendeskTriggerButton', () => {
         >
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       const link = screen.getByRole('link', { name: 'Open Article' });
@@ -187,7 +165,7 @@ describe('ZendeskTriggerButton', () => {
         <ZendeskTriggerButton zendeskId={123456} external={true}>
           Open Article
         </ZendeskTriggerButton>,
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       // Click the link

@@ -1,12 +1,14 @@
-// src/flows/Onboarding/tests/useOnboardingJsonSchemaVersion.test.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+<<<<<<< HEAD
 import { PropsWithChildren } from 'react';
+=======
+>>>>>>> main
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { TestProviders } from '@/src/tests/testHelpers';
 
 // Mock the API calls to track the query parameters
 const mockGetShowFormCountry = vi.fn();
@@ -33,12 +35,6 @@ const queryClient = new QueryClient({
     mutations: { retry: false },
   },
 });
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 describe('useOnboarding jsonSchemaVersion', () => {
   beforeEach(() => {
@@ -112,7 +108,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
               },
             },
           }),
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       await waitFor(() => {
@@ -149,7 +145,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
             skipSteps: ['select_country'],
             options: { jsonSchemaVersion },
           }),
-        { wrapper },
+        { wrapper: TestProviders },
       );
 
       await waitFor(() => {
