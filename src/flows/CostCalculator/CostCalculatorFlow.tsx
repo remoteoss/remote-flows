@@ -130,7 +130,7 @@ export const CostCalculatorFlow = ({
       estimationOptions.managementFees,
     );
     if (managementFee) {
-      form.setValue('management.management_fee', managementFee);
+      form.setValue('management.management_fee', managementFee.toString());
     }
   };
   const costCalculatorBag = useCostCalculator({
@@ -145,7 +145,6 @@ export const CostCalculatorFlow = ({
     },
   });
   const resolver = useJsonSchemasValidationFormResolver(
-    // @ts-expect-error no matching type
     costCalculatorBag.handleValidation,
   );
 
@@ -176,12 +175,12 @@ export const CostCalculatorFlow = ({
       region: regionSlug,
       salary: salary,
       salary_conversion: '',
-      salary_converted: '',
+      salary_converted: undefined,
       hiring_budget: hiringBudget || 'employee_annual_salary',
       age: age,
       contract_duration_type: contractDurationType,
       management: {
-        management_fee: defaultManagementFee,
+        management_fee: defaultManagementFee?.toString() || '',
       },
       benefits: benefits,
       estimation_title: estimationOptions.title,
@@ -209,7 +208,10 @@ export const CostCalculatorFlow = ({
           currencyCode as CurrencyKey,
           estimationOptions.managementFees,
         );
-        form.setValue('management.management_fee', defaultManagementFee);
+        form.setValue(
+          'management.management_fee',
+          defaultManagementFee?.toString() || '',
+        );
       }
     }
   }, [
