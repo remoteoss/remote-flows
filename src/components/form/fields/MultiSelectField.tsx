@@ -2,16 +2,9 @@
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
-import { MultiSelect } from '../../ui/multi-select';
+import { FormField } from '../../ui/form';
 import { useState } from 'react';
+import { MultiSelectFieldDefault } from './default/MultiSelectFieldDefault';
 
 type MultiSelectFieldProps = JSFField & {
   placeholder?: string;
@@ -42,59 +35,40 @@ export function MultiSelectField({
       name={name}
       render={({ field, fieldState }) => {
         const CustomSelectField = component || components?.['multi-select'];
-        if (CustomSelectField) {
-          const customSelectFieldProps = {
-            label,
-            name,
-            options,
-            defaultValue,
-            description,
-            onChange,
-            ...rest,
-          };
-          return (
-            <CustomSelectField
-              field={{
-                ...field,
-                onChange: (value: any) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                },
-              }}
-              fieldState={fieldState}
-              fieldData={customSelectFieldProps}
-            />
-          );
-        }
+        const Component = CustomSelectField || MultiSelectFieldDefault;
 
         const selectedOptions =
           selected ||
-          options.filter((option) => field.value.includes(option.value));
+          options.filter((option) => field.value?.includes(option.value));
+
+        const fieldData = {
+          label,
+          name,
+          options,
+          defaultValue,
+          description,
+          selected: selectedOptions,
+          ...rest,
+        };
 
         return (
-          <FormItem
-            data-field={name}
-            className={`RemoteFlows__SelectField__Item__${name}`}
-          >
-            <FormLabel className='RemoteFlows__SelectField__Label'>
-              {label}
-            </FormLabel>
-            <FormControl>
-              <MultiSelect
-                options={options}
-                selected={selectedOptions}
-                onChange={(rawValues: any[]) => {
-                  const values = rawValues.map(({ value }) => value);
-                  field.onChange(values);
-                  onChange?.(values);
+          <Component
+            field={{
+              ...field,
+              onChange: (rawValues: any) => {
+                const values = Array.isArray(rawValues)
+                  ? rawValues.map((v) => (typeof v === 'object' ? v.value : v))
+                  : rawValues;
+                field.onChange(values);
+                onChange?.(values);
+                if (Array.isArray(rawValues)) {
                   setSelected(rawValues);
-                }}
-                {...rest}
-              />
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            {fieldState.error && <FormMessage />}
-          </FormItem>
+                }
+              },
+            }}
+            fieldState={fieldState}
+            fieldData={fieldData}
+          />
         );
       }}
     />

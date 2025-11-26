@@ -102,10 +102,11 @@ describe('CheckBoxField Component', () => {
     expect(call.fieldState).toBeDefined();
   });
 
-  it('handles onChange in custom checkbox component', () => {
+  it.only('handles onChange in custom checkbox component', () => {
     const CustomCheckboxField = vi.fn().mockImplementation(({ field }) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        field.onChange(e);
+        const checked = e.target.checked;
+        field.onChange(checked);
       };
 
       return (
@@ -127,6 +128,7 @@ describe('CheckBoxField Component', () => {
     fireEvent.click(customCheckbox);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(true);
   });
 
   it("should render multiple checkboxes when 'multiple' prop is true and 'options' are defined", () => {

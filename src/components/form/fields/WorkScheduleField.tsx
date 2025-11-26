@@ -27,6 +27,7 @@ import {
 } from './workScheduleUtils';
 import { CheckBoxField } from './CheckBoxField';
 import { TextField } from './TextField';
+import { WorkScheduleFieldDefault } from './default/WorkScheduleFieldDefault';
 
 type WorkScheduleFieldProps = JSFField & {
   name: string;
@@ -274,65 +275,42 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
     setCurrentSchedule(data);
   }
 
-  const CustomWorkScheduleField =
-    props.component || components?.['work-schedule'];
-
-  if (CustomWorkScheduleField) {
-    return (
-      <FormField
-        control={control}
-        name={props.name}
-        render={({ field, fieldState }) => {
-          return (
-            <CustomWorkScheduleField
-              field={{
-                ...field,
-                onChange: (value: any) => {
-                  field.onChange(value);
-                  props.onChange?.(value);
-                },
-              }}
-              fieldState={fieldState}
-              fieldData={{
-                ...props,
-                // @ts-expect-error - defaultFormattedValue is not part of fieldData. It's generated in this component.
-                defaultFormattedValue: {
-                  workHoursSummary,
-                  breakSummary,
-                  totalWorkHours,
-                },
-              }}
-            />
-          );
-        }}
-      />
-    );
-  }
-
   return (
-    <div className={`flex flex-col gap-3 RemoteFlows__WorkScheduleField`}>
-      <p className={`text-sm RemoteFlows__WorkScheduleField__Title`}>
-        Work hours
-      </p>
-      <div className='flex flex-col gap-1 RemoteFlows__WorkScheduleField__Summary'>
-        <p
-          className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__WorkHours'
-          dangerouslySetInnerHTML={{
-            __html: workHoursSummary.join(', '),
-          }}
-        />
+    <FormField
+      control={control}
+      name={props.name}
+      render={({ field, fieldState }) => {
+        const CustomWorkScheduleField =
+          props.component || components?.['work-schedule'];
+        const Component = CustomWorkScheduleField || WorkScheduleFieldDefault;
 
-        <p className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Break'>
-          {breakSummary.join()}
-        </p>
-        <p className='text-sm text-gray-500 RemoteFlows__WorkScheduleField__Summary__Total'>
-          Total of <span>{totalWorkHours}</span> hours per week
-        </p>
-        <WorkScheduleSelectionForm
-          defaultSchedule={currentSchedule}
-          onSubmit={onSubmit}
-        />
-      </div>
-    </div>
+        const fieldData = {
+          ...props,
+          workHoursSummary,
+          breakSummary,
+          totalWorkHours,
+          WorkScheduleForm: () => (
+            <WorkScheduleSelectionForm
+              defaultSchedule={currentSchedule}
+              onSubmit={onSubmit}
+            />
+          ),
+        };
+
+        return (
+          <Component
+            field={{
+              ...field,
+              onChange: (value: any) => {
+                field.onChange(value);
+                props.onChange?.(value);
+              },
+            }}
+            fieldState={fieldState}
+            fieldData={fieldData}
+          />
+        );
+      }}
+    />
   );
 }

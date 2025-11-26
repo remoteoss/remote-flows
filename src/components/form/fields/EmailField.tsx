@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 import { TextField, TextFieldProps } from './TextField';
 import { Components } from '@/src/types/remoteFlows';
+import { EmailFieldDefault } from './default/EmailFieldDefault';
 
 type EmailFieldProps = TextFieldProps & {
   component?: Components['email'];
@@ -16,13 +17,14 @@ export function EmailField(props: EmailFieldProps) {
   const CustomEmailField = props.component || components?.email;
 
   if (CustomEmailField) {
+    const Component = CustomEmailField || EmailFieldDefault;
     return (
       <FormField
         control={control}
         name={props.name}
         render={({ field, fieldState }) => {
           return (
-            <CustomEmailField
+            <Component
               field={{
                 ...field,
                 onChange: (value: any) => {
