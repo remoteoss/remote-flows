@@ -4,6 +4,7 @@ import { TestProviders, queryClient } from '@/src/tests/testHelpers';
 
 describe('useTermination', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     queryClient.clear();
   });
   it('should have fieldValues as combination of initialValues + stepState values + changed fieldValues', async () => {

@@ -1,8 +1,8 @@
 import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
 import {
+  fillDatePicker,
   queryClient,
-  selectDayInCalendar,
   TestProviders,
 } from '@/src/tests/testHelpers';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -85,10 +85,6 @@ describe('ContractAmendmentFlow', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should send json schema version in the request', async () => {
     render(
       <ContractAmendmentFlow
@@ -124,7 +120,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(salaryInput, '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -176,7 +172,7 @@ describe('ContractAmendmentFlow', () => {
     });
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -217,7 +213,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(screen.getByLabelText('Annual gross salary'), '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', {

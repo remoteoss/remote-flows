@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';

@@ -1,11 +1,12 @@
 import userEvent from '@testing-library/user-event';
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { PropsWithChildren } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { getQueryClient } from '@/src/queryConfig';
+import { defaultComponents } from '@/src/tests/defaultComponents';
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
 export const client = {
   request: vi.fn(),
@@ -22,15 +23,21 @@ export const queryClient = getQueryClient(false, client, 'testing' as $TSFixMe);
 export const TestProviders = ({
   children,
   components,
-}: PropsWithChildren<{ components?: Components }>) => (
-  <ErrorContextProvider>
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={components || {}}>
-        {children}
-      </FormFieldsProvider>
-    </QueryClientProvider>
-  </ErrorContextProvider>
-);
+}: PropsWithChildren<{ components?: Components }>) => {
+  const mergedComponents = {
+    ...defaultComponents,
+    ...components,
+  } as Components;
+  return (
+    <ErrorContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider components={mergedComponents}>
+          {children}
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    </ErrorContextProvider>
+  );
+};
 
 /**
  * Assert that a specific radio option is selected within a radio group
@@ -79,16 +86,17 @@ export async function assertRadioValue(
 export async function fillRadio(radioName: string, radioValue: string) {
   const user = userEvent.setup();
 
-  // Wait for the radio group to be available
+  // Wait for the radio group to be available - use role-based query for specificity
   await waitFor(() => {
     screen.getByRole('radiogroup', { name: new RegExp(radioName, 'i') });
   });
 
+  // Get the specific radiogroup by role (not just by text)
   const radioGroup = screen.getByRole('radiogroup', {
     name: new RegExp(radioName, 'i'),
   });
 
-  // Find the radio button
+  // Find the radio button within that group
   const radioButton = within(radioGroup).getByRole('radio', {
     name: new RegExp(radioValue, 'i'),
   });
@@ -128,22 +136,13 @@ export async function fillCheckbox(checkboxName: string) {
   await user.click(checkbox);
 }
 
-export async function selectDayInCalendar(day: string, fieldName: string) {
-  const user = userEvent.setup();
-  const datePickerButton = await screen.findByTestId(
-    `date-picker-button-${fieldName}`,
-  );
-  await user.click(datePickerButton);
-  await waitFor(() => {
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-  });
-  const calendar = screen.getByRole('dialog');
-  expect(calendar).toBeInTheDocument();
-  const dateButton = within(calendar).getByRole('button', {
-    name: new RegExp(`^${day}$`, 'i'), // Also use ^ and $ for exact match
-  });
-  await user.click(dateButton);
-  await waitFor(() => {
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
+export async function fillDatePicker(date: string, label: string) {
+  const datePickerInput = await screen.findByLabelText(label);
+  expect(datePickerInput).toBeInTheDocument();
+  await fireEvent.change(datePickerInput, { target: { value: date } });
+}
+
+export async function fillDatePickerByTestId(date: string, testId: string) {
+  const dateInput = await screen.findByTestId(testId);
+  await fireEvent.change(dateInput, { target: { value: date } });
 }

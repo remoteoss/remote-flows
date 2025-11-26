@@ -1,4 +1,3 @@
-import { beforeEach, describe, it, vi, afterEach } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
   render,
@@ -276,6 +275,7 @@ describe('ContractorOnboardingFlow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
+    mockRender.mockReset();
 
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
@@ -352,11 +352,6 @@ describe('ContractorOnboardingFlow', () => {
         return HttpResponse.json(inviteResponse);
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
   });
 
   async function fillCountry(country: string) {
@@ -1073,7 +1068,9 @@ describe('ContractorOnboardingFlow', () => {
           },
         }}
       />,
-      { wrapper: TestProviders },
+      {
+        wrapper: TestProviders,
+      },
     );
 
     await screen.findByText(/Step: Basic Information/i);

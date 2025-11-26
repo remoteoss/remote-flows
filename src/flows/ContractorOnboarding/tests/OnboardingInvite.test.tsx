@@ -16,7 +16,6 @@ import {
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
-import { vi } from 'vitest';
 
 // Mock fixtures - you'll need to create these
 
@@ -106,10 +105,6 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         });
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('should render the OnboardingInvite component with "Invite Contractor" text', async () => {

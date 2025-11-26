@@ -1,6 +1,5 @@
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -25,6 +24,7 @@ describe('ZendeskDrawer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/help-center-articles/*', () => {
@@ -33,11 +33,14 @@ describe('ZendeskDrawer', () => {
     );
   });
 
+<<<<<<< HEAD
   afterEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
   });
 
+=======
+>>>>>>> main
   it('renders trigger element correctly', () => {
     render(<ZendeskDrawer {...defaultProps} />, { wrapper: TestProviders });
     expect(

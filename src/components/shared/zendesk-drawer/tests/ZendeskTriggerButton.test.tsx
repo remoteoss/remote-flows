@@ -1,6 +1,5 @@
 import { http, HttpResponse } from 'msw';
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { server } from '@/src/tests/server';
 import { ZendeskTriggerButton } from '../ZendeskTriggerButton';
@@ -23,11 +22,6 @@ describe('ZendeskTriggerButton', () => {
         return HttpResponse.json({ data: mockArticle });
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    queryClient.clear();
   });
 
   describe('when external is false (default)', () => {

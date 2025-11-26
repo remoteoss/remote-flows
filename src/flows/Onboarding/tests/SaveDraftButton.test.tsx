@@ -120,6 +120,9 @@ const defaultProps = {
 
 describe('SaveDraftButton', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json(companyResponse);
@@ -181,11 +184,6 @@ describe('SaveDraftButton', () => {
         });
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
   });
 
   it('should render the SaveDraftButton component with default text', async () => {
@@ -394,13 +392,9 @@ describe('SaveDraftButton', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <ErrorContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider components={{ button: MockCustomButton }}>
-            {children}
-          </FormFieldsProvider>
-        </QueryClientProvider>
-      </ErrorContextProvider>
+      <TestProviders components={{ button: MockCustomButton }}>
+        {children}
+      </TestProviders>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {

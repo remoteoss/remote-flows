@@ -799,7 +799,9 @@ describe('OnboardingInvite', () => {
         }),
       );
 
-      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      render(<OnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
 
       await screen.findByText('Hidden Deposit Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
