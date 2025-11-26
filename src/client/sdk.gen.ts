@@ -328,9 +328,6 @@ import type {
   PostCreateTokenCompanyTokenData,
   PostCreateTokenCompanyTokenResponse,
   PostCreateTokenCompanyTokenError,
-  GetIndexCompanyLegalEntitiesData,
-  GetIndexCompanyLegalEntitiesResponse,
-  GetIndexCompanyLegalEntitiesError,
   PostCompleteOnboardingEmploymentData,
   PostCompleteOnboardingEmploymentResponse,
   PostCompleteOnboardingEmploymentError,
@@ -959,11 +956,6 @@ export const getShowContractorContractDetailsCountry = <
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  */
 export const getIndexEmployment = <ThrowOnError extends boolean = false>(
@@ -1004,11 +996,6 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
  *
  *
  */
@@ -2868,7 +2855,6 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - personal_details
  * - pricing_plan_details
  * - global_payroll_administrative_details
- * - global_payroll_basic_information
  * - global_payroll_contract_details
  * - global_payroll_personal_details
  * - benefit_renewal_request
@@ -3503,11 +3489,6 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  */
 export const getShowEmployment = <ThrowOnError extends boolean = false>(
@@ -3561,11 +3542,6 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
  *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
@@ -3626,11 +3602,6 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
  *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
@@ -3885,32 +3856,6 @@ export const postCreateTokenCompanyToken = <
       },
     ],
     url: '/v1/companies/{company_id}/create-token',
-    ...options,
-  });
-};
-
-/**
- * List Company Legal Entitites
- * Lists all active legal entities for the authorized company specified in the request.
- *
- */
-export const getIndexCompanyLegalEntities = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexCompanyLegalEntitiesData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).get<
-    GetIndexCompanyLegalEntitiesResponse,
-    GetIndexCompanyLegalEntitiesError,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities',
     ...options,
   });
 };
