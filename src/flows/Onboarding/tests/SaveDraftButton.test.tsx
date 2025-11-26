@@ -20,17 +20,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
-<<<<<<< HEAD
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
-=======
->>>>>>> main
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
