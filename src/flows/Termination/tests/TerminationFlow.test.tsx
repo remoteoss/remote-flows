@@ -210,7 +210,6 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
-      console.log('filling datepicker step 1');
       await waitFor(() => {
         expect(
           screen.getByLabelText(
