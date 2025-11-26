@@ -13,7 +13,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 
 import { Client } from '@/src/client/client';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 

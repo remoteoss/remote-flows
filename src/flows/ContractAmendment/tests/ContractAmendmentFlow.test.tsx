@@ -1,25 +1,18 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { employment } from '@/src/tests/fixtures';
 import { server } from '@/src/tests/server';
-import { selectDayInCalendar } from '@/src/tests/testHelpers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  fillDatePicker,
+  queryClient,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { PropsWithChildren } from 'react';
 import {
   ContractAmendmentFlow,
   ContractAmendmentRenderProps,
 } from '../ContractAmendmentFlow';
 import { contractAmendementSchema } from './fixtures';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockError = vi.fn();
 const mockSuccess = vi.fn();
@@ -74,6 +67,7 @@ describe('ContractAmendmentFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
 
     server.use(
       http.get('*/v1/employments/*', () => {
@@ -92,10 +86,6 @@ describe('ContractAmendmentFlow', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should send json schema version in the request', async () => {
     render(
       <ContractAmendmentFlow
@@ -106,7 +96,7 @@ describe('ContractAmendmentFlow', () => {
         }}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await waitFor(() => {
@@ -118,7 +108,9 @@ describe('ContractAmendmentFlow', () => {
 
   it('submits the form when contract details are changed', async () => {
     const user = userEvent.setup();
-    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+    render(<ContractAmendmentFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     // Change annual gross salary
     await waitFor(() => {
@@ -129,7 +121,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(salaryInput, '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -172,14 +164,16 @@ describe('ContractAmendmentFlow', () => {
   });
 
   it('shows error when only non contract details fields are changed', async () => {
-    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+    render(<ContractAmendmentFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
     });
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', { name: /submit/i });
@@ -199,7 +193,9 @@ describe('ContractAmendmentFlow', () => {
       }),
     );
 
-    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+    render(<ContractAmendmentFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/error/i)).toBeInTheDocument();
@@ -208,7 +204,9 @@ describe('ContractAmendmentFlow', () => {
 
   it('should navigate back to the form after opening confirmation step', async () => {
     const user = userEvent.setup();
-    render(<ContractAmendmentFlow {...defaultProps} />, { wrapper });
+    render(<ContractAmendmentFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Annual gross salary')).toBeInTheDocument();
@@ -216,7 +214,7 @@ describe('ContractAmendmentFlow', () => {
     await user.type(screen.getByLabelText('Annual gross salary'), '360000');
 
     // change effective date
-    await selectDayInCalendar('15', 'effective_date');
+    await fillDatePicker('2025-04-15', 'Effective date of change');
 
     // submit contract amendment
     const submitButton = screen.getByRole('button', {
