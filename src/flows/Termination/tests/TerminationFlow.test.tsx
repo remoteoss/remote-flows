@@ -6,8 +6,9 @@ import {
   fillCheckbox,
   fillRadio,
   fillSelect,
-  selectDayInCalendar,
+  fillDatePicker,
   TestProviders,
+  queryClient,
 } from '@/src/tests/testHelpers';
 import { http, HttpResponse } from 'msw';
 import {
@@ -141,8 +142,13 @@ describe('TerminationFlow', () => {
   let offboardingRequest: Record<string, unknown> | null = null;
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
 
     server.use(
+      http.get('*/v1/payroll-calendars*', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employment);
       }),
@@ -204,16 +210,17 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
+      console.log('filling datepicker step 1');
       await waitFor(() => {
         expect(
-          screen.getByTestId(
-            `date-picker-button-customer_informed_employee_date`,
+          screen.getByLabelText(
+            /When the employee was told about the termination/i,
           ),
         ).toBeInTheDocument();
       });
-      await selectDayInCalendar(
+      await fillDatePicker(
         newValues?.whenWasEmployeeInformed,
-        'customer_informed_employee_date',
+        'When the employee was told about the termination',
       );
     }
 
@@ -284,9 +291,9 @@ describe('TerminationFlow', () => {
       await fillCheckbox(newValues?.riskAssessmentReason);
     }
     if (newValues?.proposedTerminationDate) {
-      await selectDayInCalendar(
+      await fillDatePicker(
         newValues?.proposedTerminationDate,
-        'proposed_termination_date',
+        'Proposed termination date',
       );
     }
   }
@@ -378,6 +385,7 @@ describe('TerminationFlow', () => {
 
     await fillEmployeeCommunication({
       isEmployeeInformed: 'Yes',
+      whenWasEmployeeInformed: '2025-11-26',
     });
 
     const nextButton = screen.getByText(/Next Step/i);
@@ -409,7 +417,7 @@ describe('TerminationFlow', () => {
   it('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
-    const proposedTerminationDate = currentDate.day.toString();
+    const proposedTerminationDate = `${currentDate.year}-${currentDate.month}-${currentDate.day}`;
 
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
@@ -417,6 +425,7 @@ describe('TerminationFlow', () => {
 
     await fillEmployeeCommunication({
       isEmployeeInformed: 'Yes',
+      whenWasEmployeeInformed: dynamicDate,
     });
 
     let nextButton = screen.getByText(/Next Step/i);
@@ -452,7 +461,7 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
-        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
+        proposed_termination_date: proposedTerminationDate,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -543,8 +552,6 @@ describe('TerminationFlow', () => {
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {
-    const currentDate = getYearMonthDate(new Date());
-    const proposedTerminationDate = currentDate.day.toString();
     server.use(
       http.post('*/v1/offboardings', async () => {
         return HttpResponse.json(
@@ -564,8 +571,10 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Termination Details/i);
 
+    const currentDate = getYearMonthDate(new Date());
+
     await fillTerminationDetails({
-      proposedTerminationDate: proposedTerminationDate,
+      proposedTerminationDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     });
 
     nextButton = screen.getByText(/Next Step/i);

@@ -37,6 +37,7 @@ import {
 } from '@/src/flows/Onboarding/tests/helpers';
 import userEvent from '@testing-library/user-event';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
+import { getYearMonthDate } from '@/src/common/dates';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -485,7 +486,7 @@ describe('OnboardingFlow', () => {
     await fillRadio('Does the employee have a seniority date?', 'Yes');
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Seniority date/i)).toBeInTheDocument();
+      expect(screen.getByTestId('seniority_date')).toBeInTheDocument();
     });
   });
 
@@ -1629,13 +1630,15 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
+    const currentDate = getYearMonthDate(new Date());
+
     // Fill in the form with data that will trigger the 422 error
     await fillBasicInformation({
       fullName: 'John Doe',
       personalEmail: 'existing@email.com', // This will trigger "has already been taken"
       workEmail: 'john.doe@remote.com',
       jobTitle: 'Software Engineer',
-      provisionalStartDate: '25', // This will trigger "cannot be in a holiday"
+      provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`, // This will trigger "cannot be in a holiday"
       hasSeniorityDate: 'No',
     });
 
