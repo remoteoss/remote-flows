@@ -1,6 +1,3 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
 import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
@@ -10,6 +7,8 @@ import {
   fillRadio,
   fillSelect,
   fillDatePicker,
+  TestProviders,
+  queryClient,
 } from '@/src/tests/testHelpers';
 import { http, HttpResponse } from 'msw';
 import {
@@ -17,37 +16,11 @@ import {
   approvedTimeoffs,
   timeoffLeavePoliciesSummaryResponse,
 } from '@/src/flows/Termination/tests/fixtures';
-import { $TSFixMe, FieldComponentProps } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { format } from 'date-fns';
-
-const DatePickerInput = ({ field, fieldData }: FieldComponentProps) => {
-  return (
-    <>
-      <label htmlFor={field.name}>{fieldData.label}</label>
-      <input
-        type='date'
-        id={field.name}
-        data-testid={`date-picker-input-${`${field.name}_date`}`}
-        onChange={(e) => {
-          field?.onChange?.(e.target.value);
-        }}
-      />
-    </>
-  );
-};
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{ date: DatePickerInput }}>
-      {children}
-    </FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockOnSubmitStep = vi.fn();
 const mockOnSubmitForm = vi.fn();
@@ -360,13 +333,13 @@ describe('TerminationFlow', () => {
   }
 
   it('should render first step of the form', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
   });
 
   it('should render the conditional fields of the radio after only touching the radio field', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillRadio(
@@ -382,7 +355,7 @@ describe('TerminationFlow', () => {
   });
 
   it('should render will_challenge_termination details field immediately after selecting will_challenge_termination', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();
     const nextButton = screen.getByText(/Next Step/i);
@@ -406,7 +379,7 @@ describe('TerminationFlow', () => {
 
   // this test needs to be before the multi step, something strange is happening when executed in parallel with the next one
   it('should fill the first step and go back to the previous step', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
@@ -446,7 +419,7 @@ describe('TerminationFlow', () => {
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
     const proposedTerminationDate = `${currentDate.year}-${currentDate.month}-${currentDate.day}`;
 
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
@@ -589,7 +562,7 @@ describe('TerminationFlow', () => {
         );
       }),
     );
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();
     let nextButton = screen.getByText(/Next Step/i);
@@ -632,7 +605,7 @@ describe('TerminationFlow', () => {
   });
 
   it('should click next step without filling the form and show error', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
@@ -661,7 +634,7 @@ describe('TerminationFlow', () => {
           personal_email: 'john.doe@example.com',
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
     await screen.findByText(/Step: Employee Communication/i);
     const employeePersonalEmail = screen.getByLabelText(
@@ -688,7 +661,7 @@ describe('TerminationFlow', () => {
       }),
     );
 
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();

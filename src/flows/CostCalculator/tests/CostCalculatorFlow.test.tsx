@@ -3,13 +3,10 @@ import { CostCalculatorFlow } from '@/src/flows/CostCalculator/CostCalculatorFlo
 import { CostCalculatorForm } from '@/src/flows/CostCalculator/CostCalculatorForm';
 import { CostCalculatorResetButton } from '@/src/flows/CostCalculator/CostCalculatorResetButton';
 import { CostCalculatorSubmitButton } from '@/src/flows/CostCalculator/CostCalculatorSubmitButton';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { server } from '@/src/tests/server';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { PropsWithChildren } from 'react';
 import {
   countries,
   currencies,
@@ -19,15 +16,11 @@ import {
   regionFieldsWithContractDurationTypeProperty,
 } from './fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { assertRadioValue, fillSelect } from '@/src/tests/testHelpers';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
+import {
+  assertRadioValue,
+  fillSelect,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -78,7 +71,7 @@ function renderComponent(
         );
       }}
     />,
-    { wrapper },
+    { wrapper: TestProviders },
   );
 }
 
@@ -534,7 +527,7 @@ describe('CostCalculatorFlow', () => {
           );
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await waitFor(() => {
@@ -615,7 +608,7 @@ describe('CostCalculatorFlow', () => {
           );
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await waitFor(() => {

@@ -1,4 +1,5 @@
-import { fillRadio, selectDayInCalendar } from '@/src/tests/testHelpers';
+import { getYearMonthDate } from '@/src/common/dates';
+import { fillRadio, fillDatePickerByTestId } from '@/src/tests/testHelpers';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 
 // Helper function to generate unique employment IDs for each test
@@ -20,12 +21,13 @@ export async function fillBasicInformation(
     hasSeniorityDate: string;
   }>,
 ) {
+  const currentDate = getYearMonthDate(new Date());
   const defaultValues = {
     fullName: 'John Doe',
     personalEmail: 'john.doe@gmail.com',
     workEmail: 'john.doe@remote.com',
     jobTitle: 'Software Engineer',
-    provisionalStartDate: '15',
+    provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     hasSeniorityDate: 'No',
   };
 
@@ -63,7 +65,7 @@ export async function fillBasicInformation(
   }
 
   if (newValues?.provisionalStartDate) {
-    await selectDayInCalendar(
+    await fillDatePickerByTestId(
       newValues?.provisionalStartDate,
       'provisional_start_date',
     );
