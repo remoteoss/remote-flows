@@ -1,10 +1,10 @@
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
-
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -36,7 +36,11 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import {
+  FlowOptions,
+  JSFModifyNext,
+  JSONSchemaFormType,
+} from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -227,7 +231,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModify;
+      jsfModify?: JSFModifyNext;
       queryOptions?: { enabled?: boolean };
       jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
@@ -310,7 +314,7 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
-  const customFields = useMemo(
+  const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -381,7 +385,7 @@ export const useOnboarding = ({
           ...options?.jsfModify?.contract_details,
           fields: {
             ...options?.jsfModify?.contract_details?.fields,
-            ...customFields.fields,
+            ...contractDetailsCustomFields.fields,
           },
         },
         queryOptions: {
@@ -786,7 +790,9 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (values: FieldValues) => {
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }

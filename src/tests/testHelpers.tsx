@@ -16,13 +16,19 @@ export const queryClient = getQueryClient();
 export const TestProviders = ({
   children,
   components,
-}: PropsWithChildren<{ components?: Components }>) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={components || defaultComponents}>
-      {children}
-    </FormFieldsProvider>
-  </QueryClientProvider>
-);
+}: PropsWithChildren<{ components?: Components }>) => {
+  const mergedComponents = {
+    ...defaultComponents,
+    ...components,
+  } as Components;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FormFieldsProvider components={mergedComponents}>
+        {children}
+      </FormFieldsProvider>
+    </QueryClientProvider>
+  );
+};
 /**
  * Assert that a specific radio option is selected within a radio group
  * @param radioName The name or label of the radio group
