@@ -900,11 +900,8 @@ describe('OnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      const errorElements = screen.getAllByText(
-        /Please select at least one option./i,
-      );
-
-      expect(errorElements).toHaveLength(3);
+      const errors = screen.getAllByText(/Please select at least one option/i);
+      expect(errors).toHaveLength(3);
     });
   });
 
