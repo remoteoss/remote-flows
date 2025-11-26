@@ -8,10 +8,7 @@ export const selectCountryStepSchema = {
           title: 'Country',
           description: '',
           type: 'string',
-          minLength: 1,
-          'x-jsf-errorMessage': {
-            minLength: 'Country is required',
-          },
+          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'select',
           },
