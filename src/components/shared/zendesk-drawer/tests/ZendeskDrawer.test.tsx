@@ -33,14 +33,6 @@ describe('ZendeskDrawer', () => {
     );
   });
 
-<<<<<<< HEAD
-  afterEach(() => {
-    vi.clearAllMocks();
-    queryClient.clear();
-  });
-
-=======
->>>>>>> main
   it('renders trigger element correctly', () => {
     render(<ZendeskDrawer {...defaultProps} />, { wrapper: TestProviders });
     expect(
