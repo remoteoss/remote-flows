@@ -1,11 +1,8 @@
 import { FormDescription } from '@/src/components/ui/form';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, render } from '@testing-library/react';
+import { TestProviders } from '@/src/tests/testHelpers';
 import { PropsWithChildren } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-
-const queryClient = new QueryClient();
 
 const wrapper = ({ children }: PropsWithChildren) => {
   const TestComponent = () => {
@@ -13,11 +10,9 @@ const wrapper = ({ children }: PropsWithChildren) => {
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
   return (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={{}}>
-        <TestComponent />
-      </FormFieldsProvider>
-    </QueryClientProvider>
+    <TestProviders>
+      <TestComponent />
+    </TestProviders>
   );
 };
 

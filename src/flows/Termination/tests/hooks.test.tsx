@@ -1,16 +1,10 @@
 import { useTermination } from '@/src/flows/Termination/hooks';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { PropsWithChildren } from 'react';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('useTermination', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     queryClient.clear();
   });
   it('should have fieldValues as combination of initialValues + stepState values + changed fieldValues', async () => {
@@ -21,7 +15,7 @@ describe('useTermination', () => {
           options: {},
           initialValues: {},
         }),
-      { wrapper: wrapper },
+      { wrapper: TestProviders },
     );
 
     // Initially, fieldValues should equal initialValues
@@ -52,7 +46,7 @@ describe('useTermination', () => {
           options: {},
           initialValues: {},
         }),
-      { wrapper: wrapper },
+      { wrapper: TestProviders },
     );
 
     // Initially, isDirty should be false
