@@ -186,7 +186,7 @@ export const useContractAmendment = ({
     useAutomatableContractAmendmentMutation(options);
 
   async function onSubmit(values: FieldValues) {
-    const parsedValues = parseJSFToValidate(
+    const parsedValues = await parseJSFToValidate(
       values,
       contractAmendmentHeadlessForm?.fields || [],
       {
@@ -227,9 +227,9 @@ export const useContractAmendment = ({
     }
   }
 
-  function handleValidation(values: FieldValues) {
+  async function handleValidation(values: FieldValues) {
     if (contractAmendmentHeadlessForm) {
-      const parsedValues = parseJSFToValidate(
+      const parsedValues = await parseJSFToValidate(
         values,
         contractAmendmentHeadlessForm?.fields,
       );

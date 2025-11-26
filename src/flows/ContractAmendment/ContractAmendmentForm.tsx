@@ -113,7 +113,7 @@ export function ContractAmendmentForm({
       });
     }
 
-    const parsedValues = parseJSFToValidate(values, fields, {
+    const parsedValues = await parseJSFToValidate(values, fields, {
       isPartialValidation: false,
     });
 

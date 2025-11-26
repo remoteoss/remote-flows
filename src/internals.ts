@@ -67,7 +67,3 @@ export {
   SelectValue,
 } from './components/ui/select';
 export { ScrollArea } from './components/ui/scroll-area';
-/**
- * @deprecated will remove the import soonish, import from @remoteoss/remote-flows instead
- */
-export * from './components/shared/zendesk-drawer/ZendeskTriggerButton';

@@ -26,7 +26,33 @@ export function iterateErrors(error: ValidationError) {
   return errors;
 }
 
+<<<<<<< HEAD
 function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
+=======
+// TODO: deprecated only used with old json-schema-form-version
+export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
+  handleValidation: (data: FieldValues) => {
+    formErrors: Record<string, string>;
+    yupError: ValidationError;
+  },
+): Resolver<InferType<T>> => {
+  return async (data: FieldValues) => {
+    const { yupError, formErrors } = await handleValidation(data);
+    if (Object.keys(formErrors || {}).length > 0) {
+      return {
+        values: {},
+        errors: iterateErrors(yupError as ValidationError),
+      };
+    }
+    return {
+      values: data,
+      errors: {},
+    };
+  };
+};
+
+function iterateFormErrors(formErrors: Record<string, string>) {
+>>>>>>> main
   return Object.entries(formErrors || {}).reduce(
     (allErrors: FieldErrors, [fieldName, message]) => {
       // Extract the error message string from various payload formats

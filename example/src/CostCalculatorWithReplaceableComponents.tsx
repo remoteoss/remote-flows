@@ -3,7 +3,6 @@ import {
   CostCalculatorForm,
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
-  CostCalculatorDisclaimer,
 } from '@remoteoss/remote-flows';
 import { components } from './Components';
 import { RemoteFlows } from './RemoteFlows';
@@ -54,7 +53,6 @@ export const CostCalculatorWithReplaceableComponents = () => {
           );
         }}
       />
-      <CostCalculatorDisclaimer label='Disclaimer' />
     </RemoteFlows>
   );
 };

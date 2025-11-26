@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.0.0
+
+### Major Changes
+
+- Remove `ZendeskTriggerButton` from `remoteoss/remote-flows/internals` (#599) [#599](https://github.com/remoteoss/remote-flows/pull/599)
+- Remove `CostCalculatorResults`, `CostCalculatorDisclaimer`, `CostCalculatorDisclaimer` (#600) [#600](https://github.com/remoteoss/remote-flows/pull/600)
+- Fix `FileUploadField`, `handleValidation` and `parseFormValues` are async (#604) [#604](https://github.com/remoteoss/remote-flows/pull/604)
+- remove `authId` from `RemoteFlows` (#608) [#608][https://github.com/remoteoss/remote-flows/pull/608]
+
 ## 0.32.0
 
 ### Minor Changes
