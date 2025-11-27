@@ -20,7 +20,7 @@ if [ ! -f "out/size-data.json" ]; then
   echo "Generating badge data..."
   npm run build
   npm run size -- --output out/bundle-analysis.json
-  npx tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
+  npm run size:badge --silent out/bundle-analysis.json > out/size-data.json
 fi
 
 # Read the badge data (shields.io endpoint format)
