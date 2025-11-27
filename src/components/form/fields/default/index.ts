@@ -10,4 +10,5 @@ import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextA
 export const defaultComponents: Components = {
   file: FileUploadFieldDefault,
   textarea: TextAreaFieldDefault,
+  select: SelectFieldDefault,
 };
