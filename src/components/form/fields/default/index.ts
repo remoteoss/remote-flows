@@ -1,5 +1,6 @@
 import { Components } from '@/src/types/remoteFlows';
 import { FileUploadFieldDefault } from './FileUploadFieldDefault';
+import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -8,4 +9,5 @@ import { FileUploadFieldDefault } from './FileUploadFieldDefault';
  */
 export const defaultComponents: Components = {
   file: FileUploadFieldDefault,
+  textarea: TextAreaFieldDefault,
 };
