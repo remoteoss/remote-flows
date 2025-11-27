@@ -1,0 +1,60 @@
+name: Coverage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+  update-coverage-badge:
+    name: Update Coverage Badge
+    runs-on: ubuntu-latest
+    needs: coverage
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Extract coverage percentage
+        id: coverage
+        run: |
+          COVERAGE=$(grep -oP 'Lines\s+:\s+\K[\d.]+' coverage/lcov-report/index.html || echo "0")
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+          echo "Coverage: $COVERAGE%"
+
+      - name: Create coverage badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: b94197caa302c8364afa820d9635cdf6
+          filename: remote-flows-coverage.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.coverage }}%
+          color: ${{ steps.coverage.outputs.coverage > 80 && 'green' || steps.coverage.outputs.coverage > 60 && 'yellow' || 'red' }}
