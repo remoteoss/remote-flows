@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import { ContractAmendmentBack } from '../ContractAmendmentBack';
 import { useContractAmendmentContext } from '../context';
 import { useFormFields } from '@/src/context';

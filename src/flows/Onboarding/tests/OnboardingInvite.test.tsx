@@ -19,7 +19,6 @@ import {
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
-import { vi } from 'vitest';
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
