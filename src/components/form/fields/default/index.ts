@@ -1,6 +1,7 @@
 import { Components } from '@/src/types/remoteFlows';
 import { FileUploadFieldDefault } from './FileUploadFieldDefault';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
+import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
