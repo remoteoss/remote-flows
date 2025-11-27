@@ -1,5 +1,7 @@
 # @remoteoss/remote-flows
 
+![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remotecom/b94197caa302c8364afa820d9635cdf6/raw/remote-flows-coverage.json)
+
 ## Overview
 
 Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embedded solution.
