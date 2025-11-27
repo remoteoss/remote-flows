@@ -1,4 +1,4 @@
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form';
+import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form-old';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';
@@ -27,9 +27,12 @@ import {
 } from '@/src/flows/Termination/utils';
 import { jsonSchema } from '@/src/flows/Termination/json-schemas/jsonSchema';
 import { terminationDetailsSchema } from '@/src/flows/Termination/json-schemas/terminationDetails';
-import { useCreateTermination, useTerminationSchema } from '@/src/flows/api';
+import {
+  useCreateTermination,
+  useTerminationSchema,
+} from '@/src/flows/Termination/api';
 import { createInformationField } from '@/src/components/form/jsf-utils/createFields';
-import { cn, ZendeskTriggerButton } from '@/src/internals';
+import { cn } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
@@ -39,6 +42,7 @@ import { AcknowledgeInformation } from '@/src/flows/Termination/components/Ackno
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 import { isInProbationPeriod } from '@/src/common/employment';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
@@ -320,12 +324,10 @@ export const useTermination = ({
     }
 
     if (terminationHeadlessForm) {
-      // this is a hack because I need to validate all form values with the entire schema
-      const parsedValues = parseJSFToValidate(
+      const parsedValues = (await parseFormValues(
         values,
-        entireTerminationSchema.fields,
-        { isPartialValidation: true },
-      );
+        true,
+      )) as TerminationFormValues;
 
       const { customer_informed_employee: customerInformedEmployee } =
         parsedValues;
@@ -347,7 +349,7 @@ export const useTermination = ({
         'will_challenge_termination',
       ];
 
-      const parsedRadioValues = parseFormRadioValues(
+      const parsedRadioValues = await parseFormRadioValues(
         parsedValues,
         radioFieldKeys,
       );
@@ -387,6 +389,36 @@ export const useTermination = ({
   }
 
   const isDirty = Boolean(Object.keys(fieldValues).length > 0);
+
+  const parseFormValues = async (
+    values: TerminationFormValues,
+    includeAllFields: boolean = false,
+  ): Promise<
+    | EmployeeCommunicationFormValues
+    | TerminationDetailsFormValues
+    | PaidTimeOffFormValues
+    | TerminationFormValues
+  > => {
+    if (includeAllFields) {
+      return (await parseJSFToValidate(values, entireTerminationSchema.fields, {
+        isPartialValidation: true,
+      })) as TerminationFormValues;
+    }
+
+    if (terminationHeadlessForm) {
+      return (await parseJSFToValidate(
+        values,
+        terminationHeadlessForm?.fields,
+        {
+          isPartialValidation: true,
+        },
+      )) as
+        | EmployeeCommunicationFormValues
+        | TerminationDetailsFormValues
+        | PaidTimeOffFormValues;
+    }
+    return {} as $TSFixMe;
+  };
 
   return {
     /**
@@ -432,9 +464,9 @@ export const useTermination = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: TerminationFormValues) => {
+    handleValidation: async (values: TerminationFormValues) => {
       if (terminationHeadlessForm) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           terminationHeadlessForm?.fields,
         );
@@ -452,30 +484,7 @@ export const useTermination = ({
      * @param values - Form values to parse
      * @returns Parsed form values
      */
-    parseFormValues: (
-      values: TerminationFormValues,
-      includeAllFields: boolean = false,
-    ):
-      | EmployeeCommunicationFormValues
-      | TerminationDetailsFormValues
-      | PaidTimeOffFormValues
-      | TerminationFormValues => {
-      if (includeAllFields) {
-        return parseJSFToValidate(values, entireTerminationSchema.fields, {
-          isPartialValidation: true,
-        }) as TerminationFormValues;
-      }
-
-      if (terminationHeadlessForm) {
-        return parseJSFToValidate(values, terminationHeadlessForm?.fields, {
-          isPartialValidation: true,
-        }) as
-          | EmployeeCommunicationFormValues
-          | TerminationDetailsFormValues
-          | PaidTimeOffFormValues;
-      }
-      return {} as $TSFixMe;
-    },
+    parseFormValues,
     /**
      * Function to handle form submission
      * @param values - Form values to submit

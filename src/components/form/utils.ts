@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
-import { $TSFixMe, Fields } from '@remoteoss/json-schema-form';
+import { $TSFixMe, Fields } from '@remoteoss/json-schema-form-old';
+import { convertFilesToBase64 } from '@/src/lib/files';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
 import get from 'lodash.get';
 
@@ -131,11 +132,17 @@ function prefillReadOnlyFields(values: Record<string, any>, fields: any[]) {
 
     if (
       !Object.prototype.hasOwnProperty.call(values, fieldName!) &&
-      !(field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled)
+      !(
+        field.inputType === supportedTypes.FIELDSET &&
+        field.valueGroupingDisabled
+      )
     )
       return;
 
-    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+    if (
+      field.inputType === supportedTypes.FIELDSET &&
+      field.valueGroupingDisabled
+    ) {
       Object.assign(newValues, prefillReadOnlyFields(values, field.fields));
       return;
     }
@@ -164,7 +171,7 @@ function extractFieldsetFieldsValues(
 ) {
   return fields.reduce<Record<string, any>>((nestedAcc, subField) => {
     const isFieldsetValueGroupingDisabled =
-      subField.type === supportedTypes.FIELDSET &&
+      subField.inputType === supportedTypes.FIELDSET &&
       subField.valueGroupingDisabled;
 
     if (isFieldsetValueGroupingDisabled) {
@@ -280,21 +287,32 @@ export const fieldTypesTransformations: Record<string, any> = {
         ? option.map((opt) => opt.value) // multi-options
         : (option?.value ?? ''), // Fallback to '' in case user removes all options,
   },
-};
+  [supportedTypes.FILE]: {
+    transformValueToAPI: () => async (files: File[]) => {
+      if (!files) {
+        return null;
+      }
 
-export function parseFormValuesToAPI(
+      return await convertFilesToBase64(files);
+    },
+  },
+};
+export async function parseFormValuesToAPI(
   formValues: Record<string, any> = {},
   fields: any[],
 ) {
   const filteredFields = fields.filter(
     (field) =>
       formValues[field.name!] ||
-      (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled),
+      (field.inputType === supportedTypes.FIELDSET &&
+        field.valueGroupingDisabled),
   );
 
-  const parsedFormValues = filteredFields.reduce(
-    (acc, field) => {
-      switch (field.type) {
+  const parsedFieldsWithValues = await Promise.all(
+    filteredFields.map(async (field) => {
+      const acc: Record<string, any> = {};
+
+      switch (field.inputType) {
         case supportedTypes.FIELDSET: {
           const fieldset = field;
           if (fieldset.valueGroupingDisabled) {
@@ -305,7 +323,7 @@ export function parseFormValuesToAPI(
 
             Object.assign(
               acc,
-              parseFormValuesToAPI(nestedFormValues, fieldset.fields),
+              await parseFormValuesToAPI(nestedFormValues, fieldset.fields),
             );
           } else {
             const fieldsetValue = formValues[field.name!];
@@ -326,10 +344,10 @@ export function parseFormValuesToAPI(
 
               acc[field.name!] =
                 Object.keys(cleanedValue).length > 0
-                  ? parseFormValuesToAPI(cleanedValue, fieldset.fields)
+                  ? await parseFormValuesToAPI(cleanedValue, fieldset.fields)
                   : undefined;
             } else {
-              acc[field.name!] = parseFormValuesToAPI(
+              acc[field.name!] = await parseFormValuesToAPI(
                 fieldsetValue,
                 fieldset.fields,
               );
@@ -339,42 +357,43 @@ export function parseFormValuesToAPI(
         }
 
         case supportedTypes.TEXTAREA:
-        case supportedTypes.TEXT: {
+        case supportedTypes.TEXT:
           // Attempt to remove null bytes from form values - https://gitlab.com/remote-com/employ-starbase/tracker/-/issues/10670
           acc[field.name] = formValues[field.name].replace(/\0/g, '');
           break;
-        }
 
         case supportedTypes.GROUP_ARRAY: {
           // NOTE: The field `name` in group arrays represents a path, but we only
           // need the last part of it which is represented by `nameKey`.
-
           const transformedFields = field?.fields?.().map((subField: any) => ({
             ...subField,
             name: subField.nameKey || '',
           }));
 
-          // Null check necessary for case where no fields are set due to optional check
-          const parsedFieldValues = formValues[field.name]?.map(
-            (fieldValues: Record<string, any>) =>
+          const parsedFieldValues = await Promise.all(
+            formValues[field.name]?.map((fieldValues: Record<string, any>) =>
               parseFormValuesToAPI(fieldValues, transformedFields),
+            ) || [],
           );
 
           acc[field.name] = parsedFieldValues;
           break;
         }
+
         case supportedTypes.EXTRA: {
           const extraField = field;
           if (extraField.includeValueToApi !== false) {
             const formValue = formValues[extraField.name];
             const fieldTransformValueToAPI =
               extraField?.transformValueToAPI ||
-              fieldTypesTransformations[extraField.type]?.transformValueToAPI;
-
-            // logErrorOnMissingComplimentaryParams(field);
+              fieldTypesTransformations[extraField.inputType]
+                ?.transformValueToAPI;
 
             if (fieldTransformValueToAPI) {
-              acc[extraField.name] = fieldTransformValueToAPI(field)(formValue);
+              const result = fieldTransformValueToAPI(field)(formValue);
+              // Await if it's a promise
+              acc[extraField.name] =
+                result instanceof Promise ? await result : result;
               break;
             }
 
@@ -384,14 +403,17 @@ export function parseFormValuesToAPI(
           acc[extraField.name] = undefined;
           break;
         }
+
         default: {
           const formValue = formValues[field.name];
           const fieldTransformValueToAPI =
             field?.transformValueToAPI ||
-            fieldTypesTransformations[field.type]?.transformValueToAPI;
-          // logErrorOnMissingComplimentaryParams(field);
+            fieldTypesTransformations[field.inputType]?.transformValueToAPI;
+
           if (fieldTransformValueToAPI) {
-            acc[field.name] = fieldTransformValueToAPI(field)(formValue);
+            const result = fieldTransformValueToAPI(field)(formValue);
+            // Await if it's a promise - THIS IS THE KEY FIX
+            acc[field.name] = result instanceof Promise ? await result : result;
             break;
           }
           acc[field.name] = formValue;
@@ -399,18 +421,19 @@ export function parseFormValuesToAPI(
         }
       }
 
-      // this occurs when const === default in a JSON Schema for a given field.
-      // without this, values such as money types won't use the correct value.
       if (field.forcedValue !== undefined) {
         acc[field.name!] = field.forcedValue;
       }
 
       return acc;
-    },
-    { ...formValues },
+    }),
   );
 
-  return parsedFormValues;
+  // Merge all accumulated objects
+  return parsedFieldsWithValues.reduce(
+    (acc, current) => ({ ...acc, ...current }),
+    { ...formValues },
+  );
 }
 
 function isFieldVisible(field: any, formValues: Record<string, unknown>) {
@@ -472,7 +495,7 @@ function excludeValuesInvisible(
         return;
       }
 
-      if (field.type === 'fieldset' && field.valueGroupingDisabled) {
+      if (field.inputType === 'fieldset' && field.valueGroupingDisabled) {
         Object.assign(
           valuesAsked,
           excludeValuesInvisible(
@@ -528,7 +551,7 @@ function cleanUnderscoreFields(obj: Record<string, any>): Record<string, any> {
   return obj;
 }
 
-export function parseSubmitValues(
+export async function parseSubmitValues(
   formValues: Record<string, any>,
   fields: any[],
   config?: { keepInvisibleValues?: boolean },
@@ -536,7 +559,10 @@ export function parseSubmitValues(
   const visibleFormValues = config?.keepInvisibleValues
     ? formValues
     : excludeValuesInvisible(formValues, fields);
-  const convertedFormValues = parseFormValuesToAPI(visibleFormValues, fields);
+  const convertedFormValues = await parseFormValuesToAPI(
+    visibleFormValues,
+    fields,
+  );
   const formValuesWithTrimmedStrings = trimStringValues(convertedFormValues);
 
   const formValuesWithUndefined = removeEmptyValues(
@@ -550,16 +576,16 @@ export function parseSubmitValues(
   return cleanUnderscoreFields(valuesWithReadOnly);
 }
 
-export function parseJSFToValidate(
+export async function parseJSFToValidate(
   formValues: Record<string, any>,
   fields: Fields,
   config: { isPartialValidation: boolean } = {
     isPartialValidation: false,
   },
 ) {
-  const valuesParsed = parseSubmitValues(formValues, fields, {
+  const valuesParsed = await parseSubmitValues(formValues, fields, {
     /* We cannot exclude invisible fields (excludeValuesInvisible) because
-        they are needed for conditional fields validations */
+          they are needed for conditional fields validations */
     keepInvisibleValues: config?.isPartialValidation,
   });
   return valuesParsed;
@@ -587,7 +613,7 @@ function getInitialDefaultValue(
   const defaultFieldValue = get(defaultValues, field.name);
   const fieldTransformValueFromAPI =
     field?.transformValueFromAPI ||
-    fieldTypesTransformations[field.type]?.transformValueFromAPI;
+    fieldTypesTransformations[field.inputType]?.transformValueFromAPI;
 
   if (fieldTransformValueFromAPI) {
     return fieldTransformValueFromAPI(field)(defaultFieldValue);
@@ -616,7 +642,7 @@ function getInitialDefaultValue(
     excludeString(defaultValueDeprecated) ??
     excludeString(field.default) ??
     initialValueForCheckboxAsBool ??
-    getDefaultValueForType(field.type)
+    getDefaultValueForType(field.inputType)
   );
 }
 
@@ -654,7 +680,10 @@ function getInitialSubFieldValues(
       );
     });
 
-    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
+    if (
+      field.inputType === supportedTypes.FIELDSET &&
+      field.valueGroupingDisabled
+    ) {
       Object.assign(initialValue, subFieldValues);
     } else {
       initialValue[field.name!] = subFieldValues;
@@ -684,7 +713,7 @@ export function getInitialValues(
   fields
     .map((field) => applyFieldDynamicProperties(field, defaultFieldValues))
     .forEach((field) => {
-      switch (field.type) {
+      switch (field.inputType) {
         case supportedTypes.FIELDSET: {
           if (field.valueGroupingDisabled) {
             Object.assign(

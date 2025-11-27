@@ -7,6 +7,7 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
@@ -36,9 +37,13 @@ import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -56,11 +61,6 @@ const stepToFormSchemaMap: Record<
   contract_preview: null,
   review: null,
 };
-
-import {
-  contractorStandardProductIdentifier,
-  contractorPlusProductIdentifier,
-} from '@/src/flows/ContractorOnboarding/constants';
 
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
@@ -480,7 +480,7 @@ export const useContractorOnboarding = ({
     goToStep(step);
   };
 
-  const parseFormValues = (values: FieldValues) => {
+  const parseFormValues = async (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
@@ -489,7 +489,7 @@ export const useContractorOnboarding = ({
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return parseJSFToValidate(values, basicInformationForm?.fields, {
+      return await parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -498,7 +498,7 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm &&
       stepState.currentStep.name === 'contract_details'
     ) {
-      return parseJSFToValidate(
+      return await parseJSFToValidate(
         values,
         contractorOnboardingDetailsForm?.fields,
         {
@@ -511,7 +511,7 @@ export const useContractorOnboarding = ({
       signatureSchemaForm &&
       stepState.currentStep.name === 'contract_preview'
     ) {
-      return parseJSFToValidate(values, signatureSchemaForm?.fields, {
+      return await parseJSFToValidate(values, signatureSchemaForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -530,7 +530,7 @@ export const useContractorOnboarding = ({
         currentStepName as keyof typeof fieldsMetaRef.current
       ] = prettifyFormValues(values, stepFields[currentStepName]);
     }
-    const parsedValues = parseFormValues(values);
+    const parsedValues = await parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
@@ -702,7 +702,9 @@ export const useContractorOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
@@ -711,7 +713,7 @@ export const useContractorOnboarding = ({
         basicInformationForm &&
         stepState.currentStep.name === 'basic_information'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           basicInformationForm?.fields,
           { isPartialValidation: false },
@@ -723,7 +725,7 @@ export const useContractorOnboarding = ({
         contractorOnboardingDetailsForm &&
         stepState.currentStep.name === 'contract_details'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           contractorOnboardingDetailsForm?.fields,
           { isPartialValidation: false },
@@ -735,7 +737,7 @@ export const useContractorOnboarding = ({
         signatureSchemaForm &&
         stepState.currentStep.name === 'contract_preview'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           signatureSchemaForm?.fields,
           { isPartialValidation: false },
@@ -747,7 +749,6 @@ export const useContractorOnboarding = ({
         // TODO: TBD
         return {
           formErrors: {},
-          yupError: null,
         };
       }
 

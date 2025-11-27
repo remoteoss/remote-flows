@@ -3,7 +3,9 @@ import type {
   Components,
   FieldComponentProps,
   FieldSetToggleComponentProps,
+  FileComponentProps,
 } from '@remoteoss/remote-flows';
+import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -266,6 +268,56 @@ const FieldsetToggle = ({
   );
 };
 
+const FileUploadField = ({
+  field,
+  fieldData,
+  fieldState,
+}: FileComponentProps) => {
+  return (
+    <div className='input-container'>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <FileUploader
+        onChange={field.onChange}
+        files={field.value}
+        accept={fieldData.accept}
+        multiple={fieldData.multiple}
+      />
+      {fieldData.description && (
+        <p className='input-description'>{fieldData.description}</p>
+      )}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
+const DatePickerInput = ({
+  field,
+  fieldData,
+  fieldState,
+}: FieldComponentProps) => {
+  return (
+    <div className='input-container'>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <input
+        type='date'
+        id={field.name}
+        data-testid={`date-picker-input-${field.name}`}
+        onChange={(e) => {
+          field?.onChange?.(e.target.value);
+        }}
+      />
+      {fieldData.description && (
+        <p className='input-description'>{fieldData.description}</p>
+      )}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -275,5 +327,7 @@ export const components: Components = {
   checkbox: Checkbox,
   countries: Countries,
   fieldsetToggle: FieldsetToggle,
+  file: FileUploadField,
+  date: DatePickerInput,
   //zendeskDrawer: ZendeskDialog,
 };

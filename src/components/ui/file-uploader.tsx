@@ -45,8 +45,8 @@ export function FileUploader({
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
 
-      setFiles(newFiles);
-      onChange(newFiles);
+      setFiles([...files, ...newFiles]);
+      onChange([...files, ...newFiles]);
     }
   };
 

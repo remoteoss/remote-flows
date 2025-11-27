@@ -9,8 +9,8 @@ import type {
 import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/yupValidationResolver';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import { iterateErrors } from '@/src/components/form/validationResolver';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
@@ -459,7 +459,7 @@ export const useCostCalculator = (
     let errors: JSFValidationError | null = null;
 
     options?.onValidation?.(values);
-    const parsedValues = parseJSFToValidate(values, allFields);
+    const parsedValues = await parseJSFToValidate(values, allFields);
 
     // 1. validate static fields first using Yup validate function
     try {
@@ -528,9 +528,9 @@ export const useCostCalculator = (
      * @param values - Form values to parse
      * @returns Parsed form values
      */
-    parseFormValues: (
+    parseFormValues: async (
       values: CostCalculatorEstimationFormValues,
-    ): CostCalculatorEstimationSubmitValues => {
+    ): Promise<CostCalculatorEstimationSubmitValues> => {
       const {
         country,
         region,
@@ -561,12 +561,12 @@ export const useCostCalculator = (
         estimation_title,
       };
 
-      const parsedStaticFields = parseJSFToValidate(
+      const parsedStaticFields = await parseJSFToValidate(
         jsonSchemaStaticFieldValues,
         fieldsJSONSchema.fields,
       );
 
-      const parsedRegionFields = parseJSFToValidate(
+      const parsedRegionFields = await parseJSFToValidate(
         rest,
         jsonSchemaRegionFields?.fields || [],
       );

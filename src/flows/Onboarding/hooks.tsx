@@ -1,10 +1,10 @@
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
-
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -36,7 +36,11 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import {
+  FlowOptions,
+  JSFModifyNext,
+  JSONSchemaFormType,
+} from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -167,6 +171,7 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
+
   const {
     data: company,
     isLoading: isLoadingCompany,
@@ -226,7 +231,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModify;
+      jsfModify?: JSFModifyNext;
       queryOptions?: { enabled?: boolean };
       jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
@@ -309,7 +314,7 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
-  const customFields = useMemo(
+  const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -380,7 +385,7 @@ export const useOnboarding = ({
           ...options?.jsfModify?.contract_details,
           fields: {
             ...options?.jsfModify?.contract_details?.fields,
-            ...customFields.fields,
+            ...contractDetailsCustomFields.fields,
           },
         },
         queryOptions: {
@@ -613,7 +618,7 @@ export const useOnboarding = ({
     stepFields.select_country,
   ]);
 
-  const parseFormValues = (values: FieldValues) => {
+  const parseFormValues = async (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
       return values;
     }
@@ -621,7 +626,7 @@ export const useOnboarding = ({
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return parseJSFToValidate(values, basicInformationForm?.fields, {
+      return await parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -630,7 +635,7 @@ export const useOnboarding = ({
       contractDetailsForm &&
       stepState.currentStep.name === 'contract_details'
     ) {
-      return parseJSFToValidate(values, contractDetailsForm?.fields, {
+      return await parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -647,7 +652,7 @@ export const useOnboarding = ({
       ] = prettifyFormValues(values, stepFields[currentStepName]);
     }
 
-    const parsedValues = parseFormValues(values);
+    const parsedValues = await parseFormValues(values);
     refetchCompany();
     switch (stepState.currentStep.name) {
       case 'select_country': {
@@ -785,12 +790,14 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: (values: FieldValues) => {
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           benefitOffersSchema?.fields,
           { isPartialValidation: false },
@@ -802,7 +809,7 @@ export const useOnboarding = ({
         basicInformationForm &&
         stepState.currentStep.name === 'basic_information'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           basicInformationForm?.fields,
           { isPartialValidation: false },
@@ -814,7 +821,7 @@ export const useOnboarding = ({
         contractDetailsForm &&
         stepState.currentStep.name === 'contract_details'
       ) {
-        const parsedValues = parseJSFToValidate(
+        const parsedValues = await parseJSFToValidate(
           values,
           contractDetailsForm?.fields,
           { isPartialValidation: false },

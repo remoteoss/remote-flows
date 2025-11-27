@@ -12,8 +12,8 @@ import {
 } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 
-import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import { Client } from '@/src/client/client';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ContractAmendmentParams } from './types';
 
@@ -186,7 +186,7 @@ export const useContractAmendment = ({
     useAutomatableContractAmendmentMutation(options);
 
   async function onSubmit(values: FieldValues) {
-    const parsedValues = parseJSFToValidate(
+    const parsedValues = await parseJSFToValidate(
       values,
       contractAmendmentHeadlessForm?.fields || [],
       {
@@ -227,9 +227,9 @@ export const useContractAmendment = ({
     }
   }
 
-  function handleValidation(values: FieldValues) {
+  async function handleValidation(values: FieldValues) {
     if (contractAmendmentHeadlessForm) {
-      const parsedValues = parseJSFToValidate(
+      const parsedValues = await parseJSFToValidate(
         values,
         contractAmendmentHeadlessForm?.fields,
       );
