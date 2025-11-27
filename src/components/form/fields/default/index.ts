@@ -2,6 +2,7 @@ import { Components } from '@/src/types/remoteFlows';
 import { FileUploadFieldDefault } from './FileUploadFieldDefault';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
+import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -9,6 +10,7 @@ import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectF
  * You can use these as-is or override specific fields with custom components.
  */
 export const defaultComponents: Components = {
+  countries: CountryFieldDefault,
   file: FileUploadFieldDefault,
   textarea: TextAreaFieldDefault,
   select: SelectFieldDefault,

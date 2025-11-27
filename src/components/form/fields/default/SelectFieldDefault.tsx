@@ -5,7 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/src/components/ui/form';
-import { FieldComponentProps } from '@/src/types/remoteFlows';
+import { FieldComponentProps } from '@/src/types/fields';
 import {
   Select,
   SelectGroup,

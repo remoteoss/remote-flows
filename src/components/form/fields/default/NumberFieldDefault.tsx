@@ -1,5 +1,5 @@
 import { TextField } from '@/src/components/form/fields/TextField';
-import { FieldComponentProps } from '@/src/types/remoteFlows';
+import { FieldComponentProps } from '@/src/types/fields';
 
 export function NumberFieldDefault({ field, fieldData }: FieldComponentProps) {
   return (

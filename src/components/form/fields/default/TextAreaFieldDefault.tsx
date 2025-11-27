@@ -7,7 +7,7 @@ import {
 } from '@/src/components/ui/form';
 import { Textarea } from '@/src/components/ui/textarea';
 import { cn } from '@/src/lib/utils';
-import { FieldComponentProps } from '@/src/types/remoteFlows';
+import { FieldComponentProps } from '@/src/types/fields';
 
 export function TextAreaFieldDefault({
   field,

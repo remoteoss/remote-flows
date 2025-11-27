@@ -7,7 +7,7 @@ import {
 } from '@/src/components/ui/form';
 import { FileUploader } from '@/src/components/ui/file-uploader';
 import { cn } from '@/src/lib/utils';
-import { FileComponentProps } from '@/src/types/remoteFlows';
+import { FileComponentProps } from '@/src/types/fields';
 
 export function FileUploadFieldDefault({
   field,
