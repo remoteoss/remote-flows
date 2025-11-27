@@ -3,11 +3,20 @@ import { getContractDetailsSchemaVersion } from '../utils';
 
 describe('getContractDetailsSchemaVersion', () => {
   it('should return version 1 for all countries', () => {
-    const result = getContractDetailsSchemaVersion(undefined);
+    const result = getContractDetailsSchemaVersion(undefined, null);
 
     expect(result).toEqual({
       form_schema: {
         contract_details: 1,
+      },
+    });
+  });
+
+  it('should return version 2 for Germany', () => {
+    const result = getContractDetailsSchemaVersion(undefined, 'DEU');
+    expect(result).toEqual({
+      form_schema: {
+        contract_details: 2,
       },
     });
   });
@@ -20,7 +29,7 @@ describe('getContractDetailsSchemaVersion', () => {
       },
     };
 
-    const result = getContractDetailsSchemaVersion(externalVersion);
+    const result = getContractDetailsSchemaVersion(externalVersion, null);
 
     expect(result).toEqual({
       form_schema: {
