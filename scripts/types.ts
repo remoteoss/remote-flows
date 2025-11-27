@@ -40,7 +40,7 @@ export interface BundleAnalysis {
     raw: number;
     gzip: number;
   }>;
-  allFiles: FileData[];
+  allFiles?: FileData[];
 }
 
 export interface ChangeInfo {

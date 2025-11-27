@@ -3,20 +3,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { filesize } from 'filesize';
-import type { BundleAnalysis } from './types.js';
-
-interface SizeLimitConfig {
-  limits: {
-    total: number;
-    totalGzip: number;
-    css: number;
-    cssGzip: number;
-    maxChunkSize: number;
-    maxChunkSizeGzip: number;
-  };
-  exclude: string[];
-  warningThreshold: number;
-}
+import type { BundleAnalysis, SizeLimitConfig } from './types';
 
 interface BadgeData {
   schemaVersion: 1;

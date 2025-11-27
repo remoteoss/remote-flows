@@ -113,27 +113,10 @@ The Gist stores data in this format:
 
 ```json
 {
-  "lastUpdated": "2025-11-22T10:00:00Z",
-  "currentSize": {
-    "total": 485000,
-    "totalGzip": 142000,
-    "css": 53000,
-    "cssGzip": 22000
-  },
-  "badge": {
-    "schemaVersion": 1,
-    "label": "bundle size",
-    "message": "142 KB",
-    "color": "green"
-  },
-  "history": [
-    {
-      "version": "0.31.0",
-      "commit": "8906a562",
-      "date": "2025-11-22",
-      "size": 142000
-    }
-  ]
+  "schemaVersion": 1,
+  "label": "bundle size",
+  "message": "142 KB",
+  "color": "green"
 }
 ```
 

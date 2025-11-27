@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from 'fs';
 import { join, extname } from 'path';
 import { gzipSizeSync } from 'gzip-size';
-import type { BundleAnalysis, SizeLimitConfig } from './types.js';
+import type { BundleAnalysis, SizeLimitConfig } from './types';
 
 export const DIST_DIR = 'dist';
 export const CONFIG_FILE = '.sizelimit.json';
