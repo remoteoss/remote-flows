@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 
 const queryClient = new QueryClient();
