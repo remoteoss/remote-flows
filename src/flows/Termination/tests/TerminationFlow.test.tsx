@@ -209,7 +209,6 @@ describe('TerminationFlow', () => {
       newValues?.isEmployeeInformed === 'Yes' &&
       newValues?.whenWasEmployeeInformed
     ) {
-      console.log('filling datepicker step 1');
       await waitFor(() => {
         expect(
           screen.getByLabelText(
@@ -327,6 +326,13 @@ describe('TerminationFlow', () => {
       ...values,
     };
     if (newValues?.ackowledgeTermination) {
+      await waitFor(() => {
+        expect(
+          screen.getByRole('checkbox', {
+            name: /I agree to the procedures in this form/i,
+          }),
+        ).toBeInTheDocument();
+      });
       await fillCheckbox('I agree to the procedures in this form');
     }
   }
@@ -611,6 +617,12 @@ describe('TerminationFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
+
     const employeePersonalEmail = screen.getByLabelText(
       /Employee's personal email/i,
     );
@@ -636,6 +648,11 @@ describe('TerminationFlow', () => {
       { wrapper: TestProviders },
     );
     await screen.findByText(/Step: Employee Communication/i);
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
     const employeePersonalEmail = screen.getByLabelText(
       /Employee's personal email/i,
     );
@@ -668,9 +685,12 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Termination Details/i);
 
     // Verify it was selected by querying the select-value slot
-    const selectValue = document.querySelector('[data-slot="select-value"]');
-    expect(selectValue?.textContent).toMatch(
-      /Decision to cancel hiring before the employee starts/i,
-    );
+    await waitFor(() => {
+      const selectValue = document.querySelector('[data-slot="select-value"]');
+      expect(selectValue).toBeInTheDocument();
+      expect(selectValue?.textContent).toMatch(
+        /Decision to cancel hiring before the employee starts/i,
+      );
+    });
   });
 });

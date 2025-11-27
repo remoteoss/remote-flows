@@ -1,10 +1,10 @@
-import { Client } from '@hey-api/client-fetch';
 import {
   modify,
   createHeadlessForm,
 } from '@remoteoss/remote-json-schema-form-kit';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+import { Client } from '@/src/client/client';
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,

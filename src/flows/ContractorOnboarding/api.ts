@@ -20,7 +20,7 @@ import {
 import { findFieldsByType } from '@/src/flows/utils';
 import { formatCurrency } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 import {
   createHeadlessForm,
   modify,
