@@ -47,11 +47,23 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'invited',
 ];
 
+export const getContractDetailsJsonSchemaVersionByCountry = (
+  countryCode: string | null,
+) => {
+  const countryVersions = {
+    DEU: 2, // Germany
+  };
+
+  return countryVersions[countryCode as keyof typeof countryVersions] ?? 1;
+};
+
 export const getContractDetailsSchemaVersion = (
   jsonSchemaVersion: FlowOptions['jsonSchemaVersion'],
+  countryCode: string | null,
 ): FlowOptions['jsonSchemaVersion'] | undefined => {
   // returning one for all contract details schemas for now
-  const countrySpecificContractDetailsVersion = 1;
+  const countrySpecificContractDetailsVersion =
+    getContractDetailsJsonSchemaVersionByCountry(countryCode);
 
   // TODO: We need to improve the options.jsonSchemaVersion, we need to be to pass different json_schema_versions for different countries
   const effectiveContractDetailsJsonSchemaVersion = jsonSchemaVersion

@@ -372,7 +372,10 @@ export const useOnboarding = ({
   );
 
   const effectiveContractDetailsJsonSchemaVersion =
-    getContractDetailsSchemaVersion(options?.jsonSchemaVersion);
+    getContractDetailsSchemaVersion(
+      options?.jsonSchemaVersion,
+      internalCountryCode,
+    );
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
