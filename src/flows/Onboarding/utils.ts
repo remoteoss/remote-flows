@@ -54,7 +54,7 @@ export const BASIC_INFORMATION_SCHEMA_VERSION = DEFAULT_VERSION;
  * Key: country code, Value: array of allowed versions (first is default/recommended)
  */
 const COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST: Record<string, number[]> = {
-  DEU: [1, 2], // Germany: allows v2 (default) and v1
+  DEU: [1, 2], // Germany: allows v1 (default) and v2
 };
 
 /**
