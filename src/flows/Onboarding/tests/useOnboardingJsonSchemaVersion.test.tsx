@@ -156,7 +156,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
       const contractDetailsCall = mockGetShowFormCountry.mock.calls[1][0];
 
       await waitFor(() => {
-        expect(contractDetailsCall).toHaveBeenCalledWith({
+        expect(contractDetailsCall).toEqual({
           client: expect.any(Object),
           headers: {
             Authorization: ``,
