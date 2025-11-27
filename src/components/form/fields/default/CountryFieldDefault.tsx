@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   FormControl,
   FormDescription,
@@ -9,7 +10,6 @@ import { FormItem } from '@/src/components/ui/form';
 import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryComponentProps } from '@/src/types/fields';
-import { useState } from 'react';
 
 export function CountryFieldDefault({
   field,
@@ -22,6 +22,19 @@ export function CountryFieldDefault({
     field.onChange(values);
     setSelected(rawValues);
   };
+
+  useEffect(() => {
+    if (field.value && fieldData.options) {
+      setSelected(
+        field.value.map(
+          (value: $TSFixMe) =>
+            fieldData?.options?.find(
+              (option) => option.value === value,
+            ) as $TSFixMe,
+        ),
+      );
+    }
+  }, [field.value, fieldData.options]);
 
   const countryOptions = [
     ...Object.entries(fieldData.$meta?.regions || {}).map(([key, value]) => ({
