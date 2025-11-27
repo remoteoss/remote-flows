@@ -45,7 +45,6 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate badge and history data
-        id: badge-data
         run: |
           # Generate the badge data
           npx tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
@@ -55,8 +54,6 @@ jobs:
         env:
           GIST_ID: ${{ secrets.BUNDLE_SIZE_GIST_ID }}
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
-          PACKAGE_VERSION: ${{ steps.package-version.outputs.version }}
-          GITHUB_SHA: ${{ github.sha }}
         run: |
           # Read the badge data (shields.io endpoint format)
           BADGE_DATA=$(cat out/size-data.json)

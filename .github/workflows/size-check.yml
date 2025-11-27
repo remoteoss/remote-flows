@@ -77,15 +77,10 @@ jobs:
           if [ "${{ steps.check_script.outputs.exists }}" != "true" ]; then
             echo "⚠️ Comparison script not found in base branch. Showing current bundle size only."
             npx tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
-            REPORT=$(cat out/size-report.md)
-            echo "report<<EOF" >> $GITHUB_OUTPUT
-            echo "$REPORT" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            exit 0
+          else
+            # Run comparison and capture output
+            npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1
           fi
-
-          # Run comparison and capture output
-          npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || echo "comparison_failed=true" >> $GITHUB_OUTPUT
 
           # Read the report for the PR comment
           REPORT=$(cat out/size-report.md)
