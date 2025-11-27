@@ -80,6 +80,10 @@ export type JSFModifyNext = ModifyConfig;
 
 export type FlowOptions = {
   jsfModify?: JSFModify;
+  /**
+   * Temporarily disabled, don't use it for now.
+   * @deprecated
+   */
   jsonSchemaVersion?: {
     contract_amendments?: number;
     form_schema?: {
@@ -92,6 +96,10 @@ export type FlowOptions = {
 
 export type NextFlowOptions = {
   jsfModify?: JSFModifyNext;
+  /**
+   * Temporarily disabled, don't use it for now.
+   * @deprecated
+   */
   jsonSchemaVersion?: {
     contract_amendments?: number;
     form_schema?: {

@@ -12,6 +12,7 @@ Welcome to the Onboarding flow docs
 - [Components API](#components-api)
   - [OnboardingFlow](#onboardingflow)
     - [options.jsfModify properties](#optionsjsfmodify-properties)
+    - [options.jsonSchemaVersionByCountry](#optionsjsonschemaversionbycountry)
     - [Example](#example)
   - [SelectCountryStep](#selectcountrystep)
   - [BasicInformationStep](#basicinformationstep)
@@ -521,11 +522,42 @@ The component accepts the following props:
 | `externalId`    | string                                                                                                                                                                                                  | No       | External identifier for the employment, useful for tracking in your own system                                                  |
 | `initialValues` | Record<string, any>                                                                                                                                                                                     | No       | Initial values to pre-populate form fields. When editing an existing employment, server data takes precedence over these values |
 | `render`        | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow         |
-| `options`       | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}}`                                                                                                      | No       | See detailed explanation below                                                                                                  |
+| `options`       | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}, jsonSchemaVersionByCountry:Record<CountryCode, {contract_details?: number}>}`                         | No       | See detailed explanation below                                                                                                  |
 
 #### options.jsfModify properties
 
 The `options.jsfModify` object accepts keys for each step (`basic_information`, `contract_details`, `benefits`) where each value is a `JSFModify` object. The `JSFModify` type accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library accepts.
+
+#### options.jsonSchemaVersionByCountry
+
+Specify which JSON schema versions to use for different steps by country. This allows you to opt-in to newer schema versions that may contain updated fields and validations.
+
+**Supported countries and versions:**
+
+- `DEU` (Germany): `contract_details` schema, it only supports 1 and 2
+
+**Configuration:**
+
+```tsx
+<OnboardingFlow
+  companyId={companyId}
+  type={type}
+  render={OnBoardingRender}
+  employmentId={employmentId}
+  externalId={externalId}
+  options={{
+    jsonSchemaVersionByCountry: {
+      DEU: {
+        contract_details: 2,
+      },
+    },
+  }}
+/>
+```
+
+**Notes:**
+
+- If you specify an unsupported version, it defaults to version 1, you will have a warning in console
 
 #### Example
 

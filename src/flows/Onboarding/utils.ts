@@ -1,5 +1,4 @@
-import { Employment } from '@/src/flows/Onboarding/types';
-import { FlowOptions } from '@/src/flows/types';
+import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 
 type StepKeys =
@@ -47,42 +46,89 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'invited',
 ];
 
-export const getContractDetailsJsonSchemaVersionByCountry = (
-  countryCode: string | null,
-) => {
-  const countryVersions = {
-    DEU: 2, // Germany
-  };
+export const DEFAULT_VERSION = 1;
+export const BASIC_INFORMATION_SCHEMA_VERSION = DEFAULT_VERSION;
 
-  return countryVersions[countryCode as keyof typeof countryVersions] ?? 1;
+/**
+ * Defines allowed JSON schema versions per country for contract_details
+ * Key: country code, Value: array of allowed versions (first is default/recommended)
+ */
+const COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST: Record<string, number[]> = {
+  DEU: [1, 2], // Germany: allows v1 (default) and v2
 };
 
-export const getContractDetailsSchemaVersion = (
-  jsonSchemaVersion: FlowOptions['jsonSchemaVersion'],
+/**
+ * Gets the default (recommended) contract details schema version for a country
+ */
+const getDefaultContractDetailsSchemaVersion = (
   countryCode: string | null,
-): FlowOptions['jsonSchemaVersion'] | undefined => {
-  // returning one for all contract details schemas for now
-  const countrySpecificContractDetailsVersion =
-    getContractDetailsJsonSchemaVersionByCountry(countryCode);
+): number => {
+  if (!countryCode) return DEFAULT_VERSION;
+  const allowedVersions =
+    COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode];
+  return allowedVersions?.[0] ?? DEFAULT_VERSION; // First version is the default
+};
 
-  // TODO: We need to improve the options.jsonSchemaVersion, we need to be to pass different json_schema_versions for different countries
-  const effectiveContractDetailsJsonSchemaVersion = jsonSchemaVersion
-    ? {
-        ...jsonSchemaVersion,
-        form_schema: {
-          ...jsonSchemaVersion.form_schema,
-          contract_details:
-            countrySpecificContractDetailsVersion ??
-            jsonSchemaVersion.form_schema?.contract_details,
-        },
-      }
-    : countrySpecificContractDetailsVersion
-      ? {
-          form_schema: {
-            contract_details: countrySpecificContractDetailsVersion,
-          },
-        }
-      : undefined;
+/**
+ * Validates if a version is allowed for a given country
+ * Returns the version if valid, otherwise returns the default
+ */
+const getValidatedContractDetailsSchemaVersion = (
+  requestedVersion: number | undefined,
+  countryCode: string | null,
+): number => {
+  const defaultVersion = getDefaultContractDetailsSchemaVersion(countryCode);
 
-  return effectiveContractDetailsJsonSchemaVersion;
+  // If there is no country code, no allowlist for country, or no requested version, return the default version
+  if (
+    !countryCode ||
+    !COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode] ||
+    !requestedVersion
+  ) {
+    return defaultVersion;
+  }
+
+  const allowedVersions =
+    COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode];
+
+  // Check if requested version is allowed
+  if (allowedVersions.includes(requestedVersion)) {
+    return requestedVersion;
+  }
+
+  // Version not allowed, return default with console warning
+  console.warn(
+    `[RemoteFlows] JSON Schema version ${requestedVersion} is not allowed for country ${countryCode}. ` +
+      `Allowed versions: [${allowedVersions.join(', ')}]. Using default version ${defaultVersion}.`,
+  );
+
+  return defaultVersion;
+};
+
+/**
+ * Resolves the effective contract details schema version for a country
+ * Priority: country-specific > global > default by country
+ *
+ * @param options - The flow options containing version configurations
+ * @param countryCode - The country code to resolve version for
+ * @returns The effective jsonSchemaVersion configuration
+ */
+export const getContractDetailsSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+  countryCode: string | null,
+) => {
+  const jsonSchemaVersionByCountry = options?.jsonSchemaVersionByCountry;
+  const countrySpecificVersion = countryCode
+    ? jsonSchemaVersionByCountry?.[countryCode]?.contract_details
+    : undefined;
+
+  const requestedVersion = countrySpecificVersion
+    ? countrySpecificVersion
+    : getDefaultContractDetailsSchemaVersion(countryCode);
+  const effectiveVersion = getValidatedContractDetailsSchemaVersion(
+    requestedVersion,
+    countryCode,
+  );
+
+  return effectiveVersion;
 };
