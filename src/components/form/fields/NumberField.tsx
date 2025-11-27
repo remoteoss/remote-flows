@@ -1,6 +1,6 @@
 import { useFormFields } from '@/src/context';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/ui/form';
 import { TextFieldProps } from './TextField';
 import { Components } from '@/src/types/remoteFlows';
 import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
