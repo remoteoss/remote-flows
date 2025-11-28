@@ -1,9 +1,11 @@
 import { createClient } from '@/src/auth/createClient';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-vi.mock('@hey-api/client-fetch', () => ({
-  createClient: vi.fn((config) => ({ ...config })),
-  createConfig: vi.fn((config) => config),
+vi.mock('@/src/client/client', () => ({
+  createClient: vi.fn((config) => ({
+    ...config,
+    auth: config.auth,
+  })),
 }));
 
 vi.mock('@/src/client/client.gen', () => ({

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import React, { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
@@ -66,6 +66,7 @@ export const JSONSchemaFormFields = ({
               value={field.const as string}
               statement={field.statement as any}
               label={field.label as string}
+              helpCenter={field.meta?.helpCenter}
             />
           );
         }

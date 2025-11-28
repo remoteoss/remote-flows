@@ -1,4 +1,11 @@
 import {
+  modify,
+  createHeadlessForm,
+} from '@remoteoss/remote-json-schema-form-kit';
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { FieldValues } from 'react-hook-form';
+import { Client } from '@/src/client/client';
+import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
   EmploymentCreateParams,
@@ -25,13 +32,13 @@ import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
-import { FlowOptions, JSONSchemaFormType } from '@/src/flows/types';
+import {
+  JSONSchemaFormResultWithFieldsets,
+  JSONSchemaFormType,
+  NextFlowOptions,
+} from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { FieldValues } from 'react-hook-form';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -174,17 +181,19 @@ export const useJSONSchemaForm = ({
   fieldValues,
   options,
   query = {},
+  jsonSchemaVersion,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
-}) => {
+  jsonSchemaVersion?: number;
+}): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
+  const jsonSchemaQueryParam = jsonSchemaVersion
     ? {
-        json_schema_version: options.jsonSchemaVersion.form_schema[form],
+        json_schema_version: jsonSchemaVersion,
       }
     : {};
   return useQuery({
@@ -442,7 +451,7 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
 };
 
 export const useCountriesSchemaField = (
-  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+  options?: Omit<NextFlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };
   },
 ) => {

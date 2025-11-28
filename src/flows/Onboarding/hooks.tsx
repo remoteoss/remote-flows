@@ -1,12 +1,13 @@
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form';
-
+import { Fields } from '@remoteoss/json-schema-form-old';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
+  BASIC_INFORMATION_SCHEMA_VERSION,
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
   reviewStepAllowedEmploymentStatus,
@@ -36,7 +37,7 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModifyNext, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -224,14 +225,15 @@ export const useOnboarding = ({
     form,
     options: jsonSchemaOptions = {},
     query = {},
+    jsonSchemaVersion,
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModify;
+      jsfModify?: JSFModifyNext;
       queryOptions?: { enabled?: boolean };
-      jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
     query?: Record<string, string>;
+    jsonSchemaVersion?: number;
   }) => {
     const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
@@ -258,8 +260,8 @@ export const useOnboarding = ({
         queryOptions: {
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
-        jsonSchemaVersion: jsonSchemaOptions.jsonSchemaVersion,
       },
+      jsonSchemaVersion,
     });
   };
 
@@ -282,11 +284,11 @@ export const useOnboarding = ({
     form: 'employment_basic_information',
     options: {
       jsfModify: options?.jsfModify?.basic_information,
-      jsonSchemaVersion: options?.jsonSchemaVersion,
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
     },
+    jsonSchemaVersion: BASIC_INFORMATION_SCHEMA_VERSION,
   });
 
   const annualGrossSalaryField =
@@ -310,7 +312,7 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
-  const customFields = useMemo(
+  const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
         annual_gross_salary: {
@@ -368,7 +370,7 @@ export const useOnboarding = ({
   );
 
   const effectiveContractDetailsJsonSchemaVersion =
-    getContractDetailsSchemaVersion(options?.jsonSchemaVersion);
+    getContractDetailsSchemaVersion(options, internalCountryCode);
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useJSONSchema({
@@ -381,14 +383,14 @@ export const useOnboarding = ({
           ...options?.jsfModify?.contract_details,
           fields: {
             ...options?.jsfModify?.contract_details?.fields,
-            ...customFields.fields,
+            ...contractDetailsCustomFields.fields,
           },
         },
         queryOptions: {
           enabled: isContractDetailsEnabled,
         },
-        jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
       },
+      jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
     });
 
   const {
@@ -786,7 +788,9 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (values: FieldValues) => {
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }

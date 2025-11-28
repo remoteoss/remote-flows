@@ -1,3 +1,4 @@
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
 import {
   CostCalculatorEstimateParams,
   getIndexCompanyCurrency,
@@ -7,12 +8,11 @@ import {
   postCreateEstimationCsv,
   postCreateEstimationPdf,
 } from '@/src/client';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
 import { JSFModify } from '@/src/flows/types';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
 
 /**
  * Hook to fetch the countries for the cost calculator.

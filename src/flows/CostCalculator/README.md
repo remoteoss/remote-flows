@@ -584,17 +584,14 @@ This configuration shows management fees in both the estimation results and prov
 The `version` prop (`'standard' | 'marketing'`) controls three key behaviors in the cost calculator:
 
 1. Currency Conversion:
-
    - `marketing`: Uses `no_spread` (raw exchange rate without additional fees/risk margins)
    - `standard`: Uses `spread` (includes forex risk and service fees in exchange rate)
 
 2. UI/Form Elements:
-
    - `marketing`: Hiring budget radio option is hidden
    - `standard`: Hiring budget radio option is shown
 
 3. Salary Field Behavior:
-
    - Marketing Version:
      - Based on last input field used:
        - If last input was in country's currency → `annual_gross_salary`

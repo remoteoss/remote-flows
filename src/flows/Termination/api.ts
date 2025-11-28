@@ -19,8 +19,8 @@ import {
   DaysAndHours,
   formatAsDecimal,
 } from '@/src/lib/time';
-import { Client } from '@hey-api/client-fetch';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form';
+import { Client } from '@/src/client/client';
+import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
 

@@ -1,4 +1,4 @@
-import { Fields } from '@remoteoss/json-schema-form';
+import { Fields } from '@remoteoss/json-schema-form-old';
 import {
   prettifyFormValues,
   sanitizeHtml,
