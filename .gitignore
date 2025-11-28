@@ -16,3 +16,4 @@ dist
 coverage
 example/public/
 .cursor
+out
