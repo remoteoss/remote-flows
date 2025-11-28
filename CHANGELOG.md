@@ -1,5 +1,18 @@
 # @remoteoss/remote-flows
 
+## 1.1.0
+
+### Minor Changes
+
+- consolidate test setup with shared TestProviders wrapper (#592) [#592](https://github.com/remoteoss/remote-flows/pull/592)
+- add date picker input component and update tests (#612) [#612](https://github.com/remoteoss/remote-flows/pull/612)
+- migrate to json-schema-form-next library (#596) [#596](https://github.com/remoteoss/remote-flows/pull/596)
+- configure vitest globals and remove explicit imports (#590) [#590](https://github.com/remoteoss/remote-flows/pull/590)
+- upgrade dev dependencies (#583) [#583](https://github.com/remoteoss/remote-flows/pull/583)
+- add a fielset to be more similar to Remote's (#621) [#621](https://github.com/remoteoss/remote-flows/pull/621)
+- add automated bundle size tracking and monitoring (#616) [#616](https://github.com/remoteoss/remote-flows/pull/616)
+- add country-specific contract schema versioning (#614) [#614](https://github.com/remoteoss/remote-flows/pull/614)
+
 ## 1.0.0
 
 ### Major Changes
