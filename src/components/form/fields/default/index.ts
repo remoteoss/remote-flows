@@ -3,6 +3,7 @@ import { FileUploadFieldDefault } from './FileUploadFieldDefault';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
+import { StatementDefault } from '@/src/components/form/fields/default/StatementDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -14,4 +15,5 @@ export const defaultComponents: Components = {
   file: FileUploadFieldDefault,
   textarea: TextAreaFieldDefault,
   select: SelectFieldDefault,
+  statement: StatementDefault,
 };
