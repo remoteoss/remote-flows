@@ -26,26 +26,17 @@ const DescriptionWithConversion = ({
     ? `Hide ${targetCurrency} conversion`
     : `Show ${targetCurrency} conversion`;
 
-  const CustomButton = components?.button;
+  const CustomButton = components?.button || 'button';
   return (
     <span className={className}>
       {description}{' '}
-      {CustomButton ? (
-        <CustomButton
-          className={`${className.replace('-description', '-button')}`}
-          data-type='inline'
-          onClick={onClick}
-        >
-          {label}
-        </CustomButton>
-      ) : (
-        <button
-          className={`${className.replace('-description', '-button')}`}
-          onClick={onClick}
-        >
-          {label}
-        </button>
-      )}
+      <CustomButton
+        className={`${className.replace('-description', '-button')}`}
+        data-type='inline'
+        onClick={onClick}
+      >
+        {label}
+      </CustomButton>
     </span>
   );
 };
