@@ -3,13 +3,13 @@ import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
 import { SupportedTypes } from '../components/form/fields/types';
-import { StatementProps } from '../components/form/Statement';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
   CountryComponentProps,
   FieldComponentProps,
   FileComponentProps,
+  StatementComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -82,13 +82,6 @@ export type ZendeskDrawerComponentProps = {
   error: Error | null;
   zendeskURL: string;
   Trigger: React.ReactElement;
-};
-
-/**
- * Props for custom statement components.
- */
-export type StatementComponentProps = {
-  data: StatementProps;
 };
 
 export type DrawerComponentProps = {

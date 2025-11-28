@@ -53,3 +53,14 @@ type FieldCountryDataProps = FieldDataProps & {
 export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
+
+/**
+ * Props for custom statement components.
+ */
+export type StatementComponentProps = {
+  data: {
+    title?: string;
+    description: string;
+    severity: 'warning' | 'error' | 'success' | 'info' | undefined;
+  };
+};

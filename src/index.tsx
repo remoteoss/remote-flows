@@ -35,7 +35,6 @@ export type {
   RemoteFlowsSDKProps,
   FieldSetToggleComponentProps,
   ButtonComponentProps,
-  StatementComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   Meta,
@@ -45,6 +44,7 @@ export type {
   FieldComponentProps,
   FileComponentProps,
   CountryComponentProps,
+  StatementComponentProps,
 } from '@/src/types/fields';
 
 export type {

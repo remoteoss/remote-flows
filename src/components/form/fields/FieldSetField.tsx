@@ -7,11 +7,12 @@ import {
   Components,
   FieldSetToggleComponentProps,
 } from '@/src/types/remoteFlows';
-import { Statement, StatementProps } from '@/src/components/form/Statement';
+import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { Button } from '@/src/components/ui/button';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { SupportedTypes } from './types';
+import { StatementComponentProps } from '@/src/types/fields';
 
 type FieldBase = {
   label: string;
@@ -54,7 +55,7 @@ export type FieldSetProps = {
   fields: Field[];
   features?: FieldSetFeatures;
   components: Components;
-  statement?: StatementProps;
+  statement?: StatementComponentProps['data'];
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
   variant: 'outset' | 'inset';
