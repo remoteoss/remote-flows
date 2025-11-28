@@ -14,7 +14,7 @@ import {
   PopoverClose,
   PopoverContent,
   PopoverTrigger,
-} from '@radix-ui/react-popover';
+} from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
 
