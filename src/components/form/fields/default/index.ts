@@ -4,6 +4,10 @@ import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextA
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 import { StatementDefault } from '@/src/components/form/fields/default/StatementDefault';
+import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
+import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
+import { EmailFieldDefault } from '@/src/components/form/fields/default/EmailFieldDefault';
+import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -12,8 +16,12 @@ import { StatementDefault } from '@/src/components/form/fields/default/Statement
  */
 export const defaultComponents: Components = {
   countries: CountryFieldDefault,
+  date: DatePickerFieldDefault,
+  email: EmailFieldDefault,
   file: FileUploadFieldDefault,
-  textarea: TextAreaFieldDefault,
+  number: NumberFieldDefault,
+  radio: RadioGroupFieldDefault,
   select: SelectFieldDefault,
   statement: StatementDefault,
+  textarea: TextAreaFieldDefault,
 };

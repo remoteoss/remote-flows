@@ -54,6 +54,15 @@ export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
 
+type FieldDatePickerDataProps = FieldDataProps & {
+  minDate?: string;
+  maxDate?: string;
+};
+
+export type DatePickerComponentProps = FieldComponentProps & {
+  fieldData: FieldDatePickerDataProps;
+};
+
 /**
  * Props for custom statement components.
  */
