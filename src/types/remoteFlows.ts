@@ -11,6 +11,7 @@ import {
   FileComponentProps,
   StatementComponentProps,
   TextFieldComponentProps,
+  WorkScheduleComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -107,7 +108,10 @@ export type FieldSetToggleComponentProps = {
 };
 
 // We exclude the file type as we're extending the fieldData property in the FileUploadField component
-type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries' | 'text'>;
+type TypesWithoutFile = Exclude<
+  SupportedTypes,
+  'file' | 'countries' | 'text' | 'work-schedule'
+>;
 
 export type Components = {
   [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
@@ -121,6 +125,7 @@ export type Components = {
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
   drawer?: React.ComponentType<DrawerComponentProps>;
   table?: React.ComponentType<TableComponentProps>;
+  'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
