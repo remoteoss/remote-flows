@@ -8,6 +8,7 @@ import { DatePickerFieldDefault } from '@/src/components/form/fields/default/Dat
 import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
 import { EmailFieldDefault } from '@/src/components/form/fields/default/EmailFieldDefault';
 import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
+import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -19,6 +20,7 @@ export const defaultComponents: Components = {
   date: DatePickerFieldDefault,
   email: EmailFieldDefault,
   file: FileUploadFieldDefault,
+  'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,
   radio: RadioGroupFieldDefault,
   select: SelectFieldDefault,
