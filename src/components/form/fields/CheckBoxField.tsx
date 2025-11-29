@@ -40,7 +40,7 @@ export function CheckBoxField({
   const { components } = useFormFields();
   const { control } = useFormContext();
 
-  const handleCheckboxNativeChange = (
+  const handleCheckboxChange = (
     optionId: string,
     checked: boolean,
     field: ControllerRenderProps<FieldValues, string>,
@@ -83,7 +83,7 @@ export function CheckBoxField({
               field={{
                 ...field,
                 onChange: (evt: React.ChangeEvent<HTMLInputElement>) => {
-                  handleCheckboxNativeChange(name, evt.target.checked, field);
+                  handleCheckboxChange(name, evt.target.checked, field);
                   onChange?.(evt.target.checked === true, name);
                 },
               }}
@@ -107,7 +107,7 @@ export function CheckBoxField({
                       <Checkbox
                         id={option.value}
                         onCheckedChange={(checked: CheckedState) => {
-                          handleCheckboxNativeChange(
+                          handleCheckboxChange(
                             option.value,
                             checked === true,
                             field,
@@ -130,7 +130,7 @@ export function CheckBoxField({
                     <Checkbox
                       id={name}
                       onCheckedChange={(event: CheckedState) => {
-                        handleCheckboxNativeChange(name, event === true, field);
+                        handleCheckboxChange(name, event === true, field);
                         onChange?.(event === true, name);
                       }}
                       checked={field.value}
