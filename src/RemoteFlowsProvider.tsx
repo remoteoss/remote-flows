@@ -5,6 +5,8 @@ import React, { useRef } from 'react';
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
 import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
+import { createClient } from '@/src/auth/createClient';
+import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 import {
   ErrorContextProvider,
@@ -12,8 +14,6 @@ import {
 } from '@/src/components/error-handling/ErrorContext';
 import { getQueryClient } from '@/src/queryConfig';
 import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
-import { Client } from '@hey-api/client-fetch';
-import { createClient } from '@/src/auth/createClient';
 
 type RemoteFlowContextWrapperProps = {
   children: React.ReactNode;

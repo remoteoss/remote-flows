@@ -319,7 +319,9 @@ describe('CurrencyFieldWithConversion', () => {
     renderWithFormContext(propsWithCustomPrefix);
 
     // Check that the custom class name is applied
-    const descriptionElement = screen.getByText(/Enter your test salary/i);
+    const descriptionElement = screen.getByText(
+      /Enter your test salary/i,
+    ).parentElement;
     expect(descriptionElement).toHaveClass('CustomPrefix-description');
   });
 

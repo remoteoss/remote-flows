@@ -1,10 +1,10 @@
-import { Client } from '@hey-api/client-fetch';
 import {
   modify,
   createHeadlessForm,
 } from '@remoteoss/remote-json-schema-form-kit';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+import { Client } from '@/src/client/client';
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
@@ -181,17 +181,19 @@ export const useJSONSchemaForm = ({
   fieldValues,
   options,
   query = {},
+  jsonSchemaVersion,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
+  jsonSchemaVersion?: number;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
+  const jsonSchemaQueryParam = jsonSchemaVersion
     ? {
-        json_schema_version: options.jsonSchemaVersion.form_schema[form],
+        json_schema_version: jsonSchemaVersion,
       }
     : {};
   return useQuery({
