@@ -4,7 +4,6 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
-import { components } from './Components';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -21,7 +20,7 @@ export const CostCalculatorWithReplaceableComponents = () => {
   };
 
   return (
-    <RemoteFlows isClientToken components={components}>
+    <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

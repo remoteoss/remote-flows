@@ -31,7 +31,6 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import { components } from './Components';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
 import 'react-flagpack/dist/style.css';
@@ -720,7 +719,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   return (
-    <RemoteFlows components={components} isClientToken>
+    <RemoteFlows isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );

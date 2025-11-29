@@ -9,6 +9,7 @@ import {
   ContractDetailsFormPayload,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import { useState } from 'react';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
@@ -120,6 +121,7 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
         <div className='benefits-container'>
           <BenefitsStep
             components={{
+              ...defaultComponents,
               radio: ({ field, fieldData }) => {
                 const selectedValue = field.value;
 
