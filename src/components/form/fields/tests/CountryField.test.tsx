@@ -11,10 +11,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { CountryField } from '../CountryField';
 import { JSFField } from '@/src/types/remoteFlows';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(() => ({ components: {} })),
+  useFormFields: vi.fn(() => ({ components: defaultComponents })),
 }));
 
 type CountryFieldProps = JSFField & {
@@ -75,7 +76,9 @@ describe('CountryField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockImplementation(() => ({ components: {} }));
+    (useFormFields as any).mockImplementation(() => ({
+      components: defaultComponents,
+    }));
   });
 
   it('renders the default implementation correctly', () => {
@@ -107,7 +110,7 @@ describe('CountryField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { countries: CustomSelectField },
+      components: { ...defaultComponents, countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -124,7 +127,7 @@ describe('CountryField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { countries: CustomSelectField },
+      components: { ...defaultComponents, countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -153,7 +156,7 @@ describe('CountryField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { countries: CustomSelectField },
+      components: { ...defaultComponents, countries: CustomSelectField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -230,7 +233,10 @@ describe('CountryField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { countries: CustomCountryFieldFromContext },
+      components: {
+        ...defaultComponents,
+        countries: CustomCountryFieldFromContext,
+      },
     });
 
     renderWithFormContext({

@@ -6,7 +6,11 @@ import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
 import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { Components, JSFFieldset } from '@/src/types/remoteFlows';
+import {
+  Components,
+  ComponentsKeys,
+  JSFFieldset,
+} from '@/src/types/remoteFlows';
 import { getFieldsWithFlatFieldsets } from './utils';
 import { StatementComponentProps } from '@/src/types/fields';
 
@@ -120,7 +124,7 @@ export const JSONSchemaFormFields = ({
             <FieldComponent
               {...field}
               component={
-                components && components[field.inputType as SupportedTypes]
+                components && components?.[field.inputType as ComponentsKeys]
               }
             />
             {field.statement ? (

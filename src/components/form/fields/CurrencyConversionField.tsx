@@ -27,7 +27,7 @@ const DescriptionWithConversion = ({
     ? `Hide ${targetCurrency} conversion`
     : `Show ${targetCurrency} conversion`;
 
-  const CustomButton = components?.button || 'button';
+  const CustomButton = components.button;
   return (
     <span className={className}>
       <FormDescription as='span'>{description}</FormDescription>{' '}

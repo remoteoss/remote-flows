@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { array } from 'yup';
 import { MultiSelectField } from '../MultiSelectField';
+import { defaultComponents } from '@/src/default-components';
 
 type MultiSelectFieldProps = React.ComponentProps<typeof MultiSelectField>;
 
@@ -58,7 +59,7 @@ describe('MultiSelectField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {
@@ -169,7 +170,10 @@ describe('MultiSelectField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
+      components: {
+        ...defaultComponents,
+        'multi-select': CustomMultiSelectField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -188,7 +192,10 @@ describe('MultiSelectField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
+      components: {
+        ...defaultComponents,
+        'multi-select': CustomMultiSelectField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -218,7 +225,10 @@ describe('MultiSelectField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
+      components: {
+        ...defaultComponents,
+        'multi-select': CustomMultiSelectField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -244,7 +254,10 @@ describe('MultiSelectField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectFieldFromContext },
+      components: {
+        ...defaultComponents,
+        'multi-select': CustomMultiSelectFieldFromContext,
+      },
     });
 
     renderWithFormContext({

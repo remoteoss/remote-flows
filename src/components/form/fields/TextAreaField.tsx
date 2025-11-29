@@ -3,7 +3,6 @@ import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
-import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 
 export type TextAreaFieldProps = JSFField & {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -27,8 +26,7 @@ export function TextAreaField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomTextAreaField = component || components?.textarea;
-        const Component = CustomTextAreaField || TextAreaFieldDefault;
+        const CustomTextAreaField = component || components.textarea;
         const customTextAreaFieldProps = {
           name,
           description,
@@ -37,7 +35,7 @@ export function TextAreaField({
           ...rest,
         };
         return (
-          <Component
+          <CustomTextAreaField
             field={{
               ...field,
               onChange: (evt: React.ChangeEvent<HTMLTextAreaElement>) => {

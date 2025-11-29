@@ -19,6 +19,7 @@ import {
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -828,7 +829,12 @@ describe('OnboardingInvite', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <TestProviders components={{ button: MockCustomButton }}>
+      <TestProviders
+        components={{
+          ...defaultRemoteFlowsComponents,
+          button: MockCustomButton,
+        }}
+      >
         {children}
       </TestProviders>
     );

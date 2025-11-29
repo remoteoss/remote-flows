@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextAreaField, TextAreaFieldProps } from '../TextAreaField';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,9 @@ describe('TextAreaField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: { ...defaultRemoteFlowsComponents },
+    });
   });
 
   it('renders the default implementation correctly', () => {
@@ -74,7 +77,10 @@ describe('TextAreaField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { textarea: CustomTextAreaField },
+      components: {
+        ...defaultRemoteFlowsComponents,
+        textarea: CustomTextAreaField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -91,7 +97,10 @@ describe('TextAreaField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { textarea: CustomTextAreaField },
+      components: {
+        ...defaultRemoteFlowsComponents,
+        textarea: CustomTextAreaField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -112,7 +121,10 @@ describe('TextAreaField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { textarea: CustomTextAreaField },
+      components: {
+        ...defaultRemoteFlowsComponents,
+        textarea: CustomTextAreaField,
+      },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -136,7 +148,10 @@ describe('TextAreaField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { textarea: CustomTextAreaFieldFromContext },
+      components: {
+        ...defaultRemoteFlowsComponents,
+        textarea: CustomTextAreaFieldFromContext,
+      },
     });
 
     renderWithFormContext({

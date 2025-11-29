@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { CostCalculatorResetButton } from '../CostCalculatorResetButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 // Mock the hooks
 vi.mock('../context');
@@ -30,7 +31,7 @@ describe('CostCalculatorResetButton', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: {},
+      components: { ...defaultRemoteFlowsComponents },
     });
   });
 
@@ -98,6 +99,7 @@ describe('CostCalculatorResetButton', () => {
     beforeEach(() => {
       mockUseFormFields.mockReturnValue({
         components: {
+          ...defaultRemoteFlowsComponents,
           button: CustomButton,
         },
       });

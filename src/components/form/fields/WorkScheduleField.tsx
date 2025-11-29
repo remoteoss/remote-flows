@@ -12,7 +12,6 @@ import {
   calculateTotalWorkHours,
   DailySchedule,
 } from './workScheduleUtils';
-import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
 
 type WorkScheduleFieldProps = JSFField & {
   name: string;
@@ -45,9 +44,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
   }
 
   const CustomWorkScheduleField =
-    props.component || components?.['work-schedule'];
-  const Component = CustomWorkScheduleField || WorkScheduleFieldDefault;
-
+    props.component || components['work-schedule'];
   const fieldData = {
     ...props,
     onSubmit,
@@ -65,7 +62,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
       name={props.name}
       render={({ field, fieldState }) => {
         return (
-          <Component
+          <CustomWorkScheduleField
             field={{
               ...field,
               onChange: (value: any) => {

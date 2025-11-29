@@ -2,7 +2,6 @@ import { useFormContext } from 'react-hook-form';
 import { useFormFields } from '@/src/context';
 import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
-import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
 import { TextFieldProps } from './TextField';
 
 export type NumberFieldProps = TextFieldProps & {
@@ -14,15 +13,14 @@ export function NumberField(props: NumberFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
 
-  const CustomNumberField = props.component || components?.number;
-  const Component = CustomNumberField || NumberFieldDefault;
+  const CustomNumberField = props.component || components.number;
   return (
     <FormField
       control={control}
       name={props.name}
       render={({ field, fieldState }) => {
         return (
-          <Component
+          <CustomNumberField
             field={{
               ...field,
               onChange: (value: number) => {

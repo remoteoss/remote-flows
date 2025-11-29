@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn, sanitizeHtml } from '@/src/lib/utils';
-import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components, ComponentsKeys } from '@/src/types/remoteFlows';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
@@ -50,7 +50,7 @@ export type FieldSetProps = {
   description: string;
   fields: Field[];
   features?: FieldSetFeatures;
-  components: Components;
+  components?: Components;
   statement?: StatementComponentProps['data'];
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
@@ -285,7 +285,7 @@ export function FieldSetField({
                   <FieldComponent
                     {...field}
                     name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    component={components?.[field.inputType as SupportedTypes]}
+                    component={components?.[field.inputType as ComponentsKeys]}
                   />
                   {field.extra ? field.extra : null}
                 </Fragment>

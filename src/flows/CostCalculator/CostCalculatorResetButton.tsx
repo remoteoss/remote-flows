@@ -1,4 +1,3 @@
-import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useCostCalculatorContext } from './context';
 import { cn } from '@/src/lib/utils';
@@ -12,9 +11,8 @@ export function CostCalculatorResetButton({
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button || Button;
   return (
-    <CustomButton
+    <components.button
       {...props}
       type='reset'
       className={cn(
@@ -29,6 +27,6 @@ export function CostCalculatorResetButton({
       }}
     >
       {children}
-    </CustomButton>
+    </components.button>
   );
 }

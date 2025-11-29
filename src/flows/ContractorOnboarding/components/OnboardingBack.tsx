@@ -1,4 +1,3 @@
-import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -24,11 +23,9 @@ export function OnboardingBack({
     onClick?.(evt);
   };
 
-  const CustomButton = components?.button || Button;
-
   return (
-    <CustomButton {...props} onClick={onBackHandler}>
+    <components.button {...props} onClick={onBackHandler}>
       {children}
-    </CustomButton>
+    </components.button>
   );
 }

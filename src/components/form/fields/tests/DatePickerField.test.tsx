@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { addBusinessDays } from 'date-fns';
 import { DatePickerField, DatePickerFieldProps } from '../DatePickerField';
-
+import { defaultComponents } from '@/src/default-components';
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
@@ -54,7 +54,7 @@ describe('DatePickerField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
     (addBusinessDays as any).mockClear();
   });
 
@@ -89,7 +89,7 @@ describe('DatePickerField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { date: CustomDatePickerField },
+      components: { ...defaultComponents, date: CustomDatePickerField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -108,7 +108,7 @@ describe('DatePickerField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { date: CustomDatePickerField },
+      components: { ...defaultComponents, date: CustomDatePickerField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -135,7 +135,7 @@ describe('DatePickerField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { date: CustomDatePickerField },
+      components: { ...defaultComponents, date: CustomDatePickerField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -161,7 +161,10 @@ describe('DatePickerField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { date: CustomDatePickerFieldFromContext },
+      components: {
+        ...defaultComponents,
+        date: CustomDatePickerFieldFromContext,
+      },
     });
 
     renderWithFormContext({
@@ -235,7 +238,7 @@ describe('DatePickerField Component', () => {
         ));
 
       (useFormFields as any).mockReturnValue({
-        components: { date: CustomDatePickerField },
+        components: { ...defaultComponents, date: CustomDatePickerField },
       });
 
       renderWithFormContext({
@@ -262,7 +265,7 @@ describe('DatePickerField Component', () => {
         ));
 
       (useFormFields as any).mockReturnValue({
-        components: { date: CustomDatePickerField },
+        components: { ...defaultComponents, date: CustomDatePickerField },
       });
 
       renderWithFormContext({

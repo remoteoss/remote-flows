@@ -3,7 +3,6 @@ import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
-import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
 
 type MultiSelectFieldProps = JSFField & {
   placeholder?: string;
@@ -32,8 +31,7 @@ export function MultiSelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomSelectField = component || components?.['multi-select'];
-        const Component = CustomSelectField || MultiSelectFieldDefault;
+        const CustomSelectField = component || components['multi-select'];
         const customSelectFieldProps = {
           label,
           name,
@@ -44,7 +42,7 @@ export function MultiSelectField({
           ...rest,
         };
         return (
-          <Component
+          <CustomSelectField
             field={{
               ...field,
               onChange: (value: any) => {

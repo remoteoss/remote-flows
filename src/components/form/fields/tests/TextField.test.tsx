@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextField, TextFieldProps } from '../TextField';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,7 @@ describe('TextField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {
@@ -74,7 +75,7 @@ describe('TextField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { text: CustomTextField },
+      components: { ...defaultComponents, text: CustomTextField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -91,7 +92,7 @@ describe('TextField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { text: CustomTextField },
+      components: { ...defaultComponents, text: CustomTextField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -110,7 +111,7 @@ describe('TextField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { text: CustomTextField },
+      components: { ...defaultComponents, text: CustomTextField },
     });
 
     renderWithFormContext({
@@ -140,7 +141,7 @@ describe('TextField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { text: CustomTextField },
+      components: { ...defaultComponents, text: CustomTextField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -164,7 +165,7 @@ describe('TextField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { text: CustomTextFieldFromContext },
+      components: { ...defaultComponents, text: CustomTextFieldFromContext },
     });
 
     renderWithFormContext({

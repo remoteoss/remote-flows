@@ -1,6 +1,5 @@
 import { useFormFields } from '@/src/context';
 import { DrawerComponentProps } from '@/src/types/remoteFlows';
-import { DrawerDefault } from './DrawerDefault';
 
 export type DrawerProps = DrawerComponentProps & {
   className?: string;
@@ -17,7 +16,7 @@ export const Drawer = ({
   direction = 'right',
 }: DrawerProps) => {
   const { components } = useFormFields();
-  const CustomDrawer = components?.drawer || DrawerDefault;
+  const CustomDrawer = components.drawer;
 
   return (
     <CustomDrawer

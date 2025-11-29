@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,7 @@ describe('FileUploadField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {
@@ -78,7 +79,7 @@ describe('FileUploadField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { file: CustomFileUploadField },
+      components: { ...defaultComponents, file: CustomFileUploadField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -97,7 +98,7 @@ describe('FileUploadField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { file: CustomFileUploadField },
+      components: { ...defaultComponents, file: CustomFileUploadField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -125,7 +126,7 @@ describe('FileUploadField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { file: CustomFileUploadField },
+      components: { ...defaultComponents, file: CustomFileUploadField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -154,7 +155,10 @@ describe('FileUploadField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { file: CustomFileUploadFieldFromContext },
+      components: {
+        ...defaultComponents,
+        file: CustomFileUploadFieldFromContext,
+      },
     });
 
     renderWithFormContext({

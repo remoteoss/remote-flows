@@ -7,7 +7,6 @@ import {
 } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 import { FieldDataProps } from '@/src/types/fields';
-import { FileUploadFieldDefault } from './default/FileUploadFieldDefault';
 
 const validateFileSize = (files: File[], maxSize?: number): string | null => {
   if (!maxSize) return null;
@@ -70,8 +69,7 @@ export function FileUploadField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomFileUploadField = component || components?.file;
-        const Component = CustomFileUploadField || FileUploadFieldDefault;
+        const CustomFileUploadField = component || components.file;
 
         const fieldData: FieldFileDataProps = {
           name,
@@ -84,7 +82,7 @@ export function FileUploadField({
         };
 
         return (
-          <Component
+          <CustomFileUploadField
             field={{
               ...field,
               value: field.value,

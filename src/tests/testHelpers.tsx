@@ -6,6 +6,7 @@ import { getQueryClient } from '@/src/queryConfig';
 import { Components } from '@/src/types/remoteFlows';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
 import { defaultComponents } from '@/src/tests/defaultComponents';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 export const queryClient = getQueryClient();
 
@@ -18,6 +19,7 @@ export const TestProviders = ({
   components,
 }: PropsWithChildren<{ components?: Components }>) => {
   const mergedComponents = {
+    ...defaultRemoteFlowsComponents,
     ...defaultComponents,
     ...components,
   } as Components;

@@ -4,7 +4,6 @@ import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
-import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 
 type CountryFieldProps = JSFField & {
   options: Array<{ value: string; label: string }>;
@@ -36,8 +35,7 @@ export function CountryField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomSelectField = component || components?.countries;
-        const Component = CustomSelectField || CountryFieldDefault;
+        const CustomSelectField = component || components.countries;
 
         const customSelectFieldProps = {
           label,
@@ -50,7 +48,7 @@ export function CountryField({
           ...rest,
         };
         return (
-          <Component
+          <CustomSelectField
             field={{
               ...field,
               onChange: (value: any) => {

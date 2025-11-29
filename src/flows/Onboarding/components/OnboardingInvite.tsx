@@ -1,6 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
-import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
@@ -123,9 +122,8 @@ export function OnboardingInvite({
     onboardingBag.employment?.status &&
     !onboardingBag.isEmploymentReadOnly;
 
-  const CustomButton = components?.button || Button;
   return (
-    <CustomButton
+    <components.button
       {...props}
       disabled={
         employmentInviteMutation.isPending ||
@@ -142,6 +140,6 @@ export function OnboardingInvite({
           ? 'created_awaiting_reserve'
           : 'invited',
       })}
-    </CustomButton>
+    </components.button>
   );
 }

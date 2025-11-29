@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { boolean } from 'yup';
+import { defaultComponents } from '@/src/default-components';
 import { CheckBoxField, CheckBoxFieldProps } from '../CheckBoxField';
 
 // Mock dependencies
@@ -46,7 +47,9 @@ describe('CheckBoxField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: defaultComponents,
+    });
   });
 
   it('renders the default implementation correctly', () => {
@@ -74,7 +77,7 @@ describe('CheckBoxField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
+      components: { ...defaultComponents, checkbox: CustomCheckboxField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -91,7 +94,7 @@ describe('CheckBoxField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
+      components: { ...defaultComponents, checkbox: CustomCheckboxField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -118,7 +121,7 @@ describe('CheckBoxField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxField },
+      components: { ...defaultComponents, checkbox: CustomCheckboxField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -203,7 +206,10 @@ describe('CheckBoxField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { checkbox: CustomCheckboxFieldFromContext },
+      components: {
+        ...defaultComponents,
+        checkbox: CustomCheckboxFieldFromContext,
+      },
     });
 
     renderWithFormContext({

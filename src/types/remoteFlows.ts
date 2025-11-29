@@ -107,25 +107,32 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
+// excluded types from components
+type ExcludedTypesFromComponents =
+  | 'money'
+  | 'hidden'
+  | 'fieldset'
+  | 'fieldset-flat';
+
 // We exclude the file type as we're extending the fieldData property in the FileUploadField component
-type TypesWithoutFile = Exclude<
+export type ComponentsKeys = Exclude<
   SupportedTypes,
-  'file' | 'countries' | 'text' | 'work-schedule'
+  'file' | 'countries' | 'text' | 'work-schedule' | ExcludedTypesFromComponents
 >;
 
 export type Components = {
-  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
+  [K in ComponentsKeys]: React.ComponentType<FieldComponentProps>;
 } & {
-  text?: React.ComponentType<TextFieldComponentProps>;
-  file?: React.ComponentType<FileComponentProps>;
-  countries?: React.ComponentType<CountryComponentProps>;
-  statement?: React.ComponentType<StatementComponentProps>;
-  button?: React.ComponentType<ButtonComponentProps>;
-  fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
-  zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
-  drawer?: React.ComponentType<DrawerComponentProps>;
-  table?: React.ComponentType<TableComponentProps>;
-  'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
+  text: React.ComponentType<TextFieldComponentProps>;
+  file: React.ComponentType<FileComponentProps>;
+  countries: React.ComponentType<CountryComponentProps>;
+  statement: React.ComponentType<StatementComponentProps>;
+  button: React.ComponentType<ButtonComponentProps>;
+  fieldsetToggle: React.ComponentType<FieldSetToggleComponentProps>;
+  zendeskDrawer: React.ComponentType<ZendeskDrawerComponentProps>;
+  drawer: React.ComponentType<DrawerComponentProps>;
+  table: React.ComponentType<TableComponentProps>;
+  'work-schedule': React.ComponentType<WorkScheduleComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
@@ -137,7 +144,7 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   /**
    * Components to override the default field components used in the SDK.
    */
-  components?: Components;
+  components: Components;
   /**
    * Environment to use for API calls.
    * If not provided, the SDK will use production environment.

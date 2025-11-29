@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { RadioGroupField } from '../RadioGroupField';
 import { JSFField } from '@/src/types/remoteFlows';
+import { defaultComponents } from '@/src/default-components';
 
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string | React.ChangeEvent<HTMLInputElement>) => void;
@@ -62,7 +63,7 @@ describe('RadioGroupField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {
@@ -91,7 +92,7 @@ describe('RadioGroupField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
+      components: { ...defaultComponents, radio: CustomRadioGroupField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -108,7 +109,7 @@ describe('RadioGroupField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
+      components: { ...defaultComponents, radio: CustomRadioGroupField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -142,7 +143,7 @@ describe('RadioGroupField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
+      components: { ...defaultComponents, radio: CustomRadioGroupField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -166,7 +167,10 @@ describe('RadioGroupField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupFieldFromContext },
+      components: {
+        ...defaultComponents,
+        radio: CustomRadioGroupFieldFromContext,
+      },
     });
 
     renderWithFormContext({

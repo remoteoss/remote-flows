@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { CostCalculatorSubmitButton } from '../CostCalculatorSubmitButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock the hooks
 vi.mock('../context');
@@ -23,7 +24,7 @@ describe('CostCalculatorSubmitButton', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: {},
+      components: defaultComponents,
     });
   });
 
@@ -65,6 +66,7 @@ describe('CostCalculatorSubmitButton', () => {
     beforeEach(() => {
       mockUseFormFields.mockReturnValue({
         components: {
+          ...defaultComponents,
           button: CustomButton,
         },
       });

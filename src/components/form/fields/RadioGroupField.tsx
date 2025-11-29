@@ -2,7 +2,6 @@ import { FormField } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string) => void;
@@ -27,8 +26,7 @@ export function RadioGroupField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => {
-        const CustomRadioGroupField = component || components?.radio;
-        const Component = CustomRadioGroupField || RadioGroupFieldDefault;
+        const CustomRadioGroupField = component || components.radio;
         const customRadioGroupFieldProps = {
           name,
           defaultValue,
@@ -38,7 +36,7 @@ export function RadioGroupField({
           ...rest,
         };
         return (
-          <Component
+          <CustomRadioGroupField
             field={{
               ...field,
               onChange: (value: string) => {
