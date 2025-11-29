@@ -6,8 +6,7 @@ import type {
   FileComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
-import { defaultComponents } from '../../dist/default-components';
-//import { ZendeskDialog } from './ZendeskDialog';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
