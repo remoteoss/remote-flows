@@ -1,21 +1,13 @@
 import { useFormFields } from '@/src/context';
-import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
   FieldValues,
   useFormContext,
 } from 'react-hook-form';
-import { FileUploader } from '../../ui/file-uploader';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
+import { FormField } from '../../ui/form';
 import { FieldDataProps } from '@/src/types/fields';
+import { FileUploadFieldDefault } from './default/FileUploadFieldDefault';
 
 const validateFileSize = (files: File[], maxSize?: number): string | null => {
   if (!maxSize) return null;
@@ -79,56 +71,28 @@ export function FileUploadField({
       name={name}
       render={({ field, fieldState }) => {
         const CustomFileUploadField = component || components?.file;
-        if (CustomFileUploadField) {
-          const customFileUploadFieldProps: FieldFileDataProps = {
-            name,
-            description,
-            label,
-            multiple,
-            accept,
-            maxFileSize: maxSize,
-            ...rest,
-          };
-          return (
-            <CustomFileUploadField
-              field={{
-                ...field,
-                value: field.value,
-                onChange: async (value: File[]) => handleOnChange(value, field),
-              }}
-              fieldState={fieldState}
-              fieldData={customFileUploadFieldProps}
-            />
-          );
-        }
+        const Component = CustomFileUploadField || FileUploadFieldDefault;
+
+        const fieldData: FieldFileDataProps = {
+          name,
+          description,
+          label,
+          multiple,
+          accept,
+          maxFileSize: maxSize,
+          ...rest,
+        };
+
         return (
-          <FormItem
-            data-field={name}
-            className={`RemoteFlows__FileUpload__Item__${name}`}
-          >
-            <FormLabel className='RemoteFlows__FileUpload__Label'>
-              {label}
-            </FormLabel>
-            <FormControl>
-              <FileUploader
-                onChange={(evt) => handleOnChange(evt, field)}
-                multiple={multiple}
-                className={cn('RemoteFlows__FileUpload__Input')}
-                accept={accept}
-                files={field.value}
-              />
-            </FormControl>
-            {description && (
-              <div className='flex items-center justify-between'>
-                <FormDescription className='RemoteFlows__FileUpload__Description'>
-                  {description}
-                </FormDescription>
-              </div>
-            )}
-            {fieldState.error && (
-              <FormMessage className='RemoteFlows__FileUpload__Error' />
-            )}
-          </FormItem>
+          <Component
+            field={{
+              ...field,
+              value: field.value,
+              onChange: async (value: File[]) => handleOnChange(value, field),
+            }}
+            fieldState={fieldState}
+            fieldData={fieldData}
+          />
         );
       }}
     />

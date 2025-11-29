@@ -1,4 +1,4 @@
-import { FieldComponentProps } from '@/src/types/remoteFlows';
+import { FieldComponentProps } from '@/src/types/fields';
 
 export const defaultComponents = {
   date: ({ field, fieldData, fieldState }: FieldComponentProps) => {
