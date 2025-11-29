@@ -6,7 +6,7 @@ import {
   ErrorContextValue,
 } from '@/src/components/error-handling/ErrorContext';
 import { Environment } from '@/src/environments';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 
 type ErrorBoundaryState = {
   hasError: boolean;

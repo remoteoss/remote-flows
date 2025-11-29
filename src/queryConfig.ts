@@ -3,7 +3,7 @@ import { npmPackageVersion } from '@/src/lib/version';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import type { ErrorContextData } from '@/src/components/error-handling/types';
 import { Environment } from '@/src/environments';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 
 /**
  * Global ref to store the current error context

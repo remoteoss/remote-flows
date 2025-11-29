@@ -3,7 +3,7 @@ import { npmPackageVersion } from '@/src/lib/version';
 import { useEffect } from 'react';
 import { ErrorContextData } from '@/src/components/error-handling/types';
 import { Environment } from '@/src/environments';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 
 /**
  * Reports unhandled errors to the telemetry API.
