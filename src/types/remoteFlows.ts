@@ -53,6 +53,7 @@ export type JSFField = {
 };
 
 export type TableComponentProps<T = $TSFixMe> = {
+  ref: React.ForwardedRef<HTMLTableElement>;
   data: T[] | undefined;
   columns: ColumnDef<T>[];
   className?: string;

@@ -12,6 +12,7 @@ import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/Mu
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { ZendeskDrawerDefault } from '@/src/components/form/fields/default/ZendeskDrawerDefault';
 import { DrawerDefault } from '@/src/components/form/fields/default/DrawerDefault';
+import { TableFieldDefault } from '@/src/components/form/fields/default/TableFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -32,4 +33,5 @@ export const defaultComponents: Components = {
   textarea: TextAreaFieldDefault,
   text: TextFieldDefault,
   zendeskDrawer: ZendeskDrawerDefault,
+  table: TableFieldDefault,
 };
