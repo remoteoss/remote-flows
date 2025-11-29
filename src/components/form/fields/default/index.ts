@@ -13,6 +13,7 @@ import { TextFieldDefault } from '@/src/components/form/fields/default/TextField
 import { ZendeskDrawerDefault } from '@/src/components/form/fields/default/ZendeskDrawerDefault';
 import { DrawerDefault } from '@/src/components/form/fields/default/DrawerDefault';
 import { TableFieldDefault } from '@/src/components/form/fields/default/TableFieldDefault';
+import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -24,6 +25,7 @@ export const defaultComponents: Components = {
   date: DatePickerFieldDefault,
   drawer: DrawerDefault,
   email: EmailFieldDefault,
+  fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,
