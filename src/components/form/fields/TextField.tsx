@@ -48,7 +48,6 @@ export function TextField({
       render={({ field, fieldState }) => {
         const CustomTextField = component || components?.text;
         const Component = CustomTextField || TextFieldDefault;
-        // TODO: Remove the onChange type from the props in the next major version
         const customTextFieldProps: CustomTextFieldProps = {
           name,
           description,
