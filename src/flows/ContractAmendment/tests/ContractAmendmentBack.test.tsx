@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ContractAmendmentBack } from '../ContractAmendmentBack';
 import { useContractAmendmentContext } from '../context';
 import { useFormFields } from '@/src/context';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 // Mock the hooks
 vi.mock('../context');
@@ -26,7 +27,7 @@ describe('ContractAmendmentBack', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: {},
+      components: { ...defaultRemoteFlowsComponents },
     });
   });
 
@@ -90,6 +91,7 @@ describe('ContractAmendmentBack', () => {
     beforeEach(() => {
       mockUseFormFields.mockReturnValue({
         components: {
+          ...defaultRemoteFlowsComponents,
           button: CustomButton,
         },
       });

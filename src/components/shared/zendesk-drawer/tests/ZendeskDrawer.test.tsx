@@ -7,6 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { ZendeskDrawer } from '../ZendeskDrawer';
 import userEvent from '@testing-library/user-event';
 import { TestProviders, queryClient } from '@/src/tests/testHelpers';
+import { defaultComponents as defaultRemoteFlowsComponents } from '@/src/default-components';
 
 describe('ZendeskDrawer', () => {
   const mockArticle = {
@@ -116,7 +117,12 @@ describe('ZendeskDrawer', () => {
   it('renders custom zendesk dialog component when provided', () => {
     const CustomComponent = vi.fn(() => null);
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <TestProviders components={{ zendeskDrawer: CustomComponent }}>
+      <TestProviders
+        components={{
+          ...defaultRemoteFlowsComponents,
+          zendeskDrawer: CustomComponent,
+        }}
+      >
         {children}
       </TestProviders>
     );
@@ -200,6 +206,7 @@ describe('ZendeskDrawer', () => {
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider
           components={{
+            ...defaultRemoteFlowsComponents,
             zendeskDrawer: CustomComponent,
           }}
         >

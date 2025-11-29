@@ -8,6 +8,7 @@ import { DailySchedule } from '../workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import { Components } from '@/src/types/remoteFlows';
 import * as yup from 'yup';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -100,7 +101,7 @@ describe('WorkScheduleField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {

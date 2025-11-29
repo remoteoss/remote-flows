@@ -1,6 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
-import { Button } from '@/src/components/ui/button';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
@@ -77,35 +76,18 @@ export function OnboardingInvite({
     }
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        disabled={employmentInviteMutation.isPending || props.disabled}
-        onClick={(evt) => {
-          handleSubmit();
-          props.onClick?.(evt);
-        }}
-      >
-        {render({
-          employmentStatus: 'invited',
-        })}
-      </CustomButton>
-    );
-  }
-
   return (
-    <Button
+    <components.button
       {...props}
       disabled={employmentInviteMutation.isPending || props.disabled}
-      onClick={() => {
+      onClick={(evt) => {
         handleSubmit();
+        props.onClick?.(evt);
       }}
     >
       {render({
         employmentStatus: 'invited',
       })}
-    </Button>
+    </components.button>
   );
 }

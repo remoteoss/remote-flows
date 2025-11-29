@@ -45,28 +45,14 @@ export const SaveDraftButton = ({
     }
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        onClick={handleSaveDraft}
-        disabled={disabled || onboardingBag.isSubmitting}
-        className={className}
-      >
-        {children}
-      </CustomButton>
-    );
-  }
-
   return (
-    <button
-      type='button'
+    <components.button
+      {...props}
       onClick={handleSaveDraft}
       disabled={disabled || onboardingBag.isSubmitting}
       className={className}
     >
       {children}
-    </button>
+    </components.button>
   );
 };

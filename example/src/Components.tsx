@@ -6,7 +6,7 @@ import type {
   FileComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
-//import { ZendeskDialog } from './ZendeskDialog';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
@@ -319,6 +319,7 @@ const DatePickerInput = ({
 };
 
 export const components: Components = {
+  ...defaultComponents,
   button: Button,
   text: Input,
   select: Select,
@@ -329,5 +330,4 @@ export const components: Components = {
   fieldsetToggle: FieldsetToggle,
   file: FileUploadField,
   date: DatePickerInput,
-  //zendeskDrawer: ZendeskDialog,
 };

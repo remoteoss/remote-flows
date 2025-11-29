@@ -33,15 +33,21 @@ export { convertFromCents } from '@/src/components/form/utils';
 export type {
   Components,
   RemoteFlowsSDKProps,
-  FieldComponentProps,
   FieldSetToggleComponentProps,
   ButtonComponentProps,
-  StatementComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   Meta,
-  FileComponentProps,
 } from '@/src/types/remoteFlows';
+
+export type {
+  FieldComponentProps,
+  FileComponentProps,
+  CountryComponentProps,
+  StatementComponentProps,
+  TextFieldComponentProps,
+  DatePickerComponentProps,
+} from '@/src/types/fields';
 
 export type {
   ContractAmendmentAutomatableResponse,

@@ -4,10 +4,15 @@ import React, { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { SupportedTypes } from '@/src/components/form/fields/types';
-import { Statement, StatementProps } from '@/src/components/form/Statement';
+import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { Components, JSFFieldset } from '@/src/types/remoteFlows';
+import {
+  Components,
+  ComponentsKeys,
+  JSFFieldset,
+} from '@/src/types/remoteFlows';
 import { getFieldsWithFlatFieldsets } from './utils';
+import { StatementComponentProps } from '@/src/types/fields';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
@@ -109,6 +114,7 @@ export const JSONSchemaFormFields = ({
           );
         }
 
+        // TODO: Have doubts about this, it seems we only support checkbox for multiple select
         if (field.inputType === 'select' && field.multiple) {
           FieldComponent = fieldsMap['multi-select'];
         }
@@ -118,11 +124,13 @@ export const JSONSchemaFormFields = ({
             <FieldComponent
               {...field}
               component={
-                components && components[field.inputType as SupportedTypes]
+                components && components?.[field.inputType as ComponentsKeys]
               }
             />
             {field.statement ? (
-              <Statement {...(field.statement as StatementProps)} />
+              <Statement
+                {...(field.statement as StatementComponentProps['data'])}
+              />
             ) : null}
             {field.extra ? field.extra : null}
           </Fragment>

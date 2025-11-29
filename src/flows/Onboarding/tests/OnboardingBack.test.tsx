@@ -3,6 +3,7 @@ import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { OnboardingBack } from '../components/OnboardingBack';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -25,7 +26,7 @@ describe('OnboardingBack Component', () => {
         isEmploymentReadOnly: false,
       },
     });
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default button implementation correctly', () => {
@@ -70,7 +71,7 @@ describe('OnboardingBack Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { button: CustomButton },
+      components: { ...defaultComponents, button: CustomButton },
     });
 
     render(<OnboardingBack onClick={mockOnClick}>Go Back</OnboardingBack>);
@@ -134,7 +135,7 @@ describe('OnboardingBack Component', () => {
       );
 
     (useFormFields as any).mockReturnValue({
-      components: { button: CustomButton },
+      components: { ...defaultComponents, button: CustomButton },
     });
 
     render(
@@ -196,7 +197,7 @@ describe('OnboardingBack Component', () => {
           isEmploymentReadOnly: true,
         },
       });
-      (useFormFields as any).mockReturnValue({ components: {} });
+      (useFormFields as any).mockReturnValue({ components: defaultComponents });
     });
 
     it('should not call mockBack', () => {
@@ -219,7 +220,7 @@ describe('OnboardingBack Component', () => {
         ));
 
       (useFormFields as any).mockReturnValue({
-        components: { button: CustomButton },
+        components: { ...defaultComponents, button: CustomButton },
       });
 
       render(<OnboardingBack onClick={mockOnClick}>Go Back</OnboardingBack>);

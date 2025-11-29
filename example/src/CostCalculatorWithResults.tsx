@@ -12,6 +12,7 @@ import type {
 import Flag from 'react-flagpack';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { components } from './Components';
 import './css/main.css';
 import 'react-flagpack/dist/style.css';
 
@@ -26,7 +27,7 @@ export function CostCalculatorWithResults() {
     useState<CostCalculatorEstimateResponse | null>(null);
 
   return (
-    <RemoteFlows isClientToken>
+    <RemoteFlows components={components} isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {

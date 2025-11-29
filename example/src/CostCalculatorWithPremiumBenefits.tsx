@@ -31,9 +31,9 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import { components } from './Components';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
+import { components } from './Components';
 import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';

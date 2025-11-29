@@ -31,12 +31,10 @@ export function FormFieldsProvider({
   children,
   components,
 }: PropsWithChildren<{
-  components?: Components;
+  components: Components;
 }>) {
   return (
-    <FormFieldsContext.Provider
-      value={components ? { components } : { components: {} }}
-    >
+    <FormFieldsContext.Provider value={{ components }}>
       {children}
     </FormFieldsContext.Provider>
   );

@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { number } from 'yup';
 import { NumberField } from '../NumberField';
 import { TextFieldProps } from '../TextField';
+import { defaultComponents } from '@/src/default-components';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +48,7 @@ describe('NumberField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({ components: defaultComponents });
   });
 
   it('renders the default implementation correctly', () => {
@@ -75,7 +76,7 @@ describe('NumberField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { number: CustomNumberField },
+      components: { ...defaultComponents, number: CustomNumberField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -92,7 +93,7 @@ describe('NumberField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { number: CustomNumberField },
+      components: { ...defaultComponents, number: CustomNumberField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -113,7 +114,7 @@ describe('NumberField Component', () => {
     });
 
     (useFormFields as any).mockReturnValue({
-      components: { number: CustomNumberField },
+      components: { ...defaultComponents, number: CustomNumberField },
     });
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
@@ -137,7 +138,10 @@ describe('NumberField Component', () => {
       ));
 
     (useFormFields as any).mockReturnValue({
-      components: { number: CustomNumberFieldFromContext },
+      components: {
+        ...defaultComponents,
+        number: CustomNumberFieldFromContext,
+      },
     });
 
     renderWithFormContext({

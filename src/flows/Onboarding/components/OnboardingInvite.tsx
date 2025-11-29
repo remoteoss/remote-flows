@@ -1,6 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
-import { Button } from '@/src/components/ui/button';
 import { useCreateReserveInvoice } from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
@@ -123,40 +122,17 @@ export function OnboardingInvite({
     onboardingBag.employment?.status &&
     !onboardingBag.isEmploymentReadOnly;
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        disabled={
-          employmentInviteMutation.isPending ||
-          useCreateReserveInvoiceMutation.isPending ||
-          props.disabled
-        }
-        onClick={(evt) => {
-          handleSubmit();
-          props.onClick?.(evt);
-        }}
-      >
-        {render({
-          employmentStatus: isReserveFlow
-            ? 'created_awaiting_reserve'
-            : 'invited',
-        })}
-      </CustomButton>
-    );
-  }
-
   return (
-    <Button
+    <components.button
       {...props}
       disabled={
         employmentInviteMutation.isPending ||
         useCreateReserveInvoiceMutation.isPending ||
         props.disabled
       }
-      onClick={() => {
+      onClick={(evt) => {
         handleSubmit();
+        props.onClick?.(evt);
       }}
     >
       {render({
@@ -164,6 +140,6 @@ export function OnboardingInvite({
           ? 'created_awaiting_reserve'
           : 'invited',
       })}
-    </Button>
+    </components.button>
   );
 }
