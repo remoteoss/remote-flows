@@ -92,6 +92,7 @@ export type DrawerComponentProps = {
   trigger: React.ReactElement;
   children?: React.ReactNode;
   direction?: 'left' | 'right';
+  className?: string;
 };
 
 export type FieldSetToggleComponentProps = {

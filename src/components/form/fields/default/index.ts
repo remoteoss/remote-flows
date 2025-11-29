@@ -11,6 +11,7 @@ import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/Rad
 import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { ZendeskDrawerDefault } from '@/src/components/form/fields/default/ZendeskDrawerDefault';
+import { DrawerDefault } from '@/src/components/form/fields/default/DrawerDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -20,6 +21,7 @@ import { ZendeskDrawerDefault } from '@/src/components/form/fields/default/Zende
 export const defaultComponents: Components = {
   countries: CountryFieldDefault,
   date: DatePickerFieldDefault,
+  drawer: DrawerDefault,
   email: EmailFieldDefault,
   file: FileUploadFieldDefault,
   'multi-select': MultiSelectFieldDefault,
