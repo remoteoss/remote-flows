@@ -37,6 +37,7 @@ import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
+import { components } from './Components';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
@@ -719,7 +720,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   return (
-    <RemoteFlows isClientToken>
+    <RemoteFlows components={components} isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
