@@ -82,9 +82,12 @@ export function CheckBoxField({
             <CustomCheckboxField
               field={{
                 ...field,
-                onChange: (evt: React.ChangeEvent<HTMLInputElement>) => {
+                onChange: (
+                  evt: React.ChangeEvent<HTMLInputElement>,
+                  optionId?: string,
+                ) => {
                   handleCheckboxChange(name, evt.target.checked, field);
-                  onChange?.(evt.target.checked === true, name);
+                  onChange?.(evt.target.checked === true, optionId);
                 },
               }}
               fieldState={fieldState}
