@@ -9,6 +9,7 @@ import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberF
 import { EmailFieldDefault } from '@/src/components/form/fields/default/EmailFieldDefault';
 import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 /**
  * Default field components provided by RemoteFlows.
@@ -26,4 +27,5 @@ export const defaultComponents: Components = {
   select: SelectFieldDefault,
   statement: StatementDefault,
   textarea: TextAreaFieldDefault,
+  text: TextFieldDefault,
 };
