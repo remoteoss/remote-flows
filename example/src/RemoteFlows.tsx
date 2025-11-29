@@ -42,7 +42,7 @@ const fetchCompanyManagerToken = () => {
     });
 };
 
-type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
+type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth' | 'components'> & {
   children: ReactNode;
   auth?: RemoteFlowsSDKProps['auth'];
   isClientToken?: boolean;
