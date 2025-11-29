@@ -91,6 +91,17 @@ export type OnboardingFlowProps = {
       contract_details?: JSFModifyNext;
       benefits?: JSFModifyNext;
     };
+    /**
+     * The json schema version to use for the onboarding by country.
+     * This is used to override the json schema version for the onboarding by country.
+     * the old jsonSchemaVersion is not working well at the moment, don't use it for now.
+     */
+    jsonSchemaVersionByCountry?: {
+      [countryCode: string]: {
+        employment_basic_information?: number;
+        contract_details?: number;
+      };
+    };
   };
   /**
    * The render prop function with the params passed by the useOnboarding hook and the components available to use for this flow

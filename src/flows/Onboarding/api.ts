@@ -181,17 +181,19 @@ export const useJSONSchemaForm = ({
   fieldValues,
   options,
   query = {},
+  jsonSchemaVersion,
 }: {
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
   options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
+  jsonSchemaVersion?: number;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema?.[form]
+  const jsonSchemaQueryParam = jsonSchemaVersion
     ? {
-        json_schema_version: options.jsonSchemaVersion.form_schema[form],
+        json_schema_version: jsonSchemaVersion,
       }
     : {};
   return useQuery({

@@ -97,8 +97,8 @@ describe('useOnboarding jsonSchemaVersion', () => {
             countryCode: 'PRT',
             skipSteps: ['select_country'],
             options: {
-              jsonSchemaVersion: {
-                form_schema: {
+              jsonSchemaVersionByCountry: {
+                PRT: {
                   employment_basic_information: 2,
                 },
               },
@@ -121,14 +121,16 @@ describe('useOnboarding jsonSchemaVersion', () => {
       // Verify the query part specifically
       expect(call.query).toEqual({
         skip_benefits: true,
-        json_schema_version: 2,
+        json_schema_version: 1,
       });
     });
 
-    it('should pass jsonSchemaVersion to contract details form', async () => {
-      const jsonSchemaVersion = {
-        form_schema: {
-          contract_details: 2,
+    it('should pass jsonSchemaVersionByCountry to contract details form', async () => {
+      const options = {
+        jsonSchemaVersionByCountry: {
+          PRT: {
+            contract_details: 2,
+          },
         },
       };
 
@@ -139,7 +141,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
             countryCode: 'PRT',
             employmentId: 'test-employment-id',
             skipSteps: ['select_country'],
-            options: { jsonSchemaVersion },
+            options,
           }),
         { wrapper: TestProviders },
       );
@@ -151,8 +153,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       // Navigate to contract details step
       result.current.goTo('contract_details');
 
+      const contractDetailsCall = mockGetShowFormCountry.mock.calls[1][0];
+
       await waitFor(() => {
-        expect(mockGetShowFormCountry).toHaveBeenCalledWith({
+        expect(contractDetailsCall).toEqual({
           client: expect.any(Object),
           headers: {
             Authorization: ``,
@@ -164,7 +168,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
           query: {
             skip_benefits: true,
             employment_id: 'test-employment-id',
-            json_schema_version: 1, // TODO: We're setting 1 for all countries for now and ignoring if someone passes json_schema_version, we need to change the json_schema_version implementation as it not well designed
+            json_schema_version: 1,
           },
         });
       });

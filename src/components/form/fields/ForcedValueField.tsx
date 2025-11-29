@@ -1,6 +1,39 @@
+import { useFormContext } from 'react-hook-form';
 import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+
+const Description = ({
+  name,
+  description,
+  helpCenter,
+}: {
+  name: string;
+  description: string;
+  helpCenter?: {
+    callToAction: string;
+    id: number;
+    url: string;
+    label: string;
+  };
+}) => {
+  return (
+    <span>
+      <span
+        className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+      />
+      {helpCenter?.callToAction && helpCenter?.id && (
+        <ZendeskTriggerButton
+          className='RemoteFlows__ForcedValue__HelpCenterLink'
+          zendeskId={helpCenter.id}
+        >
+          {helpCenter.callToAction}
+        </ZendeskTriggerButton>
+      )}
+    </span>
+  );
+};
 
 export type ForcedValueFieldProps = {
   name: string;
@@ -11,6 +44,12 @@ export type ForcedValueFieldProps = {
     description?: string;
   };
   label: string;
+  helpCenter?: {
+    callToAction: string;
+    id: number;
+    url: string;
+    label: string;
+  };
 };
 
 export function ForcedValueField({
@@ -19,9 +58,12 @@ export function ForcedValueField({
   description,
   statement,
   label,
+  helpCenter,
 }: ForcedValueFieldProps) {
   const { setValue } = useFormContext();
-
+  const descriptionSanitized = sanitizeHtml(
+    statement?.description || description,
+  );
   useEffect(() => {
     setValue(name, value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,17 +80,17 @@ export function ForcedValueField({
               __html: sanitizeHtml(statement?.title || label),
             }}
           />
-          <p
-            className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-            dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(statement?.description || description),
-            }}
+          <Description
+            name={name}
+            description={sanitizeHtml(statement?.description || description)}
+            helpCenter={helpCenter}
           />
         </>
       ) : (
-        <p
-          className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+        <Description
+          name={name}
+          description={descriptionSanitized}
+          helpCenter={helpCenter}
         />
       )}
     </div>

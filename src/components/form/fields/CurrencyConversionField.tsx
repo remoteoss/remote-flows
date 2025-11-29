@@ -5,6 +5,7 @@ import { useConvertCurrency } from '@/src/flows/Onboarding/api';
 import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
+import { FormDescription } from '@/src/components/ui/form';
 
 type DescriptionWithConversionProps = {
   description: ReactNode;
@@ -29,7 +30,7 @@ const DescriptionWithConversion = ({
   const CustomButton = components?.button || 'button';
   return (
     <span className={className}>
-      {description}{' '}
+      <FormDescription as='span'>{description}</FormDescription>{' '}
       <CustomButton
         className={`${className.replace('-description', '-button')}`}
         data-type='inline'

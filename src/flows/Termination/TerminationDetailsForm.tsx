@@ -22,5 +22,10 @@ export function TerminationDetailsForm({
     terminationBag?.next();
   };
 
-  return <TerminationForm onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      onSubmit={handleSubmit}
+    />
+  );
 }
