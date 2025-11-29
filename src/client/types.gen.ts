@@ -1181,7 +1181,6 @@ export type ContractorInvoiceStatus =
   | 'rejected_by_remote'
   | 'blocked'
   | 'compliance_review'
-  | 'compliance_failed'
   | 'pay_out_scheduled'
   | 'enqueued'
   | 'processing'
@@ -3561,8 +3560,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -6093,6 +6092,43 @@ export type IdsRequiredParams = {
 };
 
 /**
+ * SDKErrorPayload
+ */
+export type SdkErrorPayload = {
+  context?: {
+    [key: string]: unknown;
+  } | null;
+  error: {
+    category:
+      | 'RENDER_ERROR'
+      | 'NETWORK_ERROR'
+      | 'VALIDATION_ERROR'
+      | 'STATE_ERROR'
+      | 'HOOK_ERROR'
+      | 'RUNTIME_ERROR'
+      | 'UNKNOWN_ERROR';
+    componentStack?: Array<string> | null;
+    /**
+     * Error message
+     */
+    message: string;
+    /**
+     * Error name
+     */
+    name: string;
+    severity: 'critical' | 'error' | 'warning' | 'info';
+    stack?: string | null;
+  };
+  metadata: {
+    environment: string;
+    sdkVersion: string;
+    timestamp: string;
+    url: string;
+    userAgent: string;
+  };
+};
+
+/**
  * CompanyStructureNodesResponse
  */
 export type CompanyStructureNodesResponse = {
@@ -6148,6 +6184,14 @@ export type ContractorInvoiceSchedulePeriodicity =
   | 'monthly'
   | 'semi_monthly'
   | 'weekly';
+
+/**
+ * ErrorResponse
+ */
+export type ErrorResponse = {
+  details?: string;
+  error?: string;
+};
 
 /**
  * ListEmploymentCustomFieldValueResponse
@@ -6544,6 +6588,13 @@ export type TerminationDetailsParams = {
    * If it is likely that the employee will challenge their termination, please provide additional details explaining the risk
    */
   will_challenge_termination_description?: string;
+};
+
+/**
+ * RateLimitResponse
+ */
+export type RateLimitResponse = {
+  error?: string;
 };
 
 /**
@@ -7203,17 +7254,13 @@ export type EmploymentCreateParams = {
   company_id?: string;
   country_code: string;
   /**
-   * This field is required to create a global payroll employee.
-   */
-  engaged_by_entity_slug?: string;
-  /**
    * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   external_id?: string;
   /**
    * If not provided, it will default to `employee`.
    */
-  type?: 'employee' | 'contractor' | 'global_payroll_employee';
+  type?: 'employee' | 'contractor';
 };
 
 /**
@@ -9207,6 +9254,37 @@ export type GetIndexPricingPlanPartnerTemplateResponses = {
 
 export type GetIndexPricingPlanPartnerTemplateResponse =
   GetIndexPricingPlanPartnerTemplateResponses[keyof GetIndexPricingPlanPartnerTemplateResponses];
+
+export type PostReportErrorsTelemetryData = {
+  /**
+   * SDK Error Report
+   */
+  body: SdkErrorPayload;
+  path?: never;
+  query?: never;
+  url: '/v1/telemetry/errors';
+};
+
+export type PostReportErrorsTelemetryErrors = {
+  /**
+   * Bad Request
+   */
+  400: ErrorResponse;
+  /**
+   * Too Many Requests
+   */
+  429: RateLimitResponse;
+};
+
+export type PostReportErrorsTelemetryError =
+  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
+
+export type PostReportErrorsTelemetryResponses = {
+  /**
+   * No Content
+   */
+  204: unknown;
+};
 
 export type GetIndexEorPayrollCalendarData = {
   body?: never;

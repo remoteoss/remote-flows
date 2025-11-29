@@ -68,7 +68,6 @@ describe('ContractAmendmentFlow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
-
     server.use(
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employment);

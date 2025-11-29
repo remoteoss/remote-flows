@@ -1,13 +1,20 @@
 import userEvent from '@testing-library/user-event';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
-import { getQueryClient } from '@/src/queryConfig';
-import { Components } from '@/src/types/remoteFlows';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { getQueryClient } from '@/src/queryConfig';
 import { defaultComponents } from '@/src/tests/defaultComponents';
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
-export const queryClient = getQueryClient();
+export const client = {
+  request: vi.fn(),
+  post: vi.fn(),
+  get: vi.fn(),
+} as $TSFixMe;
+
+export const queryClient = getQueryClient(false, client, 'testing' as $TSFixMe);
 
 /**
  * Wrapper component for tests that need ErrorContext, QueryClient, and FormFields providers
@@ -22,13 +29,16 @@ export const TestProviders = ({
     ...components,
   } as Components;
   return (
-    <QueryClientProvider client={queryClient}>
-      <FormFieldsProvider components={mergedComponents}>
-        {children}
-      </FormFieldsProvider>
-    </QueryClientProvider>
+    <ErrorContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider components={mergedComponents}>
+          {children}
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    </ErrorContextProvider>
   );
 };
+
 /**
  * Assert that a specific radio option is selected within a radio group
  * @param radioName The name or label of the radio group
