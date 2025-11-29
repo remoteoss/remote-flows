@@ -20,5 +20,10 @@ export function PaidTimeOffForm({ onSubmit }: PaidTimeOffFormProps) {
     terminationBag?.next();
   };
 
-  return <TerminationForm onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      onSubmit={handleSubmit}
+    />
+  );
 }
