@@ -5,8 +5,8 @@ import {
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
-import './css/main.css';
 import { components } from './Components';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',

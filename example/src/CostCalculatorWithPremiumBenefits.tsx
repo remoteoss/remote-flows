@@ -33,11 +33,11 @@ import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
+import { components } from './Components';
 import 'react-flagpack/dist/style.css';
 import './css/main.css';
 import './css/premium-benefits.css';
 import './css/utils.css';
-import { components } from './Components';
 
 const estimationOptions: CostCalculatorEstimationOptions = {
   includeBenefits: true,
