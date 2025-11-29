@@ -45,6 +45,8 @@ export type {
   FileComponentProps,
   CountryComponentProps,
   StatementComponentProps,
+  TextFieldComponentProps,
+  DatePickerComponentProps,
 } from '@/src/types/fields';
 
 export type {
