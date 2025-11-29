@@ -3,6 +3,7 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { ButtonHTMLAttributes } from 'react';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { Button } from '@/src/components/ui/button';
 
 type SaveDraftButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -45,28 +46,15 @@ export const SaveDraftButton = ({
     }
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        onClick={handleSaveDraft}
-        disabled={disabled || onboardingBag.isSubmitting}
-        className={className}
-      >
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <button
-      type='button'
+    <CustomButton
+      {...props}
       onClick={handleSaveDraft}
       disabled={disabled || onboardingBag.isSubmitting}
       className={className}
     >
       {children}
-    </button>
+    </CustomButton>
   );
 };
