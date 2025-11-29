@@ -24,18 +24,11 @@ export function OnboardingBack({
     onClick?.(evt);
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} onClick={onBackHandler}>
-        {children}
-      </CustomButton>
-    );
-  }
+  const CustomButton = components?.button || Button;
 
   return (
-    <Button {...props} onClick={onBackHandler}>
+    <CustomButton {...props} onClick={onBackHandler}>
       {children}
-    </Button>
+    </CustomButton>
   );
 }

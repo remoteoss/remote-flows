@@ -14,23 +14,9 @@ export function ContractAmendmentBack({
 
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        onClick={(evt) => {
-          back();
-          props.onClick?.(evt);
-        }}
-      >
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button
+    <CustomButton
       {...props}
       onClick={(evt) => {
         back();
@@ -38,6 +24,6 @@ export function ContractAmendmentBack({
       }}
     >
       {children}
-    </Button>
+    </CustomButton>
   );
 }

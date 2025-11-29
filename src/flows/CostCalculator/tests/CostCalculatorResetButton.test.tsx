@@ -122,7 +122,8 @@ describe('CostCalculatorResetButton', () => {
         expect.objectContaining({
           form: mockFormId,
           disabled: true,
-          className: 'custom-class',
+          className:
+            'RemoteFlows__CostCalculatorForm__ResetButton custom-class',
           'data-testid': 'reset-button',
           variant: 'custom',
           type: 'reset',
