@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { TableFieldDefault } from '@/src/components/form/fields/default/TableFieldDefault';
+import { TableFieldDefault } from './TableFieldDefault';
 
 export type ColumnDef<T = $TSFixMe> = {
   id: keyof T;

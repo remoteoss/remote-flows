@@ -1,6 +1,6 @@
 import { useFormFields } from '@/src/context';
 import { DrawerComponentProps } from '@/src/types/remoteFlows';
-import { DrawerDefault } from '@/src/components/form/fields/default/DrawerDefault';
+import { DrawerDefault } from './DrawerDefault';
 
 export type DrawerProps = DrawerComponentProps & {
   className?: string;

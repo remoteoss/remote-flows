@@ -1,7 +1,7 @@
 import { useZendeskArticle } from '@/src/components/shared/zendesk-drawer/api';
 import { useFormFields } from '@/src/context';
 import { buildZendeskURL } from '@/src/components/shared/zendesk-drawer/utils';
-import { ZendeskDrawerDefault } from '@/src/components/form/fields/default/ZendeskDrawerDefault';
+import { ZendeskDrawerDefault } from './ZendeskDrawerDefault';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactElement;
