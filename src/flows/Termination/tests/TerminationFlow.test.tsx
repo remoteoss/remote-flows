@@ -359,6 +359,53 @@ describe('TerminationFlow', () => {
     });
   });
 
+  it('should preserve updated field values when navigating back to previous step', async () => {
+    render(
+      <TerminationFlow
+        {...defaultProps}
+        initialValues={{
+          personal_email: 'john.doe@example.com',
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Employee Communication/i);
+
+    // Verify initial value is populated
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
+
+    await fillEmployeeCommunication({
+      employeePersonalEmail: 'ze@remote.com',
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Termination Details/i);
+
+    // Go back to previous step
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
+
+    // Assert that ze@remote.com is retained (not the original john.doe@example.com)
+    await screen.findByText(/Step: Employee Communication/i);
+    const emailFieldAfterNavigation = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(emailFieldAfterNavigation).toHaveValue('ze@remote.com');
+  });
+
   it('should render will_challenge_termination details field immediately after selecting will_challenge_termination', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);

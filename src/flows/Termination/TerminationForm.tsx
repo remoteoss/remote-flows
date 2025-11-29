@@ -10,9 +10,14 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/vali
 type TerminationFormProps = {
   onSubmit: (payload: TerminationFormValues) => void;
   fields?: Fields;
+  defaultValues?: TerminationFormValues;
 };
 
-export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
+export function TerminationForm({
+  defaultValues,
+  fields,
+  onSubmit,
+}: TerminationFormProps) {
   const { formId, terminationBag } = useTerminationContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
@@ -21,7 +26,7 @@ export function TerminationForm({ fields, onSubmit }: TerminationFormProps) {
 
   const form = useForm({
     resolver,
-    defaultValues: terminationBag?.initialValues,
+    defaultValues: defaultValues,
     shouldUnregister: false,
     mode: 'onBlur',
   });
