@@ -1,8 +1,11 @@
 import {
   buildErrorPayload,
+  reportTelemetryError,
   shouldReportError,
 } from '@/src/components/error-handling/telemetryService';
 import * as utils from '@/src/components/error-handling/utils';
+import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock the utility functions
 vi.mock('@/src/components/error-handling/utils', () => ({
@@ -11,9 +14,18 @@ vi.mock('@/src/components/error-handling/utils', () => ({
   parseComponentStack: vi.fn(),
 }));
 
+vi.mock('@/src/client/sdk.gen', () => ({
+  postReportErrorsTelemetry: vi.fn(() => Promise.resolve()),
+}));
+
 describe('telemetryService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should build error payload with all required fields', () => {
@@ -74,5 +86,46 @@ describe('telemetryService', () => {
     const payload = buildErrorPayload(error, '1.0.0', 'production');
 
     expect(shouldReportError(error, payload)).toBe(true);
+  });
+
+  it('should deduplicate rapid duplicate calls', () => {
+    // Unique error message for this test
+    const error = new Error('Deduplication test error 1');
+    const mockClient = {} as $TSFixMe;
+
+    vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
+    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
+    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
+
+    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
+      debugMode: false,
+    });
+    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
+      debugMode: false,
+    });
+
+    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
+  });
+
+  it('should report again after deduplication window expires', () => {
+    // Different unique error message
+    const error = new Error('Deduplication test error 2');
+    const mockClient = {} as $TSFixMe;
+
+    vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
+    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
+    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
+
+    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
+      debugMode: false,
+    });
+    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(150);
+
+    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
+      debugMode: false,
+    });
+    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(2);
   });
 });
