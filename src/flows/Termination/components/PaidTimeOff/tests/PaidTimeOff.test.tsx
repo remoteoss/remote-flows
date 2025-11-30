@@ -8,7 +8,7 @@ import {
 } from '@/src/flows/Termination/tests/fixtures';
 import { employment } from '@/src/tests/fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { TestProviders, queryClient } from '@/src/tests/testHelpers';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('PaidTimeOff', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { useTermination } from '@/src/flows/Termination/hooks';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { TestProviders, queryClient } from '@/src/tests/testHelpers';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('useTermination', () => {
   beforeEach(() => {
