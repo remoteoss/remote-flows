@@ -38,10 +38,13 @@ export const logDebugPayload = (
   );
   console.log('🏷️  Category:', payload.error.category);
 
-  if (payload.error.componentStack && payload.error.componentStack.length > 0) {
+  if (
+    payload.error.component_stack &&
+    payload.error.component_stack.length > 0
+  ) {
     console.log(
       '🧩 Component Stack:',
-      payload.error.componentStack.join(' → '),
+      payload.error.component_stack.join(' → '),
     );
   }
 
@@ -59,7 +62,7 @@ export const logDebugPayload = (
 
   console.log('⏰ Timestamp:', payload.metadata.timestamp);
   console.log('🌐 URL:', payload.metadata.url);
-  console.log('📦 SDK Version:', payload.metadata.sdkVersion);
+  console.log('📦 SDK Version:', payload.metadata.sdk_version);
 
   if (payload.error.stack) {
     console.log('\n📚 Stack Trace:');
@@ -89,14 +92,14 @@ export function buildErrorPayload(
       name: error.name,
       category,
       severity,
-      componentStack,
+      component_stack: componentStack,
     },
     context,
     metadata: {
-      sdkVersion,
+      sdk_version: sdkVersion,
       timestamp: new Date().toISOString(),
       url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-      userAgent:
+      user_agent:
         typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
       environment: environment,
     },

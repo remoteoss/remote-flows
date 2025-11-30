@@ -40,14 +40,14 @@ export type ErrorPayload = {
     name: string;
     category: ErrorCategory;
     severity: ErrorSeverity;
-    componentStack?: string[]; // Parsed React component names from stack trace
+    component_stack?: string[]; // Parsed React component names from stack trace
   };
   context?: ErrorContextData;
   metadata: {
-    sdkVersion: string;
+    sdk_version: string;
     timestamp: string;
     url: string;
-    userAgent: string;
+    user_agent: string;
     environment: Environment;
   };
 };

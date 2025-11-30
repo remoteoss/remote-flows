@@ -1181,6 +1181,7 @@ export type ContractorInvoiceStatus =
   | 'rejected_by_remote'
   | 'blocked'
   | 'compliance_review'
+  | 'compliance_failed'
   | 'pay_out_scheduled'
   | 'enqueued'
   | 'processing'
@@ -6107,7 +6108,7 @@ export type SdkErrorPayload = {
       | 'HOOK_ERROR'
       | 'RUNTIME_ERROR'
       | 'UNKNOWN_ERROR';
-    componentStack?: Array<string> | null;
+    component_stack?: Array<string> | null;
     /**
      * Error message
      */
@@ -6121,10 +6122,10 @@ export type SdkErrorPayload = {
   };
   metadata: {
     environment: string;
-    sdkVersion: string;
+    sdk_version: string;
     timestamp: string;
     url: string;
-    userAgent: string;
+    user_agent: string;
   };
 };
 
@@ -7254,13 +7255,17 @@ export type EmploymentCreateParams = {
   company_id?: string;
   country_code: string;
   /**
+   * This field is required to create a global payroll employee.
+   */
+  engaged_by_entity_slug?: string;
+  /**
    * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   external_id?: string;
   /**
    * If not provided, it will default to `employee`.
    */
-  type?: 'employee' | 'contractor';
+  type?: 'employee' | 'contractor' | 'global_payroll_employee';
 };
 
 /**
