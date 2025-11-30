@@ -747,22 +747,13 @@ export const useOnboarding = ({
 
   function back() {
     previousStep();
-    updateErrorContext({
-      step: stepState.currentStep.name,
-    });
   }
 
   function next() {
     nextStep();
-    updateErrorContext({
-      step: stepState.currentStep.name,
-    });
   }
 
   function goTo(step: keyof typeof STEPS) {
-    updateErrorContext({
-      step: step,
-    });
     goToStep(step);
   }
 
