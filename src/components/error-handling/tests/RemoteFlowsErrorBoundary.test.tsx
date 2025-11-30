@@ -4,7 +4,18 @@ import { RemoteFlowsErrorBoundary } from '../RemoteFlowsErrorBoundary';
 import { reportTelemetryError } from '../telemetryService';
 import { ErrorContextProvider, useErrorContext } from '../ErrorContext';
 import { client } from '@/src/tests/testHelpers';
+import { markErrorAsHandled } from '../useErrorReportingForUnhandledErrors';
+
 vi.mock('../telemetryService');
+vi.mock('../useErrorReportingForUnhandledErrors', async () => {
+  const actual = await vi.importActual(
+    '../useErrorReportingForUnhandledErrors',
+  );
+  return {
+    ...actual,
+    markErrorAsHandled: vi.fn(),
+  };
+});
 
 const ErrorThrowingComponent = () => {
   throw new Error('Test error from child component');
@@ -150,6 +161,25 @@ describe('RemoteFlowsErrorBoundary', () => {
       {
         debugMode: false,
       },
+    );
+  });
+
+  it('should mark errors as handled to prevent duplicate reporting', () => {
+    render(
+      <RemoteFlowsErrorBoundary
+        client={client}
+        environment='production'
+        debug={false}
+      >
+        <ErrorThrowingComponent />
+      </RemoteFlowsErrorBoundary>,
+    );
+
+    // Should have marked the error as handled
+    expect(markErrorAsHandled).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Test error from child component',
+      }),
     );
   });
 });
