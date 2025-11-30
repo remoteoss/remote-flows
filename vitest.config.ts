@@ -7,7 +7,7 @@ export default defineConfig({
     exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
     coverage: {
       provider: 'istanbul',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'node_modules',
@@ -15,6 +15,7 @@ export default defineConfig({
         'src/**/*.test.{ts,tsx}',
         'src/tests/**/*.{ts,tsx}',
         'src/**/tests/*.{ts,tsx}',
+        'src/client/**/*.{ts,tsx}',
       ],
     },
     globals: true,
