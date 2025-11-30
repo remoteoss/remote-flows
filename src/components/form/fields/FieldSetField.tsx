@@ -249,7 +249,7 @@ export function FieldSetField({
               }
 
               // Handle nested fieldsets
-              /* if (field.inputType === 'fieldset') {
+              if (field.inputType === 'fieldset') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -258,7 +258,7 @@ export function FieldSetField({
                     components={components}
                   />
                 );
-              } */
+              }
 
               if (field.inputType === 'fieldset-flat') {
                 return (
@@ -288,13 +288,13 @@ export function FieldSetField({
                 return <Component key={field.name} {...field} />;
               }
 
-              /*  if (!FieldComponent) {
+              if (!FieldComponent) {
                 return (
                   <p className='error'>
                     Field type {field.inputType as string} not supported
                   </p>
                 );
-              } */
+              }
 
               if (field.inputType === 'select' && field.multiple) {
                 FieldComponent = baseFields['multi-select'];

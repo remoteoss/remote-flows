@@ -5,6 +5,18 @@ import { ErrorContextData } from '@/src/components/error-handling/types';
 import { Environment } from '@/src/environments';
 import { Client } from '@/src/client/client';
 
+// WeakSet to track errors already handled by error boundaries
+// Kept in module scope so it's shared across all hook instances
+const handledErrors = new WeakSet<Error>();
+
+/**
+ * Marks an error as handled by an error boundary
+ * This prevents duplicate reporting from the window error listener
+ */
+export function markErrorAsHandled(error: Error): void {
+  handledErrors.add(error);
+}
+
 /**
  * Reports unhandled errors to the telemetry API.
  * @param errorContext - The error context.
@@ -19,6 +31,14 @@ export function useErrorReportingForUnhandledErrors(
 ) {
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
+      if (event.error && handledErrors.has(event.error)) {
+        if (debug) {
+          console.log(
+            '[RemoteFlows] Skipping already-handled error from window listener',
+          );
+        }
+        return;
+      }
       reportTelemetryError(
         event.error,
         npmPackageVersion,

@@ -11,6 +11,36 @@ import {
 import { Environment } from '@/src/environments';
 import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
 
+const recentlyReported = new Map<string, number>();
+const DEDUPE_WINDOW_MS = 100; // 100ms should catch Strict Mode double-invokes
+
+function getErrorSignature(error: Error): string {
+  return `${error.name}:${error.message}:${error.stack?.substring(0, 100) || ''}`;
+}
+
+function wasRecentlyReported(error: Error): boolean {
+  const signature = getErrorSignature(error);
+  const lastReported = recentlyReported.get(signature);
+  const now = Date.now();
+
+  if (lastReported && now - lastReported < DEDUPE_WINDOW_MS) {
+    return true;
+  }
+
+  recentlyReported.set(signature, now);
+
+  // Cleanup old entries periodically
+  if (recentlyReported.size > 100) {
+    for (const [sig, timestamp] of recentlyReported.entries()) {
+      if (now - timestamp > DEDUPE_WINDOW_MS) {
+        recentlyReported.delete(sig);
+      }
+    }
+  }
+
+  return false;
+}
+
 /**
  * Logs error payload to console in debug mode
  * Shows what would be sent to telemetry API
@@ -157,6 +187,13 @@ export function reportTelemetryError(
     debugMode: false,
   },
 ): void {
+  if (wasRecentlyReported(error)) {
+    if (options.debugMode) {
+      console.log('[RemoteFlows] Skipping duplicate error report');
+    }
+    return;
+  }
+
   const payload: ErrorPayload = buildErrorPayload(
     error,
     sdkVersion,
@@ -187,8 +224,5 @@ export function reportTelemetryError(
         console.warn('[RemoteFlows] Error telemetry setup failed:', err);
       }
     }
-
-    // Send to telemetry API
-    // TODO: Implement actual telemetry API call
   }
 }

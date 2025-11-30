@@ -34,7 +34,7 @@ describe('telemetryService', () => {
     expect(payload.error.category).toBe('RENDER_ERROR');
     expect(payload.error.severity).toBe('error');
     expect(payload.context).toEqual(context);
-    expect(payload.metadata.sdkVersion).toBe('1.0.0');
+    expect(payload.metadata.sdk_version).toBe('1.0.0');
     expect(payload.metadata.timestamp).toBeDefined();
     expect(payload.metadata.url).toBe(window.location.href);
     expect(payload.metadata.environment).toBe('production');
