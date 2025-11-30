@@ -3,8 +3,8 @@ import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { TestProviders, queryClient } from '@/src/tests/testHelpers';
 import { countries, currencies, estimation, regionFields } from './fixtures';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('useCostCalculator', () => {
   beforeEach(() => {
