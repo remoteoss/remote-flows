@@ -1,5 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
+import {
+  markErrorAsHandled,
+  useErrorReportingForUnhandledErrors,
+} from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { client } from '@/src/tests/testHelpers';
@@ -84,5 +87,52 @@ describe('useErrorReportingForUnhandledErrors', () => {
       'unhandledrejection',
       expect.any(Function),
     );
+  });
+
+  it('should skip errors marked as handled', async () => {
+    const errorContext = { flow: 'onboarding' };
+    renderHook(() =>
+      useErrorReportingForUnhandledErrors(
+        errorContext,
+        'production',
+        client,
+        false,
+      ),
+    );
+
+    const error = new Error('Test error');
+
+    // Mark as handled (simulating error boundary catching it)
+    markErrorAsHandled(error);
+
+    // Dispatch window error event
+    window.dispatchEvent(new ErrorEvent('error', { error }));
+
+    await waitFor(() => {
+      // Should NOT have been reported
+      expect(reportTelemetryError).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should report errors not marked as handled', async () => {
+    const errorContext = { flow: 'onboarding' };
+    renderHook(() =>
+      useErrorReportingForUnhandledErrors(
+        errorContext,
+        'production',
+        client,
+        false,
+      ),
+    );
+
+    const error = new Error('Test error');
+
+    // Don't mark as handled - simulating truly unhandled error
+    window.dispatchEvent(new ErrorEvent('error', { error }));
+
+    await waitFor(() => {
+      // Should be reported
+      expect(reportTelemetryError).toHaveBeenCalledTimes(1);
+    });
   });
 });
