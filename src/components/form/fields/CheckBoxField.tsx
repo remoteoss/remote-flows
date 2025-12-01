@@ -41,9 +41,9 @@ export function CheckBoxField({
   const { control } = useFormContext();
 
   const handleCheckboxChange = (
-    optionId: string,
-    checked: boolean,
     field: ControllerRenderProps<FieldValues, string>,
+    checked: boolean,
+    optionId?: string,
   ) => {
     if (multiple && optionId) {
       // Multiple checkboxes: manage as array
@@ -86,7 +86,7 @@ export function CheckBoxField({
                   evt: React.ChangeEvent<HTMLInputElement>,
                   optionId?: string,
                 ) => {
-                  handleCheckboxChange(name, evt.target.checked, field);
+                  handleCheckboxChange(field, evt.target.checked, optionId);
                   onChange?.(evt.target.checked === true, optionId);
                 },
               }}
@@ -111,9 +111,9 @@ export function CheckBoxField({
                         id={option.value}
                         onCheckedChange={(checked: CheckedState) => {
                           handleCheckboxChange(
-                            option.value,
-                            checked === true,
                             field,
+                            checked === true,
+                            option.value,
                           );
                           onChange?.(checked === true, option.value);
                         }}
@@ -133,7 +133,7 @@ export function CheckBoxField({
                     <Checkbox
                       id={name}
                       onCheckedChange={(event: CheckedState) => {
-                        handleCheckboxChange(name, event === true, field);
+                        handleCheckboxChange(field, event === true);
                         onChange?.(event === true, name);
                       }}
                       checked={field.value}
