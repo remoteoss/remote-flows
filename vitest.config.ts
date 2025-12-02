@@ -15,6 +15,7 @@ export default defineConfig({
         'src/**/*.test.{ts,tsx}',
         'src/tests/**/*.{ts,tsx}',
         'src/**/tests/*.{ts,tsx}',
+        'src/client/**/*.{ts,tsx}',
       ],
     },
     globals: true,
