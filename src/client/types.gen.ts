@@ -833,6 +833,17 @@ export type UnifiedEmploymentsBenefitOffersJsonSchemaResponse = {
 };
 
 /**
+ * CustomVariance
+ */
+export type CustomVariance = {
+  currentPay: PayValue;
+  label: string;
+  payDifference?: PayDifference;
+  payYoy?: PayValue;
+  previousPay?: PayValue;
+};
+
+/**
  * CompanyCurrenciesResponse
  *
  * Company currencies
@@ -941,6 +952,16 @@ export type EmployeeDetails = {
     amount?: number;
     currency?: string;
   };
+};
+
+/**
+ * Variance
+ */
+export type Variance = {
+  currentPay: PayValue;
+  payDifference?: PayDifference;
+  payYoy?: PayValue;
+  previousPay?: PayValue;
 };
 
 /**
@@ -1550,7 +1571,9 @@ export type MinimalTimesheetResponse = {
  * PayVarianceResponse
  */
 export type PayVarianceResponse = {
-  payVariance?: Array<PayDifference>;
+  additionalVariances?: Array<CustomVariance>;
+  grossVariance?: Variance;
+  netVariance?: Variance;
 };
 
 /**
@@ -5325,6 +5348,15 @@ export type IdentityCompanyAccessTokenResponse = {
 };
 
 /**
+ * PayValue
+ */
+export type PayValue = {
+  periodEndDate: string;
+  periodStartDate: string;
+  totalAmount: Amount;
+};
+
+/**
  * TravelLetterUser
  *
  * Travel Letter User
@@ -6139,7 +6171,7 @@ export type SdkErrorPayload = {
     /**
      * SDK runtime environment
      */
-    environment: 'production' | 'staging' | 'local' | 'partners';
+    environment: 'production' | 'staging' | 'local' | 'partners' | 'sandbox';
     /**
      * SDK Version
      */
@@ -7555,7 +7587,7 @@ export type Expense = {
 export type PayDifference = {
   amountDifference: Amount;
   percentDifference: number;
-  workerDifference: {
+  workerDifference?: {
     label: string;
     link?: string;
   };
