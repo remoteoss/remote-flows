@@ -72,6 +72,7 @@ const defaultProps = {
 describe('OnboardingInvite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
     queryClient.clear();
 
     server.use(
