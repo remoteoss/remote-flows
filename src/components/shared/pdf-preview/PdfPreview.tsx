@@ -5,10 +5,10 @@ import { Button } from '@/src/components/ui/button';
 // Configure the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-interface PDFPreviewProps {
+export type PDFPreviewProps = {
   base64Data: string;
   fileName?: string;
-}
+};
 
 export function PDFPreview({
   base64Data,

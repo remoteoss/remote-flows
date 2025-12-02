@@ -25,6 +25,6 @@ export const tsup: Options = {
     REMOTE_GATEWAY_URL:
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'react-pdf', 'pdfjs-dist'],
   noExternal: ['react-hook-form', '@hookform/resolvers'],
 };
