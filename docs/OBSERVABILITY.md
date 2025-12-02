@@ -520,6 +520,10 @@ it('should catch and report errors', async () => {
 - **Not actionable**: Usually don't indicate SDK bugs
 - **User decision**: Developers can catch 404s in their own error handlers if needed
 
+### WAF caveats
+
+When sending the data to the BE, we avoid sending localhost as WAF blocks it + encode with base64 the stack to avoid WAF to intervene
+
 ---
 
 ## Summary
