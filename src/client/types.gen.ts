@@ -6096,10 +6096,16 @@ export type IdsRequiredParams = {
  * SDKErrorPayload
  */
 export type SdkErrorPayload = {
+  /**
+   * Context
+   */
   context?: {
     [key: string]: unknown;
   } | null;
   error: {
+    /**
+     * Error category
+     */
     category:
       | 'RENDER_ERROR'
       | 'NETWORK_ERROR'
@@ -6108,6 +6114,9 @@ export type SdkErrorPayload = {
       | 'HOOK_ERROR'
       | 'RUNTIME_ERROR'
       | 'UNKNOWN_ERROR';
+    /**
+     * Component Stack
+     */
     component_stack?: Array<string> | null;
     /**
      * Error message
@@ -6117,14 +6126,35 @@ export type SdkErrorPayload = {
      * Error name
      */
     name: string;
+    /**
+     * Error severity
+     */
     severity: 'critical' | 'error' | 'warning' | 'info';
+    /**
+     * Stack Trace
+     */
     stack?: string | null;
   };
   metadata: {
-    environment: string;
+    /**
+     * SDK runtime environment
+     */
+    environment: 'production' | 'staging' | 'local' | 'partners';
+    /**
+     * SDK Version
+     */
     sdk_version: string;
+    /**
+     * Client Timestamp
+     */
     timestamp: string;
+    /**
+     * Client URL
+     */
     url: string;
+    /**
+     * User Agent
+     */
     user_agent: string;
   };
 };
@@ -8628,6 +8658,37 @@ export type GetIndexContractorInvoiceResponses = {
 export type GetIndexContractorInvoiceResponse =
   GetIndexContractorInvoiceResponses[keyof GetIndexContractorInvoiceResponses];
 
+export type PostReportErrorsTelemetryData = {
+  /**
+   * SDK Error Report
+   */
+  body: SdkErrorPayload;
+  path?: never;
+  query?: never;
+  url: '/v1/sdk/telemetry-errors';
+};
+
+export type PostReportErrorsTelemetryErrors = {
+  /**
+   * Bad Request
+   */
+  400: ErrorResponse;
+  /**
+   * Too Many Requests
+   */
+  429: RateLimitResponse;
+};
+
+export type PostReportErrorsTelemetryError =
+  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
+
+export type PostReportErrorsTelemetryResponses = {
+  /**
+   * No Content
+   */
+  204: unknown;
+};
+
 export type GetDetailsSsoConfigurationData = {
   body?: never;
   path?: never;
@@ -9259,37 +9320,6 @@ export type GetIndexPricingPlanPartnerTemplateResponses = {
 
 export type GetIndexPricingPlanPartnerTemplateResponse =
   GetIndexPricingPlanPartnerTemplateResponses[keyof GetIndexPricingPlanPartnerTemplateResponses];
-
-export type PostReportErrorsTelemetryData = {
-  /**
-   * SDK Error Report
-   */
-  body: SdkErrorPayload;
-  path?: never;
-  query?: never;
-  url: '/v1/telemetry/errors';
-};
-
-export type PostReportErrorsTelemetryErrors = {
-  /**
-   * Bad Request
-   */
-  400: ErrorResponse;
-  /**
-   * Too Many Requests
-   */
-  429: RateLimitResponse;
-};
-
-export type PostReportErrorsTelemetryError =
-  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
-
-export type PostReportErrorsTelemetryResponses = {
-  /**
-   * No Content
-   */
-  204: unknown;
-};
 
 export type GetIndexEorPayrollCalendarData = {
   body?: never;

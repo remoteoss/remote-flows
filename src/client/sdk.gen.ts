@@ -1015,6 +1015,33 @@ export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Report SDK errors
+ *
+ * Receives error telemetry from the frontend SDK.
+ * Errors are logged to Datadog for monitoring and debugging.
+ *
+ */
+export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
+  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostReportErrorsTelemetryResponses,
+    PostReportErrorsTelemetryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sdk/telemetry-errors',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show the SSO Configuration Details
  *
  * Shows the SSO Configuration details for the company.
@@ -1317,30 +1344,6 @@ export const getIndexPricingPlanPartnerTemplate = <
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/pricing-plan-partner-templates',
     ...options,
-  });
-
-/**
- * Report SDK errors
- *
- * Receives error telemetry from the frontend SDK.
- * Errors are logged to Datadog for monitoring and debugging.
- *
- */
-export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
-  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostReportErrorsTelemetryResponses,
-    PostReportErrorsTelemetryErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/telemetry/errors',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
