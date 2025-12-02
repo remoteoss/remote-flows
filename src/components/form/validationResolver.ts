@@ -26,36 +26,37 @@ export function iterateErrors(error: ValidationError) {
   return errors;
 }
 
-function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
+export function iterateFormErrors(
+  formErrors?: FormErrors,
+  parentPath = '',
+): FieldErrors {
   return Object.entries(formErrors || {}).reduce(
     (allErrors: FieldErrors, [fieldName, message]) => {
-      // Extract the error message string from various payload formats
-      let messageString: string;
+      const fullPath = parentPath ? `${parentPath}.${fieldName}` : fieldName;
 
-      if (typeof message === 'string') {
-        // Case 1: Simple string error
-        messageString = message;
-      } else if (
+      // If message is a nested object, recurse
+      if (
         typeof message === 'object' &&
         message !== null &&
         !Array.isArray(message)
       ) {
-        // Case 2: Object with 'value' property (e.g., { value: "..." })
-        messageString =
-          ((message as Record<string, string>).value as string) ||
-          JSON.stringify(message);
-      } else {
-        // Case 3: Fallback for arrays or other structures
-        messageString = JSON.stringify(message);
+        return {
+          ...allErrors,
+          ...iterateFormErrors(message as FormErrors, fullPath),
+        };
       }
 
-      allErrors[fieldName] = {
+      // Extract the error message string from various payload formats
+      const messageString =
+        typeof message === 'string' ? message : JSON.stringify(message);
+
+      allErrors[fullPath] = {
         type: 'validation',
         message: messageString,
       };
 
       // Also add errors for nested variants (.value and .filter) in case the field is nested
-      allErrors[`${fieldName}.value`] = {
+      allErrors[`${fullPath}.value`] = {
         type: 'validation',
         message: messageString,
       };
