@@ -1,5 +1,20 @@
 # @remoteoss/remote-flows
 
+## 1.1.2
+
+### Patch Changes
+
+- implement lazy loading for PDF preview component (#611) [#611](https://github.com/remoteoss/remote-flows/pull/611)
+- improve nested error handling in validation (#631) [#631](https://github.com/remoteoss/remote-flows/pull/631)
+
+## 1.1.1
+
+### Patch Changes
+
+- fix form values and checkbox logic (#625) [#625](https://github.com/remoteoss/remote-flows/pull/625)
+- ensure day is zero-padded in getYearMonthDate (#628) [#628](https://github.com/remoteoss/remote-flows/pull/628)
+- reorder handleCheckboxChange parameters for consistency (#629) [#629](https://github.com/remoteoss/remote-flows/pull/629)
+
 ## 1.1.0
 
 ### Minor Changes
