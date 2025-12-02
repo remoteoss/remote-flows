@@ -105,6 +105,24 @@ export const logDebugPayload = (
   console.groupEnd();
 };
 
+const getSafeUrl = () => {
+  let url = 'unknown';
+  if (typeof window !== 'undefined') {
+    const href = window.location.href;
+    // Replace localhost URLs with a dummy URL to avoid WAF issues
+    if (href.includes('localhost') || href.includes('127.0.0.1')) {
+      url = 'https://telemetry.local/report';
+    } else {
+      url = href;
+    }
+  }
+  return url;
+};
+
+const encodeStack = (stack?: string) => {
+  return stack ? btoa(stack) : '';
+};
+
 export function buildErrorPayload(
   error: Error,
   sdkVersion: string,
@@ -114,11 +132,13 @@ export function buildErrorPayload(
   const category = categorizeError(error);
   const severity = determineErrorSeverity(error, category);
   const componentStack = parseComponentStack(error, error.stack);
+  const url = getSafeUrl();
+  const encodedStack = encodeStack(error.stack);
 
   const payload: ErrorPayload = {
     error: {
       message: error.message,
-      stack: error.stack,
+      stack: encodedStack,
       name: error.name,
       category,
       severity,
@@ -128,7 +148,7 @@ export function buildErrorPayload(
     metadata: {
       sdk_version: sdkVersion,
       timestamp: new Date().toISOString(),
-      url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      url,
       user_agent:
         typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
       environment: environment,
