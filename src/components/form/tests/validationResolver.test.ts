@@ -2,7 +2,6 @@ import { iterateFormErrors } from '@/src/components/form/validationResolver';
 
 describe('iterateFormErrors', () => {
   it('should flatten nested object errors from json-schema-form validation', () => {
-    // This mimics errors returned by @remoteoss/remote-json-schema-form-kit
     const formErrors = {
       hobong_salary_details: {
         meal_allowance: 'Required field',
