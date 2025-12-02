@@ -1,29 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/src/components/ui/select';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
+import { FormField } from '@/src/components/ui/form';
+import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 
 type SelectFieldProps = JSFField & {
   placeholder?: string;
   options: Array<{ value: string | number; label: string }>;
   className?: string;
-  onChange?: (value: any) => void;
+  onChange?: (value: string | number) => void;
   component?: Components['select'];
 };
 
@@ -47,83 +32,30 @@ export function SelectField({
       name={name}
       render={({ field, fieldState }) => {
         const CustomSelectField = component || components?.select;
-        if (CustomSelectField) {
-          const customSelectFieldProps = {
-            label,
-            name,
-            options,
-            defaultValue,
-            description,
-            onChange,
-            ...rest,
-          };
-          return (
-            <CustomSelectField
-              field={{
-                ...field,
-                onChange: (value: string | number) => {
-                  const maybeCastValue =
-                    rest.jsonType === 'number' ? Number(value) : value;
-                  field.onChange(maybeCastValue);
-                  onChange?.(maybeCastValue);
-                },
-              }}
-              fieldState={fieldState}
-              fieldData={customSelectFieldProps}
-            />
-          );
-        }
-
+        const Component = CustomSelectField || SelectFieldDefault;
+        const customSelectFieldProps = {
+          label,
+          name,
+          options,
+          defaultValue,
+          description,
+          onChange,
+          ...rest,
+        };
         return (
-          <FormItem
-            data-field={name}
-            className={`RemoteFlows__SelectField__Item__${name}`}
-          >
-            <FormLabel className='RemoteFlows__SelectField__Label'>
-              {label}
-            </FormLabel>
-            <FormControl>
-              <div className='relative'>
-                <Select
-                  value={field.value || ''}
-                  onValueChange={(value: string) => {
-                    // For some reason react-hook-form converts option values from numbers to strings.
-                    // If a value can be cast to a number, the field in the form state should use the numeric type instead.
-                    const maybeCastValue =
-                      rest.jsonType === 'number' ? Number(value) : value;
-                    field.onChange(maybeCastValue);
-                    onChange?.(maybeCastValue);
-                  }}
-                >
-                  <SelectTrigger
-                    className='RemoteFlows__SelectField__Trigger'
-                    aria-invalid={Boolean(fieldState.error)}
-                    aria-label={label}
-                  >
-                    <span className='absolute'>
-                      <SelectValue placeholder={label} />
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent className='RemoteFlows__SelectField__Content'>
-                    <SelectGroup className='RemoteFlows__SelectField__Group'>
-                      {options.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          className='RemoteFlows__SelectField__SelectItem'
-                          disabled={option.disabled}
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            {fieldState.error && <FormMessage />}
-          </FormItem>
+          <Component
+            field={{
+              ...field,
+              onChange: (value: string | number) => {
+                const maybeCastValue =
+                  rest.jsonType === 'number' ? Number(value) : value;
+                field.onChange(maybeCastValue);
+                onChange?.(maybeCastValue);
+              },
+            }}
+            fieldState={fieldState}
+            fieldData={customSelectFieldProps}
+          />
         );
       }}
     />
