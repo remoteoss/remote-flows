@@ -27,43 +27,62 @@ export function iterateErrors(error: ValidationError) {
 }
 
 function iterateFormErrors(formErrors?: FormErrors): FieldErrors {
-  return Object.entries(formErrors || {}).reduce(
-    (allErrors: FieldErrors, [fieldName, message]) => {
-      // Extract the error message string from various payload formats
-      let messageString: string;
+  const flattenedErrors: FieldErrors = {};
+
+  const flattenErrors = (obj?: FormErrors, prefix = '') => {
+    Object.entries(obj || {}).forEach(([fieldName, message]) => {
+      const fullPath = prefix ? `${prefix}.${fieldName}` : fieldName;
 
       if (typeof message === 'string') {
-        // Case 1: Simple string error
-        messageString = message;
+        // Simple string error
+        flattenedErrors[fullPath] = {
+          type: 'validation',
+          message: message,
+        };
       } else if (
         typeof message === 'object' &&
         message !== null &&
         !Array.isArray(message)
       ) {
-        // Case 2: Object with 'value' property (e.g., { value: "..." })
-        messageString =
-          ((message as Record<string, string>).value as string) ||
-          JSON.stringify(message);
+        // Check if this is a leaf error (has 'value' property) or a nested object
+        if (
+          'value' in message &&
+          typeof (message as Record<string, string>).value === 'string'
+        ) {
+          // Case: { value: "..." }
+          flattenedErrors[fullPath] = {
+            type: 'validation',
+            message: (message as Record<string, string>).value as string,
+          };
+        } else if (Object.values(message).some((v) => typeof v === 'string')) {
+          // Nested object with string values - recurse
+          flattenErrors(message, fullPath);
+        } else {
+          // Fallback
+          flattenedErrors[fullPath] = {
+            type: 'validation',
+            message: JSON.stringify(message),
+          };
+        }
       } else {
-        // Case 3: Fallback for arrays or other structures
-        messageString = JSON.stringify(message);
+        // Fallback for arrays or other structures
+        flattenedErrors[fullPath] = {
+          type: 'validation',
+          message: JSON.stringify(message),
+        };
       }
+    });
+  };
 
-      allErrors[fieldName] = {
-        type: 'validation',
-        message: messageString,
-      };
+  flattenErrors(formErrors);
 
-      // Also add errors for nested variants (.value and .filter) in case the field is nested
-      allErrors[`${fieldName}.value`] = {
-        type: 'validation',
-        message: messageString,
-      };
+  // Add support for .value and .filter variants for compatibility
+  const withVariants: FieldErrors = { ...flattenedErrors };
+  Object.keys(flattenedErrors).forEach((path) => {
+    withVariants[`${path}.value`] = flattenedErrors[path];
+  });
 
-      return allErrors;
-    },
-    {} as FieldErrors,
-  );
+  return withVariants;
 }
 
 export const useJsonSchemasValidationFormResolver = <
@@ -73,6 +92,8 @@ export const useJsonSchemasValidationFormResolver = <
 ): Resolver<T> => {
   return async (data: T) => {
     const result = await handleValidation(data);
+
+    console.log('result', result);
 
     // Handle null case - return no errors
     if (!result) {
