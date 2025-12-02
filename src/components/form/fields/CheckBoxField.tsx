@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox } from '@/src/components/ui/checkbox';
 import {
   FormControl,
@@ -22,7 +21,7 @@ export type CheckBoxFieldProps = {
   name: string;
 } & Partial<
   JSFField & {
-    onChange?: (checked: any, optionId?: string) => void;
+    onChange?: (checked: boolean, optionId?: string) => void;
     component?: Components['checkbox'];
   }
 >;
@@ -42,20 +41,23 @@ export function CheckBoxField({
   const { control } = useFormContext();
 
   const handleCheckboxChange = (
-    optionId: string,
-    checked: boolean,
     field: ControllerRenderProps<FieldValues, string>,
+    checked: boolean,
+    optionId?: string,
   ) => {
-    const currentValues = field.value ? [...field.value] : [];
-
-    if (checked) {
-      // Add the value if it's not already in the array
-      if (!currentValues.includes(optionId)) {
-        field.onChange([...currentValues, optionId]);
+    if (multiple && optionId) {
+      // Multiple checkboxes: manage as array
+      const currentValues = field.value ? [...field.value] : [];
+      if (checked) {
+        if (!currentValues.includes(optionId)) {
+          field.onChange([...currentValues, optionId]);
+        }
+      } else {
+        field.onChange(currentValues.filter((value) => value !== optionId));
       }
     } else {
-      // Remove the value from the array
-      field.onChange(currentValues.filter((value) => value !== optionId));
+      // Single checkbox: simple boolean toggle
+      field.onChange(checked);
     }
   };
 
@@ -80,15 +82,12 @@ export function CheckBoxField({
             <CustomCheckboxField
               field={{
                 ...field,
-                onChange: (evt: any) => {
-                  if (multiple) {
-                    const { checked, value } = evt.target;
-                    handleCheckboxChange(value, checked, field);
-                    onChange?.(checked);
-                    return;
-                  }
-                  field.onChange(evt);
-                  onChange?.(evt);
+                onChange: (
+                  evt: React.ChangeEvent<HTMLInputElement>,
+                  optionId?: string,
+                ) => {
+                  handleCheckboxChange(field, evt.target.checked, optionId);
+                  onChange?.(evt.target.checked === true, optionId);
                 },
               }}
               fieldState={fieldState}
@@ -112,11 +111,11 @@ export function CheckBoxField({
                         id={option.value}
                         onCheckedChange={(checked: CheckedState) => {
                           handleCheckboxChange(
-                            option.value,
-                            checked === true,
                             field,
+                            checked === true,
+                            option.value,
                           );
-                          onChange?.(checked, option.value);
+                          onChange?.(checked === true, option.value);
                         }}
                         checked={field.value?.includes(option.value)}
                         className='RemoteFlows__CheckBox__Input'
@@ -134,8 +133,8 @@ export function CheckBoxField({
                     <Checkbox
                       id={name}
                       onCheckedChange={(event: CheckedState) => {
-                        field.onChange(event);
-                        onChange?.(event);
+                        handleCheckboxChange(field, event === true, name);
+                        onChange?.(event === true, name);
                       }}
                       checked={field.value}
                       className='RemoteFlows__CheckBox__Input'
