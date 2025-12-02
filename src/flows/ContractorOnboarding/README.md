@@ -29,6 +29,7 @@ You can skip the `select_country` step by passing `skipSteps: ['select_country']
 
 ### Basic Setup
 
+```tsx
 import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
 
 <RemoteFlows auth={fetchToken} theme={theme}>
@@ -38,7 +39,10 @@ import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
       // Render multi-step form
     }}
   />
-</RemoteFlows>### Props
+</RemoteFlows>
+```
+
+### Props
 
 #### `ContractorOnboardingFlowProps`
 
