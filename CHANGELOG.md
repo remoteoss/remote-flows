@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.1.2
+
+### Patch Changes
+
+- implement lazy loading for PDF preview component (#611) [#611](https://github.com/remoteoss/remote-flows/pull/611)
+- improve nested error handling in validation (#631) [#631](https://github.com/remoteoss/remote-flows/pull/631)
+
 ## 1.1.1
 
 ### Patch Changes
