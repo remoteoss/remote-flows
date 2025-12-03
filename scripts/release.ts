@@ -27,14 +27,28 @@ interface Changeset {
 
 async function getLatestPublishedVersion(): Promise<string> {
   try {
-    console.log('📦 Reading version from package.json...');
-    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-    const localVersion = packageJson.version;
-    console.log(`📦 Current version in package.json: ${localVersion}`);
-    return localVersion;
+    console.log('📦 Checking latest published version on npm...');
+    const response = await fetch(
+      'https://registry.npmjs.org/@remoteoss/remote-flows/latest',
+    );
+
+    if (!response.ok) {
+      throw new Error(`NPM API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const publishedVersion = data.version;
+    console.log(`📦 Latest published version: ${publishedVersion}`);
+    return publishedVersion;
   } catch (error) {
-    console.error('❌ Failed to read package.json:', error);
-    throw error;
+    console.log(
+      `⚠️  Could not fetch latest version from npm: ${error.message}`,
+    );
+    console.log('📦 Falling back to local package.json version');
+
+    // Fallback to local version
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+    return packageJson.version;
   }
 }
 
