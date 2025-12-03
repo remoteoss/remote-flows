@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.28.1
+
+### Fixes
+
+- fix `mutation` that happened when passing formValues to `json-schema-form`
+
 ## 0.28.0
 
 ### Minor Changes
