@@ -1018,7 +1018,7 @@ export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
  * Report SDK errors
  *
  * Receives error telemetry from the frontend SDK.
- * Errors are logged to Datadog for monitoring and debugging.
+ * Errors are logged to observability backend for monitoring and debugging.
  *
  */
 export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
