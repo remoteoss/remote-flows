@@ -2,10 +2,6 @@
 
 The ContractorOnboarding flow is a multi-step wizard designed to onboard independent contractors. It guides users through collecting essential information, defining contract terms, setting pricing, and finalizing contract signatures.
 
-## Requirements
-
-Install `react-pdf@10.2.0` and `pdfjs-dist@5.4.296`
-
 ## Overview
 
 The flow manages the complete lifecycle of contractor engagement, from initial information collection to contract signature. It supports both creating new employments and updating existing ones with contract documents and subscription management.
@@ -61,6 +57,7 @@ import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
 The render function receives an object with:
 
 - **`contractorOnboardingBag`** - Contains state, methods, and handlers:
+
   - `stepState.currentStep` - Current step information
   - `isSubmitting` - Loading state during form submission
   - `isLoading` - Loading state while fetching data
