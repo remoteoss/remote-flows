@@ -54,10 +54,12 @@ The bundle size badge system:
 3. Add two secrets:
 
    **Secret 1: BUNDLE_SIZE_GIST_ID**
+
    - Name: `BUNDLE_SIZE_GIST_ID`
    - Value: The Gist ID from step 1 (e.g., `abc123def456`)
 
    **Secret 2: GIST_TOKEN**
+
    - Name: `GIST_TOKEN`
    - Value: The personal access token from step 2
 
@@ -88,10 +90,12 @@ The bundle size badge system:
    ```
 
 2. Check the GitHub Actions workflow:
+
    - Go to Actions → "Update Bundle Size Badge"
    - Wait for the workflow to complete
 
 3. Verify the Gist was updated:
+
    - Visit your Gist URL
    - The `bundle-size.json` file should now contain real data
 

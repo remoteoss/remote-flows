@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.1.3
+
+### Patch Changes
+
+- extract default field components and improve modularity (#617) [#617](https://github.com/remoteoss/remote-flows/pull/617)
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
+
 ## 1.1.2
 
 ### Patch Changes
