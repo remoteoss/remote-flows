@@ -4,9 +4,9 @@ import {
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
-  contractDetailsSchema,
+  contractDetailsPortugalSchema,
   employmentCreatedResponse,
-  employmentResponse,
+  employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { fillBasicInformation } from '@/src/flows/Onboarding/tests/helpers';
 import {
@@ -139,17 +139,17 @@ describe('SaveDraftButton', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
-        return HttpResponse.json(contractDetailsSchema);
+        return HttpResponse.json(contractDetailsPortugalSchema);
       }),
       http.get('*/v1/employments/:id', ({ params }) => {
         // Create a response with the actual employment ID from the request
         const employmentId = params?.id;
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: employmentId,
             },
           },

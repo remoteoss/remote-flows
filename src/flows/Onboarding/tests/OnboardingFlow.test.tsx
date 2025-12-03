@@ -11,16 +11,18 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchema,
-  contractDetailsSchema,
+  contractDetailsPortugalSchema,
   benefitOffersSchema,
   employmentCreatedResponse,
   employmentUpdatedResponse,
   benefitOffersResponse,
-  employmentResponse,
+  employmentDefaultResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
   companyResponse,
   conversionFromEURToUSD,
+  employmentSouthKoreaResponse,
+  contractDetailsSouthKoreaSchema,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -325,11 +327,11 @@ describe('OnboardingFlow', () => {
         }
 
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: employmentId,
             },
           },
@@ -355,7 +357,7 @@ describe('OnboardingFlow', () => {
         return HttpResponse.json(basicInformationSchema);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
-        return HttpResponse.json(contractDetailsSchema);
+        return HttpResponse.json(contractDetailsPortugalSchema);
       }),
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
         return HttpResponse.json(benefitOffersSchema);
@@ -447,7 +449,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
   });
@@ -595,7 +597,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
 
@@ -615,7 +617,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
   });
@@ -671,18 +673,19 @@ describe('OnboardingFlow', () => {
     });
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
-      email: employmentResponse.data.employment.personal_email,
+      email: employmentDefaultResponse.data.employment.personal_email,
       has_seniority_date: 'no',
-      job_title: employmentResponse.data.employment.job_title,
+      job_title: employmentDefaultResponse.data.employment.job_title,
       tax_job_category:
-        employmentResponse.data.employment.basic_information.tax_job_category,
+        employmentDefaultResponse.data.employment.basic_information
+          .tax_job_category,
       tax_servicing_countries:
-        employmentResponse.data.employment.basic_information
+        employmentDefaultResponse.data.employment.basic_information
           .tax_servicing_countries,
-      name: employmentResponse.data.employment.basic_information.name,
+      name: employmentDefaultResponse.data.employment.basic_information.name,
       provisional_start_date:
-        employmentResponse.data.employment.provisional_start_date,
-      work_email: employmentResponse.data.employment.work_email,
+        employmentDefaultResponse.data.employment.provisional_start_date,
+      work_email: employmentDefaultResponse.data.employment.work_email,
     });
 
     await screen.findByText(/Step: Contract Details/i);
@@ -705,7 +708,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
   });
@@ -725,7 +728,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
 
@@ -750,16 +753,17 @@ describe('OnboardingFlow', () => {
     expect(mockOnSubmit).toHaveBeenCalledWith({
       email: 'gabriel@gmail.com',
       has_seniority_date: 'no',
-      job_title: employmentResponse.data.employment.job_title,
-      name: employmentResponse.data.employment.basic_information.name,
+      job_title: employmentDefaultResponse.data.employment.job_title,
+      name: employmentDefaultResponse.data.employment.basic_information.name,
       provisional_start_date:
-        employmentResponse.data.employment.provisional_start_date,
+        employmentDefaultResponse.data.employment.provisional_start_date,
       tax_job_category:
-        employmentResponse.data.employment.basic_information.tax_job_category,
+        employmentDefaultResponse.data.employment.basic_information
+          .tax_job_category,
       tax_servicing_countries:
-        employmentResponse.data.employment.basic_information
+        employmentDefaultResponse.data.employment.basic_information
           .tax_servicing_countries,
-      work_email: employmentResponse.data.employment.work_email,
+      work_email: employmentDefaultResponse.data.employment.work_email,
     });
 
     await screen.findByText(/Step: Contract Details/i);
@@ -782,7 +786,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
 
@@ -825,7 +829,8 @@ describe('OnboardingFlow', () => {
       has_signing_bonus: 'no',
       probation_length_days: 40,
       role_description:
-        employmentResponse.data.employment.contract_details.role_description,
+        employmentDefaultResponse.data.employment.contract_details
+          .role_description,
       salary_installments_confirmation: 'acknowledged',
       work_address: {
         is_home_address: 'yes',
@@ -864,7 +869,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
 
@@ -921,7 +926,7 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentResponse.data.employment.personal_email,
+        employmentDefaultResponse.data.employment.personal_email,
       );
     });
 
@@ -1157,11 +1162,11 @@ describe('OnboardingFlow', () => {
       server.use(
         http.get(`*/v1/employments/${employmentId}`, () => {
           return HttpResponse.json({
-            ...employmentResponse,
+            ...employmentDefaultResponse,
             data: {
-              ...employmentResponse.data,
+              ...employmentDefaultResponse.data,
               employment: {
-                ...employmentResponse.data.employment,
+                ...employmentDefaultResponse.data.employment,
                 employmentId: employmentId,
                 status: status,
               },
@@ -1224,11 +1229,11 @@ describe('OnboardingFlow', () => {
       server.use(
         http.get(`*/v1/employments/${employmentId}`, () => {
           return HttpResponse.json({
-            ...employmentResponse,
+            ...employmentDefaultResponse,
             data: {
-              ...employmentResponse.data,
+              ...employmentDefaultResponse.data,
               employment: {
-                ...employmentResponse.data.employment,
+                ...employmentDefaultResponse.data.employment,
                 id: employmentId,
                 status: status,
               },
@@ -1284,11 +1289,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${employmentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               employmentId: employmentId,
               status: 'invited', // This should trigger auto-navigation to review
             },
@@ -1702,11 +1707,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: uniqueEmploymentId,
               status: 'created', // Ensure it's not a readonly status
             },
@@ -1840,11 +1845,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: uniqueEmploymentId,
               status: 'created', // Ensure it's not a readonly status
             },
@@ -2055,11 +2060,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: uniqueEmploymentId,
               status: 'created', // Ensure it's not a readonly status
             },
@@ -2143,11 +2148,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: uniqueEmploymentId,
               status: 'created', // Ensure it's not a readonly status
             },
@@ -2264,11 +2269,11 @@ describe('OnboardingFlow', () => {
         }
 
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: employmentId,
               contract_details: null,
             },
@@ -2338,11 +2343,11 @@ describe('OnboardingFlow', () => {
     server.use(
       http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               id: uniqueEmploymentId,
               status: 'created', // Ensure it's not a readonly status
             },
@@ -2410,9 +2415,76 @@ describe('OnboardingFlow', () => {
     await waitFor(() => {
       expect(
         screen.getByDisplayValue(
-          employmentResponse.data.employment.basic_information.name,
+          employmentDefaultResponse.data.employment.basic_information.name,
         ),
       ).toBeInTheDocument();
+    });
+  });
+
+  it('should load employment data from south korea and make sure that meal allowance value is displayeded in the form', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentSouthKoreaResponse,
+          data: {
+            ...employmentSouthKoreaResponse.data,
+            employment: {
+              ...employmentSouthKoreaResponse.data.employment,
+              id: uniqueEmploymentId,
+            },
+          },
+        });
+      }),
+      http.get(`*/v1/countries/KOR/contract_details*`, () => {
+        return HttpResponse.json(contractDetailsSouthKoreaSchema);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        countryCode='KOR'
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Meal allowance per month/i)).toHaveValue(
+        '0',
+      );
     });
   });
 });

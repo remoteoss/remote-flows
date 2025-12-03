@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.1.3
+
+### Patch Changes
+
+- extract default field components and improve modularity (#617) [#617](https://github.com/remoteoss/remote-flows/pull/617)
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
+
 ## 1.1.2
 
 ### Patch Changes
@@ -78,6 +85,12 @@
 - Override json_schema_version for DEU contract details (#564) [#564](https://github.com/remoteoss/remote-flows/pull/564)
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
+
+## 0.28.1
+
+### Fixes
+
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
 
 ## 0.28.0
 
