@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.1.4
+
+### Patch Changes
+
+- move PDF dependencies to main package (#635) [#635](https://github.com/remoteoss/remote-flows/pull/635)
+
 ## 1.1.3
 
 ### Patch Changes
