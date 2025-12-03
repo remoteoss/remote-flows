@@ -4,8 +4,8 @@ import {
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
-  contractDetailsSchema,
-  employmentResponse,
+  contractDetailsPortugalSchema,
+  employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
@@ -108,11 +108,11 @@ describe('OnboardingInvite', () => {
       }),
 
       http.get('*/v1/countries/*/contract_details*', () => {
-        return HttpResponse.json(contractDetailsSchema);
+        return HttpResponse.json(contractDetailsPortugalSchema);
       }),
 
       http.get('*/v1/employments/*', () => {
-        return HttpResponse.json(employmentResponse);
+        return HttpResponse.json(employmentDefaultResponse);
       }),
 
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
@@ -392,11 +392,11 @@ describe('OnboardingInvite', () => {
       }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               status: 'created_reserve_paid',
             },
           },
@@ -429,11 +429,11 @@ describe('OnboardingInvite', () => {
       }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               status: 'created_reserve_paid',
             },
           },
@@ -575,11 +575,11 @@ describe('OnboardingInvite', () => {
         }),
         http.get('*/v1/employments/*', () => {
           return HttpResponse.json({
-            ...employmentResponse,
+            ...employmentDefaultResponse,
             data: {
-              ...employmentResponse.data,
+              ...employmentDefaultResponse.data,
               employment: {
-                ...employmentResponse.data.employment,
+                ...employmentDefaultResponse.data.employment,
                 status,
               },
             },
@@ -616,11 +616,11 @@ describe('OnboardingInvite', () => {
       }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               status: 'created',
             },
           },
@@ -664,11 +664,11 @@ describe('OnboardingInvite', () => {
       }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json({
-          ...employmentResponse,
+          ...employmentDefaultResponse,
           data: {
-            ...employmentResponse.data,
+            ...employmentDefaultResponse.data,
             employment: {
-              ...employmentResponse.data.employment,
+              ...employmentDefaultResponse.data.employment,
               status: 'created',
             },
           },
@@ -799,11 +799,11 @@ describe('OnboardingInvite', () => {
         }),
         http.get('*/v1/employments/*', () => {
           return HttpResponse.json({
-            ...employmentResponse,
+            ...employmentDefaultResponse,
             data: {
-              ...employmentResponse.data,
+              ...employmentDefaultResponse.data,
               employment: {
-                ...employmentResponse.data.employment,
+                ...employmentDefaultResponse.data.employment,
                 status: 'created_reserve_paid',
               },
             },

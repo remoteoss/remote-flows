@@ -235,10 +235,12 @@ export const useJSONSchemaForm = ({
         {},
       );
 
-      const initialValues = {
-        ...fieldValues,
-        ...moneyFieldsData,
-      };
+      const initialValues = JSON.parse(
+        JSON.stringify({
+          ...fieldValues,
+          ...moneyFieldsData,
+        }),
+      );
 
       return {
         meta: {
