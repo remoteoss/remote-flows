@@ -61,7 +61,6 @@ import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
 The render function receives an object with:
 
 - **`contractorOnboardingBag`** - Contains state, methods, and handlers:
-
   - `stepState.currentStep` - Current step information
   - `isSubmitting` - Loading state during form submission
   - `isLoading` - Loading state while fetching data
