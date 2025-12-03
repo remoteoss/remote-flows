@@ -86,6 +86,12 @@
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
 
+## 0.28.1
+
+### Fixes
+
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
+
 ## 0.28.0
 
 ### Minor Changes
