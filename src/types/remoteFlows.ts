@@ -104,7 +104,7 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property in the FileUploadField component
+// We exclude the file type as we're extending the fieldData property
 type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries' | 'text'>;
 
 export type Components = {
