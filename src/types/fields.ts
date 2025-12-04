@@ -51,7 +51,7 @@ type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
   meta?: {
     helpCenter?: {
       callToAction: string;
-      id: string;
+      id: number;
     };
   };
 };
@@ -64,7 +64,7 @@ type FieldDatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
   meta?: {
     helpCenter?: {
       callToAction: string;
-      id: string;
+      id: number;
     };
   };
   minDate?: string;

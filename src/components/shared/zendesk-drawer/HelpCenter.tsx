@@ -1,7 +1,7 @@
 import { ZendeskTriggerButton } from './ZendeskTriggerButton';
 
 type HelpCenterProps = {
-  helpCenter?: { callToAction: string; id: string };
+  helpCenter?: { callToAction: string; id: number };
 };
 
 export function HelpCenter({ helpCenter }: HelpCenterProps) {
@@ -9,7 +9,7 @@ export function HelpCenter({ helpCenter }: HelpCenterProps) {
     return null;
   }
   return (
-    <ZendeskTriggerButton zendeskId={Number(helpCenter.id)}>
+    <ZendeskTriggerButton zendeskId={helpCenter.id}>
       {helpCenter.callToAction}
     </ZendeskTriggerButton>
   );
