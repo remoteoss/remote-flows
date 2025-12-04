@@ -32,8 +32,6 @@
 
 ### Minor Changes
 
-You can check the latest changes to Germany by visiting [Schema Versions](./docs/SCHEMA_VERSIONS.md)
-
 - consolidate test setup with shared TestProviders wrapper (#592) [#592](https://github.com/remoteoss/remote-flows/pull/592)
 - add date picker input component and update tests (#612) [#612](https://github.com/remoteoss/remote-flows/pull/612)
 - migrate to json-schema-form-next library (#596) [#596](https://github.com/remoteoss/remote-flows/pull/596)
@@ -42,6 +40,7 @@ You can check the latest changes to Germany by visiting [Schema Versions](./docs
 - add a fielset to be more similar to Remote's (#621) [#621](https://github.com/remoteoss/remote-flows/pull/621)
 - add automated bundle size tracking and monitoring (#616) [#616](https://github.com/remoteoss/remote-flows/pull/616)
 - add country-specific contract schema versioning (#614) [#614](https://github.com/remoteoss/remote-flows/pull/614)
+  - Germany contract_details v2.0 now available — [view changes](./docs/SCHEMA_VERSIONS.md#germany-deu)
 
 ## 1.0.0
 
