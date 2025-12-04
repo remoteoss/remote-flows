@@ -32,6 +32,8 @@
 
 ### Minor Changes
 
+You can check the latest changes to Germany by visiting [Schema Versions](./docs/SCHEMA_VERSIONS.md)
+
 - consolidate test setup with shared TestProviders wrapper (#592) [#592](https://github.com/remoteoss/remote-flows/pull/592)
 - add date picker input component and update tests (#612) [#612](https://github.com/remoteoss/remote-flows/pull/612)
 - migrate to json-schema-form-next library (#596) [#596](https://github.com/remoteoss/remote-flows/pull/596)
