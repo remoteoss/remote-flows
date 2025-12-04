@@ -10,6 +10,7 @@ import { FormItem } from '@/src/components/ui/form';
 import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryComponentProps } from '@/src/types/fields';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export function CountryFieldDefault({
   field,
@@ -72,7 +73,10 @@ export function CountryFieldDefault({
         />
       </FormControl>
       {fieldData.description && (
-        <FormDescription>{fieldData.description}</FormDescription>
+        <FormDescription>
+          {fieldData.description}{' '}
+          <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+        </FormDescription>
       )}
       {fieldState.error && <FormMessage />}
     </FormItem>
