@@ -60,7 +60,13 @@ export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
 
-type FieldDatePickerDataProps = FieldDataProps & {
+type FieldDatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: string;
+    };
+  };
   minDate?: string;
   maxDate?: string;
 };
