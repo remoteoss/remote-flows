@@ -343,7 +343,7 @@ export const useUpdateEmployment = (
   const jsonSchemaQueryParams = {
     employment_basic_information_json_schema_version:
       options?.jsonSchemaVersion?.form_schema?.employment_basic_information,
-    employment_contract_details_json_schema_version:
+    contract_details_json_schema_version:
       options?.jsonSchemaVersion?.form_schema?.contract_details,
   };
 
