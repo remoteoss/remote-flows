@@ -1,5 +1,33 @@
 # @remoteoss/remote-flows
 
+## 1.1.4
+
+### Patch Changes
+
+- move PDF dependencies to main package (#635) [#635](https://github.com/remoteoss/remote-flows/pull/635)
+
+## 1.1.3
+
+### Patch Changes
+
+- extract default field components and improve modularity (#617) [#617](https://github.com/remoteoss/remote-flows/pull/617)
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
+
+## 1.1.2
+
+### Patch Changes
+
+- implement lazy loading for PDF preview component (#611) [#611](https://github.com/remoteoss/remote-flows/pull/611)
+- improve nested error handling in validation (#631) [#631](https://github.com/remoteoss/remote-flows/pull/631)
+
+## 1.1.1
+
+### Patch Changes
+
+- fix form values and checkbox logic (#625) [#625](https://github.com/remoteoss/remote-flows/pull/625)
+- ensure day is zero-padded in getYearMonthDate (#628) [#628](https://github.com/remoteoss/remote-flows/pull/628)
+- reorder handleCheckboxChange parameters for consistency (#629) [#629](https://github.com/remoteoss/remote-flows/pull/629)
+
 ## 1.1.0
 
 ### Minor Changes
@@ -63,6 +91,12 @@
 - Override json_schema_version for DEU contract details (#564) [#564](https://github.com/remoteoss/remote-flows/pull/564)
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
+
+## 0.28.1
+
+### Fixes
+
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
 
 ## 0.28.0
 

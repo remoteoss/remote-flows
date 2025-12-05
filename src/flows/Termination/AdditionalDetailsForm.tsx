@@ -44,6 +44,10 @@ export function AdditionalDetailsForm({
   };
 
   return (
-    <TerminationForm fields={terminationBag?.fields} onSubmit={handleSubmit} />
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      fields={terminationBag?.fields}
+      onSubmit={handleSubmit}
+    />
   );
 }
