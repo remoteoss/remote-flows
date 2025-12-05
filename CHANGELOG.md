@@ -1,5 +1,19 @@
 # @remoteoss/remote-flows
 
+## 1.2.0
+
+### Minor Changes
+
+- extract default field components into separate modules (#619) [#619](https://github.com/remoteoss/remote-flows/pull/619)
+- extract default field components and simplify button logic (#623) [#623](https://github.com/remoteoss/remote-flows/pull/623)
+- add help center drawer support to country and date picker fields (#638) [#638](https://github.com/remoteoss/remote-flows/pull/638)
+
+## 1.1.4
+
+### Patch Changes
+
+- move PDF dependencies to main package (#635) [#635](https://github.com/remoteoss/remote-flows/pull/635)
+
 ## 1.1.3
 
 ### Patch Changes

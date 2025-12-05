@@ -10,6 +10,7 @@ import {
   FieldComponentProps,
   FileComponentProps,
   StatementComponentProps,
+  TextFieldComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -103,12 +104,13 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property in the FileUploadField component
-type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries'>;
+// We exclude the file type as we're extending the fieldData property
+type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries' | 'text'>;
 
 export type Components = {
   [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
 } & {
+  text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
