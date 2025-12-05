@@ -60,7 +60,7 @@ export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
 
-type FieldDatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
+type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
   meta?: {
     helpCenter?: {
       callToAction: string;
@@ -72,7 +72,15 @@ type FieldDatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
 };
 
 export type DatePickerComponentProps = FieldComponentProps & {
-  fieldData: FieldDatePickerDataProps;
+  fieldData: DatePickerDataProps;
+};
+
+export type TextFieldDataProps = FieldDataProps & {
+  includeErrorMessage?: boolean;
+};
+
+export type TextFieldComponentProps = FieldComponentProps & {
+  fieldData: TextFieldDataProps;
 };
 
 /**

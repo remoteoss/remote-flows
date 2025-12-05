@@ -110,6 +110,7 @@ export const JSONSchemaFormFields = ({
           );
         }
 
+        // TODO: Have doubts about this, it seems we only support checkbox for multiple select
         if (field.inputType === 'select' && field.multiple) {
           FieldComponent = fieldsMap['multi-select'];
         }

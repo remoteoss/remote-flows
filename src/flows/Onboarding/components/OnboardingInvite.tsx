@@ -123,40 +123,18 @@ export function OnboardingInvite({
     onboardingBag.employment?.status &&
     !onboardingBag.isEmploymentReadOnly;
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        disabled={
-          employmentInviteMutation.isPending ||
-          useCreateReserveInvoiceMutation.isPending ||
-          props.disabled
-        }
-        onClick={(evt) => {
-          handleSubmit();
-          props.onClick?.(evt);
-        }}
-      >
-        {render({
-          employmentStatus: isReserveFlow
-            ? 'created_awaiting_reserve'
-            : 'invited',
-        })}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button
+    <CustomButton
       {...props}
       disabled={
         employmentInviteMutation.isPending ||
         useCreateReserveInvoiceMutation.isPending ||
         props.disabled
       }
-      onClick={() => {
+      onClick={(evt) => {
         handleSubmit();
+        props.onClick?.(evt);
       }}
     >
       {render({
@@ -164,6 +142,6 @@ export function OnboardingInvite({
           ? 'created_awaiting_reserve'
           : 'invited',
       })}
-    </Button>
+    </CustomButton>
   );
 }
