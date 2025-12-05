@@ -53,6 +53,7 @@ export type JSFField = {
 };
 
 export type TableComponentProps<T = $TSFixMe> = {
+  ref: React.ForwardedRef<HTMLTableElement>;
   data: T[] | undefined;
   columns: ColumnDef<T>[];
   className?: string;
@@ -92,6 +93,7 @@ export type DrawerComponentProps = {
   trigger: React.ReactElement;
   children?: React.ReactNode;
   direction?: 'left' | 'right';
+  className?: string;
 };
 
 export type FieldSetToggleComponentProps = {
