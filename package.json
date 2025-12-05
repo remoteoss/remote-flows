@@ -40,13 +40,6 @@
       },
       "default": "./dist/internals.js"
     },
-    "./default-components": {
-      "import": {
-        "types": "./dist/default-components.d.ts",
-        "default": "./dist/default-components.js"
-      },
-      "default": "./dist/default-components.js"
-    },
     "./flows/*": {
       "import": {
         "types": "./dist/flows/*.d.ts",
