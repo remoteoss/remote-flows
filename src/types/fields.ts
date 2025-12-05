@@ -54,13 +54,21 @@ export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
 
-type FieldDatePickerDataProps = FieldDataProps & {
+type DatePickerDataProps = FieldDataProps & {
   minDate?: string;
   maxDate?: string;
 };
 
 export type DatePickerComponentProps = FieldComponentProps & {
-  fieldData: FieldDatePickerDataProps;
+  fieldData: DatePickerDataProps;
+};
+
+export type TextFieldDataProps = FieldDataProps & {
+  includeErrorMessage?: boolean;
+};
+
+export type TextFieldComponentProps = FieldComponentProps & {
+  fieldData: TextFieldDataProps;
 };
 
 /**

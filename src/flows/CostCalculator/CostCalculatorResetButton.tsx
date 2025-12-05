@@ -12,26 +12,9 @@ export function CostCalculatorResetButton({
   const { form, formId, costCalculatorBag } = useCostCalculatorContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        type='reset'
-        form={formId}
-        onClick={(evt) => {
-          costCalculatorBag?.resetForm();
-          form.reset();
-          props.onClick?.(evt);
-        }}
-      >
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button
+    <CustomButton
       {...props}
       type='reset'
       className={cn(
@@ -46,6 +29,6 @@ export function CostCalculatorResetButton({
       }}
     >
       {children}
-    </Button>
+    </CustomButton>
   );
 }
