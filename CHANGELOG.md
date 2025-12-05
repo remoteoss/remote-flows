@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 0.28.2
+
+### Fixes
+
+- fix `updateEmployment`, passing incorrect queryParam
+
 ## 0.28.1
 
 ### Fixes
