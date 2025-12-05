@@ -17,6 +17,7 @@ import {
 } from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export function DatePickerFieldDefault({
   field,
@@ -78,7 +79,11 @@ export function DatePickerFieldDefault({
           />
         </PopoverContent>
       </Popover>
-      {description ? <FormDescription>{description}</FormDescription> : null}
+      {description ? (
+        <FormDescription>
+          {description} <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+        </FormDescription>
+      ) : null}
       {fieldState.error && (
         <FormMessage className='RemoteFlows__DatePickerField__Error' />
       )}

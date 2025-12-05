@@ -43,10 +43,16 @@ export type FileComponentProps = FieldComponentProps & {
   fieldData: FieldFileDataProps;
 };
 
-type FieldCountryDataProps = FieldDataProps & {
+type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
   $meta: {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
+  };
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: number;
+    };
   };
 };
 
@@ -54,7 +60,13 @@ export type CountryComponentProps = FieldComponentProps & {
   fieldData: FieldCountryDataProps;
 };
 
-type DatePickerDataProps = FieldDataProps & {
+type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: number;
+    };
+  };
   minDate?: string;
   maxDate?: string;
 };
