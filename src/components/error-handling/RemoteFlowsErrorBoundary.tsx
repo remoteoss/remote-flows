@@ -7,7 +7,6 @@ import {
 } from '@/src/components/error-handling/ErrorContext';
 import { Environment } from '@/src/environments';
 import { Client } from '@/src/client/client';
-import { markErrorAsHandled } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -91,8 +90,6 @@ export class RemoteFlowsErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
-
-    markErrorAsHandled(error);
 
     const errorContext = this.context?.errorContext;
 

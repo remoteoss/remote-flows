@@ -5,10 +5,8 @@ import {
   ReactNode,
   useMemo,
   useCallback,
-  useEffect,
 } from 'react';
 import type { ErrorContextData } from './types';
-import { globalErrorContextRef } from '@/src/queryConfig';
 
 export type ErrorContextValue = {
   errorContext: ErrorContextData;
@@ -26,11 +24,6 @@ export function ErrorContextProvider({ children }: { children: ReactNode }) {
   const updateContext = useCallback((updates: Partial<ErrorContextData>) => {
     setErrorContext((prev) => ({ ...prev, ...updates }));
   }, []);
-
-  // Sync error context to global ref for React Query error handlers
-  useEffect(() => {
-    globalErrorContextRef.current = errorContext;
-  }, [errorContext]);
 
   // Memoize the value object to prevent unnecessary re-renders
   // Note: setContext is stable from useState and doesn't need to be in deps

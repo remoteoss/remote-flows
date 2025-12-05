@@ -14,7 +14,7 @@ export const client = {
   get: vi.fn(),
 } as $TSFixMe;
 
-export const queryClient = getQueryClient(false, client, 'testing' as $TSFixMe);
+export const queryClient = getQueryClient();
 
 /**
  * Wrapper component for tests that need ErrorContext, QueryClient, and FormFields providers

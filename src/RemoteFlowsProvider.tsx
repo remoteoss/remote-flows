@@ -8,12 +8,8 @@ import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
 import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
-import {
-  ErrorContextProvider,
-  useErrorContext,
-} from '@/src/components/error-handling/ErrorContext';
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 import { getQueryClient } from '@/src/queryConfig';
-import { useErrorReportingForUnhandledErrors } from '@/src/components/error-handling/useErrorReportingForUnhandledErrors';
 
 type RemoteFlowContextWrapperProps = {
   children: React.ReactNode;
@@ -24,18 +20,8 @@ type RemoteFlowContextWrapperProps = {
 
 function RemoteFlowContextWrapper({
   children,
-  environment,
-  debug,
   client,
 }: RemoteFlowContextWrapperProps) {
-  const { errorContext } = useErrorContext();
-  useErrorReportingForUnhandledErrors(
-    errorContext,
-    environment ?? 'production',
-    client,
-    Boolean(debug),
-  );
-
   return (
     <RemoteFlowContext.Provider value={{ client }}>
       {children}
@@ -58,6 +44,8 @@ export function FormFieldsProvider({
   );
 }
 
+const queryClient = getQueryClient();
+
 export function RemoteFlows({
   auth,
   children,
@@ -71,7 +59,6 @@ export function RemoteFlows({
   const remoteApiClient = useRef(
     createClient(auth, { proxy, environment }),
   ).current;
-  const queryClient = getQueryClient(debug, remoteApiClient, environment);
 
   return (
     <ErrorContextProvider>

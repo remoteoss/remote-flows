@@ -1,7 +1,6 @@
 import {
   buildErrorPayload,
   reportTelemetryError,
-  shouldReportError,
 } from '@/src/components/error-handling/telemetryService';
 import * as utils from '@/src/components/error-handling/utils';
 import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
@@ -50,42 +49,6 @@ describe('telemetryService', () => {
     expect(payload.metadata.timestamp).toBeDefined();
     expect(payload.metadata.url).toBe('https://telemetry.local/report');
     expect(payload.metadata.environment).toBe('production');
-  });
-
-  it('should report non-network errors', () => {
-    const error = new Error('Render error');
-
-    vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
-    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
-
-    const payload = buildErrorPayload(error, '1.0.0', 'production');
-
-    expect(shouldReportError(error, payload)).toBe(true);
-  });
-
-  it('should skip 404 network errors', () => {
-    const error = new Error('HTTP 404: Not Found');
-
-    vi.mocked(utils.categorizeError).mockReturnValue('NETWORK_ERROR');
-    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
-
-    const payload = buildErrorPayload(error, '1.0.0', 'production');
-
-    expect(shouldReportError(error, payload)).toBe(false);
-  });
-
-  it('should report server errors', () => {
-    const error = new Error('HTTP 500: Internal Server Error');
-
-    vi.mocked(utils.categorizeError).mockReturnValue('NETWORK_ERROR');
-    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
-
-    const payload = buildErrorPayload(error, '1.0.0', 'production');
-
-    expect(shouldReportError(error, payload)).toBe(true);
   });
 
   it('should deduplicate rapid duplicate calls', () => {

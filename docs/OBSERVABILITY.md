@@ -10,8 +10,6 @@
   - [1. Error Context System](#1-error-context-system)
   - [2. Error Boundary](#2-error-boundary)
   - [3. Telemetry Service](#3-telemetry-service)
-  - [5. Unhandled Error Reporting](#5-unhandled-error-reporting)
-  - [6. React Query Integration](#6-react-query-integration)
 - [Error Payload Schema](#error-payload-schema)
   - [Full Payload Structure](#full-payload-structure)
   - [Example Payload](#example-payload)
@@ -30,23 +28,20 @@
 - [Testing](#testing)
   - [Testing Error Boundaries](#testing-error-boundaries)
 - [Architecture Decisions](#architecture-decisions)
-  - [Why WeakSet for Handled Errors?](#why-weakset-for-handled-errors)
-  - [Why Global Ref for Error Context?](#why-global-ref-for-error-context)
   - [Why 100ms Deduplication Window?](#why-100ms-deduplication-window)
-  - [Why Filter 404 Errors?](#why-filter-404-errors)
 - [Summary](#summary)
 - [Additional Resources](#additional-resources)
 
 ## Overview
 
-RemoteFlows SDK includes a comprehensive observability system that automatically captures, categorizes, and reports errors to a telemetry API. The system is designed to:
+RemoteFlows SDK includes a lightweight error boundary system that helps debug issues without adding observability overhead to the host application. The system is designed to:
 
-- **Prevent crashes**: Error boundaries catch errors before they crash the host application
-- **Track context**: Automatically captures flow, step, and query/mutation metadata
+- **Prevent crashes**: Error boundaries catch rendering errors before they crash the host application
+- **Track context**: Captures flow and step information for debugging
 - **Categorize intelligently**: Classifies errors by type and severity
-- **Filter noise**: Only reports actionable errors (excludes client errors like 404s)
-- **Deduplicate**: Prevents duplicate error reports from React Strict Mode
 - **Debug-friendly**: Includes rich console logging when debug mode is enabled
+- **Deduplicate**: Prevents duplicate error reports from React Strict Mode
+- **Host app friendly**: No automatic error reporting that could interfere with the host's monitoring
 
 ## Architecture
 
@@ -54,35 +49,26 @@ RemoteFlows SDK includes a comprehensive observability system that automatically
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     RemoteFlows Provider                     │
-│                                                              │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │         ErrorContextProvider                        │    │
-│  │  (Manages flow/step context for error reports)     │    │
-│  │                                                      │    │
-│  │  ┌──────────────────────────────────────────────┐  │    │
-│  │  │   RemoteFlowsErrorBoundary                   │  │    │
-│  │  │   • Catches render errors                    │  │    │
-│  │  │   • Reports to telemetry API                 │  │    │
-│  │  │   • Shows fallback UI or rethrows            │  │    │
-│  │  │                                               │  │    │
-│  │  │  ┌────────────────────────────────────────┐  │  │    │
-│  │  │  │   QueryClientProvider                  │  │  │    │
-│  │  │  │   • Query/Mutation error handlers     │  │  │    │
-│  │  │  │   • Reports React Query errors         │  │  │    │
-│  │  │  │                                         │  │  │    │
-│  │  │  │  ┌──────────────────────────────────┐  │  │  │    │
-│  │  │  │  │   Flow Components                │  │  │  │    │
-│  │  │  │  │   • useErrorReporting()          │  │  │  │    │
-│  │  │  │  │   • Updates error context        │  │  │  │    │
-│  │  │  │  │                                   │  │  │  │    │
-│  │  │  │  │  useErrorReportingForUnhandled  │  │  │  │    │
-│  │  │  │  │  • window.error listener         │  │  │  │    │
-│  │  │  │  │  • unhandledrejection listener   │  │  │  │    │
-│  │  │  │  └──────────────────────────────────┘  │  │  │    │
-│  │  │  └────────────────────────────────────────┘  │  │    │
-│  │  └──────────────────────────────────────────────┘  │    │
-│  └──────────────────────────────────────────────────────┘    │
+│                     RemoteFlows Provider                    │
+│  ┌────────────────────────────────────────────────────┐     │
+│  │         ErrorContextProvider                       │     │
+│  │  (Manages flow/step context for error reports)     │     │
+│  │  ┌──────────────────────────────────────────────┐  │     │
+│  │  │   RemoteFlowsErrorBoundary                   │  │     │
+│  │  │   • Catches render errors                    │  │     │
+│  │  │   • Reports to telemetry API                 │  │     │
+│  │  │   • Shows fallback UI or rethrows            │  │     │
+│  │  │  ┌────────────────────────────────────────┐  │  │     │
+│  │  │  │   QueryClientProvider                  │  │  │     │
+│  │  │  │   • Query/Mutation handling            │  │  │     │
+│  │  │  │  ┌──────────────────────────────────┐  │  │  │     │
+│  │  │  │  │   Flow Components                │  │  │  │     │
+│  │  │  │  │   • useErrorReporting()          │  │  │  │     │
+│  │  │  │  │   • Updates error context        │  │  │  │     │
+│  │  │  │  └──────────────────────────────────┘  │  │  │     │
+│  │  │  └────────────────────────────────────────┘  │  │     │
+│  │  └──────────────────────────────────────────────┘  │     │
+│  └────────────────────────────────────────────────────│     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -127,10 +113,6 @@ const onStepChange = useCallback(
 );
 ```
 
-**Global Context Reference:**
-
-The error context is synchronized to a global ref (`globalErrorContextRef`) so React Query error handlers can access it without prop drilling.
-
 ### 2. Error Boundary
 
 **File:** `src/components/error-handling/RemoteFlowsErrorBoundary.tsx`
@@ -173,43 +155,13 @@ Main entry point for error reporting:
 
 1. Checks deduplication (100ms window)
 2. Builds error payload
-3. Filters via `shouldReportError()`
-4. Logs to console (debug mode)
-5. POSTs to `/v1/telemetry/errors` endpoint
-6. Silently fails if telemetry API is down
+3. Logs to console (debug mode)
+4. POSTs to `/v1/telemetry/errors` endpoint
+5. Silently fails if telemetry API is down
 
 **Deduplication:**
 
 Uses a `Map<errorSignature, timestamp>` to prevent duplicate reports within 100ms (catches React Strict Mode double-invokes).
-
-### 5. Unhandled Error Reporting
-
-**File:** `src/components/error-handling/useErrorReportingForUnhandledErrors.tsx`
-
-**Purpose:** Captures errors not caught by error boundaries.
-
-**Listeners:**
-
-- `window.addEventListener('error')` - Runtime JavaScript errors
-- `window.addEventListener('unhandledrejection')` - Promise rejections
-
-**Deduplication with Error Boundary:**
-
-Uses a `WeakSet<Error>` to track errors already handled by error boundaries, preventing duplicate reports.
-
-### 6. React Query Integration
-
-**File:** `src/queryConfig.ts`
-
-**Purpose:** Reports errors from TanStack Query operations.
-
-**Context Enrichment:**
-
-Query/mutation errors include:
-
-- Current flow and step from `globalErrorContextRef`
-- `queryKey` or `mutationKey` in metadata
-- All standard error payload fields
 
 ## Error Payload Schema
 
@@ -493,19 +445,6 @@ it('should catch and report errors', async () => {
 
 ## Architecture Decisions
 
-### Why WeakSet for Handled Errors?
-
-- **Automatic cleanup**: Garbage collected when errors are no longer referenced
-- **No memory leaks**: Unlike Map, doesn't require manual cleanup
-- **Perfect for deduplication**: Errors already handled by boundary shouldn't be reported by window listener
-
-### Why Global Ref for Error Context?
-
-- **React Query integration**: Error handlers don't have access to React Context
-- **Performance**: Avoids prop drilling through component tree
-- **Simplicity**: Single source of truth for current error context
-- **Synchronization**: Automatically updated by ErrorContextProvider
-
 ### Why 100ms Deduplication Window?
 
 - **React Strict Mode**: In development, React intentionally double-invokes effects
@@ -513,30 +452,17 @@ it('should catch and report errors', async () => {
 - **Safety margin**: 100ms catches legitimate duplicates without filtering distinct errors
 - **Cleanup efficiency**: Short enough to periodically clean up without bloat
 
-### Why Filter 404 Errors?
-
-- **Expected behavior**: 404s are often expected (e.g., checking if resource exists)
-- **High volume**: Can create noise in telemetry data
-- **Not actionable**: Usually don't indicate SDK bugs
-- **User decision**: Developers can catch 404s in their own error handlers if needed
-
-### WAF caveats
-
-When sending the data to the BE, we avoid sending localhost as WAF blocks it + encode with base64 the stack to avoid WAF to intervene
-
 ---
 
 ## Summary
 
-The RemoteFlows observability system provides:
+RemoteFlows includes a lightweight error boundary system that:
 
-✅ **Automatic error capture** - Error boundaries + window listeners  
-✅ **Rich context** - Flow, step, query/mutation metadata  
-✅ **Smart filtering** - Only reports actionable errors  
-✅ **Deduplication** - Prevents noise from React Strict Mode  
-✅ **Intelligent classification** - Categories and severity levels  
+✅ **Catches render errors** - Error boundaries prevent crashes and show fallback UI  
+✅ **Rich context** - Captures flow and step information for debugging  
+✅ **Intelligent classification** - Categorizes errors by type and severity  
 ✅ **Debug-friendly** - Verbose console logging when enabled  
-✅ **Non-blocking** - Never crashes the app, even if telemetry fails  
+✅ **Non-blocking** - Never crashes the app, even if error handling fails  
 ✅ **Production-ready** - Tested with comprehensive test suite  
 ✅ **Zero-config** - Works out of the box with sensible defaults
 
