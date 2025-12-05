@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.1.0",
+  "version": "1.1.4",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check && npm run test",
@@ -39,13 +39,6 @@
         "default": "./dist/internals.js"
       },
       "default": "./dist/internals.js"
-    },
-    "./default-components": {
-      "import": {
-        "types": "./dist/default-components.d.ts",
-        "default": "./dist/default-components.js"
-      },
-      "default": "./dist/default-components.js"
     },
     "./flows/*": {
       "import": {
@@ -101,15 +94,15 @@
     "lodash.mergewith": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
-    "lucide-react": "^0.554.0",
-    "pdfjs-dist": "^5.4.394",
+    "lucide-react": "0.477.0",
+    "pdfjs-dist": "^5.4.296",
     "postcss": "^8.5.3",
     "react-day-picker": "^8.10.1",
     "react-flagpack": "^2.0.6",
-    "react-hook-form": "7.54.2",
+    "react-hook-form": "^7.54.2",
     "react-pdf": "^10.2.0",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.17",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss": "^4.0.9",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
     "yup": "^0.32.0"

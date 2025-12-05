@@ -2,7 +2,6 @@ import {
   RemoteFlows as RemoteFlowsAuth,
   RemoteFlowsSDKProps,
 } from '@remoteoss/remote-flows';
-import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import { ReactNode, useMemo } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 
@@ -70,7 +69,6 @@ export const RemoteFlows = ({
       <RemoteFlowsAuth
         environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
         auth={auth}
-        components={defaultComponents}
         errorBoundary={{
           useParentErrorBoundary: true,
         }}
