@@ -277,15 +277,76 @@ This is useful when testing badge changes or when you need to update the badge w
 
 ## Release Process
 
-We use an automated release workflow. See the main [README.md](./README.md#release-process) for details.
+We use an automated release workflow with two different processes depending on the type of release.
 
-### Quick Reference
+### Normal Release (from main)
+
+For regular releases with new features and fixes:
 
 1. Install gh CLI: `brew install gh`
 2. Authenticate: `gh auth login`
 3. Run release script: `npm run release`
 4. Review and merge the PR
 5. GitHub will automatically publish to npm
+
+### Hotfix Release (from a specific version)
+
+For urgent fixes that need to be released from a previous version without including unreleased changes from main.
+
+#### When to Use Hotfixes
+
+- Critical bugs in production that can't wait for the next regular release
+- Security vulnerabilities that need immediate patching
+- Breaking issues affecting users on a specific version
+
+#### Step 1: Create Hotfix Branch
+
+Start from the version tag you want to hotfix:
+
+```bash
+# Example: Create hotfix for v0.28.0
+git checkout -b release/0.28.1 v0.28.0
+```
+
+#### Step 2: Make Your Fix
+
+Make your changes and commit them using conventional commits:
+
+```bash
+# Make your changes
+git add .
+git commit -m "fix: description of the hotfix"
+```
+
+#### Step 3: Prepare Version and Changelog
+
+Execute `npm run release`
+
+#### Step 4: Trigger Release Workflow
+
+1. Go to [Actions → Release workflow](https://github.com/remoteoss/remote-flows/actions/workflows/release.yml)
+2. Click "Run workflow"
+3. Select branch: `release/0.28.1` (or your hotfix branch name)
+4. Click "Run workflow"
+
+The workflow will:
+
+- Build and test from your hotfix branch
+- Publish to npm with the version from your branch's `package.json`
+- Create a git tag (e.g., `v0.28.1`)
+- Create a GitHub release with changelog content
+
+#### Step 5: Backport to Main (if needed)
+
+If the fix should also be in main, do the necessary changes a do a normal release
+
+### Version Numbering
+
+Follow semantic versioning:
+
+- **Patch** (0.0.x): Bug fixes, security patches (used for hotfixes)
+- **Minor** (0.x.0): New features, backward-compatible changes
+- **Major** (x.0.0): Breaking changes
 
 ## Tips & Best Practices
 
