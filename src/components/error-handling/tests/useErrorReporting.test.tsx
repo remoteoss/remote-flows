@@ -1,4 +1,3 @@
-// src/components/error-handling/tests/useErrorReporting.test.tsx
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
 import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
@@ -17,7 +16,7 @@ describe('useErrorReporting', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorContext).toEqual(initialContext);
+      expect(result.current.errorContext.current).toEqual(initialContext);
     });
   });
 
@@ -31,7 +30,7 @@ describe('useErrorReporting', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorContext).toEqual({
+      expect(result.current.errorContext.current).toEqual({
         flow: 'test',
         step: 'contract_details',
       });
@@ -49,7 +48,7 @@ describe('useErrorReporting', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.errorContext).toEqual({});
+      expect(result.current.errorContext.current).toEqual({});
     });
   });
 });

@@ -1,16 +1,16 @@
 import {
   createContext,
   useContext,
-  useState,
   ReactNode,
   useMemo,
   useCallback,
+  useRef,
+  RefObject,
 } from 'react';
 import type { ErrorContextData } from './types';
 
 export type ErrorContextValue = {
-  errorContext: ErrorContextData;
-  setErrorContext: (context: ErrorContextData) => void;
+  errorContextRef: RefObject<ErrorContextData>;
   updateContext: (updates: Partial<ErrorContextData>) => void;
 };
 
@@ -19,17 +19,20 @@ export const ErrorContext = createContext<ErrorContextValue | undefined>(
 );
 
 export function ErrorContextProvider({ children }: { children: ReactNode }) {
-  const [errorContext, setErrorContext] = useState<ErrorContextData>({});
+  const errorContextRef = useRef<ErrorContextData>({});
 
   const updateContext = useCallback((updates: Partial<ErrorContextData>) => {
-    setErrorContext((prev) => ({ ...prev, ...updates }));
+    errorContextRef.current = { ...errorContextRef.current, ...updates };
   }, []);
 
   // Memoize the value object to prevent unnecessary re-renders
   // Note: setContext is stable from useState and doesn't need to be in deps
   const value = useMemo(
-    () => ({ errorContext, setErrorContext, updateContext }),
-    [errorContext, updateContext],
+    () => ({
+      errorContextRef,
+      updateContext,
+    }),
+    [updateContext],
   );
 
   return (

@@ -91,7 +91,7 @@ export class RemoteFlowsErrorBoundary extends Component<
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
 
-    const errorContext = this.context?.errorContext;
+    const errorContext = this.context?.errorContextRef.current;
 
     reportTelemetryError(
       error,
