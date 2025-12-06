@@ -75,32 +75,6 @@ const ERROR_TEST_CASES: ErrorTestCase[] = [
     expectedSeverity: 'critical',
   },
 
-  // Network errors (Priority 3)
-  {
-    description: 'fetch failure',
-    error: new Error('Failed to fetch'),
-    expectedCategory: 'NETWORK_ERROR',
-    expectedSeverity: 'error',
-  },
-  {
-    description: 'network error',
-    error: new Error('Network request failed'),
-    expectedCategory: 'NETWORK_ERROR',
-    expectedSeverity: 'error',
-  },
-  {
-    description: 'HTTP error',
-    error: new Error('HTTP 500 Internal Server Error'),
-    expectedCategory: 'NETWORK_ERROR',
-    expectedSeverity: 'error',
-  },
-  {
-    description: 'timeout error',
-    error: new Error('Request timeout after 30s'),
-    expectedCategory: 'NETWORK_ERROR',
-    expectedSeverity: 'error',
-  },
-
   // State errors (Priority 4)
   {
     description: 'state update error',
@@ -118,26 +92,6 @@ const ERROR_TEST_CASES: ErrorTestCase[] = [
     description: 'provider missing',
     error: new Error('Provider is missing for this context'),
     expectedCategory: 'STATE_ERROR',
-    expectedSeverity: 'error',
-  },
-
-  // Validation errors (Priority 5)
-  {
-    description: 'validation failure',
-    error: new Error('Validation failed for field email'),
-    expectedCategory: 'VALIDATION_ERROR',
-    expectedSeverity: 'error',
-  },
-  {
-    description: 'required field',
-    error: new Error('Field name is required'),
-    expectedCategory: 'VALIDATION_ERROR',
-    expectedSeverity: 'error',
-  },
-  {
-    description: 'must be constraint',
-    error: new Error('Password must be at least 8 characters'),
-    expectedCategory: 'VALIDATION_ERROR',
     expectedSeverity: 'error',
   },
 
@@ -319,34 +273,5 @@ describe('Error Handling Utils', () => {
         });
       },
     );
-  });
-
-  describe('categorizeError - Case Insensitivity', () => {
-    it('should handle mixed case error messages', () => {
-      expect(categorizeError(new Error('VALIDATION ERROR'))).toBe(
-        'VALIDATION_ERROR',
-      );
-      expect(categorizeError(new Error('FeTcH fAiLeD'))).toBe('NETWORK_ERROR');
-      expect(categorizeError(new Error('HyDrAtIoN fAiLeD'))).toBe(
-        'RENDER_ERROR',
-      );
-    });
-  });
-
-  describe('Priority Order Validation', () => {
-    it('should prioritize HOOK_ERROR over VALIDATION_ERROR for "invalid hook" message', () => {
-      const error = new Error('Invalid hook call');
-      expect(categorizeError(error)).toBe('HOOK_ERROR');
-    });
-
-    it('should prioritize RENDER_ERROR over HOOK_ERROR for hook-related render issues', () => {
-      const error = new Error('Rendered more hooks than expected');
-      expect(categorizeError(error)).toBe('RENDER_ERROR');
-    });
-
-    it('should categorize generic "invalid" as VALIDATION_ERROR when no higher priority match', () => {
-      const error = new Error('Invalid email format');
-      expect(categorizeError(error)).toBe('VALIDATION_ERROR');
-    });
   });
 });

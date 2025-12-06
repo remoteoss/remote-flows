@@ -14,8 +14,6 @@ export type ErrorContextData = {
  */
 export type ErrorCategory =
   | 'RENDER_ERROR' // React rendering errors (invalid components, hydration, etc.)
-  | 'NETWORK_ERROR' // API calls, fetch failures
-  | 'VALIDATION_ERROR' // Form validation, data validation
   | 'STATE_ERROR' // State management issues
   | 'HOOK_ERROR' // React hooks errors (rules of hooks violations)
   | 'RUNTIME_ERROR' // General runtime errors

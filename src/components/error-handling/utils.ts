@@ -107,28 +107,12 @@ const ERROR_PATTERNS: readonly ErrorPattern[] = [
     namePatterns: [],
   },
 
-  // Priority 3: Network errors
-  {
-    category: 'NETWORK_ERROR',
-    severity: 'error',
-    messagePatterns: ['fetch', 'network', 'http', 'timeout'],
-    namePatterns: ['networkerror'],
-  },
-
   // Priority 4: State errors (must come before render to avoid "render" keyword collision)
   {
     category: 'STATE_ERROR',
     severity: 'error',
     messagePatterns: ['state', 'context', 'provider'],
     namePatterns: [],
-  },
-
-  // Priority 5: Validation errors
-  {
-    category: 'VALIDATION_ERROR',
-    severity: 'error',
-    messagePatterns: ['validation', 'invalid', 'required', 'must'],
-    namePatterns: ['validationerror'],
   },
 
   // Priority 6: Lower priority render errors
