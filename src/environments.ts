@@ -1,4 +1,11 @@
-export const ENVIRONMENTS = {
+export type Environment =
+  | 'local'
+  | 'partners'
+  | 'production'
+  | 'sandbox'
+  | 'staging';
+
+export const ENVIRONMENTS: Record<Environment, string> = {
   local: 'http://localhost:4000/api/eor',
   partners: 'https://gateway.partners.remote-sandbox.com',
   production: 'https://gateway.remote.com',

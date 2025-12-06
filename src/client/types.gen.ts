@@ -833,6 +833,17 @@ export type UnifiedEmploymentsBenefitOffersJsonSchemaResponse = {
 };
 
 /**
+ * CustomVariance
+ */
+export type CustomVariance = {
+  currentPay: PayValue;
+  label: string;
+  payDifference?: PayDifference;
+  payYoy?: PayValue;
+  previousPay?: PayValue;
+};
+
+/**
  * CompanyCurrenciesResponse
  *
  * Company currencies
@@ -941,6 +952,16 @@ export type EmployeeDetails = {
     amount?: number;
     currency?: string;
   };
+};
+
+/**
+ * Variance
+ */
+export type Variance = {
+  currentPay: PayValue;
+  payDifference?: PayDifference;
+  payYoy?: PayValue;
+  previousPay?: PayValue;
 };
 
 /**
@@ -1550,7 +1571,9 @@ export type MinimalTimesheetResponse = {
  * PayVarianceResponse
  */
 export type PayVarianceResponse = {
-  payVariance?: Array<PayDifference>;
+  additionalVariances?: Array<CustomVariance>;
+  grossVariance?: Variance;
+  netVariance?: Variance;
 };
 
 /**
@@ -3561,8 +3584,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'parameter_too_many'
@@ -5325,6 +5348,15 @@ export type IdentityCompanyAccessTokenResponse = {
 };
 
 /**
+ * PayValue
+ */
+export type PayValue = {
+  periodEndDate: string;
+  periodStartDate: string;
+  totalAmount: Amount;
+};
+
+/**
  * TravelLetterUser
  *
  * Travel Letter User
@@ -6093,6 +6125,73 @@ export type IdsRequiredParams = {
 };
 
 /**
+ * SDKErrorPayload
+ */
+export type SdkErrorPayload = {
+  /**
+   * Context
+   */
+  context?: {
+    [key: string]: unknown;
+  } | null;
+  error: {
+    /**
+     * Error category
+     */
+    category:
+      | 'RENDER_ERROR'
+      | 'NETWORK_ERROR'
+      | 'VALIDATION_ERROR'
+      | 'STATE_ERROR'
+      | 'HOOK_ERROR'
+      | 'RUNTIME_ERROR'
+      | 'UNKNOWN_ERROR';
+    /**
+     * Component Stack
+     */
+    component_stack?: Array<string> | null;
+    /**
+     * Error message
+     */
+    message: string;
+    /**
+     * Error name
+     */
+    name: string;
+    /**
+     * Error severity
+     */
+    severity: 'critical' | 'error' | 'warning' | 'info';
+    /**
+     * Stack Trace
+     */
+    stack?: string | null;
+  };
+  metadata: {
+    /**
+     * SDK runtime environment
+     */
+    environment: 'production' | 'staging' | 'local' | 'partners' | 'sandbox';
+    /**
+     * SDK Version
+     */
+    sdk_version: string;
+    /**
+     * Client Timestamp
+     */
+    timestamp: string;
+    /**
+     * Client URL
+     */
+    url: string;
+    /**
+     * User Agent
+     */
+    user_agent: string;
+  };
+};
+
+/**
  * CompanyStructureNodesResponse
  */
 export type CompanyStructureNodesResponse = {
@@ -6148,6 +6247,14 @@ export type ContractorInvoiceSchedulePeriodicity =
   | 'monthly'
   | 'semi_monthly'
   | 'weekly';
+
+/**
+ * ErrorResponse
+ */
+export type ErrorResponse = {
+  details?: string;
+  error?: string;
+};
 
 /**
  * ListEmploymentCustomFieldValueResponse
@@ -6544,6 +6651,13 @@ export type TerminationDetailsParams = {
    * If it is likely that the employee will challenge their termination, please provide additional details explaining the risk
    */
   will_challenge_termination_description?: string;
+};
+
+/**
+ * RateLimitResponse
+ */
+export type RateLimitResponse = {
+  error?: string;
 };
 
 /**
@@ -7473,7 +7587,7 @@ export type Expense = {
 export type PayDifference = {
   amountDifference: Amount;
   percentDifference: number;
-  workerDifference: {
+  workerDifference?: {
     label: string;
     link?: string;
   };
@@ -8575,6 +8689,37 @@ export type GetIndexContractorInvoiceResponses = {
 
 export type GetIndexContractorInvoiceResponse =
   GetIndexContractorInvoiceResponses[keyof GetIndexContractorInvoiceResponses];
+
+export type PostReportErrorsTelemetryData = {
+  /**
+   * SDK Error Report
+   */
+  body: SdkErrorPayload;
+  path?: never;
+  query?: never;
+  url: '/v1/sdk/telemetry-errors';
+};
+
+export type PostReportErrorsTelemetryErrors = {
+  /**
+   * Bad Request
+   */
+  400: ErrorResponse;
+  /**
+   * Too Many Requests
+   */
+  429: RateLimitResponse;
+};
+
+export type PostReportErrorsTelemetryError =
+  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
+
+export type PostReportErrorsTelemetryResponses = {
+  /**
+   * No Content
+   */
+  204: unknown;
+};
 
 export type GetDetailsSsoConfigurationData = {
   body?: never;
