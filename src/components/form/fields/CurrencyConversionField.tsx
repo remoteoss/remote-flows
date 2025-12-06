@@ -107,7 +107,9 @@ export const CurrencyConversionField = ({
       toCurrency: string,
       targetField: string,
     ) => {
-      if (!value) return;
+      const amount = Number(value);
+
+      if (!value || isNaN(amount) || amount <= 0) return;
 
       const cacheKey = `${fromCurrency}_${toCurrency}_${value}`;
       const cached = conversionCache.current.get(cacheKey);
@@ -121,7 +123,7 @@ export const CurrencyConversionField = ({
         const response = await convertCurrency({
           source_currency: fromCurrency,
           target_currency: toCurrency,
-          amount: Number(value),
+          amount,
         });
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;
