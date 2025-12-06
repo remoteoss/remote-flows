@@ -117,8 +117,7 @@ const ERROR_TEST_CASES: ErrorTestCase[] = [
 
   // Edge cases - Priority testing
   {
-    description:
-      'hook error with "invalid" keyword (should match HOOK_ERROR not VALIDATION_ERROR)',
+    description: 'hook error with "invalid" keyword',
     error: new Error('Invalid hook call detected'),
     expectedCategory: 'HOOK_ERROR',
     expectedSeverity: 'critical',
