@@ -80,12 +80,11 @@ export type JSFModifyNext = ModifyConfig;
 
 export type FlowOptions = {
   jsfModify?: JSFModify;
-  /**
-   * Temporarily disabled, don't use it for now.
-   * @deprecated
-   */
   jsonSchemaVersion?: {
     contract_amendments?: number;
+    /**
+     * @deprecated use jsonSchemaVersionByCountry instead
+     */
     form_schema?: {
       [key in JSONSchemaFormType]?: number;
     };

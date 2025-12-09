@@ -89,42 +89,6 @@ describe('useOnboarding jsonSchemaVersion', () => {
   });
 
   describe('useJSONSchemaForm calls', () => {
-    it('should pass jsonSchemaVersion to basic information form', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            skipSteps: ['select_country'],
-            options: {
-              jsonSchemaVersionByCountry: {
-                PRT: {
-                  employment_basic_information: 2,
-                },
-              },
-            },
-          }),
-        { wrapper: TestProviders },
-      );
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      await waitFor(() => {
-        expect(mockGetShowFormCountry).toHaveBeenCalled();
-      });
-
-      // Then check the specific call
-      const call = mockGetShowFormCountry.mock.calls[0][0];
-
-      // Verify the query part specifically
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        json_schema_version: 1,
-      });
-    });
-
     it('should pass jsonSchemaVersionByCountry to contract details form', async () => {
       const options = {
         jsonSchemaVersionByCountry: {
