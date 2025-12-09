@@ -89,7 +89,85 @@ describe('useOnboarding jsonSchemaVersion', () => {
   });
 
   describe('useJSONSchemaForm calls', () => {
-    it('should pass jsonSchemaVersionByCountry to contract details form', async () => {
+    it('should pass jsonSchemaVersion 1 to contract details form as default', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'PRT',
+            employmentId: 'test-employment-id',
+            skipSteps: ['select_country'],
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(mockGetShowFormCountry).toHaveBeenCalled();
+      });
+
+      const call = mockGetShowFormCountry.mock.calls[1][0];
+
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        employment_id: 'test-employment-id',
+        json_schema_version: 1,
+      });
+    });
+
+    it('should pass jsonSchemaVersionByCountry only allow `DEU` to pass contract details form', async () => {
+      const options = {
+        jsonSchemaVersionByCountry: {
+          DEU: {
+            contract_details: 2,
+          },
+        },
+      };
+
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'DEU',
+            employmentId: 'test-employment-id',
+            skipSteps: ['select_country'],
+            options,
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Navigate to contract details step
+      result.current.goTo('contract_details');
+
+      const contractDetailsCall = mockGetShowFormCountry.mock.calls[1][0];
+
+      await waitFor(() => {
+        expect(contractDetailsCall).toEqual({
+          client: expect.any(Object),
+          headers: {
+            Authorization: ``,
+          },
+          path: {
+            country_code: 'DEU',
+            form: 'contract_details',
+          },
+          query: {
+            skip_benefits: true,
+            employment_id: 'test-employment-id',
+            json_schema_version: 2,
+          },
+        });
+      });
+    });
+
+    it('should pass jsonSchemaVersionByCountry but set default version for other countries', async () => {
       const options = {
         jsonSchemaVersionByCountry: {
           PRT: {
