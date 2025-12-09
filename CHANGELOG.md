@@ -100,6 +100,12 @@
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
 
+## 0.28.2
+
+### Fixes
+
+- fix updateEmployment mutation, passing incorrect param [0.28.2](https://github.com/remoteoss/remote-flows/releases/tag/v0.28.2)
+
 ## 0.28.1
 
 ### Fixes
