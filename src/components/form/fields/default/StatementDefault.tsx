@@ -22,7 +22,7 @@ export function StatementDefault({ data }: StatementComponentProps) {
   return (
     <Alert variant={variant}>
       <AlertCircle className='h-4 w-4' />
-      {title && <AlertTitle>{title}</AlertTitle>}
+      {title && <AlertTitle dangerouslySetInnerHTML={{ __html: title }} />}
       {description && (
         <AlertDescription dangerouslySetInnerHTML={{ __html: description }} />
       )}
