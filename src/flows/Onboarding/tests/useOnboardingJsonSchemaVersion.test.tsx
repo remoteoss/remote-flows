@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
@@ -213,6 +213,151 @@ describe('useOnboarding jsonSchemaVersion', () => {
             json_schema_version: 1,
           },
         });
+      });
+    });
+  });
+
+  describe('useUpdateEmployment calls', () => {
+    it('should call patchUpdateEmployment2 with default contract_details_json_schema_version when submitting contract_details', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            employmentId: 'existing-employment-id',
+            companyId: 'test-company-id',
+            countryCode: 'DEU',
+            skipSteps: ['select_country'],
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Navigate to contract_details step
+      act(() => {
+        result.current.goTo('contract_details');
+      });
+
+      // Submit contract_details form
+      await act(async () => {
+        await result.current.onSubmit({
+          // minimal contract details data
+          job_title: 'Engineer',
+          start_date: '2024-01-01',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+      });
+
+      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        employment_basic_information_json_schema_version: 1,
+        contract_details_json_schema_version: 1,
+      });
+    });
+
+    it('should call patchUpdateEmployment2 with custom contract_details_json_schema_version when submitting contract_details', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            employmentId: 'existing-employment-id',
+            companyId: 'test-company-id',
+            countryCode: 'DEU',
+            skipSteps: ['select_country'],
+            options: {
+              jsonSchemaVersionByCountry: {
+                DEU: {
+                  contract_details: 2,
+                },
+              },
+            },
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Navigate to contract_details step
+      act(() => {
+        result.current.goTo('contract_details');
+      });
+
+      // Submit contract_details form
+      await act(async () => {
+        await result.current.onSubmit({
+          // minimal contract details data
+          job_title: 'Engineer',
+          start_date: '2024-01-01',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+      });
+
+      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        employment_basic_information_json_schema_version: 1,
+        contract_details_json_schema_version: 2,
+      });
+    });
+
+    it('should call patchUpdateEmployment2 with default contract_details_json_schema_version when submitting contract_details when jsonSchemaVersionByCountry is bigger than the allowed versions', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            employmentId: 'existing-employment-id',
+            companyId: 'test-company-id',
+            countryCode: 'DEU',
+            skipSteps: ['select_country'],
+            options: {
+              jsonSchemaVersionByCountry: {
+                DEU: {
+                  contract_details: 3,
+                },
+              },
+            },
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Navigate to contract_details step
+      act(() => {
+        result.current.goTo('contract_details');
+      });
+
+      // Submit contract_details form
+      await act(async () => {
+        await result.current.onSubmit({
+          // minimal contract details data
+          job_title: 'Engineer',
+          start_date: '2024-01-01',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+      });
+
+      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        employment_basic_information_json_schema_version: 1,
+        contract_details_json_schema_version: 1,
       });
     });
   });
