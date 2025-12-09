@@ -39,6 +39,7 @@ import {
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -348,7 +349,7 @@ export const useUpdateEmployment = (
     // TODO: setting 1 as basic_information only supports v1 for now in the API
     employment_basic_information_json_schema_version: 1,
     contract_details_json_schema_version:
-      options?.jsonSchemaVersionByCountry?.[countryCode]?.contract_details,
+      getContractDetailsSchemaVersion(options, countryCode) || 1,
   };
 
   return useMutation({

@@ -7,7 +7,7 @@
 - extract default component implementations (#624) [#624](https://github.com/remoteoss/remote-flows/pull/624)
 - avoid sending not a number (#641) [#641](https://github.com/remoteoss/remote-flows/pull/641)
 - make sure updateEmployment follows the same rules than the GET (#646) [#646](https://github.com/remoteoss/remote-flows/pull/646)
-- fix params (#644) [#644](https://github.com/remoteoss/remote-flows/pull/644)
+- fix json_schema_form params in updateEmployment (#644) [#644](https://github.com/remoteoss/remote-flows/pull/644)
 
 ## 1.2.0
 
