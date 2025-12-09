@@ -26,11 +26,30 @@ interface Changeset {
 }
 
 async function getLatestPublishedVersion(): Promise<string> {
-  console.log('📦 Reading version from package.json...');
-  const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-  const version = packageJson.version;
-  console.log(`📦 Current version: ${version}`);
-  return version;
+  try {
+    console.log('📦 Checking latest published version on npm...');
+    const response = await fetch(
+      'https://registry.npmjs.org/@remoteoss/remote-flows/latest',
+    );
+
+    if (!response.ok) {
+      throw new Error(`NPM API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const publishedVersion = data.version;
+    console.log(`📦 Latest published version: ${publishedVersion}`);
+    return publishedVersion;
+  } catch (error) {
+    console.log(
+      `⚠️  Could not fetch latest version from npm: ${error.message}`,
+    );
+    console.log('📦 Falling back to local package.json version');
+
+    // Fallback to local version
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+    return packageJson.version;
+  }
 }
 
 function getCommitsSinceLastRelease(): Commit[] {
@@ -313,7 +332,7 @@ ${changeset.content}
   }
 
   // Create release branch
-  const branchName = `release/${newVersion}`;
+  const branchName = `release-${newVersion}`;
   console.log(`🌿 Creating release branch: ${branchName}`);
 
   execSync(`git checkout -b ${branchName}`, { stdio: 'inherit' });

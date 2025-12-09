@@ -3,12 +3,6 @@ name: Release
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Branch or tag to release (e.g., release/0.28.1)'
-        required: true
-        type: string
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -21,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ inputs.ref || '' }}
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
@@ -38,29 +31,20 @@ jobs:
           # Get current version from package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
 
-          # Check if this is a manual dispatch with ref input
-          if [ -n "${{ inputs.ref }}" ]; then
-            echo "Manual release triggered for ref: ${{ inputs.ref }}"
+          # Get last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LAST_VERSION=${LAST_TAG#v}
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "Last released version: $LAST_VERSION"
+
+          if [ "$CURRENT_VERSION" != "$LAST_VERSION" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-            echo "Version to release: $CURRENT_VERSION"
+            echo "Version changed from $LAST_VERSION to $CURRENT_VERSION"
           else
-            # Normal flow: compare with last tag
-            # Get last tag
-            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-            LAST_VERSION=${LAST_TAG#v}
-
-            echo "Current version: $CURRENT_VERSION"
-            echo "Last released version: $LAST_VERSION"
-
-            if [ "$CURRENT_VERSION" != "$LAST_VERSION" ]; then
-              echo "changed=true" >> $GITHUB_OUTPUT
-              echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-              echo "Version changed from $LAST_VERSION to $CURRENT_VERSION"
-            else
-              echo "changed=false" >> $GITHUB_OUTPUT
-              echo "No version change detected"
-            fi
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No version change detected"
           fi
 
       - name: Build and test
