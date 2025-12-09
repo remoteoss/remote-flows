@@ -1,17 +1,21 @@
-export type SupportedTypes =
+// Base types are the types that are supported by the SDK to be overridden with the components prop
+export type BaseTypes =
   | 'text'
   | 'number'
   | 'email'
   | 'select'
   | 'multi-select'
   | 'radio'
-  | 'fieldset'
-  | 'fieldset-flat'
   | 'date'
   | 'checkbox'
   | 'textarea'
-  | 'money'
   | 'file'
   | 'countries'
-  | 'hidden'
   | 'work-schedule';
+
+export type SupportedTypes =
+  | BaseTypes
+  | 'hidden'
+  | 'money'
+  | 'fieldset'
+  | 'fieldset-flat';

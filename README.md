@@ -33,7 +33,11 @@ npm install @remoteoss/remote-flows
 ## Quick Start
 
 ```tsx
-import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
+import {
+  RemoteFlows,
+  CostCalculator,
+  defaultComponents,
+} from '@remoteoss/remote-flows';
 import '@remoteoss/remote-flows/index.css';
 
 function App() {
@@ -43,7 +47,11 @@ function App() {
   };
 
   return (
-    <RemoteFlows auth={fetchToken} environment='partners'>
+    <RemoteFlows
+      components={defaultComponents}
+      auth={fetchToken}
+      environment='partners'
+    >
       <CostCalculator onSuccess={(data) => console.log(data)} />
     </RemoteFlows>
   );
@@ -134,8 +142,11 @@ const CustomButton = ({ children, ...props }: ButtonComponentProps) => {
 Here's an example of custom field components implementation:
 
 ```tsx
+import { RemoteFlows, defaultComponents } from '@remoteoss/remote-flows';
+
 <RemoteFlows
   components={{
+    ...defaultComponents,
     text: CustomInput,
     button: CustomButton,
     number: ({ field, fieldState, fieldData }) => (
@@ -165,20 +176,38 @@ Here's an example of custom field components implementation:
   auth={fetchToken}
 >
   {/* Your form components */}
-</RemoteFlows>
+</RemoteFlows>;
 ```
 
 ### Available Component Prop Types
 
-- `FieldComponentProps`: For all form field components (text, number, select, etc.)
+- `FieldComponentProps`: For all form field components (generic field component type)
 - `ButtonComponentProps`: For custom button components
 - `StatementComponentProps`: For custom statement components
+- `ZendeskDrawerComponentProps`: For custom zendesk drawer
+- `FileComponentProps`: for custom file field components
+- `CountryComponentProps`: for country field components
+- `TextFieldComponentProps`: for textfield components
+- `DatePickerComponentProps`: for datepicker components
+- `WorkScheduleComponentProps`: for workschedule components
 
 Supported field types:
 
 - `text`: Text input fields
 - `number`: Numeric input fields
 - `select`: Dropdown selection fields
+- `checkbox`: Checkbox input fields
+- `email`: Email input fields
+- `radio`: Radio input field
+- `file`: File input field
+- `date`: Datepicker input field
+- `countries`: select countries multi select field
+- `button`: Button
+- `statement`: statement field
+- `fieldSetToggle`: to replace fieldset toggle buttons
+- `zendeskDrawer`: to replace zendesk drawers with Remote's zendesk information
+- `table`: to replace table components
+- `drawer`: to replace drawer components
 
 ## Available Flows
 

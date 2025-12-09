@@ -7,7 +7,7 @@ import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
-import { SupportedTypes } from './types';
+import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 
 type FieldBase = {
@@ -285,7 +285,7 @@ export function FieldSetField({
                   <FieldComponent
                     {...field}
                     name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    component={components?.[field.inputType as SupportedTypes]}
+                    component={components?.[field.inputType as BaseTypes]}
                   />
                   {field.extra ? field.extra : null}
                 </Fragment>

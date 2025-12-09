@@ -7,6 +7,7 @@ import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
   CountryComponentProps,
+  DatePickerComponentProps,
   FieldComponentProps,
   FileComponentProps,
   StatementComponentProps,
@@ -107,16 +108,19 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property
-type TypesWithoutFile = Exclude<
+// Some types are excluded because they're overriden in the Components type
+// others like hidden, money, fieldset, fieldset-flat should be excluded because they're not supported by the SDK to override
+// left out to avoid breaking changes
+type FieldComponentTypes = Exclude<
   SupportedTypes,
-  'file' | 'countries' | 'text' | 'work-schedule'
+  'file' | 'countries' | 'text' | 'work-schedule' | 'date'
 >;
 
 export type Components = {
-  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
+  [K in FieldComponentTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
+  date?: React.ComponentType<DatePickerComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;

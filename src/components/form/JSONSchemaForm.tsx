@@ -3,7 +3,7 @@ import { Fields } from '@remoteoss/json-schema-form-old';
 import React, { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
-import { SupportedTypes } from '@/src/components/form/fields/types';
+import { BaseTypes } from '@/src/components/form/fields/types';
 import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { Components, JSFFieldset } from '@/src/types/remoteFlows';
@@ -79,7 +79,7 @@ export const JSONSchemaFormFields = ({
           return <Component key={field.name as string} {...field} />;
         }
 
-        let FieldComponent = fieldsMap[field.inputType as SupportedTypes];
+        let FieldComponent = fieldsMap[field.inputType as BaseTypes];
 
         if (!FieldComponent) {
           return (
@@ -119,9 +119,7 @@ export const JSONSchemaFormFields = ({
           <Fragment key={field.name as string}>
             <FieldComponent
               {...field}
-              component={
-                components && components[field.inputType as SupportedTypes]
-              }
+              component={components && components[field.inputType as BaseTypes]}
             />
             {field.statement ? (
               <Statement
