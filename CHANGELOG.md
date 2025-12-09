@@ -6,7 +6,6 @@
 
 - extract default component implementations (#624) [#624](https://github.com/remoteoss/remote-flows/pull/624)
 - avoid sending not a number (#641) [#641](https://github.com/remoteoss/remote-flows/pull/641)
-- add 0.28.2 release notes (#643) [#643](https://github.com/remoteoss/remote-flows/pull/643)
 - fix params (#644) [#644](https://github.com/remoteoss/remote-flows/pull/644)
 
 ## 1.2.0
