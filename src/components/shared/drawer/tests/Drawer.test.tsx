@@ -115,6 +115,8 @@ describe('Drawer', () => {
         title: 'Test Drawer',
         trigger: expect.any(Object),
         children: 'Content',
+        direction: 'right',
+        className: '',
       },
       expect.any(Object),
     );

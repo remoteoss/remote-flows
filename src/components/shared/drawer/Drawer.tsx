@@ -1,13 +1,6 @@
 import { useFormFields } from '@/src/context';
 import { DrawerComponentProps } from '@/src/types/remoteFlows';
-import {
-  Drawer as DrawerPrimitive,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/src/components/ui/drawer';
-import { cn } from '@/src/lib/utils';
+import { DrawerDefault } from './DrawerDefault';
 
 export type DrawerProps = DrawerComponentProps & {
   className?: string;
@@ -24,41 +17,18 @@ export const Drawer = ({
   direction = 'right',
 }: DrawerProps) => {
   const { components } = useFormFields();
-  const CustomDrawer = components?.drawer;
-
-  if (CustomDrawer) {
-    return (
-      <CustomDrawer
-        open={open}
-        onOpenChange={onOpenChange}
-        title={title}
-        trigger={trigger}
-      >
-        {children}
-      </CustomDrawer>
-    );
-  }
+  const CustomDrawer = components?.drawer || DrawerDefault;
 
   return (
-    <DrawerPrimitive
+    <CustomDrawer
       open={open}
       onOpenChange={onOpenChange}
+      title={title}
+      trigger={trigger}
       direction={direction}
+      className={className}
     >
-      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent
-        className={cn(
-          className,
-          'RemoteFlows__Drawer h-full w-[540px] mt-0 ml-auto px-4',
-        )}
-      >
-        <div className='h-full flex flex-col'>
-          <DrawerHeader>
-            <DrawerTitle>{title}</DrawerTitle>
-          </DrawerHeader>
-          <div className='flex-1 overflow-y-auto'>{children}</div>
-        </div>
-      </DrawerContent>
-    </DrawerPrimitive>
+      {children}
+    </CustomDrawer>
   );
 };

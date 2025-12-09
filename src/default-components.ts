@@ -1,5 +1,5 @@
 import { Components } from '@/src/types/remoteFlows';
-import { FileUploadFieldDefault } from './FileUploadFieldDefault';
+import { FileUploadFieldDefault } from '@/src/components/form/fields/default/FileUploadFieldDefault';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
@@ -10,16 +10,33 @@ import { EmailFieldDefault } from '@/src/components/form/fields/default/EmailFie
 import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
-
+import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
+import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
+import { ZendeskDrawerDefault } from '@/src/components/shared/zendesk-drawer/ZendeskDrawerDefault';
+import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefault';
 /**
- * Default field components provided by RemoteFlows.
- * These components provide the standard UI implementations for all field types.
- * You can use these as-is or override specific fields with custom components.
+ * Default field components for RemoteFlows.
+ *
+ * This module exports all default field component implementations and a pre-configured
+ * `defaultComponents` object that can be passed to the RemoteFlows SDK.
+ *
+ * @example
+ * ```tsx
+ * import { defaultComponents } from '@remoteoss/remote-flows/default-components';
+ *
+ * <RemoteFlows components={defaultComponents} {...otherProps}>
+ *   {children}
+ * </RemoteFlows>
+ * ```
+ *
+ *
  */
 export const defaultComponents: Components = {
   countries: CountryFieldDefault,
   date: DatePickerFieldDefault,
+  drawer: DrawerDefault,
   email: EmailFieldDefault,
+  fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,
@@ -28,4 +45,6 @@ export const defaultComponents: Components = {
   statement: StatementDefault,
   textarea: TextAreaFieldDefault,
   text: TextFieldDefault,
+  zendeskDrawer: ZendeskDrawerDefault,
+  table: TableFieldDefault,
 };
