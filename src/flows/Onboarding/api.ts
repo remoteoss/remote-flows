@@ -348,7 +348,7 @@ export const useUpdateEmployment = (
     // TODO: setting 1 as basic_information only supports v1 for now in the API
     employment_basic_information_json_schema_version: 1,
     contract_details_json_schema_version:
-      options?.jsonSchemaVersionByCountry?.[countryCode]?.contract_details,
+      options?.jsonSchemaVersionByCountry?.[countryCode]?.contract_details || 1,
   };
 
   return useMutation({
