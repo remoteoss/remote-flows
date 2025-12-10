@@ -7,7 +7,7 @@ import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
-import { BaseTypes, SupportedTypes } from './types';
+import { BaseTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 
 type FieldBase = {
@@ -15,7 +15,7 @@ type FieldBase = {
   name: string;
   description: string;
   Component?: React.ComponentType<$TSFixMe>;
-  inputType: SupportedTypes;
+  inputType: BaseTypes;
   multiple?: boolean;
 };
 
@@ -25,7 +25,7 @@ type FieldWithOptions = FieldBase & {
 };
 
 type FieldWithoutOptions = FieldBase & {
-  type: Exclude<SupportedTypes, 'select' | 'radio'>;
+  type: Exclude<BaseTypes, 'select' | 'radio'>;
   options?: never;
 };
 
@@ -251,13 +251,7 @@ export function FieldSetField({
               }
               // We need to do the check after checking field.inputType === 'fieldset' or field.inputType === 'fieldset-flat'
               // circular dependency most likely
-              let FieldComponent =
-                baseFields[
-                  field.inputType as Exclude<
-                    SupportedTypes,
-                    'fieldset' | 'fieldset-flat'
-                  >
-                ];
+              let FieldComponent = baseFields[field.inputType as BaseTypes];
 
               if (field.Component) {
                 const { Component } = field as {
