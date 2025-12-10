@@ -1,7 +1,3 @@
-import {
-  modify,
-  createHeadlessForm,
-} from '@remoteoss/remote-json-schema-form-kit';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { Client } from '@/src/client/client';
@@ -28,7 +24,6 @@ import {
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 
-import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
@@ -37,9 +32,8 @@ import {
   JSONSchemaFormType,
   NextFlowOptions,
 } from '@/src/flows/types';
-import { findFieldsByType } from '@/src/flows/utils';
-import { JSFFieldset } from '@/src/types/remoteFlows';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -226,39 +220,8 @@ export const useJSONSchemaForm = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      let jsfSchema = data?.data || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-
-      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
-      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
-      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
-      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
-      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
-        (acc, field) => {
-          acc[field] = convertToCents(fieldValues[field]);
-          return acc;
-        },
-        {},
-      );
-
-      const initialValues = JSON.parse(
-        JSON.stringify({
-          ...fieldValues,
-          ...moneyFieldsData,
-        }),
-      );
-
-      return {
-        meta: {
-          'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
-        },
-        ...createHeadlessForm(jsfSchema, {
-          initialValues,
-        }),
-      };
+      const jsfSchema = data?.data || {};
+      return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
 };
@@ -297,19 +260,11 @@ export const useBenefitOffersSchema = (
       return response;
     },
     select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
+      const jsfSchema = data?.data?.schema || {};
 
-      if (options && options.jsfModify?.benefits) {
-        const { schema } = modify(jsfSchema, options.jsfModify.benefits);
-        jsfSchema = schema;
-      }
-      const hasFieldValues = Object.keys(fieldValues).length > 0;
-      const result = createHeadlessForm(jsfSchema, {
-        // we need to clone the fieldValues to prevent side effects
-        // if we don't do this, the benefits get included in the other steps
-        initialValues: hasFieldValues ? { ...fieldValues } : {},
+      return createHeadlessForm(jsfSchema, fieldValues, {
+        jsfModify: options?.jsfModify?.benefits,
       });
-      return result;
     },
   });
 };
@@ -450,12 +405,11 @@ export const useCountriesSchemaField = (
 ) => {
   const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
-  const { schema: selectCountrySchema } = modify(
+  const selectCountryForm = createHeadlessForm(
     selectCountryStepSchema.data.schema,
-    options?.jsfModify || {},
+    {},
+    options,
   );
-
-  const selectCountryForm = createHeadlessForm(selectCountrySchema);
 
   if (countries) {
     const countryField = selectCountryForm.fields.find(
