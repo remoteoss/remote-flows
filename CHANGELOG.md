@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.2.1
+
+### Patch Changes
+
+- extract default component implementations (#624) [#624](https://github.com/remoteoss/remote-flows/pull/624)
+- avoid sending not a number (#641) [#641](https://github.com/remoteoss/remote-flows/pull/641)
+- make sure updateEmployment follows the same rules than the GET (#646) [#646](https://github.com/remoteoss/remote-flows/pull/646)
+- fix json_schema_form params in updateEmployment (#644) [#644](https://github.com/remoteoss/remote-flows/pull/644)
+
 ## 1.2.0
 
 ### Minor Changes
@@ -99,6 +108,12 @@
 - Override json_schema_version for DEU contract details (#564) [#564](https://github.com/remoteoss/remote-flows/pull/564)
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
+
+## 0.28.2
+
+### Fixes
+
+- fix updateEmployment mutation, passing incorrect param [0.28.2](https://github.com/remoteoss/remote-flows/releases/tag/v0.28.2)
 
 ## 0.28.1
 
