@@ -12,18 +12,10 @@ export function OnboardingSubmit({
   const { formId } = useOnboardingContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} form={formId}>
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button {...props} form={formId}>
+    <CustomButton {...props} form={formId}>
       {children}
-    </Button>
+    </CustomButton>
   );
 }

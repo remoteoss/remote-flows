@@ -1,28 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CalendarIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
-import { PopoverClose } from '@radix-ui/react-popover';
+import { FormField } from '@/src/components/ui/form';
 
-import { Button } from '@/src/components/ui/button';
-import { Calendar } from '@/src/components/ui/calendar';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/src/components/ui/form';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/src/components/ui/popover';
 import { useFormFields } from '@/src/context';
-import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
-import { format } from 'date-fns';
+import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
 
 export type DatePickerFieldProps = JSFField & {
   onChange?: (value: any) => void;
@@ -60,93 +43,29 @@ export function DatePickerField({
       name={name}
       render={({ field, fieldState }) => {
         const CustomDatePickerField = component || components?.date;
+        const Component = CustomDatePickerField || DatePickerFieldDefault;
 
-        if (CustomDatePickerField) {
-          const customDatePickerFieldProps = {
-            description,
-            label,
-            name,
-            onChange,
-            ...(minDateValue && { minDate: minDateValue.toISOString() }),
-            ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
-            ...rest,
-          };
-          return (
-            <CustomDatePickerField
-              field={{
-                ...field,
-                onChange: (value: any) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                },
-              }}
-              fieldState={fieldState}
-              fieldData={customDatePickerFieldProps}
-            />
-          );
-        }
+        const customDatePickerFieldProps = {
+          description,
+          label,
+          name,
+          onChange,
+          ...(minDateValue && { minDate: minDateValue.toISOString() }),
+          ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
+          ...rest,
+        };
         return (
-          <FormItem
-            data-field={name}
-            className={`flex flex-col RemoteFlows__DatePickerField__Item__${name}`}
-          >
-            <FormLabel className='RemoteFlows__DatePickerField__Label'>
-              {label}
-            </FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <div>
-                    <Button
-                      type='button'
-                      variant={'outline'}
-                      className={cn(
-                        'w-full pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                      data-testid={`date-picker-button-${name}`}
-                    >
-                      {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
-                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                    </Button>
-                  </div>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent
-                className={`w-auto p-0 RemoteFlows__DatepickerField__PopoverContent`}
-                align='start'
-              >
-                <Calendar
-                  mode='single'
-                  className='RemoteFlows__DatepickerField__Calendar'
-                  selected={field.value ? new Date(field.value) : undefined}
-                  onSelect={(date) => {
-                    field.onChange(date ? format(date, 'yyyy-MM-dd') : null);
-                    onChange?.(date);
-                  }}
-                  defaultMonth={minDateValue}
-                  components={{
-                    DayContent: (props) => {
-                      return (
-                        <PopoverClose>{props.date.getDate()}</PopoverClose>
-                      );
-                    },
-                  }}
-                  disabled={(date: Date) => {
-                    if (minDateValue && date < minDateValue) return true;
-                    if (maxDateValue && date > maxDateValue) return true;
-                    return false;
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
-            {description ? (
-              <FormDescription>{description}</FormDescription>
-            ) : null}
-            {fieldState.error && (
-              <FormMessage className='RemoteFlows__DatePickerField__Error' />
-            )}
-          </FormItem>
+          <Component
+            field={{
+              ...field,
+              onChange: (value: any) => {
+                field.onChange(value);
+                onChange?.(value);
+              },
+            }}
+            fieldState={fieldState}
+            fieldData={customDatePickerFieldProps}
+          />
         );
       }}
     />

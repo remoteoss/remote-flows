@@ -1,18 +1,17 @@
-import {
-  ControllerFieldState,
-  ControllerRenderProps,
-  FieldValues,
-} from 'react-hook-form';
 import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
 import { SupportedTypes } from '../components/form/fields/types';
-import { StatementProps } from '../components/form/Statement';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
-import { FieldDataProps } from '@/src/types/fields';
-import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+import {
+  CountryComponentProps,
+  FieldComponentProps,
+  FileComponentProps,
+  StatementComponentProps,
+  TextFieldComponentProps,
+} from '@/src/types/fields';
 
 type AuthResponse = {
   accessToken: string;
@@ -54,36 +53,12 @@ export type JSFField = {
 };
 
 export type TableComponentProps<T = $TSFixMe> = {
+  ref: React.ForwardedRef<HTMLTableElement>;
   data: T[] | undefined;
   columns: ColumnDef<T>[];
   className?: string;
   headerRowClassName?: string;
   bodyRowClassName?: string | ((row: T, index: number) => string);
-};
-
-/**
- * Props for custom field components.
- * All custom field components receive these three props from React Hook Form's Controller.
- */
-export type FieldComponentProps = {
-  /**
-   * Field prop from React Hook Form's Controller component.
-   * Contains field state and methods for registration.
-   * You must bind these props to your HTML elements to ensure proper form state management.
-   * @see https://react-hook-form.com/docs/usecontroller/controller
-   */
-  field: ControllerRenderProps<FieldValues, string>;
-  /**
-   * Field state prop from React Hook Form's Controller component.
-   * Contains information about the field's state, such as errors, touched status, etc.
-   * @see https://react-hook-form.com/docs/usecontroller/controller
-   */
-  fieldState: ControllerFieldState;
-  /**
-   * Metadata derived from JSON schema parsing that provides additional context and validation rules for the field.
-   * Contains properties defined in the original JSON schema such as type, format, constraints, etc.
-   */
-  fieldData: FieldDataProps;
 };
 
 /**
@@ -111,13 +86,6 @@ export type ZendeskDrawerComponentProps = {
   Trigger: React.ReactElement;
 };
 
-/**
- * Props for custom statement components.
- */
-export type StatementComponentProps = {
-  data: StatementProps;
-};
-
 export type DrawerComponentProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -125,6 +93,7 @@ export type DrawerComponentProps = {
   trigger: React.ReactElement;
   children?: React.ReactNode;
   direction?: 'left' | 'right';
+  className?: string;
 };
 
 export type FieldSetToggleComponentProps = {
@@ -137,17 +106,15 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property in the FileUploadField component
-type TypesWithoutFile = Exclude<SupportedTypes, 'file'>;
-
-export type FileComponentProps = FieldComponentProps & {
-  fieldData: FieldFileDataProps;
-};
+// We exclude the file type as we're extending the fieldData property
+type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries' | 'text'>;
 
 export type Components = {
   [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
 } & {
+  text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
+  countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;

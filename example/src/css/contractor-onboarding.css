@@ -1,3 +1,6 @@
+@import 'react-pdf/dist/Page/TextLayer.css';
+@import 'react-pdf/dist/Page/AnnotationLayer.css';
+
 .contractor-onboarding-container {
   padding: 40px 24px;
   background-color: #fafafa;

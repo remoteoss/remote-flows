@@ -137,7 +137,7 @@ export const useContractorOnboarding = ({
     return isInvited ? 'invited' : 'not_invited';
   }, [employmentStatus]);
 
-  const createEmploymentMutation = useCreateEmployment(options);
+  const createEmploymentMutation = useCreateEmployment();
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
   const signContractDocumentMutation = useSignContractDocument();

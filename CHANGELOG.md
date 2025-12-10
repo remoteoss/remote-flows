@@ -1,5 +1,62 @@
 # @remoteoss/remote-flows
 
+## 1.2.1
+
+### Patch Changes
+
+- extract default component implementations (#624) [#624](https://github.com/remoteoss/remote-flows/pull/624)
+- avoid sending not a number (#641) [#641](https://github.com/remoteoss/remote-flows/pull/641)
+- fix params (#644) [#644](https://github.com/remoteoss/remote-flows/pull/644)
+
+## 1.2.0
+
+### Minor Changes
+
+- extract default field components into separate modules (#619) [#619](https://github.com/remoteoss/remote-flows/pull/619)
+- extract default field components and simplify button logic (#623) [#623](https://github.com/remoteoss/remote-flows/pull/623)
+- add help center drawer support to country and date picker fields (#638) [#638](https://github.com/remoteoss/remote-flows/pull/638)
+
+## 1.1.4
+
+### Patch Changes
+
+- move PDF dependencies to main package (#635) [#635](https://github.com/remoteoss/remote-flows/pull/635)
+
+## 1.1.3
+
+### Patch Changes
+
+- extract default field components and improve modularity (#617) [#617](https://github.com/remoteoss/remote-flows/pull/617)
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
+
+## 1.1.2
+
+### Patch Changes
+
+- implement lazy loading for PDF preview component (#611) [#611](https://github.com/remoteoss/remote-flows/pull/611)
+- improve nested error handling in validation (#631) [#631](https://github.com/remoteoss/remote-flows/pull/631)
+
+## 1.1.1
+
+### Patch Changes
+
+- fix form values and checkbox logic (#625) [#625](https://github.com/remoteoss/remote-flows/pull/625)
+- ensure day is zero-padded in getYearMonthDate (#628) [#628](https://github.com/remoteoss/remote-flows/pull/628)
+- reorder handleCheckboxChange parameters for consistency (#629) [#629](https://github.com/remoteoss/remote-flows/pull/629)
+
+## 1.1.0
+
+### Minor Changes
+
+- consolidate test setup with shared TestProviders wrapper (#592) [#592](https://github.com/remoteoss/remote-flows/pull/592)
+- add date picker input component and update tests (#612) [#612](https://github.com/remoteoss/remote-flows/pull/612)
+- migrate to json-schema-form-next library (#596) [#596](https://github.com/remoteoss/remote-flows/pull/596)
+- configure vitest globals and remove explicit imports (#590) [#590](https://github.com/remoteoss/remote-flows/pull/590)
+- upgrade dev dependencies (#583) [#583](https://github.com/remoteoss/remote-flows/pull/583)
+- add a fielset to be more similar to Remote's (#621) [#621](https://github.com/remoteoss/remote-flows/pull/621)
+- add automated bundle size tracking and monitoring (#616) [#616](https://github.com/remoteoss/remote-flows/pull/616)
+- add country-specific contract schema versioning (#614) [#614](https://github.com/remoteoss/remote-flows/pull/614)
+
 ## 1.0.0
 
 ### Major Changes
@@ -50,6 +107,18 @@
 - Override json_schema_version for DEU contract details (#564) [#564](https://github.com/remoteoss/remote-flows/pull/564)
 - fix failed termination tests (#566) [#566](https://github.com/remoteoss/remote-flows/pull/566)
 - improve UX copy and date formatting (#565) [#565](https://github.com/remoteoss/remote-flows/pull/565)
+
+## 0.28.2
+
+### Fixes
+
+- fix updateEmployment mutation, passing incorrect param [0.28.2](https://github.com/remoteoss/remote-flows/releases/tag/v0.28.2)
+
+## 0.28.1
+
+### Fixes
+
+- deep clone initialValues object to prevent mutations (#633) [#633](https://github.com/remoteoss/remote-flows/pull/633)
 
 ## 0.28.0
 

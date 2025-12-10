@@ -2,16 +2,13 @@ import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn, sanitizeHtml } from '@/src/lib/utils';
-import {
-  $TSFixMe,
-  Components,
-  FieldSetToggleComponentProps,
-} from '@/src/types/remoteFlows';
-import { Statement, StatementProps } from '@/src/components/form/Statement';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
-import { Button } from '@/src/components/ui/button';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { SupportedTypes } from './types';
+import { StatementComponentProps } from '@/src/types/fields';
 
 type FieldBase = {
   label: string;
@@ -54,7 +51,7 @@ export type FieldSetProps = {
   fields: Field[];
   features?: FieldSetFeatures;
   components: Components;
-  statement?: StatementProps;
+  statement?: StatementComponentProps['data'];
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
   variant: 'outset' | 'inset';
@@ -67,26 +64,6 @@ export type FieldSetProps = {
     };
   } & Record<string, $TSFixMe>;
 };
-
-const DefaultToggleButton = ({
-  isExpanded,
-  onToggle,
-  className,
-  ...props
-}: FieldSetToggleComponentProps) => (
-  <Button
-    type='button'
-    className={cn(
-      'RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton',
-      className,
-    )}
-    variant='default'
-    onClick={onToggle}
-    {...props}
-  >
-    {isExpanded ? 'Remove' : 'Define'}
-  </Button>
-);
 
 export function FieldSetField({
   label,
@@ -161,7 +138,8 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
-  const ToggleComponent = formComponents?.fieldsetToggle || DefaultToggleButton;
+  const ToggleComponent =
+    formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
   const contentId = `${name}-content`;
   const headerId = `${name}-header`;
 

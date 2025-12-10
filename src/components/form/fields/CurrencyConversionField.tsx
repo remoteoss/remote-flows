@@ -27,26 +27,17 @@ const DescriptionWithConversion = ({
     ? `Hide ${targetCurrency} conversion`
     : `Show ${targetCurrency} conversion`;
 
-  const CustomButton = components?.button;
+  const CustomButton = components?.button || 'button';
   return (
     <span className={className}>
       <FormDescription as='span'>{description}</FormDescription>{' '}
-      {CustomButton ? (
-        <CustomButton
-          className={`${className.replace('-description', '-button')}`}
-          data-type='inline'
-          onClick={onClick}
-        >
-          {label}
-        </CustomButton>
-      ) : (
-        <button
-          className={`${className.replace('-description', '-button')}`}
-          onClick={onClick}
-        >
-          {label}
-        </button>
-      )}
+      <CustomButton
+        className={`${className.replace('-description', '-button')}`}
+        data-type='inline'
+        onClick={onClick}
+      >
+        {label}
+      </CustomButton>
     </span>
   );
 };
@@ -116,7 +107,9 @@ export const CurrencyConversionField = ({
       toCurrency: string,
       targetField: string,
     ) => {
-      if (!value) return;
+      const amount = Number(value);
+
+      if (!value || isNaN(amount) || amount <= 0) return;
 
       const cacheKey = `${fromCurrency}_${toCurrency}_${value}`;
       const cached = conversionCache.current.get(cacheKey);
@@ -130,7 +123,7 @@ export const CurrencyConversionField = ({
         const response = await convertCurrency({
           source_currency: fromCurrency,
           target_currency: toCurrency,
-          amount: Number(value),
+          amount,
         });
         if (response.data?.data?.conversion_data?.target_amount) {
           const amount = response.data.data.conversion_data.target_amount;

@@ -22,5 +22,10 @@ export function EmployeeCommunicationForm({
     terminationBag?.next();
   };
 
-  return <TerminationForm onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      onSubmit={handleSubmit}
+    />
+  );
 }
