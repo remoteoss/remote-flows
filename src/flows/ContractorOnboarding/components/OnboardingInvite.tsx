@@ -77,35 +77,19 @@ export function OnboardingInvite({
     }
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        disabled={employmentInviteMutation.isPending || props.disabled}
-        onClick={(evt) => {
-          handleSubmit();
-          props.onClick?.(evt);
-        }}
-      >
-        {render({
-          employmentStatus: 'invited',
-        })}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button
+    <CustomButton
       {...props}
       disabled={employmentInviteMutation.isPending || props.disabled}
-      onClick={() => {
+      onClick={(evt) => {
         handleSubmit();
+        props.onClick?.(evt);
       }}
     >
       {render({
         employmentStatus: 'invited',
       })}
-    </Button>
+    </CustomButton>
   );
 }

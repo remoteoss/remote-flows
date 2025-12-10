@@ -6,6 +6,7 @@ import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
 import { FormDescription } from '@/src/components/ui/form';
+import { Button } from '@/src/components/ui/button';
 
 type DescriptionWithConversionProps = {
   description: ReactNode;

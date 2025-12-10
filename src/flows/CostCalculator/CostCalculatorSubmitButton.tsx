@@ -12,17 +12,9 @@ export function CostCalculatorSubmitButton({
   const { formId } = useCostCalculatorContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} form={formId}>
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || Button;
   return (
-    <Button
+    <CustomButton
       {...props}
       type='submit'
       className={cn(
@@ -32,6 +24,6 @@ export function CostCalculatorSubmitButton({
       form={formId}
     >
       {children}
-    </Button>
+    </CustomButton>
   );
 }
