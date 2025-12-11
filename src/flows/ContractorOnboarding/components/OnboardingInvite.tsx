@@ -1,10 +1,10 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
-import { Button } from '@/src/components/ui/button';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -77,35 +77,19 @@ export function OnboardingInvite({
     }
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        disabled={employmentInviteMutation.isPending || props.disabled}
-        onClick={(evt) => {
-          handleSubmit();
-          props.onClick?.(evt);
-        }}
-      >
-        {render({
-          employmentStatus: 'invited',
-        })}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || ButtonDefault;
   return (
-    <Button
+    <CustomButton
       {...props}
       disabled={employmentInviteMutation.isPending || props.disabled}
-      onClick={() => {
+      onClick={(evt) => {
         handleSubmit();
+        props.onClick?.(evt);
       }}
     >
       {render({
         employmentStatus: 'invited',
       })}
-    </Button>
+    </CustomButton>
   );
 }
