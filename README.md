@@ -170,7 +170,15 @@ Here's an example of custom field components implementation:
 
 ### Available Component Prop Types
 
-- `FieldComponentProps`: For all form field components (text, number, select, etc.)
+- `FieldComponentProps`: For all form field components (generic field component type)
+- `ButtonComponentProps`: For custom button components
+- `StatementComponentProps`: For custom statement components
+- `ZendeskDrawerComponentProps`: For custom zendesk drawer
+- `FileComponentProps`: for custom file field components
+- `CountryComponentProps`: for country field components
+- `TextFieldComponentProps`: for textfield components
+- `DatePickerComponentProps`: for datepicker components
+- `WorkScheduleComponentProps`: for workschedule components
 - `ButtonComponentProps`: For custom button components
 - `StatementComponentProps`: For custom statement components
 
@@ -179,6 +187,18 @@ Supported field types:
 - `text`: Text input fields
 - `number`: Numeric input fields
 - `select`: Dropdown selection fields
+- `checkbox`: Checkbox input fields
+- `email`: Email input fields
+- `radio`: Radio input field
+- `file`: File input field
+- `date`: Datepicker input field
+- `countries`: select countries multi select field
+- `button`: Button
+- `statement`: statement field
+- `fieldSetToggle`: to replace fieldset toggle buttons
+- `zendeskDrawer`: to replace zendesk drawers with Remote's zendesk information
+- `table`: to replace table components
+- `drawer`: to replace drawer components
 
 ## Available Flows
 
