@@ -16,6 +16,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -71,9 +74,7 @@ jobs:
 
       - name: Publish to npm
         if: steps.version-check.outputs.changed == 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
 
       - name: Create git tag
         if: steps.version-check.outputs.changed == 'true'
