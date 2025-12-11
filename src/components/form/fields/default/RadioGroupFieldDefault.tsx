@@ -9,6 +9,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export const RadioGroupFieldDefault = ({
   field,
@@ -23,7 +24,11 @@ export const RadioGroupFieldDefault = ({
     >
       <FormItem>
         <legend>{label}</legend>
-        {description && <FormDescription>{description}</FormDescription>}
+        {description && (
+          <FormDescription>
+            {description} <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+          </FormDescription>
+        )}
         <FormControl>
           <RadioGroup
             aria-label={label || name}

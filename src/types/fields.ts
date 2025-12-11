@@ -38,6 +38,12 @@ export type FieldComponentProps = {
  */
 export type FieldDataProps = Partial<JSFField> & {
   metadata?: Record<string, unknown>;
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: number;
+    };
+  };
 };
 
 export type FileComponentProps = FieldComponentProps & {
@@ -49,12 +55,6 @@ type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
   };
-  meta?: {
-    helpCenter?: {
-      callToAction: string;
-      id: number;
-    };
-  };
 };
 
 export type CountryComponentProps = FieldComponentProps & {
@@ -62,12 +62,6 @@ export type CountryComponentProps = FieldComponentProps & {
 };
 
 type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
-  meta?: {
-    helpCenter?: {
-      callToAction: string;
-      id: number;
-    };
-  };
   minDate?: string;
   maxDate?: string;
 };
