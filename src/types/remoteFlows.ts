@@ -53,6 +53,14 @@ export type JSFField = {
   meta?: Record<string, unknown>;
 };
 
+/**
+ * Props passed to custom Component when using jsfModify with x-jsf-presentation.
+ * Used when overriding field rendering via the Component prop in jsfModify options.
+ */
+export type JSFCustomComponentProps = JSFField & {
+  setValue: (value: unknown) => void;
+};
+
 export type TableComponentProps<T = $TSFixMe> = {
   ref: React.ForwardedRef<HTMLTableElement>;
   data: T[] | undefined;

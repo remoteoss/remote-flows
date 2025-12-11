@@ -9,6 +9,7 @@ import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField'
 import { Components, JSFFieldset } from '@/src/types/remoteFlows';
 import { getFieldsWithFlatFieldsets } from './utils';
 import { StatementComponentProps } from '@/src/types/fields';
+import { useFormContext } from 'react-hook-form';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
@@ -33,6 +34,8 @@ export const JSONSchemaFormFields = ({
   fieldValues,
   components,
 }: JSONSchemaFormFieldsProps) => {
+  const { setValue } = useFormContext();
+
   if (!fields || fields.length === 0) return null;
 
   const maybeFieldWithFlatFieldsets =
@@ -76,7 +79,13 @@ export const JSONSchemaFormFields = ({
           const { Component } = field as {
             Component: React.ComponentType<any>;
           };
-          return <Component key={field.name as string} {...field} />;
+          return (
+            <Component
+              key={field.name as string}
+              setValue={(value: unknown) => setValue(field.name, value)}
+              {...field}
+            />
+          );
         }
 
         let FieldComponent = fieldsMap[field.inputType as SupportedTypes];
