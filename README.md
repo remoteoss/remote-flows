@@ -34,7 +34,7 @@ npm install @remoteoss/remote-flows
 
 ```tsx
 import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
-import '@remoteoss/remote-flows/index.css';
+import '@remoteoss/remote-flows/styles.css';
 
 function App() {
   const fetchToken = async () => {
@@ -213,7 +213,7 @@ For a complete implementation, check our [example server implementation](https:/
 Import the CSS file in your application:
 
 ```css
-@import '@remoteoss/remote-flows/index.css';
+@import '@remoteoss/remote-flows/styles.css';
 ```
 
 ### Theme Customization
