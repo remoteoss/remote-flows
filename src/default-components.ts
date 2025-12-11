@@ -14,6 +14,8 @@ import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/defaul
 import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
 import { ZendeskDrawerDefault } from '@/src/components/shared/zendesk-drawer/ZendeskDrawerDefault';
 import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefault';
+import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
+import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
 /**
  * Default field components for RemoteFlows.
  *
@@ -32,6 +34,7 @@ import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefau
  *
  */
 export const defaultComponents: Components = {
+  checkbox: CheckboxFieldDefault,
   countries: CountryFieldDefault,
   date: DatePickerFieldDefault,
   drawer: DrawerDefault,
@@ -47,4 +50,5 @@ export const defaultComponents: Components = {
   text: TextFieldDefault,
   zendeskDrawer: ZendeskDrawerDefault,
   table: TableFieldDefault,
+  'work-schedule': WorkScheduleFieldDefault,
 };

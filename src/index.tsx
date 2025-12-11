@@ -47,6 +47,7 @@ export type {
   StatementComponentProps,
   TextFieldComponentProps,
   DatePickerComponentProps,
+  WorkScheduleComponentProps,
 } from '@/src/types/fields';
 
 export type {

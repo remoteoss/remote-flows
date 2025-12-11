@@ -1,4 +1,5 @@
 import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+import { DailySchedule } from '@/src/components/form/fields/workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerFieldState,
@@ -81,6 +82,20 @@ export type TextFieldDataProps = FieldDataProps & {
 
 export type TextFieldComponentProps = FieldComponentProps & {
   fieldData: TextFieldDataProps;
+};
+
+type WorkScheduleDataProps = FieldDataProps & {
+  onSubmit: (data: DailySchedule[]) => void;
+  currentSchedule: DailySchedule[];
+  defaultFormattedValue: {
+    workHoursSummary: string[];
+    breakSummary: string[];
+    totalWorkHours: number;
+  };
+};
+
+export type WorkScheduleComponentProps = FieldComponentProps & {
+  fieldData: WorkScheduleDataProps;
 };
 
 /**
