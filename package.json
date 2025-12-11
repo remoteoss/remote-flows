@@ -21,7 +21,7 @@
     "type-check": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=24"
   },
   "type": "module",
   "main": "dist/index.js",
