@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.2.2
+
+### Patch Changes
+
+- add manual release triggering and simplify version detection (#642) [#642](https://github.com/remoteoss/remote-flows/pull/642)
+- extract checkbox and work schedule field defaults into separate components (#626) [#626](https://github.com/remoteoss/remote-flows/pull/626)
+- replace wildcard exports with explicit named exports (#652) [#652](https://github.com/remoteoss/remote-flows/pull/652)
+- consolidate helpCenter meta type into FieldDataProps (#650) [#650](https://github.com/remoteoss/remote-flows/pull/650)
+
 ## 1.2.1
 
 ### Patch Changes
