@@ -20,18 +20,7 @@ import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefaul
 /**
  * Default field components for RemoteFlows.
  *
- * This module exports all default field component implementations and a pre-configured
- * `defaultComponents` object that can be passed to the RemoteFlows SDK.
- *
- * @example
- * ```tsx
- * import { defaultComponents } from '@remoteoss/remote-flows/default-components';
- *
- * <RemoteFlows components={defaultComponents} {...otherProps}>
- *   {children}
- * </RemoteFlows>
- * ```
- *
+ * This module acts as a reference for our users to know what are the components that are really overrided
  *
  */
 export const defaultComponents: Components = {
@@ -43,6 +32,7 @@ export const defaultComponents: Components = {
   email: EmailFieldDefault,
   fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
+  // TODO: we have doubts multi-select, it's actually used
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,
   radio: RadioGroupFieldDefault,
