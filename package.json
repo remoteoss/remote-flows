@@ -20,6 +20,9 @@
     "size:badge": "tsx scripts/update-size-badge.ts",
     "type-check": "tsc --noEmit"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "engines": {
     "node": ">=16"
   },
@@ -52,6 +55,14 @@
         "import": "./dist/index.css"
       },
       "default": "./dist/index.css"
+    },
+    "./styles": {
+      "import": "./dist/styles.js",
+      "default": "./dist/styles.js"
+    },
+    "./styles.css": {
+      "import": "./dist/styles.css",
+      "default": "./dist/styles.css"
     }
   },
   "files": [
