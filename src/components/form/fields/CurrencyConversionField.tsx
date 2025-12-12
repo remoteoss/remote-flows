@@ -116,6 +116,9 @@ export const CurrencyConversionField = ({
   );
 
   const debouncedConvertCurrency = useDebounce(async (value: string) => {
+    // The SDK sets the employer billing currency in the salary field, but internally we don't do it like this, is set based on the employee billing currency
+    // That's why we need to do 1 / exchange rate to get the correct amount, if currencies were different, it would be done in the debouncedConvertCurrencyReverse
+    // THE BE always transforms from the target currency to the source currency
     const amountInCents = convertToCents(value);
     const conversion = await convertCurrencyCallback(
       amountInCents,
