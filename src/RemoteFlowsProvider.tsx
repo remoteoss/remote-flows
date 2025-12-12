@@ -8,6 +8,7 @@ import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
 import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
+import { lazyDefaultComponents } from './lazy-default-components';
 
 const queryClient = new QueryClient();
 
@@ -29,14 +30,22 @@ function RemoteFlowContextWrapper({
 
 export function FormFieldsProvider({
   children,
-  components,
+  components: userComponents = {},
 }: PropsWithChildren<{
   components?: Components;
 }>) {
+  // Merge user components with lazy defaults
+  // User-provided components take precedence, lazy defaults are only used as fallback
+  const resolvedComponents = useMemo(() => {
+    // Spread lazy defaults first, then override with user components
+    return {
+      ...lazyDefaultComponents,
+      ...userComponents,
+    } as Components;
+  }, [userComponents]);
+
   return (
-    <FormFieldsContext.Provider
-      value={components ? { components } : { components: {} }}
-    >
+    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
       {children}
     </FormFieldsContext.Provider>
   );

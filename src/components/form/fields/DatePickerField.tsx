@@ -5,7 +5,6 @@ import { FormField } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
-import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
 
 export type DatePickerFieldProps = JSFField & {
   onChange?: (value: any) => void;
@@ -42,8 +41,11 @@ export function DatePickerField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomDatePickerField = component || components?.date;
-        const Component = CustomDatePickerField || DatePickerFieldDefault;
+        const Component = component || components?.date;
+
+        if (!Component) {
+          throw new Error(`Date picker component not found for field ${name}`);
+        }
 
         const customDatePickerFieldProps = {
           description,

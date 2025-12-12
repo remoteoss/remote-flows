@@ -1,7 +1,6 @@
 import { useZendeskArticle } from '@/src/components/shared/zendesk-drawer/api';
 import { useFormFields } from '@/src/context';
 import { buildZendeskURL } from '@/src/components/shared/zendesk-drawer/utils';
-import { ZendeskDrawerDefault } from './ZendeskDrawerDefault';
 
 export type ZendeskDrawerProps = {
   Trigger: React.ReactElement;
@@ -27,7 +26,11 @@ export const ZendeskDrawer = ({
     enabled: open,
   });
 
-  const CustomZendeskDrawer = components?.zendeskDrawer || ZendeskDrawerDefault;
+  const CustomZendeskDrawer = components?.zendeskDrawer;
+
+  if (!CustomZendeskDrawer) {
+    throw new Error(`Zendesk drawer component not found`);
+  }
 
   return (
     <CustomZendeskDrawer

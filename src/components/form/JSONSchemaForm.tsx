@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fields } from '@remoteoss/json-schema-form-old';
-import React, { Fragment } from 'react';
+import React, { Fragment, Suspense } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { Statement } from '@/src/components/form/Statement';
@@ -8,6 +8,7 @@ import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField'
 import { Components, JSFFieldset } from '@/src/types/remoteFlows';
 import { getFieldsWithFlatFieldsets } from './utils';
 import { StatementComponentProps } from '@/src/types/fields';
+import { FormLoadingFallback } from './FormLoadingFallback';
 
 type JSONSchemaFormFieldsProps = {
   fields: Fields;
@@ -116,20 +117,22 @@ export const JSONSchemaFormFields = ({
         }
 
         return (
-          <Fragment key={field.name as string}>
-            <FieldComponent
-              {...field}
-              component={
-                components && components[field.inputType as keyof Components]
-              }
-            />
-            {field.statement ? (
-              <Statement
-                {...(field.statement as StatementComponentProps['data'])}
+          <Suspense key={field.name as string} fallback={<FormLoadingFallback />}>
+            <Fragment>
+              <FieldComponent
+                {...field}
+                component={
+                  components && components[field.inputType as keyof Components]
+                }
               />
-            ) : null}
-            {field.extra ? field.extra : null}
-          </Fragment>
+              {field.statement ? (
+                <Statement
+                  {...(field.statement as StatementComponentProps['data'])}
+                />
+              ) : null}
+              {field.extra ? field.extra : null}
+            </Fragment>
+          </Suspense>
         );
       })}
     </>

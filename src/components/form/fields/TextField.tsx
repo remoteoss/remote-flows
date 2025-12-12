@@ -5,7 +5,6 @@ import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
-import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { TextFieldDataProps } from '@/src/types/fields';
 
 export type TextFieldProps = React.ComponentProps<'input'> & {
@@ -46,8 +45,12 @@ export function TextField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomTextField = component || components?.text;
-        const Component = CustomTextField || TextFieldDefault;
+        const Component = component || components?.text;
+
+        if (!Component) {
+          throw new Error(`Text component not found for field ${name}`);
+        }
+
         const customTextFieldProps: CustomTextFieldProps = {
           name,
           description,

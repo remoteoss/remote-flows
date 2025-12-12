@@ -3,7 +3,6 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { ButtonHTMLAttributes } from 'react';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 type SaveDraftButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -46,7 +45,11 @@ export const SaveDraftButton = ({
     }
   };
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <CustomButton
       {...props}
