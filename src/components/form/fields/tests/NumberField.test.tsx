@@ -7,6 +7,7 @@ import { number } from 'yup';
 import { NumberField } from '../NumberField';
 import { TextFieldProps } from '../TextField';
 import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -51,6 +52,7 @@ describe('NumberField Component', () => {
     (useFormFields as any).mockReturnValue({
       components: {
         number: NumberFieldDefault,
+        text: TextFieldDefault,
       },
     });
   });

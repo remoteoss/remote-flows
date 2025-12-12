@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
+import { FileUploadFieldDefault } from '@/src/components/form/fields/default/FileUploadFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,11 @@ describe('FileUploadField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        file: FileUploadFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {
