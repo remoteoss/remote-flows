@@ -255,7 +255,6 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
-      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 
@@ -270,7 +269,6 @@ export const useContractorOnboarding = ({
         enabled: isContractorOnboardingDetailsEnabled,
       },
       jsfModify: options?.jsfModify?.contract_details,
-      jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
 

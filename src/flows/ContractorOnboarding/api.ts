@@ -9,7 +9,6 @@ import {
   postSignContractDocument,
   SignContractDocument,
 } from '@/src/client';
-import { convertToCents } from '@/src/components/form/utils';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
@@ -17,14 +16,9 @@ import {
   JSONSchemaFormResultWithFieldsets,
   NextFlowOptions,
 } from '@/src/flows/types';
-import { findFieldsByType } from '@/src/flows/utils';
 import { formatCurrency } from '@/src/lib/utils';
-import { JSFFieldset } from '@/src/types/remoteFlows';
 import { Client } from '@/src/client/client';
-import {
-  createHeadlessForm,
-  modify,
-} from '@remoteoss/remote-json-schema-form-kit';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
@@ -45,9 +39,7 @@ export const useGetContractDocumentSignatureSchema = ({
   return useQuery({
     queryKey: ['contract-document-signature'],
     queryFn: async () => {
-      return createHeadlessForm(signatureSchema, {
-        initialValues: fieldValues,
-      });
+      return createHeadlessForm(signatureSchema, fieldValues);
     },
     enabled: options?.queryOptions?.enabled,
   });
@@ -211,13 +203,6 @@ export const useContractorOnboardingDetailsSchema = ({
   options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ?.contractor_contract_details_form_schema
-    ? {
-        json_schema_version:
-          options.jsonSchemaVersion.contractor_contract_details_form_schema,
-      }
-    : {};
   const { client } = useClient();
   return useQuery({
     queryKey: ['contractor-onboarding-details-schema', countryCode],
@@ -227,43 +212,14 @@ export const useContractorOnboardingDetailsSchema = ({
         client: client as Client,
         path: { country_code: countryCode },
         query: {
-          ...jsonSchemaQueryParam,
+          json_schema_version: 1,
         },
       });
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-
-      // Contract details contains x-jsf-logic that need to be calculated every time a form value changes
-      // In particular there are calculations involving the annual_gross_salary field. However this field value doesn't get
-      // here in cents. So we need to convert the money fields to cents, so that the calculations are correct.
-      const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
-      const moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
-        (acc, field) => {
-          acc[field] = convertToCents(fieldValues[field]);
-          return acc;
-        },
-        {},
-      );
-
-      const initialValues = {
-        ...fieldValues,
-        ...moneyFieldsData,
-      };
-
-      return {
-        meta: {
-          'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
-        },
-        ...createHeadlessForm(jsfSchema, {
-          initialValues,
-        }),
-      };
+      const jsfSchema = data?.data?.schema || {};
+      return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
 };
@@ -280,12 +236,11 @@ export const useContractorSubscriptionSchemaField = (
       },
     });
 
-  const { schema: selectContractorSubscriptionSchema } = modify(
+  const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
-    options?.jsfModify || {},
+    {},
+    options,
   );
-
-  const form = createHeadlessForm(selectContractorSubscriptionSchema);
 
   if (contractorSubscriptions) {
     const field = form.fields.find((field) => field.name === 'subscription');
