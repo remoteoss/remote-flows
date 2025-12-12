@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useMemo } from 'react';
+import React, { useMemo, Suspense } from 'react';
 
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
@@ -9,6 +9,8 @@ import { createClient } from '@/src/auth/createClient';
 import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
 import { lazyDefaultComponents } from './lazy-default-components';
+import { FormLoadingFallback } from '@/src/components/form/FormLoadingFallback';
+import { DelayedFallback } from '@/src/components/form/DelayedFallback';
 
 const queryClient = new QueryClient();
 
@@ -46,7 +48,13 @@ export function FormFieldsProvider({
 
   return (
     <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
-      {children}
+      <Suspense
+        fallback={
+          <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
+        }
+      >
+        {children}
+      </Suspense>
     </FormFieldsContext.Provider>
   );
 }
