@@ -12,14 +12,39 @@ import {
   ContractorOnboardingContractDetailsResponse,
   ContractPreviewResponse,
   ContractPreviewFormPayload,
+  JSFCustomComponentProps,
 } from '@remoteoss/remote-flows';
-import { Card } from '@remoteoss/remote-flows/internals';
+import {
+  Card,
+  Tabs,
+  TabsTrigger,
+  TabsList,
+} from '@remoteoss/remote-flows/internals';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+
+const Switcher = (props: JSFCustomComponentProps) => {
+  return (
+    <Tabs
+      defaultValue={props.options?.[0].value}
+      onValueChange={(value) => {
+        props.setValue(value);
+      }}
+    >
+      <TabsList>
+        {props.options?.map((option) => (
+          <TabsTrigger key={option.value} value={option.value}>
+            {option.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  );
+};
 
 const STEPS = [
   'Select Country',
@@ -306,6 +331,21 @@ export const ContractorOnboardingWithProps = ({
                 },
                 service_duration: {
                   provisional_start_date: provisionalStartDate,
+                },
+              }}
+              options={{
+                jsfModify: {
+                  contract_details: {
+                    fields: {
+                      'payment_terms.payment_terms_type': {
+                        'x-jsf-presentation': {
+                          Component: (props: JSFCustomComponentProps) => (
+                            <Switcher {...props} />
+                          ),
+                        },
+                      },
+                    },
+                  },
                 },
               }}
             />
