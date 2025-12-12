@@ -108,6 +108,18 @@ Available component types include:
 - `drawer` - Drawer components
 - `zendeskDrawer` - Zendesk drawer components
 
+and their typescript definitions
+
+- `FieldComponentProps`: For all form field components (generic field component type)
+- `ButtonComponentProps`: For custom button components
+- `StatementComponentProps`: For custom statement components
+- `ZendeskDrawerComponentProps`: For custom zendesk drawer
+- `FileComponentProps`: for custom file field components
+- `CountryComponentProps`: for country field components
+- `TextFieldComponentProps`: for textfield components
+- `DatePickerComponentProps`: for datepicker components
+- `WorkScheduleComponentProps`: for workschedule components
+
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
 ### Important Notes
