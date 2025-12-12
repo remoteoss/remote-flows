@@ -2,11 +2,14 @@ import { render, screen } from '@testing-library/react';
 import { Table, ColumnDef } from '@/src/components/shared/table/Table';
 import * as FormFieldsContext from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefault';
 
 // Mock the context
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(() => ({
-    components: {},
+    components: {
+      table: TableFieldDefault,
+    },
   })),
 }));
 

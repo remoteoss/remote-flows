@@ -15,6 +15,8 @@ import {
   conversionFromUSDToEUR,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { useState } from 'react';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 const queryClient = new QueryClient();
 
@@ -50,7 +52,9 @@ const renderWithFormContext = (props = defaultProps) => {
 
     return (
       <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{}}>
+        <FormFieldsProvider
+          components={{ text: TextFieldDefault, button: ButtonDefault }}
+        >
           <FormProvider {...methods}>
             <CurrencyConversionField {...props} />
           </FormProvider>
@@ -78,7 +82,9 @@ const renderWithCustomButton = (
 
     return (
       <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={{ button: CustomButton }}>
+        <FormFieldsProvider
+          components={{ text: TextFieldDefault, button: CustomButton }}
+        >
           <FormProvider {...methods}>
             <CurrencyConversionField {...props} />
           </FormProvider>
@@ -295,7 +301,9 @@ describe('CurrencyFieldWithConversion', () => {
 
       return (
         <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider components={{}}>
+          <FormFieldsProvider
+            components={{ text: TextFieldDefault, button: ButtonDefault }}
+          >
             <FormProvider {...methods}>
               <CurrencyConversionField
                 {...defaultProps}

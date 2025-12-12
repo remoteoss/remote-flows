@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { addBusinessDays } from 'date-fns';
 import { DatePickerField, DatePickerFieldProps } from '../DatePickerField';
+import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -54,7 +55,11 @@ describe('DatePickerField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        date: DatePickerFieldDefault,
+      },
+    });
     (addBusinessDays as any).mockClear();
   });
 

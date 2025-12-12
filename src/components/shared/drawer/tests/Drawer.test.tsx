@@ -3,8 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { FormFieldsContext } from '@/src/context';
 import { ReactNode } from 'react';
+import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
 
-const mockComponents = { components: {} };
+const mockComponents = { components: { drawer: DrawerDefault } };
 
 const FormFieldsProvider = ({ children }: { children: ReactNode }) => (
   <FormFieldsContext.Provider value={mockComponents}>

@@ -2,7 +2,6 @@ import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useCostCalculatorContext } from './context';
 import { cn } from '@/src/lib/utils';
 import { useFormFields } from '@/src/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export function CostCalculatorSubmitButton({
   children,
@@ -12,7 +11,11 @@ export function CostCalculatorSubmitButton({
   const { formId } = useCostCalculatorContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <CustomButton
       {...props}

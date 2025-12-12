@@ -1,4 +1,3 @@
-import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
 import { FormField } from '@/src/components/ui/form';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
@@ -58,8 +57,12 @@ export function CheckBoxField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => {
-        const CustomCheckboxField = component || components?.checkbox;
-        const Component = CustomCheckboxField || CheckboxFieldDefault;
+        const Component = component || components?.checkbox;
+
+        if (!Component) {
+          throw new Error(`Checkbox component not found for field ${name}`);
+        }
+
         const customCheckboxFieldProps = {
           name,
           description,

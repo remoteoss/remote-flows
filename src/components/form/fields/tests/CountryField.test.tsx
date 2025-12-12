@@ -11,11 +11,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { CountryField } from '../CountryField';
 import { JSFField } from '@/src/types/remoteFlows';
+import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(() => ({ components: {} })),
-}));
+vi.mock('@/src/context');
 
 type CountryFieldProps = JSFField & {
   placeholder?: string;
@@ -75,7 +74,11 @@ describe('CountryField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockImplementation(() => ({ components: {} }));
+    (useFormFields as any).mockImplementation(() => ({
+      components: {
+        countries: CountryFieldDefault,
+      },
+    }));
   });
 
   it('renders the default implementation correctly', () => {

@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { RadioGroupField } from '../RadioGroupField';
 import { JSFField } from '@/src/types/remoteFlows';
+import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string | React.ChangeEvent<HTMLInputElement>) => void;
@@ -62,7 +63,11 @@ describe('RadioGroupField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        radio: RadioGroupFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {

@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { boolean } from 'yup';
 import { CheckBoxField, CheckBoxFieldProps } from '../CheckBoxField';
+import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,11 @@ describe('CheckBoxField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        checkbox: CheckboxFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {

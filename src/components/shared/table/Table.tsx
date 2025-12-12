@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { TableFieldDefault } from './TableFieldDefault';
 
 export type ColumnDef<T = $TSFixMe> = {
   id: keyof T;
@@ -22,10 +21,11 @@ export type TableComponentProps<T = $TSFixMe> = TableDataProps<T>;
 export const Table = forwardRef<HTMLTableElement, TableDataProps<$TSFixMe>>(
   ({ data = [], columns, className = '' }, ref) => {
     const { components } = useFormFields();
-    const CustomTable =
-      (components?.table as
-        | React.ComponentType<TableDataProps<$TSFixMe>>
-        | undefined) || TableFieldDefault;
+    const CustomTable = components?.table;
+
+    if (!CustomTable) {
+      throw new Error(`Table component not found`);
+    }
 
     // Pass the same structured data to custom components
     return (

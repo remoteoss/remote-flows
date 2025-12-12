@@ -5,6 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextField, TextFieldProps } from '../TextField';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -46,7 +47,11 @@ describe('TextField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        text: TextFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {

@@ -6,7 +6,6 @@ import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
 import { FormDescription } from '@/src/components/ui/form';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 import {
   convertFromCents,
   convertToCents,
@@ -33,7 +32,11 @@ const DescriptionWithConversion = ({
     ? `Hide ${targetCurrency} conversion`
     : `Show ${targetCurrency} conversion`;
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <span className={className}>
       <FormDescription as='span'>{description}</FormDescription>{' '}

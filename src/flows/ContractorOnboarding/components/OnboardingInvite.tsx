@@ -4,7 +4,6 @@ import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -77,7 +76,11 @@ export function OnboardingInvite({
     }
   };
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <CustomButton
       {...props}

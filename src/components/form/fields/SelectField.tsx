@@ -2,7 +2,6 @@ import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
-import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 
 type SelectFieldProps = JSFField & {
   placeholder?: string;
@@ -31,8 +30,12 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const CustomSelectField = component || components?.select;
-        const Component = CustomSelectField || SelectFieldDefault;
+        const Component = component || components?.select;
+
+        if (!Component) {
+          throw new Error(`Select component not found for field ${name}`);
+        }
+
         const customSelectFieldProps = {
           label,
           name,

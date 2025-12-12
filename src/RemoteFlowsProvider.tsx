@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useMemo } from 'react';
+import React, { useMemo, Suspense } from 'react';
 
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
@@ -8,6 +8,9 @@ import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
 import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
+import { lazyDefaultComponents } from './lazy-default-components';
+import { FormLoadingFallback } from '@/src/components/form/FormLoadingFallback';
+import { DelayedFallback } from '@/src/components/form/DelayedFallback';
 
 const queryClient = new QueryClient();
 
@@ -29,15 +32,29 @@ function RemoteFlowContextWrapper({
 
 export function FormFieldsProvider({
   children,
-  components,
+  components: userComponents = {},
 }: PropsWithChildren<{
   components?: Components;
 }>) {
+  // Merge user components with lazy defaults
+  // User-provided components take precedence, lazy defaults are only used as fallback
+  const resolvedComponents = useMemo(() => {
+    // Spread lazy defaults first, then override with user components
+    return {
+      ...lazyDefaultComponents,
+      ...userComponents,
+    } as Components;
+  }, [userComponents]);
+
   return (
-    <FormFieldsContext.Provider
-      value={components ? { components } : { components: {} }}
-    >
-      {children}
+    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
+      <Suspense
+        fallback={
+          <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
+        }
+      >
+        {children}
+      </Suspense>
     </FormFieldsContext.Provider>
   );
 }

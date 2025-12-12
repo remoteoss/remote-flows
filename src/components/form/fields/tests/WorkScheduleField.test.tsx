@@ -8,6 +8,9 @@ import { DailySchedule } from '../workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import { Components } from '@/src/types/remoteFlows';
 import * as yup from 'yup';
+import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
+import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -100,7 +103,13 @@ describe('WorkScheduleField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        'work-schedule': WorkScheduleFieldDefault,
+        checkbox: CheckboxFieldDefault,
+        text: TextFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {
