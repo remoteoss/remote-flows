@@ -1,6 +1,8 @@
 import { FieldComponentProps } from '@/src/types/fields';
+import { defaultComponents as defaultComponentsFromPackage } from '@/src/default-components';
 
 export const defaultComponents = {
+  ...defaultComponentsFromPackage,
   date: ({ field, fieldData, fieldState }: FieldComponentProps) => {
     return (
       <div className='input-container'>
