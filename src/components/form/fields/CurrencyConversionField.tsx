@@ -6,6 +6,11 @@ import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
 import { FormDescription } from '@/src/components/ui/form';
+import {
+  convertFromCents,
+  convertToCents,
+  round,
+} from '@/src/components/form/utils';
 
 type DescriptionWithConversionProps = {
   description: ReactNode;
@@ -76,10 +81,6 @@ export const CurrencyConversionField = ({
   const fieldValue = watch(mainFieldName || props.name);
   const isFirstRender = useRef(true);
 
-  const conversionCache = useRef<Map<string, { targetAmount: string }>>(
-    new Map(),
-  );
-
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
@@ -105,71 +106,50 @@ export const CurrencyConversionField = ({
   }, [sourceCurrency, conversionFieldName, setValue]);
 
   const convertCurrencyCallback = useCallback(
-    async (
-      value: string,
-      fromCurrency: string,
-      toCurrency: string,
-      targetField: string,
-    ) => {
-      const amount = Number(value);
+    async (amount: number | null, fromCurrency: string, toCurrency: string) => {
+      if (!amount || isNaN(amount) || amount <= 0) return;
 
-      if (!value || isNaN(amount) || amount <= 0) return;
-
-      const cacheKey = `${fromCurrency}_${toCurrency}_${value}`;
-      const cached = conversionCache.current.get(cacheKey);
-
-      if (cached) {
-        setValue(targetField, cached.targetAmount);
-        return;
-      }
-
-      try {
-        const response = await convertCurrency({
-          source_currency: fromCurrency,
-          target_currency: toCurrency,
-          amount,
-        });
-        if (response.data?.data?.conversion_data?.target_amount) {
-          const amount = response.data.data.conversion_data.target_amount;
-          if (amount) {
-            setValue(targetField, amount?.toString());
-            // Cache both directions
-            conversionCache.current.set(cacheKey, {
-              targetAmount: amount.toString(),
-            });
-            const reverseKey = `${toCurrency}_${fromCurrency}_${amount}`;
-            conversionCache.current.set(reverseKey, {
-              targetAmount: value.toString(),
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Error converting currency:', error);
-      }
+      return convertCurrency({
+        source_currency: fromCurrency,
+        target_currency: toCurrency,
+        amount,
+      });
     },
-    [convertCurrency, setValue],
+    [convertCurrency],
   );
 
-  const debouncedConvertCurrency = useDebounce(
-    (value: string) =>
-      convertCurrencyCallback(
-        value,
-        sourceCurrency,
-        targetCurrency,
-        conversionFieldName,
-      ),
-    500,
-  );
-  const debouncedConvertCurrencyReverse = useDebounce(
-    (value: string) =>
-      convertCurrencyCallback(
-        value,
-        targetCurrency,
-        sourceCurrency,
-        mainFieldName || props.name,
-      ),
-    500,
-  );
+  const debouncedConvertCurrency = useDebounce(async (value: string) => {
+    // The SDK sets the employer billing currency in the salary field, but internally we don't do it like this, is set based on the employee billing currency
+    // That's why we need to do 1 / exchange rate to get the correct amount, if currencies were different, it would be done in the debouncedConvertCurrencyReverse
+    // THE BE always transforms from the target currency to the source currency
+    const amountInCents = convertToCents(value);
+    const conversion = await convertCurrencyCallback(
+      amountInCents,
+      targetCurrency,
+      sourceCurrency,
+    );
+
+    const exchangeRate =
+      1 / (conversion?.data?.data.conversion_data?.exchange_rate ?? 1);
+
+    const amount = round(Number(amountInCents) * exchangeRate);
+
+    setValue(conversionFieldName, convertFromCents(amount));
+  }, 500);
+
+  const debouncedConvertCurrencyReverse = useDebounce(async (value: string) => {
+    const amount = convertToCents(value);
+    const conversion = await convertCurrencyCallback(
+      amount,
+      targetCurrency,
+      sourceCurrency,
+    );
+
+    const conversionAmount =
+      conversion?.data?.data.conversion_data.target_amount;
+
+    setValue(mainFieldName || props.name, convertFromCents(conversionAmount));
+  }, 500);
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setValue(lastInputFieldName, mainFieldName || props.name);
