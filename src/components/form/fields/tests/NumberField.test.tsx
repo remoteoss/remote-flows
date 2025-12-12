@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { number } from 'yup';
 import { NumberField } from '../NumberField';
 import { TextFieldProps } from '../TextField';
+import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +48,11 @@ describe('NumberField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        number: NumberFieldDefault,
+      },
+    });
   });
 
   it('renders the default implementation correctly', () => {
