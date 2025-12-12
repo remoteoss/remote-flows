@@ -2,11 +2,12 @@ import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
-import { SupportedTypes } from '../components/form/fields/types';
+import { BaseTypes, SupportedTypes } from '../components/form/fields/types';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
   CountryComponentProps,
+  DatePickerComponentProps,
   FieldComponentProps,
   FileComponentProps,
   StatementComponentProps,
@@ -109,8 +110,8 @@ export type FieldSetToggleComponentProps = {
 
 // We exclude the file type as we're extending the fieldData property
 type TypesWithoutFile = Exclude<
-  SupportedTypes,
-  'file' | 'countries' | 'text' | 'work-schedule'
+  BaseTypes,
+  'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
 >;
 
 export type Components = {
@@ -118,6 +119,7 @@ export type Components = {
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
+  date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
