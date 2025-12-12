@@ -34,6 +34,7 @@ npm install @remoteoss/remote-flows
 
 ```tsx
 import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import '@remoteoss/remote-flows/index.css';
 
 function App() {
@@ -43,7 +44,11 @@ function App() {
   };
 
   return (
-    <RemoteFlows auth={fetchToken} environment='partners'>
+    <RemoteFlows
+      components={defaultComponents}
+      auth={fetchToken}
+      environment='partners'
+    >
       <CostCalculator onSuccess={(data) => console.log(data)} />
     </RemoteFlows>
   );
@@ -71,6 +76,7 @@ The `errorBoundary` prop controls how the SDK handles runtime errors to prevent 
 
 ```tsx
 <RemoteFlows
+  components={defaultComponents}
   auth={fetchToken}
   errorBoundary={{
     useParentErrorBoundary: false,
