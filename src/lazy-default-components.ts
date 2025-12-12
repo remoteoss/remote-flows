@@ -68,11 +68,9 @@ export const lazyDefaultComponents: Components = {
     ),
   ),
   number: lazy(() =>
-    import('./components/form/fields/default/NumberFieldDefault').then(
-      (m) => ({
-        default: m.NumberFieldDefault,
-      }),
-    ),
+    import('./components/form/fields/default/NumberFieldDefault').then((m) => ({
+      default: m.NumberFieldDefault,
+    })),
   ),
   radio: lazy(() =>
     import('./components/form/fields/default/RadioGroupFieldDefault').then(
@@ -82,11 +80,9 @@ export const lazyDefaultComponents: Components = {
     ),
   ),
   select: lazy(() =>
-    import('./components/form/fields/default/SelectFieldDefault').then(
-      (m) => ({
-        default: m.SelectFieldDefault,
-      }),
-    ),
+    import('./components/form/fields/default/SelectFieldDefault').then((m) => ({
+      default: m.SelectFieldDefault,
+    })),
   ),
   statement: lazy(() =>
     import('./components/form/fields/default/StatementDefault').then((m) => ({

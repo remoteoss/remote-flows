@@ -18,7 +18,10 @@ type DelayedFallbackProps = {
  *   <LazyComponent />
  * </Suspense>
  */
-export function DelayedFallback({ fallback, delay = 200 }: DelayedFallbackProps) {
+export function DelayedFallback({
+  fallback,
+  delay = 200,
+}: DelayedFallbackProps) {
   const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
