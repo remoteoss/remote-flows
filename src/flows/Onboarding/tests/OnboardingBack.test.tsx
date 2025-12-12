@@ -201,7 +201,9 @@ describe('OnboardingBack Component', () => {
           isEmploymentReadOnly: true,
         },
       });
-      (useFormFields as any).mockReturnValue({ components: {} });
+      (useFormFields as any).mockReturnValue({
+        components: { button: ButtonDefault },
+      });
     });
 
     it('should not call mockBack', () => {

@@ -4,6 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
@@ -53,6 +54,7 @@ describe('FieldSetField', () => {
     (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         fieldsetToggle: FieldsetToggleButtonDefault,
+        text: TextFieldDefault,
       },
     });
   });
