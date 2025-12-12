@@ -12,6 +12,7 @@ import {
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
+  DatePickerComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -115,18 +116,19 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property
-type TypesWithoutFile = Exclude<
+// We exclude some of the types that we are overriding
+type FieldComponentTypes = Exclude<
   SupportedTypes,
   'file' | 'countries' | 'text' | 'work-schedule'
 >;
 
 export type Components = {
-  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
+  [K in FieldComponentTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
+  date?: React.ComponentType<DatePickerComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
