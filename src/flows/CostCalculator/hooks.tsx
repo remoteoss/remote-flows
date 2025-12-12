@@ -201,6 +201,8 @@ export const useCostCalculator = (
     const { from, to, shouldSwapOrder } = getCurrencies();
     const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
 
+    console.log({ version });
+
     return {
       fields: {
         salary: {
@@ -222,9 +224,7 @@ export const useCostCalculator = (
                 <SalaryField
                   {...props}
                   shouldSwapOrder={shouldSwapOrder}
-                  conversionType={
-                    version === 'marketing' ? 'no_spread' : 'spread'
-                  }
+                  conversionType={'no_spread'}
                   defaultValue={defaultSalary}
                 />
               );
