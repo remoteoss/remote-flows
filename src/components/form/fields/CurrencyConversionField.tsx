@@ -7,7 +7,11 @@ import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
 import { FormDescription } from '@/src/components/ui/form';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
-import { round } from '@/src/components/form/utils';
+import {
+  convertFromCents,
+  convertToCents,
+  round,
+} from '@/src/components/form/utils';
 
 type DescriptionWithConversionProps = {
   description: ReactNode;
@@ -77,8 +81,6 @@ export const CurrencyConversionField = ({
   const canShowConversion =
     sourceCurrency && targetCurrency && sourceCurrency !== targetCurrency;
 
-  console.log({ conversionType });
-
   const { mutateAsync: convertCurrency } = useConvertCurrency({
     type: conversionType,
   });
@@ -101,10 +103,8 @@ export const CurrencyConversionField = ({
   }, [sourceCurrency, conversionFieldName, setValue]);
 
   const convertCurrencyCallback = useCallback(
-    async (value: string, fromCurrency: string, toCurrency: string) => {
-      const amount = Number(value);
-
-      if (!value || isNaN(amount) || amount <= 0) return;
+    async (amount: number | null, fromCurrency: string, toCurrency: string) => {
+      if (!amount || isNaN(amount) || amount <= 0) return;
 
       return convertCurrency({
         source_currency: fromCurrency,
@@ -116,31 +116,33 @@ export const CurrencyConversionField = ({
   );
 
   const debouncedConvertCurrency = useDebounce(async (value: string) => {
+    const amountInCents = convertToCents(value);
     const conversion = await convertCurrencyCallback(
-      value,
-      sourceCurrency,
+      amountInCents,
       targetCurrency,
+      sourceCurrency,
     );
 
-    setValue(
-      conversionFieldName,
-      conversion?.data?.data.conversion_data.target_amount,
-    );
+    const exchangeRate =
+      1 / (conversion?.data?.data.conversion_data?.exchange_rate ?? 1);
+
+    const amount = round(Number(amountInCents) * exchangeRate);
+
+    setValue(conversionFieldName, convertFromCents(amount));
   }, 500);
 
   const debouncedConvertCurrencyReverse = useDebounce(async (value: string) => {
+    const amount = convertToCents(value);
     const conversion = await convertCurrencyCallback(
-      value,
-      sourceCurrency,
+      amount,
       targetCurrency,
+      sourceCurrency,
     );
 
-    const reverseConversion =
-      1 / (conversion?.data?.data.conversion_data?.exchange_rate ?? 1);
+    const conversionAmount =
+      conversion?.data?.data.conversion_data.target_amount;
 
-    const amount = round(Number(value) * reverseConversion);
-
-    setValue(mainFieldName || props.name, amount);
+    setValue(mainFieldName || props.name, convertFromCents(conversionAmount));
   }, 500);
 
   const handleMainFieldChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
