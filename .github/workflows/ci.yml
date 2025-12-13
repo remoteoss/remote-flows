@@ -26,6 +26,150 @@ jobs:
       - name: Run type checks && tests
         run: npm run ci
 
+      - name: Run tests with coverage
+        if: github.event_name == 'pull_request'
+        run: npm run test:coverage
+
+      - name: Create output directory
+        if: github.event_name == 'pull_request'
+        run: mkdir -p out
+
+      - name: Extract current coverage
+        if: github.event_name == 'pull_request'
+        run: npm run coverage:extract -- --output out/current-coverage.json
+
+      - name: Upload current coverage
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-coverage
+          path: out/current-coverage.json
+          retention-days: 1
+
+  coverage-compare:
+    name: Compare Coverage
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Download current coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: current-coverage
+          path: out
+
+      - name: Check if coverage scripts exist
+        id: check-scripts
+        run: |
+          if [ -f "scripts/compare-coverage.ts" ] && [ -f "scripts/extract-coverage.ts" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout base branch
+        if: steps.check-scripts.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Install dependencies (base)
+        if: steps.check-scripts.outputs.exists == 'true'
+        working-directory: base
+        run: npm ci --ignore-scripts
+
+      - name: Run tests with coverage (base)
+        if: steps.check-scripts.outputs.exists == 'true'
+        working-directory: base
+        run: npm run test:coverage
+        continue-on-error: true
+
+      - name: Extract base coverage
+        if: steps.check-scripts.outputs.exists == 'true'
+        working-directory: base
+        run: npm run coverage:extract -- --output ../out/base-coverage.json
+        continue-on-error: true
+
+      - name: Compare coverage
+        id: compare
+        run: |
+          # Run comparison (will handle missing base file gracefully)
+          npx tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
+
+          # Read the report for the PR comment
+          REPORT=$(cat out/coverage-report.md)
+
+          # Set output for PR comment (escape for GitHub Actions)
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post PR comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const report = process.env.COVERAGE_REPORT;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('📊 Coverage Report')
+            );
+
+            const commentBody = report;
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
+        env:
+          COVERAGE_REPORT: ${{ steps.compare.outputs.report }}
+
+      - name: Upload coverage analysis
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-analysis
+          path: |
+            out/current-coverage.json
+            out/base-coverage.json
+            out/coverage-report.md
+          retention-days: 30
+
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
