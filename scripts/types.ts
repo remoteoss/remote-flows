@@ -55,3 +55,41 @@ export interface Violation {
   limit: number;
   percentage: number;
 }
+
+export interface CoverageData {
+  timestamp: string;
+  lines: {
+    total: number;
+    covered: number;
+    skipped: number;
+    pct: number;
+  };
+  statements: {
+    total: number;
+    covered: number;
+    skipped: number;
+    pct: number;
+  };
+  functions: {
+    total: number;
+    covered: number;
+    skipped: number;
+    pct: number;
+  };
+  branches: {
+    total: number;
+    covered: number;
+    skipped: number;
+    pct: number;
+  };
+}
+
+export interface CoverageChange {
+  text: string;
+  icon: string;
+  color: string;
+  delta: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type $TSFixMe = any;

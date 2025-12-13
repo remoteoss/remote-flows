@@ -7,7 +7,7 @@ export default defineConfig({
     exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
     coverage: {
       provider: 'istanbul',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'node_modules',
@@ -17,6 +17,12 @@ export default defineConfig({
         'src/**/tests/*.{ts,tsx}',
         'src/client/**/*.{ts,tsx}',
       ],
+      thresholds: {
+        lines: 75,
+        functions: 75,
+        branches: 75,
+        statements: 75,
+      },
     },
     globals: true,
     environment: 'jsdom',
