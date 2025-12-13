@@ -219,7 +219,7 @@ function main(): void {
         readFileSync(baseFile, 'utf-8'),
       );
       report = generateMarkdownReport(baseData, currentData);
-    } catch (error) {
+    } catch {
       // Base file doesn't exist or is invalid, show current only
       // Don't log error details to avoid cluttering PR comments
       report = generateCurrentOnlyReport(currentData);
