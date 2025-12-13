@@ -24,7 +24,12 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Run type checks && tests
+        if: github.event_name != 'pull_request'
         run: npm run ci
+
+      - name: Run checks (without tests)
+        if: github.event_name == 'pull_request'
+        run: npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check
 
       - name: Run tests with coverage
         if: github.event_name == 'pull_request'
