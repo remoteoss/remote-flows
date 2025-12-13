@@ -177,7 +177,7 @@ function generateCurrentOnlyReport(currentData: CoverageData): string {
   }
 
   report += `\n---\n`;
-  report += `*ℹ️ This is the first PR with coverage reporting. Future PRs will show coverage changes.*\n`;
+  report += `*ℹ️ Base coverage not available for comparison. Showing current coverage only.*\n`;
 
   return report;
 }
@@ -220,11 +220,8 @@ function main(): void {
       );
       report = generateMarkdownReport(baseData, currentData);
     } catch (error) {
-      console.error(`Error reading base coverage file ${baseFile}:`, error);
       // Base file doesn't exist or is invalid, show current only
-      console.warn(
-        `Note: Could not read base coverage file, showing current coverage only`,
-      );
+      // Don't log error details to avoid cluttering PR comments
       report = generateCurrentOnlyReport(currentData);
     }
   } else {
