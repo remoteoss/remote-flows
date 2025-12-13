@@ -13,6 +13,7 @@
     "openapi-ts": "openapi-ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "coverage:extract": "tsx scripts/extract-coverage.ts",
     "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",

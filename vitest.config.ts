@@ -17,6 +17,12 @@ export default defineConfig({
         'src/**/tests/*.{ts,tsx}',
         'src/client/**/*.{ts,tsx}',
       ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
     },
     globals: true,
     environment: 'jsdom',
