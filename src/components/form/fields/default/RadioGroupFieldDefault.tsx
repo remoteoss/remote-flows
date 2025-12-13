@@ -9,6 +9,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export const RadioGroupFieldDefault = ({
   field,
@@ -21,14 +22,13 @@ export const RadioGroupFieldDefault = ({
       className={cn('space-y-3', `RemoteFlows__RadioGroupField__Item__${name}`)}
       data-field={name}
     >
-      <FormItem
-        className={cn(
-          'space-y-3',
-          `RemoteFlows__RadioGroupField__Item__${name}`,
-        )}
-        data-field={name}
-      >
+      <FormItem>
         <legend>{label}</legend>
+        {description && (
+          <FormDescription>
+            {description} <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+          </FormDescription>
+        )}
         <FormControl>
           <RadioGroup
             aria-label={label || name}
@@ -66,7 +66,6 @@ export const RadioGroupFieldDefault = ({
             ))}
           </RadioGroup>
         </FormControl>
-        {description && <FormDescription>{description}</FormDescription>}
         {fieldState.error && <FormMessage />}
       </FormItem>
     </fieldset>

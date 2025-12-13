@@ -14,30 +14,25 @@ import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/defaul
 import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
 import { ZendeskDrawerDefault } from '@/src/components/shared/zendesk-drawer/ZendeskDrawerDefault';
 import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefault';
+import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
+import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 /**
  * Default field components for RemoteFlows.
  *
- * This module exports all default field component implementations and a pre-configured
- * `defaultComponents` object that can be passed to the RemoteFlows SDK.
- *
- * @example
- * ```tsx
- * import { defaultComponents } from '@remoteoss/remote-flows/default-components';
- *
- * <RemoteFlows components={defaultComponents} {...otherProps}>
- *   {children}
- * </RemoteFlows>
- * ```
- *
+ * This module acts as a reference for our users to know what are the components that are really overrided
  *
  */
 export const defaultComponents: Components = {
+  button: ButtonDefault,
+  checkbox: CheckboxFieldDefault,
   countries: CountryFieldDefault,
   date: DatePickerFieldDefault,
   drawer: DrawerDefault,
   email: EmailFieldDefault,
   fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
+  // TODO: we have doubts multi-select, it's actually used
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,
   radio: RadioGroupFieldDefault,
@@ -47,4 +42,5 @@ export const defaultComponents: Components = {
   text: TextFieldDefault,
   zendeskDrawer: ZendeskDrawerDefault,
   table: TableFieldDefault,
+  'work-schedule': WorkScheduleFieldDefault,
 };
