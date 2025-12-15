@@ -13,6 +13,7 @@ import {
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
+  DatePickerComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -52,6 +53,14 @@ export type JSFField = {
   maxLength?: number;
   multiple?: boolean;
   meta?: Record<string, unknown>;
+};
+
+/**
+ * Props passed to custom Component when using jsfModify with x-jsf-presentation.
+ * Used when overriding field rendering via the Component prop in jsfModify options.
+ */
+export type JSFCustomComponentProps = JSFField & {
+  setValue: (value: unknown) => void;
 };
 
 export type TableComponentProps<T = $TSFixMe> = {
@@ -108,19 +117,20 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property
-type TypesWithoutFile = Exclude<
-  BaseTypes,
+// We exclude some of the types that we are overriding
+type FieldComponentTypes = Exclude<
+  SupportedTypes,
   'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
 >;
 
 export type Components = {
-  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
+  [K in FieldComponentTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
   date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
+  date?: React.ComponentType<DatePickerComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;

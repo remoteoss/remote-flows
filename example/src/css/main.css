@@ -1,4 +1,4 @@
-@import '@remoteoss/remote-flows/index.css';
+@import '@remoteoss/remote-flows/styles.css';
 @import './reset.css';
 
 .cost-calculator__container {
