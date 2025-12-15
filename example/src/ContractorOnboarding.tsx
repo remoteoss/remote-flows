@@ -24,7 +24,7 @@ import './css/contractor-onboarding.css';
 const STEPS = [
   'Select Country',
   'Basic Information',
-  'Contract Details',
+  'Statement of Work',
   'Pricing Plan',
   'Contract Preview',
 ];
