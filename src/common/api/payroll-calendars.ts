@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getIndexEorPayrollCalendar } from '@/src/client';
 import { useClient } from '@/src/context';
-import { Client } from '@hey-api/client-fetch';
+import { Client } from '@/src/client/client';
 
 export const usePayrollCalendars = ({
   query,

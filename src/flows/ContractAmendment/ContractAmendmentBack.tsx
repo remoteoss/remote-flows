@@ -1,7 +1,7 @@
-import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useContractAmendmentContext } from './context';
 import { useFormFields } from '@/src/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export function ContractAmendmentBack({
   children,
@@ -14,23 +14,9 @@ export function ContractAmendmentBack({
 
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton
-        {...props}
-        onClick={(evt) => {
-          back();
-          props.onClick?.(evt);
-        }}
-      >
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || ButtonDefault;
   return (
-    <Button
+    <CustomButton
       {...props}
       onClick={(evt) => {
         back();
@@ -38,6 +24,6 @@ export function ContractAmendmentBack({
       }}
     >
       {children}
-    </Button>
+    </CustomButton>
   );
 }

@@ -2,9 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { EstimationResults } from '../EstimationResults/EstimationResults';
 import { formatCurrency } from '@/src/lib/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { PropsWithChildren } from 'react';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TestProviders } from '@/src/tests/testHelpers';
 
 // $TSFixMe as there are some missing fields in the type CostCalculatorEmployment
 const mockEstimation: $TSFixMe = {
@@ -144,21 +142,13 @@ const defaultProps = {
   onEdit: vi.fn(),
 };
 
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
-
 describe('EstimationResults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders the component with basic information', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     // Check if title is rendered
     expect(screen.getByText('Test Estimation')).toBeInTheDocument();
@@ -183,7 +173,7 @@ describe('EstimationResults', () => {
   });
 
   it('handles actions correctly', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     // Open actions dropdown
     const actionsButton = screen.getByRole('button', { name: /actions/i });
@@ -210,7 +200,7 @@ describe('EstimationResults', () => {
   });
 
   it('displays correct currency amounts for multiple currencies', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     // Check if both currency columns are displayed
     expect(screen.getByText('Employee currency')).toBeInTheDocument();
@@ -242,7 +232,7 @@ describe('EstimationResults', () => {
           Footer: CustomFooter,
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     expect(screen.getByText('Custom Header')).toBeInTheDocument();
@@ -259,7 +249,7 @@ describe('EstimationResults', () => {
   });
 
   it('displays breakdown items correctly', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     // Check if main sections are present
     expect(screen.getByText('Monthly total cost')).toBeInTheDocument();
@@ -279,7 +269,7 @@ describe('EstimationResults', () => {
   });
 
   it('displays correct currency conversions for benefits', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     // Find and expand Core Benefits section
     const benefitsSection = screen.getAllByText('Benefits')[0];
@@ -321,7 +311,7 @@ describe('EstimationResults', () => {
   });
 
   it('renders onboarding timeline correctly', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     expect(screen.getByText('Onboarding timeline')).toBeInTheDocument();
     expect(screen.getByText('5 days')).toBeInTheDocument();
@@ -338,7 +328,7 @@ describe('EstimationResults', () => {
   });
 
   it('renders hiring section with correct links', () => {
-    render(<EstimationResults {...defaultProps} />, { wrapper });
+    render(<EstimationResults {...defaultProps} />, { wrapper: TestProviders });
 
     const hiringSection = screen.getByText(
       `Hiring in ${mockEstimation.country.name}`,

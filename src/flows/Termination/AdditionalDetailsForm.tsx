@@ -27,10 +27,10 @@ export function AdditionalDetailsForm({
   const { terminationBag } = useTerminationContext();
 
   const handleSubmit = async (values: TerminationFormValues) => {
-    const parsedValues = terminationBag?.parseFormValues(
+    const parsedValues = (await terminationBag?.parseFormValues(
       values,
       true,
-    ) as TerminationFormValues;
+    )) as TerminationFormValues;
     await onSubmit?.(parsedValues);
     const terminationResult = await terminationBag?.onSubmit(values);
 
@@ -44,6 +44,10 @@ export function AdditionalDetailsForm({
   };
 
   return (
-    <TerminationForm fields={terminationBag?.fields} onSubmit={handleSubmit} />
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      fields={terminationBag?.fields}
+      onSubmit={handleSubmit}
+    />
   );
 }

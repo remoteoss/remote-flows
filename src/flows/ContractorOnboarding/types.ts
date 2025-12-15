@@ -10,7 +10,7 @@ import { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks'
 import { BasicInformationStep } from '@/src/flows/ContractorOnboarding/components/BasicInformationStep';
 import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
-import { FlowOptions, JSFModify } from '@/src/flows/types';
+import { FlowOptions, JSFModifyNext } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
@@ -80,9 +80,9 @@ export type ContractorOnboardingFlowProps = {
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
-      select_country?: JSFModify;
-      basic_information?: JSFModify;
-      contract_details?: JSFModify;
+      select_country?: JSFModifyNext;
+      basic_information?: JSFModifyNext;
+      contract_details?: JSFModifyNext;
     };
   };
 

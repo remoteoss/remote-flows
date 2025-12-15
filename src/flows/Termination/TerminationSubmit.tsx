@@ -1,7 +1,7 @@
-import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useTerminationContext } from './context';
 import { useFormFields } from '@/src/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export function TerminationSubmit({
   children,
@@ -11,18 +11,10 @@ export function TerminationSubmit({
   const { formId } = useTerminationContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} form={formId}>
-        {children}
-      </CustomButton>
-    );
-  }
-
+  const CustomButton = components?.button || ButtonDefault;
   return (
-    <Button {...props} form={formId}>
+    <CustomButton {...props} form={formId}>
       {children}
-    </Button>
+    </CustomButton>
   );
 }

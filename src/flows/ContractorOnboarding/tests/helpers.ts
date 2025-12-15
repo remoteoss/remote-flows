@@ -1,9 +1,10 @@
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 import {
-  selectDayInCalendar,
   fillRadio,
   fillSelect,
+  fillDatePickerByTestId,
 } from '@/src/tests/testHelpers';
+import { getYearMonthDate } from '@/src/common/dates';
 
 // Helper to generate unique employment IDs
 let employmentIdCounter = 0;
@@ -24,12 +25,13 @@ export async function fillBasicInformation(
     hasSeniorityDate: string;
   }>,
 ) {
+  const currentDate = getYearMonthDate(new Date());
   const defaultValues = {
     fullName: 'John Doe',
     personalEmail: 'john.doe@gmail.com',
     workEmail: 'john.doe@remote.com',
     jobTitle: 'Software Engineer',
-    provisionalStartDate: '15',
+    provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     hasSeniorityDate: 'No',
   };
 
@@ -67,7 +69,7 @@ export async function fillBasicInformation(
   }
 
   if (newValues?.provisionalStartDate) {
-    await selectDayInCalendar(
+    await fillDatePickerByTestId(
       newValues?.provisionalStartDate,
       'provisional_start_date',
     );
@@ -89,7 +91,6 @@ export async function fillContractDetails(
   values?: Partial<{
     serviceAndDeliverables: string;
     serviceStartDate: string;
-    serviceEndDate: string;
     contractorNoticePeriodAmount: number;
     companyNoticePeriodAmount: number;
     invoicingFrequency: string;
@@ -98,10 +99,10 @@ export async function fillContractDetails(
     periodUnit: string;
   }>,
 ) {
+  const currentDate = getYearMonthDate(new Date());
   const defaultValues = {
     serviceAndDeliverables: 'Service and Deliverables project manager role',
-    serviceStartDate: '15',
-    serviceEndDate: '15',
+    serviceStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     contractorNoticePeriodAmount: 15,
     companyNoticePeriodAmount: 15,
     invoicingFrequency: 'Bi-weekly',
@@ -128,7 +129,7 @@ export async function fillContractDetails(
   }
 
   if (newValues?.serviceStartDate) {
-    await selectDayInCalendar(
+    await fillDatePickerByTestId(
       newValues?.serviceStartDate,
       'service_duration.provisional_start_date',
     );

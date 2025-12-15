@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { Button } from '@/src/components/ui/button';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { useFormFields } from '@/src/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export function OnboardingSubmit({
   children,
@@ -12,18 +12,11 @@ export function OnboardingSubmit({
   const { formId } = useContractorOnboardingContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} form={formId}>
-        {children}
-      </CustomButton>
-    );
-  }
+  const CustomButton = components?.button || ButtonDefault;
 
   return (
-    <Button {...props} form={formId}>
+    <CustomButton {...props} form={formId}>
       {children}
-    </Button>
+    </CustomButton>
   );
 }

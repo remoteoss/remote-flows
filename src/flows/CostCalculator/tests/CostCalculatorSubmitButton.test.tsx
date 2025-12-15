@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
 import { CostCalculatorSubmitButton } from '../CostCalculatorSubmitButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
@@ -90,7 +89,8 @@ describe('CostCalculatorSubmitButton', () => {
         expect.objectContaining({
           form: mockFormId,
           disabled: true,
-          className: 'custom-class',
+          className:
+            'RemoteFlows__CostCalculatorForm__SubmitButton custom-class',
           'data-testid': 'submit-button',
           variant: 'custom',
           onClick: expect.any(Function),

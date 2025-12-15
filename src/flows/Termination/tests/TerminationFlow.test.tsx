@@ -1,7 +1,3 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, vi } from 'vitest';
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -9,7 +5,9 @@ import {
   fillCheckbox,
   fillRadio,
   fillSelect,
-  selectDayInCalendar,
+  fillDatePicker,
+  TestProviders,
+  queryClient,
 } from '@/src/tests/testHelpers';
 import { http, HttpResponse } from 'msw';
 import {
@@ -22,14 +20,6 @@ import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { format } from 'date-fns';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockOnSubmitStep = vi.fn();
 const mockOnSubmitForm = vi.fn();
@@ -151,8 +141,13 @@ describe('TerminationFlow', () => {
   let offboardingRequest: Record<string, unknown> | null = null;
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRender.mockReset();
+    queryClient.clear();
 
     server.use(
+      http.get('*/v1/payroll-calendars*', () => {
+        return HttpResponse.json({ data: [] });
+      }),
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employment);
       }),
@@ -173,10 +168,6 @@ describe('TerminationFlow', () => {
         return HttpResponse.json(terminationResponse);
       }),
     );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   async function fillEmployeeCommunication(
@@ -220,14 +211,14 @@ describe('TerminationFlow', () => {
     ) {
       await waitFor(() => {
         expect(
-          screen.getByTestId(
-            `date-picker-button-customer_informed_employee_date`,
+          screen.getByLabelText(
+            /When the employee was told about the termination/i,
           ),
         ).toBeInTheDocument();
       });
-      await selectDayInCalendar(
+      await fillDatePicker(
         newValues?.whenWasEmployeeInformed,
-        'customer_informed_employee_date',
+        'When the employee was told about the termination',
       );
     }
 
@@ -298,9 +289,9 @@ describe('TerminationFlow', () => {
       await fillCheckbox(newValues?.riskAssessmentReason);
     }
     if (newValues?.proposedTerminationDate) {
-      await selectDayInCalendar(
+      await fillDatePicker(
         newValues?.proposedTerminationDate,
-        'proposed_termination_date',
+        'Proposed termination date',
       );
     }
   }
@@ -335,18 +326,25 @@ describe('TerminationFlow', () => {
       ...values,
     };
     if (newValues?.ackowledgeTermination) {
+      await waitFor(() => {
+        expect(
+          screen.getByRole('checkbox', {
+            name: /I agree to the procedures in this form/i,
+          }),
+        ).toBeInTheDocument();
+      });
       await fillCheckbox('I agree to the procedures in this form');
     }
   }
 
   it('should render first step of the form', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
   });
 
   it('should render the conditional fields of the radio after only touching the radio field', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillRadio(
@@ -361,8 +359,55 @@ describe('TerminationFlow', () => {
     });
   });
 
+  it('should preserve updated field values when navigating back to previous step', async () => {
+    render(
+      <TerminationFlow
+        {...defaultProps}
+        initialValues={{
+          personal_email: 'john.doe@example.com',
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Employee Communication/i);
+
+    // Verify initial value is populated
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
+
+    await fillEmployeeCommunication({
+      employeePersonalEmail: 'ze@remote.com',
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Termination Details/i);
+
+    // Go back to previous step
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeInTheDocument();
+    backButton.click();
+
+    // Assert that ze@remote.com is retained (not the original john.doe@example.com)
+    await screen.findByText(/Step: Employee Communication/i);
+    const emailFieldAfterNavigation = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    expect(emailFieldAfterNavigation).toHaveValue('ze@remote.com');
+  });
+
   it('should render will_challenge_termination details field immediately after selecting will_challenge_termination', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();
     const nextButton = screen.getByText(/Next Step/i);
@@ -386,12 +431,13 @@ describe('TerminationFlow', () => {
 
   // this test needs to be before the multi step, something strange is happening when executed in parallel with the next one
   it('should fill the first step and go back to the previous step', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillEmployeeCommunication({
       isEmployeeInformed: 'Yes',
+      whenWasEmployeeInformed: '2025-11-26',
     });
 
     const nextButton = screen.getByText(/Next Step/i);
@@ -423,14 +469,15 @@ describe('TerminationFlow', () => {
   it('should submit the termination flow', async () => {
     const currentDate = getYearMonthDate(new Date());
     const dynamicDate = `${currentDate.year}-${currentDate.month}-15`;
-    const proposedTerminationDate = currentDate.day.toString();
+    const proposedTerminationDate = `${currentDate.year}-${currentDate.month}-${currentDate.day}`;
 
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillEmployeeCommunication({
       isEmployeeInformed: 'Yes',
+      whenWasEmployeeInformed: dynamicDate,
     });
 
     let nextButton = screen.getByText(/Next Step/i);
@@ -466,7 +513,7 @@ describe('TerminationFlow', () => {
     });
     expect(mockOnSubmitStep.mock.calls[1]).toEqual([
       {
-        proposed_termination_date: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
+        proposed_termination_date: proposedTerminationDate,
         reason_description: 'whatever text',
         risk_assessment_reasons: ['sick_leave'],
         termination_reason: 'gross_misconduct',
@@ -557,8 +604,6 @@ describe('TerminationFlow', () => {
   });
 
   it("should trigger the 'onError' callback when the request fails", async () => {
-    const currentDate = getYearMonthDate(new Date());
-    const proposedTerminationDate = currentDate.day.toString();
     server.use(
       http.post('*/v1/offboardings', async () => {
         return HttpResponse.json(
@@ -569,7 +614,7 @@ describe('TerminationFlow', () => {
         );
       }),
     );
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();
     let nextButton = screen.getByText(/Next Step/i);
@@ -578,8 +623,10 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Termination Details/i);
 
+    const currentDate = getYearMonthDate(new Date());
+
     await fillTerminationDetails({
-      proposedTerminationDate: proposedTerminationDate,
+      proposedTerminationDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     });
 
     nextButton = screen.getByText(/Next Step/i);
@@ -610,12 +657,18 @@ describe('TerminationFlow', () => {
   });
 
   it('should click next step without filling the form and show error', async () => {
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
 
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
 
     const employeePersonalEmail = screen.getByLabelText(
       /Employee's personal email/i,
@@ -639,9 +692,14 @@ describe('TerminationFlow', () => {
           personal_email: 'john.doe@example.com',
         }}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
     await screen.findByText(/Step: Employee Communication/i);
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
     const employeePersonalEmail = screen.getByLabelText(
       /Employee's personal email/i,
     );
@@ -666,7 +724,7 @@ describe('TerminationFlow', () => {
       }),
     );
 
-    render(<TerminationFlow {...defaultProps} />, { wrapper });
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
     await screen.findByText(/Step: Employee Communication/i);
     await fillEmployeeCommunication();
@@ -674,9 +732,12 @@ describe('TerminationFlow', () => {
     await screen.findByText(/Step: Termination Details/i);
 
     // Verify it was selected by querying the select-value slot
-    const selectValue = document.querySelector('[data-slot="select-value"]');
-    expect(selectValue?.textContent).toMatch(
-      /Decision to cancel hiring before the employee starts/i,
-    );
+    await waitFor(() => {
+      const selectValue = document.querySelector('[data-slot="select-value"]');
+      expect(selectValue).toBeInTheDocument();
+      expect(selectValue?.textContent).toMatch(
+        /Decision to cancel hiring before the employee starts/i,
+      );
+    });
   });
 });

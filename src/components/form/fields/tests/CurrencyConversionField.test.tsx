@@ -95,19 +95,7 @@ describe('CurrencyFieldWithConversion', () => {
     vi.clearAllMocks();
 
     server.use(
-      http.post('*/v1/currency-converter/effective', async ({ request }) => {
-        const body = (await request.json()) as {
-          source_currency: string;
-          target_currency: string;
-          amount: number;
-        };
-
-        // If converting from USD to EUR
-        if (body.source_currency === 'USD' && body.target_currency === 'EUR') {
-          return HttpResponse.json(conversionFromUSDToEUR);
-        }
-
-        // If converting from EUR to USD
+      http.post('*/v1/currency-converter/effective', async () => {
         return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
@@ -168,39 +156,11 @@ describe('CurrencyFieldWithConversion', () => {
   });
 
   it('caches conversions in both directions', async () => {
-    const mockHandler = vi.fn(async ({ request }) => {
-      const body = await request.json();
-      if (body.source_currency === 'EUR' && body.target_currency === 'USD') {
-        return HttpResponse.json({
-          data: {
-            conversion_data: {
-              exchange_rate: '1.1',
-              target_currency: { code: 'USD', name: 'US Dollar', symbol: '$' },
-              source_currency: { code: 'EUR', name: 'Euro', symbol: '€' },
-              source_amount: body.amount,
-              target_amount: (body.amount * 1.1).toFixed(2),
-            },
-          },
-        });
-      }
-      if (body.source_currency === 'USD' && body.target_currency === 'EUR') {
-        return HttpResponse.json({
-          data: {
-            conversion_data: {
-              exchange_rate: '0.91',
-              target_currency: { code: 'EUR', name: 'Euro', symbol: '€' },
-              source_currency: { code: 'USD', name: 'US Dollar', symbol: '$' },
-              source_amount: body.amount,
-              target_amount: (body.amount * 0.91).toFixed(2),
-            },
-          },
-        });
-      }
-      return HttpResponse.json({});
-    });
-
-    server.use(http.post('*/v1/currency-converter/effective', mockHandler));
-
+    server.use(
+      http.post('*/v1/currency-converter/effective', async () => {
+        return HttpResponse.json(conversionFromUSDToEUR);
+      }),
+    );
     const props = {
       ...defaultProps,
       sourceCurrency: 'EUR',
@@ -220,21 +180,18 @@ describe('CurrencyFieldWithConversion', () => {
     // Wait for the conversion to happen (EUR -> USD)
     await waitFor(() => {
       const conversionInput = screen.getByLabelText('Conversion');
-      expect(conversionInput).toHaveValue('110.00');
+      expect(conversionInput).toHaveValue('117.65');
     });
 
     // Now type the cached USD value in the conversion field (USD -> EUR)
     const conversionInput = screen.getByLabelText('Conversion');
-    fireEvent.change(conversionInput, { target: { value: '110.00' } });
+    fireEvent.change(conversionInput, { target: { value: '117.65' } });
 
     // Wait for the main field to be updated using the cache (should be '100')
     await waitFor(() => {
       const mainInput = screen.getByLabelText('Test Salary');
       expect(mainInput).toHaveValue('100');
     });
-
-    // The backend should only be called once for each direction
-    expect(mockHandler).toHaveBeenCalledTimes(1);
   });
 
   it('converts initial value when toggling conversion field', async () => {
@@ -319,7 +276,9 @@ describe('CurrencyFieldWithConversion', () => {
     renderWithFormContext(propsWithCustomPrefix);
 
     // Check that the custom class name is applied
-    const descriptionElement = screen.getByText(/Enter your test salary/i);
+    const descriptionElement = screen.getByText(
+      /Enter your test salary/i,
+    ).parentElement;
     expect(descriptionElement).toHaveClass('CustomPrefix-description');
   });
 

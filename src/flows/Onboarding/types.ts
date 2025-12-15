@@ -9,7 +9,7 @@ import { ContractDetailsStep } from '@/src/flows/Onboarding/components/ContractD
 import { OnboardingSubmit } from '@/src/flows/Onboarding/components/OnboardingSubmit';
 import { BenefitsStep } from '@/src/flows/Onboarding/components/BenefitsStep';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
-import { FlowOptions, JSFModify } from '@/src/flows/types';
+import { FlowOptions, JSFModifyNext } from '@/src/flows/types';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
@@ -86,10 +86,21 @@ export type OnboardingFlowProps = {
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
-      select_country?: JSFModify;
-      basic_information?: JSFModify;
-      contract_details?: JSFModify;
-      benefits?: JSFModify;
+      select_country?: JSFModifyNext;
+      basic_information?: JSFModifyNext;
+      contract_details?: JSFModifyNext;
+      benefits?: JSFModifyNext;
+    };
+    /**
+     * The json schema version to use for the onboarding by country.
+     * This is used to override the json schema version for the onboarding by country.
+     * the old jsonSchemaVersion is not working well at the moment, don't use it for now.
+     */
+    jsonSchemaVersionByCountry?: {
+      [countryCode: string]: {
+        employment_basic_information?: number;
+        contract_details?: number;
+      };
     };
   };
   /**

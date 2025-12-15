@@ -1,7 +1,3 @@
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
-import { beforeEach, describe, it, vi, afterEach } from 'vitest';
 import { server } from '@/src/tests/server';
 import {
   render,
@@ -23,7 +19,12 @@ import {
   mockContractDocumentPreviewResponse,
   inviteResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
-import { fillSelect } from '@/src/tests/testHelpers';
+import {
+  fillDatePickerByTestId,
+  fillSelect,
+  queryClient,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboarding/types';
 import { fireEvent } from '@testing-library/react';
 import {
@@ -33,14 +34,6 @@ import {
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>
-    <FormFieldsProvider components={{}}>{children}</FormFieldsProvider>
-  </QueryClientProvider>
-);
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -282,6 +275,8 @@ describe('ContractorOnboardingFlow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
+    mockRender.mockReset();
 
     server.use(
       http.get('*/v1/employments/:id', ({ params }) => {
@@ -360,11 +355,6 @@ describe('ContractorOnboardingFlow', () => {
     );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    mockRender.mockReset();
-  });
-
   async function fillCountry(country: string) {
     await screen.findByText(/Step: Select Country/i);
 
@@ -413,7 +403,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -439,9 +429,59 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   it('should select a country and advance to the next step', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('Portugal');
+  });
+
+  it('should set provisional_start_date to today when using the form for the first time', async () => {
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillCountry('Portugal');
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    const provisionalStartDateInput = await screen.findByTestId(
+      'provisional_start_date',
+    );
+    const today = new Date().toISOString().split('T')[0];
+    expect(provisionalStartDateInput).toHaveValue(today);
+  });
+
+  it('should set provisional_start_date in the statement of work when using the form for the first time', async () => {
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillCountry('Portugal');
+
+    // setting same value that the mock receives
+    await fillBasicInformation({
+      provisionalStartDate: '2025-11-26',
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    const serviceDurationInput = await screen.findByTestId(
+      'service_duration.provisional_start_date',
+    );
+    // this value comes from the HTTP mocked call
+    expect(serviceDurationInput).toHaveValue('2025-11-26');
   });
 
   it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
@@ -455,7 +495,9 @@ describe('ContractorOnboardingFlow', () => {
       }),
     );
 
-    render(<ContractorOnboardingFlow {...defaultProps} />, { wrapper });
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
 
     await fillCountry('Portugal');
 
@@ -552,7 +594,7 @@ describe('ContractorOnboardingFlow', () => {
         employmentId={generateUniqueEmploymentId()}
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -619,7 +661,7 @@ describe('ContractorOnboardingFlow', () => {
         countryCode='PRT'
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -699,7 +741,7 @@ describe('ContractorOnboardingFlow', () => {
         countryCode='PRT'
         skipSteps={['select_country']}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -792,7 +834,7 @@ describe('ContractorOnboardingFlow', () => {
           {...defaultProps}
         />,
         {
-          wrapper,
+          wrapper: TestProviders,
         },
       );
 
@@ -848,7 +890,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         externalId={testExternalId}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -920,7 +962,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -976,7 +1018,7 @@ describe('ContractorOnboardingFlow', () => {
         skipSteps={['select_country']}
         {...defaultProps}
       />,
-      { wrapper },
+      { wrapper: TestProviders },
     );
 
     await screen.findByText(/Step: Basic Information/i);
@@ -1076,7 +1118,7 @@ describe('ContractorOnboardingFlow', () => {
         }}
       />,
       {
-        wrapper,
+        wrapper: TestProviders,
       },
     );
 
@@ -1085,5 +1127,78 @@ describe('ContractorOnboardingFlow', () => {
     // Verify that the custom label is displayed
     const labelElement = screen.getByLabelText(customLabel);
     expect(labelElement).toBeInTheDocument();
+  });
+
+  it('should display description message when service_duration.provisional_start_date differs from employment provisional_start_date', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify the field is pre-filled with the value from the mock (2025-11-26)
+    const serviceStartDateInput = await screen.findByTestId(
+      'service_duration.provisional_start_date',
+    );
+    expect(serviceStartDateInput).toHaveValue('2025-11-26');
+
+    // Change the date to a different value
+    await fillDatePickerByTestId(
+      '2025-12-01',
+      'service_duration.provisional_start_date',
+    );
+
+    // Verify the description message appears
+    await waitFor(() => {
+      const description = screen.getByText(
+        /This date does not match the date you provided in the Basic Information step - 2025-11-26 - and will override it only when both parties have signed the contract/i,
+      );
+      expect(description).toBeInTheDocument();
+    });
   });
 });

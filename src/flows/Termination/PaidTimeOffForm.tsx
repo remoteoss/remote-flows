@@ -15,11 +15,15 @@ type PaidTimeOffFormProps = {
 export function PaidTimeOffForm({ onSubmit }: PaidTimeOffFormProps) {
   const { terminationBag } = useTerminationContext();
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(
-      terminationBag?.parseFormValues(values) as PaidTimeOffFormValues,
-    );
+    const parsedValues = await terminationBag?.parseFormValues(values);
+    await onSubmit?.(parsedValues as PaidTimeOffFormValues);
     terminationBag?.next();
   };
 
-  return <TerminationForm onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      onSubmit={handleSubmit}
+    />
+  );
 }

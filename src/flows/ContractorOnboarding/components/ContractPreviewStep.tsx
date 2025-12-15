@@ -1,5 +1,5 @@
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
-import { PDFPreview } from '@/src/components/shared/pdf-preview/PdfPreview';
+import { LazyPdfPreview } from '@/src/components/shared/pdf-preview/LazyLoadPdfPreview';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
   NormalizedFieldError,
@@ -43,9 +43,9 @@ export function ContractPreviewStep({
 
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.(
-        contractorOnboardingBag.parseFormValues(payload) as $TSFixMe, // TODO: add type
-      );
+      const parsedValues =
+        await contractorOnboardingBag.parseFormValues(payload);
+      await onSubmit?.(parsedValues as $TSFixMe);
       const response = await contractorOnboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe); // TODO: add type
@@ -79,7 +79,7 @@ export function ContractPreviewStep({
 
   return (
     <div className='space-y-4'>
-      <PDFPreview
+      <LazyPdfPreview
         base64Data={
           contractorOnboardingBag.documentPreviewPdf?.contract_document
             .content as unknown as string

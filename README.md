@@ -1,25 +1,27 @@
 # @remoteoss/remote-flows
 
-## Overview
+[![npm version](https://img.shields.io/npm/v/@remoteoss/remote-flows.svg)](https://www.npmjs.com/package/@remoteoss/remote-flows) [![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remotecom/b8884fb20051d4c0095a29569d51e34e/raw/remote-flows-bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
 
-Welcome to the `@remoteoss/remote-flows` package, a React library that provides components for Remote's embedded solution.
+> **Note:** This badge reflects the latest published version. Check [npm](https://www.npmjs.com/package/@remoteoss/remote-flows) for current version information.
+
+A React library that provides components for Remote's embedded solution, enabling seamless integration of Remote's employment flows into your application.
 
 ## Table of Contents
 
-- [Overview](#overview)
 - [Installation](#installation)
+- [Quick Start](#quick-start)
 - [Components API](#components-api)
   - [RemoteFlows](#remoteflows)
-- [Docs](#docs)
+  - [Custom Field Components](#custom-field-components)
+- [Available Flows](#available-flows)
 - [Authentication](#authentication)
 - [Styling Options](#styling-options)
   - [Using Default Styles](#using-default-styles)
   - [Theme Customization](#theme-customization)
-  - [CSS Overrides](#css-overrides)
+  - [Custom CSS](#custom-css)
 - [Advanced Usage](#advanced-usage)
-  - [Custom Implementation](#custom-implementation)
 - [Example](#example)
-- [Release Process](#release-process)
+- [Contributing](#contributing)
 - [Internals](#internals)
 
 ## Installation
@@ -28,47 +30,25 @@ Welcome to the `@remoteoss/remote-flows` package, a React library that provides 
 npm install @remoteoss/remote-flows
 ```
 
-## Development
+## Quick Start
 
-To run the SDK locally for development:
+```tsx
+import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
+import '@remoteoss/remote-flows/styles.css';
 
-1. Clone the repository and install dependencies:
+function App() {
+  const fetchToken = async () => {
+    const response = await fetch('/api/auth/token');
+    return response.json();
+  };
 
-```sh
-git clone https://github.com/remoteoss/remote-flows.git
-cd remote-flows
-npm install
+  return (
+    <RemoteFlows auth={fetchToken} environment='partners'>
+      <CostCalculator onSuccess={(data) => console.log(data)} />
+    </RemoteFlows>
+  );
+}
 ```
-
-2. Create a `.env` file in the example directory with your Remote credentials:
-
-```env
-VITE_CLIENT_ID=your_client_id
-VITE_CLIENT_SECRET=your_client_secret
-VITE_REFRESH_TOKEN=your_refresh_token
-VITE_REMOTE_GATEWAY=partners # for sandbox
-# VITE_REMOTE_GATEWAY=production # for production
-```
-
-3. Start the development server:
-
-First run the root package with
-
-```
-npm link
-npm run dev
-```
-
-then
-
-```
-cd example
-npm install
-npm link @remoteoss/remote-flows
-npm run dev
-```
-
-The example app will be available at `http://localhost:3001`. The server handles authentication and proxies API requests to Remote's gateway.
 
 ## Components API
 
@@ -76,15 +56,15 @@ The example app will be available at `http://localhost:3001`. The server handles
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop            | Type                                                                                          | Required | Deprecated | Description                                                                     |
-| --------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | ------------------------------------------------------------------------------- |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | Yes      | -          | Function to fetch authentication token                                          |
-| `authId`        | `'default' \| 'client' \|`                                                                    | No       | Yes        | Id to differenciate between client token authentication and company based token |
-| `environment`   | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                       |
-| `theme`         | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                      |
-| `components`    | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                      |
-| `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                       |
-| `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       |  -         | Error boundary configuration to prevent crashes and show custom fallback UI     |
+| Prop            | Type                                                                                          | Required | Deprecated | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | --------------------------------------------------------------------------- |
+| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | Yes      | -          | Function to fetch authentication token                                      |
+| `environment`   | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                   |
+| `theme`         | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                  |
+| `components`    | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                  |
+| `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                   |
+| `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       |  -         | Error boundary configuration to prevent crashes and show custom fallback UI |
+| `debug`         | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                |
 
 #### Error Boundary
 
@@ -121,94 +101,18 @@ The `errorBoundary` prop controls how the SDK handles runtime errors to prevent 
 
 ### Custom Field Components
 
-The `components` prop allows you to override the default form field components with your own implementations. Each component receives three props:
+You can customize form field components to match your application's design system.
 
-- `field`: React Hook Form's field props for registration and state management
-- `fieldState`: Field state including errors and touched status
-- `fieldData`: Metadata from JSON schema with field configuration
+> For detailed documentation on component customization including step-level and field-specific overrides, see the [Component Customization Guide](./docs/COMPONENT_CUSTOMIZATION.md).
 
-> **Important**: All custom components are wrapped with React Hook Form's `Controller` component. You must bind the `field` props to your HTML elements to ensure proper form state management and validation.
+## Available Flows
 
-For TypeScript users, we export component prop types to make it easier to create properly typed custom components:
+Each flow handles a specific Remote employment operation. For detailed API documentation, see the individual flow READMEs:
 
-```tsx
-import {
-  FieldComponentProps,
-  ButtonComponentProps,
-} from '@remoteoss/remote-flows';
-
-const CustomInput = ({ field, fieldData, fieldState }: FieldComponentProps) => {
-  return (
-    <div>
-      <label htmlFor={field.name}>{fieldData.label}</label>
-      <input {...field} />
-      {fieldState.error && <p>{fieldState.error.message}</p>}
-    </div>
-  );
-};
-
-const CustomButton = ({ children, ...props }: ButtonComponentProps) => {
-  return <button {...props}>{children}</button>;
-};
-```
-
-Here's an example of custom field components implementation:
-
-```tsx
-<RemoteFlows
-  components={{
-    text: CustomInput,
-    button: CustomButton,
-    number: ({ field, fieldState, fieldData }) => (
-      <div>
-        <label>{fieldData.label}</label>
-        <input {...field} type='number' />
-        {fieldState.error && (
-          <span className='text-red-500'>{fieldState.error.message}</span>
-        )}
-      </div>
-    ),
-    select: ({ field, fieldState, fieldData }) => (
-      <>
-        <select {...field} onChange={(ev) => field.onChange(ev.target.value)}>
-          {fieldData?.options?.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {fieldState.error && (
-          <span className='text-red-500'>{fieldState.error.message}</span>
-        )}
-      </>
-    ),
-  }}
-  auth={fetchToken}
->
-  {/* Your form components */}
-</RemoteFlows>
-```
-
-### Available Component Prop Types
-
-- `FieldComponentProps`: For all form field components (text, number, select, etc.)
-- `ButtonComponentProps`: For custom button components
-- `StatementComponentProps`: For custom statement components
-
-Supported field types:
-
-- `text`: Text input fields
-- `number`: Numeric input fields
-- `select`: Dropdown selection fields
-
-## Docs
-
-Visit the different different docs for each flow
-
-- [Cost Calculator Flow](./src/flows/CostCalculator/README.md)
-- [Termination Flow](./src/flows/Termination/README.md)
-- [Contract Amendments](./src/flows/ContractAmendment/README.md)
-- [Onboarding Flow](./src/flows/Onboarding/README.md)
+- [**Cost Calculator**](./src/flows/CostCalculator/README.md) - Calculate employment costs for different countries
+- [**Onboarding**](./src/flows/Onboarding/README.md) - Onboard new employees
+- [**Contract Amendment**](./src/flows/ContractAmendment/README.md) - Modify existing employment contracts
+- [**Termination**](./src/flows/Termination/README.md) - Handle employee terminations
 
 ## Authentication
 
@@ -234,7 +138,7 @@ For a complete implementation, check our [example server implementation](https:/
 Import the CSS file in your application:
 
 ```css
-@import '@remoteoss/remote-flows/index.css';
+@import '@remoteoss/remote-flows/styles.css';
 ```
 
 ### Theme Customization
@@ -272,9 +176,9 @@ Import the CSS file in your application:
 
 ### Custom CSS
 
-All components expose CSS classes with the prefix `RemoteFlows__` that you can target for custom styling. This approach gives you fine-grained control over specific elements without having to rebuild the components.
+All components expose CSS classes prefixed with `RemoteFlows__` for targeted styling:
 
-For example, let's say you want to render the currency field next to the salary field. You can achieve this with the following CSS:
+**Example:** Customize the Cost Calculator layout:
 
 ```css
 .RemoteFlows__CostCalculatorForm {
@@ -294,41 +198,17 @@ For example, let's say you want to render the currency field next to the salary 
 
 ## Advanced Usage
 
-### Custom Implementation
-
-`remote-flows` provides opinionated components but your application might require more extensive customization than what theme tokens allow. For these cases, we expose several hooks that give you complete control over rendering while handling the complex business logic for you.
-
-Here's how to create a fully custom implementation using our hooks:
+For complete control over rendering, use our hooks directly. They handle the business logic while you control the UI:
 
 ```tsx
+import { useCostCalculator } from '@remoteoss/remote-flows';
+
 function CustomCostCalculator() {
   const {
     onSubmit: submitCostCalculator,
-    fields, // fields is a list of field objects returned by json-schema-form. Read more at https://github.com/remoteoss/json-schema-form
+    fields, // Field definitions from json-schema-form
     validationSchema,
   } = useCostCalculator();
-
-  // Build your custom form using the provided fields and validation schema
-
-  function handleSubmit(data) {
-    submitCostCalculator(data); // submitCostCalculator validates form fields before posting to Remote API
-  }
-
-  return (
-    <Form onSubmit={handleSubmit}>{/* Your custom form implementation */}</Form>
-  );
-}
-```
-
-```tsx
-function CustomCostCalculator() {
-  const {
-    onSubmit: submitCostCalculator,
-    fields, // fields is a list of field objects returned by json-schema-form. Read more at https://github.com/remoteoss/json-schema-form
-    validationSchema,
-  } = useCostCalculator();
-
-  // Build your custom form using the provided fields and validation schema
 
   return (
     <form onSubmit={handleSubmit((data) => submitCostCalculator(data))}>
@@ -338,31 +218,19 @@ function CustomCostCalculator() {
 }
 ```
 
+Learn more about field definitions in the [json-schema-form documentation](https://github.com/remoteoss/json-schema-form).
+
 ## Example
 
-For a complete implementation example, refer to our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
+For a complete implementation example, see our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
 
-## Release Process
+## Contributing
 
-1. **Install gh dependency**
-   If you haven't done it before
+We welcome contributions! If you're working on this package:
 
-   `brew gh`, if you aren't on mac os check the installation [guide](https://github.com/cli/cli#installation)
-
-   `gh login`
-
-2. **Run the release script**
-   Run the following command
-
-   ```bash
-   npm run release
-   ```
-
-3. **Review Pull Request created**
-   Review the automatic PR that the script create
-
-4. **Merge the PR && Publish**
-   Once your PR is merged, GitHub will automatically publish the version
+- See [DEVELOPMENT.md](./DEVELOPMENT.md) for development setup, testing, and bundle size management
+- Check out our [example app](./example) to test changes locally
+- Ensure bundle size stays within limits before submitting PRs
 
 ## Internals
 

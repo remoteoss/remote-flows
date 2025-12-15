@@ -1,5 +1,6 @@
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
-import { cn, ZendeskTriggerButton } from '@/src/internals';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { cn } from '@/src/internals';
 
 const terminationSteps = [
   'You submit your termination request.',

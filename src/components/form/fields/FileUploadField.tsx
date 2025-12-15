@@ -1,50 +1,13 @@
 import { useFormFields } from '@/src/context';
-import { cn } from '@/src/lib/utils';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
   FieldValues,
   useFormContext,
 } from 'react-hook-form';
-import { FileUploader } from '../../ui/file-uploader';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
+import { FormField } from '../../ui/form';
 import { FieldDataProps } from '@/src/types/fields';
-
-const toBase64 = (file: File): Promise<string> => {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
-const convertFilesToBase64 = async (files: File[]) => {
-  const base64Files = await Promise.all(
-    files.map(async (file) => {
-      const base64 = await toBase64(file);
-      // the ...file makes typescript compiler to say we're returning a FILE interface but we aren't
-      // we just return name, size, type and content
-      // File interface makes it easy for everybody to use
-      // if we remove the ...file, typescript will complain about the return type
-      return {
-        ...file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        content: base64.split(',')[1],
-      };
-    }),
-  );
-  return base64Files;
-};
+import { FileUploadFieldDefault } from './default/FileUploadFieldDefault';
 
 const validateFileSize = (files: File[], maxSize?: number): string | null => {
   if (!maxSize) return null;
@@ -98,9 +61,8 @@ export function FileUploadField({
     }
 
     clearErrors(name);
-    const base64Files = await convertFilesToBase64(files);
-    field.onChange(base64Files);
-    onChange?.(base64Files);
+    field.onChange(files);
+    onChange?.(files);
   };
 
   return (
@@ -109,56 +71,28 @@ export function FileUploadField({
       name={name}
       render={({ field, fieldState }) => {
         const CustomFileUploadField = component || components?.file;
-        if (CustomFileUploadField) {
-          const customFileUploadFieldProps: FieldFileDataProps = {
-            name,
-            description,
-            label,
-            multiple,
-            accept,
-            maxFileSize: maxSize,
-            ...rest,
-          };
-          return (
-            <CustomFileUploadField
-              field={{
-                ...field,
-                value: field.value,
-                onChange: async (value: File[]) => handleOnChange(value, field),
-              }}
-              fieldState={fieldState}
-              fieldData={customFileUploadFieldProps}
-            />
-          );
-        }
+        const Component = CustomFileUploadField || FileUploadFieldDefault;
+
+        const fieldData: FieldFileDataProps = {
+          name,
+          description,
+          label,
+          multiple,
+          accept,
+          maxFileSize: maxSize,
+          ...rest,
+        };
+
         return (
-          <FormItem
-            data-field={name}
-            className={`RemoteFlows__FileUpload__Item__${name}`}
-          >
-            <FormLabel className='RemoteFlows__FileUpload__Label'>
-              {label}
-            </FormLabel>
-            <FormControl>
-              <FileUploader
-                onChange={(evt) => handleOnChange(evt, field)}
-                multiple={multiple}
-                className={cn('RemoteFlows__FileUpload__Input')}
-                accept={accept}
-                files={field.value}
-              />
-            </FormControl>
-            {description && (
-              <div className='flex items-center justify-between'>
-                <FormDescription className='RemoteFlows__FileUpload__Description'>
-                  {description}
-                </FormDescription>
-              </div>
-            )}
-            {fieldState.error && (
-              <FormMessage className='RemoteFlows__FileUpload__Error' />
-            )}
-          </FormItem>
+          <Component
+            field={{
+              ...field,
+              value: field.value,
+              onChange: async (value: File[]) => handleOnChange(value, field),
+            }}
+            fieldState={fieldState}
+            fieldData={fieldData}
+          />
         );
       }}
     />

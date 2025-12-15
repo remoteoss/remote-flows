@@ -17,11 +17,15 @@ export function TerminationDetailsForm({
 }: TerminationDetailsFormProps) {
   const { terminationBag } = useTerminationContext();
   const handleSubmit = async (values: TerminationFormValues) => {
-    await onSubmit?.(
-      terminationBag?.parseFormValues(values) as TerminationDetailsFormValues,
-    );
+    const parsedValues = await terminationBag?.parseFormValues(values);
+    await onSubmit?.(parsedValues as TerminationDetailsFormValues);
     terminationBag?.next();
   };
 
-  return <TerminationForm onSubmit={handleSubmit} />;
+  return (
+    <TerminationForm
+      defaultValues={terminationBag.fieldValues}
+      onSubmit={handleSubmit}
+    />
+  );
 }

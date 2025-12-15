@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import { CostCalculatorResetButton } from '../CostCalculatorResetButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
@@ -123,7 +122,8 @@ describe('CostCalculatorResetButton', () => {
         expect.objectContaining({
           form: mockFormId,
           disabled: true,
-          className: 'custom-class',
+          className:
+            'RemoteFlows__CostCalculatorForm__ResetButton custom-class',
           'data-testid': 'reset-button',
           variant: 'custom',
           type: 'reset',

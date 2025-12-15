@@ -1,7 +1,11 @@
-import { FieldValues, Resolver } from 'react-hook-form';
-import type { AnyObjectSchema, InferType, ValidationError } from 'yup';
+import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
+import type { ValidationError } from 'yup';
+import type {
+  FormErrors,
+  ValidationResult,
+} from '@remoteoss/remote-json-schema-form-kit';
 
-// TODO: deprecated only used with old json-schema-form-version
+// TODO: deprecated only used in the CostCalculatorFlow as we're using yup there
 export function iterateErrors(error: ValidationError) {
   const errors = (error as ValidationError).inner.reduce(
     (
@@ -22,61 +26,70 @@ export function iterateErrors(error: ValidationError) {
   return errors;
 }
 
-// TODO: deprecated only used with old json-schema-form-version
-export const useJsonSchemasValidationFormResolver = <T extends AnyObjectSchema>(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-    yupError: ValidationError;
-  },
-): Resolver<InferType<T>> => {
-  return async (data: FieldValues) => {
-    const { yupError, formErrors } = await handleValidation(data);
-
-    if (Object.keys(formErrors || {}).length > 0) {
-      return {
-        values: {},
-        errors: iterateErrors(yupError as ValidationError),
-      };
-    }
-    return {
-      values: data,
-      errors: {},
-    };
-  };
-};
-
-function iterateFormErrors(formErrors: Record<string, string>) {
+export function iterateFormErrors(
+  formErrors?: FormErrors,
+  parentPath = '',
+): FieldErrors {
   return Object.entries(formErrors || {}).reduce(
-    (
-      allErrors: Record<string, { type: string; message: string }>,
-      [fieldName, message],
-    ) => {
-      return {
-        ...allErrors,
-        [fieldName]: {
-          type: 'validation',
-          message,
-        },
+    (allErrors: FieldErrors, [fieldName, message]) => {
+      const fullPath = parentPath ? `${parentPath}.${fieldName}` : fieldName;
+
+      // If message is a nested object, recurse
+      if (
+        typeof message === 'object' &&
+        message !== null &&
+        !Array.isArray(message)
+      ) {
+        return {
+          ...allErrors,
+          ...iterateFormErrors(message as FormErrors, fullPath),
+        };
+      }
+
+      // Extract the error message string from various payload formats
+      const messageString =
+        typeof message === 'string' ? message : JSON.stringify(message);
+
+      allErrors[fullPath] = {
+        type: 'validation',
+        message: messageString,
       };
+
+      // Also add errors for nested variants (.value and .filter) in case the field is nested
+      allErrors[`${fullPath}.value`] = {
+        type: 'validation',
+        message: messageString,
+      };
+
+      return allErrors;
     },
-    {} as Record<string, { type: string; message: string }>,
+    {} as FieldErrors,
   );
 }
 
-export const useJsonSchemasValidationFormResolverNext = <
-  T extends AnyObjectSchema,
+export const useJsonSchemasValidationFormResolver = <
+  T extends FieldValues = FieldValues,
 >(
-  handleValidation: (data: FieldValues) => {
-    formErrors: Record<string, string>;
-  },
-): Resolver<InferType<T>> => {
-  return async (data: FieldValues) => {
-    const { formErrors } = await handleValidation(data);
+  handleValidation: (data: T) => Promise<ValidationResult | null>,
+): Resolver<T> => {
+  return async (data: T) => {
+    const result = await handleValidation(data);
+
+    // Handle null case - return no errors
+    if (!result) {
+      return {
+        values: data,
+        errors: {},
+      };
+    }
+
+    const formErrors = 'formErrors' in result ? result.formErrors : undefined;
 
     if (Object.keys(formErrors || {}).length > 0) {
+      const errors = iterateFormErrors(formErrors);
       return {
-        values: {},
-        errors: iterateFormErrors(formErrors),
+        values: {} as T,
+        errors: errors as FieldErrors<T>,
       };
     }
     return {

@@ -1,7 +1,7 @@
-import { Button } from '@/src/components/ui/button';
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 type OnboardingBackProps = ButtonHTMLAttributes<HTMLButtonElement> &
   Record<string, unknown>;
@@ -24,18 +24,11 @@ export function OnboardingBack({
     onClick?.(evt);
   };
 
-  const CustomButton = components?.button;
-  if (CustomButton) {
-    return (
-      <CustomButton {...props} onClick={onBackHandler}>
-        {children}
-      </CustomButton>
-    );
-  }
+  const CustomButton = components?.button || ButtonDefault;
 
   return (
-    <Button {...props} onClick={onBackHandler}>
+    <CustomButton {...props} onClick={onBackHandler}>
       {children}
-    </Button>
+    </CustomButton>
   );
 }
