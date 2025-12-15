@@ -20,6 +20,7 @@ import {
   inviteResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
+  fillDatePickerByTestId,
   fillSelect,
   queryClient,
   TestProviders,
@@ -1126,5 +1127,78 @@ describe('ContractorOnboardingFlow', () => {
     // Verify that the custom label is displayed
     const labelElement = screen.getByLabelText(customLabel);
     expect(labelElement).toBeInTheDocument();
+  });
+
+  it('should display description message when service_duration.provisional_start_date differs from employment provisional_start_date', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify the field is pre-filled with the value from the mock (2025-11-26)
+    const serviceStartDateInput = await screen.findByTestId(
+      'service_duration.provisional_start_date',
+    );
+    expect(serviceStartDateInput).toHaveValue('2025-11-26');
+
+    // Change the date to a different value
+    await fillDatePickerByTestId(
+      '2025-12-01',
+      'service_duration.provisional_start_date',
+    );
+
+    // Verify the description message appears
+    await waitFor(() => {
+      const description = screen.getByText(
+        /This date does not match the date you provided in the Basic Information step - 2025-11-26 - and will override it only when both parties have signed the contract/i,
+      );
+      expect(description).toBeInTheDocument();
+    });
   });
 });
