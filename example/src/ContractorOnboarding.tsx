@@ -49,7 +49,7 @@ const Switcher = (props: JSFCustomComponentProps) => {
 const STEPS = [
   'Select Country',
   'Basic Information',
-  'Contract Details',
+  'Statement of Work',
   'Pricing Plan',
   'Contract Preview',
 ];
@@ -310,7 +310,6 @@ export const ContractorOnboardingWithProps = ({
   employmentId,
   externalId,
 }: ContractorOnboardingFormData) => {
-  const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
@@ -328,9 +327,6 @@ export const ContractorOnboardingWithProps = ({
                 pricing_plan: {
                   subscription:
                     'urn:remotecom:resource:product:contractor:standard:monthly',
-                },
-                service_duration: {
-                  provisional_start_date: provisionalStartDate,
                 },
               }}
               options={{
