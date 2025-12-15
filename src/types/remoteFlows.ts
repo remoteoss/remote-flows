@@ -13,7 +13,6 @@ import {
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
-  DatePickerComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -119,7 +118,7 @@ export type FieldSetToggleComponentProps = {
 
 // We exclude some of the types that we are overriding
 type FieldComponentTypes = Exclude<
-  SupportedTypes,
+  BaseTypes,
   'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
 >;
 
