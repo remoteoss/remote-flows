@@ -130,7 +130,6 @@ export type Components = {
   file?: React.ComponentType<FileComponentProps>;
   date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
-  date?: React.ComponentType<DatePickerComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
