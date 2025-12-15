@@ -300,6 +300,7 @@ export const ContractorOnboardingWithProps = ({
               employmentId={employmentId}
               externalId={externalId}
               initialValues={{
+                provisional_start_date: provisionalStartDate,
                 pricing_plan: {
                   subscription:
                     'urn:remotecom:resource:product:contractor:standard:monthly',
