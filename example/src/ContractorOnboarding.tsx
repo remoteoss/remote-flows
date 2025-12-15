@@ -310,7 +310,6 @@ export const ContractorOnboardingWithProps = ({
   employmentId,
   externalId,
 }: ContractorOnboardingFormData) => {
-  const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
@@ -325,13 +324,9 @@ export const ContractorOnboardingWithProps = ({
               employmentId={employmentId}
               externalId={externalId}
               initialValues={{
-                provisional_start_date: provisionalStartDate,
                 pricing_plan: {
                   subscription:
                     'urn:remotecom:resource:product:contractor:standard:monthly',
-                },
-                service_duration: {
-                  provisional_start_date: provisionalStartDate,
                 },
               }}
               options={{

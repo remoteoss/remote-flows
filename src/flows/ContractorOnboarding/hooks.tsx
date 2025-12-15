@@ -68,6 +68,8 @@ const jsonSchemaToEmployment: Partial<
   employment_basic_information: 'basic_information',
 };
 
+const provisionalStartDate = new Date().toISOString().split('T')[0];
+
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -341,6 +343,7 @@ export const useContractorOnboarding = ({
 
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
+      provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
     };
@@ -353,7 +356,14 @@ export const useContractorOnboarding = ({
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
+    const hardcodedValues = {
+      service_duration: {
+        provisional_start_date:
+          employmentBasicInformation.provisional_start_date,
+      },
+    };
     const initialValues = {
+      ...hardcodedValues,
       ...onboardingInitialValues,
       ...employmentContractDetails,
     };
@@ -363,6 +373,7 @@ export const useContractorOnboarding = ({
     stepFields.contract_details,
     employmentContractDetails,
     onboardingInitialValues,
+    employmentBasicInformation,
   ]);
 
   const contractPreviewInitialValues = useMemo(() => {
@@ -565,6 +576,7 @@ export const useContractorOnboarding = ({
           }
         } else if (internalEmploymentId) {
           // TODO: Provisional it seems you cannot update a contractor employment
+          // TODO: we'll need to check later if the provisional start date gets updated for the statement of work
           return Promise.resolve({
             data: { employmentId: internalEmploymentId },
           });
