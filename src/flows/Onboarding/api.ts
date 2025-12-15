@@ -39,6 +39,7 @@ import {
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -317,17 +318,12 @@ export const useBenefitOffersSchema = (
  * Use this hook to create an employment
  * @returns
  */
-export const useCreateEmployment = (
-  options?: OnboardingFlowProps['options'],
-) => {
+export const useCreateEmployment = () => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion?.form_schema
-    ?.employment_basic_information
-    ? {
-        json_schema_version:
-          options.jsonSchemaVersion.form_schema.employment_basic_information,
-      }
-    : {};
+  // TODO: setting 1 as basic_information only supports v1 for now in the API
+  const jsonSchemaQueryParam = {
+    json_schema_version: 1,
+  };
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
       return postCreateEmployment2({
@@ -345,21 +341,16 @@ export const useCreateEmployment = (
 };
 
 export const useUpdateEmployment = (
+  countryCode: string,
   options?: OnboardingFlowProps['options'],
 ) => {
   const { client } = useClient();
   const jsonSchemaQueryParams = {
-    employment_basic_information_json_schema_version:
-      options?.jsonSchemaVersion?.form_schema?.employment_basic_information,
-    employment_contract_details_json_schema_version:
-      options?.jsonSchemaVersion?.form_schema?.contract_details,
+    // TODO: setting 1 as basic_information only supports v1 for now in the API
+    employment_basic_information_json_schema_version: 1,
+    contract_details_json_schema_version:
+      getContractDetailsSchemaVersion(options, countryCode) || 1,
   };
-
-  const filteredQueryParams = Object.fromEntries(
-    Object.entries(jsonSchemaQueryParams).filter(
-      ([, value]) => value !== undefined,
-    ),
-  );
 
   return useMutation({
     mutationFn: ({
@@ -377,7 +368,7 @@ export const useUpdateEmployment = (
         },
         query: {
           skip_benefits: true,
-          ...filteredQueryParams,
+          ...jsonSchemaQueryParams,
         },
       });
     },

@@ -13,7 +13,7 @@ export function Statement({ title, description, severity }: StatementProps) {
   return (
     <Component
       data={{
-        title,
+        title: title ? sanitizeHtml(title) : undefined,
         description: sanitizeHtml(description),
         severity,
       }}

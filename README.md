@@ -34,7 +34,7 @@ npm install @remoteoss/remote-flows
 
 ```tsx
 import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
-import '@remoteoss/remote-flows/index.css';
+import '@remoteoss/remote-flows/styles.css';
 
 function App() {
   const fetchToken = async () => {
@@ -101,85 +101,9 @@ The `errorBoundary` prop controls how the SDK handles runtime errors to prevent 
 
 ### Custom Field Components
 
-You can customize form field components to match your application's design system. Each component receives three props:
+You can customize form field components to match your application's design system.
 
-- `field`: React Hook Form's field props for registration and state management
-- `fieldState`: Field state including errors and touched status
-- `fieldData`: Metadata from JSON schema with field configuration
-
-> **Important**: All custom components are wrapped with React Hook Form's `Controller` component. You must bind the `field` props to your HTML elements to ensure proper form state management and validation.
-
-For TypeScript users, we export component prop types to make it easier to create properly typed custom components:
-
-```tsx
-import {
-  FieldComponentProps,
-  ButtonComponentProps,
-} from '@remoteoss/remote-flows';
-
-const CustomInput = ({ field, fieldData, fieldState }: FieldComponentProps) => {
-  return (
-    <div>
-      <label htmlFor={field.name}>{fieldData.label}</label>
-      <input {...field} />
-      {fieldState.error && <p>{fieldState.error.message}</p>}
-    </div>
-  );
-};
-
-const CustomButton = ({ children, ...props }: ButtonComponentProps) => {
-  return <button {...props}>{children}</button>;
-};
-```
-
-Here's an example of custom field components implementation:
-
-```tsx
-<RemoteFlows
-  components={{
-    text: CustomInput,
-    button: CustomButton,
-    number: ({ field, fieldState, fieldData }) => (
-      <div>
-        <label>{fieldData.label}</label>
-        <input {...field} type='number' />
-        {fieldState.error && (
-          <span className='text-red-500'>{fieldState.error.message}</span>
-        )}
-      </div>
-    ),
-    select: ({ field, fieldState, fieldData }) => (
-      <>
-        <select {...field} onChange={(ev) => field.onChange(ev.target.value)}>
-          {fieldData?.options?.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {fieldState.error && (
-          <span className='text-red-500'>{fieldState.error.message}</span>
-        )}
-      </>
-    ),
-  }}
-  auth={fetchToken}
->
-  {/* Your form components */}
-</RemoteFlows>
-```
-
-### Available Component Prop Types
-
-- `FieldComponentProps`: For all form field components (text, number, select, etc.)
-- `ButtonComponentProps`: For custom button components
-- `StatementComponentProps`: For custom statement components
-
-Supported field types:
-
-- `text`: Text input fields
-- `number`: Numeric input fields
-- `select`: Dropdown selection fields
+> For detailed documentation on component customization including step-level and field-specific overrides, see the [Component Customization Guide](./docs/COMPONENT_CUSTOMIZATION.md).
 
 ## Available Flows
 
@@ -214,7 +138,7 @@ For a complete implementation, check our [example server implementation](https:/
 Import the CSS file in your application:
 
 ```css
-@import '@remoteoss/remote-flows/index.css';
+@import '@remoteoss/remote-flows/styles.css';
 ```
 
 ### Theme Customization

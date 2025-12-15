@@ -7,7 +7,6 @@ import {
 import { Fields } from '@remoteoss/json-schema-form-old';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
-  BASIC_INFORMATION_SCHEMA_VERSION,
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
   reviewStepAllowedEmploymentStatus,
@@ -218,8 +217,11 @@ export const useOnboarding = ({
       },
     });
 
-  const createEmploymentMutation = useCreateEmployment(options);
-  const updateEmploymentMutation = useUpdateEmployment(options);
+  const createEmploymentMutation = useCreateEmployment();
+  const updateEmploymentMutation = useUpdateEmployment(
+    internalCountryCode as string,
+    options,
+  );
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const updateContractEligibilityMutation = useUpsertContractEligibility();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
@@ -308,7 +310,6 @@ export const useOnboarding = ({
         enabled: isBasicInformationDetailsEnabled,
       },
     },
-    jsonSchemaVersion: BASIC_INFORMATION_SCHEMA_VERSION,
   });
 
   const annualGrossSalaryField =

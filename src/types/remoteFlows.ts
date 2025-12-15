@@ -2,15 +2,17 @@ import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
-import { SupportedTypes } from '../components/form/fields/types';
+import { BaseTypes } from '../components/form/fields/types';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
   CountryComponentProps,
+  DatePickerComponentProps,
   FieldComponentProps,
   FileComponentProps,
   StatementComponentProps,
   TextFieldComponentProps,
+  WorkScheduleComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -29,7 +31,7 @@ export type JSFField = {
   computedAttributes: Record<string, unknown>;
   description: ReactNode;
   errorMessage: Record<string, string>;
-  inputType: SupportedTypes;
+  inputType: BaseTypes;
   isVisible: boolean;
   jsonType: string;
   label: string;
@@ -52,7 +54,16 @@ export type JSFField = {
   meta?: Record<string, unknown>;
 };
 
+/**
+ * Props passed to custom Component when using jsfModify with x-jsf-presentation.
+ * Used when overriding field rendering via the Component prop in jsfModify options.
+ */
+export type JSFCustomComponentProps = JSFField & {
+  setValue: (value: unknown) => void;
+};
+
 export type TableComponentProps<T = $TSFixMe> = {
+  ref: React.ForwardedRef<HTMLTableElement>;
   data: T[] | undefined;
   columns: ColumnDef<T>[];
   className?: string;
@@ -92,6 +103,7 @@ export type DrawerComponentProps = {
   trigger: React.ReactElement;
   children?: React.ReactNode;
   direction?: 'left' | 'right';
+  className?: string;
 };
 
 export type FieldSetToggleComponentProps = {
@@ -104,14 +116,18 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-// We exclude the file type as we're extending the fieldData property
-type TypesWithoutFile = Exclude<SupportedTypes, 'file' | 'countries' | 'text'>;
+// We exclude some of the types that we are overriding
+type FieldComponentTypes = Exclude<
+  BaseTypes,
+  'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
+>;
 
 export type Components = {
-  [K in TypesWithoutFile]?: React.ComponentType<FieldComponentProps>;
+  [K in FieldComponentTypes]?: React.ComponentType<FieldComponentProps>;
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
+  date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
@@ -119,6 +135,7 @@ export type Components = {
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
   drawer?: React.ComponentType<DrawerComponentProps>;
   table?: React.ComponentType<TableComponentProps>;
+  'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

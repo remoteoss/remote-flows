@@ -47,7 +47,6 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
 ];
 
 export const DEFAULT_VERSION = 1;
-export const BASIC_INFORMATION_SCHEMA_VERSION = DEFAULT_VERSION;
 
 /**
  * Defines allowed JSON schema versions per country for contract_details

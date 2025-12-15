@@ -1,3 +1,4 @@
+import { JSFModifyNext } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
 
 type StepKeys =
@@ -27,3 +28,49 @@ export const STEPS_WITHOUT_SELECT_COUNTRY: Record<
   contract_preview: { index: 3, name: 'contract_preview' },
   review: { index: 4, name: 'review' },
 } as const;
+
+/**
+ * Calculates the description for the provisional start date field
+ * based on whether the dates match between basic information and contract details steps
+ */
+export const calculateProvisionalStartDateDescription = (
+  employmentProvisionalStartDate: string | undefined,
+  fieldProvisionalStartDate: string | undefined,
+): string | undefined => {
+  const datesNotMatching =
+    employmentProvisionalStartDate &&
+    fieldProvisionalStartDate &&
+    employmentProvisionalStartDate !== fieldProvisionalStartDate;
+
+  if (datesNotMatching) {
+    const datesDontMatchWarning = `This date does not match the date you provided in the Basic Information step - ${
+      employmentProvisionalStartDate
+    } - and will override it only when both parties have signed the contract.`;
+    return `When the contractor will start providing service to your company. ${datesDontMatchWarning}`;
+  }
+  return undefined;
+};
+
+/**
+ * Merges internal jsfModify modifications with user-provided options for contract_details step
+ * This abstracts the logic of applying internal field modifications (like dynamic descriptions)
+ * while preserving user customizations
+ */
+export const buildContractDetailsJsfModify = (
+  userJsfModify: JSFModifyNext | undefined,
+  provisionalStartDateDescription: string | undefined,
+): JSFModifyNext => {
+  return {
+    ...userJsfModify,
+    fields: {
+      ...userJsfModify?.fields,
+      ...(provisionalStartDateDescription
+        ? {
+            'service_duration.provisional_start_date': {
+              description: provisionalStartDateDescription,
+            },
+          }
+        : {}),
+    },
+  };
+};

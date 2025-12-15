@@ -1,4 +1,5 @@
 import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+import { DailySchedule } from '@/src/components/form/fields/workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerFieldState,
@@ -37,6 +38,12 @@ export type FieldComponentProps = {
  */
 export type FieldDataProps = Partial<JSFField> & {
   metadata?: Record<string, unknown>;
+  meta?: {
+    helpCenter?: {
+      callToAction: string;
+      id: number;
+    };
+  };
 };
 
 export type FileComponentProps = FieldComponentProps & {
@@ -48,12 +55,6 @@ type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
   };
-  meta?: {
-    helpCenter?: {
-      callToAction: string;
-      id: number;
-    };
-  };
 };
 
 export type CountryComponentProps = FieldComponentProps & {
@@ -61,12 +62,6 @@ export type CountryComponentProps = FieldComponentProps & {
 };
 
 type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
-  meta?: {
-    helpCenter?: {
-      callToAction: string;
-      id: number;
-    };
-  };
   minDate?: string;
   maxDate?: string;
 };
@@ -81,6 +76,20 @@ export type TextFieldDataProps = FieldDataProps & {
 
 export type TextFieldComponentProps = FieldComponentProps & {
   fieldData: TextFieldDataProps;
+};
+
+type WorkScheduleDataProps = FieldDataProps & {
+  onSubmit: (data: DailySchedule[]) => void;
+  currentSchedule: DailySchedule[];
+  defaultFormattedValue: {
+    workHoursSummary: string[];
+    breakSummary: string[];
+    totalWorkHours: number;
+  };
+};
+
+export type WorkScheduleComponentProps = FieldComponentProps & {
+  fieldData: WorkScheduleDataProps;
 };
 
 /**

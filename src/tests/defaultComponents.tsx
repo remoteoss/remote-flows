@@ -9,6 +9,7 @@ export const defaultComponents = {
           type='date'
           id={field.name}
           data-testid={field.name}
+          value={field.value}
           onChange={(e) => {
             field?.onChange?.(e.target.value);
           }}
