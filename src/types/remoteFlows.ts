@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
-import { BaseTypes, SupportedTypes } from '../components/form/fields/types';
+import { BaseTypes } from '../components/form/fields/types';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
@@ -31,7 +31,7 @@ export type JSFField = {
   computedAttributes: Record<string, unknown>;
   description: ReactNode;
   errorMessage: Record<string, string>;
-  inputType: SupportedTypes;
+  inputType: BaseTypes;
   isVisible: boolean;
   jsonType: string;
   label: string;
