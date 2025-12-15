@@ -2,17 +2,17 @@ import { ReactNode } from 'react';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
-import { SupportedTypes } from '../components/form/fields/types';
+import { BaseTypes } from '../components/form/fields/types';
 import { ENVIRONMENTS } from '../environments';
 import { ColumnDef } from '@/src/components/shared/table/Table';
 import {
   CountryComponentProps,
+  DatePickerComponentProps,
   FieldComponentProps,
   FileComponentProps,
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
-  DatePickerComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -31,7 +31,7 @@ export type JSFField = {
   computedAttributes: Record<string, unknown>;
   description: ReactNode;
   errorMessage: Record<string, string>;
-  inputType: SupportedTypes;
+  inputType: BaseTypes;
   isVisible: boolean;
   jsonType: string;
   label: string;
@@ -118,8 +118,8 @@ export type FieldSetToggleComponentProps = {
 
 // We exclude some of the types that we are overriding
 type FieldComponentTypes = Exclude<
-  SupportedTypes,
-  'file' | 'countries' | 'text' | 'work-schedule'
+  BaseTypes,
+  'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
 >;
 
 export type Components = {
@@ -127,8 +127,8 @@ export type Components = {
 } & {
   text?: React.ComponentType<TextFieldComponentProps>;
   file?: React.ComponentType<FileComponentProps>;
-  countries?: React.ComponentType<CountryComponentProps>;
   date?: React.ComponentType<DatePickerComponentProps>;
+  countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
