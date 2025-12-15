@@ -1,12 +1,10 @@
-export type SupportedTypes =
+export type BaseTypes =
   | 'text'
   | 'number'
   | 'email'
   | 'select'
   | 'multi-select'
   | 'radio'
-  | 'fieldset'
-  | 'fieldset-flat'
   | 'date'
   | 'checkbox'
   | 'textarea'
@@ -15,3 +13,5 @@ export type SupportedTypes =
   | 'countries'
   | 'hidden'
   | 'work-schedule';
+
+export type SupportedTypes = BaseTypes | 'fieldset' | 'fieldset-flat';
