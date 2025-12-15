@@ -1,3 +1,6 @@
+import { Fields } from '@remoteoss/json-schema-form-old';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 import {
   CreateContractDocument,
   Employment,
@@ -21,6 +24,8 @@ import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/
 import {
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
+  calculateProvisionalStartDateDescription,
+  buildContractDetailsJsfModify,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -37,9 +42,6 @@ import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
-import { Fields } from '@remoteoss/json-schema-form-old';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FieldValues } from 'react-hook-form';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -261,6 +263,16 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const descriptionProvisionalStartDate = useMemo(() => {
+    return calculateProvisionalStartDateDescription(
+      employment?.basic_information?.provisional_start_date as string,
+      fieldValues?.service_duration?.provisional_start_date as string,
+    );
+  }, [
+    employment?.basic_information?.provisional_start_date,
+    fieldValues?.service_duration?.provisional_start_date,
+  ]);
+
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
@@ -271,7 +283,10 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
       },
-      jsfModify: options?.jsfModify?.contract_details,
+      jsfModify: buildContractDetailsJsfModify(
+        options?.jsfModify?.contract_details,
+        descriptionProvisionalStartDate,
+      ),
       jsonSchemaVersion: options?.jsonSchemaVersion,
     },
   });
