@@ -17,8 +17,6 @@ import {
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 
-// Mock fixtures - you'll need to create these
-
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
 const mockSubmit = vi.fn();
