@@ -469,4 +469,3 @@ The system is designed to be **zero-config** for basic usage while providing ful
 
 - [Error Handling Tests](../src/components/error-handling/tests/)
 - [React Error Boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
-- [OpenAPI Schema](../openapi-ts.config.ts)
