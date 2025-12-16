@@ -121,7 +121,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Previous Step
             </BackButton>
             <SubmitButton
-              id='create-employment-and-continue'
               className='submit-button'
               disabled={onboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
