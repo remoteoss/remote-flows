@@ -1,10 +1,14 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.2.1",
+  "version": "1.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remoteoss/remote-flows.git"
+  },
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check && npm run test",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css --profile node16",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css styles.css --profile node16",
     "check-format": "prettier --check .",
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=development tsup --watch",
     "build:reset": "postcss src/styles/reset.css -o ./example/src/css/reset.css",
@@ -20,8 +24,11 @@
     "size:badge": "tsx scripts/update-size-badge.ts",
     "type-check": "tsc --noEmit"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "engines": {
-    "node": ">=16"
+    "node": ">=24"
   },
   "type": "module",
   "main": "dist/index.js",
@@ -52,6 +59,14 @@
         "import": "./dist/index.css"
       },
       "default": "./dist/index.css"
+    },
+    "./styles": {
+      "import": "./dist/styles.js",
+      "default": "./dist/styles.js"
+    },
+    "./styles.css": {
+      "import": "./dist/styles.css",
+      "default": "./dist/styles.css"
     }
   },
   "files": [

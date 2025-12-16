@@ -1,5 +1,25 @@
 # @remoteoss/remote-flows
 
+## 1.3.0
+
+### Minor Changes
+
+- simplify currency conversion to have same data that estimation (#662) [#662](https://github.com/remoteoss/remote-flows/pull/662)
+- add new style export (#651) [#651](https://github.com/remoteoss/remote-flows/pull/651)
+- expose setValue prop to custom JSF components (#655) [#655](https://github.com/remoteoss/remote-flows/pull/655)
+- fix Components type (#660) [#660](https://github.com/remoteoss/remote-flows/pull/660)
+- add provisional start date inside the contractor onboarding flow (#663) [#663](https://github.com/remoteoss/remote-flows/pull/663)
+- add warning in contract details when dates are different (#664) [#664](https://github.com/remoteoss/remote-flows/pull/664)
+
+## 1.2.2
+
+### Patch Changes
+
+- add manual release triggering and simplify version detection (#642) [#642](https://github.com/remoteoss/remote-flows/pull/642)
+- extract checkbox and work schedule field defaults into separate components (#626) [#626](https://github.com/remoteoss/remote-flows/pull/626)
+- replace wildcard exports with explicit named exports (#652) [#652](https://github.com/remoteoss/remote-flows/pull/652)
+- consolidate helpCenter meta type into FieldDataProps (#650) [#650](https://github.com/remoteoss/remote-flows/pull/650)
+
 ## 1.2.1
 
 ### Patch Changes

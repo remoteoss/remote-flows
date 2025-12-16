@@ -7,7 +7,7 @@ import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
-import { SupportedTypes } from './types';
+import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 
 type FieldBase = {
@@ -251,19 +251,24 @@ export function FieldSetField({
               }
               // We need to do the check after checking field.inputType === 'fieldset' or field.inputType === 'fieldset-flat'
               // circular dependency most likely
-              let FieldComponent =
-                baseFields[
-                  field.inputType as Exclude<
-                    SupportedTypes,
-                    'fieldset' | 'fieldset-flat'
-                  >
-                ];
+              let FieldComponent = baseFields[field.inputType as BaseTypes];
 
               if (field.Component) {
                 const { Component } = field as {
                   Component: React.ComponentType<$TSFixMe>;
                 };
-                return <Component key={field.name} {...field} />;
+                return (
+                  <Component
+                    key={field.name}
+                    setValue={(value: unknown) =>
+                      setValue(
+                        isFlatFieldset ? field.name : `${name}.${field.name}`,
+                        value,
+                      )
+                    }
+                    {...field}
+                  />
+                );
               }
 
               if (!FieldComponent) {
@@ -285,7 +290,9 @@ export function FieldSetField({
                   <FieldComponent
                     {...field}
                     name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    component={components?.[field.inputType as SupportedTypes]}
+                    component={
+                      components?.[field.inputType as keyof Components]
+                    }
                   />
                   {field.extra ? field.extra : null}
                 </Fragment>

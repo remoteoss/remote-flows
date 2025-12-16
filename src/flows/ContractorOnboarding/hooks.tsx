@@ -1,3 +1,6 @@
+import { Fields } from '@remoteoss/json-schema-form-old';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 import {
   CreateContractDocument,
   Employment,
@@ -21,6 +24,8 @@ import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/
 import {
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
+  calculateProvisionalStartDateDescription,
+  buildContractDetailsJsfModify,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -37,9 +42,6 @@ import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
 import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
-import { Fields } from '@remoteoss/json-schema-form-old';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FieldValues } from 'react-hook-form';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -67,6 +69,8 @@ const jsonSchemaToEmployment: Partial<
 > = {
   employment_basic_information: 'basic_information',
 };
+
+const provisionalStartDate = new Date().toISOString().split('T')[0];
 
 export const useContractorOnboarding = ({
   countryCode,
@@ -258,6 +262,16 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const descriptionProvisionalStartDate = useMemo(() => {
+    return calculateProvisionalStartDateDescription(
+      employment?.basic_information?.provisional_start_date as string,
+      fieldValues?.service_duration?.provisional_start_date as string,
+    );
+  }, [
+    employment?.basic_information?.provisional_start_date,
+    fieldValues?.service_duration?.provisional_start_date,
+  ]);
+
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
@@ -268,7 +282,10 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
       },
-      jsfModify: options?.jsfModify?.contract_details,
+      jsfModify: buildContractDetailsJsfModify(
+        options?.jsfModify?.contract_details,
+        descriptionProvisionalStartDate,
+      ),
     },
   });
 
@@ -339,6 +356,7 @@ export const useContractorOnboarding = ({
 
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
+      provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
     };
@@ -351,7 +369,14 @@ export const useContractorOnboarding = ({
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
+    const hardcodedValues = {
+      service_duration: {
+        provisional_start_date:
+          employmentBasicInformation.provisional_start_date,
+      },
+    };
     const initialValues = {
+      ...hardcodedValues,
       ...onboardingInitialValues,
       ...employmentContractDetails,
     };
@@ -361,6 +386,7 @@ export const useContractorOnboarding = ({
     stepFields.contract_details,
     employmentContractDetails,
     onboardingInitialValues,
+    employmentBasicInformation,
   ]);
 
   const contractPreviewInitialValues = useMemo(() => {
@@ -563,6 +589,7 @@ export const useContractorOnboarding = ({
           }
         } else if (internalEmploymentId) {
           // TODO: Provisional it seems you cannot update a contractor employment
+          // TODO: we'll need to check later if the provisional start date gets updated for the statement of work
           return Promise.resolve({
             data: { employmentId: internalEmploymentId },
           });
