@@ -175,7 +175,6 @@ type ErrorPayload = {
     name: string; // Error name (TypeError, etc.)
     category: ErrorCategory; // Classified category
     severity: ErrorSeverity; // Classified severity
-    component_stack?: string[]; // React component hierarchy
   };
   context?: {
     flow?: string; // Current flow
@@ -206,8 +205,7 @@ type ErrorPayload = {
     "stack": "TypeError: Cannot read property 'country' of undefined\n    at OnboardingForm...",
     "name": "TypeError",
     "category": "RUNTIME_ERROR",
-    "severity": "critical",
-    "component_stack": ["OnboardingForm", "BasicInformationStep"]
+    "severity": "critical"
   },
   "context": {
     "flow": "onboarding",
@@ -333,7 +331,6 @@ When `debug: true`, errors are logged to console with rich formatting:
     name: string;
     category: ErrorCategory;
     severity: ErrorSeverity;
-    component_stack?: string[];
   };
   context?: ErrorContextData;
   metadata: {

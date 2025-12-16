@@ -38,7 +38,6 @@ export type ErrorPayload = {
     name: string;
     category: ErrorCategory;
     severity: ErrorSeverity;
-    component_stack?: string[]; // Parsed React component names from stack trace
   };
   context?: ErrorContextData;
   metadata: {

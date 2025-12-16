@@ -67,16 +67,6 @@ export const logDebugPayload = (
   );
   console.log('🏷️  Category:', payload.error.category);
 
-  if (
-    payload.error.component_stack &&
-    payload.error.component_stack.length > 0
-  ) {
-    console.log(
-      '🧩 Component Stack:',
-      payload.error.component_stack.join(' → '),
-    );
-  }
-
   if (payload.context?.flow) {
     console.log('🔄 Flow:', payload.context.flow);
   }
