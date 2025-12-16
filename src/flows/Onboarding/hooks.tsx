@@ -36,7 +36,7 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModifyNext, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -231,7 +231,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModifyNext;
+      jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
     query?: Record<string, string>;

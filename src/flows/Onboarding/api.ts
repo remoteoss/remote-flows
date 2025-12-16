@@ -30,7 +30,7 @@ import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import {
   JSONSchemaFormResultWithFieldsets,
   JSONSchemaFormType,
-  NextFlowOptions,
+  FlowOptions,
 } from '@/src/flows/types';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -181,7 +181,7 @@ export const useJSONSchemaForm = ({
   countryCode: string;
   form: JSONSchemaFormType;
   fieldValues: FieldValues;
-  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
   jsonSchemaVersion?: number;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
@@ -399,7 +399,7 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
 };
 
 export const useCountriesSchemaField = (
-  options?: Omit<NextFlowOptions, 'jsonSchemaVersion'> & {
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };
   },
 ) => {

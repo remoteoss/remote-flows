@@ -14,7 +14,7 @@ import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/s
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
-  NextFlowOptions,
+  FlowOptions,
 } from '@/src/flows/types';
 import { formatCurrency } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
@@ -200,7 +200,7 @@ export const useContractorOnboardingDetailsSchema = ({
 }: {
   countryCode: string;
   fieldValues: FieldValues;
-  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } };
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
@@ -226,7 +226,7 @@ export const useContractorOnboardingDetailsSchema = ({
 
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
-  options?: NextFlowOptions & { queryOptions?: { enabled?: boolean } },
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
   const { data: contractorSubscriptions, isLoading: isLoading } =
     useGetContractorSubscriptions({
