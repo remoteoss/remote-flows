@@ -12,8 +12,14 @@ import {
   ContractorOnboardingContractDetailsResponse,
   ContractPreviewResponse,
   ContractPreviewFormPayload,
+  JSFCustomComponentProps,
 } from '@remoteoss/remote-flows';
-import { Card } from '@remoteoss/remote-flows/internals';
+import {
+  Card,
+  Tabs,
+  TabsTrigger,
+  TabsList,
+} from '@remoteoss/remote-flows/internals';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -21,10 +27,29 @@ import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
+const Switcher = (props: JSFCustomComponentProps) => {
+  return (
+    <Tabs
+      defaultValue={props.options?.[0].value}
+      onValueChange={(value) => {
+        props.setValue(value);
+      }}
+    >
+      <TabsList>
+        {props.options?.map((option) => (
+          <TabsTrigger key={option.value} value={option.value}>
+            {option.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  );
+};
+
 const STEPS = [
   'Select Country',
   'Basic Information',
-  'Contract Details',
+  'Statement of Work',
   'Pricing Plan',
   'Contract Preview',
 ];
@@ -285,7 +310,6 @@ export const ContractorOnboardingWithProps = ({
   employmentId,
   externalId,
 }: ContractorOnboardingFormData) => {
-  const provisionalStartDate = new Date().toISOString().split('T')[0];
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
@@ -304,8 +328,20 @@ export const ContractorOnboardingWithProps = ({
                   subscription:
                     'urn:remotecom:resource:product:contractor:standard:monthly',
                 },
-                service_duration: {
-                  provisional_start_date: provisionalStartDate,
+              }}
+              options={{
+                jsfModify: {
+                  contract_details: {
+                    fields: {
+                      'payment_terms.payment_terms_type': {
+                        'x-jsf-presentation': {
+                          Component: (props: JSFCustomComponentProps) => (
+                            <Switcher {...props} />
+                          ),
+                        },
+                      },
+                    },
+                  },
                 },
               }}
             />

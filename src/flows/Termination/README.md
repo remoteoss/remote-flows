@@ -24,7 +24,7 @@ Welcome to the Termination flow docs
 After installation, import the main CSS file in your application:
 
 ```css
-@import '@remoteoss/remote-flows/index.css';
+@import '@remoteoss/remote-flows/styles.css';
 ```
 
 ### Full Example
