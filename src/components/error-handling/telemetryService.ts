@@ -179,20 +179,13 @@ export function reportTelemetryError(
     logDebugPayload(payload, Boolean(options.debugMode));
   }
 
-  try {
-    postReportErrorsTelemetry({
-      client,
-      body: payload,
-    }).catch((err) => {
-      // Silently fail - don't crash if telemetry reporting fails
-      if (options.debugMode) {
-        console.warn('[RemoteFlows] Failed to report error telemetry:', err);
-      }
-    });
-  } catch (err) {
+  postReportErrorsTelemetry({
+    client,
+    body: payload,
+  }).catch((err) => {
     // Silently fail - don't crash if telemetry reporting fails
     if (options.debugMode) {
-      console.warn('[RemoteFlows] Error telemetry setup failed:', err);
+      console.warn('[RemoteFlows] Failed to report error telemetry:', err);
     }
-  }
+  });
 }
