@@ -490,11 +490,13 @@ export const useCostCalculator = (
     // 3. combine the errors from both validations
     const combinedInnerErrors = [
       ...(errors?.yupError.inner || []),
-      ...(handleValidationResult?.yupError?.inner || []),
+      ...((handleValidationResult as { yupError: ValidationError })?.yupError
+        ?.inner || []),
     ];
     const combinedValues = {
       ...(errors?.yupError?.value || {}),
-      ...(handleValidationResult?.yupError?.value || {}),
+      ...((handleValidationResult as { yupError: ValidationError })?.yupError
+        ?.value || {}),
     };
 
     return {
