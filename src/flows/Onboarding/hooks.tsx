@@ -213,6 +213,8 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
+  const { mutateAsync: updateContractEligibilityMutationAsync } =
+    mutationToPromise(updateContractEligibilityMutation);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -685,7 +687,7 @@ export const useOnboarding = ({
               const employmentId = response.data?.data?.employment?.id;
               if (employmentId) {
                 setInternalEmploymentId(employmentId);
-                await updateContractEligibilityMutation.mutateAsync({
+                await updateContractEligibilityMutationAsync({
                   employmentId: employmentId,
                   eligible_to_work_in_residing_country: 'citizen',
                   employer_or_work_restrictions: false,
@@ -788,7 +790,8 @@ export const useOnboarding = ({
     isSubmitting:
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
-      updateBenefitsOffersMutation.isPending,
+      updateBenefitsOffersMutation.isPending ||
+      updateContractEligibilityMutation.isPending,
     /**
      * Initial form values
      */
