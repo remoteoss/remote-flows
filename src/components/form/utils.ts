@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { convertFilesToBase64 } from '@/src/lib/files';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
 import get from 'lodash.get';
@@ -579,7 +579,7 @@ export async function parseSubmitValues(
 
 export async function parseJSFToValidate(
   formValues: Record<string, any>,
-  fields: Fields,
+  fields: JSFFields,
   config: { isPartialValidation: boolean } = {
     isPartialValidation: false,
   },
@@ -702,7 +702,7 @@ function getInitialSubFieldValues(
 }
 
 export function getInitialValues(
-  fields: Fields,
+  fields: JSFFields,
   defaultValues: Record<string, unknown>,
 ) {
   const initialValues: Record<string, unknown> = {};
@@ -825,7 +825,7 @@ export function getFieldsWithFlatFieldsets({
 }
 
 export function enableAckFields(
-  fields: Fields,
+  fields: JSFFields,
   values: Record<string, unknown>,
 ) {
   let result = values;

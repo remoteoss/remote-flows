@@ -4,7 +4,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -85,8 +85,8 @@ const getLoadingStates = ({
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  basicInformationFields: Fields;
-  contractDetailsFields: Fields;
+  basicInformationFields: JSFFields;
+  contractDetailsFields: JSFFields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -419,7 +419,7 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],

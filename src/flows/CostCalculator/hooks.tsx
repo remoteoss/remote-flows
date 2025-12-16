@@ -10,7 +10,7 @@ import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/validationResolver';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
@@ -82,12 +82,7 @@ type UseCostCalculatorParams = {
 };
 
 const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
-  const { schema: jsonSchemaModified } = modify(
-    jsonSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  return createHeadlessForm(jsonSchemaModified);
+  return createHeadlessForm(jsonSchema.data.schema, undefined, options);
 };
 
 type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';

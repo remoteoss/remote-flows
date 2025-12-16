@@ -1,6 +1,6 @@
-import { Fields } from '@remoteoss/json-schema-form-old';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -308,7 +308,7 @@ export const useContractorOnboarding = ({
       },
     });
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
