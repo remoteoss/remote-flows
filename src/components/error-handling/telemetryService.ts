@@ -6,7 +6,6 @@ import {
 import {
   categorizeError,
   determineErrorSeverity,
-  parseComponentStack,
 } from '@/src/components/error-handling/utils';
 import { Environment } from '@/src/environments';
 import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
@@ -131,7 +130,6 @@ export function buildErrorPayload(
 ): ErrorPayload {
   const category = categorizeError(error);
   const severity = determineErrorSeverity(error, category);
-  const componentStack = parseComponentStack(error, error.stack);
   const url = getSafeUrl();
   const encodedStack = encodeStack(error.stack);
 
@@ -142,7 +140,6 @@ export function buildErrorPayload(
       name: error.name,
       category,
       severity,
-      component_stack: componentStack,
     },
     context,
     metadata: {
