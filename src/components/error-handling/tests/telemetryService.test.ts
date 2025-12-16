@@ -10,7 +10,6 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 vi.mock('@/src/components/error-handling/utils', () => ({
   categorizeError: vi.fn(),
   determineErrorSeverity: vi.fn(),
-  parseComponentStack: vi.fn(),
 }));
 
 vi.mock('@/src/client/sdk.gen', () => ({
