@@ -100,11 +100,7 @@ const MultiStepForm = ({
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
           <div className='contractor-onboarding-buttons-container'>
-            <SubmitButton
-              className='submit-button'
-              disabled={contractorOnboardingBag.isSubmitting}
-              variant='outline'
-            >
+            <SubmitButton className='submit-button' variant='outline'>
               Continue
             </SubmitButton>
           </div>
@@ -134,7 +130,6 @@ const MultiStepForm = ({
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
@@ -167,7 +162,6 @@ const MultiStepForm = ({
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
@@ -200,7 +194,6 @@ const MultiStepForm = ({
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
@@ -233,7 +226,6 @@ const MultiStepForm = ({
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={contractorOnboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
