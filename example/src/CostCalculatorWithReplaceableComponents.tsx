@@ -42,10 +42,7 @@ export const CostCalculatorWithReplaceableComponents = () => {
                 >
                   Reset
                 </CostCalculatorResetButton>
-                <CostCalculatorSubmitButton
-                  className='submit-button'
-                  disabled={props.isSubmitting}
-                >
+                <CostCalculatorSubmitButton className='submit-button'>
                   Get estimate
                 </CostCalculatorSubmitButton>
               </div>

@@ -37,18 +37,14 @@ describe('ContractAmendmentFlow', () => {
                 onSuccess={mockSuccess}
                 onSubmit={mockOnSubmit}
               />
-              <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
-                Submit
-              </SubmitButton>
+              <SubmitButton>Submit</SubmitButton>
             </div>
           );
         case 'confirmation_form':
           return (
             <div data-testid='confirmation-form'>
               <ConfirmationForm onSubmit={mockOnSubmitConfirmation} />
-              <SubmitButton disabled={contractAmendmentBag.isSubmitting}>
-                Confirm
-              </SubmitButton>
+              <SubmitButton>Confirm</SubmitButton>
               <BackButton>Back</BackButton>
             </div>
           );

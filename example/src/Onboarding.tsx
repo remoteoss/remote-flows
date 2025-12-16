@@ -85,11 +85,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
           <div className='buttons-container'>
-            <SubmitButton
-              className='submit-button'
-              disabled={onboardingBag.isSubmitting}
-              variant='outline'
-            >
+            <SubmitButton className='submit-button' variant='outline'>
               Continue
             </SubmitButton>
           </div>
