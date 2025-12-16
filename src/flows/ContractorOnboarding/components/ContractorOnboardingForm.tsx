@@ -16,7 +16,7 @@ type ContractorOnboardingFormProps = {
       | BasicInformationFormPayload
       | PricingPlanFormPayload
       | ContractorOnboardingContractDetailsFormPayload,
-  ) => void;
+  ) => Promise<void>;
   components?: Components;
   fields?: Fields;
   defaultValues: Record<string, unknown>;
@@ -64,7 +64,7 @@ export function ContractorOnboardingForm({
   }, []);
 
   const handleSubmit = async (values: Record<string, unknown>) => {
-    onSubmit(values);
+    await onSubmit(values);
   };
 
   return (
