@@ -92,17 +92,16 @@ export class RemoteFlowsErrorBoundary extends Component<
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
 
     const errorContext = this.context?.errorContextRef.current;
-
-    reportTelemetryError(
+    const params = {
       error,
-      npmPackageVersion,
-      this.props.client,
-      this.props.environment,
-      errorContext,
-      {
-        debugMode: this.props.debug,
-      },
-    );
+      sdkVersion: npmPackageVersion,
+      client: this.props.client,
+      environment: this.props.environment,
+    };
+
+    reportTelemetryError(params, errorContext, {
+      debugMode: this.props.debug,
+    });
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {
       throw error;

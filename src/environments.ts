@@ -12,3 +12,5 @@ export const ENVIRONMENTS: Record<Environment, string> = {
   sandbox: 'https://gateway.remote-sandbox.com',
   staging: 'https://gateway.niceremote.com',
 };
+
+export const defaultEnvironment: Environment = 'production';

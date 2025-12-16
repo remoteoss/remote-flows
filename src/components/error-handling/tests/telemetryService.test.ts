@@ -34,10 +34,6 @@ describe('telemetryService', () => {
 
     vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([
-      'Component1',
-      'Component2',
-    ]);
 
     const payload = buildErrorPayload(error, sdkVersion, 'production', context);
 
@@ -58,14 +54,31 @@ describe('telemetryService', () => {
 
     vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
 
-    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
-      debugMode: false,
-    });
-    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
-      debugMode: false,
-    });
+    reportTelemetryError(
+      {
+        error,
+        sdkVersion: '1.0.0',
+        client: mockClient,
+        environment: 'production',
+      },
+      undefined,
+      {
+        debugMode: false,
+      },
+    );
+    reportTelemetryError(
+      {
+        error,
+        sdkVersion: '1.0.0',
+        client: mockClient,
+        environment: 'production',
+      },
+      undefined,
+      {
+        debugMode: false,
+      },
+    );
 
     expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
   });
@@ -77,18 +90,35 @@ describe('telemetryService', () => {
 
     vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
     vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
-    vi.mocked(utils.parseComponentStack).mockReturnValue([]);
 
-    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
-      debugMode: false,
-    });
+    reportTelemetryError(
+      {
+        error,
+        sdkVersion: '1.0.0',
+        client: mockClient,
+        environment: 'production',
+      },
+      undefined,
+      {
+        debugMode: false,
+      },
+    );
     expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(150);
 
-    reportTelemetryError(error, '1.0.0', mockClient, 'production', undefined, {
-      debugMode: false,
-    });
+    reportTelemetryError(
+      {
+        error,
+        sdkVersion: '1.0.0',
+        client: mockClient,
+        environment: 'production',
+      },
+      undefined,
+      {
+        debugMode: false,
+      },
+    );
     expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(2);
   });
 });

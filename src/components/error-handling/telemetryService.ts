@@ -7,7 +7,7 @@ import {
   categorizeError,
   determineErrorSeverity,
 } from '@/src/components/error-handling/utils';
-import { Environment } from '@/src/environments';
+import { defaultEnvironment, Environment } from '@/src/environments';
 import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
 
 const recentlyReported = new Map<string, number>();
@@ -156,10 +156,12 @@ export function buildErrorPayload(
 }
 
 export function reportTelemetryError(
-  error: Error,
-  sdkVersion: string,
-  client: Client,
-  environment?: Environment,
+  params: {
+    error: Error;
+    sdkVersion: string;
+    client: Client;
+    environment?: Environment;
+  },
   context?: ErrorContextData,
   options: {
     debugMode?: boolean;
@@ -167,6 +169,7 @@ export function reportTelemetryError(
     debugMode: false,
   },
 ): void {
+  const { error, sdkVersion, client, environment } = params;
   if (wasRecentlyReported(error)) {
     if (options.debugMode) {
       console.log('[RemoteFlows] Skipping duplicate error report');
@@ -177,7 +180,7 @@ export function reportTelemetryError(
   const payload: ErrorPayload = buildErrorPayload(
     error,
     sdkVersion,
-    environment ?? 'production',
+    environment ?? defaultEnvironment,
     context,
   );
 

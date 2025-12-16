@@ -6,6 +6,9 @@ import { ErrorContextProvider, useErrorContext } from '../ErrorContext';
 import { client } from '@/src/tests/testHelpers';
 
 vi.mock('../telemetryService');
+vi.mock('@/src/lib/version', () => ({
+  npmPackageVersion: '1.0.0',
+}));
 
 const ErrorThrowingComponent = () => {
   throw new Error('Test error from child component');
@@ -65,10 +68,12 @@ describe('RemoteFlowsErrorBoundary', () => {
     );
 
     expect(reportTelemetryError).toHaveBeenCalledWith(
-      new Error('Test error from child component'),
-      'unknown',
-      client,
-      'production',
+      {
+        error: new Error('Test error from child component'),
+        sdkVersion: '1.0.0',
+        client: client,
+        environment: 'production',
+      },
       undefined,
       {
         debugMode: false,
@@ -140,10 +145,12 @@ describe('RemoteFlowsErrorBoundary', () => {
     );
 
     expect(reportTelemetryError).toHaveBeenCalledWith(
-      new Error('Test error from child component'),
-      'unknown',
-      client,
-      'production',
+      {
+        error: new Error('Test error from child component'),
+        sdkVersion: '1.0.0',
+        client: client,
+        environment: 'production',
+      },
       {
         flow: 'onboarding',
         step: 'basic_info',
