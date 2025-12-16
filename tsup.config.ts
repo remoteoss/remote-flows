@@ -9,6 +9,7 @@ export const tsup: Options = {
   dts: true,
   entry: [
     'src/index.tsx',
+    'src/styles.ts',
     'src/internals.ts',
     'src/default-components.ts',
     'src/flows',

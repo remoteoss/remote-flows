@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+// TODO: we can remove this import in the next major version, we can import styles with import '@remoteoss/remote-flows/styles.css'
 import './styles/global.css';
 
 export {
@@ -121,7 +122,7 @@ export type {
   Company,
 } from './client/types.gen';
 
-export type { $TSFixMe } from './types/remoteFlows';
+export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
 export { zendeskArticles } from './components/shared/zendesk-drawer/utils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';

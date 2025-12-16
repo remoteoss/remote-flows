@@ -257,7 +257,18 @@ export function FieldSetField({
                 const { Component } = field as {
                   Component: React.ComponentType<$TSFixMe>;
                 };
-                return <Component key={field.name} {...field} />;
+                return (
+                  <Component
+                    key={field.name}
+                    setValue={(value: unknown) =>
+                      setValue(
+                        isFlatFieldset ? field.name : `${name}.${field.name}`,
+                        value,
+                      )
+                    }
+                    {...field}
+                  />
+                );
               }
 
               if (!FieldComponent) {
