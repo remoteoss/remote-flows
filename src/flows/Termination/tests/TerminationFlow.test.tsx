@@ -741,7 +741,7 @@ describe('TerminationFlow', () => {
     });
   });
 
-  it('should display formatted proposed termination date in paid time off step', async () => {
+  it('should preserve proposed termination date when navigating from termination details to paid time off step', async () => {
     const proposedTerminationDate = '2025-12-17';
 
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
