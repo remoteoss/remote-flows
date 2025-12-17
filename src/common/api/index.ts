@@ -136,7 +136,11 @@ export const usePaidTimeoffBreakdownQuery = ({
       enabled: options?.enabled,
       select: (data) => {
         return {
-          bookedDays: data?.data?.total_count || 0,
+          bookedDays:
+            data?.data?.timeoffs?.reduce(
+              (acc, timeoff) => acc + (timeoff?.timeoff_days?.length || 0),
+              0,
+            ) || 0,
           timeoffs:
             data?.data?.timeoffs?.map((timeoff) => {
               return {
