@@ -86,11 +86,11 @@ export const useTermination = ({
 
   const initialValues = buildInitialValues(
     {
+      ...terminationInitialValues,
       ...stepState.values?.employee_communication,
       ...stepState.values?.termination_details,
       ...stepState.values?.paid_time_off,
       ...stepState.values?.additional_information,
-      ...terminationInitialValues,
     },
     hasFutureStartDate,
   );
@@ -98,10 +98,9 @@ export const useTermination = ({
   const formValues = useMemo(
     () => ({
       ...initialValues,
-      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
       ...fieldValues,
     }),
-    [stepState.values, stepState.currentStep.name, fieldValues, initialValues],
+    [fieldValues, initialValues],
   );
 
   const proposedTerminationDateStatement =

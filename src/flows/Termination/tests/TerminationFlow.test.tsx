@@ -740,4 +740,40 @@ describe('TerminationFlow', () => {
       );
     });
   });
+
+  it('should display formatted proposed termination date in paid time off step', async () => {
+    const proposedTerminationDate = '2025-12-17';
+
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    await screen.findByText(/Step: Employee Communication/i);
+    await fillEmployeeCommunication();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await screen.findByText(/Step: Termination Details/i);
+    await fillTerminationDetails({
+      proposedTerminationDate: proposedTerminationDate,
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(2);
+    });
+
+    await screen.findByText(/Step: Paid Time Off/i);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /The proposed termination date for .+ is December 17, 2025/i,
+        ),
+      ).toBeInTheDocument();
+    });
+  });
 });
