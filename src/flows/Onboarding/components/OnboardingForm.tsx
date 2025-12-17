@@ -19,7 +19,7 @@ type OnboardingFormProps = {
       | BasicInformationFormPayload
       | BenefitsFormPayload
       | ContractDetailsFormPayload,
-  ) => void;
+  ) => Promise<void>;
   components?: Components;
   fields?: Fields;
   defaultValues: Record<string, unknown>;
@@ -116,7 +116,7 @@ export function OnboardingForm({
       }
     } else {
       // Handle normal form submission
-      onSubmit(values);
+      await onSubmit(values);
     }
   };
 

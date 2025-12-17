@@ -21,7 +21,7 @@ describe('OnboardingSubmit Component', () => {
     vi.clearAllMocks();
     (useOnboardingContext as any).mockReturnValue({
       formId: mockFormId,
-      onboardingBag: {},
+      onboardingBag: { isSubmitting: false },
     });
     (useFormFields as any).mockReturnValue({ components: {} });
   });

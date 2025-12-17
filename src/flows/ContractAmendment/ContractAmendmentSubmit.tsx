@@ -8,12 +8,16 @@ export function ContractAmendmentSubmit({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
   Record<string, unknown>) {
-  const { formId } = useContractAmendmentContext();
+  const { formId, contractAmendment } = useContractAmendmentContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button || ButtonDefault;
   return (
-    <CustomButton {...props} form={formId}>
+    <CustomButton
+      {...props}
+      form={formId}
+      disabled={props.disabled || contractAmendment.isSubmitting}
+    >
       {children}
     </CustomButton>
   );

@@ -213,6 +213,8 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
+  const { mutateAsync: updateContractEligibilityMutationAsync } =
+    mutationToPromise(updateContractEligibilityMutation);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -675,16 +677,25 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            // @ts-expect-error the types from the response are not matching
-            const employmentId = response.data?.data?.employment?.id;
-            setInternalEmploymentId(employmentId);
-            await updateContractEligibilityMutation.mutateAsync({
-              employmentId: employmentId,
-              eligible_to_work_in_residing_country: 'citizen',
-              employer_or_work_restrictions: false,
-            });
 
-            return response;
+            if (response.error) {
+              return response;
+            }
+
+            if (response.data) {
+              // @ts-expect-error the types from the response are not matching
+              const employmentId = response.data?.data?.employment?.id;
+              if (employmentId) {
+                setInternalEmploymentId(employmentId);
+                await updateContractEligibilityMutationAsync({
+                  employmentId: employmentId,
+                  eligible_to_work_in_residing_country: 'citizen',
+                  employer_or_work_restrictions: false,
+                });
+              }
+
+              return response;
+            }
           } catch (error) {
             console.error('Error creating onboarding:', error);
             throw error;
@@ -779,7 +790,8 @@ export const useOnboarding = ({
     isSubmitting:
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
-      updateBenefitsOffersMutation.isPending,
+      updateBenefitsOffersMutation.isPending ||
+      updateContractEligibilityMutation.isPending,
     /**
      * Initial form values
      */
