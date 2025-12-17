@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.4.0
+
+### Minor Changes
+
+- implement comprehensive error telemetry and reporting system (#591) [#591](https://github.com/remoteoss/remote-flows/pull/591)
+
 ## 1.3.1
 
 ### Patch Changes
