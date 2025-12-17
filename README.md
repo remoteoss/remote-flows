@@ -64,6 +64,7 @@ The `RemoteFlows` component serves as a provider for authentication and theming.
 | `components`    | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                  |
 | `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                   |
 | `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       |  -         | Error boundary configuration to prevent crashes and show custom fallback UI |
+| `debug`         | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                |
 
 #### Error Boundary
 

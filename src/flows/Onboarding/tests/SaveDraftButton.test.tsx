@@ -13,11 +13,8 @@ import {
   OnboardingFlowProps,
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding/types';
-import { FormFieldsProvider } from '@/src/RemoteFlowsProvider';
-import { defaultComponents } from '@/src/tests/defaultComponents';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
@@ -309,7 +306,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should disable button when disabled prop is passed', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -355,7 +352,7 @@ describe('SaveDraftButton', () => {
   });
 
   it('should show custom children text when provided', async () => {
-    mockRender.mockImplementationOnce(({ components }) => {
+    mockRender.mockImplementation(({ components }) => {
       const { SaveDraftButton } = components;
       return (
         <SaveDraftButton
@@ -389,17 +386,13 @@ describe('SaveDraftButton', () => {
     });
 
     const customWrapper = ({ children }: PropsWithChildren) => (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider
-          components={{ ...defaultComponents, button: MockCustomButton }}
-        >
-          {children}
-        </FormFieldsProvider>
-      </QueryClientProvider>
+      <TestProviders components={{ button: MockCustomButton }}>
+        {children}
+      </TestProviders>
     );
 
     it('should use custom button when provided via FormFieldsProvider', async () => {
-      mockRender.mockImplementation(({ components }) => {
+      mockRender.mockImplementationOnce(({ components }) => {
         const { SaveDraftButton } = components;
         return (
           <SaveDraftButton

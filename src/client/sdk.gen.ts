@@ -498,6 +498,9 @@ import type {
   PostReplayWebhookEventData,
   PostReplayWebhookEventErrors,
   PostReplayWebhookEventResponses,
+  PostReportErrorsTelemetryData,
+  PostReportErrorsTelemetryErrors,
+  PostReportErrorsTelemetryResponses,
   PostSendBackTimesheetData,
   PostSendBackTimesheetErrors,
   PostSendBackTimesheetResponses,
@@ -1009,6 +1012,33 @@ export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/contractor-invoices',
     ...options,
+  });
+
+/**
+ * Report SDK errors
+ *
+ * Receives error telemetry from the frontend SDK.
+ * Errors are logged to observability backend for monitoring and debugging.
+ *
+ */
+export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
+  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostReportErrorsTelemetryResponses,
+    PostReportErrorsTelemetryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sdk/telemetry-errors',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
