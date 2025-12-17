@@ -17,6 +17,12 @@ function getErrorSignature(error: Error): string {
   return `${error.name}:${error.message}:${error.stack?.substring(0, 100) || ''}`;
 }
 
+/**
+ * Checks if the error has been reported recently to avoid duplicate reports
+ * This is caused by React Strict Mode double-invoking the error boundary.
+ * @param error - The error to check
+ * @returns True if the error has been reported recently, false otherwise
+ */
 function wasRecentlyReported(error: Error): boolean {
   const signature = getErrorSignature(error);
   const lastReported = recentlyReported.get(signature);
