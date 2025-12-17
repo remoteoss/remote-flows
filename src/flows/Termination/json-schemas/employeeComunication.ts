@@ -18,7 +18,7 @@ export const employeeComunicationSchema = {
                 'x-jsf-presentation': {
                   statement: {
                     title:
-                      'Please make sure to add the employee personal email so we can get in contact with the employee after the termination process takes effect.',
+                      'Please make sure to add the employee personal email so Remote can get in contact with the employee after the termination process takes effect.',
                     inputType: 'statement',
                     severity: 'warning',
                   },
@@ -81,9 +81,9 @@ export const employeeComunicationSchema = {
             inputType: 'radio',
             statement: {
               title:
-                'Please do not inform the employee of their termination until we review your request for legal risks.',
+                'Please do not inform the employee of their termination until Remote reviews your request for legal risks.',
               description:
-                "When we approve your request, you can inform the employee and we'll take it from there.",
+                'When Remote approves your request, you can inform the employee and Remote will take it from there.',
               inputType: 'statement',
               severity: 'warning',
             },
@@ -131,7 +131,8 @@ export const employeeComunicationSchema = {
           },
         },
         personal_email: {
-          description: 'We’ll use this for post-termination communication.',
+          description:
+            'Remote will use this for post-termination communication.',
           maxLength: 255,
           title: "Employee's personal email",
           format: 'email',

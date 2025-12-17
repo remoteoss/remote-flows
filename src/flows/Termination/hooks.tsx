@@ -142,7 +142,7 @@ export const useTermination = ({
         proposed_termination_date_info: createInformationField(
           'Proposed termination date',
           <>
-            In most cases, we must provide notice to the employee before
+            In most cases, Remote must provide notice to the employee before
             termination. The required notice period depends on local labor laws,
             the employment agreement, and other factors. We'll use those factors
             to determine the required notice period.
