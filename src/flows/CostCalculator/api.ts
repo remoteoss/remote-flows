@@ -1,4 +1,4 @@
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
   CostCalculatorEstimateParams,
   getIndexCompanyCurrency,
@@ -154,12 +154,8 @@ export const useRegionFields = (
     },
     enabled: !!region,
     select: ({ data }) => {
-      let jsfSchema = data?.data?.schema || {};
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-      return createHeadlessForm(jsfSchema);
+      const jsfSchema = data?.data?.schema || {};
+      return createHeadlessForm(jsfSchema, undefined, options);
     },
   });
 };

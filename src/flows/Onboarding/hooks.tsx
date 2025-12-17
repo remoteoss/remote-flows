@@ -4,7 +4,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -36,7 +36,7 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModifyNext, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -85,8 +85,8 @@ const getLoadingStates = ({
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  basicInformationFields: Fields;
-  contractDetailsFields: Fields;
+  basicInformationFields: JSFFields;
+  contractDetailsFields: JSFFields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -233,7 +233,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModifyNext;
+      jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
     query?: Record<string, string>;
@@ -421,7 +421,7 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],

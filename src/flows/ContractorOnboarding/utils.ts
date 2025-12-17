@@ -1,4 +1,4 @@
-import { JSFModifyNext } from '@/src/flows/types';
+import { JSFModify } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
 
 type StepKeys =
@@ -57,9 +57,9 @@ export const calculateProvisionalStartDateDescription = (
  * while preserving user customizations
  */
 export const buildContractDetailsJsfModify = (
-  userJsfModify: JSFModifyNext | undefined,
+  userJsfModify: JSFModify | undefined,
   provisionalStartDateDescription: string | undefined,
-): JSFModifyNext => {
+): JSFModify => {
   return {
     ...userJsfModify,
     fields: {
