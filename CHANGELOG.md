@@ -1,8 +1,8 @@
 # @remoteoss/remote-flows
 
-## 1.4.0
+## 1.3.1
 
-### Minor Changes
+### Patch Changes
 
 - simplify form values memoization to solve form state bug (#669) [#669](https://github.com/remoteoss/remote-flows/pull/669)
 - prevent double submission (#666) [#666](https://github.com/remoteoss/remote-flows/pull/666)
