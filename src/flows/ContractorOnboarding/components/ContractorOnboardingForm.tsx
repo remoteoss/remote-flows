@@ -1,4 +1,4 @@
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -16,9 +16,9 @@ type ContractorOnboardingFormProps = {
       | BasicInformationFormPayload
       | PricingPlanFormPayload
       | ContractorOnboardingContractDetailsFormPayload,
-  ) => void;
+  ) => Promise<void>;
   components?: Components;
-  fields?: Fields;
+  fields?: JSFFields;
   defaultValues: Record<string, unknown>;
 };
 
@@ -64,7 +64,7 @@ export function ContractorOnboardingForm({
   }, []);
 
   const handleSubmit = async (values: Record<string, unknown>) => {
-    onSubmit(values);
+    await onSubmit(values);
   };
 
   return (

@@ -4,7 +4,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -36,7 +36,7 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModifyNext, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -86,8 +86,8 @@ const getLoadingStates = ({
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  basicInformationFields: Fields;
-  contractDetailsFields: Fields;
+  basicInformationFields: JSFFields;
+  contractDetailsFields: JSFFields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -233,6 +233,8 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
+  const { mutateAsync: updateContractEligibilityMutationAsync } =
+    mutationToPromise(updateContractEligibilityMutation);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -251,7 +253,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModifyNext;
+      jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
     query?: Record<string, string>;
@@ -439,7 +441,7 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
@@ -695,16 +697,25 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            // @ts-expect-error the types from the response are not matching
-            const employmentId = response.data?.data?.employment?.id;
-            setInternalEmploymentId(employmentId);
-            await updateContractEligibilityMutation.mutateAsync({
-              employmentId: employmentId,
-              eligible_to_work_in_residing_country: 'citizen',
-              employer_or_work_restrictions: false,
-            });
 
-            return response;
+            if (response.error) {
+              return response;
+            }
+
+            if (response.data) {
+              // @ts-expect-error the types from the response are not matching
+              const employmentId = response.data?.data?.employment?.id;
+              if (employmentId) {
+                setInternalEmploymentId(employmentId);
+                await updateContractEligibilityMutationAsync({
+                  employmentId: employmentId,
+                  eligible_to_work_in_residing_country: 'citizen',
+                  employer_or_work_restrictions: false,
+                });
+              }
+
+              return response;
+            }
           } catch (error) {
             console.error('Error creating onboarding:', error);
             throw error;
@@ -799,7 +810,8 @@ export const useOnboarding = ({
     isSubmitting:
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
-      updateBenefitsOffersMutation.isPending,
+      updateBenefitsOffersMutation.isPending ||
+      updateContractEligibilityMutation.isPending,
     /**
      * Initial form values
      */

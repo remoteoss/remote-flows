@@ -20,6 +20,8 @@ type AuthResponse = {
   expiresIn: number;
 };
 
+export type JSFFields = Record<string, unknown>[];
+
 export type JSFFieldset = {
   [x: string]: {
     propertiesByName: string[];

@@ -1,6 +1,6 @@
 import { Employment } from '@/src/client';
 import { convertFromCents } from '@/src/components/form/utils';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { Step } from '../useStepState';
 
 type StepKeys = 'form' | 'confirmation_form';
@@ -12,7 +12,7 @@ export const STEPS: Record<StepKeys, Step<StepKeys>> = {
 
 export function buildInitialValues(
   employment: Employment | undefined,
-  fields?: Fields | undefined,
+  fields?: JSFFields | undefined,
 ) {
   if (!employment) {
     return {};

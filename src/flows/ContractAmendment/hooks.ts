@@ -1,3 +1,5 @@
+import { FieldValues } from 'react-hook-form';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   CreateContractAmendmentParams,
   Employment,
@@ -5,21 +7,13 @@ import {
   postAutomatableContractAmendment,
   postCreateContractAmendment,
 } from '@/src/client';
-
-import {
-  convertToCents,
-  parseJSFToValidate,
-} from '@/src/components/form/utils';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
-
 import { Client } from '@/src/client/client';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { ContractAmendmentParams } from './types';
-
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useEmploymentQuery } from '@/src/common/api';
 import { useClient } from '@/src/context';
-import { FieldValues } from 'react-hook-form';
+import { ContractAmendmentParams } from './types';
 import { useStepState } from '../useStepState';
 import { buildInitialValues, STEPS } from './utils';
 import { FlowOptions } from '@/src/flows/types';
@@ -68,28 +62,9 @@ const useContractAmendmentSchemaQuery = ({
     },
     enabled: Boolean(employment),
     select: ({ data }) => {
-      let jsfSchema = data?.data || {};
+      const jsfSchema = data?.data || {};
 
-      if (options && options.jsfModify) {
-        const { schema } = modify(jsfSchema, options.jsfModify);
-        jsfSchema = schema;
-      }
-
-      const copyFieldValues = {
-        ...fieldValues,
-        annual_gross_salary: fieldValues?.annual_gross_salary
-          ? convertToCents(fieldValues?.annual_gross_salary)
-          : undefined,
-      };
-
-      const hasFieldValues = Object.keys(copyFieldValues).length > 0;
-
-      const result = createHeadlessForm(jsfSchema, {
-        initialValues: hasFieldValues
-          ? copyFieldValues
-          : buildInitialValues(employment),
-      });
-      return result;
+      return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
 };

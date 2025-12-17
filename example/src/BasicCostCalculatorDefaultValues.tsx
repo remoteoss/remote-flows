@@ -38,10 +38,7 @@ export function BasicCostCalculatorWithDefaultValues() {
                 <CostCalculatorResetButton className='reset-button'>
                   Reset
                 </CostCalculatorResetButton>
-                <CostCalculatorSubmitButton
-                  className='submit-button'
-                  disabled={props.isSubmitting}
-                >
+                <CostCalculatorSubmitButton className='submit-button'>
                   Get estimate
                 </CostCalculatorSubmitButton>
               </div>

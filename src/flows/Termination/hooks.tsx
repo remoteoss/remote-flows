@@ -1,4 +1,5 @@
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form-old';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';
@@ -86,11 +87,11 @@ export const useTermination = ({
 
   const initialValues = buildInitialValues(
     {
+      ...terminationInitialValues,
       ...stepState.values?.employee_communication,
       ...stepState.values?.termination_details,
       ...stepState.values?.paid_time_off,
       ...stepState.values?.additional_information,
-      ...terminationInitialValues,
     },
     hasFutureStartDate,
   );
@@ -98,10 +99,9 @@ export const useTermination = ({
   const formValues = useMemo(
     () => ({
       ...initialValues,
-      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
       ...fieldValues,
     }),
-    [stepState.values, stepState.currentStep.name, fieldValues, initialValues],
+    [fieldValues, initialValues],
   );
 
   const proposedTerminationDateStatement =
@@ -143,7 +143,7 @@ export const useTermination = ({
         proposed_termination_date_info: createInformationField(
           'Proposed termination date',
           <>
-            In most cases, we must provide notice to the employee before
+            In most cases, Remote must provide notice to the employee before
             termination. The required notice period depends on local labor laws,
             the employment agreement, and other factors. We'll use those factors
             to determine the required notice period.

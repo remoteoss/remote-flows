@@ -10,7 +10,7 @@ import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/validationResolver';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
 import { buildPayload, buildValidationSchema } from './utils';
@@ -82,12 +82,7 @@ type UseCostCalculatorParams = {
 };
 
 const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
-  const { schema: jsonSchemaModified } = modify(
-    jsonSchema.data.schema,
-    options?.jsfModify || {},
-  );
-
-  return createHeadlessForm(jsonSchemaModified);
+  return createHeadlessForm(jsonSchema.data.schema, undefined, options);
 };
 
 type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';
@@ -490,11 +485,13 @@ export const useCostCalculator = (
     // 3. combine the errors from both validations
     const combinedInnerErrors = [
       ...(errors?.yupError.inner || []),
-      ...(handleValidationResult?.yupError?.inner || []),
+      ...((handleValidationResult as { yupError: ValidationError })?.yupError
+        ?.inner || []),
     ];
     const combinedValues = {
       ...(errors?.yupError?.value || {}),
-      ...(handleValidationResult?.yupError?.value || {}),
+      ...((handleValidationResult as { yupError: ValidationError })?.yupError
+        ?.value || {}),
     };
 
     return {

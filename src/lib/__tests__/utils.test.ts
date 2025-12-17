@@ -1,4 +1,4 @@
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   prettifyFormValues,
   sanitizeHtml,
@@ -117,13 +117,13 @@ describe('utils lib', () => {
 
     it('handles undefined values', () => {
       const values = { name: undefined };
-      const fields: Fields = [{ name: 'name', type: 'text', label: 'Name' }];
+      const fields: JSFFields = [{ name: 'name', type: 'text', label: 'Name' }];
       expect(prettifyFormValues(values, fields)).toEqual({});
     });
 
     it('handles basic text field', () => {
       const values = { name: 'John' };
-      const fields: Fields = [{ name: 'name', type: 'text', label: 'Name' }];
+      const fields: JSFFields = [{ name: 'name', type: 'text', label: 'Name' }];
       expect(prettifyFormValues(values, fields)).toEqual({
         name: { prettyValue: 'John', label: 'Name', inputType: 'text' },
       });
@@ -131,7 +131,7 @@ describe('utils lib', () => {
 
     it('handles radio field', () => {
       const values = { gender: 'male' };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'gender',
           type: 'radio',
@@ -149,7 +149,7 @@ describe('utils lib', () => {
 
     it('handles select field', () => {
       const values = { country: 'us' };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'country',
           type: 'select',
@@ -171,7 +171,7 @@ describe('utils lib', () => {
 
     it('handles countries field', () => {
       const values = { countries: ['us', 'uk'] };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'countries',
           type: 'countries',
@@ -189,7 +189,7 @@ describe('utils lib', () => {
 
     it('handles money field', () => {
       const values = { salary: 100000 };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'salary',
           type: 'money',
@@ -214,7 +214,7 @@ describe('utils lib', () => {
           city: 'Boston',
         },
       };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'address',
           type: 'fieldset',
@@ -247,7 +247,7 @@ describe('utils lib', () => {
           phone: '123-456-7890',
         },
       };
-      const fields: Fields = [
+      const fields: JSFFields = [
         {
           name: 'contact',
           type: 'fieldset',
@@ -287,7 +287,7 @@ describe('utils lib', () => {
 
     it('handles unknown field types', () => {
       const values = { custom: 'value' };
-      const fields: Fields = [
+      const fields: JSFFields = [
         { name: 'custom', type: 'unknown', label: 'Custom' },
       ];
       expect(prettifyFormValues(values, fields)).toEqual({
@@ -305,7 +305,7 @@ describe('utils lib', () => {
           city: 'Boston',
         },
       };
-      const fields: Fields = [
+      const fields: JSFFields = [
         { name: 'name', type: 'text', label: 'Name' },
         {
           name: 'gender',

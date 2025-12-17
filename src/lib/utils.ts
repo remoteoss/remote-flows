@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -128,7 +128,7 @@ export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
 // @ts-expect-error need to check function return type
 export function prettifyFormValues(
   values: Record<string, unknown>,
-  fields: Fields | undefined,
+  fields: JSFFields | undefined,
 ) {
   if (!fields) {
     return {};
@@ -187,7 +187,7 @@ export function prettifyFormValues(
           // @ts-expect-error need to check function return type
           const prettiedFieldset = prettifyFormValues(
             value as Record<string, unknown>,
-            field.fields as Fields,
+            field.fields as JSFFields,
           );
 
           // Handles benefits fieldset in specific

@@ -1,4 +1,4 @@
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useEffect } from 'react';
@@ -9,7 +9,7 @@ import { useJsonSchemasValidationFormResolver } from '@/src/components/form/vali
 
 type TerminationFormProps = {
   onSubmit: (payload: TerminationFormValues) => void;
-  fields?: Fields;
+  fields?: JSFFields;
   defaultValues?: TerminationFormValues;
 };
 

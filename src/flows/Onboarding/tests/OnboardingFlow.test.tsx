@@ -123,9 +123,7 @@ describe('OnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_details':
@@ -137,9 +135,7 @@ describe('OnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
 
@@ -153,9 +149,7 @@ describe('OnboardingFlow', () => {
               onSuccess={mockOnSuccess}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'review':
@@ -217,9 +211,7 @@ describe('OnboardingFlow', () => {
               onSuccess={mockOnSuccess}
               onError={mockOnError}
             />
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_details':
@@ -231,9 +223,7 @@ describe('OnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
 
@@ -247,9 +237,7 @@ describe('OnboardingFlow', () => {
               onSuccess={mockOnSuccess}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={onboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'review':
