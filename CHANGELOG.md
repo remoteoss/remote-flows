@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.4.0
+
+### Minor Changes
+
+- simplify form values memoization to solve form state bug (#669) [#669](https://github.com/remoteoss/remote-flows/pull/669)
+- prevent double submission (#666) [#666](https://github.com/remoteoss/remote-flows/pull/666)
+- add inline variant support for ButtonDefault component (#667) [#667](https://github.com/remoteoss/remote-flows/pull/667)
+- replace generic pronouns with Remote company name for clarity (#668) [#668](https://github.com/remoteoss/remote-flows/pull/668)
+- extract headless form creation logic into reusable utility (#654) [#654](https://github.com/remoteoss/remote-flows/pull/654)
+- calculate booked days from timeoff array length (#670) [#670](https://github.com/remoteoss/remote-flows/pull/670)
+
 ## 1.3.0
 
 ### Minor Changes
