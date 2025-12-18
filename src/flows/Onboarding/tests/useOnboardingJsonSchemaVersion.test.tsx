@@ -89,6 +89,39 @@ describe('useOnboarding jsonSchemaVersion', () => {
   });
 
   describe('useJSONSchemaForm calls', () => {
+    it('should pass jsonSchemaVersion 1 to basic information form as default', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'PRT',
+            employmentId: 'test-employment-id',
+            skipSteps: ['select_country'],
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(mockGetShowFormCountry).toHaveBeenCalled();
+      });
+
+      const call = mockGetShowFormCountry.mock.calls[0][0];
+
+      expect(call.path).toEqual({
+        country_code: 'PRT',
+        form: 'employment_basic_information',
+      });
+
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        json_schema_version: 1,
+      });
+    });
+
     it('should pass jsonSchemaVersion 1 to contract details form as default', async () => {
       const { result } = renderHook(
         () =>
