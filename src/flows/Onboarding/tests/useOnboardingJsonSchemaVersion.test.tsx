@@ -144,6 +144,11 @@ describe('useOnboarding jsonSchemaVersion', () => {
 
       const call = mockGetShowFormCountry.mock.calls[1][0];
 
+      expect(call.path).toEqual({
+        country_code: 'PRT',
+        form: 'contract_details',
+      });
+
       expect(call.query).toEqual({
         skip_benefits: true,
         employment_id: 'test-employment-id',
