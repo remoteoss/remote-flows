@@ -319,6 +319,7 @@ export const useTermination = ({
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {
+    console.log({ values });
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }

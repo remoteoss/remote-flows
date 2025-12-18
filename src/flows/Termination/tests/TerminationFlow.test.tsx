@@ -296,7 +296,13 @@ describe('TerminationFlow', () => {
     }
   }
 
-  async function fillPTO(values?: Partial<{ agreePTO: string }>) {
+  async function fillPTO(
+    values?: Partial<{
+      agreePTO: string;
+      timesheet_file: File;
+      agrees_to_pto_amount_notes: string;
+    }>,
+  ) {
     const defaultValues = {
       agreePTO: 'Yes',
     };
@@ -310,6 +316,25 @@ describe('TerminationFlow', () => {
         'Are these paid time off records correct?',
         newValues?.agreePTO,
       );
+    }
+
+    if (newValues?.agreePTO === 'no' && newValues?.agrees_to_pto_amount_notes) {
+      const agrees_to_pto_amount_notes = screen.getByLabelText(
+        /Provide time off details/i,
+      );
+      fireEvent.change(agrees_to_pto_amount_notes, {
+        target: { value: newValues?.agrees_to_pto_amount_notes },
+      });
+    }
+
+    if (newValues?.agreePTO === 'no' && newValues?.timesheet_file) {
+      await waitFor(() => {
+        expect(screen.getByLabelText('Timesheet document')).toBeInTheDocument();
+      });
+      const timesheetFile = screen.getByLabelText('Timesheet document');
+      fireEvent.change(timesheetFile, {
+        target: { files: [newValues?.timesheet_file] },
+      });
     }
   }
 
@@ -525,7 +550,15 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Paid Time Off/i);
 
-    await fillPTO();
+    const file = new File(['base64'], 'timesheet.pdf', {
+      type: 'application/pdf',
+    });
+
+    await fillPTO({
+      agreePTO: 'no',
+      agrees_to_pto_amount_notes: 'whatever text',
+      timesheet_file: file,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -538,7 +571,16 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitStep.mock.calls[2]).toEqual([
       {
-        agrees_to_pto_amount: 'yes',
+        agrees_to_pto_amount: 'no',
+        agrees_to_pto_amount_notes: 'whatever text',
+        timesheet_file: [
+          {
+            content: expect.any(String),
+            name: 'timesheet.pdf',
+            size: expect.any(Number),
+            type: 'application/pdf',
+          },
+        ],
       },
       'paid_time_off',
     ]);
@@ -556,7 +598,8 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitForm).toHaveBeenCalledWith({
       acknowledge_termination_procedure: true,
-      agrees_to_pto_amount: 'yes',
+      agrees_to_pto_amount: 'no',
+      agrees_to_pto_amount_notes: 'whatever text',
       confidential: 'no',
       customer_informed_employee: 'yes',
       customer_informed_employee_date: dynamicDate,
@@ -568,6 +611,14 @@ describe('TerminationFlow', () => {
       termination_reason: 'gross_misconduct',
       termination_reason_files: [],
       will_challenge_termination: 'no',
+      timesheet_file: [
+        {
+          content: expect.any(String),
+          name: 'timesheet.pdf',
+          size: expect.any(Number),
+          type: 'application/pdf',
+        },
+      ],
     });
 
     await waitFor(() => {
@@ -584,7 +635,8 @@ describe('TerminationFlow', () => {
       employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
       termination_details: {
         acknowledge_termination_procedure: true,
-        agrees_to_pto_amount: true,
+        agrees_to_pto_amount: false,
+        agrees_to_pto_amount_notes: 'whatever text',
         confidential: false,
         customer_informed_employee: true,
         employee_awareness: {
@@ -598,6 +650,10 @@ describe('TerminationFlow', () => {
         termination_reason: 'gross_misconduct',
         termination_reason_files: [],
         will_challenge_termination: false,
+        timesheet_file: {
+          content: expect.any(String),
+          name: 'timesheet.pdf',
+        },
       },
       type: 'termination',
     });
