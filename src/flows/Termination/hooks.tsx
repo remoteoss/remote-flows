@@ -368,9 +368,18 @@ export const useTermination = ({
         isNull,
       ) as unknown as TerminationDetailsParams;
 
+      const files = (parsedValues.timesheet_file as $TSFixMe) ?? [];
+      const timesheetFile =
+        Array.isArray(files) && files.length > 0
+          ? { content: files[0].content, name: files[0].name }
+          : undefined;
+
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
-        termination_details: terminationDetails,
+        termination_details: {
+          ...terminationDetails,
+          timesheet_file: timesheetFile ? timesheetFile : undefined,
+        },
         type: 'termination',
       };
 

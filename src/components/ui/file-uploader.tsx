@@ -18,6 +18,7 @@ type FileUploaderProps = {
   multiple?: boolean;
   accept?: string;
   files?: File[];
+  id?: string;
 };
 
 export function FileUploader({
@@ -26,6 +27,7 @@ export function FileUploader({
   multiple,
   accept,
   files: externalFiles,
+  id,
 }: FileUploaderProps) {
   const [files, setFiles] = useState<File[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +64,7 @@ export function FileUploader({
       <input
         type='file'
         ref={inputRef}
+        id={id}
         onChange={handleChange}
         className='hidden'
         aria-label='File upload'
