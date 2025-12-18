@@ -1,8 +1,8 @@
 # @remoteoss/remote-flows
 
-## 1.5.0
+## 1.4.1
 
-### Minor Changes
+### Patch Changes
 
 - add jsonSchemaVersion to form configuration (#673) [#673](https://github.com/remoteoss/remote-flows/pull/673)
 - handle timesheet file parsing and validation (#675) [#675](https://github.com/remoteoss/remote-flows/pull/675)
