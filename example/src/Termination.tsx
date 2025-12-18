@@ -172,10 +172,12 @@ const TerminationRender = ({
           }
           onSubmitForm={(payload) => {
             console.log('onSubmitForm', payload);
-            setIsSuccess(true);
           }}
           onError={(error) => console.log('onError', error)}
-          onSuccess={(response) => console.log('onSuccess', response)}
+          onSuccess={(response) => {
+            console.log('onSuccess', response);
+            setIsSuccess(true);
+          }}
         />
       </div>
     </>

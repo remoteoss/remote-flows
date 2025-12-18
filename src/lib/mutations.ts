@@ -90,11 +90,12 @@ export function mutationToPromise<
               const fieldErrors = extractFieldErrors(response.error);
               resolve({
                 data: null,
-                error: response.error?.message
-                  ? (new Error(response.error.message) as unknown as Error)
-                  : (new Error(
-                      'Something went wrong. Please try again later.',
-                    ) as unknown as Error),
+                error:
+                  typeof response.error?.message === 'string'
+                    ? (new Error(response.error.message) as unknown as Error)
+                    : (new Error(
+                        'Something went wrong. Please try again later.',
+                      ) as unknown as Error),
                 rawError: response.error,
                 fieldErrors,
               });
