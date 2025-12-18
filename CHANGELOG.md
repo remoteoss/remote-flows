@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.2.3
+
+### Patch Changes
+
+- fix basic information json_schema_version
+
 ## 1.2.2
 
 ### Patch Changes
