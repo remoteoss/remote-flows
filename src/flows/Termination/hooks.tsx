@@ -90,8 +90,6 @@ export const useTermination = ({
     personal_email: employment?.basic_information?.email as string,
   } as Partial<TerminationFormValues>;
 
-  console.log({ employmentValues });
-
   const initialValues = buildInitialValues(
     {
       ...employmentValues,

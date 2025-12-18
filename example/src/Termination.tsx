@@ -203,22 +203,6 @@ export const TerminationWithProps = ({
             },
           },
         }}
-        initialValues={{
-          confidential: 'no',
-          customer_informed_employee: 'no',
-          additional_comments:
-            'Employee has been notified. Please process final paycheck and benefits termination.',
-          proposed_termination_date: new Date().toISOString(),
-          reason_description:
-            'Performance did not meet expectations despite multiple coaching sessions and performance improvement plan.',
-          risk_assessment_reasons: [
-            'sick_leave',
-            'member_of_union_or_works_council',
-          ],
-          termination_reason: 'performance',
-          will_challenge_termination: 'no',
-          agrees_to_pto_amount: 'yes',
-        }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
     </RemoteFlows>
