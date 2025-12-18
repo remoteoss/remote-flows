@@ -290,6 +290,7 @@ export const useOnboarding = ({
         enabled: isBasicInformationDetailsEnabled,
       },
     },
+    jsonSchemaVersion: 1,
   });
 
   const annualGrossSalaryField =
