@@ -339,7 +339,7 @@ This script will:
 
 #### Step 4: Review and Merge PR
 
-Review the automatically created PR and merge it to main.
+Review the automatically created PR
 
 #### Step 5: Trigger Release Workflow
 
