@@ -4,11 +4,11 @@ import { readFileSync } from 'fs';
 import type { CoverageData, CoverageChange } from './types';
 
 // Coverage thresholds (should match vitest.config.ts)
-const COVERAGE_THRESHOLDS = {
-  lines: 80,
-  statements: 80,
-  functions: 80,
-  branches: 80,
+export const COVERAGE_THRESHOLDS = {
+  lines: 75,
+  statements: 75,
+  functions: 75,
+  branches: 75,
 };
 
 function formatChange(current: number, previous: number): CoverageChange {
