@@ -1,6 +1,12 @@
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import {
   fillCheckbox,
   fillRadio,
@@ -43,6 +49,11 @@ describe('TerminationFlow', () => {
       SubmitButton,
       Back,
     } = components;
+
+    if (terminationBag.isLoading) {
+      return <div data-testid='spinner'>Loading...</div>;
+    }
+
     switch (terminationBag.stepState.currentStep.name) {
       case 'employee_communication':
         return (
@@ -395,6 +406,8 @@ describe('TerminationFlow', () => {
       { wrapper: TestProviders },
     );
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     // Verify initial value is populated
@@ -417,6 +430,8 @@ describe('TerminationFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Termination Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Go back to previous step
     const backButton = screen.getByText(/Back/i);
@@ -458,6 +473,8 @@ describe('TerminationFlow', () => {
   it('should fill the first step and go back to the previous step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillEmployeeCommunication({
@@ -471,6 +488,8 @@ describe('TerminationFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Termination Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -715,6 +734,8 @@ describe('TerminationFlow', () => {
   it('should click next step without filling the form and show error', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     const nextButton = screen.getByText(/Next Step/i);
@@ -760,6 +781,25 @@ describe('TerminationFlow', () => {
       /Employee's personal email/i,
     );
     expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
+  });
+
+  it('should preload the form with the employment email', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    await screen.findByText(/Step: Employee Communication/i);
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    await waitFor(() => {
+      expect(employeePersonalEmail).toHaveValue(
+        employment.data.employment.basic_information.email,
+      );
+    });
   });
 
   it('should only show cancellation_before_start_date option when employment has future start date', async () => {
