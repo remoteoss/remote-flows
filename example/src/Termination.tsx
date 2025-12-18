@@ -40,7 +40,7 @@ type MultiStepFormProps = {
     step: string,
   ) => void | Promise<void>;
   onSubmitForm: (payload: TerminationFormValues) => void | Promise<void>;
-  onError: (error: Error) => void;
+  onError: (error: Record<string, unknown>) => void;
   onSuccess: (response: OffboardingResponse) => void;
 };
 
