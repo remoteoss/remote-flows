@@ -1,6 +1,12 @@
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import {
   fillCheckbox,
   fillRadio,
@@ -43,6 +49,11 @@ describe('TerminationFlow', () => {
       SubmitButton,
       Back,
     } = components;
+
+    if (terminationBag.isLoading) {
+      return <div data-testid='spinner'>Loading...</div>;
+    }
+
     switch (terminationBag.stepState.currentStep.name) {
       case 'employee_communication':
         return (
@@ -296,7 +307,13 @@ describe('TerminationFlow', () => {
     }
   }
 
-  async function fillPTO(values?: Partial<{ agreePTO: string }>) {
+  async function fillPTO(
+    values?: Partial<{
+      agreePTO: string;
+      timesheet_file: File;
+      agrees_to_pto_amount_notes: string;
+    }>,
+  ) {
     const defaultValues = {
       agreePTO: 'Yes',
     };
@@ -310,6 +327,25 @@ describe('TerminationFlow', () => {
         'Are these paid time off records correct?',
         newValues?.agreePTO,
       );
+    }
+
+    if (newValues?.agreePTO === 'no' && newValues?.agrees_to_pto_amount_notes) {
+      const agrees_to_pto_amount_notes = screen.getByLabelText(
+        /Provide time off details/i,
+      );
+      fireEvent.change(agrees_to_pto_amount_notes, {
+        target: { value: newValues?.agrees_to_pto_amount_notes },
+      });
+    }
+
+    if (newValues?.agreePTO === 'no' && newValues?.timesheet_file) {
+      await waitFor(() => {
+        expect(screen.getByLabelText('Timesheet document')).toBeInTheDocument();
+      });
+      const timesheetFile = screen.getByLabelText('Timesheet document');
+      fireEvent.change(timesheetFile, {
+        target: { files: [newValues?.timesheet_file] },
+      });
     }
   }
 
@@ -370,6 +406,8 @@ describe('TerminationFlow', () => {
       { wrapper: TestProviders },
     );
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     // Verify initial value is populated
@@ -392,6 +430,8 @@ describe('TerminationFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Termination Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Go back to previous step
     const backButton = screen.getByText(/Back/i);
@@ -433,6 +473,8 @@ describe('TerminationFlow', () => {
   it('should fill the first step and go back to the previous step', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     await fillEmployeeCommunication({
@@ -446,6 +488,8 @@ describe('TerminationFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Termination Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -525,7 +569,15 @@ describe('TerminationFlow', () => {
 
     await screen.findByText(/Step: Paid Time Off/i);
 
-    await fillPTO();
+    const file = new File(['base64'], 'timesheet.pdf', {
+      type: 'application/pdf',
+    });
+
+    await fillPTO({
+      agreePTO: 'no',
+      agrees_to_pto_amount_notes: 'whatever text',
+      timesheet_file: file,
+    });
 
     nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
@@ -538,7 +590,16 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitStep.mock.calls[2]).toEqual([
       {
-        agrees_to_pto_amount: 'yes',
+        agrees_to_pto_amount: 'no',
+        agrees_to_pto_amount_notes: 'whatever text',
+        timesheet_file: [
+          {
+            content: expect.any(String),
+            name: 'timesheet.pdf',
+            size: expect.any(Number),
+            type: 'application/pdf',
+          },
+        ],
       },
       'paid_time_off',
     ]);
@@ -556,7 +617,8 @@ describe('TerminationFlow', () => {
 
     expect(mockOnSubmitForm).toHaveBeenCalledWith({
       acknowledge_termination_procedure: true,
-      agrees_to_pto_amount: 'yes',
+      agrees_to_pto_amount: 'no',
+      agrees_to_pto_amount_notes: 'whatever text',
       confidential: 'no',
       customer_informed_employee: 'yes',
       customer_informed_employee_date: dynamicDate,
@@ -568,6 +630,14 @@ describe('TerminationFlow', () => {
       termination_reason: 'gross_misconduct',
       termination_reason_files: [],
       will_challenge_termination: 'no',
+      timesheet_file: [
+        {
+          content: expect.any(String),
+          name: 'timesheet.pdf',
+          size: expect.any(Number),
+          type: 'application/pdf',
+        },
+      ],
     });
 
     await waitFor(() => {
@@ -584,7 +654,8 @@ describe('TerminationFlow', () => {
       employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
       termination_details: {
         acknowledge_termination_procedure: true,
-        agrees_to_pto_amount: true,
+        agrees_to_pto_amount: false,
+        agrees_to_pto_amount_notes: 'whatever text',
         confidential: false,
         customer_informed_employee: true,
         employee_awareness: {
@@ -598,6 +669,10 @@ describe('TerminationFlow', () => {
         termination_reason: 'gross_misconduct',
         termination_reason_files: [],
         will_challenge_termination: false,
+        timesheet_file: {
+          content: expect.any(String),
+          name: 'timesheet.pdf',
+        },
       },
       type: 'termination',
     });
@@ -659,6 +734,8 @@ describe('TerminationFlow', () => {
   it('should click next step without filling the form and show error', async () => {
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await screen.findByText(/Step: Employee Communication/i);
 
     const nextButton = screen.getByText(/Next Step/i);
@@ -704,6 +781,25 @@ describe('TerminationFlow', () => {
       /Employee's personal email/i,
     );
     expect(employeePersonalEmail).toHaveValue('john.doe@example.com');
+  });
+
+  it('should preload the form with the employment email', async () => {
+    render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    await screen.findByText(/Step: Employee Communication/i);
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/Employee's personal email/i),
+      ).toBeInTheDocument();
+    });
+    const employeePersonalEmail = screen.getByLabelText(
+      /Employee's personal email/i,
+    );
+    await waitFor(() => {
+      expect(employeePersonalEmail).toHaveValue(
+        employment.data.employment.basic_information.email,
+      );
+    });
   });
 
   it('should only show cancellation_before_start_date option when employment has future start date', async () => {

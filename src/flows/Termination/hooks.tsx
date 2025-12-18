@@ -55,7 +55,8 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const { data: employment } = useEmploymentQuery({ employmentId });
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId });
 
   const { data: payrollCalendars } = usePayrollCalendars({
     query: {
@@ -85,8 +86,13 @@ export const useTermination = ({
       isFuture(parseISO(employment.provisional_start_date)),
   );
 
+  const employmentValues = {
+    personal_email: employment?.basic_information?.email as string,
+  } as Partial<TerminationFormValues>;
+
   const initialValues = buildInitialValues(
     {
+      ...employmentValues,
       ...terminationInitialValues,
       ...stepState.values?.employee_communication,
       ...stepState.values?.termination_details,
@@ -368,9 +374,18 @@ export const useTermination = ({
         isNull,
       ) as unknown as TerminationDetailsParams;
 
+      const files = (parsedValues.timesheet_file as $TSFixMe) ?? [];
+      const timesheetFile =
+        Array.isArray(files) && files.length > 0
+          ? { content: files[0].content, name: files[0].name }
+          : undefined;
+
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
-        termination_details: terminationDetails,
+        termination_details: {
+          ...terminationDetails,
+          timesheet_file: timesheetFile ? timesheetFile : undefined,
+        },
         type: 'termination',
       };
 
@@ -450,7 +465,7 @@ export const useTermination = ({
     /**
      * Loading state indicating if the termination schema is being fetched
      */
-    isLoading: isLoadingTermination,
+    isLoading: isLoadingTermination || isLoadingEmployment,
     /**
      * Loading state indicating if a contract amendment mutation is in progress
      */
