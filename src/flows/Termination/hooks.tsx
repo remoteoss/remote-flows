@@ -55,7 +55,8 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const { data: employment } = useEmploymentQuery({ employmentId });
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId });
 
   const { data: payrollCalendars } = usePayrollCalendars({
     query: {
@@ -85,8 +86,15 @@ export const useTermination = ({
       isFuture(parseISO(employment.provisional_start_date)),
   );
 
+  const employmentValues = {
+    personal_email: employment?.basic_information?.email as string,
+  } as Partial<TerminationFormValues>;
+
+  console.log({ employmentValues });
+
   const initialValues = buildInitialValues(
     {
+      ...employmentValues,
       ...terminationInitialValues,
       ...stepState.values?.employee_communication,
       ...stepState.values?.termination_details,
@@ -459,7 +467,7 @@ export const useTermination = ({
     /**
      * Loading state indicating if the termination schema is being fetched
      */
-    isLoading: isLoadingTermination,
+    isLoading: isLoadingTermination || isLoadingEmployment,
     /**
      * Loading state indicating if a contract amendment mutation is in progress
      */

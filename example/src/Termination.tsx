@@ -206,7 +206,6 @@ export const TerminationWithProps = ({
         initialValues={{
           confidential: 'no',
           customer_informed_employee: 'no',
-          personal_email: 'john.doe@example.com',
           additional_comments:
             'Employee has been notified. Please process final paycheck and benefits termination.',
           proposed_termination_date: new Date().toISOString(),
