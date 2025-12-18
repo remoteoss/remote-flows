@@ -11,7 +11,7 @@ type AdditionalDetailsFormProps = {
   /*
    * The function is called when the form submission has failed.
    */
-  onError?: (error: Error) => void;
+  onError?: (error: Record<string, unknown>) => void;
   /*
    * The function is called when the form submission is successful. It receives the response data as
    * an argument.
@@ -35,7 +35,7 @@ export function AdditionalDetailsForm({
     const terminationResult = await terminationBag?.onSubmit(values);
 
     if (terminationResult?.error) {
-      onError?.(terminationResult.error);
+      onError?.(terminationResult.rawError);
     } else {
       if (terminationResult?.data) {
         await onSuccess?.(terminationResult.data as OffboardingResponse);

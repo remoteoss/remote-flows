@@ -1,4 +1,5 @@
-import { $TSFixMe, createHeadlessForm } from '@remoteoss/json-schema-form-old';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';
@@ -54,7 +55,8 @@ export const useTermination = ({
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
-  const { data: employment } = useEmploymentQuery({ employmentId });
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId });
 
   const { data: payrollCalendars } = usePayrollCalendars({
     query: {
@@ -84,13 +86,18 @@ export const useTermination = ({
       isFuture(parseISO(employment.provisional_start_date)),
   );
 
+  const employmentValues = {
+    personal_email: employment?.basic_information?.email as string,
+  } as Partial<TerminationFormValues>;
+
   const initialValues = buildInitialValues(
     {
+      ...employmentValues,
+      ...terminationInitialValues,
       ...stepState.values?.employee_communication,
       ...stepState.values?.termination_details,
       ...stepState.values?.paid_time_off,
       ...stepState.values?.additional_information,
-      ...terminationInitialValues,
     },
     hasFutureStartDate,
   );
@@ -98,10 +105,9 @@ export const useTermination = ({
   const formValues = useMemo(
     () => ({
       ...initialValues,
-      ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
       ...fieldValues,
     }),
-    [stepState.values, stepState.currentStep.name, fieldValues, initialValues],
+    [fieldValues, initialValues],
   );
 
   const proposedTerminationDateStatement =
@@ -143,7 +149,7 @@ export const useTermination = ({
         proposed_termination_date_info: createInformationField(
           'Proposed termination date',
           <>
-            In most cases, we must provide notice to the employee before
+            In most cases, Remote must provide notice to the employee before
             termination. The required notice period depends on local labor laws,
             the employment agreement, and other factors. We'll use those factors
             to determine the required notice period.
@@ -368,9 +374,18 @@ export const useTermination = ({
         isNull,
       ) as unknown as TerminationDetailsParams;
 
+      const files = (parsedValues.timesheet_file as $TSFixMe) ?? [];
+      const timesheetFile =
+        Array.isArray(files) && files.length > 0
+          ? { content: files[0].content, name: files[0].name }
+          : undefined;
+
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
-        termination_details: terminationDetails,
+        termination_details: {
+          ...terminationDetails,
+          timesheet_file: timesheetFile ? timesheetFile : undefined,
+        },
         type: 'termination',
       };
 
@@ -450,7 +465,7 @@ export const useTermination = ({
     /**
      * Loading state indicating if the termination schema is being fetched
      */
-    isLoading: isLoadingTermination,
+    isLoading: isLoadingTermination || isLoadingEmployment,
     /**
      * Loading state indicating if a contract amendment mutation is in progress
      */

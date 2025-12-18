@@ -69,12 +69,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <div className='buttons-container'>
-              <SubmitButton
-                className='submit-button'
-                disabled={contractorOnboardingBag.isSubmitting}
-              >
-                Continue
-              </SubmitButton>
+              <SubmitButton className='submit-button'>Continue</SubmitButton>
             </div>
           </>
         );
@@ -87,9 +82,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_details':
@@ -101,9 +94,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_preview':
@@ -115,9 +106,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'pricing_plan':
@@ -129,9 +118,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'review':
@@ -177,9 +164,7 @@ describe('ContractorOnboardingFlow', () => {
               onSuccess={mockOnSuccess}
               onError={mockOnError}
             />
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_details':
@@ -191,9 +176,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'contract_preview':
@@ -205,9 +188,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'pricing_plan':
@@ -219,9 +200,7 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton disabled={contractorOnboardingBag.isSubmitting}>
-              Next Step
-            </SubmitButton>
+            <SubmitButton>Next Step</SubmitButton>
           </>
         );
       case 'review':

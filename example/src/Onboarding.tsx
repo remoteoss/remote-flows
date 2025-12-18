@@ -85,11 +85,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
           <div className='buttons-container'>
-            <SubmitButton
-              className='submit-button'
-              disabled={onboardingBag.isSubmitting}
-              variant='outline'
-            >
+            <SubmitButton className='submit-button' variant='outline'>
               Continue
             </SubmitButton>
           </div>
@@ -122,7 +118,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={onboardingBag.isSubmitting}
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Create Employment & Continue
@@ -160,7 +155,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-              disabled={onboardingBag.isSubmitting}
             >
               Continue
             </SubmitButton>
@@ -193,9 +187,8 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Previous Step
             </BackButton>
             <SubmitButton
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               className='submit-button'
-              disabled={onboardingBag.isSubmitting}
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
             </SubmitButton>

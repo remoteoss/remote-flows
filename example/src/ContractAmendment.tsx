@@ -53,10 +53,7 @@ function AmendmentFlow({
               </p>
             </div>
           )}
-          <SubmitButton
-            className='amendment_form__buttons__submit'
-            disabled={contractAmendmentBag.isSubmitting}
-          >
+          <SubmitButton className='amendment_form__buttons__submit'>
             Go to preview and confirm changes
           </SubmitButton>
         </div>
@@ -101,10 +98,7 @@ function AmendmentFlow({
             <div>{automatable?.data?.message}</div>
           ) : null}
           <div className='confirmation_form__buttons'>
-            <SubmitButton
-              disabled={contractAmendmentBag.isSubmitting}
-              className='confirmation_form__buttons__submit'
-            >
+            <SubmitButton className='confirmation_form__buttons__submit'>
               Submit amendment request
             </SubmitButton>
             <BackButton className='confirmation_form__buttons__back'>

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   BasicInformationFormPayload,
   BenefitsFormPayload,
@@ -19,9 +19,9 @@ type OnboardingFormProps = {
       | BasicInformationFormPayload
       | BenefitsFormPayload
       | ContractDetailsFormPayload,
-  ) => void;
+  ) => Promise<void>;
   components?: Components;
-  fields?: Fields;
+  fields?: JSFFields;
   defaultValues: Record<string, unknown>;
 };
 
@@ -116,7 +116,7 @@ export function OnboardingForm({
       }
     } else {
       // Handle normal form submission
-      onSubmit(values);
+      await onSubmit(values);
     }
   };
 

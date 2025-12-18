@@ -1,0 +1,197 @@
+import { Client } from '@/src/client/client';
+import {
+  ErrorContextData,
+  ErrorPayload,
+} from '@/src/components/error-handling/types';
+import {
+  categorizeError,
+  determineErrorSeverity,
+} from '@/src/components/error-handling/utils';
+import { defaultEnvironment, Environment } from '@/src/environments';
+import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
+
+const recentlyReported = new Map<string, number>();
+const DEDUPE_WINDOW_MS = 100; // 100ms should catch Strict Mode double-invokes
+
+function getErrorSignature(error: Error): string {
+  return `${error.name}:${error.message}:${error.stack?.substring(0, 100) || ''}`;
+}
+
+/**
+ * Checks if the error has been reported recently to avoid duplicate reports
+ * This is caused by React Strict Mode double-invoking the error boundary.
+ * @param error - The error to check
+ * @returns True if the error has been reported recently, false otherwise
+ */
+function wasRecentlyReported(error: Error): boolean {
+  const signature = getErrorSignature(error);
+  const lastReported = recentlyReported.get(signature);
+  const now = Date.now();
+
+  if (lastReported && now - lastReported < DEDUPE_WINDOW_MS) {
+    return true;
+  }
+
+  recentlyReported.set(signature, now);
+
+  // Cleanup old entries periodically
+  if (recentlyReported.size > 100) {
+    for (const [sig, timestamp] of recentlyReported.entries()) {
+      if (now - timestamp > DEDUPE_WINDOW_MS) {
+        recentlyReported.delete(sig);
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Logs error payload to console in debug mode
+ * Shows what would be sent to telemetry API
+ */
+export const logDebugPayload = (
+  payload: ErrorPayload,
+  debugMode: boolean,
+): void => {
+  if (!debugMode) return;
+
+  const severityEmoji = {
+    critical: '🔴',
+    error: '🟠',
+    warning: '🟡',
+    info: '🔵',
+  };
+
+  console.group('📮 [RemoteFlows] Error Report (Debug Mode)');
+  console.log('─────────────────────────────────────────');
+  console.log('❌ Error:', payload.error.message);
+  console.log('📛 Name:', payload.error.name);
+  console.log(
+    `${severityEmoji[payload.error.severity]} Severity:`,
+    payload.error.severity.toUpperCase(),
+  );
+  console.log('🏷️  Category:', payload.error.category);
+
+  if (payload.context?.flow) {
+    console.log('🔄 Flow:', payload.context.flow);
+  }
+
+  if (payload.context?.step !== undefined) {
+    console.log('📍 Step:', payload.context.step);
+  }
+
+  if (payload.context?.metadata) {
+    console.log('📝 Context Metadata:', payload.context.metadata);
+  }
+
+  console.log('⏰ Timestamp:', payload.metadata.timestamp);
+  console.log('🌐 URL:', payload.metadata.url);
+  console.log('📦 SDK Version:', payload.metadata.sdk_version);
+
+  if (payload.error.stack) {
+    console.log('\n📚 Stack Trace:');
+    console.log(payload.error.stack);
+  }
+
+  console.log('\n📋 Full Payload (would be sent to telemetry):');
+  console.log(JSON.stringify(payload, null, 2));
+  console.log('─────────────────────────────────────────');
+  console.groupEnd();
+};
+
+const getSafeUrl = () => {
+  let url = 'unknown';
+  if (typeof window !== 'undefined') {
+    const href = window.location.href;
+    // Replace localhost URLs with a dummy URL to avoid WAF issues
+    if (href.includes('localhost') || href.includes('127.0.0.1')) {
+      url = 'https://telemetry.local/report';
+    } else {
+      url = href;
+    }
+  }
+  return url;
+};
+
+const encodeStack = (stack?: string) => {
+  return stack ? btoa(stack) : '';
+};
+
+export function buildErrorPayload(
+  error: Error,
+  sdkVersion: string,
+  environment: Environment,
+  context?: ErrorContextData,
+): ErrorPayload {
+  const category = categorizeError(error);
+  const severity = determineErrorSeverity(error, category);
+  const url = getSafeUrl();
+  const encodedStack = encodeStack(error.stack);
+
+  const payload: ErrorPayload = {
+    error: {
+      message: error.message,
+      stack: encodedStack,
+      name: error.name,
+      category,
+      severity,
+    },
+    context,
+    metadata: {
+      sdk_version: sdkVersion,
+      timestamp: new Date().toISOString(),
+      url,
+      user_agent:
+        typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      environment: environment,
+    },
+  };
+
+  return payload;
+}
+
+export function reportTelemetryError(
+  params: {
+    error: Error;
+    sdkVersion: string;
+    client: Client;
+    environment?: Environment;
+  },
+  context?: ErrorContextData,
+  options: {
+    debugMode?: boolean;
+  } = {
+    debugMode: false,
+  },
+): void {
+  const { error, sdkVersion, client, environment } = params;
+  if (wasRecentlyReported(error)) {
+    if (options.debugMode) {
+      console.log('[RemoteFlows] Skipping duplicate error report');
+    }
+    return;
+  }
+
+  const payload: ErrorPayload = buildErrorPayload(
+    error,
+    sdkVersion,
+    environment ?? defaultEnvironment,
+    context,
+  );
+
+  // Log to console in debug mode
+  if (options.debugMode) {
+    logDebugPayload(payload, Boolean(options.debugMode));
+  }
+
+  postReportErrorsTelemetry({
+    client,
+    body: payload,
+  }).catch((err) => {
+    // Silently fail - don't crash if telemetry reporting fails
+    if (options.debugMode) {
+      console.warn('[RemoteFlows] Failed to report error telemetry:', err);
+    }
+  });
+}

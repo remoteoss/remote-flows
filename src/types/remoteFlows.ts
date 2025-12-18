@@ -20,6 +20,8 @@ type AuthResponse = {
   expiresIn: number;
 };
 
+export type JSFFields = Record<string, unknown>[];
+
 export type JSFFieldset = {
   [x: string]: {
     propertiesByName: string[];
@@ -182,6 +184,11 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
      */
     fallback?: ReactNode | ((error: Error) => ReactNode);
   };
+  /**
+   * Debug mode to enable logging of telemetry errors to the console.
+   * @default false
+   */
+  debug?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

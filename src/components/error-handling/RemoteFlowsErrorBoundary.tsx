@@ -1,4 +1,12 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { reportTelemetryError } from '@/src/components/error-handling/telemetryService';
+import { npmPackageVersion } from '@/src/lib/version';
+import {
+  ErrorContext,
+  ErrorContextValue,
+} from '@/src/components/error-handling/ErrorContext';
+import { Environment } from '@/src/environments';
+import { Client } from '@/src/client/client';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -7,6 +15,22 @@ type ErrorBoundaryState = {
 
 interface RemoteFlowsErrorBoundaryProps {
   children: ReactNode;
+  /**
+   * Debug mode to enable logging of errors to the console.
+   * @default false
+   */
+  debug: boolean;
+  /**
+   * Environment to use for API calls.
+   * If not provided, the SDK will use production environment.
+   */
+  environment?: Environment;
+
+  /**
+   * Client to use for API calls.
+   * If not provided, the SDK will crash
+   */
+  client: Client;
   /**
    * Error boundary configuration.
    */
@@ -61,8 +85,23 @@ export class RemoteFlowsErrorBoundary extends Component<
     };
   }
 
+  static contextType = ErrorContext;
+  declare context: ErrorContextValue | undefined;
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('[RemoteFlows] Error caught:', error, errorInfo);
+
+    const errorContext = this.context?.errorContextRef.current;
+    const params = {
+      error,
+      sdkVersion: npmPackageVersion,
+      client: this.props.client,
+      environment: this.props.environment,
+    };
+
+    reportTelemetryError(params, errorContext, {
+      debugMode: this.props.debug,
+    });
 
     if (this.props.errorBoundary?.useParentErrorBoundary) {
       throw error;

@@ -2,7 +2,7 @@ export const cards = {
   remoteDoesNext: {
     title: 'What Remote does next:',
     description:
-      "We'll review the termination request and respond within the next 5 days with any subsequent actions or advice.",
+      "They'll review the termination request and respond within the next 5 days with any subsequent actions or advice.",
   },
   whatYouNeedToDo: {
     title: 'What you need to do next:',

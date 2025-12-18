@@ -9,7 +9,7 @@ import { ContractDetailsStep } from '@/src/flows/Onboarding/components/ContractD
 import { OnboardingSubmit } from '@/src/flows/Onboarding/components/OnboardingSubmit';
 import { BenefitsStep } from '@/src/flows/Onboarding/components/BenefitsStep';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
-import { FlowOptions, JSFModifyNext } from '@/src/flows/types';
+import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
@@ -86,10 +86,10 @@ export type OnboardingFlowProps = {
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
-      select_country?: JSFModifyNext;
-      basic_information?: JSFModifyNext;
-      contract_details?: JSFModifyNext;
-      benefits?: JSFModifyNext;
+      select_country?: JSFModify;
+      basic_information?: JSFModify;
+      contract_details?: JSFModify;
+      benefits?: JSFModify;
     };
     /**
      * The json schema version to use for the onboarding by country.
