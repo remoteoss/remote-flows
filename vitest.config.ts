@@ -1,6 +1,6 @@
 import path from 'path';
 import { defineConfig } from 'vitest/config';
-import { COVERAGE_THRESHOLDS } from './scripts/compare-coverage';
+import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils';
 
 export default defineConfig({
   test: {
