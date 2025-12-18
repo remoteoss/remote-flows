@@ -40,7 +40,7 @@ type MultiStepFormProps = {
     step: string,
   ) => void | Promise<void>;
   onSubmitForm: (payload: TerminationFormValues) => void | Promise<void>;
-  onError: (error: Error) => void;
+  onError: (error: Record<string, unknown>) => void;
   onSuccess: (response: OffboardingResponse) => void;
 };
 
@@ -172,10 +172,12 @@ const TerminationRender = ({
           }
           onSubmitForm={(payload) => {
             console.log('onSubmitForm', payload);
-            setIsSuccess(true);
           }}
           onError={(error) => console.log('onError', error)}
-          onSuccess={(response) => console.log('onSuccess', response)}
+          onSuccess={(response) => {
+            console.log('onSuccess', response);
+            setIsSuccess(true);
+          }}
         />
       </div>
     </>
@@ -206,7 +208,6 @@ export const TerminationWithProps = ({
         initialValues={{
           confidential: 'no',
           customer_informed_employee: 'no',
-          personal_email: 'john.doe@example.com',
           additional_comments:
             'Employee has been notified. Please process final paycheck and benefits termination.',
           proposed_termination_date: new Date().toISOString(),

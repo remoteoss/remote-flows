@@ -8,7 +8,7 @@ export function CostCalculatorSubmitButton({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
   Record<string, unknown>) {
-  const { formId } = useCostCalculatorContext();
+  const { formId, costCalculatorBag } = useCostCalculatorContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -25,6 +25,7 @@ export function CostCalculatorSubmitButton({
         props.className,
       )}
       form={formId}
+      disabled={props.disabled || costCalculatorBag?.isSubmitting}
     >
       {children}
     </CustomButton>

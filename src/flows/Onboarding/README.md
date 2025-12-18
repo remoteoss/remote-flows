@@ -103,11 +103,7 @@ const MultiStepForm = ({
             onError={(error: Error) => setApiError(error.message)}
           />
           <div className='buttons-container'>
-            <SubmitButton
-              className='submit-button'
-              disabled={onboardingBag.isSubmitting}
-              variant='outline'
-            >
+            <SubmitButton className='submit-button' variant='outline'>
               Continue
             </SubmitButton>
           </div>
@@ -135,7 +131,6 @@ const MultiStepForm = ({
             </BackButton>
             <SubmitButton
               className='submit-button'
-              disabled={onboardingBag.isSubmitting}
               onClick={() => setApiError(null)}
             >
               Create Employment & Continue
@@ -164,7 +159,6 @@ const MultiStepForm = ({
             <SubmitButton
               className='submit-button'
               onClick={() => setApiError(null)}
-              disabled={onboardingBag.isSubmitting}
             >
               Continue
             </SubmitButton>
@@ -192,7 +186,6 @@ const MultiStepForm = ({
             <SubmitButton
               onClick={() => setApiError(null)}
               className='submit-button'
-              disabled={onboardingBag.isSubmitting}
             >
               Continue
             </SubmitButton>
@@ -426,12 +419,7 @@ const MultiStepForm = ({
           {apiError && <p className='alert-error'>{apiError}</p>}
           <div className='buttons-container'>
             <BackButton className='back-button'>Previous Step</BackButton>
-            <SubmitButton
-              className='submit-button'
-              disabled={onboardingBag.isSubmitting}
-            >
-              Continue
-            </SubmitButton>
+            <SubmitButton className='submit-button'>Continue</SubmitButton>
           </div>
         </div>
       );

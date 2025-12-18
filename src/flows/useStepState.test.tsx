@@ -24,7 +24,8 @@ describe('useStepState', () => {
   });
 
   it('should move to next step and store values', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const onStepChange = vi.fn();
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
 
     act(() => {
       result.current.setFieldValues({ name: 'John' });
@@ -38,10 +39,12 @@ describe('useStepState', () => {
     expect(result.current.stepState.values).toEqual({
       step1: { name: 'John' },
     });
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
   });
 
   it('should move back to previous step', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const onStepChange = vi.fn();
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
 
     // Move to step 2
     act(() => {
@@ -55,6 +58,7 @@ describe('useStepState', () => {
     });
 
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
   });
 
   it('should not move next if at last step', () => {
@@ -243,6 +247,39 @@ describe('useStepState', () => {
     act(() => {
       result.current.goToStep('step1');
     });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+  });
+
+  it('should emit onStepChange when going to a step', () => {
+    const onStepChange = vi.fn();
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+
+    // Pre-populate all step values
+    act(() => {
+      result.current.setStepValues({
+        step1: { name: 'John' },
+        step2: { age: 30 },
+        step3: { email: 'john@example.com' },
+      });
+    });
+
+    // Clear the initial onMount call
+    onStepChange.mockClear();
+
+    act(() => {
+      result.current.goToStep('step2');
+    });
+
+    expect(onStepChange).toHaveBeenCalledTimes(1);
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
+  });
+
+  it('should emit the first step onMount', () => {
+    const onStepChange = vi.fn();
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
+    expect(onStepChange).toHaveBeenCalledTimes(1);
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
   });
 });

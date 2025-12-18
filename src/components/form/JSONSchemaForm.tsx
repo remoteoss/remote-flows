@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import React, { Fragment } from 'react';
 
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
@@ -11,7 +11,7 @@ import { StatementComponentProps } from '@/src/types/fields';
 import { useFormContext } from 'react-hook-form';
 
 type JSONSchemaFormFieldsProps = {
-  fields: Fields;
+  fields: JSFFields;
   components?: Components;
   fieldsets?: JSFFieldset | null | undefined;
   fieldValues?: Record<string, unknown>;

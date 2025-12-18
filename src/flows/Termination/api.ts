@@ -20,7 +20,7 @@ import {
   formatAsDecimal,
 } from '@/src/lib/time';
 import { Client } from '@/src/client/client';
-import { createHeadlessForm, modify } from '@remoteoss/json-schema-form-old';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
 
@@ -309,15 +309,10 @@ export const useTerminationSchema = ({
       return schema[step as keyof typeof schema] ?? defaultSchema;
     },
     select: ({ data }) => {
-      let jsfSchema = data?.schema || {};
-      if (jsfModify) {
-        const { schema } = modify(jsfSchema, jsfModify);
-        jsfSchema = schema;
-      }
-      const form = createHeadlessForm(jsfSchema || {}, {
-        initialValues: formValues || {},
+      const jsfSchema = data?.schema || {};
+      return createHeadlessForm(jsfSchema, formValues || {}, {
+        jsfModify,
       });
-      return form;
     },
   });
 };

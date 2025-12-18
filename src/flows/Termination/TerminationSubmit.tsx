@@ -7,7 +7,7 @@ export function TerminationSubmit({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
   Record<string, unknown>) {
-  const { formId } = useTerminationContext();
+  const { formId, terminationBag } = useTerminationContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -16,7 +16,11 @@ export function TerminationSubmit({
   }
 
   return (
-    <CustomButton {...props} form={formId}>
+    <CustomButton
+      {...props}
+      form={formId}
+      disabled={props.disabled || terminationBag.isSubmitting}
+    >
       {children}
     </CustomButton>
   );

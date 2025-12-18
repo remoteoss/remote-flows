@@ -4,7 +4,7 @@ import {
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
-import { Fields } from '@remoteoss/json-schema-form-old';
+import { JSFFields } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -22,7 +22,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
   useBenefitOffers,
@@ -36,10 +36,11 @@ import {
   useUpdateEmployment,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModifyNext, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
+import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
@@ -85,8 +86,8 @@ const getLoadingStates = ({
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
-  basicInformationFields: Fields;
-  contractDetailsFields: Fields;
+  basicInformationFields: JSFFields;
+  contractDetailsFields: JSFFields;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -136,6 +137,40 @@ export const useOnboarding = ({
   externalId,
   initialValues: onboardingInitialValues,
 }: OnboardingHookProps) => {
+  const { updateErrorContext } = useErrorReporting({
+    flow: 'onboarding',
+    metadata: {
+      employmentId,
+      companyId,
+      isUpdating: Boolean(employmentId),
+    },
+  });
+  const stepsToUse = skipSteps?.includes('select_country')
+    ? STEPS_WITHOUT_SELECT_COUNTRY
+    : STEPS;
+
+  const onStepChange = useCallback(
+    (step: Step<keyof typeof STEPS>) => {
+      updateErrorContext({
+        step: step.name,
+      });
+    },
+    [updateErrorContext],
+  );
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+    setStepValues,
+  } = useStepState(
+    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
+    onStepChange,
+  );
+
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
@@ -173,21 +208,6 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
-
-  const {
-    fieldValues,
-    stepState,
-    setFieldValues,
-    previousStep,
-    nextStep,
-    goToStep,
-    setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
@@ -213,6 +233,8 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
+  const { mutateAsync: updateContractEligibilityMutationAsync } =
+    mutationToPromise(updateContractEligibilityMutation);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -231,7 +253,7 @@ export const useOnboarding = ({
   }: {
     form: JSONSchemaFormType;
     options?: {
-      jsfModify?: JSFModifyNext;
+      jsfModify?: JSFModify;
       queryOptions?: { enabled?: boolean };
     };
     query?: Record<string, string>;
@@ -290,6 +312,7 @@ export const useOnboarding = ({
         enabled: isBasicInformationDetailsEnabled,
       },
     },
+    jsonSchemaVersion: 1,
   });
 
   const annualGrossSalaryField =
@@ -419,7 +442,7 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, Fields> = useMemo(
+  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
@@ -675,16 +698,25 @@ export const useOnboarding = ({
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
-            // @ts-expect-error the types from the response are not matching
-            const employmentId = response.data?.data?.employment?.id;
-            setInternalEmploymentId(employmentId);
-            await updateContractEligibilityMutation.mutateAsync({
-              employmentId: employmentId,
-              eligible_to_work_in_residing_country: 'citizen',
-              employer_or_work_restrictions: false,
-            });
 
-            return response;
+            if (response.error) {
+              return response;
+            }
+
+            if (response.data) {
+              // @ts-expect-error the types from the response are not matching
+              const employmentId = response.data?.data?.employment?.id;
+              if (employmentId) {
+                setInternalEmploymentId(employmentId);
+                await updateContractEligibilityMutationAsync({
+                  employmentId: employmentId,
+                  eligible_to_work_in_residing_country: 'citizen',
+                  employer_or_work_restrictions: false,
+                });
+              }
+
+              return response;
+            }
           } catch (error) {
             console.error('Error creating onboarding:', error);
             throw error;
@@ -779,7 +811,8 @@ export const useOnboarding = ({
     isSubmitting:
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
-      updateBenefitsOffersMutation.isPending,
+      updateBenefitsOffersMutation.isPending ||
+      updateContractEligibilityMutation.isPending,
     /**
      * Initial form values
      */

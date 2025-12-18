@@ -8,7 +8,7 @@ export function OnboardingSubmit({
 }: PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
 >) {
-  const { formId } = useOnboardingContext();
+  const { formId, onboardingBag } = useOnboardingContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -17,7 +17,11 @@ export function OnboardingSubmit({
   }
 
   return (
-    <CustomButton {...props} form={formId}>
+    <CustomButton
+      {...props}
+      form={formId}
+      disabled={props.disabled || onboardingBag.isSubmitting}
+    >
       {children}
     </CustomButton>
   );

@@ -433,10 +433,7 @@ const AddEstimateForm = ({
               </div>
             )}
             <div className='flex justify-center mt-10'>
-              <CostCalculatorSubmitButton
-                className='submit-button'
-                disabled={props.isSubmitting}
-              >
+              <CostCalculatorSubmitButton className='submit-button'>
                 Get estimate
               </CostCalculatorSubmitButton>
             </div>

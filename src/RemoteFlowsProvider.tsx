@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useMemo, Suspense } from 'react';
+import React, { useMemo, Suspense, useRef } from 'react';
 
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
@@ -11,11 +11,13 @@ import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/Remote
 import { lazyDefaultComponents } from './lazy-default-components';
 import { FormLoadingFallback } from '@/src/components/form/FormLoadingFallback';
 import { DelayedFallback } from '@/src/components/form/DelayedFallback';
-
-const queryClient = new QueryClient();
+import { getQueryClient } from '@/src/queryConfig';
+import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
 type RemoteFlowContextWrapperProps = {
   children: React.ReactNode;
+  environment?: RemoteFlowsSDKProps['environment'];
+  debug?: RemoteFlowsSDKProps['debug'];
   client: Client;
 };
 
@@ -59,6 +61,8 @@ export function FormFieldsProvider({
   );
 }
 
+const queryClient = getQueryClient();
+
 export function RemoteFlows({
   auth,
   children,
@@ -67,20 +71,32 @@ export function RemoteFlows({
   proxy,
   environment,
   errorBoundary = { useParentErrorBoundary: true },
+  debug = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
-  const client = useMemo(
-    () => createClient(auth, { environment, proxy }),
-    [auth, environment, proxy],
-  );
+  const remoteApiClient = useRef(
+    createClient(auth, { proxy, environment }),
+  ).current;
+
   return (
-    <RemoteFlowsErrorBoundary errorBoundary={errorBoundary}>
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider components={components}>
-          <RemoteFlowContextWrapper client={client}>
-            <ThemeProvider theme={theme}>{children}</ThemeProvider>
-          </RemoteFlowContextWrapper>
-        </FormFieldsProvider>
-      </QueryClientProvider>
-    </RemoteFlowsErrorBoundary>
+    <ErrorContextProvider>
+      <RemoteFlowsErrorBoundary
+        errorBoundary={errorBoundary}
+        debug={debug}
+        environment={environment}
+        client={remoteApiClient}
+      >
+        <QueryClientProvider client={queryClient}>
+          <FormFieldsProvider components={components}>
+            <RemoteFlowContextWrapper
+              environment={environment}
+              debug={debug}
+              client={remoteApiClient}
+            >
+              <ThemeProvider theme={theme}>{children}</ThemeProvider>
+            </RemoteFlowContextWrapper>
+          </FormFieldsProvider>
+        </QueryClientProvider>
+      </RemoteFlowsErrorBoundary>
+    </ErrorContextProvider>
   );
 }
