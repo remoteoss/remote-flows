@@ -742,7 +742,20 @@ describe('TerminationFlow', () => {
   });
 
   it('should preserve proposed termination date when navigating from termination details to paid time off step', async () => {
-    const proposedTerminationDate = '2025-12-17';
+    const currentDate = getYearMonthDate(new Date());
+    const proposedTerminationDate = `${currentDate.year}-${currentDate.month}-${currentDate.day}`;
+
+    // Calculate expected formatted date dynamically using the same logic as the component
+    const [year, month, day] = proposedTerminationDate.split('-').map(Number);
+    const expectedFormattedDate = new Date(
+      year,
+      month - 1,
+      day,
+    ).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
 
     render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
 
@@ -771,7 +784,10 @@ describe('TerminationFlow', () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          /The proposed termination date for .+ is December 17, 2025/i,
+          new RegExp(
+            `The proposed termination date for .+ is ${expectedFormattedDate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
+            'i',
+          ),
         ),
       ).toBeInTheDocument();
     });
