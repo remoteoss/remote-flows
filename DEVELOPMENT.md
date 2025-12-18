@@ -299,13 +299,15 @@ For urgent fixes that need to be released from a previous version without includ
 - Security vulnerabilities that need immediate patching
 - Breaking issues affecting users on a specific version
 
+**Note**: Hotfixes always bump the patch version only (e.g., 1.2.2 → 1.2.3), never minor or major versions.
+
 #### Step 1: Create Hotfix Branch
 
 Start from the version tag you want to hotfix:
 
 ```bash
-# Example: Create hotfix for v0.28.0
-git checkout -b release/0.28.1 v0.28.0
+# Example: Create hotfix for v1.2.2
+git checkout -b hotfix-branch v1.2.2
 ```
 
 #### Step 2: Make Your Fix
@@ -320,25 +322,44 @@ git commit -m "fix: description of the hotfix"
 
 #### Step 3: Prepare Version and Changelog
 
-Execute `npm run release`
+Run the hotfix release script:
 
-#### Step 4: Trigger Release Workflow
+```bash
+npm run release:fix
+```
+
+This script will:
+
+- Show the current version (e.g., 1.2.2)
+- Prompt you to enter the hotfix description (e.g., "- Fix authentication timeout issue")
+- Bump to the next patch version (e.g., 1.2.3)
+- Update CHANGELOG.md with your description
+- Create a release branch (e.g., `release/1.2.3`)
+- Push the branch and create a PR
+
+#### Step 4: Review and Merge PR
+
+Review the automatically created PR and merge it to main.
+
+#### Step 5: Trigger Release Workflow
 
 1. Go to [Actions → Release workflow](https://github.com/remoteoss/remote-flows/actions/workflows/release.yml)
 2. Click "Run workflow"
-3. Select branch: `release/0.28.1` (or your hotfix branch name)
+3. Select branch: `release/1.2.3` (or your release branch name)
 4. Click "Run workflow"
 
 The workflow will:
 
-- Build and test from your hotfix branch
-- Publish to npm with the version from your branch's `package.json`
-- Create a git tag (e.g., `v0.28.1`)
+- Build and test from your release branch
+- Automatically detect that this is an older version and publish to npm with `--tag legacy`
+- Create a git tag (e.g., `v1.2.3`)
 - Create a GitHub release with changelog content
 
-#### Step 5: Backport to Main (if needed)
+**Note**: The workflow now automatically detects when publishing an older version and applies the appropriate npm dist-tag, so hotfixes won't conflict with the `latest` tag.
 
-If the fix should also be in main, do the necessary changes a do a normal release
+#### Step 6: Backport to Main (if needed)
+
+If the fix should also be in main, make the necessary changes and do a normal release.
 
 ### Version Numbering
 
