@@ -319,7 +319,6 @@ export const useTermination = ({
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {
-    console.log({ values });
     if (!employmentId) {
       throw new Error('Employment id is missing');
     }
@@ -369,24 +368,17 @@ export const useTermination = ({
         isNull,
       ) as unknown as TerminationDetailsParams;
 
+      const files = (parsedValues.timesheet_file as $TSFixMe) ?? [];
       const timesheetFile =
-        Array.isArray(parsedValues.timesheet_file as $TSFixMe) &&
-        (parsedValues.timesheet_file as $TSFixMe)?.length > 0
-          ? (parsedValues as $TSFixMe)?.timesheet_file[0]
+        Array.isArray(files) && files.length > 0
+          ? { content: files[0].content, name: files[0].name }
           : undefined;
-
-      const timesheetFileParsed = timesheetFile
-        ? {
-            content: timesheetFile?.content as unknown as $TSFixMe,
-            name: timesheetFile?.name as string,
-          }
-        : undefined;
 
       const terminationPayload: CreateOffboardingParams = {
         employment_id: employmentId,
         termination_details: {
           ...terminationDetails,
-          timesheet_file: timesheetFileParsed ? timesheetFileParsed : undefined,
+          timesheet_file: timesheetFile ? timesheetFile : undefined,
         },
         type: 'termination',
       };
