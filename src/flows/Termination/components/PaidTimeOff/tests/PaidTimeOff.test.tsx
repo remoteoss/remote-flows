@@ -11,9 +11,11 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('PaidTimeOff', () => {
+  const originalTimezone = process.env.TZ;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear(); // Clear query cache between tests
+    queryClient.clear();
     server.use(
       http.get('*/v1/timeoff*', () => {
         return HttpResponse.json(approvedTimeoffs);
@@ -22,6 +24,10 @@ describe('PaidTimeOff', () => {
         return HttpResponse.json(timeoffLeavePoliciesSummaryResponse);
       }),
     );
+  });
+
+  afterEach(() => {
+    process.env.TZ = originalTimezone;
   });
 
   it('should render the PaidTimeOff component with summary data', async () => {
@@ -178,5 +184,70 @@ describe('PaidTimeOff', () => {
     );
     // Remaining: 23 - 4 - 3 = 16 days
     expect(summaryData).toHaveTextContent('Remaining: 16 days');
+  });
+
+  it('should format dates correctly regardless of user timezone', async () => {
+    // Test with USA Eastern Time (UTC-5)
+    process.env.TZ = 'America/New_York';
+
+    render(
+      <PaidTimeOffContainer
+        employmentId='test-id'
+        employeeName='John Doe'
+        proposedTerminationDate='2025-01-15'
+        render={(props) => {
+          return (
+            <div>
+              const{' '}
+              <button
+                onClick={() => {
+                  props.onOpenChange();
+                }}
+              >
+                View details
+              </button>
+              <p data-testid='formatted-date'>
+                {props.formattedProposedTerminationDate}
+              </p>
+              {props.timeoffQuery?.data?.timeoffs?.map((timeoff, index) => (
+                <p key={index} data-testid={`timeoff-${index}`}>
+                  {timeoff.formattedDate}
+                </p>
+              ))}
+            </div>
+          );
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('formatted-date')).toBeInTheDocument();
+    });
+
+    // Date should be January 15, not January 14 (which would happen with UTC parsing)
+    expect(screen.getByTestId('formatted-date')).toHaveTextContent(
+      'January 15, 2025',
+    );
+
+    // Open the drawer to load timeoff data
+    const openButton = screen.getByText(/View details/i);
+    if (openButton) {
+      openButton.click();
+    }
+
+    await waitFor(() => {
+      expect(screen.queryAllByTestId(/^timeoff-/).length).toBeGreaterThan(0);
+    });
+
+    const timeoffElements = screen.queryAllByTestId(/^timeoff-/);
+
+    expect(timeoffElements[0]).toHaveTextContent('Dec 14, 2025 → Dec 14, 2025');
+
+    expect(timeoffElements[1]).toHaveTextContent('Dec 15, 2025 → Dec 15, 2025');
+
+    expect(timeoffElements[2]).toHaveTextContent('Dec 16, 2025 → Dec 16, 2025');
+
+    expect(timeoffElements[3]).toHaveTextContent('Dec 17, 2025 → Dec 17, 2025');
   });
 });

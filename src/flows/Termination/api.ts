@@ -6,7 +6,7 @@ import {
 import {
   useTimeOffLeavePoliciesSummaryQuery,
   useTimeOffQuery,
-} from '@/src/common/api';
+} from '@/src/common/api/timeoff';
 import { useClient } from '@/src/context';
 import { Employment } from '@/src/flows/Onboarding/types';
 import { defaultSchema } from '@/src/flows/Termination/json-schemas/defaultSchema';

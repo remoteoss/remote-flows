@@ -1,7 +1,8 @@
 import {
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
-} from '@/src/common/api';
+} from '@/src/common/api/timeoff';
+import { parseLocalDate } from '@/src/common/dates';
 import {
   useBookedTimeoffBeforeAndAfterTerminationQuery,
   useSummaryTimeOffDataQuery,
@@ -30,7 +31,7 @@ export const PaidTimeOffContainer = ({
     employmentId: employmentId,
   });
 
-  const formattedProposedTerminationDate = new Date(
+  const formattedProposedTerminationDate = parseLocalDate(
     proposedTerminationDate,
   ).toLocaleDateString('en-US', {
     month: 'long',
