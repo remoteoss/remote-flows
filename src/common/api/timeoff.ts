@@ -111,9 +111,12 @@ export const usePaidTimeoffBreakdownQuery = ({
             ) || 0,
           timeoffs:
             data?.data?.timeoffs?.map((timeoff) => {
+              const duration =
+                timeoff?.timeoff_days?.filter((day) => day.hours > 0).length ||
+                0;
               return {
                 status: timeoff?.status,
-                duration: timeoff?.timeoff_days.length,
+                duration: duration,
                 startDate: timeoff?.start_date,
                 endDate: timeoff?.end_date,
                 formattedDate: formatDateRange(
