@@ -319,14 +319,22 @@ export const useTerminationSchema = ({
   });
 };
 
+/**
+ * Hook to retrieve list of offboardings or filter offboardings by employmentId.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch offboardings for.
+ * @param {boolean} [params.includeConfidential] - Whether to include confidential offboardings in the response.
+ * @returns {TData} - The offboardings data.
+ */
 export const useGetOffboardings = <TData = ListOffboardingResponse['data']>({
   params,
   options,
 }: {
-  params: {
-    employmentId: string;
-    includeConfidential: boolean;
-  };
+  params: Partial<{
+    employmentId?: string;
+    includeConfidential?: boolean;
+  }>;
   options?: {
     enabled: boolean;
     select?: (data: ListOffboardingResponse['data']) => TData;
