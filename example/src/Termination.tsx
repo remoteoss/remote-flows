@@ -1,4 +1,8 @@
-import { TerminationFlow, zendeskArticles } from '@remoteoss/remote-flows';
+import {
+  TerminationFlow,
+  useGetOffboardings,
+  zendeskArticles,
+} from '@remoteoss/remote-flows';
 import type {
   TerminationRenderProps,
   TerminationFormValues,
@@ -184,14 +188,28 @@ const TerminationRender = ({
   );
 };
 
-export const TerminationWithProps = ({
-  employmentId,
-}: {
-  employmentId: string;
-}) => {
-  const proxyURL = window.location.origin;
+const Termination = ({ employmentId }: { employmentId: string }) => {
+  const { data: offboardings, isLoading: isLoadingOffboardings } =
+    useGetOffboardings({
+      params: {
+        employmentId: employmentId,
+        includeConfidential: true,
+      },
+      options: {
+        enabled: !!employmentId,
+      },
+    });
+
+  if (isLoadingOffboardings) {
+    return <div>Loading offboardings...</div>;
+  }
+
+  if (offboardings?.total_count && offboardings?.total_count > 0) {
+    return <div>You have already submitted a termination requests </div>;
+  }
+
   return (
-    <RemoteFlows proxy={{ url: proxyURL }} authType='company-manager'>
+    <>
       <TerminationFlow
         employmentId={employmentId}
         render={TerminationRender}
@@ -223,6 +241,19 @@ export const TerminationWithProps = ({
         }}
       />
       <OffboardingRequestModal employee={{ name: 'Ken' }} />
+    </>
+  );
+};
+
+export const TerminationWithProps = ({
+  employmentId,
+}: {
+  employmentId: string;
+}) => {
+  const proxyURL = window.location.origin;
+  return (
+    <RemoteFlows proxy={{ url: proxyURL }} authType='company-manager'>
+      <Termination employmentId={employmentId} />
     </RemoteFlows>
   );
 };

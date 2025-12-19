@@ -1,5 +1,6 @@
 import {
   CreateOffboardingParams,
+  getIndexOffboarding,
   postCreateOffboarding,
   Timeoff,
 } from '@/src/client';
@@ -314,5 +315,38 @@ export const useTerminationSchema = ({
         jsfModify,
       });
     },
+  });
+};
+
+export const useGetOffboardings = ({
+  params,
+  options,
+}: {
+  params: {
+    employmentId: string;
+    includeConfidential: boolean;
+  };
+  options?: { enabled: boolean };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: [
+      'rmt-flows-get-offboardings',
+      params.employmentId,
+      params.includeConfidential,
+    ],
+    queryFn: () => {
+      return getIndexOffboarding({
+        client: client as Client,
+        query: {
+          employment_id: params.employmentId,
+          include_confidential: params.includeConfidential ? 'true' : 'false',
+        },
+      });
+    },
+    select: ({ data }) => {
+      return data?.data;
+    },
+    enabled: options?.enabled,
   });
 };
