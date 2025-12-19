@@ -335,10 +335,10 @@ export const useGetOffboardings = <TData = ListOffboardingResponse['data']>({
     employmentId?: string;
     includeConfidential?: boolean;
   }>;
-  options?: {
-    enabled: boolean;
+  options?: Partial<{
+    enabled?: boolean;
     select?: (data: ListOffboardingResponse['data']) => TData;
-  };
+  }>;
 }) => {
   const { client } = useClient();
   return useQuery({
