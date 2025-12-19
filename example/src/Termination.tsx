@@ -189,7 +189,7 @@ const TerminationRender = ({
 };
 
 const Termination = ({ employmentId }: { employmentId: string }) => {
-  const { data: offboardings, isLoading: isLoadingOffboardings } =
+  const { data: totalOffboardings, isLoading: isLoadingOffboardings } =
     useGetOffboardings({
       params: {
         employmentId: employmentId,
@@ -197,6 +197,9 @@ const Termination = ({ employmentId }: { employmentId: string }) => {
       },
       options: {
         enabled: !!employmentId,
+        select: (data) => {
+          return data?.total_count;
+        },
       },
     });
 
@@ -204,7 +207,7 @@ const Termination = ({ employmentId }: { employmentId: string }) => {
     return <div>Loading offboardings...</div>;
   }
 
-  if (offboardings?.total_count && offboardings?.total_count > 0) {
+  if (totalOffboardings && totalOffboardings > 0) {
     return <div>You have already submitted a termination requests </div>;
   }
 

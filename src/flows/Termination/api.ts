@@ -1,6 +1,7 @@
 import {
   CreateOffboardingParams,
   getIndexOffboarding,
+  ListOffboardingResponse,
   postCreateOffboarding,
   Timeoff,
 } from '@/src/client';
@@ -318,7 +319,7 @@ export const useTerminationSchema = ({
   });
 };
 
-export const useGetOffboardings = ({
+export const useGetOffboardings = <TData = ListOffboardingResponse['data']>({
   params,
   options,
 }: {
@@ -326,7 +327,10 @@ export const useGetOffboardings = ({
     employmentId: string;
     includeConfidential: boolean;
   };
-  options?: { enabled: boolean };
+  options?: {
+    enabled: boolean;
+    select?: (data: ListOffboardingResponse['data']) => TData;
+  };
 }) => {
   const { client } = useClient();
   return useQuery({
@@ -345,7 +349,7 @@ export const useGetOffboardings = ({
       });
     },
     select: ({ data }) => {
-      return data?.data;
+      return (options?.select?.(data?.data) ?? data?.data) as TData;
     },
     enabled: options?.enabled,
   });
