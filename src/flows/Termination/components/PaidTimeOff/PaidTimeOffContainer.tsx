@@ -1,7 +1,7 @@
 import {
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
-} from '@/src/common/api';
+} from '@/src/common/api/timeoff';
 import {
   useBookedTimeoffBeforeAndAfterTerminationQuery,
   useSummaryTimeOffDataQuery,

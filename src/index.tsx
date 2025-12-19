@@ -76,13 +76,13 @@ export type {
 
 export type * from '@/src/flows/CostCalculator/types';
 
+export { useEmploymentQuery, useMagicLink } from '@/src/common/api';
+
 export {
-  useEmploymentQuery,
   useTimeOffQuery,
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
-  useMagicLink,
-} from '@/src/common/api';
+} from '@/src/common/api/timeoff';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 

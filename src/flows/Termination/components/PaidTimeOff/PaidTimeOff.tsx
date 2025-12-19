@@ -1,4 +1,4 @@
-import { PaidTimeoffBreakdownResponse } from '@/src/common/api';
+import { PaidTimeoffBreakdownResponse } from '@/src/common/api/timeoff';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';

@@ -2,7 +2,7 @@ import type {
   Employment,
   ListLeavePoliciesSummaryResponse,
 } from '@/src/client';
-import type { PaidTimeoffBreakdownResponse } from '@/src/common/api';
+import type { PaidTimeoffBreakdownResponse } from '@/src/common/api/timeoff';
 import type {
   BookedTimeoffBeforeDateResponse,
   SummaryTimeOffDataResponse,
