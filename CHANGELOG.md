@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.4.2
+
+### Patch Changes
+
+- improve error handling with typed error objects (#678) [#678](https://github.com/remoteoss/remote-flows/pull/678)
+- prefill form with employment.basic_information.personal_email (#679) [#679](https://github.com/remoteoss/remote-flows/pull/679)
+- fix timezone issues (#681) [#681](https://github.com/remoteoss/remote-flows/pull/681)
+- fix duration summary (#682) [#682](https://github.com/remoteoss/remote-flows/pull/682)
+
 ## 1.4.1
 
 ### Patch Changes
