@@ -6,6 +6,7 @@ import {
   TimeoffType,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
+import { parseLocalDate } from '@/src/common/dates';
 import { useClient } from '@/src/context';
 import { useQuery } from '@tanstack/react-query';
 
@@ -52,11 +53,6 @@ export const useTimeOffQuery = <TData = ListTimeoffResponse>({
     select: ({ data }) => (options?.select?.(data) ?? data) as TData,
     enabled: options?.enabled,
   });
-};
-
-const parseLocalDate = (dateString: string) => {
-  const [year, month, day] = dateString.split('-').map(Number);
-  return new Date(year, month - 1, day);
 };
 
 const formatDateRange = (startDate: string, endDate: string) => {
