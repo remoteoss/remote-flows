@@ -251,6 +251,107 @@ describe('PaidTimeOff', () => {
     expect(timeoffElements[3]).toHaveTextContent('Dec 17, 2025 → Dec 17, 2025');
   });
 
+  it('should calculate bookedDays excluding days with 0 hours (weekends/holidays)', async () => {
+    // Mock timeoff data with multiple timeoffs, some with weekends/holidays
+    const timeoffWithWeekends = {
+      data: {
+        total_count: 2,
+        current_page: 1,
+        total_pages: 1,
+        timeoffs: [
+          {
+            id: 'test-timeoff-id-1',
+            status: 'approved',
+            start_date: '2025-12-22',
+            end_date: '2026-01-02',
+            timeoff_type: 'paid_time_off',
+            timeoff_days: [
+              { hours: 8, day: '2025-12-22' },
+              { hours: 8, day: '2025-12-23' },
+              { hours: 8, day: '2025-12-24' },
+              { hours: 0, day: '2025-12-25' }, // holiday
+              { hours: 8, day: '2025-12-26' },
+              { hours: 0, day: '2025-12-27' }, // weekend
+              { hours: 0, day: '2025-12-28' }, // weekend
+              { hours: 8, day: '2025-12-29' },
+              { hours: 8, day: '2025-12-30' },
+              { hours: 8, day: '2025-12-31' },
+              { hours: 0, day: '2026-01-01' }, // holiday
+              { hours: 8, day: '2026-01-02' },
+            ],
+          },
+          {
+            id: 'test-timeoff-id-2',
+            status: 'approved',
+            start_date: '2025-10-21',
+            end_date: '2025-10-22',
+            timeoff_type: 'paid_time_off',
+            timeoff_days: [
+              { hours: 8, day: '2025-10-21' },
+              { hours: 8, day: '2025-10-22' },
+            ],
+          },
+        ],
+      },
+    };
+
+    server.use(
+      http.get('*/v1/timeoff*', () => {
+        return HttpResponse.json(timeoffWithWeekends);
+      }),
+    );
+
+    render(
+      <PaidTimeOffContainer
+        employmentId='test-id'
+        employeeName='John Doe'
+        proposedTerminationDate='2025-12-15'
+        render={(props) => {
+          return (
+            <div>
+              <button
+                onClick={() => {
+                  props.onOpenChange();
+                }}
+              >
+                View details
+              </button>
+              <div data-testid='booked-days'>
+                Booked Days: {props.timeoffQuery?.data?.bookedDays || 0}
+              </div>
+              {props.timeoffQuery?.data?.timeoffs?.map((timeoff, index) => (
+                <div key={index} data-testid={`timeoff-${index}`}>
+                  <span data-testid={`duration-${index}`}>
+                    Duration: {timeoff.duration} days
+                  </span>
+                </div>
+              ))}
+            </div>
+          );
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    // Open the drawer to load timeoff data
+    const openButton = screen.getByText(/View details/i);
+    openButton.click();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('booked-days')).toHaveTextContent(
+        'Booked Days: 10',
+      );
+    });
+
+    // Also verify individual durations
+    expect(screen.getByTestId('duration-0')).toHaveTextContent(
+      'Duration: 8 days',
+    );
+    expect(screen.getByTestId('duration-1')).toHaveTextContent(
+      'Duration: 2 days',
+    );
+  });
+
   it('should calculate duration excluding days with 0 hours (weekends/holidays)', async () => {
     // Mock timeoff data with weekends and holidays (0 hours)
     const timeoffWithWeekends = {
