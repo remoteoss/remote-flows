@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.4.3
+
+### Patch Changes
+
+- exclude zero-hour days from booked days calculation (#684) [#684](https://github.com/remoteoss/remote-flows/pull/684)
+
 ## 1.4.2
 
 ### Patch Changes
