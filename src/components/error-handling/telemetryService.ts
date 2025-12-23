@@ -100,18 +100,11 @@ export const logDebugPayload = (
   console.groupEnd();
 };
 
-const getSafeUrl = () => {
-  let url = 'unknown';
+const getUrl = () => {
   if (typeof window !== 'undefined') {
-    const href = window.location.href;
-    // Replace localhost URLs with a dummy URL to avoid WAF issues
-    if (href.includes('localhost') || href.includes('127.0.0.1')) {
-      url = 'https://telemetry.local/report';
-    } else {
-      url = href;
-    }
+    return window.location.href;
   }
-  return url;
+  return 'unknown';
 };
 
 const encodeStack = (stack?: string) => {
@@ -126,7 +119,7 @@ export function buildErrorPayload(
 ): ErrorPayload {
   const category = categorizeError(error);
   const severity = determineErrorSeverity(error, category);
-  const url = getSafeUrl();
+  const url = getUrl();
   const encodedStack = encodeStack(error.stack);
 
   const payload: ErrorPayload = {
@@ -149,6 +142,22 @@ export function buildErrorPayload(
   };
 
   return payload;
+}
+
+/**
+ * Determines if telemetry should be sent based on environment and URL
+ * Send telemetry when environment and URL "match":
+ * - local env + localhost URL → send (local testing)
+ * - production env + production URL → send (real errors)
+ * - local env + production URL → skip (edge case)
+ * - production env + localhost URL → skip (edge case)
+ */
+function shouldSendTelemetry(environment: Environment, url: string): boolean {
+  const isLocalEnv = environment === 'local';
+  const isLocalhostUrl = url.includes('localhost') || url.includes('127.0.0.1');
+
+  // Send when both are local OR both are production
+  return isLocalEnv === isLocalhostUrl;
 }
 
 export function reportTelemetryError(
@@ -183,6 +192,21 @@ export function reportTelemetryError(
   // Log to console in debug mode
   if (options.debugMode) {
     logDebugPayload(payload, Boolean(options.debugMode));
+  }
+
+  // Only send telemetry if not in local environment
+  const shouldSend = shouldSendTelemetry(
+    environment ?? defaultEnvironment,
+    payload.metadata.url,
+  );
+
+  if (!shouldSend) {
+    if (options.debugMode) {
+      console.log(
+        '[RemoteFlows] Skipping telemetry API call (local environment)',
+      );
+    }
+    return;
   }
 
   postReportErrorsTelemetry({
