@@ -22,6 +22,7 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import { JSFField } from '@/src/types/remoteFlows';
 
 /**
  * Get the contract document signature schema
@@ -243,7 +244,9 @@ export const useContractorSubscriptionSchemaField = (
   );
 
   if (contractorSubscriptions) {
-    const field = form.fields.find((field) => field.name === 'subscription');
+    const field: JSFField | undefined = form.fields.find(
+      (field) => field.name === 'subscription',
+    ) as JSFField | undefined;
     if (field) {
       const options = contractorSubscriptions
         .filter((opts) => opts.product.identifier !== corProductIdentifier)
@@ -255,9 +258,16 @@ export const useContractorSubscriptionSchemaField = (
               opts.currency.symbol,
             );
           }
-          const label = `${opts.product.name} - ${formattedPrice}`;
-          const value = opts.product.identifier;
-          return { label, value };
+          const foundOption = field?.options?.find(
+            (option: { value: string }) =>
+              option.value === opts.product.identifier,
+          );
+          const title = foundOption?.label;
+          const label = `${title} - ${formattedPrice}`;
+          const value = opts.product.identifier ?? '';
+          const description = foundOption?.description ?? '';
+          const meta = foundOption?.meta;
+          return { label, value, description, meta };
         });
       field.options = options;
     }

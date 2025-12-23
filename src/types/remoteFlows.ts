@@ -47,6 +47,7 @@ export type JSFField = {
     label: string;
     description?: string;
     disabled?: boolean;
+    meta?: Record<string, unknown>;
   }>;
   defaultValue?: string | number;
   minDate?: string;
