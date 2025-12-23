@@ -49,8 +49,8 @@ const Switcher = (props: JSFCustomComponentProps) => {
 const STEPS = [
   'Select Country',
   'Basic Information',
-  'Statement of Work',
   'Pricing Plan',
+  'Statement of Work',
   'Contract Preview',
 ];
 
