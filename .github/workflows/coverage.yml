@@ -52,8 +52,8 @@ jobs:
       - name: Create coverage badge
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: b94197caa302c8364afa820d9635cdf6
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ secrets.COVERAGE_GIST_ID }}
           filename: remote-flows-coverage.json
           label: coverage
           message: ${{ steps.coverage.outputs.coverage }}%
