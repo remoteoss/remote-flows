@@ -6,6 +6,7 @@ export const selectContractorSubscriptionStepSchema = {
       properties: {
         subscription: {
           title: 'Payment terms',
+          description: 'Choose the plan that best fits your needs.',
           type: 'string',
           oneOf: [],
           'x-jsf-presentation': {

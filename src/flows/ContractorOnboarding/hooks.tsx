@@ -540,8 +540,17 @@ export const useContractorOnboarding = ({
       });
     }
 
-    if (stepState.currentStep.name === 'pricing_plan') {
-      return values;
+    if (
+      selectContractorSubscriptionForm &&
+      stepState.currentStep.name === 'pricing_plan'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        selectContractorSubscriptionForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     return {};
@@ -770,11 +779,16 @@ export const useContractorOnboarding = ({
         return signatureSchemaForm?.handleValidation(parsedValues);
       }
 
-      if (stepState.currentStep.name === 'pricing_plan') {
-        // TODO: TBD
-        return {
-          formErrors: {},
-        };
+      if (
+        selectContractorSubscriptionForm &&
+        stepState.currentStep.name === 'pricing_plan'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          selectContractorSubscriptionForm?.fields,
+          { isPartialValidation: false },
+        );
+        return selectContractorSubscriptionForm?.handleValidation(parsedValues);
       }
 
       return null;
