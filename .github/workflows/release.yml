@@ -72,9 +72,36 @@ jobs:
           npm run build
           npm run test
 
+      - name: Determine npm tag
+        if: steps.version-check.outputs.changed == 'true'
+        id: npm-tag
+        run: |
+          CURRENT_VERSION="${{ steps.version-check.outputs.version }}"
+
+          # Get the latest version from npm registry
+          LATEST_VERSION=$(npm view @remoteoss/remote-flows dist-tags.latest 2>/dev/null || echo "0.0.0")
+
+          echo "Current version to publish: $CURRENT_VERSION"
+          echo "Latest version on npm: $LATEST_VERSION"
+
+          # Compare versions using sort -V (version sort)
+          # If current version is less than latest, use legacy tag
+          if [ "$(printf '%s\n' "$CURRENT_VERSION" "$LATEST_VERSION" | sort -V | head -n1)" = "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "tag=legacy" >> $GITHUB_OUTPUT
+            echo "Publishing with --tag legacy (older than current latest)"
+          else
+            echo "tag=" >> $GITHUB_OUTPUT
+            echo "Publishing with default tag (will become latest)"
+          fi
+
       - name: Publish to npm
         if: steps.version-check.outputs.changed == 'true'
-        run: npm publish --provenance --access public
+        run: |
+          if [ -n "${{ steps.npm-tag.outputs.tag }}" ]; then
+            npm publish --provenance --access public --tag ${{ steps.npm-tag.outputs.tag }}
+          else
+            npm publish --provenance --access public
+          fi
 
       - name: Create git tag
         if: steps.version-check.outputs.changed == 'true'
