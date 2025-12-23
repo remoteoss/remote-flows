@@ -13,6 +13,7 @@ import {
   ContractPreviewResponse,
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
+  FieldComponentProps,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -26,6 +27,15 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+
+const PricingPlanCards = ({ field, fieldData }: FieldComponentProps) => {
+  console.log({ field, fieldData });
+  return (
+    <div>
+      <h1>Pricing Plan Cards</h1>
+    </div>
+  );
+};
 
 const Switcher = (props: JSFCustomComponentProps) => {
   return (
@@ -207,6 +217,11 @@ const MultiStepForm = ({
       return (
         <>
           <PricingPlanStep
+            components={{
+              radio: ({ field, fieldData }) => {
+                return <PricingPlanCards field={field} fieldData={fieldData} />;
+              },
+            }}
             onSubmit={(payload: PricingPlanFormPayload) =>
               console.log('payload', payload)
             }
