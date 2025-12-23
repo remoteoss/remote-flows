@@ -474,8 +474,10 @@ export const useContractorOnboarding = ({
         ),
         // TODO: TBD
         contract_preview: {},
-        // TODO: TBD
-        pricing_plan: {},
+        pricing_plan: prettifyFormValues(
+          pricingPlanInitialValues,
+          stepFields.pricing_plan,
+        ),
       };
 
       setStepValues({
@@ -483,7 +485,7 @@ export const useContractorOnboarding = ({
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
         contract_preview: {},
-        pricing_plan: {},
+        pricing_plan: pricingPlanInitialValues,
         review: {},
       });
       goToStep('review');
@@ -498,6 +500,8 @@ export const useContractorOnboarding = ({
     stepFields.select_country,
     stepFields.basic_information,
     stepFields.contract_details,
+    stepFields.pricing_plan,
+    pricingPlanInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
