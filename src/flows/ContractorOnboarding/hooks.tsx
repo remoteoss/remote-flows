@@ -474,6 +474,8 @@ export const useContractorOnboarding = ({
         ),
         // TODO: TBD
         contract_preview: {},
+        // TODO: The BE needs to return the pricing plan through an endpoint
+        // TODO: First correct pricingPlanInitialValues to make this work
         pricing_plan: prettifyFormValues(
           pricingPlanInitialValues,
           stepFields.pricing_plan,
