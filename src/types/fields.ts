@@ -36,6 +36,7 @@ export type HelpCenterDataProps = {
   callToAction: string;
   id: number;
   content: string;
+  title: string;
 };
 
 /**
