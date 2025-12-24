@@ -75,15 +75,13 @@ jobs:
 
       - name: Checkout base branch
         if: steps.check-scripts.outputs.exists == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.base_ref }}
-          path: base
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git checkout origin/${{ github.base_ref }}
 
       - name: Check if coverage scripts exist in base branch
         if: steps.check-scripts.outputs.exists == 'true'
         id: check-base-scripts
-        working-directory: base
         run: |
           if [ -f "scripts/compare-coverage.ts" ] && [ -f "scripts/extract-coverage.ts" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -93,19 +91,41 @@ jobs:
 
       - name: Install dependencies (base)
         if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        working-directory: base
         run: npm ci --ignore-scripts
 
       - name: Run tests with coverage (base)
         if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        working-directory: base
         run: npm run test:coverage
-        continue-on-error: true
 
       - name: Extract base coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        working-directory: base
-        run: npm run coverage:extract -- --output ../out/base-coverage.json
+        run: npm run coverage:extract -- --output out/base-coverage.json
+
+      - name: Upload base coverage
+        if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: base-coverage
+          path: out/base-coverage.json
+          retention-days: 1
+
+      - name: Checkout PR branch
+        if: steps.check-scripts.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Download current coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: current-coverage
+          path: out
+
+      - name: Download base coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: base-coverage
+          path: out
         continue-on-error: true
 
       - name: Compare coverage
