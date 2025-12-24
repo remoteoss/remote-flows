@@ -33,6 +33,8 @@ export {
   TerminationDialogInfoContent,
 } from '@/src/flows/Termination';
 
+export { useGetOffboardings } from '@/src/flows/Termination/api';
+
 export type {
   TerminationFormValues,
   TerminationFlowProps,
