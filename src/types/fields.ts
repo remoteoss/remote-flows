@@ -33,9 +33,21 @@ export type FieldComponentProps = {
 };
 
 export type HelpCenterDataProps = {
+  /**
+   * The call to action text for the help center.
+   */
   callToAction: string;
+  /**
+   * The Zendesk ID of the help center article.
+   */
   id: number;
+  /**
+   * The HTML content of the help center article.
+   */
   content: string;
+  /**
+   * The title of the help center article.
+   */
   title: string;
 };
 
