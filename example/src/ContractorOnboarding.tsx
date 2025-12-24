@@ -25,9 +25,9 @@ import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
+import { PricingPlanCard } from './components/PricingPlanCard';
 import './css/main.css';
 import './css/contractor-onboarding.css';
-import { PricingPlanCard } from './components/PricingPlanCard';
 
 const PricingPlanCards = ({
   field,
