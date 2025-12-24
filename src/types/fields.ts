@@ -32,6 +32,12 @@ export type FieldComponentProps = {
   fieldData: FieldDataProps;
 };
 
+export type HelpCenterDataProps = {
+  callToAction: string;
+  id: number;
+  content: string;
+};
+
 /**
  * Base type for field metadata passed to custom field components.
  * Extends JSFField with optional metadata for extensibility.
@@ -39,10 +45,7 @@ export type FieldComponentProps = {
 export type FieldDataProps = Partial<JSFField> & {
   metadata?: Record<string, unknown>;
   meta?: {
-    helpCenter?: {
-      callToAction: string;
-      id: number;
-    };
+    helpCenter?: HelpCenterDataProps;
   };
 };
 
