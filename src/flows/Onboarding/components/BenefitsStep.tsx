@@ -11,6 +11,9 @@ import {
 } from '@/src/lib/mutations';
 
 type BenefitsStepProps = {
+  /**
+   * Components to override the default field components used in the form.
+   */
   components?: Components;
   /**
    * Callback function to be called when the benefits form is submitted.

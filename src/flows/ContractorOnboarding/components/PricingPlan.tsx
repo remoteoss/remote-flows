@@ -1,4 +1,4 @@
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import {
   normalizeFieldErrors,
   NormalizedFieldError,
@@ -11,6 +11,10 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 
 type PricingPlanStepProps = {
+  /**
+   * Components to override the default field components used in the form.
+   */
+  components?: Components;
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
@@ -34,6 +38,7 @@ type PricingPlanStepProps = {
 };
 
 export function PricingPlanStep({
+  components,
   onSubmit,
   onSuccess,
   onError,
@@ -78,6 +83,7 @@ export function PricingPlanStep({
 
   return (
     <ContractorOnboardingForm
+      components={components}
       defaultValues={initialValues}
       onSubmit={handleSubmit}
     />
