@@ -1,13 +1,15 @@
 import { ZendeskTriggerButton } from './ZendeskTriggerButton';
+import { HelpCenterDataProps } from '@/src/types/fields';
 
 type HelpCenterProps = {
-  helpCenter?: { callToAction: string; id: number };
+  helpCenter?: HelpCenterDataProps;
 };
 
 export function HelpCenter({ helpCenter }: HelpCenterProps) {
   if (!helpCenter) {
     return null;
   }
+
   return (
     <ZendeskTriggerButton zendeskId={helpCenter.id}>
       {helpCenter.callToAction}
