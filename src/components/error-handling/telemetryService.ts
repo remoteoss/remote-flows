@@ -194,7 +194,6 @@ export function reportTelemetryError(
     logDebugPayload(payload, Boolean(options.debugMode));
   }
 
-  // Only send telemetry if not in local environment
   const shouldSend = shouldSendTelemetry(
     environment ?? defaultEnvironment,
     payload.metadata.url,
