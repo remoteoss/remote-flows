@@ -3,6 +3,8 @@ import { FieldSetField, FieldSetProps } from '../FieldSetField';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
@@ -49,7 +51,12 @@ const renderWithFormContext = (
 describe('FieldSetField', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as $TSFixMe).mockReturnValue({ components: {} });
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: {
+        fieldsetToggle: FieldsetToggleButtonDefault,
+        text: TextFieldDefault,
+      },
+    });
   });
   it('renders with default variant (outset)', () => {
     renderWithFormContext();

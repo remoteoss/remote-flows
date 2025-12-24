@@ -17,6 +17,12 @@ vi.mock('@/src/client/sdk.gen', () => ({
 }));
 
 describe('telemetryService', () => {
+  Object.defineProperty(window, 'location', {
+    value: {
+      href: 'https://telemetry.local/report',
+    },
+    writable: true,
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -119,5 +125,26 @@ describe('telemetryService', () => {
       },
     );
     expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(2);
+  });
+
+  it('should skip telemetry if url is localhost and environment is not local', () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://localhost:3000',
+      },
+      writable: true,
+    });
+
+    const error = new Error('Test error');
+    const sdkVersion = '1.0.0';
+    const context = { flow: 'test-flow', step: 'basic_info' };
+
+    vi.mocked(utils.categorizeError).mockReturnValue('RENDER_ERROR');
+    vi.mocked(utils.determineErrorSeverity).mockReturnValue('error');
+
+    const payload = buildErrorPayload(error, sdkVersion, 'production', context);
+
+    expect(payload.metadata.url).toBe('http://localhost:3000');
+    expect(postReportErrorsTelemetry).not.toHaveBeenCalled();
   });
 });

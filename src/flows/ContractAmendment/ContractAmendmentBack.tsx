@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { useContractAmendmentContext } from './context';
 import { useFormFields } from '@/src/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 export function ContractAmendmentBack({
   children,
@@ -14,7 +13,11 @@ export function ContractAmendmentBack({
 
   const { components } = useFormFields();
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <CustomButton
       {...props}

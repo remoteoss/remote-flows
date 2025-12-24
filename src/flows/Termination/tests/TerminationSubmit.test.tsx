@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { TerminationSubmit } from '../TerminationSubmit';
 import { useTerminationContext } from '../context';
 import { useFormFields } from '@/src/context';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 // Mock the hooks
 vi.mock('../context');
@@ -22,7 +23,9 @@ describe('TerminationSubmit', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: {},
+      components: {
+        button: ButtonDefault,
+      },
     });
   });
 

@@ -1,5 +1,4 @@
 import { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useFormFields } from '@/src/context';
 
@@ -12,7 +11,11 @@ export function OnboardingSubmit({
   const { formId, onboardingBag } = useOnboardingContext();
   const { components } = useFormFields();
 
-  const CustomButton = components?.button || ButtonDefault;
+  const CustomButton = components?.button;
+  if (!CustomButton) {
+    throw new Error(`Button component not found`);
+  }
+
   return (
     <CustomButton
       {...props}
