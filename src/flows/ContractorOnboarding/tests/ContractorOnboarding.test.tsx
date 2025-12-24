@@ -230,8 +230,8 @@ describe('ContractorOnboardingFlow', () => {
       const steps: Record<number, string> = {
         [0]: 'Select Country',
         [1]: 'Basic Information',
-        [2]: 'Contract Details',
-        [3]: 'Pricing Plan',
+        [2]: 'Pricing Plan',
+        [3]: 'Contract Details',
         [4]: 'Contract Preview',
         [5]: 'Review',
       };
@@ -358,8 +358,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -397,7 +397,9 @@ describe('ContractorOnboardingFlow', () => {
 
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -451,10 +453,21 @@ describe('ContractorOnboardingFlow', () => {
       provisionalStartDate: '2025-11-26',
     });
 
-    const nextButton = screen.getByText(/Next Step/i);
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const serviceDurationInput = await screen.findByTestId(
       'service_duration.provisional_start_date',
@@ -490,7 +503,7 @@ describe('ContractorOnboardingFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
     await waitFor(() => {
       expect(postSpy).toHaveBeenCalledTimes(1);
@@ -517,7 +530,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
     // Verify second POST was called with Spain
     await waitFor(() => {
@@ -549,8 +562,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -586,7 +599,7 @@ describe('ContractorOnboardingFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
     // Verify PATCH was NOT called (contractors can't be updated)
     expect(patchSpy).not.toHaveBeenCalled();
@@ -616,8 +629,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -650,16 +663,18 @@ describe('ContractorOnboardingFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillContractDetails();
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findByText(/Step: Contract Details/i);
 
-    await fillContractorSubscription();
+    await fillContractDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -696,8 +711,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -730,16 +745,18 @@ describe('ContractorOnboardingFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillContractDetails();
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findByText(/Step: Contract Details/i);
 
-    await fillContractorSubscription();
+    await fillContractDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -788,8 +805,8 @@ describe('ContractorOnboardingFlow', () => {
 
           const steps: Record<number, string> = {
             [0]: 'Basic Information',
-            [1]: 'Contract Details',
-            [2]: 'Pricing Plan',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
             [3]: 'Contract Preview',
             [4]: 'Review',
           };
@@ -844,8 +861,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -879,7 +896,7 @@ describe('ContractorOnboardingFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
     // Verify POST was called with external_id
     expect(postSpy).toHaveBeenCalledTimes(1);
@@ -917,8 +934,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -973,8 +990,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -1007,16 +1024,18 @@ describe('ContractorOnboardingFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillContractDetails();
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findByText(/Step: Contract Details/i);
 
-    await fillContractorSubscription();
+    await fillContractDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -1057,8 +1076,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -1121,8 +1140,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -1155,7 +1174,16 @@ describe('ContractorOnboardingFlow', () => {
 
     await fillBasicInformation();
 
-    const nextButton = screen.getByText(/Next Step/i);
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
