@@ -11,6 +11,7 @@ export const tsup: Options = {
     'src/index.tsx',
     'src/styles.ts',
     'src/internals.ts',
+    'src/default-components.ts',
     'src/flows',
     '!src/**/*.test.{ts,tsx}',
     '!src/**/tests/*.{ts,tsx}',

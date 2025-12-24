@@ -3,6 +3,7 @@ import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { OnboardingSubmit } from '../components/OnboardingSubmit';
+import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -23,7 +24,11 @@ describe('OnboardingSubmit Component', () => {
       formId: mockFormId,
       onboardingBag: { isSubmitting: false },
     });
-    (useFormFields as any).mockReturnValue({ components: {} });
+    (useFormFields as any).mockReturnValue({
+      components: {
+        button: ButtonDefault,
+      },
+    });
   });
 
   it('renders the default button implementation correctly', () => {
