@@ -97,7 +97,11 @@ export function FileUploader({
           <div key={index} className='text-sm flex items-center gap-2'>
             Selected file: <span className='font-medium'>{file.name}</span> (
             {Math.round(file.size / 1024)} KB)
-            <Button variant='ghost' onClick={() => onRemoveFile(file)}>
+            <Button
+              type='button'
+              variant='ghost'
+              onClick={() => onRemoveFile(file)}
+            >
               <X />
             </Button>
           </div>
