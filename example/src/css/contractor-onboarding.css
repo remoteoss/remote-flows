@@ -33,11 +33,20 @@
   margin: 0 auto;
 }
 
-.contractor-onboarding-form {
+.contractor-onboarding-form-layout {
   max-width: 530px;
   width: 100%;
   margin: 0 auto;
   padding: 40px 0;
+}
+
+.pricing-plan-form-layout {
+  width: 100%;
+  padding: 40px;
+}
+
+.pricing-plan-form {
+  margin: unset;
 }
 
 .steps-contractor-onboarding-navigation {

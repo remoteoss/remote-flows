@@ -27,12 +27,28 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+import { PricingPlanCard } from './components/PricingPlanCard';
 
-const PricingPlanCards = ({ field, fieldData }: FieldComponentProps) => {
-  console.log({ field, fieldData });
+const PricingPlanCards = ({
+  field,
+  fieldData,
+  fieldState,
+}: FieldComponentProps) => {
+  const hasError = !!fieldState.error;
   return (
-    <div>
-      <h1>Pricing Plan Cards</h1>
+    <div className='flex flex-row gap-2'>
+      {fieldData.options?.map((option) => (
+        <PricingPlanCard
+          key={option.value}
+          title={option.label}
+          description={option.description}
+          features={option.meta?.features as string[]}
+          value={field.value}
+          onSelect={() => field.onChange(option.value)}
+          selected={field.value === option.value}
+        />
+      ))}
+      {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
 };
@@ -94,7 +110,7 @@ const MultiStepForm = ({
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'select_country':
       return (
-        <>
+        <div className='contractor-onboarding-form-layout'>
           <SelectCountryStep
             onSubmit={(payload: SelectCountryFormPayload) =>
               console.log('payload', payload)
@@ -115,11 +131,11 @@ const MultiStepForm = ({
               Continue
             </SubmitButton>
           </div>
-        </>
+        </div>
       );
     case 'basic_information':
       return (
-        <>
+        <div className='contractor-onboarding-form-layout'>
           <BasicInformationStep
             onSubmit={(payload: BasicInformationFormPayload) =>
               console.log('payload', payload)
@@ -146,12 +162,12 @@ const MultiStepForm = ({
               Continue
             </SubmitButton>
           </div>
-        </>
+        </div>
       );
 
     case 'contract_details':
       return (
-        <>
+        <div className='contractor-onboarding-form-layout'>
           <ContractDetailsStep
             onSubmit={(
               payload: ContractorOnboardingContractDetailsFormPayload,
@@ -178,12 +194,12 @@ const MultiStepForm = ({
               Continue
             </SubmitButton>
           </div>
-        </>
+        </div>
       );
 
     case 'contract_preview':
       return (
-        <>
+        <div className='contractor-onboarding-form-layout'>
           <ContractPreviewStep
             onSubmit={(payload: ContractPreviewFormPayload) =>
               console.log('payload', payload)
@@ -210,16 +226,28 @@ const MultiStepForm = ({
               Continue
             </SubmitButton>
           </div>
-        </>
+        </div>
       );
 
     case 'pricing_plan':
       return (
-        <>
+        <div className='pricing-plan-form-layout'>
+          <div className='flex flex-col gap-2 text-center mb-6'>
+            <h1 className='text-2xl font-bold text-[#000000]'>Payment terms</h1>
+            <p className='text-sm text-[#71717A]'>
+              Choose the plan that best fits your needs.
+            </p>
+          </div>
           <PricingPlanStep
             components={{
-              radio: ({ field, fieldData }) => {
-                return <PricingPlanCards field={field} fieldData={fieldData} />;
+              radio: ({ field, fieldData, fieldState }) => {
+                return (
+                  <PricingPlanCards
+                    fieldData={fieldData}
+                    fieldState={fieldState}
+                    field={field}
+                  />
+                );
               },
             }}
             onSubmit={(payload: PricingPlanFormPayload) =>
@@ -247,16 +275,18 @@ const MultiStepForm = ({
               Continue
             </SubmitButton>
           </div>
-        </>
+        </div>
       );
     case 'review': {
       return (
-        <ReviewContractorOnboardingStep
-          onboardingBag={contractorOnboardingBag}
-          components={components}
-          errors={errors}
-          setErrors={setErrors}
-        />
+        <div className='contractor-onboarding-form-layout'>
+          <ReviewContractorOnboardingStep
+            onboardingBag={contractorOnboardingBag}
+            components={components}
+            errors={errors}
+            setErrors={setErrors}
+          />
+        </div>
       );
     }
   }
@@ -284,16 +314,14 @@ const OnBoardingRender = ({
       </div>
 
       {contractorOnboardingBag.isLoading ? (
-        <div className='contractor-onboarding-form'>
+        <div className='contractor-onboarding-form-layout'>
           <p>Loading...</p>
         </div>
       ) : (
-        <div className='contractor-onboarding-form'>
-          <MultiStepForm
-            contractorOnboardingBag={contractorOnboardingBag}
-            components={components}
-          />
-        </div>
+        <MultiStepForm
+          contractorOnboardingBag={contractorOnboardingBag}
+          components={components}
+        />
       )}
     </>
   );

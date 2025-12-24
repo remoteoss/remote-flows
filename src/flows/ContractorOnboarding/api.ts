@@ -262,11 +262,14 @@ export const useContractorSubscriptionSchemaField = (
             (option: { value: string }) =>
               option.value === opts.product.identifier,
           );
-          const title = foundOption?.label;
-          const label = `${title} - ${formattedPrice}`;
+          const title = foundOption?.label ?? '';
+          const label = title;
           const value = opts.product.identifier ?? '';
           const description = foundOption?.description ?? '';
-          const meta = foundOption?.meta;
+          const meta = {
+            ...foundOption?.meta,
+            price: formattedPrice,
+          };
           return { label, value, description, meta };
         });
       field.options = options;
