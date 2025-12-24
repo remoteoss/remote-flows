@@ -76,8 +76,8 @@ const STEPS = [
   'Select Country',
   'Basic Information',
   'Statement of Work',
-  'Contract Preview',
   'Pricing Plan',
+  'Contract Preview',
   'Review',
 ];
 
