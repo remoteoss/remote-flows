@@ -79,11 +79,19 @@ export const JSONSchemaFormFields = ({
             Component: React.ComponentType<any>;
           };
           return (
-            <Component
-              key={field.name as string}
-              setValue={(value: unknown) => setValue(field.name, value)}
-              {...field}
-            />
+            <Fragment key={field.name as string}>
+              <Component
+                key={field.name as string}
+                setValue={(value: unknown) => setValue(field.name, value)}
+                {...field}
+              />
+              {field.statement ? (
+                <Statement
+                  {...(field.statement as StatementComponentProps['data'])}
+                />
+              ) : null}
+              {field.extra ? field.extra : null}
+            </Fragment>
           );
         }
 
