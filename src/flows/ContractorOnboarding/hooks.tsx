@@ -292,6 +292,7 @@ export const useContractorOnboarding = ({
         options?.jsfModify?.contract_details,
         descriptionProvisionalStartDate,
         selectedPricingPlan,
+        fieldValues,
       ),
     },
   });

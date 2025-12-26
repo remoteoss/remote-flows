@@ -2,6 +2,8 @@ import { format } from 'date-fns';
 import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { JSFModify } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
+import { FieldValues } from 'react-hook-form';
+import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 
 type StepKeys =
   | 'select_country'
@@ -57,6 +59,25 @@ const isStandardPricingPlan = (pricingPlan: string | undefined) => {
   return pricingPlan === contractorStandardProductIdentifier;
 };
 
+const showBackDateWarning = (
+  isStandardPricingPlanSelected: boolean,
+  provisionalStartDate: string | undefined,
+) => {
+  const isStartDateBackdated =
+    provisionalStartDate &&
+    // Compare full days omitting time of the day
+    provisionalStartDate < format(new Date(), 'yyyy-MM-dd');
+
+  if (!isStandardPricingPlanSelected && isStartDateBackdated) {
+    return createStatementProperty({
+      severity: 'warning',
+      description:
+        'Backdating the service start date is not supported in the selected Contractor Management plan.',
+    });
+  }
+
+  return undefined;
+};
 /**
  * Merges internal jsfModify modifications with user-provided options for contract_details step
  * This abstracts the logic of applying internal field modifications (like dynamic descriptions)
@@ -66,9 +87,16 @@ export const buildContractDetailsJsfModify = (
   userJsfModify: JSFModify | undefined,
   provisionalStartDateDescription: string | undefined,
   selectedPricingPlan: string | undefined,
+  fieldValues: FieldValues,
 ): JSFModify => {
   const isStandardPricingPlanSelected =
     isStandardPricingPlan(selectedPricingPlan);
+  const provisionalStartDate =
+    fieldValues?.service_duration?.provisional_start_date;
+  const statement = showBackDateWarning(
+    isStandardPricingPlanSelected,
+    provisionalStartDate,
+  );
   return {
     ...userJsfModify,
     fields: {
@@ -80,6 +108,7 @@ export const buildContractDetailsJsfModify = (
             minDate: !isStandardPricingPlanSelected
               ? format(new Date(), 'yyyy-MM-dd')
               : undefined,
+            ...statement,
           },
         },
       },

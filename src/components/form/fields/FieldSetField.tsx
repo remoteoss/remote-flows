@@ -294,6 +294,11 @@ export function FieldSetField({
                       components?.[field.inputType as keyof Components]
                     }
                   />
+                  {field.statement ? (
+                    <Statement
+                      {...(field.statement as StatementComponentProps['data'])}
+                    />
+                  ) : null}
                   {field.extra ? field.extra : null}
                 </Fragment>
               );
