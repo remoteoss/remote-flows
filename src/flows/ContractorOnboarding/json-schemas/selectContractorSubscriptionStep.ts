@@ -15,21 +15,6 @@ export const selectContractorSubscriptionStepSchema = {
           type: 'string',
           oneOf: [
             {
-              const: contractorPlusProductIdentifier,
-              title: 'Contractor Management Plus',
-              description: 'Engage and pay contractors with indemnity coverage',
-              'x-jsf-presentation': {
-                meta: {
-                  features: [
-                    'Contract between you and contractor',
-                    'Access to all Contractor Management features',
-                    '$100K indemnity coverage for penalties',
-                    '4X monetary coverage than our competitors  in case of penalties',
-                  ],
-                },
-              },
-            },
-            {
               const: contractorStandardProductIdentifier,
               title: 'Contractor Management',
               description: 'Engage and pay contractors compliantly',
@@ -40,6 +25,21 @@ export const selectContractorSubscriptionStepSchema = {
                     'Contract service agreement template',
                     'Only pay for active contractors',
                     'Work with contractors in 200+ countries and jurisdictions',
+                  ],
+                },
+              },
+            },
+            {
+              const: contractorPlusProductIdentifier,
+              title: 'Contractor Management Plus',
+              description: 'Engage and pay contractors with indemnity coverage',
+              'x-jsf-presentation': {
+                meta: {
+                  features: [
+                    'Contract between you and contractor',
+                    'Access to all Contractor Management features',
+                    '$100K indemnity coverage for penalties',
+                    '4X monetary coverage than our competitors  in case of penalties',
                   ],
                 },
               },

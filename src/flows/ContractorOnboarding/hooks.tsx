@@ -412,15 +412,16 @@ export const useContractorOnboarding = ({
   ]);
 
   const pricingPlanInitialValues = useMemo(() => {
+    const preselectedPricingPlan = {
+      subscription: contractorStandardProductIdentifier,
+    };
     const initialValues = {
+      ...preselectedPricingPlan,
       ...onboardingInitialValues,
       ...employmentContractDetails,
     };
 
-    return getInitialValues(
-      stepFields.pricing_plan,
-      (initialValues?.pricing_plan ?? {}) as Record<string, unknown>,
-    );
+    return getInitialValues(stepFields.pricing_plan, initialValues);
   }, [
     stepFields.pricing_plan,
     employmentContractDetails,
