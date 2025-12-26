@@ -81,7 +81,6 @@ export const JSONSchemaFormFields = ({
           return (
             <Fragment key={field.name as string}>
               <Component
-                key={field.name as string}
                 setValue={(value: unknown) => setValue(field.name, value)}
                 {...field}
               />
