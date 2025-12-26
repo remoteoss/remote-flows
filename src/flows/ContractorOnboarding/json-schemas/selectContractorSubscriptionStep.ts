@@ -1,3 +1,8 @@
+import {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
+
 export const selectContractorSubscriptionStepSchema = {
   data: {
     version: 7,
@@ -10,23 +15,7 @@ export const selectContractorSubscriptionStepSchema = {
           type: 'string',
           oneOf: [
             {
-              const: 'urn:remotecom:resource:product:contractor:plus:monthly',
-              title: 'Contractor Management Plus',
-              description: 'Engage and pay contractors with indemnity coverage',
-              'x-jsf-presentation': {
-                meta: {
-                  features: [
-                    'Contract between you and contractor',
-                    'Access to all Contractor Management features',
-                    '$100K indemnity coverage for penalties',
-                    '4X monetary coverage than our competitors  in case of penalties',
-                  ],
-                },
-              },
-            },
-            {
-              const:
-                'urn:remotecom:resource:product:contractor:standard:monthly',
+              const: contractorStandardProductIdentifier,
               title: 'Contractor Management',
               description: 'Engage and pay contractors compliantly',
               'x-jsf-presentation': {
@@ -36,6 +25,21 @@ export const selectContractorSubscriptionStepSchema = {
                     'Contract service agreement template',
                     'Only pay for active contractors',
                     'Work with contractors in 200+ countries and jurisdictions',
+                  ],
+                },
+              },
+            },
+            {
+              const: contractorPlusProductIdentifier,
+              title: 'Contractor Management Plus',
+              description: 'Engage and pay contractors with indemnity coverage',
+              'x-jsf-presentation': {
+                meta: {
+                  features: [
+                    'Contract between you and contractor',
+                    'Access to all Contractor Management features',
+                    '$100K indemnity coverage for penalties',
+                    '4X monetary coverage than our competitors  in case of penalties',
                   ],
                 },
               },

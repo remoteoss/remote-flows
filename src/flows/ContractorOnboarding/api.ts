@@ -271,7 +271,8 @@ export const useContractorSubscriptionSchemaField = (
             price: formattedPrice,
           };
           return { label, value, description, meta };
-        });
+        })
+        .sort((a, b) => a.label.localeCompare(b.label));
       field.options = options;
     }
   }

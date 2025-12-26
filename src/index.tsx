@@ -74,6 +74,11 @@ export type {
   ContractPreviewResponse,
 } from '@/src/flows/ContractorOnboarding';
 
+export {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
+
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useEmploymentQuery, useMagicLink } from '@/src/common/api';
