@@ -258,16 +258,25 @@ export function FieldSetField({
                   Component: React.ComponentType<$TSFixMe>;
                 };
                 return (
-                  <Component
-                    key={field.name}
-                    setValue={(value: unknown) =>
-                      setValue(
-                        isFlatFieldset ? field.name : `${name}.${field.name}`,
-                        value,
-                      )
-                    }
-                    {...field}
-                  />
+                  <Fragment
+                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                  >
+                    <Component
+                      setValue={(value: unknown) =>
+                        setValue(
+                          isFlatFieldset ? field.name : `${name}.${field.name}`,
+                          value,
+                        )
+                      }
+                      {...field}
+                    />
+                    {field.statement ? (
+                      <Statement
+                        {...(field.statement as StatementComponentProps['data'])}
+                      />
+                    ) : null}
+                    {field.extra ? field.extra : null}
+                  </Fragment>
                 );
               }
 
