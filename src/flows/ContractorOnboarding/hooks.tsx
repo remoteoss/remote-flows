@@ -272,6 +272,12 @@ export const useContractorOnboarding = ({
     fieldValues?.service_duration?.provisional_start_date,
   ]);
 
+  // TODO: this is a temporary solution to get the selected pricing plan
+  // TODO: we need to get the selected pricing plan from the backend
+  const selectedPricingPlan = useMemo(() => {
+    return stepState.values?.pricing_plan?.subscription;
+  }, [stepState.values?.pricing_plan?.subscription]);
+
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
@@ -285,6 +291,7 @@ export const useContractorOnboarding = ({
       jsfModify: buildContractDetailsJsfModify(
         options?.jsfModify?.contract_details,
         descriptionProvisionalStartDate,
+        selectedPricingPlan,
       ),
     },
   });

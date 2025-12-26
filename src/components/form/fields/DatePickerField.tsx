@@ -27,7 +27,7 @@ export function DatePickerField({
   let minDateValue: Date;
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
     minDateValue = getMinStartDate(rest.meta.mot);
-  } else if (minDate) {
+  } else if (typeof minDate === 'string') {
     minDateValue = new Date(`${minDate}T00:00:00`);
   }
 

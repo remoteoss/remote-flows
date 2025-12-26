@@ -14,6 +14,7 @@ import {
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
   FieldComponentProps,
+  contractorStandardProductIdentifier,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -361,8 +362,7 @@ export const ContractorOnboardingWithProps = ({
               externalId={externalId}
               initialValues={{
                 pricing_plan: {
-                  subscription:
-                    'urn:remotecom:resource:product:contractor:standard:monthly',
+                  subscription: contractorStandardProductIdentifier,
                 },
               }}
               options={{

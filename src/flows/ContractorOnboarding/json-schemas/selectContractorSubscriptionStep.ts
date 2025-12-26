@@ -1,3 +1,8 @@
+import {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
+
 export const selectContractorSubscriptionStepSchema = {
   data: {
     version: 7,
@@ -10,7 +15,7 @@ export const selectContractorSubscriptionStepSchema = {
           type: 'string',
           oneOf: [
             {
-              const: 'urn:remotecom:resource:product:contractor:plus:monthly',
+              const: contractorPlusProductIdentifier,
               title: 'Contractor Management Plus',
               description: 'Engage and pay contractors with indemnity coverage',
               'x-jsf-presentation': {
@@ -25,8 +30,7 @@ export const selectContractorSubscriptionStepSchema = {
               },
             },
             {
-              const:
-                'urn:remotecom:resource:product:contractor:standard:monthly',
+              const: contractorStandardProductIdentifier,
               title: 'Contractor Management',
               description: 'Engage and pay contractors compliantly',
               'x-jsf-presentation': {

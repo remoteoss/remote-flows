@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { JSFModify } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
 
@@ -51,6 +53,10 @@ export const calculateProvisionalStartDateDescription = (
   return undefined;
 };
 
+const isStandardPricingPlan = (pricingPlan: string | undefined) => {
+  return pricingPlan === contractorStandardProductIdentifier;
+};
+
 /**
  * Merges internal jsfModify modifications with user-provided options for contract_details step
  * This abstracts the logic of applying internal field modifications (like dynamic descriptions)
@@ -59,18 +65,24 @@ export const calculateProvisionalStartDateDescription = (
 export const buildContractDetailsJsfModify = (
   userJsfModify: JSFModify | undefined,
   provisionalStartDateDescription: string | undefined,
+  selectedPricingPlan: string | undefined,
 ): JSFModify => {
+  const isStandardPricingPlanSelected =
+    isStandardPricingPlan(selectedPricingPlan);
   return {
     ...userJsfModify,
     fields: {
       ...userJsfModify?.fields,
-      ...(provisionalStartDateDescription
-        ? {
-            'service_duration.provisional_start_date': {
-              description: provisionalStartDateDescription,
-            },
-          }
-        : {}),
+      ...{
+        'service_duration.provisional_start_date': {
+          description: provisionalStartDateDescription,
+          'x-jsf-presentation': {
+            minDate: !isStandardPricingPlanSelected
+              ? format(new Date(), 'yyyy-MM-dd')
+              : undefined,
+          },
+        },
+      },
     },
   };
 };
