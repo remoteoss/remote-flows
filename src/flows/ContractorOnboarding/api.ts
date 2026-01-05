@@ -22,7 +22,7 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
-import { JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 
 /**
  * Get the contract document signature schema
@@ -262,17 +262,20 @@ export const useContractorSubscriptionSchemaField = (
             (option: { value: string }) =>
               option.value === opts.product.identifier,
           );
-          const title = foundOption?.label ?? '';
+          const product: $TSFixMe = opts.product; // TODO: fix types later
+          const title = product.name ?? '';
           const label = title;
-          const value = opts.product.identifier ?? '';
-          const description = foundOption?.description ?? '';
+          const value = product.identifier ?? '';
+          const description = product.description ?? '';
+          const features = product.features ?? [];
           const meta = {
             ...foundOption?.meta,
+            features,
             price: formattedPrice,
           };
           return { label, value, description, meta };
         });
-      field.options = options;
+      field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
 

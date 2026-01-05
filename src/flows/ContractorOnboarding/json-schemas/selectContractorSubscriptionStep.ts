@@ -12,8 +12,9 @@ export const selectContractorSubscriptionStepSchema = {
             {
               const: 'urn:remotecom:resource:product:contractor:plus:monthly',
               title: 'Contractor Management Plus',
-              description: 'Engage and pay contractors with indemnity coverage',
+              description: 'Engage and pay contractors with indemnity coverage', // TODO delete later when endpoint is deployed
               'x-jsf-presentation': {
+                // TODO delete later when endpoint is deployed
                 meta: {
                   features: [
                     'Contract between you and contractor',
@@ -28,8 +29,9 @@ export const selectContractorSubscriptionStepSchema = {
               const:
                 'urn:remotecom:resource:product:contractor:standard:monthly',
               title: 'Contractor Management',
-              description: 'Engage and pay contractors compliantly',
+              description: 'Engage and pay contractors compliantly', // TODO delete later when endpoint is deployed
               'x-jsf-presentation': {
+                // TODO delete later when endpoint is deployed
                 meta: {
                   features: [
                     'Contract between you and contractor',
