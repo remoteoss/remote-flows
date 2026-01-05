@@ -225,6 +225,14 @@ export const useContractorOnboardingDetailsSchema = ({
   });
 };
 
+// TODO: remove later when endpoint is deployed
+const CONTRACT_PRODUCT_TITLES = {
+  ['urn:remotecom:resource:product:contractor:plus:monthly']:
+    'Contractor Management Plus',
+  ['urn:remotecom:resource:product:contractor:standard:monthly']:
+    'Contractor Management',
+};
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
@@ -263,10 +271,16 @@ export const useContractorSubscriptionSchemaField = (
               option.value === opts.product.identifier,
           );
           const product: $TSFixMe = opts.product; // TODO: fix types later
-          const title = product.name ?? '';
-          const label = title;
+          const title =
+            CONTRACT_PRODUCT_TITLES[
+              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+            ] ??
+            foundOption?.label ??
+            ''; // TODO: remove later foundOption?.title;
+          const label = title; // TODO: remove later foundOption?.label;
           const value = product.identifier ?? '';
-          const description = product.description ?? '';
+          const description =
+            product.description ?? foundOption?.description ?? ''; // TODO: remove later foundOption?.description
           const features =
             product.features ?? foundOption?.meta?.features ?? []; // TODO: remove later foundOption?.meta?.features
           const meta = {
