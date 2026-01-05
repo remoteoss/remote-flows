@@ -267,7 +267,8 @@ export const useContractorSubscriptionSchemaField = (
           const label = title;
           const value = product.identifier ?? '';
           const description = product.description ?? '';
-          const features = product.features ?? [];
+          const features =
+            product.features ?? foundOption?.meta?.features ?? []; // TODO: remove later foundOption?.meta?.features
           const meta = {
             ...foundOption?.meta,
             features,

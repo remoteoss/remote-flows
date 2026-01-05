@@ -31,7 +31,7 @@ export const selectContractorSubscriptionStepSchema = {
               title: 'Contractor Management',
               description: 'Engage and pay contractors compliantly', // TODO delete later when endpoint is deployed
               'x-jsf-presentation': {
-                // TODO delete later when endpoint is deployed
+                // TODO delete later when endpoint is deployed``
                 meta: {
                   features: [
                     'Contract between you and contractor',
