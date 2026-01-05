@@ -1,5 +1,18 @@
 # @remoteoss/remote-flows
 
+## 1.5.0
+
+### Minor Changes
+
+- add automated coverage tracking with badge reporting (#618) [#618](https://github.com/remoteoss/remote-flows/pull/618)
+- add hotfix release workflow with npm tag management (#676) [#676](https://github.com/remoteoss/remote-flows/pull/676)
+- use secrets for gist configuration (#686) [#686](https://github.com/remoteoss/remote-flows/pull/686)
+- lazy load form components with suspense boundaries (#661) [#661](https://github.com/remoteoss/remote-flows/pull/661)
+- skip telemetry when enviroment is not local and in localhost (#688) [#688](https://github.com/remoteoss/remote-flows/pull/688)
+- render statement and extra fields in JSON schema form (#692) [#692](https://github.com/remoteoss/remote-flows/pull/692)
+- add content property to the helpCenter types (#690) [#690](https://github.com/remoteoss/remote-flows/pull/690)
+- increase request size limit and add explicit button type (#689) [#689](https://github.com/remoteoss/remote-flows/pull/689)
+
 ## 1.4.3
 
 ### Patch Changes
