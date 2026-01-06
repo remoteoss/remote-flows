@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.5.1
+
+### Patch Changes
+
+- replace 'we' pronouns with 'Remote' for clarity (#694) [#694](https://github.com/remoteoss/remote-flows/pull/694)
+
 ## 1.5.0
 
 ### Minor Changes
