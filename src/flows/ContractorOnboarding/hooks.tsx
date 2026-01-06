@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -46,6 +46,8 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
+import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
+import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -289,14 +291,46 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const signatureJsfModify = {
+    fields: {
+      contract_preview_header: {
+        'x-jsf-presentation': {
+          Component: (props: JSFCustomComponentProps) => {
+            return <ContractPreviewHeader {...props} />;
+          },
+        },
+      },
+      contract_preview_statement: {
+        'x-jsf-presentation': {
+          Component: (props: JSFCustomComponentProps) => {
+            return <ContractPreviewStatement {...props} />;
+          },
+        },
+      },
+      signature: {
+        'x-jsf-presentation': {
+          calculateDynamicProperties: (
+            fieldValues: Record<string, unknown>,
+          ) => {
+            console.log('fieldValues', fieldValues);
+            return {
+              isVisible: Boolean(fieldValues.review_completed),
+            };
+          },
+        },
+      },
+    },
+  };
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
+      jsfModify: signatureJsfModify,
     },
   });
+
   const { data: documentPreviewPdf, isLoading: isLoadingDocumentPreviewForm } =
     useGetShowContractDocument({
       employmentId: internalEmploymentId as string,
