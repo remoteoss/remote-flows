@@ -310,11 +310,13 @@ export const useContractorOnboarding = ({
       signature: {
         'x-jsf-presentation': {
           calculateDynamicProperties: (
-            fieldValues: Record<string, unknown>,
+            fieldValuesDynamicProperties: Record<string, unknown>,
           ) => {
-            console.log('fieldValues', fieldValues);
             return {
-              isVisible: Boolean(fieldValues.review_completed),
+              // For some reason the review_completed gets wiped out when writing the signature
+              isVisible:
+                fieldValuesDynamicProperties.signature ||
+                Boolean(fieldValuesDynamicProperties.review_completed),
             };
           },
         },

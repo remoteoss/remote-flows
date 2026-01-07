@@ -194,11 +194,12 @@ const MultiStepForm = ({
               Back
             </BackButton>
             <ContractReviewButton
+              render={({ reviewCompleted }) =>
+                reviewCompleted ? 'Continue' : 'Review'
+              }
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-            >
-              Review
-            </ContractReviewButton>
+            />
           </div>
         </>
       );

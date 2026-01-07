@@ -1,15 +1,18 @@
-import { ButtonHTMLAttributes, PropsWithChildren, useState } from 'react';
+import { ButtonHTMLAttributes, useState } from 'react';
 import { LazyPdfPreview } from '@/src/components/shared/pdf-preview/LazyLoadPdfPreview';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { useFormFields } from '@/src/context';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+
+type ContractReviewButtonProps = {
+  render: (props: { reviewCompleted: boolean }) => React.ReactNode;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function ContractReviewButton({
-  children,
+  render,
   onClick,
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
+}: ContractReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
   const { components } = useFormFields();
@@ -19,10 +22,9 @@ export function ContractReviewButton({
     throw new Error(`Button component not found`);
   }
 
-  const reviewCompleted = Boolean(
-    contractorOnboardingBag.fieldValues?.review_completed,
-  );
-  console.log('reviewCompleted', reviewCompleted);
+  const reviewCompleted =
+    Boolean(contractorOnboardingBag.fieldValues?.review_completed) ||
+    Boolean(contractorOnboardingBag.fieldValues?.signature);
   const pdfContent = contractorOnboardingBag.documentPreviewPdf
     ?.contract_document.content as unknown as string;
 
@@ -67,8 +69,13 @@ export function ContractReviewButton({
       direction={'bottom'}
       title='Contract Document'
       trigger={
-        <CustomButton form={formId} onClick={handleOpen} {...props}>
-          {children}
+        <CustomButton
+          type={reviewCompleted ? 'submit' : 'button'}
+          form={formId}
+          onClick={handleOpen}
+          {...props}
+        >
+          {render({ reviewCompleted })}
         </CustomButton>
       }
     >
