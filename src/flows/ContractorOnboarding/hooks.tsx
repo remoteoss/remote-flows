@@ -313,10 +313,7 @@ export const useContractorOnboarding = ({
             fieldValuesDynamicProperties: Record<string, unknown>,
           ) => {
             return {
-              // For some reason the review_completed gets wiped out when writing the signature
-              isVisible:
-                fieldValuesDynamicProperties.signature ||
-                Boolean(fieldValuesDynamicProperties.review_completed),
+              isVisible: Boolean(fieldValuesDynamicProperties.review_completed),
             };
           },
         },
@@ -429,15 +426,10 @@ export const useContractorOnboarding = ({
     // TODO: TBD not sure if contract preview needs to be populated with anything
     const initialValues = {
       ...onboardingInitialValues,
-      ...employmentContractDetails,
     };
 
     return getInitialValues(stepFields.contract_preview, initialValues);
-  }, [
-    stepFields.contract_preview,
-    employmentContractDetails,
-    onboardingInitialValues,
-  ]);
+  }, [stepFields.contract_preview, onboardingInitialValues]);
 
   const pricingPlanInitialValues = useMemo(() => {
     const initialValues = {
@@ -710,7 +702,17 @@ export const useContractorOnboarding = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: (values: FieldValues) => {
+      setFieldValues((prevFieldValues) => {
+        const cleanedValues = Object.fromEntries(
+          Object.entries(values).filter(([, v]) => v !== undefined),
+        );
+        return {
+          ...prevFieldValues,
+          ...cleanedValues,
+        };
+      });
+    },
 
     /**
      * Function to handle going back to the previous step
@@ -801,7 +803,7 @@ export const useContractorOnboarding = ({
         const parsedValues = await parseJSFToValidate(
           values,
           signatureSchemaForm?.fields,
-          { isPartialValidation: false },
+          { isPartialValidation: true },
         );
         return signatureSchemaForm?.handleValidation(parsedValues);
       }

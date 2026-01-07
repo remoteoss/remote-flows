@@ -39,27 +39,9 @@ export function ContractReviewButton({
   const handleClose = () => {
     setIsOpen(false);
 
-    const currentValues = {
-      ...contractorOnboardingBag.fieldValues,
+    contractorOnboardingBag.checkFieldUpdates({
       review_completed: true,
-    };
-
-    contractorOnboardingBag.checkFieldUpdates(currentValues);
-
-    if (formId) {
-      const formElement = document.getElementById(formId) as HTMLFormElement;
-      if (formElement) {
-        // Create or update hidden input for review_completed
-        const hiddenInput = formElement.querySelector(
-          'input[name="review_completed"]',
-        ) as HTMLInputElement;
-
-        hiddenInput.value = 'true';
-
-        // Trigger change event so React Hook Form picks it up
-        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }
+    });
   };
 
   return (
