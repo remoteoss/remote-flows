@@ -66,8 +66,8 @@ export function ContractReviewButton({
     <Drawer
       open={isOpen}
       onOpenChange={handleClose}
-      direction={'bottom'}
       title='Contract Document'
+      className='max-h-[90vh] flex flex-col w-full'
       trigger={
         <CustomButton
           type={reviewCompleted ? 'submit' : 'button'}
