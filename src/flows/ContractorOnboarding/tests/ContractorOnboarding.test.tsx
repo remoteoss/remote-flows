@@ -53,6 +53,7 @@ describe('ContractorOnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
       SelectCountryStep,
+      ContractReviewButton,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -106,7 +107,11 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
+            <ContractReviewButton
+              render={({ reviewCompleted }: { reviewCompleted: boolean }) =>
+                reviewCompleted ? 'Continue' : 'Review'
+              }
+            />
           </>
         );
       case 'pricing_plan':
@@ -149,6 +154,7 @@ describe('ContractorOnboardingFlow', () => {
       SubmitButton,
       BackButton,
       OnboardingInvite,
+      ContractReviewButton,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -188,7 +194,11 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
+            <ContractReviewButton
+              render={({ reviewCompleted }: { reviewCompleted: boolean }) =>
+                reviewCompleted ? 'Continue' : 'Review'
+              }
+            />
           </>
         );
       case 'pricing_plan':
@@ -749,7 +759,7 @@ describe('ContractorOnboardingFlow', () => {
     await fillSignature();
 
     // Mock signature field would be here in real scenario
-    nextButton = screen.getByText(/Next Step/i);
+    nextButton = screen.getByText(/Continue/i);
     nextButton.click();
 
     // Verify contract was signed
@@ -1025,7 +1035,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await fillSignature();
 
-    nextButton = screen.getByText(/Next Step/i);
+    nextButton = screen.getByText(/Continue/i);
     nextButton.click();
 
     await screen.findByText(/Step: Review/i);
