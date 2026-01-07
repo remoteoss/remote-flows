@@ -74,6 +74,8 @@ export type {
   ContractPreviewResponse,
 } from '@/src/flows/ContractorOnboarding';
 
+export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useEmploymentQuery, useMagicLink } from '@/src/common/api';

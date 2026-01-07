@@ -291,21 +291,30 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const signatureJsfModify = useMemo(() => {
+  const mergedContractPreviewJsfModify = useMemo(() => {
+    const userFields = options?.jsfModify?.contract_preview?.fields;
+
     return {
       fields: {
         contract_preview_header: {
           'x-jsf-presentation': {
             Component: (props: JSFCustomComponentProps) => {
-              return <ContractPreviewHeader {...props} />;
+              const CustomComponent =
+                userFields?.contract_preview_header?.['x-jsf-presentation']
+                  ?.Component || ContractPreviewHeader;
+              return <CustomComponent {...props} />;
             },
           },
         },
         contract_preview_statement: {
           'x-jsf-presentation': {
             Component: (props: JSFCustomComponentProps) => {
+              const CustomComponent =
+                userFields?.contract_preview_statement?.['x-jsf-presentation']
+                  ?.Component || ContractPreviewStatement;
+
               return (
-                <ContractPreviewStatement
+                <CustomComponent
                   reviewCompleted={Boolean(fieldValues?.review_completed)}
                   {...props}
                 />
@@ -324,29 +333,13 @@ export const useContractorOnboarding = ({
                 ),
               };
             },
+            // Merge any user-provided signature customizations
+            ...userFields?.signature?.['x-jsf-presentation'],
           },
         },
       },
     };
-  }, [fieldValues?.review_completed]);
-
-  const mergedContractPreviewJsfModify = {
-    fields: {
-      ...signatureJsfModify.fields,
-      ...options?.jsfModify?.contract_preview?.fields,
-      // Deep merge signature field to preserve internal calculateDynamicProperties
-      ...(options?.jsfModify?.contract_preview?.fields?.signature && {
-        signature: {
-          'x-jsf-presentation': {
-            ...signatureJsfModify.fields.signature['x-jsf-presentation'],
-            ...options?.jsfModify?.contract_preview?.fields?.signature?.[
-              'x-jsf-presentation'
-            ],
-          },
-        },
-      }),
-    },
-  };
+  }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
 
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
@@ -734,9 +727,7 @@ export const useContractorOnboarding = ({
       const cleanedValues = Object.fromEntries(
         Object.entries(values).filter(([, v]) => v !== undefined),
       );
-      console.log('cleanedValues', cleanedValues);
       setFieldValues((prevFieldValues) => {
-        console.log('prevFieldValues', prevFieldValues);
         return {
           ...prevFieldValues,
           ...cleanedValues,

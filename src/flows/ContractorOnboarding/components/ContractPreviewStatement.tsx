@@ -2,7 +2,7 @@ import { CheckIcon, FileText } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
-type ContractPreviewStatementProps = JSFCustomComponentProps & {
+export type ContractPreviewStatementProps = JSFCustomComponentProps & {
   reviewCompleted: boolean;
 };
 
