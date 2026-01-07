@@ -10,6 +10,7 @@ import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/Pri
 import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 import { OnboardingInvite } from '@/src/flows/ContractorOnboarding/components/OnboardingInvite';
+import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 
 export const ContractorOnboardingFlow = ({
   render,
@@ -44,6 +45,7 @@ export const ContractorOnboardingFlow = ({
           ContractDetailsStep: ContractDetailsStep,
           ContractPreviewStep: ContractPreviewStep,
           OnboardingInvite: OnboardingInvite,
+          ContractReviewButton: ContractReviewButton,
         },
       })}
     </ContractorOnboardingContext.Provider>

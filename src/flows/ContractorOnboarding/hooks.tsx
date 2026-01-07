@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -46,6 +46,8 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
+import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
+import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -289,14 +291,66 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const mergedContractPreviewJsfModify = useMemo(() => {
+    const userFields = options?.jsfModify?.contract_preview?.fields;
+
+    return {
+      fields: {
+        contract_preview_header: {
+          'x-jsf-presentation': {
+            Component: (props: JSFCustomComponentProps) => {
+              const CustomComponent =
+                userFields?.contract_preview_header?.['x-jsf-presentation']
+                  ?.Component || ContractPreviewHeader;
+              return <CustomComponent {...props} />;
+            },
+          },
+        },
+        contract_preview_statement: {
+          'x-jsf-presentation': {
+            Component: (props: JSFCustomComponentProps) => {
+              const CustomComponent =
+                userFields?.contract_preview_statement?.['x-jsf-presentation']
+                  ?.Component || ContractPreviewStatement;
+
+              return (
+                <CustomComponent
+                  reviewCompleted={Boolean(fieldValues?.review_completed)}
+                  {...props}
+                />
+              );
+            },
+          },
+        },
+        signature: {
+          'x-jsf-presentation': {
+            calculateDynamicProperties: (
+              fieldValuesDynamicProperties: Record<string, unknown>,
+            ) => {
+              return {
+                isVisible: Boolean(
+                  fieldValuesDynamicProperties.review_completed,
+                ),
+              };
+            },
+            // Merge any user-provided signature customizations
+            ...userFields?.signature?.['x-jsf-presentation'],
+          },
+        },
+      },
+    };
+  }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
+
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
+      jsfModify: mergedContractPreviewJsfModify,
     },
   });
+
   const { data: documentPreviewPdf, isLoading: isLoadingDocumentPreviewForm } =
     useGetShowContractDocument({
       employmentId: internalEmploymentId as string,
@@ -393,15 +447,10 @@ export const useContractorOnboarding = ({
     // TODO: TBD not sure if contract preview needs to be populated with anything
     const initialValues = {
       ...onboardingInitialValues,
-      ...employmentContractDetails,
     };
 
     return getInitialValues(stepFields.contract_preview, initialValues);
-  }, [
-    stepFields.contract_preview,
-    employmentContractDetails,
-    onboardingInitialValues,
-  ]);
+  }, [stepFields.contract_preview, onboardingInitialValues]);
 
   const pricingPlanInitialValues = useMemo(() => {
     const initialValues = {
@@ -674,7 +723,17 @@ export const useContractorOnboarding = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: (values: FieldValues) => {
+      const cleanedValues = Object.fromEntries(
+        Object.entries(values).filter(([, v]) => v !== undefined),
+      );
+      setFieldValues((prevFieldValues) => {
+        return {
+          ...prevFieldValues,
+          ...cleanedValues,
+        };
+      });
+    },
 
     /**
      * Function to handle going back to the previous step
@@ -765,7 +824,7 @@ export const useContractorOnboarding = ({
         const parsedValues = await parseJSFToValidate(
           values,
           signatureSchemaForm?.fields,
-          { isPartialValidation: false },
+          { isPartialValidation: true },
         );
         return signatureSchemaForm?.handleValidation(parsedValues);
       }

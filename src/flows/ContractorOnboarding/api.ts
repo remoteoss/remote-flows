@@ -15,6 +15,7 @@ import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOn
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
+  JSFModify,
 } from '@/src/flows/types';
 import { formatCurrency } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
@@ -34,12 +35,18 @@ export const useGetContractDocumentSignatureSchema = ({
   options,
 }: {
   fieldValues: FieldValues;
-  options?: { queryOptions?: { enabled?: boolean } };
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
   return useQuery({
-    queryKey: ['contract-document-signature'],
+    queryKey: [
+      'contract-document-signature',
+      fieldValues.review_completed,
+      options?.jsfModify,
+    ],
     queryFn: async () => {
-      return createHeadlessForm(signatureSchema, fieldValues);
+      return createHeadlessForm(signatureSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
     },
     enabled: options?.queryOptions?.enabled,
   });
@@ -89,7 +96,7 @@ export const useGetShowContractDocument = ({
 }: {
   employmentId: string;
   contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
   const { client } = useClient();
   return useQuery({

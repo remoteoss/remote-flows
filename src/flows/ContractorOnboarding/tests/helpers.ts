@@ -1,4 +1,5 @@
 import { fireEvent, waitFor, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
   fillRadio,
   fillSelect,
@@ -192,12 +193,24 @@ export async function fillSignature(
     ...values,
   };
 
+  const reviewButton = screen.getByRole('button', { name: /Review/i });
+
+  reviewButton.click();
+
   await waitFor(() => {
-    expect(screen.getByLabelText(/Full Legal Name/i)).toBeInTheDocument();
+    expect(screen.getByText(/Contract Document/i)).toBeInTheDocument();
+  });
+
+  // Press Escape to close the drawer
+  const user = userEvent.setup();
+  await user.keyboard('{Escape}');
+
+  await waitFor(() => {
+    expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
   });
 
   if (newValues?.signature) {
-    fireEvent.change(screen.getByLabelText(/Full Legal Name/i), {
+    fireEvent.change(screen.getByLabelText(/Enter full name/i), {
       target: { value: newValues?.signature },
     });
   }
