@@ -29,7 +29,6 @@ export const signatureSchema = {
       type: 'boolean',
       'x-jsf-presentation': {
         inputType: 'hidden',
-        hidden: true,
       },
       default: false,
     },
@@ -38,8 +37,9 @@ export const signatureSchema = {
       'x-jsf-presentation': {
         inputType: 'text',
       },
-      title: 'Full Legal Name',
-      description: 'Please type your full legal name to sign this contract',
+      title: 'Enter full name',
+      description:
+        'By signing, you agree to this legally binding document and acknowledge the information within is accurate to the best of your knowledge. After you sign, this document will be sent to the recipient to collect their signature.',
     },
   },
   required: ['signature'],

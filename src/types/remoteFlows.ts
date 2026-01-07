@@ -104,7 +104,7 @@ export type DrawerComponentProps = {
   title: React.ReactNode;
   trigger: React.ReactElement;
   children?: React.ReactNode;
-  direction?: 'left' | 'right';
+  direction?: 'left' | 'right' | 'bottom' | 'top';
   className?: string;
 };
 

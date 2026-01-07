@@ -14,6 +14,7 @@ import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
+import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -43,6 +44,7 @@ export type ContractorOnboardingRenderProps = {
     ContractDetailsStep: typeof ContractDetailsStep;
     ContractPreviewStep: typeof ContractPreviewStep;
     OnboardingInvite: typeof OnboardingInvite;
+    ContractReviewButton: typeof ContractReviewButton;
   };
 };
 

@@ -71,6 +71,7 @@ const MultiStepForm = ({
     PricingPlanStep,
     ContractDetailsStep,
     ContractPreviewStep,
+    ContractReviewButton,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -192,12 +193,12 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
-            <SubmitButton
+            <ContractReviewButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Continue
-            </SubmitButton>
+              Review
+            </ContractReviewButton>
           </div>
         </>
       );
