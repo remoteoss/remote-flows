@@ -26,6 +26,7 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+import { components } from './Components';
 
 const Switcher = (props: JSFCustomComponentProps) => {
   return (
@@ -309,6 +310,7 @@ export const ContractorOnboardingWithProps = ({
       <RemoteFlows
         authType='company-manager'
         proxy={{ url: window.location.origin }}
+        components={components}
       >
         <div className='contractor-onboarding-content'>
           <Header />

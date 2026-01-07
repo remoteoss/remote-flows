@@ -1,5 +1,4 @@
 import { ButtonHTMLAttributes, useState } from 'react';
-import { LazyPdfPreview } from '@/src/components/shared/pdf-preview/LazyLoadPdfPreview';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { useFormFields } from '@/src/context';
@@ -20,6 +19,11 @@ export function ContractReviewButton({
   const CustomButton = components?.button;
   if (!CustomButton) {
     throw new Error(`Button component not found`);
+  }
+
+  const CustomPdfViewer = components?.pdfViewer;
+  if (!CustomPdfViewer) {
+    throw new Error(`PDFViewer component not found`);
   }
 
   const reviewCompleted = Boolean(
@@ -61,7 +65,7 @@ export function ContractReviewButton({
         </CustomButton>
       }
     >
-      {pdfContent && <LazyPdfPreview base64Data={pdfContent} />}
+      {pdfContent && <CustomPdfViewer base64Data={pdfContent} />}
     </Drawer>
   );
 }

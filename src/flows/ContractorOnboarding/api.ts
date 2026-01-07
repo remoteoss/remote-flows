@@ -17,12 +17,13 @@ import {
   FlowOptions,
   JSFModify,
 } from '@/src/flows/types';
-import { formatCurrency } from '@/src/lib/utils';
+import { clearBase64Data, formatCurrency } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 /**
  * Get the contract document signature schema
@@ -109,7 +110,15 @@ export const useGetShowContractDocument = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      return data?.data;
+      return {
+        ...data?.data,
+        contract_document: {
+          ...data?.data?.contract_document,
+          content: clearBase64Data(
+            data?.data?.contract_document?.content as $TSFixMe,
+          ),
+        },
+      };
     },
   });
 };

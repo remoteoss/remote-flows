@@ -120,4 +120,9 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
+  pdfViewer: lazy(() =>
+    import('./components/shared/pdf-preview/PDFPreviewDefault').then((m) => ({
+      default: m.PDFPreviewDefault,
+    })),
+  ),
 };

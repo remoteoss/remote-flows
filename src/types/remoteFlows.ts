@@ -118,6 +118,11 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
+export type PDFPreviewComponentProps = {
+  base64Data: string;
+  fileName?: string;
+};
+
 // We exclude some of the types that we are overriding
 type FieldComponentTypes = Exclude<
   BaseTypes,
@@ -138,6 +143,7 @@ export type Components = {
   drawer?: React.ComponentType<DrawerComponentProps>;
   table?: React.ComponentType<TableComponentProps>;
   'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
+  pdfViewer?: React.ComponentType<PDFPreviewComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
