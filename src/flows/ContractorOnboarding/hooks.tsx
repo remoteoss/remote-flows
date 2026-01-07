@@ -291,35 +291,44 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const signatureJsfModify = {
-    fields: {
-      contract_preview_header: {
-        'x-jsf-presentation': {
-          Component: (props: JSFCustomComponentProps) => {
-            return <ContractPreviewHeader {...props} />;
+  const signatureJsfModify = useMemo(() => {
+    return {
+      fields: {
+        contract_preview_header: {
+          'x-jsf-presentation': {
+            Component: (props: JSFCustomComponentProps) => {
+              return <ContractPreviewHeader {...props} />;
+            },
+          },
+        },
+        contract_preview_statement: {
+          'x-jsf-presentation': {
+            Component: (props: JSFCustomComponentProps) => {
+              return (
+                <ContractPreviewStatement
+                  reviewCompleted={Boolean(fieldValues?.review_completed)}
+                  {...props}
+                />
+              );
+            },
+          },
+        },
+        signature: {
+          'x-jsf-presentation': {
+            calculateDynamicProperties: (
+              fieldValuesDynamicProperties: Record<string, unknown>,
+            ) => {
+              return {
+                isVisible: Boolean(
+                  fieldValuesDynamicProperties.review_completed,
+                ),
+              };
+            },
           },
         },
       },
-      contract_preview_statement: {
-        'x-jsf-presentation': {
-          Component: (props: JSFCustomComponentProps) => {
-            return <ContractPreviewStatement {...props} />;
-          },
-        },
-      },
-      signature: {
-        'x-jsf-presentation': {
-          calculateDynamicProperties: (
-            fieldValuesDynamicProperties: Record<string, unknown>,
-          ) => {
-            return {
-              isVisible: Boolean(fieldValuesDynamicProperties.review_completed),
-            };
-          },
-        },
-      },
-    },
-  };
+    };
+  }, [fieldValues?.review_completed]);
 
   const mergedContractPreviewJsfModify = {
     fields: {
@@ -722,10 +731,12 @@ export const useContractorOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates: (values: FieldValues) => {
+      const cleanedValues = Object.fromEntries(
+        Object.entries(values).filter(([, v]) => v !== undefined),
+      );
+      console.log('cleanedValues', cleanedValues);
       setFieldValues((prevFieldValues) => {
-        const cleanedValues = Object.fromEntries(
-          Object.entries(values).filter(([, v]) => v !== undefined),
-        );
+        console.log('prevFieldValues', prevFieldValues);
         return {
           ...prevFieldValues,
           ...cleanedValues,

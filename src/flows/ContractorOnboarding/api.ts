@@ -38,7 +38,11 @@ export const useGetContractDocumentSignatureSchema = ({
   options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
   return useQuery({
-    queryKey: ['contract-document-signature'],
+    queryKey: [
+      'contract-document-signature',
+      fieldValues.review_completed,
+      options?.jsfModify,
+    ],
     queryFn: async () => {
       return createHeadlessForm(signatureSchema, fieldValues, {
         jsfModify: options?.jsfModify,
