@@ -85,6 +85,7 @@ export type ContractorOnboardingFlowProps = {
       select_country?: JSFModify;
       basic_information?: JSFModify;
       contract_details?: JSFModify;
+      contract_preview?: JSFModify;
     };
   };
 

@@ -320,13 +320,32 @@ export const useContractorOnboarding = ({
       },
     },
   };
+
+  const mergedContractPreviewJsfModify = {
+    fields: {
+      ...signatureJsfModify.fields,
+      ...options?.jsfModify?.contract_preview?.fields,
+      // Deep merge signature field to preserve internal calculateDynamicProperties
+      ...(options?.jsfModify?.contract_preview?.fields?.signature && {
+        signature: {
+          'x-jsf-presentation': {
+            ...signatureJsfModify.fields.signature['x-jsf-presentation'],
+            ...options?.jsfModify?.contract_preview?.fields?.signature?.[
+              'x-jsf-presentation'
+            ],
+          },
+        },
+      }),
+    },
+  };
+
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
-      jsfModify: signatureJsfModify,
+      jsfModify: mergedContractPreviewJsfModify,
     },
   });
 
