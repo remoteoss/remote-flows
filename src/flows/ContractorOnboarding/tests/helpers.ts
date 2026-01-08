@@ -183,7 +183,9 @@ export async function fillSignature(
   values?: Partial<{
     signature: string;
   }>,
+  signatureFieldLabel?: string,
 ) {
+  const signatureFieldLabelText = signatureFieldLabel || 'Enter full name';
   const defaultValues = {
     signature: 'John Doe',
   };
@@ -206,12 +208,17 @@ export async function fillSignature(
   await user.keyboard('{Escape}');
 
   await waitFor(() => {
-    expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(new RegExp(signatureFieldLabelText, 'i')),
+    ).toBeInTheDocument();
   });
 
   if (newValues?.signature) {
-    fireEvent.change(screen.getByLabelText(/Enter full name/i), {
-      target: { value: newValues?.signature },
-    });
+    fireEvent.change(
+      screen.getByLabelText(new RegExp(signatureFieldLabelText, 'i')),
+      {
+        target: { value: newValues?.signature },
+      },
+    );
   }
 }

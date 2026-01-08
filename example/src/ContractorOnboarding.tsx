@@ -52,6 +52,7 @@ const STEPS = [
   'Statement of Work',
   'Pricing Plan',
   'Contract Preview',
+  'Review',
 ];
 
 type MultiStepFormProps = {
@@ -333,6 +334,20 @@ export const ContractorOnboardingWithProps = ({
                             <Switcher {...props} />
                           ),
                         },
+                      },
+                    },
+                  },
+                  contract_preview: {
+                    fields: {
+                      contract_preview_header: {
+                        title: 'Sign contractor services agreement...',
+                      },
+                      contract_preview_statement: {
+                        title: 'Review document here...',
+                      },
+                      signature: {
+                        title: 'Full name',
+                        description: 'Enter your full name',
                       },
                     },
                   },
