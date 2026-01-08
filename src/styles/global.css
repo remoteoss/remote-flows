@@ -1,6 +1,6 @@
-@layer theme, base, components, utilities;
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
+@import 'tailwindcss';
+
+@source '../**/*.{tsx,ts,jsx,js}';
 
 :root {
   --background: oklch(1 0 0);

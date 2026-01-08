@@ -1,9 +1,52 @@
 import {
   ContractorOnboardingRenderProps,
   NormalizedFieldError,
+  useMagicLink,
 } from '@remoteoss/remote-flows';
+import { Button } from '@remoteoss/remote-flows/internals';
+import { CheckIcon } from 'lucide-react';
 import { InviteSection, ReviewMeta } from './ReviewOnboardingStep';
 import { AlertError } from './AlertError';
+
+const RemotePaymentServicesSetUp = () => {
+  const magicLink = useMagicLink();
+
+  const generateMagicLinkToPayments = async () => {
+    const response = await magicLink.mutateAsync({
+      path: `/dashboard/company-settings/payments`,
+      user_id: import.meta.env.VITE_USER_ID,
+    });
+
+    if (response.data) {
+      window.open(response.data.data.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  return (
+    <div className='flex items-center gap-4 rounded-lg border bg-card px-4 py-3'>
+      <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded bg-purple-100'>
+        <div className=''>
+          <CheckIcon className='h-4 w-4' />
+        </div>
+      </div>
+      <div className='flex-1'>
+        <h3 className='font-medium text-card-foreground'>
+          Set up Remote Payments
+        </h3>
+        <p className='text-sm text-muted-foreground'>
+          Gain access to more payment methods and more efficient payment
+          management.
+        </p>
+      </div>
+      <Button
+        className='bg-[#000000] text-white hover:bg-[#000000]/80'
+        onClick={generateMagicLinkToPayments}
+      >
+        Set up now
+      </Button>
+    </div>
+  );
+};
 
 export const ReviewContractorOnboardingStep = ({
   onboardingBag,
@@ -28,6 +71,7 @@ export const ReviewContractorOnboardingStep = ({
 
   return (
     <div className='onboarding-review'>
+      <RemotePaymentServicesSetUp />
       <h2 className='title'>Basic Information</h2>
       <ReviewMeta meta={onboardingBag.meta.fields.basic_information} />
       <button
