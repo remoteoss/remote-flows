@@ -17,6 +17,7 @@ import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefau
 import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
 import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { PDFPreviewDefault } from '@/src/components/shared/pdf-preview/PDFPreviewDefault';
 /**
  * Default field components for RemoteFlows.
  *
@@ -43,4 +44,5 @@ export const defaultComponents: Components = {
   zendeskDrawer: ZendeskDrawerDefault,
   table: TableFieldDefault,
   'work-schedule': WorkScheduleFieldDefault,
+  pdfViewer: PDFPreviewDefault,
 };

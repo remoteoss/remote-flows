@@ -53,6 +53,7 @@ describe('ContractorOnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
       SelectCountryStep,
+      ContractReviewButton,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -106,7 +107,11 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
+            <ContractReviewButton
+              render={({ reviewCompleted }: { reviewCompleted: boolean }) =>
+                reviewCompleted ? 'Continue' : 'Review'
+              }
+            />
           </>
         );
       case 'pricing_plan':
@@ -149,6 +154,7 @@ describe('ContractorOnboardingFlow', () => {
       SubmitButton,
       BackButton,
       OnboardingInvite,
+      ContractReviewButton,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -188,7 +194,11 @@ describe('ContractorOnboardingFlow', () => {
               onError={mockOnError}
             />
             <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
+            <ContractReviewButton
+              render={({ reviewCompleted }: { reviewCompleted: boolean }) =>
+                reviewCompleted ? 'Continue' : 'Review'
+              }
+            />
           </>
         );
       case 'pricing_plan':
@@ -766,7 +776,7 @@ describe('ContractorOnboardingFlow', () => {
     await fillSignature();
 
     // Mock signature field would be here in real scenario
-    nextButton = screen.getByText(/Next Step/i);
+    nextButton = screen.getByText(/Continue/i);
     nextButton.click();
 
     // Verify contract was signed
@@ -1044,7 +1054,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await fillSignature();
 
-    nextButton = screen.getByText(/Next Step/i);
+    nextButton = screen.getByText(/Continue/i);
     nextButton.click();
 
     await screen.findByText(/Step: Review/i);
@@ -1206,6 +1216,108 @@ describe('ContractorOnboardingFlow', () => {
         /This date does not match the date you provided in the Basic Information step - 2025-11-26 - and will override it only when both parties have signed the contract/i,
       );
       expect(description).toBeInTheDocument();
+    });
+  });
+
+  it('should customize multiple contract preview fields simultaneously using jsfModify options', async () => {
+    const customHeaderTitle = 'Sign the Agreement';
+    const customStatementTitle = 'Please review the document';
+    const customSignatureTitle = 'Digital Signature';
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Pricing Plan',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        if (contractorOnboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        {...defaultProps}
+        options={{
+          jsfModify: {
+            contract_preview: {
+              fields: {
+                contract_preview_header: {
+                  title: customHeaderTitle,
+                },
+                contract_preview_statement: {
+                  title: customStatementTitle,
+                },
+                signature: {
+                  title: customSignatureTitle,
+                },
+              },
+            },
+          },
+        }}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await fillContractDetails();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Preview/i);
+
+    // Verify all custom titles are displayed
+    await waitFor(() => {
+      expect(screen.getByText(customHeaderTitle)).toBeInTheDocument();
+      expect(screen.getByText(customStatementTitle)).toBeInTheDocument();
+    });
+
+    await fillSignature(undefined, customSignatureTitle);
+
+    // After completing the review, signature field should be visible with custom title
+    await waitFor(() => {
+      expect(screen.getByLabelText(customSignatureTitle)).toBeInTheDocument();
     });
   });
 });
