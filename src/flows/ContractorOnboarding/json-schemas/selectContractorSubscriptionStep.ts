@@ -35,7 +35,8 @@ export const selectContractorSubscriptionStepSchema = {
                 meta: {
                   features: [
                     'Contract between you and contractor',
-                    'Contract service agreement template',
+                    'Localized contract templates',
+                    'AI-powered features to reduce misclassification risks',
                     'Only pay for active contractors',
                     'Work with contractors in 200+ countries and jurisdictions',
                   ],
