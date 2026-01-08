@@ -52,6 +52,7 @@ const STEPS = [
   'Statement of Work',
   'Pricing Plan',
   'Contract Preview',
+  'Review',
 ];
 
 type MultiStepFormProps = {

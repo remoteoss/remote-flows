@@ -245,6 +245,17 @@ Use the `options.jsfModify` prop to customize individual form steps:
       contract_details: {
         // Customize contract details form
       },
+      // you can customize the different labels or control what it gets rendered
+      // to see the fields definition you can check https://github.com/remoteoss/remote-flows/blob/main/src/flows/ContractorOnboarding/json-schemas/signature.ts#L1
+      contract_preview: {
+        contract_preview_header: {
+          title: 'Whatever title',
+          description: 'whatever description',
+          'x-jsf-presentation': {
+            Component: () => <div>hello header</div>,
+          },
+        },
+      },
     },
   }}
   render={}
@@ -271,7 +282,7 @@ The `contractorOnboardingBag` provides access to:
 3. **Contract Details**: Contract document is generated and stored
 4. **Pricing Plan**: Subscription tier is selected and configured
 5. **Contract Preview**: Generated contract is displayed and user signs electronically
-6. **Complete**: Flow finishes, contractor onboarding is complete
+6. **Review**: Flow finishes, contractor onboarding is complete
 
 ## Initial Values
 

@@ -297,6 +297,7 @@ export const useContractorOnboarding = ({
     return {
       fields: {
         contract_preview_header: {
+          ...userFields?.contract_preview_header,
           'x-jsf-presentation': {
             Component: (props: JSFCustomComponentProps) => {
               const CustomComponent =
@@ -307,6 +308,7 @@ export const useContractorOnboarding = ({
           },
         },
         contract_preview_statement: {
+          ...userFields?.contract_preview_statement,
           'x-jsf-presentation': {
             Component: (props: JSFCustomComponentProps) => {
               const CustomComponent =
@@ -323,6 +325,7 @@ export const useContractorOnboarding = ({
           },
         },
         signature: {
+          ...userFields?.signature,
           'x-jsf-presentation': {
             calculateDynamicProperties: (
               fieldValuesDynamicProperties: Record<string, unknown>,

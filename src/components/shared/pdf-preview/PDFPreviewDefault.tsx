@@ -1,39 +1,19 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Button } from '@/src/components/ui/button';
+import { PDFPreviewComponentProps } from '@/src/types/remoteFlows';
 
 // Configure the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export type PDFPreviewProps = {
-  base64Data: string;
-  fileName?: string;
-};
-
-export function PDFPreview({
+export function PDFPreviewDefault({
   base64Data,
   fileName = 'document.pdf',
-}: PDFPreviewProps) {
+}: PDFPreviewComponentProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-
-  const pdfDataUri = useMemo(() => {
-    if (!base64Data) return '';
-
-    const cleanedData = base64Data.trim();
-
-    if (cleanedData.startsWith('data:application/pdf;base64,')) {
-      return cleanedData;
-    }
-
-    if (cleanedData.startsWith('data:')) {
-      return cleanedData;
-    }
-
-    return `data:application/pdf;base64,${cleanedData}`;
-  }, [base64Data]);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -55,7 +35,7 @@ export function PDFPreview({
     setPageNumber((prev) => Math.min(numPages, prev + 1));
   };
 
-  if (!pdfDataUri) {
+  if (!base64Data) {
     return (
       <div className='w-full border rounded p-8 text-center bg-gray-50'>
         <p className='text-gray-500'>No PDF data available</p>
@@ -79,7 +59,7 @@ export function PDFPreview({
             <div className='text-center space-y-4'>
               <p className='text-red-600'>{error}</p>
               <Button asChild>
-                <a href={pdfDataUri} download={fileName}>
+                <a href={base64Data} download={fileName}>
                   Download PDF Instead
                 </a>
               </Button>
@@ -88,7 +68,7 @@ export function PDFPreview({
 
           {!error && (
             <Document
-              file={pdfDataUri}
+              file={base64Data}
               onLoadSuccess={onDocumentLoadSuccess}
               onLoadError={onDocumentLoadError}
               loading=''
@@ -140,7 +120,7 @@ export function PDFPreview({
         <p className='text-gray-600'>{fileName}</p>
         <Button variant='link' size='link' asChild>
           <a
-            href={pdfDataUri}
+            href={base64Data}
             download={fileName}
             className='flex items-center gap-1'
           >

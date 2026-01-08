@@ -4,6 +4,7 @@ import type {
   FieldComponentProps,
   FieldSetToggleComponentProps,
   FileComponentProps,
+  PDFPreviewComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -318,6 +319,19 @@ const DatePickerInput = ({
   );
 };
 
+const PDFPreview = ({ base64Data }: PDFPreviewComponentProps) => {
+  return (
+    <iframe
+      src={base64Data}
+      height='100%'
+      width='100%'
+      style={{
+        border: 'none',
+      }}
+    />
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -329,5 +343,6 @@ export const components: Components = {
   fieldsetToggle: FieldsetToggle,
   file: FileUploadField,
   date: DatePickerInput,
+  pdfViewer: PDFPreview,
   //zendeskDrawer: ZendeskDialog,
 };

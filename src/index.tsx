@@ -99,6 +99,7 @@ export type {
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
+  PDFPreviewComponentProps,
   Meta,
 } from '@/src/types/remoteFlows';
 
