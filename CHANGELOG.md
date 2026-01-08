@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.6.0
+
+### Minor Changes
+
+- add size prop to inline button variant (#695) [#695](https://github.com/remoteoss/remote-flows/pull/695)
+- improve contract preview step (#697) [#697](https://github.com/remoteoss/remote-flows/pull/697)
+- add customizable PDF viewer component (#698) [#698](https://github.com/remoteoss/remote-flows/pull/698)
+
 ## 1.5.1
 
 ### Patch Changes
