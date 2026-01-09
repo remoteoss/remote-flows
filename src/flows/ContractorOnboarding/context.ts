@@ -5,9 +5,9 @@ import { UseFormSetValue } from 'react-hook-form';
 export const ContractorOnboardingContext = createContext<{
   formId: string | undefined;
   contractorOnboardingBag: ReturnType<typeof useContractorOnboarding> | null;
-  formSetValue?: RefObject<
-    UseFormSetValue<Record<string, unknown>> | undefined
-  >;
+  formRef?: {
+    setValue: RefObject<UseFormSetValue<Record<string, unknown>> | undefined>;
+  };
 }>({
   formId: undefined,
   contractorOnboardingBag: null,
@@ -24,6 +24,6 @@ export const useContractorOnboardingContext = () => {
   return {
     formId: context.formId,
     contractorOnboardingBag: context.contractorOnboardingBag,
-    formSetValue: context.formSetValue,
+    formRef: context.formRef,
   } as const;
 };

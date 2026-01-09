@@ -344,8 +344,6 @@ export const useContractorOnboarding = ({
     };
   }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
 
-  console.log('fieldValues', fieldValues);
-
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
@@ -743,18 +741,7 @@ export const useContractorOnboarding = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: (values: FieldValues) => {
-      console.log('checkFieldUpdates', values);
-      const cleanedValues = Object.fromEntries(
-        Object.entries(values).filter(([, v]) => v !== undefined),
-      );
-      setFieldValues((prevFieldValues) => {
-        return {
-          ...prevFieldValues,
-          ...cleanedValues,
-        };
-      });
-    },
+    checkFieldUpdates: setFieldValues,
 
     /**
      * Function to handle going back to the previous step

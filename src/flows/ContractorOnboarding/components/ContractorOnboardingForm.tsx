@@ -27,7 +27,7 @@ export function ContractorOnboardingForm({
   onSubmit,
   components,
 }: ContractorOnboardingFormProps) {
-  const { formId, contractorOnboardingBag, formSetValue } =
+  const { formId, contractorOnboardingBag, formRef } =
     useContractorOnboardingContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
@@ -43,10 +43,10 @@ export function ContractorOnboardingForm({
 
   // Register the form's setValue method with the context so other components can access it
   useEffect(() => {
-    if (formSetValue) {
-      formSetValue.current = form.setValue;
+    if (formRef?.setValue) {
+      formRef.setValue.current = form.setValue;
     }
-  }, [form.setValue, formSetValue]);
+  }, [form.setValue, formRef]);
 
   useEffect(() => {
     // When the employmentId is set,
