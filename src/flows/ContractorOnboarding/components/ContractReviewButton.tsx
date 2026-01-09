@@ -13,7 +13,8 @@ export function ContractReviewButton({
   ...props
 }: ContractReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
+  const { formId, contractorOnboardingBag, formRef } =
+    useContractorOnboardingContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -43,9 +44,10 @@ export function ContractReviewButton({
   const handleClose = () => {
     setIsOpen(false);
 
-    contractorOnboardingBag.checkFieldUpdates({
-      review_completed: true,
-    });
+    // Sync with the form if it's available
+    if (formRef?.setValue?.current) {
+      formRef.setValue.current('review_completed', true);
+    }
   };
 
   return (
