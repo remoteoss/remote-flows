@@ -773,6 +773,8 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillSignature();
 
     // Mock signature field would be here in real scenario
@@ -1052,6 +1054,8 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillSignature();
 
     nextButton = screen.getByText(/Continue/i);
@@ -1234,8 +1238,8 @@ describe('ContractorOnboardingFlow', () => {
 
         const steps: Record<number, string> = {
           [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Pricing Plan',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
           [3]: 'Contract Preview',
           [4]: 'Review',
         };
@@ -1291,16 +1295,16 @@ describe('ContractorOnboardingFlow', () => {
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillContractDetails();
+    await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findByText(/Step: Contract Details/i);
 
-    await fillContractorSubscription();
+    await fillContractDetails();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();

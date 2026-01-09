@@ -26,9 +26,10 @@ export function ContractReviewButton({
     throw new Error(`PDFViewer component not found`);
   }
 
-  const reviewCompleted = Boolean(
-    contractorOnboardingBag.fieldValues?.review_completed,
-  );
+  const reviewCompleted =
+    Boolean(contractorOnboardingBag.fieldValues?.signature) ||
+    Boolean(contractorOnboardingBag.fieldValues?.review_completed);
+
   const pdfContent = contractorOnboardingBag.documentPreviewPdf
     ?.contract_document.content as unknown as string;
 

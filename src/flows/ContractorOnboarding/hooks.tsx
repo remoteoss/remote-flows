@@ -331,9 +331,9 @@ export const useContractorOnboarding = ({
               fieldValuesDynamicProperties: Record<string, unknown>,
             ) => {
               return {
-                isVisible: Boolean(
-                  fieldValuesDynamicProperties.review_completed,
-                ),
+                isVisible:
+                  Boolean(fieldValuesDynamicProperties.signature) ||
+                  Boolean(fieldValuesDynamicProperties.review_completed),
               };
             },
             // Merge any user-provided signature customizations
