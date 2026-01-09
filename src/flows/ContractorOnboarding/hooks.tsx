@@ -331,9 +331,9 @@ export const useContractorOnboarding = ({
               fieldValuesDynamicProperties: Record<string, unknown>,
             ) => {
               return {
-                isVisible:
-                  Boolean(fieldValuesDynamicProperties.signature) ||
-                  Boolean(fieldValuesDynamicProperties.review_completed),
+                isVisible: Boolean(
+                  fieldValuesDynamicProperties.review_completed,
+                ),
               };
             },
             // Merge any user-provided signature customizations
@@ -343,6 +343,8 @@ export const useContractorOnboarding = ({
       },
     };
   }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
+
+  console.log('fieldValues', fieldValues);
 
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
@@ -742,6 +744,7 @@ export const useContractorOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates: (values: FieldValues) => {
+      console.log('checkFieldUpdates', values);
       const cleanedValues = Object.fromEntries(
         Object.entries(values).filter(([, v]) => v !== undefined),
       );

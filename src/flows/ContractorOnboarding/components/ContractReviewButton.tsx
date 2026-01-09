@@ -13,7 +13,8 @@ export function ContractReviewButton({
   ...props
 }: ContractReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { formId, contractorOnboardingBag } = useContractorOnboardingContext();
+  const { formId, contractorOnboardingBag, formSetValue } =
+    useContractorOnboardingContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -26,9 +27,9 @@ export function ContractReviewButton({
     throw new Error(`PDFViewer component not found`);
   }
 
-  const reviewCompleted =
-    Boolean(contractorOnboardingBag.fieldValues?.signature) ||
-    Boolean(contractorOnboardingBag.fieldValues?.review_completed);
+  const reviewCompleted = Boolean(
+    contractorOnboardingBag.fieldValues?.review_completed,
+  );
 
   const pdfContent = contractorOnboardingBag.documentPreviewPdf
     ?.contract_document.content as unknown as string;
@@ -44,9 +45,10 @@ export function ContractReviewButton({
   const handleClose = () => {
     setIsOpen(false);
 
-    contractorOnboardingBag.checkFieldUpdates({
-      review_completed: true,
-    });
+    // Sync with the form if it's available
+    if (formSetValue?.current) {
+      formSetValue.current('review_completed', true);
+    }
   };
 
   return (
