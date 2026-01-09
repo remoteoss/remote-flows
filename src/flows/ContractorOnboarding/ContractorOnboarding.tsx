@@ -1,5 +1,5 @@
-import { useId, useMemo, useRef } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
+import { useId, useRef, useMemo } from 'react';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { SelectCountryStep } from '@/src/flows/ContractorOnboarding/components/SelectCountryStep';
 import { ContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -31,6 +31,8 @@ export const ContractorOnboardingFlow = ({
     initialValues,
   });
   const formId = useId();
+  // Store form's setValue method in ref to allow sibling components
+  // to update form state directly (e.g., ContractReviewButton setting review_completed)
   const setValueRef = useRef<
     UseFormSetValue<Record<string, unknown>> | undefined
   >(undefined);

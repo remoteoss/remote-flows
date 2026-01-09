@@ -11,6 +11,7 @@ export const ContractorOnboardingContext = createContext<{
 }>({
   formId: undefined,
   contractorOnboardingBag: null,
+  formRef: undefined,
 });
 
 export const useContractorOnboardingContext = () => {
