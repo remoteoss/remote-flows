@@ -172,6 +172,9 @@ import type {
   GetIndexTravelLetterRequestData,
   GetIndexTravelLetterRequestErrors,
   GetIndexTravelLetterRequestResponses,
+  GetIndexWebhookCallbackData,
+  GetIndexWebhookCallbackErrors,
+  GetIndexWebhookCallbackResponses,
   GetIndexWebhookEventData,
   GetIndexWebhookEventErrors,
   GetIndexWebhookEventResponses,
@@ -222,6 +225,9 @@ import type {
   GetShowEmploymentCustomFieldValueResponses,
   GetShowEmploymentData,
   GetShowEmploymentErrors,
+  GetShowEmploymentOnboardingStepsData,
+  GetShowEmploymentOnboardingStepsErrors,
+  GetShowEmploymentOnboardingStepsResponses,
   GetShowEmploymentResponses,
   GetShowExpenseData,
   GetShowExpenseErrors,
@@ -263,6 +269,9 @@ import type {
   GetShowScheduledContractorInvoiceErrors,
   GetShowScheduledContractorInvoiceResponses,
   GetShowSchemaData,
+  GetShowSchemaEligibilityQuestionnaireData,
+  GetShowSchemaEligibilityQuestionnaireErrors,
+  GetShowSchemaEligibilityQuestionnaireResponses,
   GetShowSchemaErrors,
   GetShowSchemaResponses,
   GetShowSsoConfigurationData,
@@ -507,6 +516,9 @@ import type {
   PostSignContractDocumentData,
   PostSignContractDocumentErrors,
   PostSignContractDocumentResponses,
+  PostSubmitEligibilityQuestionnaireData,
+  PostSubmitEligibilityQuestionnaireErrors,
+  PostSubmitEligibilityQuestionnaireResponses,
   PostTokenOAuth2TokenData,
   PostTokenOAuth2TokenErrors,
   PostTokenOAuth2TokenResponses,
@@ -891,11 +903,6 @@ export const getShowContractorContractDetailsCountry = <
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  */
 export const getIndexEmployment = <ThrowOnError extends boolean = false>(
@@ -916,6 +923,15 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  *
  * Creates an employment. We support creating employees and contractors.
  *
+ * ## Global Payroll Employees
+ *
+ * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
+ * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
+ *
+ * ## HRIS Employees
+ *
+ * To create a HRIS employee, pass `hris` as the `type` parameter.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -932,11 +948,6 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  */
 export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
@@ -947,7 +958,10 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
     PostCreateEmployment2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/employments',
     ...options,
     headers: {
@@ -2470,6 +2484,7 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - global_payroll_contract_details
  * - global_payroll_personal_details
  * - benefit_renewal_request
+ * - hris_personal_details
  *
  * ```
  *
@@ -2930,6 +2945,69 @@ export const getShowSchema = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Get eligibility questionnaire schema
+ *
+ * Returns the JSON schema for the eligibility questionnaire by type.
+ *
+ * The schema defines the structure and validation rules for the questionnaire responses.
+ * Supports versioning to allow for schema evolution while maintaining backwards compatibility.
+ *
+ */
+export const getShowSchemaEligibilityQuestionnaire = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowSchemaEligibilityQuestionnaireData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowSchemaEligibilityQuestionnaireResponses,
+    GetShowSchemaEligibilityQuestionnaireErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/eligibility-questionnaire/schema',
+    ...options,
+  });
+
+/**
+ * Submit eligibility questionnaire
+ *
+ * Submits an eligibility questionnaire for a contractor employment.
+ *
+ * The questionnaire determines if the contractor is eligible for certain products or features.
+ * The responses are validated against the JSON schema for the questionnaire type.
+ *
+ * **Requirements:**
+ * - Employment must be of type `contractor`
+ * - Employment must be in `created` status
+ * - Responses must conform to the questionnaire JSON schema
+ *
+ */
+export const postSubmitEligibilityQuestionnaire = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostSubmitEligibilityQuestionnaireData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostSubmitEligibilityQuestionnaireResponses,
+    PostSubmitEligibilityQuestionnaireErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/eligibility-questionnaire',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * List timesheets
  *
  * Lists all timesheets.
@@ -2971,11 +3049,6 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  */
 export const getShowEmployment = <ThrowOnError extends boolean = false>(
@@ -2986,7 +3059,10 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
     GetShowEmploymentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/employments/{employment_id}',
     ...options,
   });
@@ -3009,6 +3085,14 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  *
  * It is possible to update the `external_id` of the employment for all employment statuses.
  *
+ * ## Global Payroll Employees
+ *
+ * To update a Global Payment employment your input data must comply with the global payroll json schemas.
+ *
+ * ## Direct Employees
+ *
+ * To update an HRIS employment your input data must comply with the HRIS json schemas.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -3025,11 +3109,6 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
  *
@@ -3042,7 +3121,10 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
     PatchUpdateEmployment2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/employments/{employment_id}',
     ...options,
     headers: {
@@ -3069,6 +3151,14 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * It is possible to update the `external_id` of the employment for all employment statuses.
  *
+ * ## Global Payroll Employees
+ *
+ * To update a Global Payment employment your input data must comply with the global payroll json schemas.
+ *
+ * ## Direct Employees
+ *
+ * To update an HRIS employment your input data must comply with the HRIS json schemas.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -3085,11 +3175,6 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
  *
@@ -3102,7 +3187,10 @@ export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
     PatchUpdateEmploymentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/employments/{employment_id}',
     ...options,
     headers: {
@@ -3771,12 +3859,13 @@ export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
 /**
  * Update employment
  *
- * Updates an employment. Use this endpoint to modify employment states for testing
- * in the Sandbox environment. This endpoint will respond with a 404 outside of the
- * Sandbox environment.
+ * Updates an employment. Use this endpoint to:
+ * - modify employment states for testing
+ * - Backdate employment start dates
  *
- * For updating an employment's parameters outside of testing purposes, use [this
- * Employment update endpoint](#operation/patch_update_employment).
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
  */
 export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
@@ -3799,12 +3888,13 @@ export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
 /**
  * Update employment
  *
- * Updates an employment. Use this endpoint to modify employment states for testing
- * in the Sandbox environment. This endpoint will respond with a 404 outside of the
- * Sandbox environment.
+ * Updates an employment. Use this endpoint to:
+ * - modify employment states for testing
+ * - Backdate employment start dates
  *
- * For updating an employment's parameters outside of testing purposes, use [this
- * Employment update endpoint](#operation/patch_update_employment).
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
  */
 export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
@@ -4050,6 +4140,29 @@ export const postUpdateBenefitRenewalRequest = <
   });
 
 /**
+ * Show onboarding steps for an employment
+ *
+ * Returns onboarding steps and substeps in a hierarchical, ordered structure.
+ */
+export const getShowEmploymentOnboardingSteps = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowEmploymentOnboardingStepsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEmploymentOnboardingStepsResponses,
+    GetShowEmploymentOnboardingStepsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/onboarding-steps',
+    ...options,
+  });
+
+/**
  * List company structure nodes
  *
  * Shows all the company structure nodes of an employment.
@@ -4119,6 +4232,27 @@ export const putValidateResignation = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List Webhook Callbacks
+ *
+ * List callbacks for a given company
+ */
+export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexWebhookCallbackData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexWebhookCallbackResponses,
+    GetIndexWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/webhook-callbacks',
+    ...options,
   });
 
 /**
