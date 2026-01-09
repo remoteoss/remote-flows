@@ -31,6 +31,8 @@ export const ContractorOnboardingFlow = ({
     initialValues,
   });
   const formId = useId();
+  // Store form's setValue method in ref to allow sibling components
+  // to update form state directly (e.g., ContractReviewButton setting review_completed)
   const setValueRef = useRef<
     UseFormSetValue<Record<string, unknown>> | undefined
   >(undefined);
