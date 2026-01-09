@@ -20,6 +20,7 @@ import {
   useGetShowContractDocument,
   useSignContractDocument,
 } from '@/src/flows/ContractorOnboarding/api';
+//import { useUpdateEmployment } from '@/src/flows/Onboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
@@ -144,6 +145,11 @@ export const useContractorOnboarding = ({
   }, [employmentStatus]);
 
   const createEmploymentMutation = useCreateEmployment();
+  /*const updateEmploymentMutation = useUpdateEmployment(
+    internalCountryCode as string,
+    options,
+  );*/
+
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
   const signContractDocumentMutation = useSignContractDocument();
@@ -163,6 +169,10 @@ export const useContractorOnboarding = ({
 
   const { mutateAsync: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
+
+  /*const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
+    updateEmploymentMutation,
+  );*/
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -642,6 +652,15 @@ export const useContractorOnboarding = ({
         } else if (internalEmploymentId) {
           // TODO: Provisional it seems you cannot update a contractor employment
           // TODO: we'll need to check later if the provisional start date gets updated for the statement of work
+          /*return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: parsedValues,
+            pricing_plan_details: {
+              frequency: 'monthly',
+            },
+            external_id: externalId,
+          });*/
+
           return Promise.resolve({
             data: { employmentId: internalEmploymentId },
           });
