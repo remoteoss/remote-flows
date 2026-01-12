@@ -9,6 +9,8 @@ import {
   ContractorOnboardingContractDetailsFormPayload,
   ContractorOnboardingContractDetailsResponse,
 } from '@/src/flows/ContractorOnboarding/types';
+import { StatementOfWorkDisclaimer } from '@/src/flows/ContractorOnboarding/components/StatementOfWorkDisclaimer';
+import { isCMOrCMPlus } from '@/src/flows/ContractorOnboarding/utils';
 
 type ContractDetailsStepProps = {
   /*
@@ -80,10 +82,19 @@ export function ContractDetailsStep({
     contractorOnboardingBag.stepState.values?.contract_details ||
     contractorOnboardingBag.initialValues.contract_details;
 
+  const subscription =
+    contractorOnboardingBag.stepState.values?.pricing_plan?.subscription;
+  const shouldShowDisclaimer = isCMOrCMPlus(subscription);
+
   return (
-    <ContractorOnboardingForm
-      defaultValues={initialValues}
-      onSubmit={handleSubmit}
-    />
+    <div className='space-y-4'>
+      <ContractorOnboardingForm
+        defaultValues={initialValues}
+        onSubmit={handleSubmit}
+      />
+      {shouldShowDisclaimer && (
+        <StatementOfWorkDisclaimer subscription={subscription} />
+      )}
+    </div>
   );
 }

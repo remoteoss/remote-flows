@@ -398,6 +398,7 @@ describe('OnboardingInvite', () => {
   });
 
   it('should not call risk-reserve endpoint when employmentStatus is created_reserve_paid', async () => {
+    const riskReserveSpy = vi.fn();
     const reserveInvoiceSpy = vi.fn();
     const inviteSpy = vi.fn();
 
@@ -426,6 +427,12 @@ describe('OnboardingInvite', () => {
           },
         });
       }),
+      http.post('*/v1/risk-reserve', () => {
+        riskReserveSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
       http.post('*/v1/employments/:employmentId/reserve-invoice', () => {
         reserveInvoiceSpy();
         return HttpResponse.json({
@@ -450,7 +457,8 @@ describe('OnboardingInvite', () => {
     await waitFor(() => {
       // Should call invite endpoint
       expect(inviteSpy).toHaveBeenCalledTimes(1);
-      // Should NOT call reserve invoice endpoint
+      // Should NOT call risk-reserve or reserve invoice endpoints
+      expect(riskReserveSpy).not.toHaveBeenCalled();
       expect(reserveInvoiceSpy).not.toHaveBeenCalled();
     });
 
