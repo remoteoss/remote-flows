@@ -514,6 +514,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await fillContractorSubscription();
 
     await waitFor(() => {
       expect(postSpy).toHaveBeenCalledTimes(1);
@@ -525,11 +526,11 @@ describe('ContractorOnboardingFlow', () => {
 
     let backButton = screen.getByRole('button', { name: 'Back' });
     backButton.click();
-    await screen.findByText(/Step: Basic Information/i);
+    await screen.findByText(/Step: Pricing Plan/i);
 
     backButton = screen.getByRole('button', { name: 'Back' });
     backButton.click();
-    await screen.findByText(/Step: Select Country/i);
+    await screen.findByText(/Step: Basic Information/i);
 
     await fillCountry('Spain');
 
@@ -1296,7 +1297,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1322,6 +1322,68 @@ describe('ContractorOnboardingFlow', () => {
     // After completing the review, signature field should be visible with custom title
     await waitFor(() => {
       expect(screen.getByLabelText(customSignatureTitle)).toBeInTheDocument();
+    });
+  });
+
+  it('should display standard CSA disclaimer in contract details step when subscription is standard', async () => {
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      const elements = screen.getAllByText(/Contractor Services Agreement/i);
+      expect(elements.length).toBeGreaterThan(0);
     });
   });
 });
