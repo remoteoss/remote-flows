@@ -30,7 +30,6 @@ export function ContractReviewButton({
   const reviewCompleted = Boolean(
     contractorOnboardingBag.fieldValues?.review_completed,
   );
-
   const pdfContent = contractorOnboardingBag.documentPreviewPdf
     ?.contract_document.content as unknown as string;
 
