@@ -526,8 +526,12 @@ export const useContractorOnboarding = ({
         ),
         // TODO: TBD
         contract_preview: {},
-        // TODO: TBD
-        pricing_plan: {},
+        // TODO: The BE needs to return the pricing plan through an endpoint
+        // TODO: First correct pricingPlanInitialValues to make this work
+        pricing_plan: prettifyFormValues(
+          pricingPlanInitialValues,
+          stepFields.pricing_plan,
+        ),
       };
 
       setStepValues({
@@ -535,7 +539,7 @@ export const useContractorOnboarding = ({
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
         contract_preview: {},
-        pricing_plan: {},
+        pricing_plan: pricingPlanInitialValues,
         review: {},
       });
       goToStep('review');
@@ -550,6 +554,8 @@ export const useContractorOnboarding = ({
     stepFields.select_country,
     stepFields.basic_information,
     stepFields.contract_details,
+    stepFields.pricing_plan,
+    pricingPlanInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
@@ -592,8 +598,17 @@ export const useContractorOnboarding = ({
       });
     }
 
-    if (stepState.currentStep.name === 'pricing_plan') {
-      return values;
+    if (
+      selectContractorSubscriptionForm &&
+      stepState.currentStep.name === 'pricing_plan'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        selectContractorSubscriptionForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     return {};
@@ -822,11 +837,16 @@ export const useContractorOnboarding = ({
         return signatureSchemaForm?.handleValidation(parsedValues);
       }
 
-      if (stepState.currentStep.name === 'pricing_plan') {
-        // TODO: TBD
-        return {
-          formErrors: {},
-        };
+      if (
+        selectContractorSubscriptionForm &&
+        stepState.currentStep.name === 'pricing_plan'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          selectContractorSubscriptionForm?.fields,
+          { isPartialValidation: false },
+        );
+        return selectContractorSubscriptionForm?.handleValidation(parsedValues);
       }
 
       return null;

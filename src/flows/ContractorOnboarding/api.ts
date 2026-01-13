@@ -23,7 +23,7 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 
 /**
  * Get the contract document signature schema
@@ -240,6 +240,13 @@ export const useContractorOnboardingDetailsSchema = ({
   });
 };
 
+const CONTRACT_PRODUCT_TITLES = {
+  ['urn:remotecom:resource:product:contractor:plus:monthly']:
+    'Contractor Management Plus',
+  ['urn:remotecom:resource:product:contractor:standard:monthly']:
+    'Contractor Management',
+};
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
@@ -259,7 +266,9 @@ export const useContractorSubscriptionSchemaField = (
   );
 
   if (contractorSubscriptions) {
-    const field = form.fields.find((field) => field.name === 'subscription');
+    const field: JSFField | undefined = form.fields.find(
+      (field) => field.name === 'subscription',
+    ) as JSFField | undefined;
     if (field) {
       const options = contractorSubscriptions
         .filter((opts) => opts.product.identifier !== corProductIdentifier)
@@ -271,11 +280,22 @@ export const useContractorSubscriptionSchemaField = (
               opts.currency.symbol,
             );
           }
-          const label = `${opts.product.name} - ${formattedPrice}`;
-          const value = opts.product.identifier;
-          return { label, value };
+          const product = opts.product;
+          const title =
+            CONTRACT_PRODUCT_TITLES[
+              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+            ] ?? '';
+          const label = title;
+          const value = product.identifier ?? '';
+          const description = product.description ?? '';
+          const features = product.features ?? [];
+          const meta = {
+            features,
+            price: formattedPrice,
+          };
+          return { label, value, description, meta };
         });
-      field.options = options;
+      field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
 
