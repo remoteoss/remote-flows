@@ -3058,9 +3058,12 @@ export type ProbationCompletionLetter = {
  * Product
  */
 export type Product = {
+  description?: string;
+  features?: Array<string>;
   frequency: string;
   identifier?: string;
   name: string;
+  short_name?: string;
   tier: string;
 };
 
@@ -3708,8 +3711,8 @@ export type ResourceErrorResponse = {
       | 'action_unrecognized'
       | 'action_invalid'
       | 'parameter_invalid_date'
-      | 'parameter_value_invalid'
       | 'resource_invalid_state'
+      | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
