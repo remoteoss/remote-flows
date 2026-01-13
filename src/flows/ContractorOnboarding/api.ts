@@ -240,7 +240,6 @@ export const useContractorOnboardingDetailsSchema = ({
   });
 };
 
-// TODO: remove later when endpoint is deployed
 const CONTRACT_PRODUCT_TITLES = {
   ['urn:remotecom:resource:product:contractor:plus:monthly']:
     'Contractor Management Plus',
