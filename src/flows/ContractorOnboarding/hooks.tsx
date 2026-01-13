@@ -45,6 +45,7 @@ import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
+  corProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
 import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
@@ -274,11 +275,19 @@ export const useContractorOnboarding = ({
     fieldValues?.service_duration?.provisional_start_date,
   ]);
 
-  // TODO: this is a temporary solution to get the selected pricing plan
-  // TODO: we need to get the selected pricing plan from the backend
   const selectedPricingPlan = useMemo(() => {
-    return stepState.values?.pricing_plan?.subscription;
-  }, [stepState.values?.pricing_plan?.subscription]);
+    if (!employment?.contractor_type) {
+      return undefined;
+    }
+    const subscriptions = {
+      standard: contractorStandardProductIdentifier,
+      plus: contractorPlusProductIdentifier,
+      cor: corProductIdentifier,
+    };
+    return subscriptions[
+      employment?.contractor_type as keyof typeof subscriptions
+    ];
+  }, [employment]);
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -465,20 +474,15 @@ export const useContractorOnboarding = ({
 
   const pricingPlanInitialValues = useMemo(() => {
     const preselectedPricingPlan = {
-      subscription: contractorStandardProductIdentifier,
+      subscription: selectedPricingPlan || contractorStandardProductIdentifier,
     };
     const initialValues = {
       ...preselectedPricingPlan,
       ...onboardingInitialValues,
-      ...employmentContractDetails,
     };
 
     return getInitialValues(stepFields.pricing_plan, initialValues);
-  }, [
-    stepFields.pricing_plan,
-    employmentContractDetails,
-    onboardingInitialValues,
-  ]);
+  }, [stepFields.pricing_plan, onboardingInitialValues, selectedPricingPlan]);
 
   const initialValues = useMemo(() => {
     return {
