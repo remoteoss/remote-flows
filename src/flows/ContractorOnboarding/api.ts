@@ -281,25 +281,16 @@ export const useContractorSubscriptionSchemaField = (
               opts.currency.symbol,
             );
           }
-          const foundOption = field?.options?.find(
-            (option: { value: string }) =>
-              option.value === opts.product.identifier,
-          );
-          const product: $TSFixMe = opts.product; // TODO: fix types later
+          const product = opts.product;
           const title =
             CONTRACT_PRODUCT_TITLES[
               product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ??
-            foundOption?.label ??
-            ''; // TODO: remove later foundOption?.title;
-          const label = title; // TODO: remove later foundOption?.label;
+            ] ?? '';
+          const label = title;
           const value = product.identifier ?? '';
-          const description =
-            product.description ?? foundOption?.description ?? ''; // TODO: remove later foundOption?.description
-          const features =
-            product.features ?? foundOption?.meta?.features ?? []; // TODO: remove later foundOption?.meta?.features
+          const description = product.description ?? '';
+          const features = product.features ?? [];
           const meta = {
-            ...foundOption?.meta,
             features,
             price: formattedPrice,
           };
