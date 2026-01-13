@@ -284,9 +284,11 @@ export const useContractorOnboarding = ({
       plus: contractorPlusProductIdentifier,
       cor: corProductIdentifier,
     };
-    return subscriptions[
-      employment?.contractor_type as keyof typeof subscriptions
-    ];
+    return (
+      subscriptions[
+        employment?.contractor_type as keyof typeof subscriptions
+      ] || contractorStandardProductIdentifier
+    );
   }, [employment]);
 
   const {
@@ -474,7 +476,7 @@ export const useContractorOnboarding = ({
 
   const pricingPlanInitialValues = useMemo(() => {
     const preselectedPricingPlan = {
-      subscription: selectedPricingPlan || contractorStandardProductIdentifier,
+      subscription: selectedPricingPlan,
     };
     const initialValues = {
       ...preselectedPricingPlan,
