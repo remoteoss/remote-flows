@@ -467,16 +467,12 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Pricing Plan/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Contract Details/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const serviceDurationInput = await screen.findByTestId(
       'service_duration.provisional_start_date',
@@ -513,6 +509,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await fillContractorSubscription();
 
     await waitFor(() => {
       expect(postSpy).toHaveBeenCalledTimes(1);
@@ -674,8 +671,6 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Pricing Plan/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -755,8 +750,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -1036,9 +1029,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1191,9 +1181,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
