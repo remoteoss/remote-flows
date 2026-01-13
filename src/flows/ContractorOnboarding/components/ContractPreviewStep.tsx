@@ -1,5 +1,4 @@
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
-import { LazyPdfPreview } from '@/src/components/shared/pdf-preview/LazyLoadPdfPreview';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
   NormalizedFieldError,
@@ -79,12 +78,6 @@ export function ContractPreviewStep({
 
   return (
     <div className='space-y-4'>
-      <LazyPdfPreview
-        base64Data={
-          contractorOnboardingBag.documentPreviewPdf?.contract_document
-            .content as unknown as string
-        }
-      />
       <ContractorOnboardingForm
         defaultValues={initialValues}
         onSubmit={handleSubmit}

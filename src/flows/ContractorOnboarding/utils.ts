@@ -1,9 +1,12 @@
 import { format } from 'date-fns';
-import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { JSFModify } from '@/src/flows/types';
 import { Step } from '@/src/flows/useStepState';
 import { FieldValues } from 'react-hook-form';
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
+import {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+} from '@/src/flows/ContractorOnboarding/constants';
 
 type StepKeys =
   | 'select_country'
@@ -114,4 +117,14 @@ export const buildContractDetailsJsfModify = (
       },
     },
   };
+};
+
+/**
+ * Checks if the selected pricing plan is CM (standard) or CM+ (plus)
+ */
+export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
+  return (
+    subscription === contractorStandardProductIdentifier ||
+    subscription === contractorPlusProductIdentifier
+  );
 };

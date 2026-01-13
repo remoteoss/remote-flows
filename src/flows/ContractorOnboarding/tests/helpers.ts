@@ -1,4 +1,5 @@
 import { fireEvent, waitFor, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
   fillRadio,
   fillSelect,
@@ -182,7 +183,9 @@ export async function fillSignature(
   values?: Partial<{
     signature: string;
   }>,
+  signatureFieldLabel?: string,
 ) {
+  const signatureFieldLabelText = signatureFieldLabel || 'Enter full name';
   const defaultValues = {
     signature: 'John Doe',
   };
@@ -192,13 +195,30 @@ export async function fillSignature(
     ...values,
   };
 
+  const reviewButton = screen.getByRole('button', { name: /Review/i });
+
+  reviewButton.click();
+
   await waitFor(() => {
-    expect(screen.getByLabelText(/Full Legal Name/i)).toBeInTheDocument();
+    expect(screen.getByText(/Contract Document/i)).toBeInTheDocument();
+  });
+
+  // Press Escape to close the drawer
+  const user = userEvent.setup();
+  await user.keyboard('{Escape}');
+
+  await waitFor(() => {
+    expect(
+      screen.getByLabelText(new RegExp(signatureFieldLabelText, 'i')),
+    ).toBeInTheDocument();
   });
 
   if (newValues?.signature) {
-    fireEvent.change(screen.getByLabelText(/Full Legal Name/i), {
-      target: { value: newValues?.signature },
-    });
+    fireEvent.change(
+      screen.getByLabelText(new RegExp(signatureFieldLabelText, 'i')),
+      {
+        target: { value: newValues?.signature },
+      },
+    );
   }
 }

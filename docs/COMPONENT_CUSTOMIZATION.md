@@ -107,6 +107,7 @@ Available component types include:
 - `table` - Table components
 - `drawer` - Drawer components
 - `zendeskDrawer` - Zendesk drawer components
+- `pdfViewer` - PDF viewer component
 
 and their typescript definitions
 
@@ -119,12 +120,13 @@ and their typescript definitions
 - `TextFieldComponentProps`: for textfield components
 - `DatePickerComponentProps`: for datepicker components
 - `WorkScheduleComponentProps`: for workschedule components
+- `PDFPreviewComponentProps`: for the pdf viewer component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
 ### Important Notes
 
-- All custom components are wrapped with React Hook Form's `Controller`
+- All custom components are wrapped with React Hook Form's `Controller` except zendeskDrawer, pdfViewer, table, drawer, statement, fieldsetToggle
 - You **must** bind the `field` props to your HTML elements for proper form state management
 - Use the exported TypeScript types for proper typing
 

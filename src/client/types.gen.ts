@@ -219,7 +219,7 @@ export type EmploymentCustomFieldValueResponse = {
  */
 export type PeriodProperties = {
   nextPeriodEndDate?: _Date;
-  paymentDate?: _Date;
+  paymentDate: _Date;
   periodEndDate: _Date;
   periodStartDate: _Date;
   priorPeriodEndDate?: _Date;
@@ -555,6 +555,15 @@ export type Employment = {
     | 'contractor'
     | 'direct_employee'
     | 'global_payroll_employee';
+  /**
+   * Contractor-specific settings. Only present for contractor employments.
+   */
+  contractor_settings?: {
+    /**
+     * Whether the contractor requires work confirmation before submitting invoices.
+     */
+    requires_work_confirmation?: boolean;
+  } | null;
   employment_lifecycle_stage: EmploymentLifecycleStage;
   /**
    * Administrative information. Its properties may vary depending on the country.
@@ -562,6 +571,39 @@ export type Employment = {
   administrative_details: {
     [key: string]: unknown;
   };
+  /**
+   * Type of contractor product. Only present for contractor employments. 'standard' for Contractor Standard, 'cor' for Contractor of Record, 'plus' for Contractor Plus.
+   */
+  contractor_type?: 'standard' | 'cor' | 'plus';
+  /**
+   * Contractor compensation rate details. Only present for contractor employments when rate is configured.
+   */
+  contractor_rate?: {
+    amount?: {
+      /**
+       * Rate amount as decimal
+       */
+      amount?: number;
+      currency?: {
+        /**
+         * Currency code (e.g., USD, EUR)
+         */
+        code?: string;
+      };
+    };
+    /**
+     * Payment frequency cadence
+     */
+    pay_frequency?: 'weekly' | 'bi_weekly' | 'semi_monthly' | 'monthly';
+    /**
+     * Unique identifier for the contractor rate
+     */
+    slug?: string;
+    /**
+     * Rate type indicating billing frequency
+     */
+    type?: 'hourly' | 'daily' | 'weekly' | 'monthly' | 'one_off';
+  } | null;
   company_id: string;
   /**
    * Work address information. Its properties may vary depending on the country.
@@ -589,6 +631,7 @@ export type Employment = {
    */
   department_id?: string | null;
   manager?: string;
+  login_email: string;
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
@@ -736,6 +779,35 @@ export type ExpenseResponse = {
   data: {
     expense: ExpenseOrDraft;
   };
+};
+
+/**
+ * Step
+ */
+export type Step = {
+  completed_at?: string | null;
+  description?: string | null;
+  /**
+   * Unique identifier for this step instance
+   */
+  id: string;
+  /**
+   * Human-readable step name
+   */
+  label: string;
+  started_at?: string | null;
+  /**
+   * Step status
+   */
+  status: 'not_started' | 'in_progress' | 'completed' | 'failed';
+  /**
+   * Ordered list of substeps for this step
+   */
+  sub_steps: Array<SubStep>;
+  /**
+   * Step type identifier
+   */
+  type: string;
 };
 
 /**
@@ -993,6 +1065,32 @@ export type DownloadDocumentResponse = {
 };
 
 /**
+ * EligibilityQuestionnaireJSONSchemaResponse
+ *
+ * JSON Schema definition for eligibility questionnaire
+ */
+export type EligibilityQuestionnaireJsonSchemaResponse = {
+  data?: {
+    /**
+     * Permissions related to the schema
+     */
+    permissions?: {
+      [key: string]: unknown;
+    };
+    /**
+     * The JSON Schema definition
+     */
+    schema?: {
+      [key: string]: unknown;
+    };
+    /**
+     * The version of the JSON Schema
+     */
+    version?: number;
+  };
+};
+
+/**
  * ApproveExpenseParams
  *
  * Approve an expense
@@ -1035,6 +1133,7 @@ export type EmploymentBasicResponse = {
   full_name?: string;
   id?: UuidSlug;
   job_title?: string | null;
+  login_email?: string;
   personal_email?: string;
   /**
    * Required for employees, optional for contractors
@@ -1540,6 +1639,7 @@ export type ContractDocumentResponse = {
     contract_document: {
       content: Blob | File;
       name: string;
+      signatories: Array<Signatory>;
     };
   };
 };
@@ -1589,9 +1689,8 @@ export type BenefitOffersByEmployment = {
  * Action
  */
 export type Action = {
-  externalLink?: string;
+  externalLink: string;
   label: string;
-  link: string;
 };
 
 /**
@@ -1713,6 +1812,25 @@ export type CostCalculatorEstimateResponse = {
   data: {
     employments?: Array<CostCalculatorEmployment>;
   };
+};
+
+/**
+ * SubmitEligibilityQuestionnaireRequest
+ *
+ * Request body for submitting an eligibility questionnaire
+ */
+export type SubmitEligibilityQuestionnaireRequest = {
+  /**
+   * The slug/ID of the employment
+   */
+  employment_slug: string;
+  /**
+   * Responses to the questionnaire questions
+   */
+  responses: {
+    [key: string]: string;
+  };
+  type: 'contractor_of_record';
 };
 
 /**
@@ -2201,6 +2319,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.probation_period_extension.completed'
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
+    | 'employment.status.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -2469,7 +2588,7 @@ export type Currency = {
  * Payment
  */
 export type Payment = {
-  bankValueNumber: Amount;
+  bankValueNumber?: Amount;
   fields?: Array<CustomField>;
   payrollFundedDate: _Date;
 };
@@ -2682,6 +2801,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.probation_period_extension.completed'
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
+    | 'employment.status.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -2938,9 +3058,12 @@ export type ProbationCompletionLetter = {
  * Product
  */
 export type Product = {
+  description?: string;
+  features?: Array<string>;
   frequency: string;
   identifier?: string;
   name: string;
+  short_name?: string;
   tier: string;
 };
 
@@ -3353,11 +3476,12 @@ export type PayProgressResponse = {
  *
  * Required params to update an employment in the Sandbox environment.
  *
- * Currently only supports setting the Employment Status to `active`.
+ * Currently supports setting the Employment Status to `active` and backdating the employment start date.
  *
  */
 export type EmploymentUpdateParams = {
-  status: EmploymentStatus;
+  provisional_start_date?: string;
+  status?: EmploymentStatus;
 };
 
 /**
@@ -3466,6 +3590,13 @@ export type Payslip = {
 };
 
 /**
+ * EligibilityQuestionnaireResponse
+ */
+export type EligibilityQuestionnaireResponse = {
+  data: EligibilityQuestionnaire;
+};
+
+/**
  * UpdateExpenseParams
  *
  * Update expense params
@@ -3529,6 +3660,7 @@ export type MinimalEmployment = {
   full_name: string;
   id: string;
   job_title: string;
+  login_email: string;
   personal_email: string;
   short_id: ShortId;
   status: EmploymentStatus;
@@ -4154,6 +4286,13 @@ export type LeavePolicyDetails = {
 };
 
 /**
+ * ListWebhookCallbacksResponse
+ */
+export type ListWebhookCallbacksResponse = {
+  data: Array<WebhookCallback>;
+};
+
+/**
  * ContractAmendmentAutomatableResponse
  *
  * Contract Amendment Automatable response
@@ -4197,6 +4336,26 @@ export type Incentive = {
   recurring_incentive_id?: string | null;
   status: string;
   type: string;
+};
+
+/**
+ * Signatory
+ *
+ * Contract document signatory with signature details
+ */
+export type Signatory = {
+  email: string | null;
+  name: string | null;
+  /**
+   * Base64 encoded signature image
+   */
+  signature: string | null;
+  signed_at: string | null;
+  status: 'pending' | 'signed' | 'unassigned';
+  type: 'company' | 'employee' | 'admin' | 'external' | 'unknown';
+  user: {
+    [key: string]: unknown;
+  } | null;
 };
 
 /**
@@ -4638,6 +4797,15 @@ export type PayrollCalendarsResponse = {
 };
 
 /**
+ * EmploymentOnboardingStepsResponse
+ */
+export type EmploymentOnboardingStepsResponse = {
+  data: {
+    steps: Array<Step>;
+  };
+};
+
+/**
  * ContractorInvoiceScheduleResponse
  *
  * Response schema to show a Contractor Invoice Schedule
@@ -4836,6 +5004,38 @@ export type ListExpenseResponse = {
      */
     total_pages?: number;
   };
+};
+
+/**
+ * SubStep
+ */
+export type SubStep = {
+  completed_at?: string | null;
+  /**
+   * Unique identifier for this substep
+   */
+  id: string;
+  /**
+   * Human-readable substep name
+   */
+  label: string;
+  /**
+   * Whether this substep is optional
+   */
+  optional: boolean;
+  started_at?: string | null;
+  /**
+   * Substep status
+   */
+  status: 'not_started' | 'in_progress' | 'completed' | 'failed';
+  /**
+   * Optional UI tag
+   */
+  tag?: string | null;
+  /**
+   * Substep type identifier
+   */
+  type: string;
 };
 
 /**
@@ -5479,6 +5679,31 @@ export type TooManyRequestsResponse = {
 };
 
 /**
+ * EligibilityQuestionnaire
+ */
+export type EligibilityQuestionnaire = {
+  /**
+   * Whether the questionnaire blocks further progress if failed
+   */
+  is_blocking: boolean;
+  /**
+   * The questions in the questionnaire
+   */
+  questions: {
+    [key: string]: unknown;
+  };
+  /**
+   * The responses to the questionnaire
+   */
+  responses: {
+    [key: string]: unknown;
+  };
+  slug: UuidSlug;
+  submitted_at: DateTime;
+  type: 'contractor_of_record';
+};
+
+/**
  * RecurringIncentiveResponse
  *
  * Recurring Incentive response
@@ -5661,6 +5886,7 @@ export type WebhookCallback = {
     | 'employment.probation_period_extension.completed'
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
+    | 'employment.status.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -6892,6 +7118,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.probation_period_extension.completed'
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
+    | 'employment.status.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -7327,7 +7554,7 @@ export type EmploymentCreateParams = {
   /**
    * If not provided, it will default to `employee`.
    */
-  type?: 'employee' | 'contractor' | 'global_payroll_employee';
+  type?: 'employee' | 'contractor' | 'global_payroll_employee' | 'hris';
 };
 
 /**
@@ -8401,11 +8628,6 @@ export type GetIndexEmploymentData = {
     status?: string;
     /**
      * Filters the results by employments whose employment product type matches the value
-     * Possible values: `contractor`, `direct_employee`, `employee`, `global_payroll_employee`
-     * `employee` returns all employments that are eor, peo or global payroll.
-     *
-     * `global_payroll_employee` will be deprecated in the future. Please use `global_payroll` in the `employment_model` field instead.
-     *
      */
     employment_type?: string;
     /**
@@ -8419,7 +8641,7 @@ export type GetIndexEmploymentData = {
      */
     page?: number;
     /**
-     * Change the amount of records returned per page, defaults to 20, limited to 100
+     * Number of items per page
      */
     page_size?: number;
   };
@@ -8432,19 +8654,19 @@ export type GetIndexEmploymentErrors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
+  403: ForbiddenResponse;
   /**
-   * Not Found
+   * Conflict
    */
-  404: NotFoundResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -8492,19 +8714,19 @@ export type PostCreateEmployment2Errors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
+  403: ForbiddenResponse;
   /**
-   * Not Found
+   * Conflict
    */
-  404: NotFoundResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -8516,7 +8738,7 @@ export type PostCreateEmployment2Responses = {
   /**
    * Success
    */
-  201: EmploymentCreationResponse;
+  200: EmploymentCreationResponse;
 };
 
 export type PostCreateEmployment2Response =
@@ -12549,6 +12771,53 @@ export type GetShowSchemaResponses = {
 export type GetShowSchemaResponse =
   GetShowSchemaResponses[keyof GetShowSchemaResponses];
 
+export type PostCreateEligibilityQuestionnaireData = {
+  /**
+   * Eligibility questionnaire submission
+   */
+  body: SubmitEligibilityQuestionnaireRequest;
+  path?: never;
+  query?: {
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
+  url: '/v1/contractors/eligibility-questionnaire';
+};
+
+export type PostCreateEligibilityQuestionnaireErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictErrorResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateEligibilityQuestionnaireError =
+  PostCreateEligibilityQuestionnaireErrors[keyof PostCreateEligibilityQuestionnaireErrors];
+
+export type PostCreateEligibilityQuestionnaireResponses = {
+  /**
+   * Questionnaire submitted successfully
+   */
+  201: EligibilityQuestionnaireResponse;
+};
+
+export type PostCreateEligibilityQuestionnaireResponse =
+  PostCreateEligibilityQuestionnaireResponses[keyof PostCreateEligibilityQuestionnaireResponses];
+
 export type GetIndexTimesheetData = {
   body?: never;
   path?: never;
@@ -12632,19 +12901,19 @@ export type GetShowEmploymentErrors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
+  403: ForbiddenResponse;
   /**
-   * Not Found
+   * Conflict
    */
-  404: NotFoundResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -12737,13 +13006,9 @@ export type PatchUpdateEmployment2Errors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
+  403: ForbiddenResponse;
   /**
    * Conflict
    */
@@ -12753,7 +13018,7 @@ export type PatchUpdateEmployment2Errors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -12846,13 +13111,9 @@ export type PatchUpdateEmploymentErrors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
+  403: ForbiddenResponse;
   /**
    * Conflict
    */
@@ -12862,7 +13123,7 @@ export type PatchUpdateEmploymentErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -13301,7 +13562,7 @@ export type PostCompleteOnboardingEmploymentData = {
   /**
    * Employment slug
    */
-  body: CompleteOnboarding;
+  body?: CompleteOnboarding;
   headers: {
     /**
      * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
@@ -13322,19 +13583,19 @@ export type PostCompleteOnboardingEmploymentErrors = {
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
+   * Forbidden
    */
-  401: UnauthorizedResponse;
+  403: ForbiddenResponse;
   /**
-   * Not Found
+   * Conflict
    */
-  404: NotFoundResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
   /**
-   * Too many requests
+   * Unprocessable Entity
    */
   429: TooManyRequestsResponse;
 };
@@ -14695,6 +14956,42 @@ export type PostUpdateBenefitRenewalRequestResponses = {
 export type PostUpdateBenefitRenewalRequestResponse =
   PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
 
+export type GetShowEmploymentOnboardingStepsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/onboarding-steps';
+};
+
+export type GetShowEmploymentOnboardingStepsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowEmploymentOnboardingStepsError =
+  GetShowEmploymentOnboardingStepsErrors[keyof GetShowEmploymentOnboardingStepsErrors];
+
+export type GetShowEmploymentOnboardingStepsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentOnboardingStepsResponse;
+};
+
+export type GetShowEmploymentOnboardingStepsResponse =
+  GetShowEmploymentOnboardingStepsResponses[keyof GetShowEmploymentOnboardingStepsResponses];
+
 export type GetIndexEmploymentCompanyStructureNodeData = {
   body?: never;
   path: {
@@ -14834,6 +15131,42 @@ export type PutValidateResignationResponses = {
 
 export type PutValidateResignationResponse =
   PutValidateResignationResponses[keyof PutValidateResignationResponses];
+
+export type GetIndexWebhookCallbackData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/webhook-callbacks';
+};
+
+export type GetIndexWebhookCallbackErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetIndexWebhookCallbackError =
+  GetIndexWebhookCallbackErrors[keyof GetIndexWebhookCallbackErrors];
+
+export type GetIndexWebhookCallbackResponses = {
+  /**
+   * Success
+   */
+  200: ListWebhookCallbacksResponse;
+};
+
+export type GetIndexWebhookCallbackResponse =
+  GetIndexWebhookCallbackResponses[keyof GetIndexWebhookCallbackResponses];
 
 export type GetShowEmploymentCustomFieldValueData = {
   body?: never;
@@ -15320,6 +15653,50 @@ export type PatchUpdateIncentiveResponses = {
 
 export type PatchUpdateIncentiveResponse =
   PatchUpdateIncentiveResponses[keyof PatchUpdateIncentiveResponses];
+
+export type GetShowEligibilityQuestionnaireData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Type of eligibility questionnaire
+     */
+    type: 'contractor_of_record';
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number;
+  };
+  url: '/v1/contractors/schemas/eligibility-questionnaire';
+};
+
+export type GetShowEligibilityQuestionnaireErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetShowEligibilityQuestionnaireError =
+  GetShowEligibilityQuestionnaireErrors[keyof GetShowEligibilityQuestionnaireErrors];
+
+export type GetShowEligibilityQuestionnaireResponses = {
+  /**
+   * Success
+   */
+  200: EligibilityQuestionnaireJsonSchemaResponse;
+};
+
+export type GetShowEligibilityQuestionnaireResponse =
+  GetShowEligibilityQuestionnaireResponses[keyof GetShowEligibilityQuestionnaireResponses];
 
 export type GetIndexWorkAuthorizationRequestData = {
   body?: never;
@@ -16369,6 +16746,91 @@ export type GetShowCompanyManagerResponses = {
 
 export type GetShowCompanyManagerResponse =
   GetShowCompanyManagerResponses[keyof GetShowCompanyManagerResponses];
+
+export type DeleteDeleteContractorCorSubscriptionSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+};
+
+export type DeleteDeleteContractorCorSubscriptionSubscriptionErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type DeleteDeleteContractorCorSubscriptionSubscriptionError =
+  DeleteDeleteContractorCorSubscriptionSubscriptionErrors[keyof DeleteDeleteContractorCorSubscriptionSubscriptionErrors];
+
+export type DeleteDeleteContractorCorSubscriptionSubscriptionResponses = {
+  /**
+   * No Content
+   */
+  204: unknown;
+};
+
+export type PostManageContractorCorSubscriptionSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+};
+
+export type PostManageContractorCorSubscriptionSubscriptionErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostManageContractorCorSubscriptionSubscriptionError =
+  PostManageContractorCorSubscriptionSubscriptionErrors[keyof PostManageContractorCorSubscriptionSubscriptionErrors];
+
+export type PostManageContractorCorSubscriptionSubscriptionResponses = {
+  /**
+   * Created
+   */
+  201: SuccessResponse;
+};
+
+export type PostManageContractorCorSubscriptionSubscriptionResponse =
+  PostManageContractorCorSubscriptionSubscriptionResponses[keyof PostManageContractorCorSubscriptionSubscriptionResponses];
 
 export type GetIndexScheduledContractorInvoiceData = {
   body?: never;

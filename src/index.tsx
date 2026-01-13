@@ -79,6 +79,8 @@ export {
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 
+export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useEmploymentQuery, useMagicLink } from '@/src/common/api';
@@ -102,6 +104,7 @@ export type {
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
+  PDFPreviewComponentProps,
   Meta,
 } from '@/src/types/remoteFlows';
 

@@ -3,7 +3,7 @@ import { DrawerComponentProps } from '@/src/types/remoteFlows';
 
 export type DrawerProps = DrawerComponentProps & {
   className?: string;
-  direction?: 'left' | 'right';
+  direction?: 'left' | 'right' | 'bottom' | 'top';
 };
 
 export const Drawer = ({

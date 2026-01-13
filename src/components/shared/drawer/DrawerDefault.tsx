@@ -26,8 +26,8 @@ export function DrawerDefault({
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent
         className={cn(
-          className,
           'RemoteFlows__Drawer h-full w-[540px] mt-0 ml-auto px-4',
+          className,
         )}
       >
         <div className='h-full flex flex-col'>

@@ -1,5 +1,32 @@
 # @remoteoss/remote-flows
 
+## 1.6.0
+
+### Minor Changes
+
+- add size prop to inline button variant (#695) [#695](https://github.com/remoteoss/remote-flows/pull/695)
+- improve contract preview step (#697) [#697](https://github.com/remoteoss/remote-flows/pull/697)
+- add customizable PDF viewer component (#698) [#698](https://github.com/remoteoss/remote-flows/pull/698)
+
+## 1.5.1
+
+### Patch Changes
+
+- replace 'we' pronouns with 'Remote' for clarity (#694) [#694](https://github.com/remoteoss/remote-flows/pull/694)
+
+## 1.5.0
+
+### Minor Changes
+
+- add automated coverage tracking with badge reporting (#618) [#618](https://github.com/remoteoss/remote-flows/pull/618)
+- add hotfix release workflow with npm tag management (#676) [#676](https://github.com/remoteoss/remote-flows/pull/676)
+- use secrets for gist configuration (#686) [#686](https://github.com/remoteoss/remote-flows/pull/686)
+- lazy load form components with suspense boundaries (#661) [#661](https://github.com/remoteoss/remote-flows/pull/661)
+- skip telemetry when enviroment is not local and in localhost (#688) [#688](https://github.com/remoteoss/remote-flows/pull/688)
+- render statement and extra fields in JSON schema form (#692) [#692](https://github.com/remoteoss/remote-flows/pull/692)
+- add content property to the helpCenter types (#690) [#690](https://github.com/remoteoss/remote-flows/pull/690)
+- increase request size limit and add explicit button type (#689) [#689](https://github.com/remoteoss/remote-flows/pull/689)
+
 ## 1.4.3
 
 ### Patch Changes

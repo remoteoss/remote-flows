@@ -105,7 +105,7 @@ export type DrawerComponentProps = {
   title: React.ReactNode;
   trigger: React.ReactElement;
   children?: React.ReactNode;
-  direction?: 'left' | 'right';
+  direction?: 'left' | 'right' | 'bottom' | 'top';
   className?: string;
 };
 
@@ -117,6 +117,11 @@ export type FieldSetToggleComponentProps = {
   'aria-label': string;
   className?: string;
   children?: React.ReactNode;
+};
+
+export type PDFPreviewComponentProps = {
+  base64Data: string;
+  fileName?: string;
 };
 
 // We exclude some of the types that we are overriding
@@ -139,6 +144,7 @@ export type Components = {
   drawer?: React.ComponentType<DrawerComponentProps>;
   table?: React.ComponentType<TableComponentProps>;
   'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
+  pdfViewer?: React.ComponentType<PDFPreviewComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {

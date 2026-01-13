@@ -15,14 +15,15 @@ import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOn
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
+  JSFModify,
 } from '@/src/flows/types';
-import { formatCurrency } from '@/src/lib/utils';
+import { clearBase64Data, formatCurrency } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
-import { JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 
 /**
  * Get the contract document signature schema
@@ -35,12 +36,18 @@ export const useGetContractDocumentSignatureSchema = ({
   options,
 }: {
   fieldValues: FieldValues;
-  options?: { queryOptions?: { enabled?: boolean } };
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
   return useQuery({
-    queryKey: ['contract-document-signature'],
+    queryKey: [
+      'contract-document-signature',
+      fieldValues.review_completed,
+      options?.jsfModify,
+    ],
     queryFn: async () => {
-      return createHeadlessForm(signatureSchema, fieldValues);
+      return createHeadlessForm(signatureSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
     },
     enabled: options?.queryOptions?.enabled,
   });
@@ -90,7 +97,7 @@ export const useGetShowContractDocument = ({
 }: {
   employmentId: string;
   contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
   const { client } = useClient();
   return useQuery({
@@ -103,7 +110,15 @@ export const useGetShowContractDocument = ({
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
-      return data?.data;
+      return {
+        ...data?.data,
+        contract_document: {
+          ...data?.data?.contract_document,
+          content: clearBase64Data(
+            data?.data?.contract_document?.content as $TSFixMe,
+          ),
+        },
+      };
     },
   });
 };
@@ -225,6 +240,13 @@ export const useContractorOnboardingDetailsSchema = ({
   });
 };
 
+const CONTRACT_PRODUCT_TITLES = {
+  ['urn:remotecom:resource:product:contractor:plus:monthly']:
+    'Contractor Management Plus',
+  ['urn:remotecom:resource:product:contractor:standard:monthly']:
+    'Contractor Management',
+};
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
@@ -258,22 +280,22 @@ export const useContractorSubscriptionSchemaField = (
               opts.currency.symbol,
             );
           }
-          const foundOption = field?.options?.find(
-            (option: { value: string }) =>
-              option.value === opts.product.identifier,
-          );
-          const title = foundOption?.label ?? '';
+          const product = opts.product;
+          const title =
+            CONTRACT_PRODUCT_TITLES[
+              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+            ] ?? '';
           const label = title;
-          const value = opts.product.identifier ?? '';
-          const description = foundOption?.description ?? '';
+          const value = product.identifier ?? '';
+          const description = product.description ?? '';
+          const features = product.features ?? [];
           const meta = {
-            ...foundOption?.meta,
+            features,
             price: formattedPrice,
           };
           return { label, value, description, meta };
-        })
-        .sort((a, b) => a.label.localeCompare(b.label));
-      field.options = options;
+        });
+      field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
 
