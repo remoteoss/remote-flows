@@ -74,11 +74,6 @@ export type {
   ContractPreviewResponse,
 } from '@/src/flows/ContractorOnboarding';
 
-export {
-  contractorStandardProductIdentifier,
-  contractorPlusProductIdentifier,
-} from '@/src/flows/ContractorOnboarding/constants';
-
 export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
 export type * from '@/src/flows/CostCalculator/types';
