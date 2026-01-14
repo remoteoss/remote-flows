@@ -32,6 +32,7 @@ import {
   useCreateEmployment,
   useEmployment,
   useJSONSchemaForm,
+  useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import {
   disabledInviteButtonEmploymentStatus,
@@ -144,8 +145,15 @@ export const useContractorOnboarding = ({
   }, [employmentStatus]);
 
   const createEmploymentMutation = useCreateEmployment();
+  const updateEmploymentMutation = useUpdateEmployment(
+    internalCountryCode as string,
+    options,
+  );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
+  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
+    updateEmploymentMutation,
+  );
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
@@ -655,10 +663,9 @@ export const useContractorOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          // TODO: Provisional it seems you cannot update a contractor employment
-          // TODO: we'll need to check later if the provisional start date gets updated for the statement of work
-          return Promise.resolve({
-            data: { employmentId: internalEmploymentId },
+          return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: parsedValues,
           });
         }
 
