@@ -7,7 +7,7 @@
 #### Features
 
 - add statement informing users about contractor services agreement in the statement of work (#702) [#702](https://github.com/remoteoss/remote-flows/pull/702)
-- add custom pricing plan cards with component override support [#687](https://github.com/remoteoss/remote-flows/pull/687)
+- add custom pricing plan cards with component override support and move product plans to step 2 [#687](https://github.com/remoteoss/remote-flows/pull/687)
 - add Remote Payments setup section in the review step (#700) [#700](https://github.com/remoteoss/remote-flows/pull/700)
 - implement update basic information (#703) [#703](https://github.com/remoteoss/remote-flows/pull/703)
 - recover select pricing plan selected, add warning about backdating and add minDate to provisionalStartDate if CM+ is chosen (#691) [#691](https://github.com/remoteoss/remote-flows/pull/691)
