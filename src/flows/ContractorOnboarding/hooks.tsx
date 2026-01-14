@@ -743,6 +743,7 @@ export const useContractorOnboarding = ({
             );
             // @ts-expect-error the types from the response are not matching
             const employmentId = response.data?.data?.employment?.id;
+            // TODO: probably we need to do updates in the BE to send ir35 as standalone field
             if (ir35ContractDetailsPayload && employmentId) {
               await createContractorContractDocumentMutationAsync({
                 employmentId: employmentId,
