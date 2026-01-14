@@ -1375,4 +1375,82 @@ describe('ContractorOnboardingFlow', () => {
       expect(elements.length).toBeGreaterThan(0);
     });
   });
+
+  it('should pre-select Contractor Management Plus when employment has contractor_type plus', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              id: employmentId,
+              contractor_type: 'plus',
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Verify that Contractor Management Plus is pre-selected
+    await waitFor(() => {
+      const plusRadio = screen.getByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      expect(plusRadio).toBeChecked();
+    });
+  });
 });
