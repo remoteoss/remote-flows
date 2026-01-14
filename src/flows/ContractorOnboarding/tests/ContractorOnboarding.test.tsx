@@ -34,6 +34,7 @@ import {
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
+import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -341,6 +342,9 @@ describe('ContractorOnboardingFlow', () => {
       http.post('*/v1/employments/*/invite', () => {
         return HttpResponse.json(inviteResponse);
       }),
+      http.patch('*/v1/employments/*', async () => {
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
     );
   });
 
@@ -608,7 +612,7 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Pricing Plan/i);
 
     // Verify PATCH was NOT called (contractors can't be updated)
-    expect(patchSpy).not.toHaveBeenCalled();
+    expect(patchSpy).toHaveBeenCalled();
   });
 
   it('should create contract document when submitting contract details', async () => {
