@@ -251,13 +251,88 @@ export const useContractorOnboarding = ({
         Boolean(employmentId)),
   );
 
+  const basicInformationJsfModify = useMemo(() => {
+    const isSaudiArabia = internalCountryCode === 'SAU';
+    const isUk = internalCountryCode === 'GBR';
+    if (!isSaudiArabia && !isUk) {
+      return options?.jsfModify?.basic_information;
+    }
+
+    if (isUk) {
+      return {
+        ...options?.jsfModify?.basic_information,
+        create: {
+          ...options?.jsfModify?.basic_information?.create,
+          ir35: {
+            title: 'IR35 Status',
+            description:
+              "What's your contractor's employment status? - Add Zendesk help link here",
+            oneOf: [
+              {
+                const: 'inside',
+                title: 'Inside IR35 (deemed employee)',
+              },
+              {
+                const: 'outside',
+                title: 'Outside IR35',
+              },
+              {
+                const: 'exempt',
+                title: 'Exempt from IR35',
+              },
+            ],
+            'x-jsf-presentation': {
+              inputType: 'select',
+            },
+          },
+        },
+        orderRoot: (originalOrder) => {
+          return [...originalOrder, 'ir35'];
+        },
+      };
+    }
+
+    // Add Saudi nationality field when country is Saudi Arabia
+    return {
+      ...options?.jsfModify?.basic_information,
+      create: {
+        ...options?.jsfModify?.basic_information?.create,
+        saudi_nationality_status: {
+          title:
+            'Is your contractor a Saudi Arabia national, or a non-Saudi national contracting via a local business entity or under a Special Privilege Iqama visa?',
+          description: '',
+          type: 'string',
+          oneOf: [
+            {
+              const: 'national',
+              description: '',
+              title: 'Yes',
+            },
+            {
+              const: 'non-national',
+              description:
+                'Please be aware that contracting with non-Saudi Arabia nationals that are not operating as a company or under a Special Privilege Iqama visa can lead to fines for operating without proper work authorization. If you are concerned, please speak with the Contractor and/or local Saudi Arabia counsel to ensure compliance.',
+              title: 'No',
+            },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+          },
+        },
+      },
+      orderRoot: (originalOrder) => {
+        return [...originalOrder, 'saudi_nationality_status'];
+      },
+    };
+  }, [internalCountryCode, options?.jsfModify?.basic_information]);
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'contractor_basic_information',
     options: {
-      jsfModify: options?.jsfModify?.basic_information,
+      jsfModify: basicInformationJsfModify,
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -637,16 +712,51 @@ export const useContractorOnboarding = ({
           employment?.country.code !== internalCountryCode;
 
         if (isEmploymentNotLoaded || hasChangedCountry) {
-          const payload: EmploymentCreateParams = {
-            basic_information: parsedValues,
+          const {
+            saudi_nationality_status: saudiNationalityStatus,
+            ir35: ir35Status,
+            ...basicInformationParsedValues
+          } = parsedValues;
+          const basicInformationPayload: EmploymentCreateParams = {
+            basic_information: basicInformationParsedValues,
             type: 'contractor',
             country_code: internalCountryCode,
             external_id: externalId,
           };
+          const ir35ContractDetailsPayload = {
+            contract_document: {
+              details: {
+                ir_35: ir35Status,
+              },
+            },
+          };
+          const saudiContractDetailsPayload = {
+            contract_document: {
+              details: {
+                nationality: saudiNationalityStatus,
+              },
+            },
+          };
           try {
-            const response = await createEmploymentMutationAsync(payload);
+            const response = await createEmploymentMutationAsync(
+              basicInformationPayload,
+            );
             // @ts-expect-error the types from the response are not matching
             const employmentId = response.data?.data?.employment?.id;
+            if (ir35ContractDetailsPayload && employmentId) {
+              await createContractorContractDocumentMutationAsync({
+                employmentId: employmentId,
+                payload: ir35ContractDetailsPayload,
+              });
+            }
+            // TODO: probably we need to do updates in the BE to send nationality as standalone field
+            if (saudiNationalityStatus && employmentId) {
+              await createContractorContractDocumentMutationAsync({
+                employmentId: employmentId,
+                payload: saudiContractDetailsPayload,
+              });
+            }
+
             setInternalEmploymentId(employmentId);
 
             return response;
