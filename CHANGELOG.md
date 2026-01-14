@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.7.0
+
+### Minor Changes
+
+- enable cross-component form state management (#701) [#701](https://github.com/remoteoss/remote-flows/pull/701)
+- add statement informing users (#702) [#702](https://github.com/remoteoss/remote-flows/pull/702)
+- add custom pricing plan cards with component override support (#687) [#687](https://github.com/remoteoss/remote-flows/pull/687)
+- add Remote Payments setup section (#700) [#700](https://github.com/remoteoss/remote-flows/pull/700)
+- implement employment update capability for contractors (#703) [#703](https://github.com/remoteoss/remote-flows/pull/703)
+- add validations (#691) [#691](https://github.com/remoteoss/remote-flows/pull/691)
+
 ## 1.6.0
 
 ### Minor Changes
