@@ -30,6 +30,7 @@ export const createHeadlessForm = (
   if (options && options.jsfModify) {
     const { schema } = modify(jsfSchema, options.jsfModify);
     jsfSchema = schema;
+    console.log('jsfSchema after modify', jsfSchema);
   }
 
   let moneyFieldsData: Record<string, number | null> = {};

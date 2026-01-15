@@ -258,9 +258,11 @@ const MultiStepForm = ({
             onSuccess={(response: PricingPlanResponse) =>
               console.log('response', response)
             }
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
+            onError={({ error, fieldErrors }) => {
+              console.log('error', error);
+              console.log('fieldErrors', fieldErrors);
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
           <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
