@@ -361,12 +361,6 @@ export const ContractorOnboardingWithProps = ({
               render={OnBoardingRender}
               employmentId={employmentId}
               externalId={externalId}
-              initialValues={{
-                pricing_plan: {
-                  subscription:
-                    'urn:remotecom:resource:product:contractor:standard:monthly',
-                },
-              }}
               options={{
                 jsfModify: {
                   contract_details: {
