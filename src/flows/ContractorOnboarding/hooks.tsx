@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import omit from 'lodash.omit';
-import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -27,7 +27,6 @@ import {
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
   calculateProvisionalStartDateDescription,
-  buildContractDetailsJsfModify,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -50,8 +49,11 @@ import {
   contractorPlusProductIdentifier,
   corProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
-import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+import {
+  buildBasicInformationJsfModify,
+  buildContractDetailsJsfModify,
+  buildContractPreviewJsfModify,
+} from '@/src/flows/ContractorOnboarding/jsfModify';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -266,88 +268,16 @@ export const useContractorOnboarding = ({
         Boolean(employmentId)),
   );
 
-  const basicInformationJsfModify = useMemo(() => {
-    const isSaudiArabia = internalCountryCode === 'SAU';
-    const isUk = internalCountryCode === 'GBR';
-    if (!isSaudiArabia && !isUk) {
-      return options?.jsfModify?.basic_information;
-    }
-
-    if (isUk) {
-      return {
-        ...options?.jsfModify?.basic_information,
-        create: {
-          ...options?.jsfModify?.basic_information?.create,
-          ir35: {
-            title: 'IR35 Status',
-            description:
-              "What's your contractor's employment status? - Add Zendesk help link here",
-            oneOf: [
-              {
-                const: 'inside',
-                title: 'Inside IR35 (deemed employee)',
-              },
-              {
-                const: 'outside',
-                title: 'Outside IR35',
-              },
-              {
-                const: 'exempt',
-                title: 'Exempt from IR35',
-              },
-            ],
-            'x-jsf-presentation': {
-              inputType: 'select',
-            },
-          },
-        },
-        orderRoot: (originalOrder) => {
-          return [...originalOrder, 'ir35'];
-        },
-      };
-    }
-
-    // Add Saudi nationality field when country is Saudi Arabia
-    return {
-      ...options?.jsfModify?.basic_information,
-      create: {
-        ...options?.jsfModify?.basic_information?.create,
-        saudi_nationality_status: {
-          title:
-            'Is your contractor a Saudi Arabia national, or a non-Saudi national contracting via a local business entity or under a Special Privilege Iqama visa?',
-          description: '',
-          type: 'string',
-          oneOf: [
-            {
-              const: 'national',
-              description: '',
-              title: 'Yes',
-            },
-            {
-              const: 'non-national',
-              description:
-                'Please be aware that contracting with non-Saudi Arabia nationals that are not operating as a company or under a Special Privilege Iqama visa can lead to fines for operating without proper work authorization. If you are concerned, please speak with the Contractor and/or local Saudi Arabia counsel to ensure compliance.',
-              title: 'No',
-            },
-          ],
-          'x-jsf-presentation': {
-            inputType: 'radio',
-          },
-        },
-      },
-      orderRoot: (originalOrder) => {
-        return [...originalOrder, 'saudi_nationality_status'];
-      },
-    };
-  }, [internalCountryCode, options?.jsfModify?.basic_information]);
-
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'contractor_basic_information',
     options: {
-      jsfModify: basicInformationJsfModify,
+      jsfModify: buildBasicInformationJsfModify(
+        internalCountryCode as string,
+        options,
+      ),
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -399,66 +329,13 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const mergedContractPreviewJsfModify = useMemo(() => {
-    const userFields = options?.jsfModify?.contract_preview?.fields;
-
-    return {
-      fields: {
-        contract_preview_header: {
-          ...userFields?.contract_preview_header,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_header?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewHeader;
-              return <CustomComponent {...props} />;
-            },
-          },
-        },
-        contract_preview_statement: {
-          ...userFields?.contract_preview_statement,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_statement?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewStatement;
-
-              return (
-                <CustomComponent
-                  reviewCompleted={Boolean(fieldValues?.review_completed)}
-                  {...props}
-                />
-              );
-            },
-          },
-        },
-        signature: {
-          ...userFields?.signature,
-          'x-jsf-presentation': {
-            calculateDynamicProperties: (
-              fieldValuesDynamicProperties: Record<string, unknown>,
-            ) => {
-              return {
-                isVisible: Boolean(
-                  fieldValuesDynamicProperties.review_completed,
-                ),
-              };
-            },
-            // Merge any user-provided signature customizations
-            ...userFields?.signature?.['x-jsf-presentation'],
-          },
-        },
-      },
-    };
-  }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
-
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
-      jsfModify: mergedContractPreviewJsfModify,
+      jsfModify: buildContractPreviewJsfModify(options, fieldValues),
     },
   });
 
