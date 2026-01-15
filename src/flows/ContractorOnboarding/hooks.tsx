@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import omit from 'lodash.omit';
 import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
@@ -19,6 +20,7 @@ import {
   useContractorSubscriptionSchemaField,
   useGetShowContractDocument,
   useSignContractDocument,
+  useUpdateUKandSaudiFields,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -149,6 +151,10 @@ export const useContractorOnboarding = ({
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
     options,
+  );
+  const { mutate: updateUKandSaudiFieldsMutation } = useUpdateUKandSaudiFields(
+    internalEmploymentId as string,
+    fieldValues,
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
@@ -518,6 +524,8 @@ export const useContractorOnboarding = ({
       provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
+      ir35: employment?.contract_details?.ir_35,
+      nationality: employment?.contract_details?.nationality, // TODO: check later when saudi works if this works
     };
 
     return getInitialValues(stepFields.basic_information, initialValues);
@@ -525,6 +533,8 @@ export const useContractorOnboarding = ({
     stepFields.basic_information,
     employmentBasicInformation,
     onboardingInitialValues,
+    employment?.contract_details?.ir_35,
+    employment?.contract_details?.nationality,
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
@@ -735,51 +745,25 @@ export const useContractorOnboarding = ({
           employment?.country.code !== internalCountryCode;
 
         if (isEmploymentNotLoaded || hasChangedCountry) {
-          const {
-            saudi_nationality_status: saudiNationalityStatus,
-            ir35: ir35Status,
-            ...basicInformationParsedValues
-          } = parsedValues;
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+          );
           const basicInformationPayload: EmploymentCreateParams = {
             basic_information: basicInformationParsedValues,
             type: 'contractor',
             country_code: internalCountryCode,
             external_id: externalId,
           };
-          const ir35ContractDetailsPayload = {
-            contract_document: {
-              details: {
-                ir_35: ir35Status,
-              },
-            },
-          };
-          const saudiContractDetailsPayload = {
-            contract_document: {
-              details: {
-                nationality: saudiNationalityStatus,
-              },
-            },
-          };
+
           try {
             const response = await createEmploymentMutationAsync(
               basicInformationPayload,
             );
             // @ts-expect-error the types from the response are not matching
             const employmentId = response.data?.data?.employment?.id;
-            // TODO: probably we need to do updates in the BE to send ir35 as standalone field
-            if (ir35ContractDetailsPayload && employmentId) {
-              await createContractorContractDocumentMutationAsync({
-                employmentId: employmentId,
-                payload: ir35ContractDetailsPayload,
-              });
-            }
-            // TODO: probably we need to do updates in the BE to send nationality as standalone field
-            if (saudiNationalityStatus && employmentId) {
-              await createContractorContractDocumentMutationAsync({
-                employmentId: employmentId,
-                payload: saudiContractDetailsPayload,
-              });
-            }
+            await updateUKandSaudiFieldsMutation();
 
             setInternalEmploymentId(employmentId);
 
@@ -789,9 +773,16 @@ export const useContractorOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+          );
+
+          await updateUKandSaudiFieldsMutation();
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
-            basic_information: parsedValues,
+            basic_information: basicInformationParsedValues,
           });
         }
 

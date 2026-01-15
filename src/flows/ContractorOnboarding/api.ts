@@ -24,6 +24,7 @@ import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { mutationToPromise } from '@/src/lib/mutations';
 
 /**
  * Get the contract document signature schema
@@ -302,5 +303,48 @@ export const useContractorSubscriptionSchemaField = (
   return {
     isLoading,
     form,
+  };
+};
+
+export const useUpdateUKandSaudiFields = (
+  employmentId: string,
+  parsedValues: FieldValues,
+) => {
+  const createContractorContractDocumentMutation =
+    useCreateContractorContractDocument();
+  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+    mutationToPromise(createContractorContractDocumentMutation);
+
+  return {
+    mutate: async () => {
+      const {
+        saudi_nationality_status: saudiNationalityStatus,
+        ir35: ir35Status,
+      } = parsedValues;
+      const ir35ContractDetailsPayload = {
+        contract_document: {
+          ir_35: ir35Status,
+        },
+      };
+      const saudiContractDetailsPayload = {
+        contract_document: {
+          details: {
+            nationality: saudiNationalityStatus,
+          },
+        },
+      };
+      if (ir35Status) {
+        await createContractorContractDocumentMutationAsync({
+          employmentId: employmentId,
+          payload: ir35ContractDetailsPayload,
+        });
+      }
+      if (saudiNationalityStatus) {
+        await createContractorContractDocumentMutationAsync({
+          employmentId: employmentId,
+          payload: saudiContractDetailsPayload,
+        });
+      }
+    },
   };
 };
