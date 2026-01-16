@@ -312,7 +312,7 @@ export const useUpdateUKandSaudiFields = (
 ) => {
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
-  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+  const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
   return {
@@ -334,13 +334,13 @@ export const useUpdateUKandSaudiFields = (
         },
       };
       if (ir35Status) {
-        await createContractorContractDocumentMutationAsync({
+        return createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
           payload: ir35ContractDetailsPayload,
         });
       }
       if (saudiNationalityStatus) {
-        await createContractorContractDocumentMutationAsync({
+        return createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
           payload: saudiContractDetailsPayload,
         });

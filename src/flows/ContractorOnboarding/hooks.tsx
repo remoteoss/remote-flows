@@ -160,16 +160,14 @@ export const useContractorOnboarding = ({
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
-  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
-    updateEmploymentMutation,
-  );
+  const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
+    mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
 
-  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
-    createEmploymentMutation,
-  );
+  const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
+    mutationToPromise(createEmploymentMutation);
 
   const { mutateAsync: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
@@ -639,7 +637,6 @@ export const useContractorOnboarding = ({
             const response = await createEmploymentMutationAsync(
               basicInformationPayload,
             );
-            // @ts-expect-error the types from the response are not matching
             const employmentId = response.data?.data?.employment?.id;
             await updateUKandSaudiFieldsMutation();
 
@@ -658,11 +655,16 @@ export const useContractorOnboarding = ({
             'ir35_sds_file',
           );
 
-          await updateUKandSaudiFieldsMutation();
-          return updateEmploymentMutationAsync({
-            employmentId: internalEmploymentId,
-            basic_information: basicInformationParsedValues,
-          });
+          try {
+            await updateUKandSaudiFieldsMutation();
+            return updateEmploymentMutationAsync({
+              employmentId: internalEmploymentId,
+              basic_information: basicInformationParsedValues,
+            });
+          } catch (error) {
+            console.error('Error updating onboarding:', error);
+            throw error;
+          }
         }
 
         return;
@@ -876,7 +878,9 @@ export const useContractorOnboarding = ({
      */
     isSubmitting:
       createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
+      manageContractorSubscriptionMutation.isPending ||
       signContractDocumentMutation.isPending,
 
     /**
