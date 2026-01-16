@@ -43,7 +43,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
-import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -175,9 +175,8 @@ export const useContractorOnboarding = ({
   const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
-  const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
-    signContractDocumentMutation,
-  );
+  const { mutateAsyncOrThrow: signContractDocumentMutationAsync } =
+    mutationToPromise(signContractDocumentMutation);
 
   const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
@@ -677,13 +676,12 @@ export const useContractorOnboarding = ({
           contract_document: parsedValues,
         };
         try {
-          const response: $TSFixMe =
-            await createContractorContractDocumentMutationAsync({
-              employmentId: internalEmploymentId as string,
-              payload,
-            });
-
-          const contractDocumentId = response.data?.data?.contract_document?.id;
+          const response = await createContractorContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload,
+          });
+          // @ts-expect-error the types from the response are not matching
+          const contractDocumentId = response?.data?.contract_document?.id;
           setInternalContractDocumentId(contractDocumentId);
           return response;
         } catch (error) {
@@ -693,13 +691,18 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
-          employmentId: internalEmploymentId as string,
-          contractDocumentId: internalContractDocumentId as string,
-          payload: {
-            signature: values.signature,
-          },
-        });
+        try {
+          return signContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            contractDocumentId: internalContractDocumentId as string,
+            payload: {
+              signature: values.signature,
+            },
+          });
+        } catch (error) {
+          console.error('Error signing contract document:', error);
+          throw error;
+        }
       }
       case 'pricing_plan': {
         try {
