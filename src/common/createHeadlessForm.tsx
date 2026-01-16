@@ -28,8 +28,12 @@ export const createHeadlessForm = (
   options?: { jsfModify?: JSFModify },
 ): CreateHeadlessFormResult => {
   if (options && options.jsfModify) {
-    const { schema } = modify(jsfSchema, options.jsfModify);
+    const { required, ...modifyConfig } = options.jsfModify;
+    const { schema } = modify(jsfSchema, modifyConfig);
     jsfSchema = schema;
+    if (required) {
+      jsfSchema.required = [...schema.required, ...required];
+    }
   }
 
   let moneyFieldsData: Record<string, number | null> = {};

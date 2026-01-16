@@ -74,7 +74,12 @@ export type JSONSchemaFormType =
   // Benefits forms
   | 'benefit_renewal_request';
 
-export type JSFModify = ModifyConfig;
+export type JSFModify = ModifyConfig & {
+  /**
+   * allows to specify additional required fields for the form.
+   */
+  required?: string[];
+};
 
 export type FlowOptions = {
   jsfModify?: JSFModify;

@@ -115,6 +115,7 @@ export const buildBasicInformationJsfModify = (
           },
         },
       },
+      required: ['ir35'],
       orderRoot: (originalOrder: string[]) => {
         return [...originalOrder, 'ir35'];
       },
@@ -148,6 +149,7 @@ export const buildBasicInformationJsfModify = (
         },
       },
     },
+    required: ['saudi_nationality_status'],
     orderRoot: (originalOrder: string[]) => {
       return [...originalOrder, 'saudi_nationality_status'];
     },
