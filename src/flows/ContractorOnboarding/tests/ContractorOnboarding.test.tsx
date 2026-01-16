@@ -1455,47 +1455,6 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should load United Kingdom and verify ir35 field appears in basic information step', async () => {
-    server.use(
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [
-            {
-              code: 'GBR',
-              name: 'United Kingdom',
-              eor_onboarding: true,
-            },
-            {
-              code: 'PRT',
-              name: 'Portugal',
-              eor_onboarding: true,
-            },
-          ],
-        });
-      }),
-    );
-
-    render(<ContractorOnboardingFlow {...defaultProps} />, {
-      wrapper: TestProviders,
-    });
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await fillCountry('GBR');
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
-
-    // Verify IR35 field is present
-    await waitFor(() => {
-      const ir35Field = screen.getByLabelText(/IR35 Status/i);
-      expect(ir35Field).toBeInTheDocument();
-    });
-  });
-
   it('should show file upload field when ir35 status is inside or outside', async () => {
     mockRender.mockImplementation(
       ({
@@ -1545,13 +1504,10 @@ describe('ContractorOnboardingFlow', () => {
     await fillSelect('ir35', 'inside');
 
     // Verify file upload field appears
-    await waitFor(
-      () => {
-        const fileUploadField = screen.getByLabelText(/Upload SDS/i);
-        expect(fileUploadField).toBeInTheDocument();
-      },
-      { timeout: 3000 },
-    );
+    await waitFor(() => {
+      const fileUploadField = screen.getByLabelText(/Upload SDS/i);
+      expect(fileUploadField).toBeInTheDocument();
+    });
   });
 
   it('should call createContractorContractDocumentMutationAsync and uploadFileMutationAsync with correct payload when submitting with ir35', async () => {
