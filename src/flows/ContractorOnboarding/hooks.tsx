@@ -696,13 +696,15 @@ export const useContractorOnboarding = ({
 
       case 'contract_preview': {
         try {
-          return signContractDocumentMutationAsync({
+          const response = await signContractDocumentMutationAsync({
             employmentId: internalEmploymentId as string,
             contractDocumentId: internalContractDocumentId as string,
             payload: {
               signature: values.signature,
             },
           });
+          console.log('response', response);
+          return response;
         } catch (error) {
           console.error('Error signing contract document:', error);
           throw error;
