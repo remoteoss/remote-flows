@@ -56,23 +56,20 @@ export function PricingPlanStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.pricing_plan,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
-    } catch (error: unknown) {
+    } catch (err) {
+      const { error, rawError, fieldErrors } = err as {
+        error: Error;
+        rawError: Record<string, unknown>;
+        fieldErrors: NormalizedFieldError[];
+      };
+      const normalizedFieldErrors = normalizeFieldErrors(
+        fieldErrors || [],
+        contractorOnboardingBag.meta?.fields?.pricing_plan,
+      );
       onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
+        error: error,
+        rawError: rawError,
+        fieldErrors: normalizedFieldErrors,
       });
     }
   };

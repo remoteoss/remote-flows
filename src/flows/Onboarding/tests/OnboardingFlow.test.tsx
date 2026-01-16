@@ -465,13 +465,13 @@ describe('OnboardingFlow', () => {
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
   });
 
   it('should render the seniority_date field when the user selects yes in the radio button', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await fillRadio('Does the employee have a seniority date?', 'Yes');
 
@@ -494,7 +494,7 @@ describe('OnboardingFlow', () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
     // Wait for select country step
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -524,7 +524,7 @@ describe('OnboardingFlow', () => {
     backButton.click();
     await screen.findByText(/Step: Select Country/i);
 
-    await fillCountry('Spain');
+    await fillCountry('ESP');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -692,7 +692,7 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -712,7 +712,7 @@ describe('OnboardingFlow', () => {
       },
     );
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -770,7 +770,7 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -853,7 +853,7 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -910,7 +910,7 @@ describe('OnboardingFlow', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
@@ -998,7 +998,7 @@ describe('OnboardingFlow', () => {
     );
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     let nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
+import omit from 'lodash.omit';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -19,13 +20,13 @@ import {
   useContractorSubscriptionSchemaField,
   useGetShowContractDocument,
   useSignContractDocument,
+  useUpdateUKandSaudiFields,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
   calculateProvisionalStartDateDescription,
-  buildContractDetailsJsfModify,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -42,14 +43,18 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
-import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   corProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
-import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+import {
+  buildBasicInformationJsfModify,
+  buildContractDetailsJsfModify,
+  buildContractPreviewJsfModify,
+} from '@/src/flows/ContractorOnboarding/jsfModify';
+import { useUploadFile } from '@/src/common/api/files';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -152,25 +157,30 @@ export const useContractorOnboarding = ({
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
-  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
-    updateEmploymentMutation,
-  );
+  const uploadFileMutation = useUploadFile();
+  const { mutateAsync: updateUKandSaudiFieldsMutation } =
+    useUpdateUKandSaudiFields(
+      createContractorContractDocumentMutation,
+      uploadFileMutation,
+      fieldValues,
+    );
+
+  const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
+    mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
 
-  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
-    createEmploymentMutation,
-  );
+  const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
+    mutationToPromise(createEmploymentMutation);
 
-  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+  const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
-  const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
-    signContractDocumentMutation,
-  );
+  const { mutateAsyncOrThrow: signContractDocumentMutationAsync } =
+    mutationToPromise(signContractDocumentMutation);
 
-  const { mutateAsync: manageContractorSubscriptionMutationAsync } =
+  const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
@@ -266,7 +276,10 @@ export const useContractorOnboarding = ({
   } = useJSONSchema({
     form: 'contractor_basic_information',
     options: {
-      jsfModify: options?.jsfModify?.basic_information,
+      jsfModify: buildBasicInformationJsfModify(
+        internalCountryCode as string,
+        options,
+      ),
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -318,66 +331,13 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const mergedContractPreviewJsfModify = useMemo(() => {
-    const userFields = options?.jsfModify?.contract_preview?.fields;
-
-    return {
-      fields: {
-        contract_preview_header: {
-          ...userFields?.contract_preview_header,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_header?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewHeader;
-              return <CustomComponent {...props} />;
-            },
-          },
-        },
-        contract_preview_statement: {
-          ...userFields?.contract_preview_statement,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_statement?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewStatement;
-
-              return (
-                <CustomComponent
-                  reviewCompleted={Boolean(fieldValues?.review_completed)}
-                  {...props}
-                />
-              );
-            },
-          },
-        },
-        signature: {
-          ...userFields?.signature,
-          'x-jsf-presentation': {
-            calculateDynamicProperties: (
-              fieldValuesDynamicProperties: Record<string, unknown>,
-            ) => {
-              return {
-                isVisible: Boolean(
-                  fieldValuesDynamicProperties.review_completed,
-                ),
-              };
-            },
-            // Merge any user-provided signature customizations
-            ...userFields?.signature?.['x-jsf-presentation'],
-          },
-        },
-      },
-    };
-  }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
-
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
-      jsfModify: mergedContractPreviewJsfModify,
+      jsfModify: buildContractPreviewJsfModify(options, fieldValues),
     },
   });
 
@@ -443,6 +403,8 @@ export const useContractorOnboarding = ({
       provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
+      ir35: employment?.contract_details?.ir_35,
+      nationality: employment?.contract_details?.nationality, // TODO: check later when saudi works if this works
     };
 
     return getInitialValues(stepFields.basic_information, initialValues);
@@ -450,6 +412,8 @@ export const useContractorOnboarding = ({
     stepFields.basic_information,
     employmentBasicInformation,
     onboardingInitialValues,
+    employment?.contract_details?.ir_35,
+    employment?.contract_details?.nationality,
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
@@ -659,17 +623,33 @@ export const useContractorOnboarding = ({
           employment?.country &&
           employment?.country.code !== internalCountryCode;
 
+        console.log('isEmploymentNotLoaded', isEmploymentNotLoaded);
+        console.log('hasChangedCountry', hasChangedCountry);
+
         if (isEmploymentNotLoaded || hasChangedCountry) {
-          const payload: EmploymentCreateParams = {
-            basic_information: parsedValues,
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+            'ir35_sds_file',
+          );
+          const basicInformationPayload: EmploymentCreateParams = {
+            basic_information: basicInformationParsedValues,
             type: 'contractor',
             country_code: internalCountryCode,
             external_id: externalId,
           };
+
           try {
-            const response = await createEmploymentMutationAsync(payload);
+            const response = await createEmploymentMutationAsync(
+              basicInformationPayload,
+            );
             // @ts-expect-error the types from the response are not matching
-            const employmentId = response.data?.data?.employment?.id;
+            const employmentId = response?.data?.employment?.id;
+            await updateUKandSaudiFieldsMutation({
+              employmentId: employmentId as string,
+            });
+
             setInternalEmploymentId(employmentId);
 
             return response;
@@ -678,10 +658,25 @@ export const useContractorOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
-            employmentId: internalEmploymentId,
-            basic_information: parsedValues,
-          });
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+            'ir35_sds_file',
+          );
+
+          try {
+            await updateUKandSaudiFieldsMutation({
+              employmentId: internalEmploymentId,
+            });
+            return updateEmploymentMutationAsync({
+              employmentId: internalEmploymentId,
+              basic_information: basicInformationParsedValues,
+            });
+          } catch (error) {
+            console.error('Error updating onboarding:', error);
+            throw error;
+          }
         }
 
         return;
@@ -690,43 +685,57 @@ export const useContractorOnboarding = ({
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
         };
-        const response: $TSFixMe =
-          await createContractorContractDocumentMutationAsync({
+        try {
+          const response = await createContractorContractDocumentMutationAsync({
             employmentId: internalEmploymentId as string,
             payload,
           });
-
-        const contractDocumentId = response.data?.data?.contract_document?.id;
-        setInternalContractDocumentId(contractDocumentId);
-        return response;
+          // @ts-expect-error the types from the response are not matching
+          const contractDocumentId = response?.data?.contract_document?.id;
+          setInternalContractDocumentId(contractDocumentId);
+          return response;
+        } catch (error) {
+          console.error('Error creating contract document:', error);
+          throw error;
+        }
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
-          employmentId: internalEmploymentId as string,
-          contractDocumentId: internalContractDocumentId as string,
-          payload: {
-            signature: values.signature,
-          },
-        });
+        try {
+          return signContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            contractDocumentId: internalContractDocumentId as string,
+            payload: {
+              signature: values.signature,
+            },
+          });
+        } catch (error) {
+          console.error('Error signing contract document:', error);
+          throw error;
+        }
       }
       case 'pricing_plan': {
-        if (values.subscription == contractorStandardProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'downgrade',
-            },
-          });
-        } else if (values.subscription == contractorPlusProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'upgrade',
-            },
-          });
+        try {
+          if (values.subscription == contractorStandardProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'downgrade',
+              },
+            });
+          } else if (values.subscription == contractorPlusProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'upgrade',
+              },
+            });
+          }
+          return Promise.reject({ error: 'invalid selection' });
+        } catch (error) {
+          console.error('Error managing contractor subscription:', error);
+          throw error;
         }
-        return Promise.reject({ error: 'invalid selection' });
       }
 
       default: {
@@ -895,8 +904,11 @@ export const useContractorOnboarding = ({
      */
     isSubmitting:
       createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
-      signContractDocumentMutation.isPending,
+      manageContractorSubscriptionMutation.isPending ||
+      signContractDocumentMutation.isPending ||
+      uploadFileMutation.isPending,
 
     /**
      * Document preview PDF data

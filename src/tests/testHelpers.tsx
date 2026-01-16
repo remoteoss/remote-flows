@@ -112,19 +112,19 @@ export async function fillRadio(radioName: string, radioValue: string) {
 
 export async function fillSelect(selectName: string, selectValue: string) {
   const user = userEvent.setup();
-  const select = await screen.findByRole('combobox', {
-    name: new RegExp(selectName, 'i'),
-  });
+
+  // Find the select element by label
+  const selectId = selectName.replace(' ', '_').toLowerCase();
+  const select = await screen.findByTestId(selectId);
   expect(select).toBeInTheDocument();
 
-  await user.click(select);
+  // Select the option by value
+  await user.selectOptions(select, selectValue);
 
-  const option = screen.getByRole('option', {
-    name: new RegExp(selectValue, 'i'),
+  // Wait for the selection to be applied
+  await waitFor(() => {
+    expect(select).toHaveValue(selectValue);
   });
-  expect(option).toBeInTheDocument();
-
-  await user.click(option);
 }
 
 export async function fillCheckbox(checkboxName: string) {

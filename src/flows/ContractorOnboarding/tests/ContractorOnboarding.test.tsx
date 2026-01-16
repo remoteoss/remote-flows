@@ -427,7 +427,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
   });
 
   it('should set provisional_start_date to today when using the form for the first time', async () => {
@@ -437,7 +437,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -459,7 +459,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     // setting same value that the mock receives
     await fillBasicInformation({
@@ -500,7 +500,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -531,7 +531,7 @@ describe('ContractorOnboardingFlow', () => {
     backButton.click();
     await screen.findByText(/Step: Basic Information/i);
 
-    await fillCountry('Spain');
+    await fillCountry('ESP');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -552,13 +552,13 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should NOT call PATCH when resubmitting basic information (contractors cannot be updated)', async () => {
+  it('should call PATCH when resubmitting basic information', async () => {
     const patchSpy = vi.fn();
 
     server.use(
       http.patch('*/v1/employments/*', () => {
         patchSpy();
-        return HttpResponse.json({});
+        return HttpResponse.json(employmentUpdatedResponse);
       }),
     );
 
@@ -609,10 +609,11 @@ describe('ContractorOnboardingFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalled();
+    });
 
-    // Verify PATCH was NOT called (contractors can't be updated)
-    expect(patchSpy).toHaveBeenCalled();
+    await screen.findByText(/Step: Pricing Plan/i);
   });
 
   it('should create contract document when submitting contract details', async () => {
@@ -1451,6 +1452,297 @@ describe('ContractorOnboardingFlow', () => {
         name: /Contractor Management Plus/i,
       });
       expect(plusRadio).toBeChecked();
+    });
+  });
+
+  it('should show file upload field when ir35 status is inside or outside', async () => {
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='GBR'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    // Select 'inside' IR35 status using fillSelect helper
+    await fillSelect('ir35', 'inside');
+
+    // Verify file upload field appears
+    await waitFor(() => {
+      const fileUploadField = screen.getByLabelText(/Upload SDS/i);
+      expect(fileUploadField).toBeInTheDocument();
+    });
+  });
+
+  it('should call createContractorContractDocumentMutationAsync and uploadFileMutationAsync with correct payload when submitting with ir35', async () => {
+    const postSpy = vi.fn();
+    const contractDocumentSpy = vi.fn();
+    const uploadSpy = vi.fn();
+
+    server.use(
+      http.post('*/v1/employments', async ({ request }) => {
+        const requestBody = await request.json();
+        postSpy(requestBody);
+        return HttpResponse.json(mockContractorEmploymentResponse);
+      }),
+      http.post(
+        '*/v1/contractors/employments/*/contract-documents',
+        async ({ request }) => {
+          const requestBody = await request.json();
+          contractDocumentSpy(requestBody);
+          return HttpResponse.json(mockContractDocumentCreatedResponse);
+        },
+      ),
+      http.post('*/v1/documents', async () => {
+        uploadSpy();
+        return HttpResponse.json({
+          data: {
+            file: {
+              id: 'ad8a15a5-88a5-4fb6-9225-2c4ec3e9a809',
+              name: 'Juan Carlos de Espana - Laurence Debray.pdf',
+              type: 'other',
+              inserted_at: '2026-01-16T15:33:28Z',
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='GBR'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Fill basic information with IR35
+    await fillBasicInformation();
+
+    // Select IR35 status
+    const ir35Select = screen.getByLabelText(/IR35 Status/i);
+    fireEvent.change(ir35Select, { target: { value: 'inside' } });
+
+    // Upload file
+    const file = new File(['test content'], 'test-sds.pdf', {
+      type: 'application/pdf',
+    });
+    const fileInput = screen.getByLabelText(/Upload SDS/i);
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(uploadSpy).toHaveBeenCalled();
+      expect(contractDocumentSpy).toHaveBeenCalled();
+      expect(contractDocumentSpy.mock.calls[0][0]).toMatchObject({
+        contract_document: {
+          ir_35: 'inside',
+        },
+      });
+    });
+
+    await screen.findByText(/Step: Pricing Plan/i);
+  });
+
+  it('should correctly retrieve ir35 data from employment.contract_details.ir_35', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              id: employmentId,
+              country: {
+                code: 'GBR',
+                name: 'United Kingdom',
+              },
+              contract_details: {
+                ir_35: 'inside',
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        countryCode='GBR'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Verify IR35 field is pre-filled with the value from employment
+    await waitFor(() => {
+      const ir35Select = screen.getByLabelText(
+        /IR35 Status/i,
+      ) as HTMLSelectElement;
+      expect(ir35Select).toBeInTheDocument();
+      expect(ir35Select.value).toBe('inside');
+    });
+  });
+
+  it('should not show file upload field when ir35 status is exempt', async () => {
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='GBR'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    // Select 'exempt' IR35 status
+    const ir35Select = screen.getByLabelText(/IR35 Status/i);
+    fireEvent.change(ir35Select, { target: { value: 'exempt' } });
+
+    // Verify file upload field does NOT appear
+    await waitFor(() => {
+      const fileUploadField = screen.queryByLabelText(/Upload SDS/i);
+      expect(fileUploadField).not.toBeInTheDocument();
     });
   });
 });

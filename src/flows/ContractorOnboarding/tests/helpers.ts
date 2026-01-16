@@ -106,10 +106,10 @@ export async function fillContractDetails(
     serviceStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     contractorNoticePeriodAmount: 15,
     companyNoticePeriodAmount: 15,
-    invoicingFrequency: 'Bi-weekly',
+    invoicingFrequency: 'bi_weekly',
     compensationGrossAmount: '1000',
     compensationCurrencyCode: 'USD',
-    periodUnit: 'Hour',
+    periodUnit: 'hourly',
   };
 
   const newValues = {
@@ -156,7 +156,7 @@ export async function fillContractDetails(
 
   if (newValues?.invoicingFrequency) {
     await fillSelect(
-      'Contractor Invoicing Frequency',
+      'payment_terms.invoicing_frequency',
       newValues?.invoicingFrequency,
     );
   }
@@ -169,13 +169,13 @@ export async function fillContractDetails(
 
   if (newValues?.compensationCurrencyCode) {
     await fillSelect(
-      'Gross compensation currency',
+      'payment_terms.compensation_currency_code',
       newValues?.compensationCurrencyCode,
     );
   }
 
   if (newValues?.periodUnit) {
-    await fillSelect('Compensation period unit', newValues?.periodUnit);
+    await fillSelect('payment_terms.period_unit', newValues?.periodUnit);
   }
 }
 

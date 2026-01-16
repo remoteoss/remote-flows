@@ -46,13 +46,6 @@ export function SelectCountryStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        onError?.({
-          error: response.error,
-          rawError: response.rawError,
-          fieldErrors: [],
-        });
-      }
     } catch (error: unknown) {
       onError?.({
         error: error as Error,

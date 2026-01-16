@@ -77,6 +77,40 @@ export function mutationToPromise<
   type Error = MutationError<T>;
 
   return {
+    mutateAsyncOrThrow: (values: Variables): Promise<Data> => {
+      return new Promise((resolve, reject) => {
+        mutation.mutate(values, {
+          onSuccess: (response) => {
+            if (response.data) {
+              resolve(response.data as Data);
+            } else {
+              const fieldErrors = extractFieldErrors(response.error);
+              const errorData = response.error.error || response.error;
+              const errorMessage =
+                typeof errorData?.message === 'string'
+                  ? errorData.message
+                  : 'Something went wrong. Please try again later.';
+              reject({
+                error: new Error(errorMessage),
+                rawError: response.error,
+                fieldErrors,
+              });
+            }
+          },
+          onError: (error) => {
+            const fieldErrors = extractFieldErrors(error);
+            reject({
+              error: error as Error,
+              rawError: error,
+              fieldErrors,
+            });
+          },
+        });
+      });
+    },
+    /**
+     * @deprecated Use mutateAsyncOrThrow instead, this method will be removed as the the one below handles errors better
+     */
     mutateAsync: (values: Variables): Promise<PromiseResult<Data, Error>> => {
       return new Promise((resolve, reject) => {
         mutation.mutate(values, {
@@ -88,14 +122,15 @@ export function mutationToPromise<
               });
             } else {
               const fieldErrors = extractFieldErrors(response.error);
+              // Unwrap the error if it is an object with an error property
+              const errorData = response.error.error || response.error;
+              const errorMessage =
+                typeof errorData?.message === 'string'
+                  ? errorData.message
+                  : 'Something went wrong. Please try again later.';
               resolve({
                 data: null,
-                error:
-                  typeof response.error?.message === 'string'
-                    ? (new Error(response.error.message) as unknown as Error)
-                    : (new Error(
-                        'Something went wrong. Please try again later.',
-                      ) as unknown as Error),
+                error: new Error(errorMessage) as unknown as Error,
                 rawError: response.error,
                 fieldErrors,
               });

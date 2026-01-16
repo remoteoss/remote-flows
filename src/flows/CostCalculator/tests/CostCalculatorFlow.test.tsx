@@ -373,23 +373,17 @@ describe('CostCalculatorFlow', () => {
       '30',
     );
 
-    // select benefits
-    const [, , lifeInsurance, healthInsurance] =
-      screen.getAllByRole('combobox');
-
     // select life insurance
-    await user.click(lifeInsurance);
-    const [, healthInsuranceOption] = screen.getAllByText(
-      'Option 1 - 5.64 USD/mo',
+    await fillSelect(
+      'benefits.benefit-53c5fc69-f299-47e7-9004-86def3f0e845',
+      '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
     );
-    await user.click(healthInsuranceOption);
 
     // select health insurance
-    await user.click(healthInsurance);
-    const [, lifeInsuranceOption] = screen.getAllByText(
-      'Option 1 - 113 USD/mo',
+    await fillSelect(
+      'benefits.benefit-b5b325b7-f997-4679-9e63-bd77d8d1ed1f',
+      'df47a18f-ee55-4fd8-ab53-9eefe937c4e1',
     );
-    await user.click(lifeInsuranceOption);
 
     // submit form
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
@@ -543,22 +537,16 @@ describe('CostCalculatorFlow', () => {
     );
 
     // select benefits
-    const [, , lifeInsurance, healthInsurance] =
-      screen.getAllByRole('combobox');
-
-    // select life insurance
-    await user.click(lifeInsurance);
-    const [, healthInsuranceOption] = screen.getAllByText(
-      'Option 1 - 5.64 USD/mo',
+    await fillSelect(
+      'benefits.benefit-53c5fc69-f299-47e7-9004-86def3f0e845',
+      '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
     );
-    await user.click(healthInsuranceOption);
 
     // select health insurance
-    await user.click(healthInsurance);
-    const [, lifeInsuranceOption] = screen.getAllByText(
-      'Option 1 - 113 USD/mo',
+    await fillSelect(
+      'benefits.benefit-b5b325b7-f997-4679-9e63-bd77d8d1ed1f',
+      'df47a18f-ee55-4fd8-ab53-9eefe937c4e1',
     );
-    await user.click(lifeInsuranceOption);
 
     // Submit the form
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
@@ -624,22 +612,16 @@ describe('CostCalculatorFlow', () => {
     );
 
     // select benefits
-    const [, , lifeInsurance, healthInsurance] =
-      screen.getAllByRole('combobox');
-
-    // select life insurance
-    await user.click(lifeInsurance);
-    const [, healthInsuranceOption] = screen.getAllByText(
-      'Option 1 - 5.64 USD/mo',
+    await fillSelect(
+      'benefits.benefit-53c5fc69-f299-47e7-9004-86def3f0e845',
+      '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
     );
-    await user.click(healthInsuranceOption);
 
     // select health insurance
-    await user.click(healthInsurance);
-    const [, lifeInsuranceOption] = screen.getAllByText(
-      'Option 1 - 113 USD/mo',
+    await fillSelect(
+      'benefits.benefit-b5b325b7-f997-4679-9e63-bd77d8d1ed1f',
+      'df47a18f-ee55-4fd8-ab53-9eefe937c4e1',
     );
-    await user.click(lifeInsuranceOption);
 
     // Submit the form
     fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
@@ -651,11 +633,7 @@ describe('CostCalculatorFlow', () => {
 
     // Verify form was reset
     await waitFor(() => {
-      expect(
-        screen.getByRole('combobox', {
-          name: /country/i,
-        }),
-      ).toHaveTextContent('Country');
+      expect(screen.getByTestId('country')).toHaveValue('');
     });
 
     expect(
@@ -991,7 +969,7 @@ describe('CostCalculatorFlow', () => {
       }),
     ).toHaveValue('699');
 
-    await fillSelect('Currency', 'EUR');
+    await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
     expect(
       screen.getByRole('textbox', {
@@ -1111,7 +1089,7 @@ describe('CostCalculatorFlow', () => {
       expect(salaryInput).toHaveValue('75000');
 
       // Switch to EUR (conversion needed)
-      await fillSelect('Currency', 'EUR');
+      await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
       // The value should be preserved in the conversion field
       expect(salaryInput).toHaveValue('75000');
@@ -1125,14 +1103,14 @@ describe('CostCalculatorFlow', () => {
       });
 
       // Start with EUR (conversion needed)
-      await fillSelect('Currency', 'EUR');
+      await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
       const salaryInput = screen.getByRole('textbox', { name: /salary/i });
       fireEvent.change(salaryInput, { target: { value: '65000' } });
       expect(salaryInput).toHaveValue('65000');
 
       // Switch back to USD (no conversion needed)
-      await fillSelect('Currency', 'USD');
+      await fillSelect('Currency', 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
       // The value should be preserved in the original field
       expect(salaryInput).toHaveValue('65000');
@@ -1146,14 +1124,14 @@ describe('CostCalculatorFlow', () => {
       });
 
       // Start with EUR
-      await fillSelect('Currency', 'EUR');
+      await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
       const salaryInput = screen.getByRole('textbox', { name: /salary/i });
       fireEvent.change(salaryInput, { target: { value: '55000' } });
       expect(salaryInput).toHaveValue('55000');
 
       // Switch to GBP (still conversion needed)
-      await fillSelect('Currency', 'GBP');
+      await fillSelect('Currency', 'gbp-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
       // The value should be preserved
       expect(salaryInput).toHaveValue('55000');
@@ -1172,13 +1150,13 @@ describe('CostCalculatorFlow', () => {
       expect(salaryInput).toHaveValue('80000');
 
       // Change country to Spain (EUR)
-      await fillSelect('Country', 'Spain');
+      await fillSelect('Country', 'ESP');
 
       // The value should be preserved
       expect(salaryInput).toHaveValue('80000');
 
       // Change back to US
-      await fillSelect('Country', 'United States');
+      await fillSelect('Country', 'USA');
 
       // The value should still be preserved
       expect(salaryInput).toHaveValue('80000');
