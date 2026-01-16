@@ -340,6 +340,7 @@ export const useUpdateUKandSaudiFields = (
         },
       };
       if (ir35Status) {
+        // TODO: Take a look later to see how this two work together, we need to save the file_id of the file somewhere
         await createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
           payload: ir35ContractDetailsPayload,
