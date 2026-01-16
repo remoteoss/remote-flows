@@ -154,12 +154,15 @@ export const useContractorOnboarding = ({
     internalCountryCode as string,
     options,
   );
-  const { mutate: updateUKandSaudiFieldsMutation } = useUpdateUKandSaudiFields(
-    internalEmploymentId as string,
-    fieldValues,
-  );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
+  const { mutateAsync: updateUKandSaudiFieldsMutation } =
+    useUpdateUKandSaudiFields(
+      internalEmploymentId as string,
+      fieldValues,
+      createContractorContractDocumentMutation,
+    );
+
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
@@ -169,14 +172,14 @@ export const useContractorOnboarding = ({
   const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
     mutationToPromise(createEmploymentMutation);
 
-  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+  const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
   const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
     signContractDocumentMutation,
   );
 
-  const { mutateAsync: manageContractorSubscriptionMutationAsync } =
+  const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
@@ -673,15 +676,20 @@ export const useContractorOnboarding = ({
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
         };
-        const response: $TSFixMe =
-          await createContractorContractDocumentMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload,
-          });
+        try {
+          const response: $TSFixMe =
+            await createContractorContractDocumentMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload,
+            });
 
-        const contractDocumentId = response.data?.data?.contract_document?.id;
-        setInternalContractDocumentId(contractDocumentId);
-        return response;
+          const contractDocumentId = response.data?.data?.contract_document?.id;
+          setInternalContractDocumentId(contractDocumentId);
+          return response;
+        } catch (error) {
+          console.error('Error creating contract document:', error);
+          throw error;
+        }
       }
 
       case 'contract_preview': {
@@ -694,22 +702,27 @@ export const useContractorOnboarding = ({
         });
       }
       case 'pricing_plan': {
-        if (values.subscription == contractorStandardProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'downgrade',
-            },
-          });
-        } else if (values.subscription == contractorPlusProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'upgrade',
-            },
-          });
+        try {
+          if (values.subscription == contractorStandardProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'downgrade',
+              },
+            });
+          } else if (values.subscription == contractorPlusProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'upgrade',
+              },
+            });
+          }
+          return Promise.reject({ error: 'invalid selection' });
+        } catch (error) {
+          console.error('Error managing contractor subscription:', error);
+          throw error;
         }
-        return Promise.reject({ error: 'invalid selection' });
       }
 
       default: {

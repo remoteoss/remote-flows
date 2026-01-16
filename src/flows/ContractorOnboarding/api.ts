@@ -309,14 +309,15 @@ export const useContractorSubscriptionSchemaField = (
 export const useUpdateUKandSaudiFields = (
   employmentId: string,
   parsedValues: FieldValues,
+  createContractorContractDocumentMutation: ReturnType<
+    typeof useCreateContractorContractDocument
+  >,
 ) => {
-  const createContractorContractDocumentMutation =
-    useCreateContractorContractDocument();
   const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
   return {
-    mutate: async () => {
+    mutateAsync: async () => {
       const {
         saudi_nationality_status: saudiNationalityStatus,
         ir35: ir35Status,
@@ -345,6 +346,8 @@ export const useUpdateUKandSaudiFields = (
           payload: saudiContractDetailsPayload,
         });
       }
+
+      return Promise.resolve();
     },
   };
 };
