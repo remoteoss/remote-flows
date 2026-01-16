@@ -642,7 +642,8 @@ export const useContractorOnboarding = ({
             const response = await createEmploymentMutationAsync(
               basicInformationPayload,
             );
-            const employmentId = response.data?.data?.employment?.id;
+            // @ts-expect-error the types from the response are not matching
+            const employmentId = response?.data?.employment?.id;
             await updateUKandSaudiFieldsMutation();
 
             setInternalEmploymentId(employmentId);
