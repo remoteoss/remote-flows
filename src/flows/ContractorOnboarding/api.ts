@@ -25,6 +25,7 @@ import { FieldValues } from 'react-hook-form';
 import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
+import { useUploadFile } from '@/src/common/api/files';
 
 /**
  * Get the contract document signature schema
@@ -312,7 +313,10 @@ export const useUpdateUKandSaudiFields = (
   createContractorContractDocumentMutation: ReturnType<
     typeof useCreateContractorContractDocument
   >,
+  uploadFileMutation: ReturnType<typeof useUploadFile>,
 ) => {
+  const { mutateAsyncOrThrow: uploadFileMutationAsync } =
+    mutationToPromise(uploadFileMutation);
   const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
@@ -321,6 +325,7 @@ export const useUpdateUKandSaudiFields = (
       const {
         saudi_nationality_status: saudiNationalityStatus,
         ir35: ir35Status,
+        ir35_sds_file: ir35SdsFile,
       } = parsedValues;
       const ir35ContractDetailsPayload = {
         contract_document: {
@@ -335,9 +340,13 @@ export const useUpdateUKandSaudiFields = (
         },
       };
       if (ir35Status) {
-        return createContractorContractDocumentMutationAsync({
+        await createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
           payload: ir35ContractDetailsPayload,
+        });
+        return uploadFileMutationAsync({
+          employment_id: employmentId,
+          file: ir35SdsFile,
         });
       }
       if (saudiNationalityStatus) {

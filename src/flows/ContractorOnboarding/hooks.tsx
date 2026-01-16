@@ -54,6 +54,7 @@ import {
   buildContractDetailsJsfModify,
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
+import { useUploadFile } from '@/src/common/api/files';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -156,11 +157,13 @@ export const useContractorOnboarding = ({
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
+  const uploadFileMutation = useUploadFile();
   const { mutateAsync: updateUKandSaudiFieldsMutation } =
     useUpdateUKandSaudiFields(
       internalEmploymentId as string,
       fieldValues,
       createContractorContractDocumentMutation,
+      uploadFileMutation,
     );
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
@@ -897,7 +900,8 @@ export const useContractorOnboarding = ({
       updateEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
       manageContractorSubscriptionMutation.isPending ||
-      signContractDocumentMutation.isPending,
+      signContractDocumentMutation.isPending ||
+      uploadFileMutation.isPending,
 
     /**
      * Document preview PDF data
