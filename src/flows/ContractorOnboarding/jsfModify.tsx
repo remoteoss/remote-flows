@@ -4,6 +4,7 @@ import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/compo
 import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import { JSFModify } from '@/src/flows/types';
+import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 import { format } from 'date-fns';
 import { FieldValues } from 'react-hook-form';
@@ -114,10 +115,48 @@ export const buildBasicInformationJsfModify = (
             inputType: 'select',
           },
         },
+        ir35_sds_file: {
+          title: 'Upload SDS',
+          description: 'Status determination statement',
+          type: 'string',
+          'x-jsf-presentation': {
+            inputType: 'file',
+            accept: FILE_TYPES.document,
+            multiple: false,
+            maxSize: MAX_FILE_SIZE,
+            calculateDynamicProperties: (
+              fieldValues: Record<string, unknown>,
+            ) => {
+              const ir35Status = fieldValues.ir35;
+              return {
+                isVisible: ir35Status === 'inside' || ir35Status === 'outside',
+              };
+            },
+          },
+        },
       },
+      allOf: [
+        {
+          if: {
+            properties: {
+              ir35: {
+                enum: ['inside', 'outside'],
+              },
+            },
+          },
+          then: {
+            required: ['ir35_sds_file'],
+          },
+          else: {
+            properties: {
+              ir35_sds_file: false,
+            },
+          },
+        },
+      ],
       required: ['ir35'],
       orderRoot: (originalOrder: string[]) => {
-        return [...originalOrder, 'ir35'];
+        return [...originalOrder, 'ir35', 'ir35_sds_file'];
       },
     };
   }

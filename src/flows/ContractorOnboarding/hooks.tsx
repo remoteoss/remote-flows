@@ -626,6 +626,7 @@ export const useContractorOnboarding = ({
             parsedValues,
             'saudi_nationality_status',
             'ir35',
+            'ir35_sds_file',
           );
           const basicInformationPayload: EmploymentCreateParams = {
             basic_information: basicInformationParsedValues,
@@ -654,6 +655,7 @@ export const useContractorOnboarding = ({
             parsedValues,
             'saudi_nationality_status',
             'ir35',
+            'ir35_sds_file',
           );
 
           await updateUKandSaudiFieldsMutation();

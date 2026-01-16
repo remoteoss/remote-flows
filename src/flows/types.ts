@@ -79,6 +79,10 @@ export type JSFModify = ModifyConfig & {
    * allows to specify additional required fields for the form.
    */
   required?: string[];
+  /**
+   * allows to specify additional allOf rules for the form.
+   */
+  allOf?: unknown[];
 };
 
 export type FlowOptions = {

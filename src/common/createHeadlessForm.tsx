@@ -28,11 +28,16 @@ export const createHeadlessForm = (
   options?: { jsfModify?: JSFModify },
 ): CreateHeadlessFormResult => {
   if (options && options.jsfModify) {
-    const { required, ...modifyConfig } = options.jsfModify;
+    const { required, allOf, ...modifyConfig } = options.jsfModify;
     const { schema } = modify(jsfSchema, modifyConfig);
     jsfSchema = schema;
+
     if (required) {
       jsfSchema.required = [...schema.required, ...required];
+    }
+
+    if (allOf) {
+      jsfSchema.allOf = [...(schema.allOf || []), ...allOf];
     }
   }
 
