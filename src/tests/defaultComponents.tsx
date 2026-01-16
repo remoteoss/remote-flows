@@ -26,7 +26,6 @@ export const defaultComponents = {
     );
   },
   select: ({ field, fieldData, fieldState }: FieldComponentProps) => {
-    console.log('field', field.name);
     return (
       <div className='input-container'>
         <label htmlFor={field.name}>{fieldData.label}</label>

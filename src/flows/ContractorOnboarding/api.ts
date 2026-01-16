@@ -308,12 +308,11 @@ export const useContractorSubscriptionSchemaField = (
 };
 
 export const useUpdateUKandSaudiFields = (
-  employmentId: string,
-  parsedValues: FieldValues,
   createContractorContractDocumentMutation: ReturnType<
     typeof useCreateContractorContractDocument
   >,
   uploadFileMutation: ReturnType<typeof useUploadFile>,
+  parsedValues: FieldValues,
 ) => {
   const { mutateAsyncOrThrow: uploadFileMutationAsync } =
     mutationToPromise(uploadFileMutation);
@@ -321,7 +320,7 @@ export const useUpdateUKandSaudiFields = (
     mutationToPromise(createContractorContractDocumentMutation);
 
   return {
-    mutateAsync: async () => {
+    mutateAsync: async ({ employmentId }: { employmentId: string }) => {
       const {
         saudi_nationality_status: saudiNationalityStatus,
         ir35: ir35Status,

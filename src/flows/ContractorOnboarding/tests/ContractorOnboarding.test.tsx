@@ -427,7 +427,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
   });
 
   it('should set provisional_start_date to today when using the form for the first time', async () => {
@@ -437,7 +437,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -459,7 +459,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     // setting same value that the mock receives
     await fillBasicInformation({
@@ -500,7 +500,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -531,7 +531,7 @@ describe('ContractorOnboardingFlow', () => {
     backButton.click();
     await screen.findByText(/Step: Basic Information/i);
 
-    await fillCountry('Spain');
+    await fillCountry('ESP');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -1481,7 +1481,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('United Kingdom');
+    await fillCountry('GBR');
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -1542,7 +1542,7 @@ describe('ContractorOnboardingFlow', () => {
     });
 
     // Select 'inside' IR35 status using fillSelect helper
-    await fillSelect('IR35 Status', 'Inside IR35 (deemed employee)');
+    await fillSelect('ir35', 'inside');
 
     // Verify file upload field appears
     await waitFor(
@@ -1556,6 +1556,7 @@ describe('ContractorOnboardingFlow', () => {
 
   it('should call createContractorContractDocumentMutationAsync and uploadFileMutationAsync with correct payload when submitting with ir35', async () => {
     const postSpy = vi.fn();
+    const contractDocumentSpy = vi.fn();
     const uploadSpy = vi.fn();
 
     server.use(
@@ -1568,16 +1569,19 @@ describe('ContractorOnboardingFlow', () => {
         '*/v1/contractors/employments/*/contract-documents',
         async ({ request }) => {
           const requestBody = await request.json();
-          uploadSpy(requestBody);
+          contractDocumentSpy(requestBody);
           return HttpResponse.json(mockContractDocumentCreatedResponse);
         },
       ),
-      http.post('*/v1/files/upload', async () => {
+      http.post('*/v1/documents', async () => {
+        uploadSpy();
         return HttpResponse.json({
           data: {
             file: {
-              id: 'test-file-id-123',
-              url: 'https://example.com/file.pdf',
+              id: 'ad8a15a5-88a5-4fb6-9225-2c4ec3e9a809',
+              name: 'Juan Carlos de Espana - Laurence Debray.pdf',
+              type: 'other',
+              inserted_at: '2026-01-16T15:33:28Z',
             },
           },
         });
@@ -1641,17 +1645,17 @@ describe('ContractorOnboardingFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
-
-    // Verify contract document mutation was called with ir35 data
     await waitFor(() => {
       expect(uploadSpy).toHaveBeenCalled();
-      expect(uploadSpy.mock.calls[0][0]).toMatchObject({
+      expect(contractDocumentSpy).toHaveBeenCalled();
+      expect(contractDocumentSpy.mock.calls[0][0]).toMatchObject({
         contract_document: {
           ir_35: 'inside',
         },
       });
     });
+
+    await screen.findByText(/Step: Pricing Plan/i);
   });
 
   it('should correctly retrieve ir35 data from employment.contract_details.ir_35', async () => {

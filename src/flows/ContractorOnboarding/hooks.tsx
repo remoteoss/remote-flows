@@ -160,10 +160,9 @@ export const useContractorOnboarding = ({
   const uploadFileMutation = useUploadFile();
   const { mutateAsync: updateUKandSaudiFieldsMutation } =
     useUpdateUKandSaudiFields(
-      internalEmploymentId as string,
-      fieldValues,
       createContractorContractDocumentMutation,
       uploadFileMutation,
+      fieldValues,
     );
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
@@ -624,6 +623,9 @@ export const useContractorOnboarding = ({
           employment?.country &&
           employment?.country.code !== internalCountryCode;
 
+        console.log('isEmploymentNotLoaded', isEmploymentNotLoaded);
+        console.log('hasChangedCountry', hasChangedCountry);
+
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const basicInformationParsedValues = omit(
             parsedValues,
@@ -644,7 +646,9 @@ export const useContractorOnboarding = ({
             );
             // @ts-expect-error the types from the response are not matching
             const employmentId = response?.data?.employment?.id;
-            await updateUKandSaudiFieldsMutation();
+            await updateUKandSaudiFieldsMutation({
+              employmentId: employmentId as string,
+            });
 
             setInternalEmploymentId(employmentId);
 
@@ -662,7 +666,9 @@ export const useContractorOnboarding = ({
           );
 
           try {
-            await updateUKandSaudiFieldsMutation();
+            await updateUKandSaudiFieldsMutation({
+              employmentId: internalEmploymentId,
+            });
             return updateEmploymentMutationAsync({
               employmentId: internalEmploymentId,
               basic_information: basicInformationParsedValues,
