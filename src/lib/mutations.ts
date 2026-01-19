@@ -87,7 +87,7 @@ export function mutationToPromise<
       return new Promise((resolve, reject) => {
         mutation.mutate(values, {
           onSuccess: (response) => {
-            if ('data' in response && !response.error) {
+            if ('data' in response && response.data !== null && !response.error) {
               resolve(response.data as UnwrapData<Data>);
             } else {
               const fieldErrors = extractFieldErrors(response.error);
