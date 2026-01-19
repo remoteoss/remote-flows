@@ -2,7 +2,8 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { JSFFields, Meta } from '@/src/types/remoteFlows';
+import { NormalizedFieldError, normalizeFieldErrors } from '@/src/lib/mutations';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -247,10 +248,69 @@ export function prettifyFormValues(
   );
 }
 
+/**
+ * Creates a structured error object with the error message and raw error object
+ * @param message - The error message
+ * @returns 
+ */
 export function createStructuredError(message: string) {
   return {
     error: new Error(message),
     rawError: { message },
     fieldErrors: []
+  };
+}
+
+/**
+ * Checks if the error is a structured error
+ * @param err - The error
+ * @returns True if the error is a structured error
+ */
+function isStructuredError(err: unknown): err is {
+  error: Error;
+  rawError: Record<string, unknown>;
+  fieldErrors: NormalizedFieldError[];
+} {
+  return typeof err === 'object' && err !== null && 'error' in err && 'rawError' in err && 'fieldErrors' in err;
+}
+
+
+/**
+ * Handles the error for a step
+ * @param err - The error
+ * @param fieldsMeta - The fields metadata
+ * @returns The structured error
+ */
+export function handleStepError(
+  err: unknown,
+  fieldsMeta?: Meta,
+): {
+  error: Error;
+  rawError: Record<string, unknown>;
+  fieldErrors: NormalizedFieldError[];
+} {
+  // If it's already a structured error from mutateAsyncOrThrow
+  if (isStructuredError(err)) {
+    const normalizedFieldErrors = normalizeFieldErrors(
+      err.fieldErrors || [],
+      fieldsMeta,
+    );
+    return {
+      error: err.error,
+      rawError: err.rawError,
+      fieldErrors: normalizedFieldErrors,
+    };
+  }
+
+  // For unexpected errors, create a structured error
+  const fallbackError = createStructuredError(
+    err instanceof Error 
+      ? err.message 
+      : 'An unexpected error occurred'
+  );
+  
+  return {
+    ...fallbackError,
+    fieldErrors: [], // No field errors for unexpected errors
   };
 }

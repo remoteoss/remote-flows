@@ -90,7 +90,6 @@ export function mutationToPromise<
             if ('data' in response && !response.error) {
               resolve(response.data as UnwrapData<Data>);
             } else {
-              console.log('iterating response.error', response.error);
               const fieldErrors = extractFieldErrors(response.error);
               const errorData = response.error.error || response.error;
               const errorMessage =

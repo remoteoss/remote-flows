@@ -1,6 +1,5 @@
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
-  normalizeFieldErrors,
   NormalizedFieldError,
 } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -11,6 +10,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 import { StatementOfWorkDisclaimer } from '@/src/flows/ContractorOnboarding/components/StatementOfWorkDisclaimer';
 import { isCMOrCMPlus } from '@/src/flows/ContractorOnboarding/utils';
+import { handleStepError } from '@/src/lib/utils';
 
 type ContractDetailsStepProps = {
   /*
@@ -57,21 +57,12 @@ export function ContractDetailsStep({
         contractorOnboardingBag?.next();
         return;
       }
-    } catch (err: unknown) {
-      const { error, rawError, fieldErrors } = err as {
-        error: Error;
-        rawError: Record<string, unknown>;
-        fieldErrors: NormalizedFieldError[];
-      };
-      const normalizedFieldErrors = normalizeFieldErrors(
-        fieldErrors || [],
+    } catch (error: unknown) {
+      const structuredError = handleStepError(
+        error,
         contractorOnboardingBag.meta?.fields?.contract_details,
       );
-      onError?.({
-        error: error,
-        rawError: rawError,
-        fieldErrors: normalizedFieldErrors,
-      });
+      onError?.(structuredError);
     }
   };
 
