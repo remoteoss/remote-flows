@@ -614,7 +614,6 @@ describe('ContractorOnboardingFlow', () => {
     });
 
     await screen.findByText(/Step: Pricing Plan/i);
-
   });
 
   it('should create contract document when submitting contract details', async () => {
