@@ -267,7 +267,7 @@ describe('TerminationFlow', () => {
     const defaultValues = {
       willChangeTermination: 'No',
       terminationReasonDetails: 'whatever text',
-      terminationReason: 'Gross misconduct',
+      terminationReason: 'gross_misconduct',
       riskAssessmentReason: 'Currently on or recently returned from sick leave',
       proposedTerminationDate: '15',
     };
@@ -829,11 +829,9 @@ describe('TerminationFlow', () => {
 
     // Verify it was selected by querying the select-value slot
     await waitFor(() => {
-      const selectValue = document.querySelector('[data-slot="select-value"]');
+      const selectValue = screen.getByTestId('termination_reason');
       expect(selectValue).toBeInTheDocument();
-      expect(selectValue?.textContent).toMatch(
-        /Decision to cancel hiring before the employee starts/i,
-      );
+      expect(selectValue).toHaveValue('cancellation_before_start_date');
     });
   });
 
