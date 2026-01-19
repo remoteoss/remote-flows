@@ -3,7 +3,10 @@ import { twMerge } from 'tailwind-merge';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
 import { JSFFields, Meta } from '@/src/types/remoteFlows';
-import { NormalizedFieldError, normalizeFieldErrors } from '@/src/lib/mutations';
+import {
+  NormalizedFieldError,
+  normalizeFieldErrors,
+} from '@/src/lib/mutations';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -251,13 +254,13 @@ export function prettifyFormValues(
 /**
  * Creates a structured error object with the error message and raw error object
  * @param message - The error message
- * @returns 
+ * @returns
  */
 export function createStructuredError(message: string) {
   return {
     error: new Error(message),
     rawError: { message },
-    fieldErrors: []
+    fieldErrors: [],
   };
 }
 
@@ -271,9 +274,14 @@ function isStructuredError(err: unknown): err is {
   rawError: Record<string, unknown>;
   fieldErrors: NormalizedFieldError[];
 } {
-  return typeof err === 'object' && err !== null && 'error' in err && 'rawError' in err && 'fieldErrors' in err;
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'error' in err &&
+    'rawError' in err &&
+    'fieldErrors' in err
+  );
 }
-
 
 /**
  * Handles the error for a step
@@ -304,11 +312,9 @@ export function handleStepError(
 
   // For unexpected errors, create a structured error
   const fallbackError = createStructuredError(
-    err instanceof Error 
-      ? err.message 
-      : 'An unexpected error occurred'
+    err instanceof Error ? err.message : 'An unexpected error occurred',
   );
-  
+
   return {
     ...fallbackError,
     fieldErrors: [], // No field errors for unexpected errors

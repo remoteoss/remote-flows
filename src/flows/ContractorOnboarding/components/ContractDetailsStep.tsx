@@ -1,7 +1,5 @@
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  NormalizedFieldError,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {

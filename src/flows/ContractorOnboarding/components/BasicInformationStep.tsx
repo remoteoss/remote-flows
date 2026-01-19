@@ -1,9 +1,7 @@
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { EmploymentCreationResponse } from '@/src/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  NormalizedFieldError,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
