@@ -42,7 +42,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { prettifyFormValues } from '@/src/lib/utils';
-import { $TSFixMe, JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -152,25 +152,22 @@ export const useContractorOnboarding = ({
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
-  const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
-    updateEmploymentMutation,
-  );
+  const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
+    mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
 
-  const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
-    createEmploymentMutation,
-  );
+  const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
+    mutationToPromise(createEmploymentMutation);
 
-  const { mutateAsync: createContractorContractDocumentMutationAsync } =
+  const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
     mutationToPromise(createContractorContractDocumentMutation);
 
-  const { mutateAsync: signContractDocumentMutationAsync } = mutationToPromise(
-    signContractDocumentMutation,
-  );
+  const { mutateAsyncOrThrow: signContractDocumentMutationAsync } =
+    mutationToPromise(signContractDocumentMutation);
 
-  const { mutateAsync: manageContractorSubscriptionMutationAsync } =
+  const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
@@ -669,7 +666,8 @@ export const useContractorOnboarding = ({
           try {
             const response = await createEmploymentMutationAsync(payload);
             // @ts-expect-error the types from the response are not matching
-            const employmentId = response.data?.data?.employment?.id;
+            const employmentId = response?.data?.employment?.id;
+            console.log('employmentId', employmentId);
             setInternalEmploymentId(employmentId);
 
             return response;
@@ -678,55 +676,75 @@ export const useContractorOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
-            employmentId: internalEmploymentId,
-            basic_information: parsedValues,
-          });
+          try {
+            return updateEmploymentMutationAsync({
+              employmentId: internalEmploymentId,
+              basic_information: parsedValues,
+            });
+          } catch (error) {
+            console.error('Error updating employment:', error);
+            throw error;
+          }
         }
 
         return;
       }
       case 'contract_details': {
-        const payload: CreateContractDocument = {
-          contract_document: parsedValues,
-        };
-        const response: $TSFixMe =
-          await createContractorContractDocumentMutationAsync({
+        try {
+          const payload: CreateContractDocument = {
+            contract_document: parsedValues,
+          };
+          const response = await createContractorContractDocumentMutationAsync({
             employmentId: internalEmploymentId as string,
             payload,
           });
-
-        const contractDocumentId = response.data?.data?.contract_document?.id;
-        setInternalContractDocumentId(contractDocumentId);
-        return response;
+          // @ts-expect-error the types from the response are not matching
+          const contractDocumentId = response?.data?.contract_document?.id;
+          console.log('contractDocumentId', contractDocumentId);
+          setInternalContractDocumentId(contractDocumentId);
+          return response;
+        } catch (error) {
+          console.error('Error creating contractor contract document:', error);
+          throw error;
+        }
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
-          employmentId: internalEmploymentId as string,
-          contractDocumentId: internalContractDocumentId as string,
-          payload: {
-            signature: values.signature,
-          },
-        });
+        try {
+          return signContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            contractDocumentId: internalContractDocumentId as string,
+            payload: {
+              signature: values.signature,
+            },
+          });
+        } catch (error) {
+          console.error('Error signing contract document:', error);
+          throw error;
+        }
       }
       case 'pricing_plan': {
-        if (values.subscription == contractorStandardProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'downgrade',
-            },
-          });
-        } else if (values.subscription == contractorPlusProductIdentifier) {
-          return manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'upgrade',
-            },
-          });
+        try {
+          if (values.subscription == contractorStandardProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'downgrade',
+              },
+            });
+          } else if (values.subscription == contractorPlusProductIdentifier) {
+            return manageContractorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+              payload: {
+                operation: 'upgrade',
+              },
+            });
+          }
+          return Promise.reject({ error: 'invalid selection' });
+        } catch (error) {
+          console.error('Error managing contractor subscription:', error);
+          throw error;
         }
-        return Promise.reject({ error: 'invalid selection' });
       }
 
       default: {
@@ -896,7 +914,9 @@ export const useContractorOnboarding = ({
     isSubmitting:
       createEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
-      signContractDocumentMutation.isPending,
+      signContractDocumentMutation.isPending ||
+      manageContractorSubscriptionMutation.isPending ||
+      updateEmploymentMutation.isPending,
 
     /**
      * Document preview PDF data

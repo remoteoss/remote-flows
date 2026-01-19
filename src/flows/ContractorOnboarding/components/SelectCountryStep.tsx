@@ -46,17 +46,16 @@ export function SelectCountryStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        onError?.({
-          error: response.error,
-          rawError: response.rawError,
-          fieldErrors: [],
-        });
-      }
-    } catch (error: unknown) {
+    } catch (err: unknown) {
+      const { error, rawError } = err as {
+        error: Error;
+        rawError: Record<string, unknown>;
+        fieldErrors: NormalizedFieldError[];
+      };
+
       onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
+        error: error,
+        rawError: rawError,
         fieldErrors: [],
       });
     }

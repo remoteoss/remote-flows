@@ -57,23 +57,20 @@ export function ContractDetailsStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.contract_details,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
-    } catch (error: unknown) {
+    } catch (err: unknown) {
+      const { error, rawError, fieldErrors } = err as {
+        error: Error;
+        rawError: Record<string, unknown>;
+        fieldErrors: NormalizedFieldError[];
+      };
+      const normalizedFieldErrors = normalizeFieldErrors(
+        fieldErrors || [],
+        contractorOnboardingBag.meta?.fields?.contract_details,
+      );
       onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
+        error: error,
+        rawError: rawError,
+        fieldErrors: normalizedFieldErrors,
       });
     }
   };
