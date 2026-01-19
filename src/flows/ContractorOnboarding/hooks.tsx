@@ -667,7 +667,6 @@ export const useContractorOnboarding = ({
             const response = await createEmploymentMutationAsync(payload);
             // @ts-expect-error the types from the response are not matching
             const employmentId = response?.data?.employment?.id;
-            console.log('employmentId', employmentId);
             setInternalEmploymentId(employmentId);
 
             return response;
@@ -700,7 +699,6 @@ export const useContractorOnboarding = ({
           });
           // @ts-expect-error the types from the response are not matching
           const contractDocumentId = response?.data?.contract_document?.id;
-          console.log('contractDocumentId', contractDocumentId);
           setInternalContractDocumentId(contractDocumentId);
           return response;
         } catch (error) {

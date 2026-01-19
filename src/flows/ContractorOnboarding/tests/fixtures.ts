@@ -3693,6 +3693,10 @@ export const mockManageSubscriptionResponse = {
   },
 };
 
-export const mockContractDocumentSignedResponse = {};
+export const mockContractDocumentSignedResponse = {
+  data: {
+    status: 'ok'
+  }
+};
 
 export const inviteResponse = {};
