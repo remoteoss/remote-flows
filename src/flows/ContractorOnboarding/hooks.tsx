@@ -41,7 +41,7 @@ import {
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { prettifyFormValues } from '@/src/lib/utils';
+import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
@@ -663,88 +663,65 @@ export const useContractorOnboarding = ({
             country_code: internalCountryCode,
             external_id: externalId,
           };
-          try {
-            const response = await createEmploymentMutationAsync(payload);
-            const employmentId = response?.data?.employment?.id;
-            setInternalEmploymentId(employmentId);
-
-            return response;
-          } catch (error) {
-            console.error('Error creating onboarding:', error);
-            throw error;
-          }
+          const response = await createEmploymentMutationAsync(payload);
+          const employmentId = response?.data?.employment?.id;
+          setInternalEmploymentId(employmentId);
+          return response;
         } else if (internalEmploymentId) {
-          try {
-            return updateEmploymentMutationAsync({
-              employmentId: internalEmploymentId,
-              basic_information: parsedValues,
-            });
-          } catch (error) {
-            console.error('Error updating employment:', error);
-            throw error;
-          }
+          return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: parsedValues,
+          });
         }
 
         return;
       }
       case 'contract_details': {
-        try {
-          const payload: CreateContractDocument = {
-            contract_document: parsedValues,
-          };
-          const response = await createContractorContractDocumentMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload,
-          });
-          const contractDocumentId = response?.data?.contract_document?.id;
-          setInternalContractDocumentId(contractDocumentId);
-          return response;
-        } catch (error) {
-          console.error('Error creating contractor contract document:', error);
-          throw error;
+        const payload: CreateContractDocument = {
+          contract_document: parsedValues,
+        };
+        const response = await createContractorContractDocumentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          payload,
+        });
+        const contractDocumentId = response?.data?.contract_document?.id;
+        if (!contractDocumentId) {
+          throw createStructuredError('Contract document ID not found');
         }
+        setInternalContractDocumentId(contractDocumentId);
+        return response;
       }
 
       case 'contract_preview': {
-        try {
-          return signContractDocumentMutationAsync({
-            employmentId: internalEmploymentId as string,
-            contractDocumentId: internalContractDocumentId as string,
-            payload: {
-              signature: values.signature,
-            },
-          });
-        } catch (error) {
-          console.error('Error signing contract document:', error);
-          throw error;
-        }
+        return signContractDocumentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          contractDocumentId: internalContractDocumentId as string,
+          payload: {
+            signature: values.signature,
+          },
+        });
       }
       case 'pricing_plan': {
-        try {
-          if (values.subscription == contractorStandardProductIdentifier) {
-            return manageContractorSubscriptionMutationAsync({
-              employmentId: internalEmploymentId as string,
-              payload: {
-                operation: 'downgrade',
-              },
-            });
-          } else if (values.subscription == contractorPlusProductIdentifier) {
-            return manageContractorSubscriptionMutationAsync({
-              employmentId: internalEmploymentId as string,
-              payload: {
-                operation: 'upgrade',
-              },
-            });
-          }
-          return Promise.reject({ error: 'invalid selection' });
-        } catch (error) {
-          console.error('Error managing contractor subscription:', error);
-          throw error;
+        if (values.subscription == contractorStandardProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'downgrade',
+            },
+          });
+        } else if (values.subscription == contractorPlusProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'upgrade',
+            },
+          });
         }
+        throw createStructuredError('invalid selection');
       }
 
       default: {
-        throw new Error('Invalid step state');
+        throw createStructuredError('Invalid step state');
       }
     }
   }

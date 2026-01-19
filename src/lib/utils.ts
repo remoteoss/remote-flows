@@ -246,3 +246,11 @@ export function prettifyFormValues(
       .filter(Boolean),
   );
 }
+
+export function createStructuredError(message: string) {
+  return {
+    error: new Error(message),
+    rawError: { message },
+    fieldErrors: []
+  };
+}
