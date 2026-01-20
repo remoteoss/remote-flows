@@ -1,4 +1,6 @@
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
+import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
+import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
 import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
@@ -95,8 +97,14 @@ export const buildBasicInformationJsfModify = (
         ...options?.jsfModify?.basic_information?.create,
         ir35: {
           title: 'IR35 Status',
-          description:
-            "What's your contractor's employment status? - Add Zendesk help link here",
+          description: () => (
+            <>
+              What's your contractor's employment status?{' '}
+              <ZendeskTriggerButton zendeskId={zendeskArticles.ir35Status}>
+                Learn more about IR35
+              </ZendeskTriggerButton>
+            </>
+          ),
           oneOf: [
             {
               const: 'inside',

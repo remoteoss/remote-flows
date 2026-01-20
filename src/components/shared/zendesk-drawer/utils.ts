@@ -24,6 +24,12 @@ export const zendeskArticles = {
    */
   internationalPricing: 4410698586893,
   /**
+   * IR35 Status
+   * Access: Private (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/42810224523917
+   */
+  ir35Status: 42810224523917,
+  /**
    * Remote FX Rate
    * Access: Public (Everyone can access)
    * https://support.remote.com/hc/en-us/articles/33271144977421

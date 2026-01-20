@@ -640,15 +640,15 @@ export const useContractorOnboarding = ({
             basicInformationPayload,
           );
           const employmentId = response?.data?.employment?.id;
-          if(!employmentId) {
+          if (!employmentId) {
             throw createStructuredError('Employment ID not found');
           }
-          
+
           setInternalEmploymentId(employmentId);
           await updateUKandSaudiFieldsMutation({
             employmentId: employmentId as string,
           });
-          
+
           return response;
         } else if (internalEmploymentId) {
           const basicInformationParsedValues = omit(
