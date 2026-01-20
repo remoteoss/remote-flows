@@ -42,7 +42,7 @@ import {
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { prettifyFormValues } from '@/src/lib/utils';
+import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
@@ -623,9 +623,6 @@ export const useContractorOnboarding = ({
           employment?.country &&
           employment?.country.code !== internalCountryCode;
 
-        console.log('isEmploymentNotLoaded', isEmploymentNotLoaded);
-        console.log('hasChangedCountry', hasChangedCountry);
-
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const basicInformationParsedValues = omit(
             parsedValues,
@@ -639,24 +636,10 @@ export const useContractorOnboarding = ({
             country_code: internalCountryCode,
             external_id: externalId,
           };
-
-          try {
-            const response = await createEmploymentMutationAsync(
-              basicInformationPayload,
-            );
-            // @ts-expect-error the types from the response are not matching
-            const employmentId = response?.data?.employment?.id;
-            await updateUKandSaudiFieldsMutation({
-              employmentId: employmentId as string,
-            });
-
-            setInternalEmploymentId(employmentId);
-
-            return response;
-          } catch (error) {
-            console.error('Error creating onboarding:', error);
-            throw error;
-          }
+          const response = await createEmploymentMutationAsync(basicInformationPayload);
+          const employmentId = response?.data?.employment?.id;
+          setInternalEmploymentId(employmentId);
+          return response;
         } else if (internalEmploymentId) {
           const basicInformationParsedValues = omit(
             parsedValues,
@@ -685,19 +668,16 @@ export const useContractorOnboarding = ({
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
         };
-        try {
-          const response = await createContractorContractDocumentMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload,
-          });
-          // @ts-expect-error the types from the response are not matching
-          const contractDocumentId = response?.data?.contract_document?.id;
-          setInternalContractDocumentId(contractDocumentId);
-          return response;
-        } catch (error) {
-          console.error('Error creating contract document:', error);
-          throw error;
+        const response = await createContractorContractDocumentMutationAsync({
+          employmentId: internalEmploymentId as string,
+          payload,
+        });
+        const contractDocumentId = response?.data?.contract_document?.id;
+        if (!contractDocumentId) {
+          throw createStructuredError('Contract document ID not found');
         }
+        setInternalContractDocumentId(contractDocumentId);
+        return response;
       }
 
       case 'contract_preview': {
@@ -715,7 +695,6 @@ export const useContractorOnboarding = ({
         }
       }
       case 'pricing_plan': {
-        try {
           if (values.subscription == contractorStandardProductIdentifier) {
             return manageContractorSubscriptionMutationAsync({
               employmentId: internalEmploymentId as string,
@@ -731,15 +710,12 @@ export const useContractorOnboarding = ({
               },
             });
           }
-          return Promise.reject({ error: 'invalid selection' });
-        } catch (error) {
-          console.error('Error managing contractor subscription:', error);
-          throw error;
-        }
+        
+        throw createStructuredError('invalid selection');
       }
 
       default: {
-        throw new Error('Invalid step state');
+        throw createStructuredError('Invalid step state');
       }
     }
   }
@@ -906,8 +882,8 @@ export const useContractorOnboarding = ({
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
-      manageContractorSubscriptionMutation.isPending ||
       signContractDocumentMutation.isPending ||
+      manageContractorSubscriptionMutation.isPending ||
       uploadFileMutation.isPending,
 
     /**

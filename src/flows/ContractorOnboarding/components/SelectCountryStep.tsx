@@ -7,6 +7,7 @@ import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
+import { handleStepError } from '@/src/lib/utils';
 
 type SelectCountryStepProps = {
   /*
@@ -47,11 +48,12 @@ export function SelectCountryStep({
         return;
       }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = handleStepError(
+        error,
+        contractorOnboardingBag.meta?.fields?.select_country,
+      );
+
+      onError?.(structuredError);
     }
   };
 

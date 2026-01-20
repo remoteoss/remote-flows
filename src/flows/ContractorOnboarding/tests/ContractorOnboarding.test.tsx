@@ -610,7 +610,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(patchSpy).toHaveBeenCalled();
+      expect(patchSpy).toHaveBeenCalledTimes(1);
     });
 
     await screen.findByText(/Step: Pricing Plan/i);

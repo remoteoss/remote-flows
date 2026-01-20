@@ -9,6 +9,12 @@ type MutationVariables<T> =
 type MutationError<T> =
   T extends UseMutationResult<any, infer E, any, any> ? E : never;
 
+/**
+ * Unwraps the .data property from the response type
+ * This matches the runtime behavior of mutateAsyncOrThrow which resolves with response.data
+ */
+type UnwrapData<T> = T extends { data: infer D } ? D : T;
+
 export interface SuccessResponse<D> {
   data: D;
   error: null;
@@ -77,12 +83,16 @@ export function mutationToPromise<
   type Error = MutationError<T>;
 
   return {
-    mutateAsyncOrThrow: (values: Variables): Promise<Data> => {
+    mutateAsyncOrThrow: (values: Variables): Promise<UnwrapData<Data>> => {
       return new Promise((resolve, reject) => {
         mutation.mutate(values, {
           onSuccess: (response) => {
-            if (response.data) {
-              resolve(response.data as Data);
+            if (
+              'data' in response &&
+              response.data !== null &&
+              !response.error
+            ) {
+              resolve(response.data as UnwrapData<Data>);
             } else {
               const fieldErrors = extractFieldErrors(response.error);
               const errorData = response.error.error || response.error;
