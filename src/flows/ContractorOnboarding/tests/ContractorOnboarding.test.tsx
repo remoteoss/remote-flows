@@ -552,13 +552,13 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should NOT call PATCH when resubmitting basic information (contractors cannot be updated)', async () => {
+  it('should call PATCH when resubmitting basic information', async () => {
     const patchSpy = vi.fn();
 
     server.use(
       http.patch('*/v1/employments/*', () => {
         patchSpy();
-        return HttpResponse.json({});
+        return HttpResponse.json(employmentUpdatedResponse);
       }),
     );
 
@@ -609,10 +609,11 @@ describe('ContractorOnboardingFlow', () => {
     const nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Pricing Plan/i);
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledTimes(1);
+    });
 
-    // Verify PATCH was NOT called (contractors can't be updated)
-    expect(patchSpy).toHaveBeenCalled();
+    await screen.findByText(/Step: Pricing Plan/i);
   });
 
   it('should create contract document when submitting contract details', async () => {

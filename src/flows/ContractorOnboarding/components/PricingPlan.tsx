@@ -1,14 +1,12 @@
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
-import {
-  normalizeFieldErrors,
-  NormalizedFieldError,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
   PricingPlanFormPayload,
   PricingPlanResponse,
 } from '@/src/flows/ContractorOnboarding/types';
+import { handleStepError } from '@/src/lib/utils';
 
 type PricingPlanStepProps = {
   /**
@@ -56,24 +54,12 @@ export function PricingPlanStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.pricing_plan,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = handleStepError(
+        error,
+        contractorOnboardingBag.meta?.fields?.pricing_plan,
+      );
+      onError?.(structuredError);
     }
   };
 

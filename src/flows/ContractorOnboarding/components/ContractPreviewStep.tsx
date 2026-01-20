@@ -1,14 +1,12 @@
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
-import {
-  NormalizedFieldError,
-  normalizeFieldErrors,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   ContractPreviewFormPayload,
   ContractPreviewResponse,
 } from '@/src/flows/ContractorOnboarding/types';
+import { handleStepError } from '@/src/lib/utils';
 
 type ContractPreviewStepProps = {
   /*
@@ -51,24 +49,12 @@ export function ContractPreviewStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.contract_preview,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = handleStepError(
+        error,
+        contractorOnboardingBag.meta?.fields?.contract_preview,
+      );
+      onError?.(structuredError);
     }
   };
 

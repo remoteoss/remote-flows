@@ -1,8 +1,5 @@
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  normalizeFieldErrors,
-  NormalizedFieldError,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import {
@@ -11,6 +8,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 import { StatementOfWorkDisclaimer } from '@/src/flows/ContractorOnboarding/components/StatementOfWorkDisclaimer';
 import { isCMOrCMPlus } from '@/src/flows/ContractorOnboarding/utils';
+import { handleStepError } from '@/src/lib/utils';
 
 type ContractDetailsStepProps = {
   /*
@@ -57,24 +55,12 @@ export function ContractDetailsStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.contract_details,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = handleStepError(
+        error,
+        contractorOnboardingBag.meta?.fields?.contract_details,
+      );
+      onError?.(structuredError);
     }
   };
 

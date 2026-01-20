@@ -9,6 +9,12 @@ type MutationVariables<T> =
 type MutationError<T> =
   T extends UseMutationResult<any, infer E, any, any> ? E : never;
 
+/**
+ * Unwraps the .data property from the response type
+ * This matches the runtime behavior of mutateAsyncOrThrow which resolves with response.data
+ */
+type UnwrapData<T> = T extends { data: infer D } ? D : T;
+
 export interface SuccessResponse<D> {
   data: D;
   error: null;
@@ -77,6 +83,44 @@ export function mutationToPromise<
   type Error = MutationError<T>;
 
   return {
+    mutateAsyncOrThrow: (values: Variables): Promise<UnwrapData<Data>> => {
+      return new Promise((resolve, reject) => {
+        mutation.mutate(values, {
+          onSuccess: (response) => {
+            if (
+              'data' in response &&
+              response.data !== null &&
+              !response.error
+            ) {
+              resolve(response.data as UnwrapData<Data>);
+            } else {
+              const fieldErrors = extractFieldErrors(response.error);
+              const errorData = response.error.error || response.error;
+              const errorMessage =
+                typeof errorData?.message === 'string'
+                  ? errorData.message
+                  : 'Something went wrong. Please try again later.';
+              reject({
+                error: new Error(errorMessage),
+                rawError: response.error,
+                fieldErrors,
+              });
+            }
+          },
+          onError: (error) => {
+            const fieldErrors = extractFieldErrors(error);
+            reject({
+              error: error as Error,
+              rawError: error,
+              fieldErrors,
+            });
+          },
+        });
+      });
+    },
+    /**
+     * @deprecated Use mutateAsyncOrThrow instead, this method will be removed as the the one below handles errors better
+     */
     mutateAsync: (values: Variables): Promise<PromiseResult<Data, Error>> => {
       return new Promise((resolve, reject) => {
         mutation.mutate(values, {
@@ -88,14 +132,15 @@ export function mutationToPromise<
               });
             } else {
               const fieldErrors = extractFieldErrors(response.error);
+              // Unwrap the error if it is an object with an error property
+              const errorData = response.error.error || response.error;
+              const errorMessage =
+                typeof errorData?.message === 'string'
+                  ? errorData.message
+                  : 'Something went wrong. Please try again later.';
               resolve({
                 data: null,
-                error:
-                  typeof response.error?.message === 'string'
-                    ? (new Error(response.error.message) as unknown as Error)
-                    : (new Error(
-                        'Something went wrong. Please try again later.',
-                      ) as unknown as Error),
+                error: new Error(errorMessage) as unknown as Error,
                 rawError: response.error,
                 fieldErrors,
               });

@@ -1,12 +1,10 @@
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { EmploymentCreationResponse } from '@/src/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  normalizeFieldErrors,
-  NormalizedFieldError,
-} from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
+import { handleStepError } from '@/src/lib/utils';
 
 type BasicInformationStepProps = {
   /*
@@ -49,24 +47,12 @@ export function BasicInformationStep({
         contractorOnboardingBag?.next();
         return;
       }
-      if (response?.error) {
-        const normalizedFieldErrors = normalizeFieldErrors(
-          response?.fieldErrors || [],
-          contractorOnboardingBag.meta?.fields?.basic_information,
-        );
-
-        onError?.({
-          error: response?.error,
-          rawError: response?.rawError,
-          fieldErrors: normalizedFieldErrors,
-        });
-      }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = handleStepError(
+        error,
+        contractorOnboardingBag.meta?.fields?.basic_information,
+      );
+      onError?.(structuredError);
     }
   };
 
