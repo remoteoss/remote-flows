@@ -636,9 +636,19 @@ export const useContractorOnboarding = ({
             country_code: internalCountryCode,
             external_id: externalId,
           };
-          const response = await createEmploymentMutationAsync(basicInformationPayload);
+          const response = await createEmploymentMutationAsync(
+            basicInformationPayload,
+          );
           const employmentId = response?.data?.employment?.id;
+          if(!employmentId) {
+            throw createStructuredError('Employment ID not found');
+          }
+          
           setInternalEmploymentId(employmentId);
+          await updateUKandSaudiFieldsMutation({
+            employmentId: employmentId as string,
+          });
+          
           return response;
         } else if (internalEmploymentId) {
           const basicInformationParsedValues = omit(
@@ -648,18 +658,13 @@ export const useContractorOnboarding = ({
             'ir35_sds_file',
           );
 
-          try {
-            await updateUKandSaudiFieldsMutation({
-              employmentId: internalEmploymentId,
-            });
-            return updateEmploymentMutationAsync({
-              employmentId: internalEmploymentId,
-              basic_information: basicInformationParsedValues,
-            });
-          } catch (error) {
-            console.error('Error updating onboarding:', error);
-            throw error;
-          }
+          await updateUKandSaudiFieldsMutation({
+            employmentId: internalEmploymentId,
+          });
+          return updateEmploymentMutationAsync({
+            employmentId: internalEmploymentId,
+            basic_information: basicInformationParsedValues,
+          });
         }
 
         return;
@@ -695,22 +700,22 @@ export const useContractorOnboarding = ({
         }
       }
       case 'pricing_plan': {
-          if (values.subscription == contractorStandardProductIdentifier) {
-            return manageContractorSubscriptionMutationAsync({
-              employmentId: internalEmploymentId as string,
-              payload: {
-                operation: 'downgrade',
-              },
-            });
-          } else if (values.subscription == contractorPlusProductIdentifier) {
-            return manageContractorSubscriptionMutationAsync({
-              employmentId: internalEmploymentId as string,
-              payload: {
-                operation: 'upgrade',
-              },
-            });
-          }
-        
+        if (values.subscription == contractorStandardProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'downgrade',
+            },
+          });
+        } else if (values.subscription == contractorPlusProductIdentifier) {
+          return manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'upgrade',
+            },
+          });
+        }
+
         throw createStructuredError('invalid selection');
       }
 

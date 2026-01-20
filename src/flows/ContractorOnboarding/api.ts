@@ -338,6 +338,7 @@ export const useUpdateUKandSaudiFields = (
           },
         },
       };
+      console.log('ir35Status', ir35Status);
       if (ir35Status) {
         // TODO: Take a look later to see how this two work together, we need to save the file_id of the file somewhere
         await createContractorContractDocumentMutationAsync({
