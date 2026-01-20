@@ -427,7 +427,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
   });
 
   it('should set provisional_start_date to today when using the form for the first time', async () => {
@@ -437,7 +437,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await screen.findByText(/Step: Basic Information/i);
 
@@ -459,7 +459,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     // setting same value that the mock receives
     await fillBasicInformation({
@@ -500,7 +500,7 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
-    await fillCountry('Portugal');
+    await fillCountry('PRT');
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -531,7 +531,7 @@ describe('ContractorOnboardingFlow', () => {
     backButton.click();
     await screen.findByText(/Step: Basic Information/i);
 
-    await fillCountry('Spain');
+    await fillCountry('ESP');
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
