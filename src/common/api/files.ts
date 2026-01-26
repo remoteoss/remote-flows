@@ -14,10 +14,9 @@ import {
 } from '@/src/client/types.gen';
 import { useClient } from '@/src/context';
 
-/*
+/**
  * Hook to upload a file associated with a specified employment.
- * @param {string} employmentId - The ID of the employment to upload the file for.
- * @returns {UseMutationResult<UploadFileResponse, Error, PostUploadEmployeeFileFileData['body']>} - The mutation result.
+ * @returns A mutation result for uploading employee files.
  */
 export const useUploadFile = () => {
   const { client } = useClient();
@@ -34,10 +33,10 @@ export const useUploadFile = () => {
   });
 };
 
-/*
- * Hook to download a file associated with a specified employment.
- * @param {string} id - The ID of the file to download.
- * @returns {UseQueryResult<ApiFile, Error>} - The query result.
+/**
+ * Hook to download a file by its ID.
+ * @param id - The ID of the file to download.
+ * @returns A query result containing the file data.
  */
 export const useDownloadFile = (id: string) => {
   const { client } = useClient();
@@ -60,13 +59,13 @@ export const useDownloadFile = (id: string) => {
   });
 };
 
-/*
+/**
  * Hook to retrieve files associated with a specific employment.
- * @param {string} employmentId - The ID of the employment to retrieve files for.
- * @param {GetIndexEmploymentFileData['query']} queryParams - The query parameters to filter the files.
- * @returns {UseQueryResult<ListFilesResponse, GetIndexEmploymentFileErrors>} - The query result.
+ * @param employmentId - The ID of the employment to retrieve files for.
+ * @param queryParams - The query parameters to filter the files.
+ * @param queryOptions - Optional TanStack Query options to customize the query behavior.
+ * @returns A query result containing the employment files.
  */
-
 export const useEmploymentFiles = (
   employmentId: string,
   queryParams: GetIndexEmploymentFileData['query'],
@@ -82,7 +81,7 @@ export const useEmploymentFiles = (
 ) => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['employment-files', employmentId, queryParams],
+    queryKey: ['employment-files', employmentId],
     queryFn: async () => {
       const result = await getIndexEmploymentFile({
         client: client as Client,

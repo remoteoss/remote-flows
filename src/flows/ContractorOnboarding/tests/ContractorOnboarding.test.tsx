@@ -1825,8 +1825,7 @@ describe('ContractorOnboardingFlow', () => {
     it('should correctly retrieve and display ir35 file from employment when editing', async () => {
       const employmentId = 'e54e2ab8-291b-4406-9aa0-6e720bdefbbb';
       const fileId = '643e3627-320e-44a9-9721-7b9a3cf5b946';
-      const fileName =
-        "Stamped_Affidavit_Of_Keith_O'brien_Sworn_1_April_2025_Redacted.pdf";
+      const fileName = 'test-sds.pdf';
 
       // Mock the employment response
       server.use(
