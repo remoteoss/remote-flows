@@ -370,7 +370,7 @@ export const useGetIR35File = (
   employmentId: string,
   options?: { enabled?: boolean },
 ) => {
-  const { data: ir35Files } = useEmploymentFiles(
+  const { data: ir35Files, isLoading: isLoadingFiles } = useEmploymentFiles(
     employmentId,
     {
       sub_type: IR35_FILE_SUBTYPE,
@@ -383,5 +383,10 @@ export const useGetIR35File = (
   );
   const id = ir35Files?.[0]?.id;
 
-  return useDownloadFile(id as string);
+  const downloadQuery = useDownloadFile(id as string);
+
+  return {
+    ...downloadQuery,
+    isLoading: isLoadingFiles || downloadQuery.isLoading,
+  };
 };
