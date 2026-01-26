@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { Client } from '@/src/client/client';
 import { getShowFile, postUploadEmployeeFileFile } from '@/src/client/sdk.gen';
 import {
@@ -5,7 +6,6 @@ import {
   PostUploadEmployeeFileFileData,
 } from '@/src/client/types.gen';
 import { useClient } from '@/src/context';
-import { useMutation } from '@tanstack/react-query';
 
 /*
  * Hook to upload a file associated with a specified employment.
@@ -18,10 +18,7 @@ export const useUploadFile = () => {
     mutationFn: (params: PostUploadEmployeeFileFileData['body']) => {
       return postUploadEmployeeFileFile({
         client: client as Client,
-        body: {
-          employment_id: params.employment_id,
-          file: params.file,
-        },
+        body: params,
         headers: {
           Authorization: ``,
         },

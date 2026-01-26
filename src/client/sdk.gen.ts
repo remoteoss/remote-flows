@@ -110,6 +110,9 @@ import type {
   GetIndexEmploymentCompanyStructureNodeErrors,
   GetIndexEmploymentCompanyStructureNodeResponses,
   GetIndexEmploymentContractData,
+  GetIndexEmploymentContractDocumentData,
+  GetIndexEmploymentContractDocumentErrors,
+  GetIndexEmploymentContractDocumentResponses,
   GetIndexEmploymentContractErrors,
   GetIndexEmploymentContractResponses,
   GetIndexEmploymentCustomFieldData,
@@ -120,6 +123,9 @@ import type {
   GetIndexEmploymentCustomFieldValueResponses,
   GetIndexEmploymentData,
   GetIndexEmploymentErrors,
+  GetIndexEmploymentFileData,
+  GetIndexEmploymentFileErrors,
+  GetIndexEmploymentFileResponses,
   GetIndexEmploymentJobData,
   GetIndexEmploymentJobErrors,
   GetIndexEmploymentJobResponses,
@@ -1527,6 +1533,29 @@ export const getShowContractDocument = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}',
+    ...options,
+  });
+
+/**
+ * List contract documents for an employment
+ *
+ * Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first). Only contractor employment types are supported.
+ */
+export const getIndexEmploymentContractDocument = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentContractDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentContractDocumentResponses,
+    GetIndexEmploymentContractDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/contract-documents',
     ...options,
   });
 
@@ -3761,6 +3790,30 @@ export const postCreateApproval = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List employment files
+ *
+ * Lists files associated with a specific employment.
+ *
+ * Supports filtering by file type and sub_type.
+ *
+ */
+export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexEmploymentFileData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentFileResponses,
+    GetIndexEmploymentFileErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/files',
+    ...options,
   });
 
 /**

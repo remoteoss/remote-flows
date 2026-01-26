@@ -22,7 +22,10 @@ import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
-import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import {
+  corProductIdentifier,
+  IR35_FILE_SUBTYPE,
+} from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { useUploadFile } from '@/src/common/api/files';
@@ -337,7 +340,6 @@ export const useUpdateUKandSaudiFields = (
         },
       };
       if (ir35Status) {
-        // TODO: Take a look later to see how this two work together, we need to save the file_id of the file somewhere
         await createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
           payload: ir35ContractDetailsPayload,
@@ -345,6 +347,7 @@ export const useUpdateUKandSaudiFields = (
         return uploadFileMutationAsync({
           employment_id: employmentId,
           file: ir35SdsFile,
+          sub_type: IR35_FILE_SUBTYPE,
         });
       }
       if (saudiNationalityStatus) {
