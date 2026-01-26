@@ -346,6 +346,47 @@ describe('ContractorOnboardingFlow', () => {
       http.patch('*/v1/employments/*', async () => {
         return HttpResponse.json(employmentUpdatedResponse);
       }),
+      // Mock the files list endpoint
+      http.get(`*/v1/employments/*/files`, ({ request }) => {
+        const url = new URL(request.url);
+        const subType = url.searchParams.get('sub_type');
+
+        if (subType === 'ir_35') {
+          return HttpResponse.json({
+            data: {
+              files: [
+                {
+                  id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
+                  name: 'test-sds.pdf',
+                  type: 'other',
+                  inserted_at: '2026-01-26T11:08:56Z',
+                  sub_type: 'ir_35',
+                },
+              ],
+              total_count: 1,
+              current_page: 1,
+              total_pages: 1,
+            },
+          });
+        }
+        return HttpResponse.json({ data: { files: [], total_count: 0 } });
+      }),
+
+      // Mock the individual file fetch endpoint
+      http.get(`*/v1/files/*`, () => {
+        return HttpResponse.json({
+          data: {
+            file: {
+              id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
+              name: 'test-sds.pdf',
+              type: 'other',
+              content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MK...', // Truncated base64
+              inserted_at: '2026-01-26T11:08:56Z',
+              sub_type: 'ir_35',
+            },
+          },
+        });
+      }),
     );
   });
 
@@ -1824,7 +1865,6 @@ describe('ContractorOnboardingFlow', () => {
 
     it('should correctly retrieve and display ir35 file from employment when editing', async () => {
       const employmentId = 'e54e2ab8-291b-4406-9aa0-6e720bdefbbb';
-      const fileId = '643e3627-320e-44a9-9721-7b9a3cf5b946';
       const fileName = 'test-sds.pdf';
 
       // Mock the employment response
@@ -1844,48 +1884,6 @@ describe('ContractorOnboardingFlow', () => {
                 contract_details: {
                   ir_35: 'inside',
                 },
-              },
-            },
-          });
-        }),
-
-        // Mock the files list endpoint
-        http.get(`*/v1/employments/${employmentId}/files`, ({ request }) => {
-          const url = new URL(request.url);
-          const subType = url.searchParams.get('sub_type');
-
-          if (subType === 'ir_35') {
-            return HttpResponse.json({
-              data: {
-                files: [
-                  {
-                    id: fileId,
-                    name: fileName,
-                    type: 'other',
-                    inserted_at: '2026-01-26T11:08:56Z',
-                    sub_type: 'ir_35',
-                  },
-                ],
-                total_count: 1,
-                current_page: 1,
-                total_pages: 1,
-              },
-            });
-          }
-          return HttpResponse.json({ data: { files: [], total_count: 0 } });
-        }),
-
-        // Mock the individual file fetch endpoint
-        http.get(`*/v1/files/${fileId}`, () => {
-          return HttpResponse.json({
-            data: {
-              file: {
-                id: fileId,
-                name: fileName,
-                type: 'other',
-                content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MK...', // Truncated base64
-                inserted_at: '2026-01-26T11:08:56Z',
-                sub_type: 'ir_35',
               },
             },
           });
