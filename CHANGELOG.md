@@ -4,12 +4,15 @@
 
 ### Minor Changes
 
-- unify error handling to throw errors from promise-based mutations (#708) [#708](https://github.com/remoteoss/remote-flows/pull/708)
-- add the posibility to add required and allOf (#707) [#707](https://github.com/remoteoss/remote-flows/pull/707)
+#### Features
+
+- handle UK and Saudi Arabia edge cases for contractor onboarding (#705) [#705](https://github.com/remoteoss/remote-flows/pull/705)
+
+#### Chore
+
 - mock select field to make easier asserts (#706) [#706](https://github.com/remoteoss/remote-flows/pull/706)
-- update version (#709) [#709](https://github.com/remoteoss/remote-flows/pull/709)
-- handle UK and Saudi Arabia edge cases (#705) [#705](https://github.com/remoteoss/remote-flows/pull/705)
 - downgrade node engine to v20 (#710) [#710](https://github.com/remoteoss/remote-flows/pull/710)
+- update remote-json-form-kit to latest version (#709) [#709](https://github.com/remoteoss/remote-flows/pull/709)
 
 ## 1.7.0
 
