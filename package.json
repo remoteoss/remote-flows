@@ -101,7 +101,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@remoteoss/remote-json-schema-form-kit": "github:remoteoss/remote-json-schema-form-kit#update-types-kit",
+    "@remoteoss/remote-json-schema-form-kit": "github:remoteoss/remote-json-schema-form-kit#v0.0.5",
     "@tailwindcss/cli": "^4.1.17",
     "@tailwindcss/postcss": "^4.1.17",
     "@tanstack/react-query": "^5.90.10",
