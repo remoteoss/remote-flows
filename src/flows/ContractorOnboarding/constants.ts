@@ -4,3 +4,5 @@ export const contractorPlusProductIdentifier =
   'urn:remotecom:resource:product:contractor:plus:monthly';
 export const corProductIdentifier =
   'urn:remotecom:resource:product:contractor:aor:monthly';
+
+export const IR35_FILE_SUBTYPE = 'ir_35';

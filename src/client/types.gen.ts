@@ -2320,6 +2320,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
     | 'employment.status.updated'
+    | 'employment.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -2802,6 +2803,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
     | 'employment.status.updated'
+    | 'employment.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -3485,6 +3487,15 @@ export type EmploymentUpdateParams = {
 };
 
 /**
+ * IndexContractDocumentsResponse
+ *
+ * Paginated list of contract documents
+ */
+export type IndexContractDocumentsResponse = {
+  data: IndexContractDocuments;
+};
+
+/**
  * CostCalculator.ListCountryResponse
  */
 export type CostCalculatorListCountryResponse = {
@@ -3885,6 +3896,46 @@ export type CreatePricingPlanWithPartnerTemplateParams = {
 };
 
 /**
+ * ContractDocumentItem
+ *
+ * Contract document item in list response
+ */
+export type ContractDocumentItem = {
+  /**
+   * Contract document slug/ID
+   */
+  id: string;
+  /**
+   * Created timestamp
+   */
+  inserted_at: string;
+  /**
+   * Contract document name
+   */
+  name: string | null;
+  /**
+   * Contract document status
+   */
+  status:
+    | 'draft'
+    | 'awaiting_signatures'
+    | 'finished'
+    | 'archived'
+    | 'revised'
+    | 'awaiting_customer_approval'
+    | 'approved_by_customer'
+    | 'rejected_by_customer';
+  /**
+   * Contract document type
+   */
+  type: string;
+  /**
+   * Last updated timestamp
+   */
+  updated_at: string | null;
+};
+
+/**
  * TaskDescription
  *
  * Description and status of an onboarding task.
@@ -3905,6 +3956,30 @@ export type TaskDescription = {
 export type TimeoffBalanceNotFoundResponse =
   | TimeoffBalanceNotSupportedResponse
   | NotFoundResponse;
+
+/**
+ * IndexContractDocuments
+ *
+ * Paginated list of contract documents
+ */
+export type IndexContractDocuments = {
+  /**
+   * Array of contract documents
+   */
+  contract_documents: Array<ContractDocumentItem>;
+  /**
+   * Current page number
+   */
+  current_page: number;
+  /**
+   * Total number of contract documents
+   */
+  total_count: number;
+  /**
+   * Total number of pages
+   */
+  total_pages: number;
+};
 
 /**
  * CompanyTokenResponse
@@ -4538,6 +4613,8 @@ export type UpdateIncentiveParams = CommonIncentiveParams & {
 export type FileParams = {
   employment_id: string;
   file: Blob | File;
+  sub_type?: string;
+  type?: string;
 };
 
 /**
@@ -4840,6 +4917,29 @@ export type CreatePricingPlanWithoutPartnerTemplateParams = {
  * Slug
  */
 export type Slug = string;
+
+/**
+ * ListFilesResponse
+ *
+ * Response schema listing many files
+ */
+export type ListFilesResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    files?: Array<File>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
 
 /**
  * BenefitRenewalRequests.MinimalBenefitRenewalResponse
@@ -5403,11 +5503,19 @@ export type LeavePolicy = {
  * CompanyLegalEntity
  */
 export type CompanyLegalEntity = {
+  /**
+   * ISO 3166-1 alpha-3 country code (e.g., 'USA', 'GBR', 'DEU')
+   */
+  country_code?: string | null;
   global_payroll_enabled: boolean;
   /**
    * Company slug
    */
   id: string;
+  /**
+   * Indicates if this is the default legal entity for the company
+   */
+  is_default?: boolean;
   name: string;
 };
 
@@ -5720,11 +5828,11 @@ export type RecurringIncentiveResponse = {
 export type WebhookTriggerBillingParams = {
   document_type:
     | 'supplemental_service_invoice'
-    | 'reconciliation_invoice'
     | 'prefunding_invoice'
+    | 'reconciliation_invoice'
     | 'supplemental_service_credit_note'
-    | 'reconciliation_credit_note'
-    | 'prefunding_credit_note';
+    | 'prefunding_credit_note'
+    | 'reconciliation_credit_note';
   event_type: 'billing_document.issued';
 };
 
@@ -5887,6 +5995,7 @@ export type WebhookCallback = {
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
     | 'employment.status.updated'
+    | 'employment.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -7119,6 +7228,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.probation_period_extension.submitted'
     | 'employment.start_date.changed'
     | 'employment.status.updated'
+    | 'employment.updated'
     | 'employment.user_status.activated'
     | 'employment.user_status.deactivated'
     | 'employment.user_status.initiated'
@@ -9951,6 +10061,81 @@ export type GetShowContractDocumentResponses = {
 
 export type GetShowContractDocumentResponse =
   GetShowContractDocumentResponses[keyof GetShowContractDocumentResponses];
+
+export type GetIndexEmploymentContractDocumentData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Filter by contract document statuses
+     */
+    statuses?: Array<
+      | 'draft'
+      | 'awaiting_signatures'
+      | 'finished'
+      | 'archived'
+      | 'revised'
+      | 'awaiting_customer_approval'
+      | 'approved_by_customer'
+      | 'rejected_by_customer'
+    >;
+    /**
+     * Exclude contract documents with specific statuses
+     */
+    except_statuses?: Array<
+      | 'draft'
+      | 'awaiting_signatures'
+      | 'finished'
+      | 'archived'
+      | 'revised'
+      | 'awaiting_customer_approval'
+      | 'approved_by_customer'
+      | 'rejected_by_customer'
+    >;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments/{employment_id}/contract-documents';
+};
+
+export type GetIndexEmploymentContractDocumentErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentContractDocumentError =
+  GetIndexEmploymentContractDocumentErrors[keyof GetIndexEmploymentContractDocumentErrors];
+
+export type GetIndexEmploymentContractDocumentResponses = {
+  /**
+   * Success
+   */
+  200: IndexContractDocumentsResponse;
+};
+
+export type GetIndexEmploymentContractDocumentResponse =
+  GetIndexEmploymentContractDocumentResponses[keyof GetIndexEmploymentContractDocumentResponses];
 
 export type GetIndexExpenseData = {
   body?: never;
@@ -14245,6 +14430,63 @@ export type PostCreateApprovalResponses = {
 
 export type PostCreateApprovalResponse =
   PostCreateApprovalResponses[keyof PostCreateApprovalResponses];
+
+export type GetIndexEmploymentFileData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Filter by file type (optional)
+     */
+    type?: string;
+    /**
+     * Filter by file sub_type (optional)
+     */
+    sub_type?: string;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employments/{employment_id}/files';
+};
+
+export type GetIndexEmploymentFileErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexEmploymentFileError =
+  GetIndexEmploymentFileErrors[keyof GetIndexEmploymentFileErrors];
+
+export type GetIndexEmploymentFileResponses = {
+  /**
+   * Success
+   */
+  200: ListFilesResponse;
+};
+
+export type GetIndexEmploymentFileResponse =
+  GetIndexEmploymentFileResponses[keyof GetIndexEmploymentFileResponses];
 
 export type GetIndexEmploymentCustomFieldData = {
   body?: never;

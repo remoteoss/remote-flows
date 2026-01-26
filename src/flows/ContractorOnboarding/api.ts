@@ -22,8 +22,17 @@ import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
-import { corProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import {
+  corProductIdentifier,
+  IR35_FILE_SUBTYPE,
+} from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { mutationToPromise } from '@/src/lib/mutations';
+import {
+  useDownloadFile,
+  useEmploymentFiles,
+  useUploadFile,
+} from '@/src/common/api/files';
 
 /**
  * Get the contract document signature schema
@@ -302,5 +311,82 @@ export const useContractorSubscriptionSchemaField = (
   return {
     isLoading,
     form,
+  };
+};
+
+export const useUpdateUKandSaudiFields = (
+  createContractorContractDocumentMutation: ReturnType<
+    typeof useCreateContractorContractDocument
+  >,
+  uploadFileMutation: ReturnType<typeof useUploadFile>,
+  parsedValues: FieldValues,
+) => {
+  const { mutateAsyncOrThrow: uploadFileMutationAsync } =
+    mutationToPromise(uploadFileMutation);
+  const { mutateAsyncOrThrow: createContractorContractDocumentMutationAsync } =
+    mutationToPromise(createContractorContractDocumentMutation);
+
+  return {
+    mutateAsync: async ({ employmentId }: { employmentId: string }) => {
+      const {
+        saudi_nationality_status: saudiNationalityStatus,
+        ir35: ir35Status,
+        ir35_sds_file: ir35SdsFile,
+      } = parsedValues;
+      const ir35ContractDetailsPayload = {
+        contract_document: {
+          ir_35: ir35Status,
+        },
+      };
+      const saudiContractDetailsPayload = {
+        contract_document: {
+          nationality: saudiNationalityStatus,
+        },
+      };
+      if (ir35Status) {
+        await createContractorContractDocumentMutationAsync({
+          employmentId: employmentId,
+          payload: ir35ContractDetailsPayload,
+        });
+        return uploadFileMutationAsync({
+          employment_id: employmentId,
+          file: ir35SdsFile,
+          sub_type: IR35_FILE_SUBTYPE,
+        });
+      }
+      if (saudiNationalityStatus) {
+        return createContractorContractDocumentMutationAsync({
+          employmentId: employmentId,
+          payload: saudiContractDetailsPayload,
+        });
+      }
+
+      return Promise.resolve();
+    },
+  };
+};
+
+export const useGetIR35File = (
+  employmentId: string,
+  options?: { enabled?: boolean },
+) => {
+  const { data: ir35Files, isLoading: isLoadingFiles } = useEmploymentFiles(
+    employmentId,
+    {
+      sub_type: IR35_FILE_SUBTYPE,
+    },
+    {
+      ...options,
+      select: ({ data }) =>
+        data?.files?.filter((file) => file.sub_type === IR35_FILE_SUBTYPE),
+    },
+  );
+  const id = ir35Files?.[0]?.id;
+
+  const downloadQuery = useDownloadFile(id as string);
+
+  return {
+    ...downloadQuery,
+    isLoading: isLoadingFiles || downloadQuery.isLoading,
   };
 };

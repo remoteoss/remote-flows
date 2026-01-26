@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { JSFCustomComponentProps, JSFFields } from '@/src/types/remoteFlows';
+import omit from 'lodash.omit';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -19,13 +20,14 @@ import {
   useContractorSubscriptionSchemaField,
   useGetShowContractDocument,
   useSignContractDocument,
+  useUpdateUKandSaudiFields,
+  useGetIR35File,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
   calculateProvisionalStartDateDescription,
-  buildContractDetailsJsfModify,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -48,8 +50,12 @@ import {
   contractorPlusProductIdentifier,
   corProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
-import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+import {
+  buildBasicInformationJsfModify,
+  buildContractDetailsJsfModify,
+  buildContractPreviewJsfModify,
+} from '@/src/flows/ContractorOnboarding/jsfModify';
+import { useUploadFile } from '@/src/common/api/files';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -152,6 +158,14 @@ export const useContractorOnboarding = ({
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
+  const uploadFileMutation = useUploadFile();
+  const { mutateAsync: updateUKandSaudiFieldsMutation } =
+    useUpdateUKandSaudiFields(
+      createContractorContractDocumentMutation,
+      uploadFileMutation,
+      fieldValues,
+    );
+
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
@@ -257,13 +271,29 @@ export const useContractorOnboarding = ({
         Boolean(employmentId)),
   );
 
+  const isIR35FileEnabled = Boolean(
+    internalCountryCode === 'GBR' &&
+      employmentId &&
+      stepState.currentStep.name === 'basic_information',
+  );
+
+  const { data: ir35File, isLoading: isLoadingIR35File } = useGetIR35File(
+    employmentId as string,
+    {
+      enabled: isIR35FileEnabled,
+    },
+  );
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useJSONSchema({
     form: 'contractor_basic_information',
     options: {
-      jsfModify: options?.jsfModify?.basic_information,
+      jsfModify: buildBasicInformationJsfModify(
+        internalCountryCode as string,
+        options,
+      ),
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
@@ -315,66 +345,13 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const mergedContractPreviewJsfModify = useMemo(() => {
-    const userFields = options?.jsfModify?.contract_preview?.fields;
-
-    return {
-      fields: {
-        contract_preview_header: {
-          ...userFields?.contract_preview_header,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_header?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewHeader;
-              return <CustomComponent {...props} />;
-            },
-          },
-        },
-        contract_preview_statement: {
-          ...userFields?.contract_preview_statement,
-          'x-jsf-presentation': {
-            Component: (props: JSFCustomComponentProps) => {
-              const CustomComponent =
-                userFields?.contract_preview_statement?.['x-jsf-presentation']
-                  ?.Component || ContractPreviewStatement;
-
-              return (
-                <CustomComponent
-                  reviewCompleted={Boolean(fieldValues?.review_completed)}
-                  {...props}
-                />
-              );
-            },
-          },
-        },
-        signature: {
-          ...userFields?.signature,
-          'x-jsf-presentation': {
-            calculateDynamicProperties: (
-              fieldValuesDynamicProperties: Record<string, unknown>,
-            ) => {
-              return {
-                isVisible: Boolean(
-                  fieldValuesDynamicProperties.review_completed,
-                ),
-              };
-            },
-            // Merge any user-provided signature customizations
-            ...userFields?.signature?.['x-jsf-presentation'],
-          },
-        },
-      },
-    };
-  }, [fieldValues?.review_completed, options?.jsfModify?.contract_preview]);
-
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
         enabled: stepState.currentStep.name === 'contract_preview',
       },
-      jsfModify: mergedContractPreviewJsfModify,
+      jsfModify: buildContractPreviewJsfModify(options, fieldValues),
     },
   });
 
@@ -440,13 +417,25 @@ export const useContractorOnboarding = ({
       provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
+      ir35: employment?.contract_details?.ir_35,
+      saudi_nationality_status: employment?.contract_details?.nationality,
+      ...(ir35File?.content && {
+        ir35_sds_file: [
+          new File([ir35File.content as unknown as string], ir35File.name, {
+            type: 'application/pdf',
+          }),
+        ],
+      }),
     };
 
     return getInitialValues(stepFields.basic_information, initialValues);
   }, [
-    stepFields.basic_information,
-    employmentBasicInformation,
     onboardingInitialValues,
+    employmentBasicInformation,
+    employment?.contract_details?.ir_35,
+    employment?.contract_details?.nationality,
+    ir35File,
+    stepFields.basic_information,
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
@@ -657,20 +646,46 @@ export const useContractorOnboarding = ({
           employment?.country.code !== internalCountryCode;
 
         if (isEmploymentNotLoaded || hasChangedCountry) {
-          const payload: EmploymentCreateParams = {
-            basic_information: parsedValues,
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+            'ir35_sds_file',
+          );
+          const basicInformationPayload: EmploymentCreateParams = {
+            basic_information: basicInformationParsedValues,
             type: 'contractor',
             country_code: internalCountryCode,
             external_id: externalId,
           };
-          const response = await createEmploymentMutationAsync(payload);
+          const response = await createEmploymentMutationAsync(
+            basicInformationPayload,
+          );
           const employmentId = response?.data?.employment?.id;
+          if (!employmentId) {
+            throw createStructuredError('Employment ID not found');
+          }
+
           setInternalEmploymentId(employmentId);
+          await updateUKandSaudiFieldsMutation({
+            employmentId: employmentId as string,
+          });
+
           return response;
         } else if (internalEmploymentId) {
+          const basicInformationParsedValues = omit(
+            parsedValues,
+            'saudi_nationality_status',
+            'ir35',
+            'ir35_sds_file',
+          );
+
+          await updateUKandSaudiFieldsMutation({
+            employmentId: internalEmploymentId,
+          });
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
-            basic_information: parsedValues,
+            basic_information: basicInformationParsedValues,
           });
         }
 
@@ -717,6 +732,7 @@ export const useContractorOnboarding = ({
             },
           });
         }
+
         throw createStructuredError('invalid selection');
       }
 
@@ -732,7 +748,8 @@ export const useContractorOnboarding = ({
     isLoadingEmployment ||
     isLoadingContractorOnboardingDetailsForm ||
     isLoadingContractorSubscriptions ||
-    isLoadingDocumentPreviewForm;
+    isLoadingDocumentPreviewForm ||
+    isLoadingIR35File;
 
   return {
     /**
@@ -886,10 +903,11 @@ export const useContractorOnboarding = ({
      */
     isSubmitting:
       createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
       createContractorContractDocumentMutation.isPending ||
       signContractDocumentMutation.isPending ||
       manageContractorSubscriptionMutation.isPending ||
-      updateEmploymentMutation.isPending,
+      uploadFileMutation.isPending,
 
     /**
      * Document preview PDF data
