@@ -30,7 +30,7 @@
     "**/*.css"
   ],
   "engines": {
-    "node": ">=24"
+    "node": ">=20"
   },
   "type": "module",
   "main": "dist/index.js",

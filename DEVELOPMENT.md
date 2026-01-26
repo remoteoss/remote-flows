@@ -15,7 +15,7 @@ This guide is for internal developers working on the `@remoteoss/remote-flows` p
 
 ### Prerequisites
 
-- Node.js 20 or higher
+- Node.js 20 or higher, (CI uses 24 to have 2FA)
 - npm
 
 ### Setup
