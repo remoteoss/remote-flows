@@ -20,6 +20,7 @@ import {
   inviteResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
+  assertRadioValue,
   fillDatePickerByTestId,
   fillSelect,
   queryClient,
@@ -1455,294 +1456,497 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should show file upload field when ir35 status is inside or outside', async () => {
-    mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
+  describe('Saudi Arabia edge case', () => {
+    it('should correctly retrieve saudi nationality status from employment.contract_details.nationality', async () => {
+      const employmentId = generateUniqueEmploymentId();
 
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                country: {
+                  code: 'SAU',
+                  name: 'Saudi Arabia',
+                },
+                contract_details: {
+                  nationality: 'national',
+                },
+              },
+            },
+          });
+        }),
+      );
 
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
 
-    render(
-      <ContractorOnboardingFlow
-        countryCode='GBR'
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
 
-    await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+          return (
+            <>
+              <div>Step: {steps[currentStepIndex]}</div>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='SAU'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
 
-    // Select 'inside' IR35 status using fillSelect helper
-    await fillSelect('ir35', 'inside');
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    // Verify file upload field appears
-    await waitFor(() => {
-      const fileUploadField = screen.getByLabelText(/Upload SDS/i);
-      expect(fileUploadField).toBeInTheDocument();
+      await assertRadioValue(
+        'Is your contractor a Saudi Arabia national',
+        'Yes',
+      );
     });
   });
 
-  it('should call createContractorContractDocumentMutationAsync and uploadFileMutationAsync with correct payload when submitting with ir35', async () => {
-    const postSpy = vi.fn();
-    const contractDocumentSpy = vi.fn();
-    const uploadSpy = vi.fn();
+  describe('UK edge case', () => {
+    it('should show file upload field when ir35 status is inside or outside', async () => {
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
 
-    server.use(
-      http.post('*/v1/employments', async ({ request }) => {
-        const requestBody = await request.json();
-        postSpy(requestBody);
-        return HttpResponse.json(mockContractorEmploymentResponse);
-      }),
-      http.post(
-        '*/v1/contractors/employments/*/contract-documents',
-        async ({ request }) => {
-          const requestBody = await request.json();
-          contractDocumentSpy(requestBody);
-          return HttpResponse.json(mockContractDocumentCreatedResponse);
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
         },
-      ),
-      http.post('*/v1/documents', async () => {
-        uploadSpy();
-        return HttpResponse.json({
-          data: {
-            file: {
-              id: 'ad8a15a5-88a5-4fb6-9225-2c4ec3e9a809',
-              name: 'Juan Carlos de Espana - Laurence Debray.pdf',
-              type: 'other',
-              inserted_at: '2026-01-16T15:33:28Z',
-            },
-          },
-        });
-      }),
-    );
+      );
 
-    mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
+      render(
+        <ContractorOnboardingFlow
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
 
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
-    render(
-      <ContractorOnboardingFlow
-        countryCode='GBR'
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
+      // Select 'inside' IR35 status using fillSelect helper
+      await fillSelect('ir35', 'inside');
 
-    await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    // Fill basic information with IR35
-    await fillBasicInformation();
-
-    // Select IR35 status
-    const ir35Select = screen.getByLabelText(/IR35 Status/i);
-    fireEvent.change(ir35Select, { target: { value: 'inside' } });
-
-    // Upload file
-    const file = new File(['test content'], 'test-sds.pdf', {
-      type: 'application/pdf',
-    });
-    const fileInput = screen.getByLabelText(/Upload SDS/i);
-    fireEvent.change(fileInput, { target: { files: [file] } });
-
-    const nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await waitFor(() => {
-      expect(uploadSpy).toHaveBeenCalled();
-      expect(contractDocumentSpy).toHaveBeenCalled();
-      expect(contractDocumentSpy.mock.calls[0][0]).toMatchObject({
-        contract_document: {
-          ir_35: 'inside',
-        },
+      // Verify file upload field appears
+      await waitFor(() => {
+        const fileUploadField = screen.getByLabelText(/Upload SDS/i);
+        expect(fileUploadField).toBeInTheDocument();
       });
     });
 
-    await screen.findByText(/Step: Pricing Plan/i);
-  });
+    it('should call createContractorContractDocumentMutationAsync and uploadFileMutationAsync with correct payload when submitting with ir35', async () => {
+      const postSpy = vi.fn();
+      const contractDocumentSpy = vi.fn();
+      const uploadSpy = vi.fn();
 
-  it('should correctly retrieve ir35 data from employment.contract_details.ir_35', async () => {
-    const employmentId = generateUniqueEmploymentId();
-
-    server.use(
-      http.get(`*/v1/employments/${employmentId}`, () => {
-        return HttpResponse.json({
-          ...mockContractorEmploymentResponse,
-          data: {
-            ...mockContractorEmploymentResponse.data,
-            employment: {
-              ...mockContractorEmploymentResponse.data.employment,
-              id: employmentId,
-              country: {
-                code: 'GBR',
-                name: 'United Kingdom',
-              },
-              contract_details: {
-                ir_35: 'inside',
+      server.use(
+        http.post('*/v1/employments', async ({ request }) => {
+          const requestBody = await request.json();
+          postSpy(requestBody);
+          return HttpResponse.json(mockContractorEmploymentResponse);
+        }),
+        http.post(
+          '*/v1/contractors/employments/*/contract-documents',
+          async ({ request }) => {
+            const requestBody = await request.json();
+            contractDocumentSpy(requestBody);
+            return HttpResponse.json(mockContractDocumentCreatedResponse);
+          },
+        ),
+        http.post('*/v1/documents', async () => {
+          uploadSpy();
+          return HttpResponse.json({
+            data: {
+              file: {
+                id: 'ad8a15a5-88a5-4fb6-9225-2c4ec3e9a809',
+                name: 'Juan Carlos de Espana - Laurence Debray.pdf',
+                type: 'other',
+                inserted_at: '2026-01-16T15:33:28Z',
               },
             },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Fill basic information with IR35
+      await fillBasicInformation();
+
+      // Select IR35 status
+      const ir35Select = screen.getByLabelText(/IR35 Status/i);
+      fireEvent.change(ir35Select, { target: { value: 'inside' } });
+
+      // Upload file
+      const file = new File(['test content'], 'test-sds.pdf', {
+        type: 'application/pdf',
+      });
+      const fileInput = screen.getByLabelText(/Upload SDS/i);
+      fireEvent.change(fileInput, { target: { files: [file] } });
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        expect(uploadSpy).toHaveBeenCalled();
+        expect(contractDocumentSpy).toHaveBeenCalled();
+        expect(contractDocumentSpy.mock.calls[0][0]).toMatchObject({
+          contract_document: {
+            ir_35: 'inside',
           },
         });
-      }),
-    );
+      });
 
-    mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
-
-    render(
-      <ContractorOnboardingFlow
-        employmentId={employmentId}
-        countryCode='GBR'
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
-
-    await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    // Verify IR35 field is pre-filled with the value from employment
-    await waitFor(() => {
-      const ir35Select = screen.getByLabelText(
-        /IR35 Status/i,
-      ) as HTMLSelectElement;
-      expect(ir35Select).toBeInTheDocument();
-      expect(ir35Select.value).toBe('inside');
-    });
-  });
-
-  it('should not show file upload field when ir35 status is exempt', async () => {
-    mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
-
-    render(
-      <ContractorOnboardingFlow
-        countryCode='GBR'
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
-
-    await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      await screen.findByText(/Step: Pricing Plan/i);
     });
 
-    // Select 'exempt' IR35 status
-    const ir35Select = screen.getByLabelText(/IR35 Status/i);
-    fireEvent.change(ir35Select, { target: { value: 'exempt' } });
+    it('should correctly retrieve ir35 data from employment.contract_details.ir_35', async () => {
+      const employmentId = generateUniqueEmploymentId();
 
-    // Verify file upload field does NOT appear
-    await waitFor(() => {
-      const fileUploadField = screen.queryByLabelText(/Upload SDS/i);
-      expect(fileUploadField).not.toBeInTheDocument();
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                country: {
+                  code: 'GBR',
+                  name: 'United Kingdom',
+                },
+                contract_details: {
+                  ir_35: 'inside',
+                },
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Verify IR35 field is pre-filled with the value from employment
+      await waitFor(() => {
+        const ir35Select = screen.getByLabelText(
+          /IR35 Status/i,
+        ) as HTMLSelectElement;
+        expect(ir35Select).toBeInTheDocument();
+        expect(ir35Select.value).toBe('inside');
+      });
+    });
+
+    it('should not show file upload field when ir35 status is exempt', async () => {
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      // Select 'exempt' IR35 status
+      const ir35Select = screen.getByLabelText(/IR35 Status/i);
+      fireEvent.change(ir35Select, { target: { value: 'exempt' } });
+
+      // Verify file upload field does NOT appear
+      await waitFor(() => {
+        const fileUploadField = screen.queryByLabelText(/Upload SDS/i);
+        expect(fileUploadField).not.toBeInTheDocument();
+      });
+    });
+
+    it('should correctly retrieve and display ir35 file from employment when editing', async () => {
+      const employmentId = 'e54e2ab8-291b-4406-9aa0-6e720bdefbbb';
+      const fileId = '643e3627-320e-44a9-9721-7b9a3cf5b946';
+      const fileName =
+        "Stamped_Affidavit_Of_Keith_O'brien_Sworn_1_April_2025_Redacted.pdf";
+
+      // Mock the employment response
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                country: {
+                  code: 'GBR',
+                  name: 'United Kingdom',
+                },
+                contract_details: {
+                  ir_35: 'inside',
+                },
+              },
+            },
+          });
+        }),
+
+        // Mock the files list endpoint
+        http.get(`*/v1/employments/${employmentId}/files`, ({ request }) => {
+          const url = new URL(request.url);
+          const subType = url.searchParams.get('sub_type');
+
+          if (subType === 'ir_35') {
+            return HttpResponse.json({
+              data: {
+                files: [
+                  {
+                    id: fileId,
+                    name: fileName,
+                    type: 'other',
+                    inserted_at: '2026-01-26T11:08:56Z',
+                    sub_type: 'ir_35',
+                  },
+                ],
+                total_count: 1,
+                current_page: 1,
+                total_pages: 1,
+              },
+            });
+          }
+          return HttpResponse.json({ data: { files: [], total_count: 0 } });
+        }),
+
+        // Mock the individual file fetch endpoint
+        http.get(`*/v1/files/${fileId}`, () => {
+          return HttpResponse.json({
+            data: {
+              file: {
+                id: fileId,
+                name: fileName,
+                type: 'other',
+                content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MK...', // Truncated base64
+                inserted_at: '2026-01-26T11:08:56Z',
+                sub_type: 'ir_35',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <div>Step: {steps[currentStepIndex]}</div>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Verify IR35 field is pre-filled
+      await waitFor(() => {
+        const ir35Select = screen.getByLabelText(
+          /IR35 Status/i,
+        ) as HTMLSelectElement;
+        expect(ir35Select.value).toBe('inside');
+      });
+
+      // Verify file upload field shows the existing file
+      await waitFor(() => {
+        const fileDisplay = screen.getByText(new RegExp(fileName, 'i'));
+        expect(fileDisplay).toBeInTheDocument();
+      });
     });
   });
 });
