@@ -8,7 +8,6 @@ import {
 import {
   GetIndexEmploymentFileData,
   GetIndexEmploymentFileErrors,
-  GetShowFileData,
   File as ApiFile,
   ListFilesResponse,
   PostUploadEmployeeFileFileData,
@@ -38,19 +37,26 @@ export const useUploadFile = () => {
 /*
  * Hook to download a file associated with a specified employment.
  * @param {string} id - The ID of the file to download.
- * @returns {UseMutationResult<DownloadFileResponse, Error, GetShowFileData['path']>} - The mutation result.
+ * @returns {UseQueryResult<ApiFile, Error>} - The query result.
  */
-export const useDownloadFile = () => {
+export const useDownloadFile = (id: string) => {
   const { client } = useClient();
-  return useMutation({
-    mutationFn: (params: GetShowFileData['path']) => {
-      return getShowFile({
+  return useQuery({
+    queryKey: ['download-file', id],
+    queryFn: async () => {
+      const result = await getShowFile({
         client: client as Client,
-        path: {
-          id: params.id,
-        },
+        path: { id: id },
       });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      return result.data;
     },
+    select: ({ data }) => data?.file,
+    enabled: !!id,
   });
 };
 

@@ -28,7 +28,11 @@ import {
 } from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { useUploadFile } from '@/src/common/api/files';
+import {
+  useDownloadFile,
+  useEmploymentFiles,
+  useUploadFile,
+} from '@/src/common/api/files';
 
 /**
  * Get the contract document signature schema
@@ -360,4 +364,24 @@ export const useUpdateUKandSaudiFields = (
       return Promise.resolve();
     },
   };
+};
+
+export const useGetIR35File = (
+  employmentId: string,
+  options?: { enabled?: boolean },
+) => {
+  const { data: ir35Files } = useEmploymentFiles(
+    employmentId,
+    {
+      sub_type: IR35_FILE_SUBTYPE,
+    },
+    {
+      ...options,
+      select: ({ data }) =>
+        data?.files?.filter((file) => file.sub_type === IR35_FILE_SUBTYPE),
+    },
+  );
+  const id = ir35Files?.[0]?.id;
+
+  return useDownloadFile(id as string);
 };
