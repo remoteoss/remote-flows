@@ -48,13 +48,14 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   corProductIdentifier,
+  IR35_FILE_SUBTYPE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
   buildContractDetailsJsfModify,
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
-import { useUploadFile } from '@/src/common/api/files';
+import { useEmploymentFiles, useUploadFile } from '@/src/common/api/files';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -285,6 +286,28 @@ export const useContractorOnboarding = ({
       },
     },
   });
+
+  const isIR35FileEnabled = Boolean(
+    (internalCountryCode &&
+      stepState.currentStep.name === 'basic_information' &&
+      Boolean(employmentId) &&
+      fieldValues.ir35 === 'inside') ||
+      fieldValues.ir35 === 'outside',
+  );
+
+  const { data: ir35Files } = useEmploymentFiles(
+    employmentId as string,
+    {
+      sub_type: IR35_FILE_SUBTYPE,
+    },
+    {
+      enabled: isIR35FileEnabled,
+      select: ({ data }) =>
+        data?.files?.filter((file) => file.sub_type === IR35_FILE_SUBTYPE),
+    },
+  );
+
+  console.log('ir35Files', ir35Files);
 
   const descriptionProvisionalStartDate = useMemo(() => {
     return calculateProvisionalStartDateDescription(
