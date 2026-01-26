@@ -14,7 +14,7 @@ const { buildGatewayURL } = require('./utils.js');
  * @returns {Promise<object>} - Axios response
  */
 async function createProxyRequest(path, method = 'GET', options = {}) {
-  const { body, params, headers = {}, requiresAuth = true } = options;
+  const { body, params, headers = {}, requiresAuth = true, stream } = options;
 
   const gatewayUrl = buildGatewayURL();
   const targetUrl = `${gatewayUrl}${path}`;
@@ -22,14 +22,22 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   const requestConfig = {
     method,
     url: targetUrl,
-    data: body,
+    data: stream || body,
     params,
     headers: {
       'Content-Type': 'application/json',
       ...headers,
       host: new URL(gatewayUrl).host,
     },
+    maxBodyLength: 100 * 1024 * 1024, // 100MB
+    maxContentLength: 100 * 1024 * 1024, // 100MB
+    timeout: 60000, // 60 seconds for file uploads
   };
+
+  // Remove Content-Type for streaming (let axios handle it)
+  if (stream) {
+    delete requestConfig.headers['Content-Type'];
+  }
 
   // Add authentication if required
   if (requiresAuth) {
@@ -47,9 +55,14 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
  */
 function createProxyMiddleware(requiresAuth = true) {
   return async (req, res) => {
+    const isMultipart = req.headers['content-type']?.includes(
+      'multipart/form-data',
+    );
+
     try {
       const response = await createProxyRequest(req.originalUrl, req.method, {
-        body: req.method !== 'GET' ? req.body : undefined,
+        body: !isMultipart && req.method !== 'GET' ? req.body : undefined,
+        stream: isMultipart ? req : undefined, // Stream raw request for multipart
         params: req.query,
         headers: req.headers,
         requiresAuth,

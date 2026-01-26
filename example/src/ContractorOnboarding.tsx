@@ -350,7 +350,10 @@ export const ContractorOnboardingWithProps = ({
 }: ContractorOnboardingFormData) => {
   return (
     <div className='contractor-onboarding-container'>
-      <RemoteFlows authType='company-manager'>
+      <RemoteFlows
+        authType='company-manager'
+        proxy={{ url: window.location.origin }}
+      >
         <div className='contractor-onboarding-content'>
           <Header />
           <Card className='px-0 py-0'>
