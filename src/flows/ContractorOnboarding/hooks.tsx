@@ -404,7 +404,7 @@ export const useContractorOnboarding = ({
       ...onboardingInitialValues,
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
-      nationality: employment?.contract_details?.nationality, // TODO: check later when saudi works if this works
+      saudi_nationality_status: employment?.contract_details?.nationality, // TODO: check later when saudi works if this works
     };
 
     return getInitialValues(stepFields.basic_information, initialValues);

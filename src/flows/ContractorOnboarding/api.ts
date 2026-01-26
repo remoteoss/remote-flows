@@ -333,9 +333,7 @@ export const useUpdateUKandSaudiFields = (
       };
       const saudiContractDetailsPayload = {
         contract_document: {
-          details: {
-            nationality: saudiNationalityStatus,
-          },
+          nationality: saudiNationalityStatus,
         },
       };
       if (ir35Status) {
