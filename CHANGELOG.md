@@ -1,5 +1,19 @@
 # @remoteoss/remote-flows
 
+## 1.8.0
+
+### Minor Changes
+
+#### Features
+
+- handle UK and Saudi Arabia edge cases for contractor onboarding (#705) [#705](https://github.com/remoteoss/remote-flows/pull/705)
+
+#### Chore
+
+- mock select field to make easier asserts (#706) [#706](https://github.com/remoteoss/remote-flows/pull/706)
+- downgrade node engine to v20 (#710) [#710](https://github.com/remoteoss/remote-flows/pull/710)
+- update remote-json-form-kit to latest version (#709) [#709](https://github.com/remoteoss/remote-flows/pull/709)
+
 ## 1.7.0
 
 ### Minor Changes
