@@ -8,6 +8,7 @@ import {
   postManageContractorPlusSubscriptionSubscription,
   postSignContractDocument,
   SignContractDocument,
+  getIndexEmploymentContractDocument,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -389,4 +390,24 @@ export const useGetIR35File = (
     ...downloadQuery,
     isLoading: isLoadingFiles || downloadQuery.isLoading,
   };
+};
+
+export const useGetContractDocuments = (
+  employmentId: string,
+  options?: { enabled?: boolean },
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contract-documents', employmentId],
+    queryFn: async () => {
+      return getIndexEmploymentContractDocument({
+        client: client as Client,
+        path: { employment_id: employmentId },
+      });
+    },
+    enabled: options?.enabled,
+    select: ({ data }) => {
+      return data?.data?.contract_documents;
+    },
+  });
 };

@@ -22,6 +22,7 @@ import {
   useSignContractDocument,
   useUpdateUKandSaudiFields,
   useGetIR35File,
+  useGetContractDocuments,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -283,6 +284,19 @@ export const useContractorOnboarding = ({
       enabled: isIR35FileEnabled,
     },
   );
+
+  const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
+    useGetContractDocuments(employmentId as string);
+
+  useEffect(() => {
+    if (
+      contractDocuments &&
+      contractDocuments.length > 0 &&
+      !internalContractDocumentId
+    ) {
+      setInternalContractDocumentId(contractDocuments[0].id);
+    }
+  }, [contractDocuments, internalContractDocumentId]);
 
   const {
     data: basicInformationForm,
@@ -749,7 +763,8 @@ export const useContractorOnboarding = ({
     isLoadingContractorOnboardingDetailsForm ||
     isLoadingContractorSubscriptions ||
     isLoadingDocumentPreviewForm ||
-    isLoadingIR35File;
+    isLoadingIR35File ||
+    isLoadingContractDocuments;
 
   return {
     /**
