@@ -380,7 +380,8 @@ describe('ContractorOnboardingFlow', () => {
               id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
               name: 'test-sds.pdf',
               type: 'other',
-              content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MK...', // Truncated base64
+              content:
+                'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/KQovQ3JlYXRvciAo/v8AdwBrAGgAdABtAGwAdABvAHAAZABmACAAMAAuADEAMgAuADYALgAxKQovUHJvZHVjZXIgKP7/AFEAdAAgADQALgA4AC4ANykKL0NyZWF0aW9uRGF0ZSAoRDoyMDI1MTAyMzE1MjEwNFopCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9FeHRHU3RhdGUKL1NBIHRydWUKL1NNIDAuMDIKL2NhIDEuMAovQ0EgMS4wCi9BSVMgZmFsc2UKL1NNYXNrIC9Ob25lPj4KZW5kb2JqCjQgMCBvYmoKWy9QYXR0ZXJuIC9E',
               inserted_at: '2026-01-26T11:08:56Z',
               sub_type: 'ir_35',
             },
