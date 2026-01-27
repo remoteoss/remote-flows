@@ -121,13 +121,22 @@ export function ReviewMeta({
 
         // If this has a label and prettyValue, it's a field - render it
         if (label && prettyValue !== undefined && prettyValue !== '') {
+          let displayValue;
+
+          // Handle file uploads (array of File objects)
+          if (value?.inputType === 'file' && Array.isArray(prettyValue)) {
+            displayValue = prettyValue
+              .map((file: File) => file.name)
+              .join(', ');
+          }
           // Handle boolean prettyValue
-          const displayValue =
-            typeof prettyValue === 'boolean'
-              ? prettyValue
-                ? 'Yes'
-                : 'No'
-              : prettyValue;
+          else if (typeof prettyValue === 'boolean') {
+            displayValue = prettyValue ? 'Yes' : 'No';
+          }
+          // Handle other types
+          else {
+            displayValue = prettyValue;
+          }
 
           return (
             <pre key={key}>
