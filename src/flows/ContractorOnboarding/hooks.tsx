@@ -206,7 +206,9 @@ export const useContractorOnboarding = ({
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
-      enabled: stepState.currentStep.name === 'pricing_plan',
+      enabled:
+        stepState.currentStep.name === 'pricing_plan' ||
+        (Boolean(employmentId) && isEmploymentReadOnly),
     },
   });
 
