@@ -413,6 +413,11 @@ export const useContractorOnboarding = ({
     [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
+  const convertedIr35File = useMemo(() => {
+    if (!ir35File?.content) return null;
+    return dataURLtoFile(ir35File.content as unknown as string, ir35File.name);
+  }, [ir35File?.content, ir35File?.name]);
+
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
       provisional_start_date: provisionalStartDate,
@@ -420,10 +425,8 @@ export const useContractorOnboarding = ({
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
       saudi_nationality_status: employment?.contract_details?.nationality,
-      ...(ir35File?.content && {
-        ir35_sds_file: [
-          dataURLtoFile(ir35File.content as unknown as string, ir35File.name),
-        ],
+      ...(convertedIr35File && {
+        ir35_sds_file: [convertedIr35File],
       }),
     };
 
@@ -433,7 +436,7 @@ export const useContractorOnboarding = ({
     employmentBasicInformation,
     employment?.contract_details?.ir_35,
     employment?.contract_details?.nationality,
-    ir35File,
+    convertedIr35File,
     stepFields.basic_information,
   ]);
 
