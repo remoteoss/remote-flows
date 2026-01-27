@@ -69,11 +69,6 @@ export const ReviewContractorOnboardingStep = ({
 
   const invitedStatus = onboardingBag.invitedStatus;
 
-  console.log(
-    'onboardingBag.meta.fields',
-    onboardingBag.meta.fields.basic_information,
-  );
-
   return (
     <div className='onboarding-review'>
       <h2 className='title'>Basic Information</h2>
