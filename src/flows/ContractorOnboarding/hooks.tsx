@@ -56,6 +56,7 @@ import {
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
 import { useUploadFile } from '@/src/common/api/files';
+import { dataURLtoFile } from '@/src/lib/files';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -421,9 +422,7 @@ export const useContractorOnboarding = ({
       saudi_nationality_status: employment?.contract_details?.nationality,
       ...(ir35File?.content && {
         ir35_sds_file: [
-          new File([ir35File.content as unknown as string], ir35File.name, {
-            type: 'application/pdf',
-          }),
+          dataURLtoFile(ir35File.content as unknown as string, ir35File.name),
         ],
       }),
     };
