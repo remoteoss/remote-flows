@@ -396,6 +396,12 @@ export const useGetIR35File = (
   };
 };
 
+/**
+ * Get the contract documents for a given employment
+ * @param employmentId - The employment ID
+ * @param options - The options
+ * @returns The contract documents
+ */
 export const useGetContractDocuments = (
   employmentId: string,
   options?: { enabled?: boolean },
