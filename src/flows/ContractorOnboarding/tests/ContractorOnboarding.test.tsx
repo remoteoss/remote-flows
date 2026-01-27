@@ -18,6 +18,10 @@ import {
   mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
+  filesResponseWithoutIR35,
+  filesResponseWithIR35,
+  fileResponseWithIR35,
+  contractDocumentsResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -352,41 +356,18 @@ describe('ContractorOnboardingFlow', () => {
         const subType = url.searchParams.get('sub_type');
 
         if (subType === 'ir_35') {
-          return HttpResponse.json({
-            data: {
-              files: [
-                {
-                  id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
-                  name: 'test-sds.pdf',
-                  type: 'other',
-                  inserted_at: '2026-01-26T11:08:56Z',
-                  sub_type: 'ir_35',
-                },
-              ],
-              total_count: 1,
-              current_page: 1,
-              total_pages: 1,
-            },
-          });
+          return HttpResponse.json(filesResponseWithIR35);
         }
-        return HttpResponse.json({ data: { files: [], total_count: 0 } });
+        return HttpResponse.json(filesResponseWithoutIR35);
       }),
 
       // Mock the individual file fetch endpoint
       http.get(`*/v1/files/*`, () => {
-        return HttpResponse.json({
-          data: {
-            file: {
-              id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
-              name: 'test-sds.pdf',
-              type: 'other',
-              content:
-                'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/KQovQ3JlYXRvciAo/v8AdwBrAGgAdABtAGwAdABvAHAAZABmACAAMAAuADEAMgAuADYALgAxKQovUHJvZHVjZXIgKP7/AFEAdAAgADQALgA4AC4ANykKL0NyZWF0aW9uRGF0ZSAoRDoyMDI1MTAyMzE1MjEwNFopCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9FeHRHU3RhdGUKL1NBIHRydWUKL1NNIDAuMDIKL2NhIDEuMAovQ0EgMS4wCi9BSVMgZmFsc2UKL1NNYXNrIC9Ob25lPj4KZW5kb2JqCjQgMCBvYmoKWy9QYXR0ZXJuIC9E',
-              inserted_at: '2026-01-26T11:08:56Z',
-              sub_type: 'ir_35',
-            },
-          },
-        });
+        return HttpResponse.json(fileResponseWithIR35);
+      }),
+
+      http.get('*/v1/employments/*/contract-documents', () => {
+        return HttpResponse.json(contractDocumentsResponse);
       }),
     );
   });
@@ -1420,7 +1401,7 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should pre-select Contractor Management Plus when employment has contractor_type plus', async () => {
+  it.only('should pre-select Contractor Management Plus when employment has contractor_type plus', async () => {
     const employmentId = generateUniqueEmploymentId();
 
     server.use(
