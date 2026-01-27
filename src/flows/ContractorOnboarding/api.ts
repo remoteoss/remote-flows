@@ -348,11 +348,15 @@ export const useUpdateUKandSaudiFields = (
           employmentId: employmentId,
           payload: ir35ContractDetailsPayload,
         });
-        return uploadFileMutationAsync({
-          employment_id: employmentId,
-          file: ir35SdsFile,
-          sub_type: IR35_FILE_SUBTYPE,
-        });
+
+        if (ir35SdsFile) {
+          return uploadFileMutationAsync({
+            employment_id: employmentId,
+            file: ir35SdsFile,
+            sub_type: IR35_FILE_SUBTYPE,
+          });
+        }
+        return Promise.resolve();
       }
       if (saudiNationalityStatus) {
         return createContractorContractDocumentMutationAsync({
