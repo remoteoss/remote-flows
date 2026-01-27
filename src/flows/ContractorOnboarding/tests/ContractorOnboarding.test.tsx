@@ -1946,5 +1946,106 @@ describe('ContractorOnboardingFlow', () => {
         expect(fileDisplay).toBeInTheDocument();
       });
     });
+
+    it('should not call uploadFileMutationAsync when ir35 status is exempt', async () => {
+      const postSpy = vi.fn();
+      const contractDocumentSpy = vi.fn();
+      const uploadSpy = vi.fn();
+
+      server.use(
+        http.post('*/v1/employments', async ({ request }) => {
+          const requestBody = await request.json();
+          postSpy(requestBody);
+          return HttpResponse.json(mockContractorEmploymentResponse);
+        }),
+        http.post(
+          '*/v1/contractors/employments/*/contract-documents',
+          async ({ request }) => {
+            const requestBody = await request.json();
+            contractDocumentSpy(requestBody);
+            return HttpResponse.json(mockContractDocumentCreatedResponse);
+          },
+        ),
+        http.post('*/v1/documents', async () => {
+          uploadSpy();
+          return HttpResponse.json({
+            data: {
+              file: {
+                id: 'ad8a15a5-88a5-4fb6-9225-2c4ec3e9a809',
+                name: 'test-file.pdf',
+                type: 'other',
+                inserted_at: '2026-01-16T15:33:28Z',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='GBR'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Fill basic information
+      await fillBasicInformation();
+
+      // Select IR35 status as 'exempt' (no file upload required)
+      const ir35Select = screen.getByLabelText(/IR35 Status/i);
+      fireEvent.change(ir35Select, { target: { value: 'exempt' } });
+
+      // Verify file upload field does NOT appear
+      await waitFor(() => {
+        const fileUploadField = screen.queryByLabelText(/Upload SDS/i);
+        expect(fileUploadField).not.toBeInTheDocument();
+      });
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        // Verify contract document was created with exempt status
+        expect(contractDocumentSpy).toHaveBeenCalled();
+
+        // Verify file upload was NOT called
+        expect(uploadSpy).not.toHaveBeenCalled();
+      });
+
+      await screen.findByText(/Step: Pricing Plan/i);
+    });
   });
 });
