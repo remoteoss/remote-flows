@@ -413,6 +413,8 @@ export const useContractorOnboarding = ({
     [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
+  // memoize file conversion to avoid re-converting the file on every render
+  // noticed performance issues when not doing memoizing individually
   const convertedIr35File = useMemo(() => {
     if (!ir35File?.content) return null;
     return dataURLtoFile(ir35File.content as unknown as string, ir35File.name);
