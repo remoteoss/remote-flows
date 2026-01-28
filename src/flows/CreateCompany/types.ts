@@ -1,20 +1,23 @@
 import { useCreateCompany } from '@/src/flows/CreateCompany/hooks';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
+import { CreateCompanySubmit } from '@/src/flows/CreateCompany/components/CreateCompanySubmit';
 
 export type CreateCompanyRenderProps = {
   /**
    * The create company bag returned by the useCreateCompany hook.
-   * This bag contains all the methods and properties needed to handle the contractor onboarding flow.
+   * This bag contains all the methods and properties needed to handle the create company flow.
    * @see {@link useCreateCompany}
    */
   createCompanyBag: ReturnType<typeof useCreateCompany>;
   /**
-   * The components used in the contractor onboarding flow.
+   * The components used in the create company flow.
    * @see {@link SelectCountryStep}
    */
   components: {
     SelectCountryStep: typeof SelectCountryStep;
+    SubmitButton: typeof CreateCompanySubmit;
+
   };
 };
 
@@ -33,7 +36,7 @@ export type CreateCompanyFlowProps = {
     components,
   }: CreateCompanyRenderProps) => React.ReactNode;
   /**
-   * The options for the contractor onboarding flow.
+   * The options for the create company flow.
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
