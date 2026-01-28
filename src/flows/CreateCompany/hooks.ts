@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { JSFFields } from '@/src/types/remoteFlows';
 import {
@@ -11,10 +11,8 @@ import {
 } from '@/src/flows/CreateCompany/utils';
 import {
   useCountriesSchemaField,
-  useJSONSchemaForm,
 } from '@/src/flows/Onboarding/api';
 
-import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
@@ -24,18 +22,9 @@ type useCreateCompanyProps = Omit<
   'render'
 >;
 
-const stepToFormSchemaMap: Record<
-  keyof typeof STEPS,
-  JSONSchemaFormType | null
-> = {
-  select_country: null,
-  basic_information: 'employment_basic_information',
-};
-
 export const useCreateCompany = ({
   countryCode,
   options,
-  initialValues: createCompanyInitialValues,
 }: useCreateCompanyProps) => {
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
@@ -55,7 +44,6 @@ export const useCreateCompany = ({
     previousStep,
     nextStep,
     goToStep,
-    setStepValues,
   } = useStepState(
     STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
@@ -68,47 +56,6 @@ export const useCreateCompany = ({
         enabled: stepState.currentStep.name === 'select_country',
       },
     });
-
-  const useJSONSchema = ({
-    form,
-    options: jsonSchemaOptions = {},
-    query = {},
-  }: {
-    form: JSONSchemaFormType;
-    options?: {
-      jsfModify?: JSFModify;
-      queryOptions?: { enabled?: boolean };
-      jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
-    };
-    query?: Record<string, string>;
-  }) => {
-    const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
-    // when you write on the fields, the values are stored in the fieldValues state
-    // when values are stored in the stepState is when the user has navigated to the step
-    // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const mergedFormValues = hasUserEnteredAnyValues
-      ? {
-          ...createCompanyInitialValues,
-          ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-          ...fieldValues,
-        }
-      : {
-          ...createCompanyInitialValues,
-        };
-
-    return useJSONSchemaForm({
-      countryCode: internalCountryCode as string,
-      form: form,
-      fieldValues: mergedFormValues,
-      query,
-      options: {
-        ...jsonSchemaOptions,
-        queryOptions: {
-          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
-        },
-      },
-    });
-  };
 
   const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
@@ -125,6 +72,7 @@ export const useCreateCompany = ({
     JSFFieldset | null | undefined
   > = {
     select_country: null,
+    review: null
   };
 
 

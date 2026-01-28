@@ -3,19 +3,15 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
-import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
+import { BasicInformationFormPayload } from '@/src/flows/CreateCompany/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
 import { useEffect } from 'react';
-import { PricingPlanFormPayload } from '@/src/flows/CreateCompany/types';
-import { CreateCompanyContractDetailsFormPayload } from '@/src/flows/CreateCompany/types';
 
 type CreateCompanyFormProps = {
   onSubmit: (
     payload:
       | BasicInformationFormPayload
-      | PricingPlanFormPayload
-      | CreateCompanyContractDetailsFormPayload,
   ) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
@@ -27,11 +23,11 @@ export function CreateCompanyForm({
   onSubmit,
   components,
 }: CreateCompanyFormProps) {
-  const { formId, contractorOnboardingBag, formRef } =
+  const { formId, createCompanyBag, formRef } =
     useCreateCompanyContext();
 
   const resolver = useJsonSchemasValidationFormResolver(
-    contractorOnboardingBag.handleValidation,
+    createCompanyBag.handleValidation,
   );
 
   const form = useForm({
@@ -48,37 +44,25 @@ export function CreateCompanyForm({
     }
   }, [form.setValue, formRef]);
 
-  useEffect(() => {
-    // When the employmentId is set,
-    // we need to run the checkFieldUpdates to update fieldValues in useStepState
-    if (contractorOnboardingBag.employmentId) {
-      contractorOnboardingBag?.checkFieldUpdates(form.getValues());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const subscription = form?.watch((values) => {
-      const isAnyFieldDirty = Object.keys(values).some(
-        (key) =>
-          values[key as keyof unknown] !== defaultValues[key as keyof unknown],
-      );
-      if (isAnyFieldDirty) {
-        contractorOnboardingBag?.checkFieldUpdates(values);
-      }
-    });
-    return () => subscription?.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSubmit = async (values: Record<string, unknown>) => {
-    await onSubmit(values);
+  const handleSubmit = async (values: Record<string, string>) => {
+    await onSubmit(
+      {
+	company_owner_email: values.company_owner_email,
+	company_owner_name: values.company_owner_email,
+	country_code: values.company_owner_email,
+	desired_currency: values.company_owner_email,
+	name: values.company_owner_email,
+	phone_number: values.company_owner_email,
+	tax_number: values.company_owner_email,
+	tax_job_category: values.company_owner_email,
+	tax_servicing_countries: [values.company_owner_email],
+      });
   };
 
   return (
     <Form
       {...form}
-      key={`form-${contractorOnboardingBag.stepState.currentStep.name}`}
+      key={`form-${createCompanyBag.stepState.currentStep.name}`}
     >
       <form
         id={formId}
@@ -87,9 +71,9 @@ export function CreateCompanyForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={contractorOnboardingBag.fields}
-          fieldsets={contractorOnboardingBag.meta.fieldsets}
-          fieldValues={contractorOnboardingBag.fieldValues}
+          fields={createCompanyBag.fields}
+          fieldsets={createCompanyBag.meta.fieldsets}
+          fieldValues={createCompanyBag.fieldValues}
         />
       </form>
     </Form>

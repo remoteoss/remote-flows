@@ -15,7 +15,7 @@
       in {
         devShells.default = pkgs.mkShell {
           buildInputs = [
-            pkgs.nodejs_20 or pkgs.nodejs_latest
+            pkgs.nodejs_24 or pkgs.nodejs_latest
             pkgs.playwright-driver.browsers
             pkgs.playwright
           ];

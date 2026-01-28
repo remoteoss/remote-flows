@@ -50,3 +50,15 @@ export type CreateCompanyFlowProps = {
 };
 
 
+export type BasicInformationFormPayload = {
+  company_owner_email: string;
+  company_owner_name: string;
+  country_code: string;
+  desired_currency: string;
+  name: string;
+  phone_number: string;
+  tax_number: string;
+  tax_job_category: string;
+  tax_servicing_countries: string[];
+};
+
