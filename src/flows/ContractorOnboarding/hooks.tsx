@@ -289,7 +289,9 @@ export const useContractorOnboarding = ({
   );
 
   const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
-    useGetContractDocuments(employmentId as string);
+    useGetContractDocuments(employmentId as string, {
+      enabled: Boolean(employmentId),
+    });
 
   useEffect(() => {
     if (

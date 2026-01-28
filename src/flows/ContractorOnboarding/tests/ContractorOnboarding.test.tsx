@@ -1347,7 +1347,6 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Verify that the custom label is displayed
     const labelElement = screen.getByLabelText(customLabel);
