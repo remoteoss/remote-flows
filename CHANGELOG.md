@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.9.0
+
+### Minor Changes
+
+- transform correctly base64 files (#712) [#712](https://github.com/remoteoss/remote-flows/pull/712)
+- handle exempt case that doesn't present file uploads (#714) [#714](https://github.com/remoteoss/remote-flows/pull/714)
+- handle file uploads (#713) [#713](https://github.com/remoteoss/remote-flows/pull/713)
+- populate pricing plan and contract preview for readonly employments (#715) [#715](https://github.com/remoteoss/remote-flows/pull/715)
+
 ## 1.8.0
 
 ### Minor Changes
