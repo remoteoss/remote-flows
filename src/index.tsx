@@ -83,6 +83,14 @@ export type {
 
 export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
+export { CreateCompanyFlow } from '@/src/flows/CreateCompany';
+export type {
+  CreateCompanyFlowProps,
+  CreateCompanyRenderProps,
+} from '@/src/flows/CreateCompany';
+
+
+
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useMagicLink } from '@/src/common/api';
