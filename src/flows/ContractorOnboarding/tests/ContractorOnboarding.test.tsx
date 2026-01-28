@@ -436,7 +436,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -524,7 +523,10 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('PRT');
+
+    await screen.findByText(/Step: Basic Information/i);
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -692,6 +694,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -772,6 +775,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -923,6 +927,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -995,6 +1000,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1051,6 +1057,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1153,6 +1160,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Verify that the custom label is displayed
     const labelElement = screen.getByLabelText(customLabel);
@@ -1378,6 +1386,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1401,7 +1410,7 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it.only('should pre-select Contractor Management Plus when employment has contractor_type plus', async () => {
+  it('should pre-select Contractor Management Plus when employment has contractor_type plus', async () => {
     const employmentId = generateUniqueEmploymentId();
 
     server.use(
@@ -1468,7 +1477,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Verify that Contractor Management Plus is pre-selected
     await waitFor(() => {
