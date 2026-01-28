@@ -73,6 +73,7 @@ const Switcher = (props: JSFCustomComponentProps) => {
 };
 
 const STEPS = [
+  'Select Country',
   'Basic Information',
   'Pricing Plan',
   'Statement of Work',
@@ -360,7 +361,6 @@ export const ContractorOnboardingWithProps = ({
               render={OnBoardingRender}
               employmentId={employmentId}
               externalId={externalId}
-              skipSteps={['select_country']}
               options={{
                 jsfModify: {
                   contract_details: {
