@@ -530,28 +530,34 @@ export const useContractorOnboarding = ({
     pricingPlanInitialValues,
   ]);
 
-  const isNavigatingToReview = useMemo(() => {
-    const shouldHandleReadOnlyEmployment = Boolean(
-      employmentId &&
-        isEmploymentReadOnly &&
-        stepState.currentStep.name !== 'review',
-    );
+  const shouldHandleReadOnlyEmployment = Boolean(
+    employmentId &&
+      isEmploymentReadOnly &&
+      stepState.currentStep.name !== 'review',
+  );
 
+  const initialLoading =
+    isLoadingCountries ||
+    isLoadingBasicInformationForm ||
+    isLoadingEmployment ||
+    isLoadingContractorOnboardingDetailsForm ||
+    isLoadingContractorSubscriptions ||
+    isLoadingDocumentPreviewForm ||
+    isLoadingIR35File ||
+    isLoadingContractDocuments;
+
+  const isNavigatingToReview = useMemo(() => {
     return Boolean(
       shouldHandleReadOnlyEmployment &&
-        !isLoadingEmployment &&
-        !isLoadingDocumentPreviewForm &&
+        !initialLoading &&
         Boolean(internalContractDocumentId) &&
         stepFields.basic_information.length > 0 &&
         stepFields.contract_details.length > 0 &&
         stepFields.contract_preview.length > 0,
     );
   }, [
-    employmentId,
-    isEmploymentReadOnly,
-    stepState.currentStep.name,
-    isLoadingEmployment,
-    isLoadingDocumentPreviewForm,
+    shouldHandleReadOnlyEmployment,
+    initialLoading,
     internalContractDocumentId,
     stepFields.basic_information.length,
     stepFields.contract_details.length,
@@ -784,15 +790,7 @@ export const useContractorOnboarding = ({
     }
   }
 
-  const isLoading =
-    isLoadingCountries ||
-    isLoadingBasicInformationForm ||
-    isLoadingEmployment ||
-    isLoadingContractorOnboardingDetailsForm ||
-    isLoadingContractorSubscriptions ||
-    isLoadingDocumentPreviewForm ||
-    isLoadingIR35File ||
-    isLoadingContractDocuments;
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   return {
     /**

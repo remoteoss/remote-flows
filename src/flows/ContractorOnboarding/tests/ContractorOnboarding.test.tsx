@@ -45,6 +45,39 @@ const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
 
+// Helper component to display employment data in tests
+function Review({ values }: { values: Record<string, unknown> }) {
+  return (
+    <div className='onboarding-values'>
+      {Object.entries(values).map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return (
+            <pre key={key}>
+              {key}: {value.join(', ')}
+            </pre>
+          );
+        }
+        if (typeof value === 'object') {
+          return (
+            <pre key={key}>
+              {key}: {JSON.stringify(value)}
+            </pre>
+          );
+        }
+        if (typeof value === 'string' || typeof value === 'number') {
+          return (
+            <pre key={key}>
+              {key}: {value}
+            </pre>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+}
+
 describe('ContractorOnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
     components,
@@ -136,6 +169,26 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
+            <h2 className='title'>Basic Information</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.basic_information ||
+                {}
+              }
+            />
+            <h2 className='title'>Pricing Plan</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values
+                  ?.pricing_plan_details || {}
+              }
+            />
+            <h2 className='title'>Contract Details</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.contract_details || {}
+              }
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={() => 'Invite Contractor'}
@@ -223,6 +276,26 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
+            <h2 className='title'>Basic Information</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.basic_information ||
+                {}
+              }
+            />
+            <h2 className='title'>Pricing Plan</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values
+                  ?.pricing_plan_details || {}
+              }
+            />
+            <h2 className='title'>Contract Details</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.contract_details || {}
+              }
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={() => 'Invite Contractor'}
@@ -813,7 +886,7 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   it.each(['invited'])(
-    'should automatically navigate to review step when employment status is %s',
+    'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
       const employmentId = generateUniqueEmploymentId();
       server.use(
@@ -873,8 +946,122 @@ describe('ContractorOnboardingFlow', () => {
 
       // Should automatically go to review step
       await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify email is displayed
+      expect(
+        screen.getByText('email: john.doe@example.com'),
+      ).toBeInTheDocument();
+
+      // Verify job title is displayed
+      expect(screen.getByText('job_title: pm')).toBeInTheDocument();
     },
   );
+
+  it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
+    const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
+    const employmentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              id: employmentId,
+              status: 'invited', // This should trigger auto-navigation to review
+              contract_details: {
+                service_duration: {
+                  provisional_start_date: '2025-11-26',
+                },
+                payment_terms: {
+                  compensation_currency_code: 'USD',
+                  rate: 5000,
+                  rate_unit: 'monthly',
+                },
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        const currentStepName = steps[currentStepIndex];
+
+        // Track every step that gets rendered
+        if (!contractorOnboardingBag.isLoading && currentStepName) {
+          renderSequence.push({
+            isLoading: contractorOnboardingBag.isLoading,
+            step: contractorOnboardingBag.isLoading
+              ? undefined
+              : currentStepName,
+          });
+        }
+
+        // Return the current step or loading state
+        if (contractorOnboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {currentStepName}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    // Should go directly to review step
+    await screen.findByText(/Step: Review/i);
+
+    // Filter out just the non-loading renders to see what steps were actually shown
+    const nonLoadingRenders = renderSequence
+      .filter((render) => !render.isLoading)
+      .map((render) => render.step);
+
+    // Should only show Review step, never any intermediate steps
+    expect(nonLoadingRenders).toEqual(['Review']);
+
+    // Verify the sequence: should be loading states followed by Review only
+    const hasIntermediateSteps = renderSequence.some(
+      (render) => !render.isLoading && render.step !== 'Review',
+    );
+
+    expect(hasIntermediateSteps).toBe(false);
+  });
 
   it('should send external_id when creating employment for the first time', async () => {
     const postSpy = vi.fn();
