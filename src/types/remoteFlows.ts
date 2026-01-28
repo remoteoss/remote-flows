@@ -196,6 +196,14 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * @default false
    */
   debug?: boolean;
+  /**
+   * Credentials mode for fetch requests.
+   * If not provided, credentials will not be included in requests.
+   * Set to 'include' to include credentials (cookies, authorization headers) in cross-origin requests.
+   * Set to 'same-origin' to only include credentials for same-origin requests.
+   * @default undefined (credentials not included)
+   */
+  credentials?: RequestCredentials;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

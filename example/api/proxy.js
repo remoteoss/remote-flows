@@ -1,6 +1,55 @@
 const axios = require('axios');
-const { fetchAccessToken } = require('./get_token.js');
+const {
+  fetchClientCredentialsAccessToken,
+  fetchAccessToken,
+} = require('./get_token.js');
 const { buildGatewayURL } = require('./utils.js');
+
+/**
+ * Determines which token type to use based on HTTP method and path
+ * @param {string} method - HTTP method (GET, POST, PUT, PATCH, etc.)
+ * @param {string} path - The API path (e.g., '/v1/countries' or '/v1/countries?foo=bar')
+ * @returns {'client-credentials' | 'user-token'} The token type to use
+ */
+function getTokenType(method, path) {
+  const normalizedMethod = method.toUpperCase();
+  // Extract pathname without query parameters
+  const pathname = path.split('?')[0].toLowerCase();
+
+  // GET /v1/countries
+  if (normalizedMethod === 'GET' && pathname === '/v1/countries') {
+    return 'client-credentials';
+  }
+
+  // GET /v1/countries/{country_code}/address_details
+  if (
+    normalizedMethod === 'GET' &&
+    /^\/v1\/countries\/[^/]+\/address_details$/.test(pathname)
+  ) {
+    return 'client-credentials';
+  }
+
+  // GET /v1/company-currencies
+  if (normalizedMethod === 'GET' && pathname === '/v1/company-currencies') {
+    return 'client-credentials';
+  }
+
+  // POST /v1/companies
+  if (normalizedMethod === 'POST' && pathname === '/v1/companies') {
+    return 'client-credentials';
+  }
+
+  // PUT/PATCH /v1/companies/{company_id}
+  if (
+    (normalizedMethod === 'PUT' || normalizedMethod === 'PATCH') &&
+    /^\/v1\/companies\/[^/]+$/.test(pathname)
+  ) {
+    return 'client-credentials';
+  }
+
+  // All other requests use user token
+  return 'user-token';
+}
 
 /**
  * Create a proxy request to the gateway with authentication
@@ -41,7 +90,11 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
 
   // Add authentication if required
   if (requiresAuth) {
-    const { accessToken } = await fetchAccessToken();
+    const tokenType = getTokenType(method, path);
+    const { accessToken } =
+      tokenType === 'client-credentials'
+        ? await fetchClientCredentialsAccessToken()
+        : await fetchAccessToken();
     requestConfig.headers.Authorization = `Bearer ${accessToken}`;
   }
 
@@ -79,4 +132,5 @@ function createProxyMiddleware(requiresAuth = true) {
 
 module.exports = {
   createProxyMiddleware,
+  getTokenType,
 };
