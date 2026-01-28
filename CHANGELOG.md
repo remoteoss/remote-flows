@@ -8,7 +8,7 @@
 
 - populate pricing plan and contract preview sections for readonly employments (#715) [#715](https://github.com/remoteoss/remote-flows/pull/715)
 
-#### Fixes
+#### Fixes
 
 - transform correctly base64 files (#712) [#712](https://github.com/remoteoss/remote-flows/pull/712)
 - handle exempt case that doesn't present file uploads (#714) [#714](https://github.com/remoteoss/remote-flows/pull/714)
