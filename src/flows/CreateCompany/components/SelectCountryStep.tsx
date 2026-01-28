@@ -2,7 +2,7 @@
 import {
   SelectCountryFormPayload,
   SelectCountrySuccess,
-} from '@/src/flows/CreateCountry/types';
+} from '@/src/flows/Onboarding/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
