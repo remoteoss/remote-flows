@@ -22,6 +22,7 @@ import {
   useSignContractDocument,
   useUpdateUKandSaudiFields,
   useGetIR35File,
+  useGetContractDocuments,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -205,7 +206,9 @@ export const useContractorOnboarding = ({
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
-      enabled: stepState.currentStep.name === 'pricing_plan',
+      enabled:
+        stepState.currentStep.name === 'pricing_plan' ||
+        (Boolean(employmentId) && isEmploymentReadOnly),
     },
   });
 
@@ -285,6 +288,21 @@ export const useContractorOnboarding = ({
     },
   );
 
+  const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
+    useGetContractDocuments(employmentId as string, {
+      enabled: Boolean(employmentId),
+    });
+
+  useEffect(() => {
+    if (
+      contractDocuments &&
+      contractDocuments.length > 0 &&
+      !internalContractDocumentId
+    ) {
+      setInternalContractDocumentId(contractDocuments[0].id);
+    }
+  }, [contractDocuments, internalContractDocumentId]);
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -346,11 +364,18 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const isSignatureSchemaEnabled = useMemo(() => {
+    return (
+      stepState.currentStep.name === 'contract_preview' ||
+      (Boolean(employmentId) && isEmploymentReadOnly)
+    );
+  }, [stepState.currentStep.name, employmentId, isEmploymentReadOnly]);
+
   const { data: signatureSchemaForm } = useGetContractDocumentSignatureSchema({
     fieldValues: fieldValues,
     options: {
       queryOptions: {
-        enabled: stepState.currentStep.name === 'contract_preview',
+        enabled: isSignatureSchemaEnabled,
       },
       jsfModify: buildContractPreviewJsfModify(options, fieldValues),
     },
@@ -464,13 +489,20 @@ export const useContractorOnboarding = ({
   ]);
 
   const contractPreviewInitialValues = useMemo(() => {
-    // TODO: TBD not sure if contract preview needs to be populated with anything
+    const signature = documentPreviewPdf?.contract_document?.signatories?.find(
+      (signatory) => signatory.type === 'company',
+    );
     const initialValues = {
       ...onboardingInitialValues,
+      signature: signature?.signature,
     };
 
     return getInitialValues(stepFields.contract_preview, initialValues);
-  }, [stepFields.contract_preview, onboardingInitialValues]);
+  }, [
+    stepFields.contract_preview,
+    onboardingInitialValues,
+    documentPreviewPdf,
+  ]);
 
   const pricingPlanInitialValues = useMemo(() => {
     const preselectedPricingPlan = {
@@ -500,26 +532,38 @@ export const useContractorOnboarding = ({
     pricingPlanInitialValues,
   ]);
 
-  const isNavigatingToReview = useMemo(() => {
-    const shouldHandleReadOnlyEmployment = Boolean(
-      employmentId &&
-        isEmploymentReadOnly &&
-        stepState.currentStep.name !== 'review',
-    );
+  const shouldHandleReadOnlyEmployment = Boolean(
+    employmentId &&
+      isEmploymentReadOnly &&
+      stepState.currentStep.name !== 'review',
+  );
 
+  const initialLoading =
+    isLoadingCountries ||
+    isLoadingBasicInformationForm ||
+    isLoadingEmployment ||
+    isLoadingContractorOnboardingDetailsForm ||
+    isLoadingContractorSubscriptions ||
+    isLoadingDocumentPreviewForm ||
+    isLoadingIR35File ||
+    isLoadingContractDocuments;
+
+  const isNavigatingToReview = useMemo(() => {
     return Boolean(
       shouldHandleReadOnlyEmployment &&
-        !isLoadingEmployment &&
+        !initialLoading &&
+        Boolean(internalContractDocumentId) &&
         stepFields.basic_information.length > 0 &&
-        stepFields.contract_details.length > 0,
+        stepFields.contract_details.length > 0 &&
+        stepFields.contract_preview.length > 0,
     );
   }, [
-    employmentId,
-    isEmploymentReadOnly,
-    isLoadingEmployment,
+    shouldHandleReadOnlyEmployment,
+    initialLoading,
+    internalContractDocumentId,
     stepFields.basic_information.length,
     stepFields.contract_details.length,
-    stepState.currentStep.name,
+    stepFields.contract_preview.length,
   ]);
 
   useEffect(() => {
@@ -537,10 +581,10 @@ export const useContractorOnboarding = ({
           contractDetailsInitialValues,
           stepFields.contract_details,
         ),
-        // TODO: TBD
-        contract_preview: {},
-        // TODO: The BE needs to return the pricing plan through an endpoint
-        // TODO: First correct pricingPlanInitialValues to make this work
+        contract_preview: prettifyFormValues(
+          contractPreviewInitialValues,
+          stepFields.contract_preview,
+        ),
         pricing_plan: prettifyFormValues(
           pricingPlanInitialValues,
           stepFields.pricing_plan,
@@ -569,6 +613,8 @@ export const useContractorOnboarding = ({
     stepFields.contract_details,
     stepFields.pricing_plan,
     pricingPlanInitialValues,
+    stepFields.contract_preview,
+    contractPreviewInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
@@ -746,14 +792,7 @@ export const useContractorOnboarding = ({
     }
   }
 
-  const isLoading =
-    isLoadingCountries ||
-    isLoadingBasicInformationForm ||
-    isLoadingEmployment ||
-    isLoadingContractorOnboardingDetailsForm ||
-    isLoadingContractorSubscriptions ||
-    isLoadingDocumentPreviewForm ||
-    isLoadingIR35File;
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   return {
     /**

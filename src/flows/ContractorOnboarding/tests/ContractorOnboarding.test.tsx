@@ -18,6 +18,10 @@ import {
   mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
+  filesResponseWithoutIR35,
+  filesResponseWithIR35,
+  fileResponseWithIR35,
+  contractDocumentsResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -40,6 +44,39 @@ import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
+
+// Helper component to display employment data in tests
+function Review({ values }: { values: Record<string, unknown> }) {
+  return (
+    <div className='onboarding-values'>
+      {Object.entries(values).map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return (
+            <pre key={key}>
+              {key}: {value.join(', ')}
+            </pre>
+          );
+        }
+        if (typeof value === 'object') {
+          return (
+            <pre key={key}>
+              {key}: {JSON.stringify(value)}
+            </pre>
+          );
+        }
+        if (typeof value === 'string' || typeof value === 'number') {
+          return (
+            <pre key={key}>
+              {key}: {value}
+            </pre>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+}
 
 describe('ContractorOnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
@@ -132,6 +169,26 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
+            <h2 className='title'>Basic Information</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.basic_information ||
+                {}
+              }
+            />
+            <h2 className='title'>Pricing Plan</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values
+                  ?.pricing_plan_details || {}
+              }
+            />
+            <h2 className='title'>Contract Details</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.contract_details || {}
+              }
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={() => 'Invite Contractor'}
@@ -219,6 +276,26 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
+            <h2 className='title'>Basic Information</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.basic_information ||
+                {}
+              }
+            />
+            <h2 className='title'>Pricing Plan</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values
+                  ?.pricing_plan_details || {}
+              }
+            />
+            <h2 className='title'>Contract Details</h2>
+            <Review
+              values={
+                contractorOnboardingBag.stepState.values?.contract_details || {}
+              }
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={() => 'Invite Contractor'}
@@ -352,41 +429,18 @@ describe('ContractorOnboardingFlow', () => {
         const subType = url.searchParams.get('sub_type');
 
         if (subType === 'ir_35') {
-          return HttpResponse.json({
-            data: {
-              files: [
-                {
-                  id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
-                  name: 'test-sds.pdf',
-                  type: 'other',
-                  inserted_at: '2026-01-26T11:08:56Z',
-                  sub_type: 'ir_35',
-                },
-              ],
-              total_count: 1,
-              current_page: 1,
-              total_pages: 1,
-            },
-          });
+          return HttpResponse.json(filesResponseWithIR35);
         }
-        return HttpResponse.json({ data: { files: [], total_count: 0 } });
+        return HttpResponse.json(filesResponseWithoutIR35);
       }),
 
       // Mock the individual file fetch endpoint
       http.get(`*/v1/files/*`, () => {
-        return HttpResponse.json({
-          data: {
-            file: {
-              id: '643e3627-320e-44a9-9721-7b9a3cf5b946',
-              name: 'test-sds.pdf',
-              type: 'other',
-              content:
-                'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/KQovQ3JlYXRvciAo/v8AdwBrAGgAdABtAGwAdABvAHAAZABmACAAMAAuADEAMgAuADYALgAxKQovUHJvZHVjZXIgKP7/AFEAdAAgADQALgA4AC4ANykKL0NyZWF0aW9uRGF0ZSAoRDoyMDI1MTAyMzE1MjEwNFopCj4+CmVuZG9iagozIDAgb2JqCjw8Ci9UeXBlIC9FeHRHU3RhdGUKL1NBIHRydWUKL1NNIDAuMDIKL2NhIDEuMAovQ0EgMS4wCi9BSVMgZmFsc2UKL1NNYXNrIC9Ob25lPj4KZW5kb2JqCjQgMCBvYmoKWy9QYXR0ZXJuIC9E',
-              inserted_at: '2026-01-26T11:08:56Z',
-              sub_type: 'ir_35',
-            },
-          },
-        });
+        return HttpResponse.json(fileResponseWithIR35);
+      }),
+
+      http.get('*/v1/employments/*/contract-documents', () => {
+        return HttpResponse.json(contractDocumentsResponse);
       }),
     );
   });
@@ -455,7 +509,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeInTheDocument();
@@ -543,7 +596,10 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('PRT');
+
+    await screen.findByText(/Step: Basic Information/i);
 
     await fillBasicInformation({
       fullName: 'John Doe Portugal',
@@ -711,6 +767,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -791,6 +848,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -828,7 +886,7 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   it.each(['invited'])(
-    'should automatically navigate to review step when employment status is %s',
+    'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
       const employmentId = generateUniqueEmploymentId();
       server.use(
@@ -888,8 +946,122 @@ describe('ContractorOnboardingFlow', () => {
 
       // Should automatically go to review step
       await screen.findByText(/Step: Review/i);
+
+      // Verify basic information data is displayed in the Review component
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+      // Verify email is displayed
+      expect(
+        screen.getByText('email: john.doe@example.com'),
+      ).toBeInTheDocument();
+
+      // Verify job title is displayed
+      expect(screen.getByText('job_title: pm')).toBeInTheDocument();
     },
   );
+
+  it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
+    const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
+    const employmentId = generateUniqueEmploymentId();
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              id: employmentId,
+              status: 'invited', // This should trigger auto-navigation to review
+              contract_details: {
+                service_duration: {
+                  provisional_start_date: '2025-11-26',
+                },
+                payment_terms: {
+                  compensation_currency_code: 'USD',
+                  rate: 5000,
+                  rate_unit: 'monthly',
+                },
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Pricing Plan',
+          [2]: 'Contract Details',
+          [3]: 'Contract Preview',
+          [4]: 'Review',
+        };
+
+        const currentStepName = steps[currentStepIndex];
+
+        // Track every step that gets rendered
+        if (!contractorOnboardingBag.isLoading && currentStepName) {
+          renderSequence.push({
+            isLoading: contractorOnboardingBag.isLoading,
+            step: contractorOnboardingBag.isLoading
+              ? undefined
+              : currentStepName,
+          });
+        }
+
+        // Return the current step or loading state
+        if (contractorOnboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {currentStepName}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    // Should go directly to review step
+    await screen.findByText(/Step: Review/i);
+
+    // Filter out just the non-loading renders to see what steps were actually shown
+    const nonLoadingRenders = renderSequence
+      .filter((render) => !render.isLoading)
+      .map((render) => render.step);
+
+    // Should only show Review step, never any intermediate steps
+    expect(nonLoadingRenders).toEqual(['Review']);
+
+    // Verify the sequence: should be loading states followed by Review only
+    const hasIntermediateSteps = renderSequence.some(
+      (render) => !render.isLoading && render.step !== 'Review',
+    );
+
+    expect(hasIntermediateSteps).toBe(false);
+  });
 
   it('should send external_id when creating employment for the first time', async () => {
     const postSpy = vi.fn();
@@ -942,6 +1114,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1014,6 +1187,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1070,6 +1244,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1397,6 +1572,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillBasicInformation();
 
@@ -1487,7 +1663,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     // Verify that Contractor Management Plus is pre-selected
     await waitFor(() => {
