@@ -11,6 +11,10 @@ import {
 } from '@/src/flows/types';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { CreateCompanyFlowProps } from '@/src/flows/CreateCompany/types';
+import {
+  CreateCompanyParams,
+} from '@/src/client';
+
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/CreateCompany/json-schemas/selectCountryStep';
@@ -24,6 +28,10 @@ import {
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { mutationToPromise } from '@/src/lib/mutations';
+import {
+  useCreateCompanyRequest,
+} from '@/src/flows/CreateCompany/api';
 
 type useCreateCompanyProps = Omit<
   CreateCompanyFlowProps,
@@ -93,10 +101,33 @@ const useCountriesSchemaField = (
   };
 };
 
+
+function nowUtcFormatted() {
+  const now = new Date();
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  return (
+    now.getUTCFullYear() + '-' +
+    pad(now.getUTCMonth() + 1) + '-' +
+    pad(now.getUTCDate()) + ' ' +
+    pad(now.getUTCHours()) + ':' +
+    pad(now.getUTCMinutes()) + ':' +
+    pad(now.getUTCSeconds()) + 'Z'
+  );
+}
 export const useCreateCompany = ({
   countryCode,
   options,
 }: useCreateCompanyProps) => {
+
+const createCompanyMutation = useCreateCompanyRequest();
+
+const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
+  createCompanyMutation,
+);
+
+
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
@@ -186,6 +217,31 @@ export const useCreateCompany = ({
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
+	console.log("PARSED")
+	console.log(parsedValues)
+          const payload: CreateCompanyParams = {
+	    address_details: {
+      address: "1709 Broderick St",
+      address_line_2: "Flat number 124",
+      city: "San Francisco",
+      postal_code: "94101-3344",
+      state: "CA"
+
+	    },
+            country_code: parsedValues.country_code,
+	    company_owner_email: parsedValues.company_owner_email,
+	    company_owner_name: parsedValues.company_owner_name,
+	    desired_currency: parsedValues.desired_currency,
+	    name: parsedValues.name,
+	    phone_number: parsedValues.phone_number,
+	    tax_number: parsedValues.tax_number,
+	    terms_of_service_accepted_at: nowUtcFormatted()
+          };
+
+
+	console.log("FIRING")
+        const response = await createCompanyMutationAsync(payload);
+	console.log("RESPONSE", response)
         return Promise.resolve({ data: { countryCode: parsedValues.country_code } });
       }
 

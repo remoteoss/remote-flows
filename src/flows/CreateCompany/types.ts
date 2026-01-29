@@ -3,6 +3,20 @@ import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCount
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { CreateCompanySubmit } from '@/src/flows/CreateCompany/components/CreateCompanySubmit';
 
+type countryFormFields = {
+  countryCode: string;
+  companyOwnerEmail: string;
+  companyOwnerName: string;
+  desiredCurrency: string;
+  phoneNumber: string;
+  taxNumber: string;
+  taxJobCategory: string;
+}
+
+export type CompanyBasicInfoFormPayload = countryFormFields;
+
+export type CompanyBasicInfoSuccess = countryFormFields;
+
 export type CreateCompanyRenderProps = {
   /**
    * The create company bag returned by the useCreateCompany hook.

@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { fetchAccessToken } = require('./get_token.js');
+const { fetchClientCredentialsAccessToken, fetchAccessToken } = require('./get_token.js');
 const { buildGatewayURL } = require('./utils.js');
 
 /**
@@ -38,9 +38,17 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   if (stream) {
     delete requestConfig.headers['Content-Type'];
   }
+  console.log("REQUIRES AUTH", requiresAuth)
 
   // Add authentication if required
-  if (requiresAuth) {
+  if (requiresAuth && path == '/v1/companies') {
+    console.log("COMPANIES")
+    const { accessToken } = await fetchClientCredentialsAccessToken();
+    requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+
+
+  }
+    else if (requiresAuth) {
     const { accessToken } = await fetchAccessToken();
     requestConfig.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -58,6 +66,7 @@ function createProxyMiddleware(requiresAuth = true) {
     const isMultipart = req.headers['content-type']?.includes(
       'multipart/form-data',
     );
+    console.log("PROXYING", req.originalUrl)
 
     try {
       const response = await createProxyRequest(req.originalUrl, req.method, {

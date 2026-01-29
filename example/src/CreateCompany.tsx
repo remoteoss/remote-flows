@@ -66,9 +66,6 @@ const MultiStepForm = ({
 
   switch (createCompanyBag.stepState.currentStep.name) {
     case 'select_country':
-      console.log("SELECTING CONUTRY")
-      console.log("components")
-      console.log(components)
       return (
         <div className='contractor-onboarding-form-layout'>
           <SelectCountryStep

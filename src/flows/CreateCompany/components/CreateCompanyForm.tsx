@@ -49,14 +49,14 @@ export function CreateCompanyForm({
     await onSubmit(
       {
 	company_owner_email: values.company_owner_email,
-	company_owner_name: values.company_owner_email,
-	country_code: values.company_owner_email,
-	desired_currency: values.company_owner_email,
-	name: values.company_owner_email,
-	phone_number: values.company_owner_email,
-	tax_number: values.company_owner_email,
-	tax_job_category: values.company_owner_email,
-	tax_servicing_countries: [values.company_owner_email],
+	company_owner_name: values.company_owner_name,
+	country_code: values.country_code,
+	desired_currency: values.desired_currency,
+	name: values.name,
+	phone_number: values.phone_number,
+	tax_number: values.tax_number,
+	tax_job_category: values.tax_job_category,
+	tax_servicing_countries: [],
       });
   };
 

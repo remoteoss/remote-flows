@@ -1,8 +1,8 @@
 // TODO: Correct types later
 import {
-  SelectCountryFormPayload,
-  SelectCountrySuccess,
-} from '@/src/flows/Onboarding/types';
+  CompanyBasicInfoFormPayload,
+  CompanyBasicInfoSuccess,
+} from '@/src/flows/CreateCompany/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
@@ -13,11 +13,11 @@ type SelectCountryStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: SelectCountryFormPayload) => void | Promise<void>;
+  onSubmit?: (payload: CompanyBasicInfoFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: SelectCountrySuccess) => void | Promise<void>;
+  onSuccess?: (data: CompanyBasicInfoSuccess) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -40,10 +40,18 @@ export function SelectCountryStep({
   const { createCompanyBag } = useCreateCompanyContext();
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.({ countryCode: payload.country });
+      console.log(payload)
+      await onSubmit?.({ countryCode: payload.country_code,
+		         companyOwnerEmail: payload.company_owner_email,
+			 companyOwnerName: payload.company_owner_name,
+			 desiredCurrency: payload.desired_currency,
+			 phoneNumber: payload.phone_number,
+			 taxNumber: payload.tax_number,
+			 taxJobCategory: payload.tax_job_category
+      });
       const response = await createCompanyBag.onSubmit(payload);
       if (response?.data) {
-        await onSuccess?.(response?.data as SelectCountrySuccess);
+        await onSuccess?.(response?.data as CompanyBasicInfoSuccess);
         createCompanyBag?.next();
         return;
       }
