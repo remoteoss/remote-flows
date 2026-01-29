@@ -1,17 +1,25 @@
 import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import {  useQuery } from '@tanstack/react-query';
 import { JSFFields } from '@/src/types/remoteFlows';
+import { Client } from '@/src/client/client';
 import {
   getInitialValues,
 } from '@/src/components/form/utils';
+import {
+  FlowOptions,
+} from '@/src/flows/types';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { CreateCompanyFlowProps } from '@/src/flows/CreateCompany/types';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useClient } from '@/src/context';
+import { selectCountryStepSchema } from '@/src/flows/CreateCompany/json-schemas/selectCountryStep';
 import {
   STEPS,
 } from '@/src/flows/CreateCompany/utils';
 import {
-  useCountriesSchemaField,
-} from '@/src/flows/Onboarding/api';
+  getSupportedCountry,
+} from '@/src/client';
 
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
@@ -21,6 +29,69 @@ type useCreateCompanyProps = Omit<
   CreateCompanyFlowProps,
   'render'
 >;
+
+const useCountries = (queryOptions?: { enabled?: boolean }) => {
+  const { client } = useClient();
+  return useQuery({
+    ...queryOptions,
+    queryKey: ['countries'],
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      return (
+        data?.data
+          ?.filter((country) => country.eor_onboarding)
+          .map((country) => {
+            return {
+              label: country.name,
+              value: country.code,
+            };
+          }) || []
+      );
+    },
+  });
+};
+const useCountriesSchemaField = (
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { data: countries, isLoading } = useCountries(options?.queryOptions);
+
+  const selectCountryForm = createHeadlessForm(
+    selectCountryStepSchema.data.schema,
+    {},
+    options,
+  );
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country_code',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+  };
+};
 
 export const useCreateCompany = ({
   countryCode,
@@ -115,7 +186,7 @@ export const useCreateCompany = ({
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
-        return Promise.resolve({ data: { countryCode: parsedValues.country } });
+        return Promise.resolve({ data: { countryCode: parsedValues.country_code } });
       }
 
       default: {

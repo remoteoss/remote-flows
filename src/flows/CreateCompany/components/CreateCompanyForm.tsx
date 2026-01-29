@@ -45,6 +45,7 @@ export function CreateCompanyForm({
   }, [form.setValue, formRef]);
 
   const handleSubmit = async (values: Record<string, string>) => {
+    console.log("SUBMITTING", values)
     await onSubmit(
       {
 	company_owner_email: values.company_owner_email,
