@@ -159,7 +159,7 @@ describe('EstimationResults', () => {
     // Check if annual gross salary is rendered
     const formattedSalary = formatCurrency(
       mockEstimation.regional_currency_costs.annual_gross_salary,
-      mockEstimation.regional_currency_costs.currency.symbol,
+      mockEstimation.regional_currency_costs.currency.code,
     );
 
     const salaryContainer = screen.getByTestId(
@@ -209,11 +209,11 @@ describe('EstimationResults', () => {
     // Check monthly total amounts
     const monthlyRegionalTotal = formatCurrency(
       mockEstimation.regional_currency_costs.monthly_total,
-      mockEstimation.regional_currency_costs.currency.symbol,
+      mockEstimation.regional_currency_costs.currency.code,
     );
     const monthlyEmployerTotal = formatCurrency(
       mockEstimation.employer_currency_costs.monthly_total,
-      mockEstimation.employer_currency_costs.currency.symbol,
+      mockEstimation.employer_currency_costs.currency.code,
     );
 
     expect(screen.getByText(monthlyRegionalTotal)).toBeInTheDocument();
@@ -284,12 +284,12 @@ describe('EstimationResults', () => {
     const expectedRegionalAmount = formatCurrency(
       mockEstimation.regional_currency_costs.monthly_benefits_breakdown[0]
         .amount,
-      mockEstimation.regional_currency_costs.currency.symbol,
+      mockEstimation.regional_currency_costs.currency.code,
     );
     const expectedEmployerAmount = formatCurrency(
       mockEstimation.employer_currency_costs.monthly_benefits_breakdown[0]
         .amount,
-      mockEstimation.employer_currency_costs.currency.symbol,
+      mockEstimation.employer_currency_costs.currency.code,
     );
 
     // Find the amounts in the document
@@ -299,11 +299,11 @@ describe('EstimationResults', () => {
     // Also verify the total core benefits
     const totalRegionalAmount = formatCurrency(
       mockEstimation.regional_currency_costs.monthly_benefits_total,
-      mockEstimation.regional_currency_costs.currency.symbol,
+      mockEstimation.regional_currency_costs.currency.code,
     );
     const totalEmployerAmount = formatCurrency(
       mockEstimation.employer_currency_costs.monthly_benefits_total,
-      mockEstimation.employer_currency_costs.currency.symbol,
+      mockEstimation.employer_currency_costs.currency.code,
     );
 
     expect(screen.getByText(totalRegionalAmount)).toBeInTheDocument();
