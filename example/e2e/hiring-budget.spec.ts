@@ -19,7 +19,7 @@ test.describe('hiring budget', () => {
     });
 
     const headerAmount = page.getByText(
-      /Employee annual gross salary: SEK\s\d+\.\d\d/,
+      /Employee annual gross salary: SEK\s\d{1,3}(,\d{3})*\.\d{2}/,
     );
 
     await expect(headerAmount).toBeVisible();
