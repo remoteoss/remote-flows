@@ -22,7 +22,7 @@ test.describe('annual gross salary', () => {
 
     // Using getByText for static text + regex for dynamic part
     const headerAmount = page.getByText(
-      /Employee annual gross salary: SEK\d+\.\d\d/,
+      /Employee annual gross salary: SEK\s\d+\.\d\d/,
     );
     await expect(headerAmount).toBeVisible();
   });
