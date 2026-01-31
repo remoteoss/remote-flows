@@ -37,7 +37,7 @@ import { cn } from '@/src/internals';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { PaidTimeOff } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOff';
 import { PaidTimeOffContainer } from '@/src/flows/Termination/components/PaidTimeOff/PaidTimeOffContainer';
-import { useEmploymentQuery } from '@/src/common/api';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { AcknowledgeInformationContainer } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInfomationContainer';
 import { AcknowledgeInformation } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformation';
 import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/AcknowledgeInformation/AcknowledgeInformationFees';
@@ -56,7 +56,7 @@ export const useTermination = ({
     useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
 
   const { data: employment, isLoading: isLoadingEmployment } =
-    useEmploymentQuery({ employmentId });
+    useEmploymentQuery({ employmentId, queryParams: { exclude_files: true } });
 
   const { data: payrollCalendars } = usePayrollCalendars({
     query: {

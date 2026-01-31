@@ -130,6 +130,9 @@ export const useContractAmendment = ({
     error: errorEmployment,
   } = useEmploymentQuery({
     employmentId,
+    queryParams: {
+      exclude_files: true,
+    },
   });
 
   const {

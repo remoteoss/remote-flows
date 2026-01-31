@@ -33,7 +33,6 @@ import {
 import {
   useCountriesSchemaField,
   useCreateEmployment,
-  useEmployment,
   useJSONSchemaForm,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
@@ -58,6 +57,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/jsfModify';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
+import { useEmploymentQuery } from '@/src/common/api';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -135,7 +135,10 @@ export const useContractorOnboarding = ({
     data: employment,
     isLoading: isLoadingEmployment,
     refetch: refetchEmployment,
-  } = useEmployment(internalEmploymentId);
+  } = useEmploymentQuery({
+    employmentId: internalEmploymentId as string,
+    queryParams: { exclude_files: true },
+  });
 
   const { status: employmentStatus } = employment || {};
 
