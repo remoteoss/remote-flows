@@ -266,7 +266,7 @@ const OnboardingWithProps = ({
       options={{
         jsonSchemaVersionByCountry: {
           DEU: {
-            contract_details: 2,
+            contract_details: 1,
           },
         },
       }}
