@@ -57,7 +57,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/jsfModify';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
-import { useEmploymentQuery } from '@/src/common/api';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,

@@ -40,7 +40,7 @@ import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGross
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
-import { useEmploymentQuery } from '@/src/common/api';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
