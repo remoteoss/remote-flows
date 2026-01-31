@@ -263,6 +263,13 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
+      options={{
+        jsonSchemaVersionByCountry: {
+          DEU: {
+            contract_details: 2,
+          },
+        },
+      }}
     />
   </RemoteFlows>
 );
