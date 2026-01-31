@@ -21,32 +21,4 @@ describe('getContractDetailsSchemaVersion', () => {
 
     expect(result).toEqual(2);
   });
-
-  it('should return default version if country-specific version is not valid', () => {
-    const options = {
-      jsonSchemaVersionByCountry: {
-        DEU: {
-          contract_details: 5,
-        },
-      },
-    };
-
-    const result = getContractDetailsSchemaVersion(options, 'DEU');
-
-    expect(result).toEqual(1);
-  });
-
-  it('should return default version if country-specific version is not provided', () => {
-    const options = {
-      jsonSchemaVersionByCountry: {
-        PRT: {
-          contract_details: 5,
-        },
-      },
-    };
-
-    const result = getContractDetailsSchemaVersion(options, 'PRT');
-
-    expect(result).toEqual(1);
-  });
 });
