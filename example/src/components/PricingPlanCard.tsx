@@ -6,11 +6,7 @@ import {
   CardContent,
   CardFooter,
 } from '@remoteoss/remote-flows/internals';
-import {
-  RadioGroup,
-  RadioGroupItem,
-  cn,
-} from '@remoteoss/remote-flows/internals';
+import { cn } from '@remoteoss/remote-flows/internals';
 import { Check } from 'lucide-react';
 
 interface PricingPlanCardProps {
@@ -18,7 +14,7 @@ interface PricingPlanCardProps {
   description: React.ReactNode;
   features: string[];
   selected?: boolean;
-  onSelect?: () => void;
+  onSelect?: (value: string) => void;
   value: string;
 }
 
@@ -36,7 +32,9 @@ export function PricingPlanCard({
         'px-4 py-4 border-dashed border-[#9AA6B2] cursor-pointer transition-all',
         selected && 'border-solid border-[#9AA6B2] ring-2 ring-[#9AA6B2]',
       )}
-      onClick={onSelect}
+      onClick={() => {
+        onSelect?.(value);
+      }}
     >
       <CardHeader className='pb-4'>
         <CardTitle className='text-xl font-bold'>{title}</CardTitle>
@@ -56,17 +54,38 @@ export function PricingPlanCard({
       </CardContent>
 
       <CardFooter className='pt-4'>
-        <RadioGroup value={selected ? value : undefined} className='w-full'>
-          <div className='flex items-center gap-2'>
-            <RadioGroupItem value={value} id={value} />
-            <label
-              htmlFor={value}
-              className='cursor-pointer text-sm font-medium'
-            >
-              Select plan
-            </label>
+        <div className='flex items-center gap-3 w-full'>
+          <div
+            style={{
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              border: `2px solid ${selected ? '#9AA6B2' : '#D1D5DB'}`,
+              backgroundColor: selected ? '#9AA6B2' : '#FFFFFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              transition: 'all 0.2s',
+            }}
+          >
+            {selected && (
+              <Check
+                className='text-white'
+                style={{ width: '12px', height: '12px' }}
+              />
+            )}
           </div>
-        </RadioGroup>
+          <span
+            style={{
+              fontSize: '14px',
+              fontWeight: 500,
+              color: selected ? '#364452' : '#6B7280',
+            }}
+          >
+            Select plan
+          </span>
+        </div>
       </CardFooter>
     </Card>
   );
