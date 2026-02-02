@@ -260,7 +260,7 @@ export const useOnboarding = ({
       queryOptions?: { enabled?: boolean };
     };
     query?: Record<string, string>;
-    jsonSchemaVersion?: number | string;
+    jsonSchemaVersion?: number | 'latest';
   }) => {
     const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
