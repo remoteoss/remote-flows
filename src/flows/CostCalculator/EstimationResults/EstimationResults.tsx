@@ -614,7 +614,7 @@ export const EstimationResults = ({
 
   const formattedSalary = formatCurrency(
     estimation.regional_currency_costs.annual_gross_salary,
-    estimation.regional_currency_costs.currency.symbol,
+    estimation.regional_currency_costs.currency.code,
   );
 
   return (
@@ -642,16 +642,16 @@ export const EstimationResults = ({
               ? [
                   formatCurrency(
                     estimation.regional_currency_costs.monthly_total,
-                    estimation.regional_currency_costs.currency.symbol,
+                    estimation.regional_currency_costs.currency.code,
                   ),
                   formatCurrency(
                     estimation.employer_currency_costs.monthly_total,
-                    estimation.employer_currency_costs.currency.symbol,
+                    estimation.employer_currency_costs.currency.code,
                   ),
                 ]
               : formatCurrency(
                   estimation.regional_currency_costs.monthly_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 )
           }
         >
@@ -661,11 +661,11 @@ export const EstimationResults = ({
                 label: 'Gross monthly salary',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.monthly_gross_salary,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs.monthly_gross_salary,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 zendeskId: zendeskArticles.extraPayments.toString(),
                 tooltip:
@@ -676,12 +676,12 @@ export const EstimationResults = ({
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs
                     .monthly_contributions_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs
                     .monthly_contributions_total,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 children:
                   estimation.employer_currency_costs.monthly_contributions_breakdown?.map(
@@ -691,11 +691,11 @@ export const EstimationResults = ({
                         regionalAmount: formatCurrency(
                           estimation.regional_currency_costs
                             .monthly_contributions_breakdown?.[index]?.amount,
-                          estimation.regional_currency_costs.currency.symbol,
+                          estimation.regional_currency_costs.currency.code,
                         ),
                         employerAmount: formatCurrency(
                           item.amount,
-                          estimation.employer_currency_costs.currency.symbol,
+                          estimation.employer_currency_costs.currency.code,
                         ),
                         zendeskId: item.zendesk_article_id || undefined,
                         tooltip: item.description || undefined,
@@ -707,11 +707,11 @@ export const EstimationResults = ({
                 label: 'Benefits',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.monthly_benefits_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs.monthly_benefits_total,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 children:
                   estimation.employer_currency_costs.monthly_benefits_breakdown?.map(
@@ -720,11 +720,11 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .monthly_benefits_breakdown?.[index]?.amount,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
                       tooltip: item.description || undefined,
@@ -738,12 +738,12 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .monthly_management_fee,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         estimation.employer_currency_costs
                           .monthly_management_fee,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       tooltip:
                         'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',
@@ -763,16 +763,16 @@ export const EstimationResults = ({
               ? [
                   formatCurrency(
                     estimation.regional_currency_costs.annual_total,
-                    estimation.regional_currency_costs.currency.symbol,
+                    estimation.regional_currency_costs.currency.code,
                   ),
                   formatCurrency(
                     estimation.employer_currency_costs.annual_total,
-                    estimation.employer_currency_costs.currency.symbol,
+                    estimation.employer_currency_costs.currency.code,
                   ),
                 ]
               : formatCurrency(
                   estimation.regional_currency_costs.annual_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 )
           }
         >
@@ -783,22 +783,22 @@ export const EstimationResults = ({
                 dataSelector: 'annual-gross-salary',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_gross_salary,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs.annual_gross_salary,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
               },
               {
                 label: 'Mandatory employer costs',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_contributions_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs.annual_contributions_total,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 children:
                   estimation.employer_currency_costs.annual_contributions_breakdown?.map(
@@ -807,11 +807,11 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .annual_contributions_breakdown?.[index]?.amount,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
                       tooltip: item.description || undefined,
@@ -822,11 +822,11 @@ export const EstimationResults = ({
                 label: 'Benefits',
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs.annual_benefits_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs.annual_benefits_total,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 children:
                   estimation.employer_currency_costs.annual_benefits_breakdown?.map(
@@ -835,11 +835,11 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .annual_benefits_breakdown?.[index]?.amount,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
                       tooltip: item.description || undefined,
@@ -851,12 +851,12 @@ export const EstimationResults = ({
                 regionalAmount: formatCurrency(
                   estimation.regional_currency_costs
                     .extra_statutory_payments_total,
-                  estimation.regional_currency_costs.currency.symbol,
+                  estimation.regional_currency_costs.currency.code,
                 ),
                 employerAmount: formatCurrency(
                   estimation.employer_currency_costs
                     .extra_statutory_payments_total,
-                  estimation.employer_currency_costs.currency.symbol,
+                  estimation.employer_currency_costs.currency.code,
                 ),
                 children:
                   estimation.employer_currency_costs.extra_statutory_payments_breakdown?.map(
@@ -865,11 +865,11 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .extra_statutory_payments_breakdown?.[index]?.amount,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         item.amount,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       zendeskId: item.zendesk_article_id || undefined,
                       tooltip: item.description || undefined,
@@ -883,12 +883,12 @@ export const EstimationResults = ({
                       regionalAmount: formatCurrency(
                         estimation.regional_currency_costs
                           .annual_management_fee,
-                        estimation.regional_currency_costs.currency.symbol,
+                        estimation.regional_currency_costs.currency.code,
                       ),
                       employerAmount: formatCurrency(
                         estimation.employer_currency_costs
                           .annual_management_fee,
-                        estimation.employer_currency_costs.currency.symbol,
+                        estimation.employer_currency_costs.currency.code,
                       ),
                       tooltip:
                         'Discounts may be available based on your commitment and team size. Speak to your account or customer success manager to learn more.',

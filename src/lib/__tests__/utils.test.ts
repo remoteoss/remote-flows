@@ -1,5 +1,6 @@
 import { JSFFields } from '@/src/types/remoteFlows';
 import {
+  formatCurrency,
   prettifyFormValues,
   sanitizeHtml,
   sanitizeHtmlWithImageErrorHandling,
@@ -348,6 +349,29 @@ describe('utils lib', () => {
           city: { prettyValue: 'Boston', label: 'City', inputType: 'text' },
         },
       });
+    });
+  });
+
+  describe('formatCurrency', () => {
+    it('should return "-" for undefined or null amount', () => {
+      expect(formatCurrency(null)).toBe('-');
+      expect(formatCurrency(undefined)).toBe('-');
+    });
+
+    it('should format amount in EUR by default', () => {
+      expect(formatCurrency(5000)).toBe('€50.00');
+    });
+
+    it('should format amount in specified currency', () => {
+      expect(formatCurrency(10000, 'USD')).toBe('$100.00');
+    });
+
+    it('should format amount with currency code', () => {
+      expect(formatCurrency(10000, 'ARS')).toBe('ARS\u00A0100.00');
+    });
+
+    it('should handle zero amount', () => {
+      expect(formatCurrency(0, 'USD')).toBe('$0.00');
     });
   });
 });
