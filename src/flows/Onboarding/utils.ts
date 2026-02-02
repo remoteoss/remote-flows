@@ -49,64 +49,14 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
 export const DEFAULT_VERSION = 1;
 
 /**
- * Defines allowed JSON schema versions per country for contract_details
- * Key: country code, Value: array of allowed versions (first is default/recommended)
- */
-const COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST: Record<string, number[]> = {
-  DEU: [1, 2], // Germany: allows v1 (default) and v2
-};
-
-/**
  * Gets the default (recommended) contract details schema version for a country
  */
-const getDefaultContractDetailsSchemaVersion = (
-  countryCode: string | null,
-): number => {
-  if (!countryCode) return DEFAULT_VERSION;
-  const allowedVersions =
-    COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode];
-  return allowedVersions?.[0] ?? DEFAULT_VERSION; // First version is the default
-};
-
-/**
- * Validates if a version is allowed for a given country
- * Returns the version if valid, otherwise returns the default
- */
-const getValidatedContractDetailsSchemaVersion = (
-  requestedVersion: number | undefined,
-  countryCode: string | null,
-): number => {
-  const defaultVersion = getDefaultContractDetailsSchemaVersion(countryCode);
-
-  // If there is no country code, no allowlist for country, or no requested version, return the default version
-  if (
-    !countryCode ||
-    !COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode] ||
-    !requestedVersion
-  ) {
-    return defaultVersion;
-  }
-
-  const allowedVersions =
-    COUNTRY_CONTRACT_DETAILS_VERSION_ALLOWLIST[countryCode];
-
-  // Check if requested version is allowed
-  if (allowedVersions.includes(requestedVersion)) {
-    return requestedVersion;
-  }
-
-  // Version not allowed, return default with console warning
-  console.warn(
-    `[RemoteFlows] JSON Schema version ${requestedVersion} is not allowed for country ${countryCode}. ` +
-      `Allowed versions: [${allowedVersions.join(', ')}]. Using default version ${defaultVersion}.`,
-  );
-
-  return defaultVersion;
+const getDefaultContractDetailsSchemaVersion = (): number => {
+  return DEFAULT_VERSION;
 };
 
 /**
  * Resolves the effective contract details schema version for a country
- * Priority: country-specific > global > default by country
  *
  * @param options - The flow options containing version configurations
  * @param countryCode - The country code to resolve version for
@@ -123,11 +73,7 @@ export const getContractDetailsSchemaVersion = (
 
   const requestedVersion = countrySpecificVersion
     ? countrySpecificVersion
-    : getDefaultContractDetailsSchemaVersion(countryCode);
-  const effectiveVersion = getValidatedContractDetailsSchemaVersion(
-    requestedVersion,
-    countryCode,
-  );
+    : getDefaultContractDetailsSchemaVersion();
 
-  return effectiveVersion;
+  return requestedVersion;
 };

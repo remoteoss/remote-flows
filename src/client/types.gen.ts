@@ -247,6 +247,55 @@ export type ResignationResponse = {
 };
 
 /**
+ * Integrations.Scim.Group
+ */
+export type IntegrationsScimGroup = {
+  /**
+   * Display name of the group
+   */
+  displayName: string;
+  /**
+   * Unique identifier for the group
+   */
+  id: string;
+  /**
+   * Array of group members (per RFC 7643)
+   */
+  members: Array<{
+    /**
+     * URI of the user resource
+     */
+    $ref?: string;
+    /**
+     * Display name of the user
+     */
+    display?: string;
+    /**
+     * User ID (slug)
+     */
+    value: string;
+  }>;
+  meta?: {
+    /**
+     * Creation timestamp
+     */
+    created?: string;
+    /**
+     * Last modification timestamp
+     */
+    lastModified?: string;
+    /**
+     * Resource type
+     */
+    resourceType?: string;
+  };
+  /**
+   * SCIM schema identifiers
+   */
+  schemas: Array<string>;
+};
+
+/**
  * ConvertCurrency
  *
  * The response from the currency converter
@@ -1490,6 +1539,32 @@ export type ListDataSyncEventsResponse = {
   data: {
     data_sync_events: Array<DataSyncEvent>;
   };
+};
+
+/**
+ * Integrations.Scim.GroupListResponse
+ */
+export type IntegrationsScimGroupListResponse = {
+  /**
+   * Array of group resources
+   */
+  Resources: Array<IntegrationsScimGroup>;
+  /**
+   * Number of results returned in the current set
+   */
+  itemsPerPage: number;
+  /**
+   * SCIM schema identifiers
+   */
+  schemas: Array<string>;
+  /**
+   * 1-based index of the first result in the current set
+   */
+  startIndex: number;
+  /**
+   * Total number of results matching the query
+   */
+  totalResults: number;
 };
 
 /**
@@ -7060,6 +7135,95 @@ export type ParameterError = {
 export type Actions = Array<Action>;
 
 /**
+ * Integrations.Scim.User
+ */
+export type IntegrationsScimUser = {
+  /**
+   * Whether the user is active
+   */
+  active: boolean;
+  /**
+   * Identifies the name of a department (Enterprise User extension)
+   */
+  department?: string;
+  emails: Array<{
+    /**
+     * Whether this is the primary email
+     */
+    primary?: boolean;
+    /**
+     * Type of email (e.g., 'work')
+     */
+    type: string;
+    /**
+     * Email address
+     */
+    value: string;
+  }>;
+  /**
+   * Numeric or alphanumeric identifier assigned to a person (Enterprise User extension)
+   */
+  employeeNumber?: string;
+  /**
+   * Unique identifier for the user
+   */
+  id: string;
+  /**
+   * The user's manager (Enterprise User extension)
+   */
+  manager?: {
+    /**
+     * The URI of the SCIM resource representing the user's manager
+     */
+    $ref?: string;
+    /**
+     * The displayName of the user's manager
+     */
+    displayName?: string;
+    /**
+     * The id of the SCIM resource representing the user's manager
+     */
+    value?: string;
+  };
+  meta?: {
+    /**
+     * Creation timestamp
+     */
+    created?: string;
+    /**
+     * Last modification timestamp
+     */
+    lastModified?: string;
+    /**
+     * Resource type
+     */
+    resourceType?: string;
+  };
+  name: {
+    /**
+     * Last name
+     */
+    familyName: string;
+    /**
+     * Full name
+     */
+    formatted?: string;
+    /**
+     * First name
+     */
+    givenName: string;
+  };
+  /**
+   * SCIM schema identifiers
+   */
+  schemas: Array<string>;
+  /**
+   * Username for the user
+   */
+  userName: string;
+};
+
+/**
  * CreateSSOConfigurationResult
  */
 export type CreateSsoConfigurationResult = {
@@ -7621,6 +7785,32 @@ export type Timeoff = {
   timeoff_days: Array<TimeoffDay>;
   timeoff_type: TimeoffType;
   timezone: Timezone;
+};
+
+/**
+ * Integrations.Scim.UserListResponse
+ */
+export type IntegrationsScimUserListResponse = {
+  /**
+   * Array of user resources
+   */
+  Resources: Array<IntegrationsScimUser>;
+  /**
+   * Number of results returned in the current set
+   */
+  itemsPerPage: number;
+  /**
+   * SCIM schema identifiers
+   */
+  schemas: Array<string>;
+  /**
+   * 1-based index of the first result in the current set
+   */
+  startIndex: number;
+  /**
+   * Total number of results matching the query
+   */
+  totalResults: number;
 };
 
 /**
@@ -8327,7 +8517,7 @@ export type GetShowContractAmendmentSchemaData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/contract-amendments/schema';
 };
@@ -8667,7 +8857,7 @@ export type GetShowContractorContractDetailsCountryData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/countries/{country_code}/contractor-contract-details';
 };
@@ -8813,7 +9003,7 @@ export type PostCreateEmployment2Data = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/employments';
 };
@@ -9141,7 +9331,7 @@ export type GetShowCompanySchemaData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/companies/schema';
 };
@@ -9242,7 +9432,7 @@ export type PutUpdateBenefitOfferData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/employments/{employment_id}/benefit-offers';
 };
@@ -9486,7 +9676,7 @@ export type GetShowTestSchemaData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/test-schema';
 };
@@ -10449,7 +10639,7 @@ export type GetSchemaBenefitRenewalRequestData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
 };
@@ -11305,11 +11495,11 @@ export type PatchUpdateCompany2Data = {
     /**
      * Version of the address_details form schema
      */
-    address_details_json_schema_version?: number;
+    address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the bank_account_details form schema
      */
-    bank_account_details_json_schema_version?: number;
+    bank_account_details_json_schema_version?: number | 'latest';
   };
   url: '/v1/companies/{company_id}';
 };
@@ -11375,11 +11565,11 @@ export type PatchUpdateCompanyData = {
     /**
      * Version of the address_details form schema
      */
-    address_details_json_schema_version?: number;
+    address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the bank_account_details form schema
      */
-    bank_account_details_json_schema_version?: number;
+    bank_account_details_json_schema_version?: number | 'latest';
   };
   url: '/v1/companies/{company_id}';
 };
@@ -11552,7 +11742,7 @@ export type PostCreateContractAmendmentData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/contract-amendments';
 };
@@ -12004,7 +12194,7 @@ export type GetShowFormCountryData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/countries/{country_code}/{form}';
 };
@@ -12912,6 +13102,46 @@ export type PostDeclineCancellationRequestResponses = {
 export type PostDeclineCancellationRequestResponse =
   PostDeclineCancellationRequestResponses[keyof PostDeclineCancellationRequestResponses];
 
+export type GetGetGroupScimData = {
+  body?: never;
+  path: {
+    /**
+     * Group ID (slug)
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/scim/v2/Groups/{id}';
+};
+
+export type GetGetGroupScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetGetGroupScimError =
+  GetGetGroupScimErrors[keyof GetGetGroupScimErrors];
+
+export type GetGetGroupScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimGroup;
+};
+
+export type GetGetGroupScimResponse =
+  GetGetGroupScimResponses[keyof GetGetGroupScimResponses];
+
 export type GetShowSchemaData = {
   body?: never;
   path: {
@@ -12924,7 +13154,7 @@ export type GetShowSchemaData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/employments/{employment_id}/benefit-offers/schema';
 };
@@ -12966,7 +13196,7 @@ export type PostCreateEligibilityQuestionnaireData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/contractors/eligibility-questionnaire';
 };
@@ -13076,7 +13306,12 @@ export type GetShowEmploymentData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Wether files should be excluded
+     */
+    exclude_files?: boolean;
+  };
   url: '/v1/employments/{employment_id}';
 };
 
@@ -13140,39 +13375,39 @@ export type PatchUpdateEmployment2Data = {
     /**
      * Version of the address_details form schema
      */
-    address_details_json_schema_version?: number;
+    address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the administrative_details form schema
      */
-    administrative_details_json_schema_version?: number;
+    administrative_details_json_schema_version?: number | 'latest';
     /**
      * Version of the bank_account_details form schema
      */
-    bank_account_details_json_schema_version?: number;
+    bank_account_details_json_schema_version?: number | 'latest';
     /**
      * Version of the employment_basic_information form schema
      */
-    employment_basic_information_json_schema_version?: number;
+    employment_basic_information_json_schema_version?: number | 'latest';
     /**
      * Version of the billing_address_details form schema
      */
-    billing_address_details_json_schema_version?: number;
+    billing_address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the contract_details form schema
      */
-    contract_details_json_schema_version?: number;
+    contract_details_json_schema_version?: number | 'latest';
     /**
      * Version of the emergency_contact_details form schema
      */
-    emergency_contact_details_json_schema_version?: number;
+    emergency_contact_details_json_schema_version?: number | 'latest';
     /**
      * Version of the personal_details form schema
      */
-    personal_details_json_schema_version?: number;
+    personal_details_json_schema_version?: number | 'latest';
     /**
      * Version of the pricing_plan_details form schema
      */
-    pricing_plan_details_json_schema_version?: number;
+    pricing_plan_details_json_schema_version?: number | 'latest';
     /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
@@ -13245,39 +13480,39 @@ export type PatchUpdateEmploymentData = {
     /**
      * Version of the address_details form schema
      */
-    address_details_json_schema_version?: number;
+    address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the administrative_details form schema
      */
-    administrative_details_json_schema_version?: number;
+    administrative_details_json_schema_version?: number | 'latest';
     /**
      * Version of the bank_account_details form schema
      */
-    bank_account_details_json_schema_version?: number;
+    bank_account_details_json_schema_version?: number | 'latest';
     /**
      * Version of the employment_basic_information form schema
      */
-    employment_basic_information_json_schema_version?: number;
+    employment_basic_information_json_schema_version?: number | 'latest';
     /**
      * Version of the billing_address_details form schema
      */
-    billing_address_details_json_schema_version?: number;
+    billing_address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the contract_details form schema
      */
-    contract_details_json_schema_version?: number;
+    contract_details_json_schema_version?: number | 'latest';
     /**
      * Version of the emergency_contact_details form schema
      */
-    emergency_contact_details_json_schema_version?: number;
+    emergency_contact_details_json_schema_version?: number | 'latest';
     /**
      * Version of the personal_details form schema
      */
-    personal_details_json_schema_version?: number;
+    personal_details_json_schema_version?: number | 'latest';
     /**
      * Version of the pricing_plan_details form schema
      */
-    pricing_plan_details_json_schema_version?: number;
+    pricing_plan_details_json_schema_version?: number | 'latest';
     /**
      * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
      */
@@ -14100,6 +14335,54 @@ export type PostConvertWithSpreadCurrencyConverterResponses = {
 export type PostConvertWithSpreadCurrencyConverterResponse =
   PostConvertWithSpreadCurrencyConverterResponses[keyof PostConvertWithSpreadCurrencyConverterResponses];
 
+export type GetListUsersScimData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 1-based index of the first result
+     */
+    startIndex?: number;
+    /**
+     * Maximum number of results per page
+     */
+    count?: number;
+    /**
+     * Filter expression for user attributes
+     */
+    filter?: string;
+  };
+  url: '/scim/v2/Users';
+};
+
+export type GetListUsersScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetListUsersScimError =
+  GetListUsersScimErrors[keyof GetListUsersScimErrors];
+
+export type GetListUsersScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimUserListResponse;
+};
+
+export type GetListUsersScimResponse =
+  GetListUsersScimResponses[keyof GetListUsersScimResponses];
+
 export type GetShowTimeoffData = {
   body?: never;
   headers: {
@@ -14347,7 +14630,7 @@ export type PostAutomatableContractAmendmentData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/contract-amendments/automatable';
 };
@@ -15165,7 +15448,7 @@ export type PostUpdateBenefitRenewalRequestData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
@@ -15907,7 +16190,7 @@ export type GetShowEligibilityQuestionnaireData = {
     /**
      * Version of the form schema
      */
-    json_schema_version?: number;
+    json_schema_version?: number | 'latest';
   };
   url: '/v1/contractors/schemas/eligibility-questionnaire';
 };
@@ -16175,6 +16458,54 @@ export type PostCreateEmployeeTimeoffResponses = {
 
 export type PostCreateEmployeeTimeoffResponse =
   PostCreateEmployeeTimeoffResponses[keyof PostCreateEmployeeTimeoffResponses];
+
+export type GetListGroupsScimData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 1-based index of the first result
+     */
+    startIndex?: number;
+    /**
+     * Maximum number of results per page
+     */
+    count?: number;
+    /**
+     * Filter expression for user attributes
+     */
+    filter?: string;
+  };
+  url: '/scim/v2/Groups';
+};
+
+export type GetListGroupsScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetListGroupsScimError =
+  GetListGroupsScimErrors[keyof GetListGroupsScimErrors];
+
+export type GetListGroupsScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimGroupListResponse;
+};
+
+export type GetListGroupsScimResponse =
+  GetListGroupsScimResponses[keyof GetListGroupsScimResponses];
 
 export type GetShowProbationExtensionData = {
   body?: never;
@@ -16776,11 +17107,11 @@ export type PostCreateCompanyData = {
     /**
      * Version of the address_details form schema
      */
-    address_details_json_schema_version?: number;
+    address_details_json_schema_version?: number | 'latest';
     /**
      * Version of the bank_account_details form schema
      */
-    bank_account_details_json_schema_version?: number;
+    bank_account_details_json_schema_version?: number | 'latest';
     /**
      * Complementary action(s) to perform when creating a company:
      *
@@ -17387,6 +17718,46 @@ export type PostApproveCancellationRequestResponses = {
 
 export type PostApproveCancellationRequestResponse =
   PostApproveCancellationRequestResponses[keyof PostApproveCancellationRequestResponses];
+
+export type GetGetUserScimData = {
+  body?: never;
+  path: {
+    /**
+     * User ID (slug)
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/scim/v2/Users/{id}';
+};
+
+export type GetGetUserScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetGetUserScimError =
+  GetGetUserScimErrors[keyof GetGetUserScimErrors];
+
+export type GetGetUserScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimUser;
+};
+
+export type GetGetUserScimResponse =
+  GetGetUserScimResponses[keyof GetGetUserScimResponses];
 
 export type PostVerifyIdentityVerificationData = {
   body?: never;

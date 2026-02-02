@@ -99,7 +99,7 @@ export type OnboardingFlowProps = {
     jsonSchemaVersionByCountry?: {
       [countryCode: string]: {
         employment_basic_information?: number;
-        contract_details?: number;
+        contract_details?: number | 'latest';
       };
     };
   };

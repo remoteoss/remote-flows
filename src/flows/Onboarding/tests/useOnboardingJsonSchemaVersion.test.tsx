@@ -156,7 +156,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
     });
 
-    it('should pass jsonSchemaVersionByCountry only allow `DEU` to pass contract details form', async () => {
+    it('should pass jsonSchemaVersionByCountry to contract details form', async () => {
       const options = {
         jsonSchemaVersionByCountry: {
           DEU: {
@@ -200,55 +200,6 @@ describe('useOnboarding jsonSchemaVersion', () => {
             skip_benefits: true,
             employment_id: 'test-employment-id',
             json_schema_version: 2,
-          },
-        });
-      });
-    });
-
-    it('should pass jsonSchemaVersionByCountry but set default version for other countries', async () => {
-      const options = {
-        jsonSchemaVersionByCountry: {
-          PRT: {
-            contract_details: 2,
-          },
-        },
-      };
-
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-            options,
-          }),
-        { wrapper: TestProviders },
-      );
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Navigate to contract details step
-      result.current.goTo('contract_details');
-
-      const contractDetailsCall = mockGetShowFormCountry.mock.calls[1][0];
-
-      await waitFor(() => {
-        expect(contractDetailsCall).toEqual({
-          client: expect.any(Object),
-          headers: {
-            Authorization: ``,
-          },
-          path: {
-            country_code: 'PRT',
-            form: 'contract_details',
-          },
-          query: {
-            skip_benefits: true,
-            employment_id: 'test-employment-id',
-            json_schema_version: 1,
           },
         });
       });
@@ -346,56 +297,6 @@ describe('useOnboarding jsonSchemaVersion', () => {
         skip_benefits: true,
         employment_basic_information_json_schema_version: 1,
         contract_details_json_schema_version: 2,
-      });
-    });
-
-    it('should call patchUpdateEmployment2 with default contract_details_json_schema_version when submitting contract_details when jsonSchemaVersionByCountry is bigger than the allowed versions', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            employmentId: 'existing-employment-id',
-            companyId: 'test-company-id',
-            countryCode: 'DEU',
-            skipSteps: ['select_country'],
-            options: {
-              jsonSchemaVersionByCountry: {
-                DEU: {
-                  contract_details: 3,
-                },
-              },
-            },
-          }),
-        { wrapper: TestProviders },
-      );
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Navigate to contract_details step
-      act(() => {
-        result.current.goTo('contract_details');
-      });
-
-      // Submit contract_details form
-      await act(async () => {
-        await result.current.onSubmit({
-          // minimal contract details data
-          job_title: 'Engineer',
-          start_date: '2024-01-01',
-        });
-      });
-
-      await waitFor(() => {
-        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
-      });
-
-      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
-
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        employment_basic_information_json_schema_version: 1,
-        contract_details_json_schema_version: 1,
       });
     });
   });
