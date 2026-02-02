@@ -14,7 +14,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(
   amount: number | undefined | null,
-  symbol = '€',
+  currencyCode = 'EUR',
 ): string {
   if (amount == null) {
     return '-';
@@ -22,10 +22,11 @@ export function formatCurrency(
 
   const value = amount / 100;
 
-  return `${symbol}${value.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return new Intl.NumberFormat('en', {
+    style: 'currency',
+    currency: currencyCode,
+    currencyDisplay: 'symbol',
+  }).format(value);
 }
 
 type YupError = Pick<ValidationError, 'type' | 'errors'> & {

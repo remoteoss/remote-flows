@@ -287,7 +287,7 @@ export const useContractorSubscriptionSchemaField = (
           if (opts.price.amount) {
             formattedPrice = formatCurrency(
               opts.price.amount,
-              opts.currency.symbol,
+              opts.currency.code,
             );
           }
           const product = opts.product;

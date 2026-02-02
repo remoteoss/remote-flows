@@ -137,9 +137,9 @@ function FormDescription<T extends React.ElementType = 'p'>({
   as,
   ...props
 }: React.ComponentProps<'p'> & {
+  helpCenter?: React.ReactNode;
   children?: React.ReactNode | (() => React.ReactNode);
   as?: T;
-  helpCenter?: React.ReactNode;
 } & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className'>) {
   const { formDescriptionId } = useFormField();
   const Component = as || 'p';

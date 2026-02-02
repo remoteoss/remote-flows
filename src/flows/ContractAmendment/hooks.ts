@@ -11,7 +11,7 @@ import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { useEmploymentQuery } from '@/src/common/api';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useClient } from '@/src/context';
 import { ContractAmendmentParams } from './types';
 import { useStepState } from '../useStepState';
@@ -130,6 +130,9 @@ export const useContractAmendment = ({
     error: errorEmployment,
   } = useEmploymentQuery({
     employmentId,
+    queryParams: {
+      exclude_files: true,
+    },
   });
 
   const {

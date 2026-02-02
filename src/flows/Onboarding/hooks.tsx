@@ -30,7 +30,6 @@ import {
   useCompany,
   useCountriesSchemaField,
   useCreateEmployment,
-  useEmployment,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -41,6 +40,7 @@ import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGross
 import { $TSFixMe, JSFField, JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
@@ -192,7 +192,10 @@ export const useOnboarding = ({
     data: employment,
     isLoading: isLoadingEmployment,
     refetch: refetchEmployment,
-  } = useEmployment(internalEmploymentId);
+  } = useEmploymentQuery({
+    employmentId: internalEmploymentId as string,
+    queryParams: { exclude_files: true },
+  });
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
