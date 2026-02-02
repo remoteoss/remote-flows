@@ -151,13 +151,12 @@ function FormDescription<T extends React.ElementType = 'p'>({
           data-slot='form-description'
           id={formDescriptionId}
           className={cn('text-base-color text-xs', className)}
-          dangerouslySetInnerHTML={{
-            __html: sanitizeHtml(children),
-          }}
           data-sanitized='true'
           {...props}
-        />
-        {helpCenter && helpCenter}
+        >
+          <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(children) }} />{' '}
+          {helpCenter && helpCenter}
+        </Component>
       </>
     );
   }

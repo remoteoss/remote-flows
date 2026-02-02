@@ -285,7 +285,9 @@ describe('CurrencyFieldWithConversion', () => {
     const descriptionElement = screen.getByText(
       /Enter your test salary/i,
     ).parentElement;
-    expect(descriptionElement).toHaveClass('CustomPrefix-description');
+    expect(descriptionElement?.parentElement).toHaveClass(
+      'CustomPrefix-description',
+    );
   });
 
   it('resets conversion field when source currency changes', async () => {
