@@ -25,8 +25,10 @@ export const RadioGroupFieldDefault = ({
       <FormItem>
         <legend>{label}</legend>
         {description && (
-          <FormDescription>
-            {description} <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+          <FormDescription
+            helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+          >
+            {description}
           </FormDescription>
         )}
         <FormControl>
