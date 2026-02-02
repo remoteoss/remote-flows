@@ -1,0 +1,205 @@
+---
+alwaysApply: true
+description: A brief explanation of what the project does for cursor
+---
+
+# @remoteoss/remote-flows - Cursor AI Assistant Rules
+
+## Project Overview
+
+This is a React library that provides embedded HR workflow components for Remote's platform. It includes flows for cost calculation, employee onboarding, termination, and contract amendments.
+
+## Core Architecture
+
+### Main Entry Points
+
+- `src/index.tsx` - Main exports and public API
+- `src/RemoteFlowsProvider.tsx` - Main provider component that wraps all flows
+- `src/internals.tsx` - Internal utilities and components (not guaranteed semver compatibility)
+
+### Key Flows
+
+1. **Cost Calculator** (`src/flows/CostCalculator/`) - Calculate employment costs across countries
+2. **Onboarding** (`src/flows/Onboarding/`) - Multi-step employee onboarding process
+3. **Termination** (`src/flows/Termination/`) - Employee termination workflow
+4. **Contract Amendment** (`src/flows/ContractAmendment/`) - Contract modification process
+
+## Component Patterns
+
+### Flow Components
+
+Each flow follows this pattern:
+
+- `{FlowName}Flow` - Main container component with render props
+- `{FlowName}Form` - Form component for data input
+- `{FlowName}SubmitButton` - Submit button (must be used within flow context)
+- `{FlowName}ResetButton` - Reset button (must be used within flow context)
+- Individual step components (e.g., `BasicInformationStep`, `ContractDetailsStep`)
+
+### Usage Pattern
+
+```tsx
+<RemoteFlows
+  auth={fetchToken}
+  theme={customTheme}
+  components={customComponents}
+>
+  <FlowNameFlow
+    // flow-specific props
+    render={({ flowBag, components }) => (
+      <div>
+        <FlowNameForm onSubmit={handleSubmit} />
+        <FlowNameSubmitButton>Submit</FlowNameSubmitButton>
+      </div>
+    )}
+  />
+</RemoteFlows>
+```
+
+## Authentication
+
+- All flows require authentication via `auth` prop
+- `auth` function must return `Promise<{ accessToken: string, expiresIn: number }>`
+- Server-side implementation required to avoid exposing credentials
+
+## Theming System
+
+- CSS custom properties based theming
+- Theme tokens: `colors`, `spacing`, `borderRadius`, `font`
+- CSS classes prefixed with `RemoteFlows__` for custom styling
+- Default styles imported via `@import '@remoteoss/remote-flows/index.css'`
+
+### Theme Structure
+
+```tsx
+theme={{
+  colors: {
+    primaryBackground: '#ffffff',
+    primaryForeground: '#364452',
+    accentBackground: '#e3e9ef',
+    accentForeground: '#0f1419',
+    danger: '#d92020',
+    borderInput: '#cccccc',
+  },
+  spacing: '0.25rem',
+  borderRadius: '0px',
+  font: { fontSizeBase: '1rem' }
+}}
+```
+
+## Custom Components
+
+- Override default field components via `components` prop
+- All custom components receive `FieldComponentProps`: `{ field, fieldState, fieldData }`
+- Must bind `field` props to HTML elements for proper form state management
+- Supported field types: `text`, `number`, `select`, `radio`, `checkbox`, `date`, etc.
+
+### Custom Component Example
+
+```tsx
+const CustomInput = ({ field, fieldState, fieldData }: FieldComponentProps) => (
+  <div>
+    <label htmlFor={field.name}>{fieldData.label}</label>
+    <input {...field} />
+    {fieldState.error && <p>{fieldState.error.message}</p>}
+  </div>
+);
+
+<RemoteFlows components={{ text: CustomInput }}>{/* flows */}</RemoteFlows>;
+```
+
+## Form Handling
+
+- Uses React Hook Form with Yup validation
+- JSON Schema Form for dynamic form generation
+- Form state managed through `useStepState` hook
+- Multi-step forms with navigation between steps
+
+## API Integration
+
+- Generated TypeScript client from OpenAPI specs
+- TanStack Query for data fetching and caching
+- Error handling with custom error types
+- Support for different environments (production, sandbox, staging)
+
+## File Structure Conventions
+
+- `src/flows/{FlowName}/` - Each flow in its own directory
+- `src/components/` - Shared UI components
+- `src/lib/` - Utility functions
+- `src/types/` - TypeScript type definitions
+- `src/client/` - Generated API client
+- `example/` - Demo application
+
+## Testing Patterns
+
+- Vitest for unit tests
+- Testing Library for component tests
+- Playwright for E2E tests
+- MSW for API mocking
+- Strict equality in mock assertions (no `expect.objectContaining()`)
+
+## Development Workflow
+
+- `npm run dev` - Start development server
+- `npm run build` - Build library
+- `npm run test` - Run tests
+- `npm run changeset:add` - Add changeset for release
+- Example app at `http://localhost:3001`
+
+## Common Patterns
+
+### Error Handling
+
+```tsx
+<FlowNameForm
+  onError={(error) => {
+    console.error('Form error:', error);
+    setApiError(error.message);
+  }}
+  onSuccess={(response) => {
+    console.log('Success:', response);
+  }}
+/>
+```
+
+### Loading States
+
+```tsx
+{
+  flowBag.isLoading && <div>Loading...</div>;
+}
+{
+  flowBag.isSubmitting && <button disabled>Submitting...</button>;
+}
+```
+
+### Step Navigation
+
+```tsx
+switch (flowBag.stepState.currentStep.name) {
+  case 'step_name':
+    return <StepComponent />;
+  default:
+    return null;
+}
+```
+
+## Key Dependencies
+
+- React 18/19
+- React Hook Form
+- TanStack Query
+- Radix UI components
+- Tailwind CSS
+- Yup validation
+- JSON Schema Form
+
+## Important Notes
+
+- Always wrap flows with `RemoteFlows` provider
+- Submit/Reset buttons must be used within flow render prop context
+- Custom components must properly bind React Hook Form field props
+- Use strict equality in test assertions
+- Theme customization via CSS custom properties
+- Server-side authentication implementation required
