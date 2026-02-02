@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.10.0
+
+### Minor Changes
+
+- fix currency (#718) [#718](https://github.com/remoteoss/remote-flows/pull/718)
+- exclude files (#719) [#719](https://github.com/remoteoss/remote-flows/pull/719)
+- fix bug related to the radio card input (#722) [#722](https://github.com/remoteoss/remote-flows/pull/722)
+- help center links render anchor correctly (#720) [#720](https://github.com/remoteoss/remote-flows/pull/720)
+- add bugbot instructions (#723) [#723](https://github.com/remoteoss/remote-flows/pull/723)
+- remove versioning (#721) [#721](https://github.com/remoteoss/remote-flows/pull/721)
+
 ## 1.9.0
 
 ### Minor Changes
