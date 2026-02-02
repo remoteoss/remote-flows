@@ -43,8 +43,10 @@ const PricingPlanCards = ({
           title={option.label}
           description={option.description}
           features={option.meta?.features as string[]}
-          value={field.value}
-          onSelect={() => field.onChange(option.value)}
+          value={option.value}
+          onSelect={(value: string) => {
+            field.onChange(value);
+          }}
           selected={field.value === option.value}
         />
       ))}

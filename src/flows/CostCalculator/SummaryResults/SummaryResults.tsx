@@ -49,8 +49,8 @@ const useSummaryResults = (estimations: CostCalculatorEstimation[]) => {
   const groupedCostsPerCountry = Object.values(costsPerCountry).map(
     ({ country, monthlyTotal, annualTotal }) => ({
       country,
-      monthlyCost: formatCurrency(monthlyTotal, currency.symbol),
-      annualCost: formatCurrency(annualTotal, currency.symbol),
+      monthlyCost: formatCurrency(monthlyTotal, currency.code),
+      annualCost: formatCurrency(annualTotal, currency.code),
     }),
   );
 
@@ -59,13 +59,13 @@ const useSummaryResults = (estimations: CostCalculatorEstimation[]) => {
       estimations.reduce((acc, estimation) => {
         return acc + estimation.employer_currency_costs.monthly_total;
       }, 0),
-      currency.symbol,
+      currency.code,
     ),
     annualTotal: formatCurrency(
       estimations.reduce((acc, estimation) => {
         return acc + estimation.employer_currency_costs.annual_total;
       }, 0),
-      currency.symbol,
+      currency.code,
     ),
   };
   return { currency, costsPerCountry: groupedCostsPerCountry, employeesCost };

@@ -131,11 +131,13 @@ const FormControl = React.forwardRef<
 FormControl.displayName = 'FormControl';
 
 function FormDescription<T extends React.ElementType = 'p'>({
+  helpCenter,
   className,
   children,
   as,
   ...props
 }: React.ComponentProps<'p'> & {
+  helpCenter?: React.ReactNode;
   children?: React.ReactNode | (() => React.ReactNode);
   as?: T;
 } & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className'>) {
@@ -144,16 +146,19 @@ function FormDescription<T extends React.ElementType = 'p'>({
 
   if (typeof children === 'string') {
     return (
-      <Component
-        data-slot='form-description'
-        id={formDescriptionId}
-        className={cn('text-base-color text-xs', className)}
-        dangerouslySetInnerHTML={{
-          __html: sanitizeHtml(children),
-        }}
-        data-sanitized='true'
-        {...props}
-      />
+      <>
+        <Component
+          data-slot='form-description'
+          id={formDescriptionId}
+          className={cn('text-base-color text-xs', className)}
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(children),
+          }}
+          data-sanitized='true'
+          {...props}
+        />
+        {helpCenter && helpCenter}
+      </>
     );
   }
 
@@ -166,6 +171,7 @@ function FormDescription<T extends React.ElementType = 'p'>({
       {...props}
     >
       {typeof children === 'function' ? children() : children}
+      {helpCenter && helpCenter}
     </Component>
   );
 }
