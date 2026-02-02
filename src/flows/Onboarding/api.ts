@@ -34,7 +34,6 @@ import {
 } from '@/src/flows/types';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -184,13 +183,13 @@ export const useJSONSchemaForm = ({
   fieldValues: FieldValues;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
-  jsonSchemaVersion?: number | string;
+  jsonSchemaVersion?: number | 'latest';
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
   const jsonSchemaQueryParam = jsonSchemaVersion
-    ? ({
+    ? {
         json_schema_version: jsonSchemaVersion,
-      } as $TSFixMe) // TODO: fix the types for the query params
+      }
     : {};
   return useQuery({
     queryKey: ['onboarding-json-schema-form', countryCode, form],
@@ -306,7 +305,7 @@ export const useUpdateEmployment = (
     employment_basic_information_json_schema_version: 1,
     contract_details_json_schema_version:
       getContractDetailsSchemaVersion(options, countryCode) || 1,
-  } as $TSFixMe; // TODO: fix the types for the query params
+  };
 
   return useMutation({
     mutationFn: ({
