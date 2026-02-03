@@ -34,7 +34,9 @@ export function PricingPlanCard({
         selected && 'border-solid border-[#9AA6B2] ring-2 ring-[#9AA6B2]',
       )}
       onClick={() => {
-        onSelect?.(value);
+        if (!selected) {
+          onSelect?.(value);
+        }
       }}
     >
       <CardHeader className='pb-4'>
