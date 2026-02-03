@@ -23,6 +23,7 @@ import {
   TabsTrigger,
   TabsList,
 } from '@remoteoss/remote-flows/internals';
+import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -311,29 +312,46 @@ const OnBoardingRender = ({
 
   return (
     <>
-      <div className='steps-contractor-onboarding-navigation'>
-        <ul>
-          {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-contractor-onboarding-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {index + 1}. {step}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {contractorOnboardingBag.isLoading ? (
-        <div className='contractor-onboarding-form-layout'>
-          <p>Loading...</p>
+      {contractorOnboardingBag.defaultLegalEntity && (
+        <div className='contractor-onboarding-default-legal-entity'>
+          <div className='text-sm text-[#27272A] flex items-center justify-center gap-2 uppercase mb-2 font-medium'>
+            <Flag
+              size='s'
+              code={
+                contractorOnboardingBag.defaultLegalEntity
+                  .country_code as string
+              }
+            />
+            {contractorOnboardingBag.defaultLegalEntity.name}
+          </div>
         </div>
-      ) : (
-        <MultiStepForm
-          contractorOnboardingBag={contractorOnboardingBag}
-          components={components}
-        />
       )}
+      <Header />
+      <Card className='px-0 py-0'>
+        <div className='steps-contractor-onboarding-navigation'>
+          <ul>
+            {STEPS.map((step, index) => (
+              <li
+                key={index}
+                className={`step-contractor-onboarding-item ${index === currentStepIndex ? 'active' : ''}`}
+              >
+                {index + 1}. {step}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {contractorOnboardingBag.isLoading ? (
+          <div className='contractor-onboarding-form-layout'>
+            <p>Loading...</p>
+          </div>
+        ) : (
+          <MultiStepForm
+            contractorOnboardingBag={contractorOnboardingBag}
+            components={components}
+          />
+        )}
+      </Card>
     </>
   );
 };
@@ -364,29 +382,26 @@ export const ContractorOnboardingWithProps = ({
         proxy={{ url: window.location.origin }}
       >
         <div className='contractor-onboarding-content'>
-          <Header />
-          <Card className='px-0 py-0'>
-            <ContractorOnboardingFlow
-              render={OnBoardingRender}
-              employmentId={employmentId}
-              externalId={externalId}
-              options={{
-                jsfModify: {
-                  contract_details: {
-                    fields: {
-                      'payment_terms.payment_terms_type': {
-                        'x-jsf-presentation': {
-                          Component: (props: JSFCustomComponentProps) => (
-                            <Switcher {...props} />
-                          ),
-                        },
+          <ContractorOnboardingFlow
+            render={OnBoardingRender}
+            employmentId={employmentId}
+            externalId={externalId}
+            options={{
+              jsfModify: {
+                contract_details: {
+                  fields: {
+                    'payment_terms.payment_terms_type': {
+                      'x-jsf-presentation': {
+                        Component: (props: JSFCustomComponentProps) => (
+                          <Switcher {...props} />
+                        ),
                       },
                     },
                   },
                 },
-              }}
-            />
-          </Card>
+              },
+            }}
+          />
         </div>
       </RemoteFlows>
     </div>
