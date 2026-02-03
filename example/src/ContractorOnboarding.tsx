@@ -23,6 +23,7 @@ import {
   TabsTrigger,
   TabsList,
 } from '@remoteoss/remote-flows/internals';
+import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -30,7 +31,6 @@ import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep
 import { PricingPlanCard } from './components/PricingPlanCard';
 import './css/main.css';
 import './css/contractor-onboarding.css';
-import Flag from 'react-flagpack';
 
 const PricingPlanCards = ({
   field,
