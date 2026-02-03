@@ -50,6 +50,7 @@ export function createClient(
 
   return createHeyApiClient({
     ...clientConfig,
+    credentials: "include", // for fetch
     headers: {
       ...clientConfig.headers,
       ...(isValidProxy ? options?.proxy?.headers : {}),
