@@ -61,7 +61,13 @@ export type {
   OnboardingRenderProps,
 } from '@/src/flows/Onboarding';
 
-export { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding';
+export {
+  ContractorOnboardingFlow,
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+  corProductIdentifier,
+  onboardingWorkflows,
+} from '@/src/flows/ContractorOnboarding';
 
 export type {
   ContractorOnboardingFlowProps,
