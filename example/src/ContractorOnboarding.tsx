@@ -14,6 +14,8 @@ import {
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
   FieldComponentProps,
+  ZendeskTriggerButton,
+  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -241,6 +243,11 @@ const MultiStepForm = ({
             <p className='text-sm text-[#71717A]'>
               Choose the plan that best fits your needs.
             </p>
+            <ZendeskTriggerButton
+              zendeskId={zendeskArticles.engagingContractors}
+            >
+              Explore our guide to engaging contractors ↗
+            </ZendeskTriggerButton>
           </div>
           <PricingPlanStep
             components={{
