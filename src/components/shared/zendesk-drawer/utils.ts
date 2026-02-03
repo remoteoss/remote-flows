@@ -6,6 +6,12 @@ export const zendeskArticles = {
    */
   disclaimerCostCalculator: 4668194326797,
   /**
+   * Guide for engaging contractors
+   * Access: private (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/43161434169613
+   */
+  engagingContractors: 43161434169613,
+  /**
    * Employee Onboarding Timeline
    * Access: Private (Need Remote account to access)
    * https://support.remote.com/hc/en-us/articles/4411262104589
@@ -23,6 +29,12 @@ export const zendeskArticles = {
    * https://support.remote.com/hc/en-us/articles/4410698586893
    */
   internationalPricing: 4410698586893,
+  /**
+   * Pricing Plan Options
+   * Access: Private (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/43161720465421
+   */
+  pricingPlanOptions: 43161720465421,
   /**
    * IR35 Status
    * Access: Private (Need Remote account to access)

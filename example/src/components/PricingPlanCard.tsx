@@ -5,8 +5,9 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
+  cn,
 } from '@remoteoss/remote-flows/internals';
-import { cn } from '@remoteoss/remote-flows/internals';
+import { ZendeskTriggerButton, zendeskArticles } from '@remoteoss/remote-flows';
 import { Check } from 'lucide-react';
 
 interface PricingPlanCardProps {
@@ -33,12 +34,19 @@ export function PricingPlanCard({
         selected && 'border-solid border-[#9AA6B2] ring-2 ring-[#9AA6B2]',
       )}
       onClick={() => {
-        onSelect?.(value);
+        if (!selected) {
+          onSelect?.(value);
+        }
       }}
     >
       <CardHeader className='pb-4'>
         <CardTitle className='text-xl font-bold'>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
+        <div>
+          <ZendeskTriggerButton zendeskId={zendeskArticles.pricingPlanOptions}>
+            Read more ↗
+          </ZendeskTriggerButton>
+        </div>
         <div className='border-t mt-4 pt-4'></div>
       </CardHeader>
 
