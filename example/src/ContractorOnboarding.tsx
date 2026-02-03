@@ -121,10 +121,6 @@ const MultiStepForm = ({
     fieldErrors: [],
   });
 
-  console.log('contractorOnboardingBag', contractorOnboardingBag);
-  console.log('onboardingWorkflows', onboardingWorkflows);
-  console.log('corProductIdentifier', corProductIdentifier);
-
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'select_country':
       return (
@@ -260,6 +256,11 @@ const MultiStepForm = ({
               zendeskId={zendeskArticles.engagingContractors}
             >
               Explore our guide to engaging contractors ↗
+            </ZendeskTriggerButton>
+            <ZendeskTriggerButton
+              zendeskId={zendeskArticles.pricingPlanOptions}
+            >
+              Pricing plan options ↗
             </ZendeskTriggerButton>
           </div>
           <PricingPlanStep
