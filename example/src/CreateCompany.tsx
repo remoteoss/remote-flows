@@ -5,6 +5,8 @@ import {
   CreateCompanyFlow,
   CreateCompanyRenderProps,
   JSFCustomComponentProps,
+  CompanyAddressDetailsFormPayload,
+  CompanyAddressDetailsSuccess,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -39,7 +41,7 @@ const Switcher = (props: JSFCustomComponentProps) => {
 
 const STEPS = [
   'Select Country',
-  'Review',
+  'Address Details',
 ];
 
 type MultiStepFormProps = {
@@ -53,8 +55,8 @@ const MultiStepForm = ({
 }: MultiStepFormProps) => {
   const {
     SubmitButton,
-    BackButton,
     SelectCountryStep,
+    AddressDetailsStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -83,6 +85,7 @@ const MultiStepForm = ({
               fieldErrors: NormalizedFieldError[];
             }) => setErrors({ apiError: error.message, fieldErrors })}
           />
+          <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
             <SubmitButton className='submit-button' variant='outline'>
               Continue
@@ -90,12 +93,44 @@ const MultiStepForm = ({
           </div>
         </div>
       );
-        case 'review': {
+    case 'address_details':
       return (
         <div className='contractor-onboarding-form-layout'>
+          <AddressDetailsStep
+            onSubmit={(payload: CompanyAddressDetailsFormPayload) =>
+              console.log('address details payload', payload)
+            }
+            onSuccess={(response: CompanyAddressDetailsSuccess) =>
+              console.log('address details response', response)
+            }
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => setErrors({ apiError: error.message, fieldErrors })}
+          />
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <button
+              type='button'
+              className='back-button'
+              onClick={() => {
+                createCompanyBag.back();
+                setErrors({ apiError: '', fieldErrors: [] });
+              }}
+            >
+              Back
+            </button>
+            <SubmitButton className='submit-button' variant='outline'>
+              Complete
+            </SubmitButton>
+          </div>
         </div>
       );
-    }
+    default:
+      return null;
   }
 };
 
@@ -137,8 +172,8 @@ const CreateCompanyRender = ({
 const Header = () => {
   return (
     <div className='contractor-onboarding-header'>
-      <h1>Contractor Onboarding</h1>
-      <p>Adding a new contractor is simple and fast.</p>
+      <h1>Create Company</h1>
+      <p>Create a new company and complete the address details.</p>
     </div>
   );
 };
