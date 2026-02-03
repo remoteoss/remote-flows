@@ -89,7 +89,7 @@ export const corOnboardingWorkflow = [
  */
 export const onboardingWorkflows: Record<
   string,
-  { title: string; id: string }[]
+  { title: string; id: string; description?: string }[]
 > = {
   [contractorStandardProductIdentifier]: standardOnboardingWorkflow,
   // we assign the same workflow as its the same for standard and plus
