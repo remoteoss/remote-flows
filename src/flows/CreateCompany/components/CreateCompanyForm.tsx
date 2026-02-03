@@ -3,16 +3,12 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
-import { BasicInformationFormPayload } from '@/src/flows/CreateCompany/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
 import { useEffect } from 'react';
 
 type CreateCompanyFormProps = {
-  onSubmit: (
-    payload:
-      | BasicInformationFormPayload
-  ) => Promise<void>;
+  onSubmit: (payload: Record<string, unknown>) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
   defaultValues: Record<string, unknown>;
@@ -44,20 +40,8 @@ export function CreateCompanyForm({
     }
   }, [form.setValue, formRef]);
 
-  const handleSubmit = async (values: Record<string, string>) => {
-    console.log("SUBMITTING", values)
-    await onSubmit(
-      {
-	company_owner_email: values.company_owner_email,
-	company_owner_name: values.company_owner_name,
-	country_code: values.country_code,
-	desired_currency: values.desired_currency,
-	name: values.name,
-	phone_number: values.phone_number,
-	tax_number: values.tax_number,
-	tax_job_category: values.tax_job_category,
-	tax_servicing_countries: [],
-      });
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    await onSubmit(values);
   };
 
   return (

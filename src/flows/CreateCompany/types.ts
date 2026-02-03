@@ -1,5 +1,6 @@
 import { useCreateCompany } from '@/src/flows/CreateCompany/hooks';
-import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
+import { SelectCountryStep } from '@/src/flows/CreateCompany/components/SelectCountryStep';
+import { AddressDetailsStep } from '@/src/flows/CreateCompany/components/AddressDetailsStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { CreateCompanySubmit } from '@/src/flows/CreateCompany/components/CreateCompanySubmit';
 
@@ -17,6 +18,10 @@ export type CompanyBasicInfoFormPayload = countryFormFields;
 
 export type CompanyBasicInfoSuccess = countryFormFields;
 
+export type CompanyAddressDetailsFormPayload = Record<string, unknown>;
+
+export type CompanyAddressDetailsSuccess = Record<string, unknown>;
+
 export type CreateCompanyRenderProps = {
   /**
    * The create company bag returned by the useCreateCompany hook.
@@ -27,9 +32,11 @@ export type CreateCompanyRenderProps = {
   /**
    * The components used in the create company flow.
    * @see {@link SelectCountryStep}
+   * @see {@link AddressDetailsStep}
    */
   components: {
     SelectCountryStep: typeof SelectCountryStep;
+    AddressDetailsStep: typeof AddressDetailsStep;
     SubmitButton: typeof CreateCompanySubmit;
 
   };
@@ -55,6 +62,7 @@ export type CreateCompanyFlowProps = {
   options?: Omit<FlowOptions, 'jsfModify'> & {
     jsfModify?: {
       select_country?: JSFModify;
+      address_details?: JSFModify;
     };
   };
 

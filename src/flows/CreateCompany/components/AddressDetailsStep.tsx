@@ -1,7 +1,6 @@
-// TODO: Correct types later
 import {
-  CompanyBasicInfoFormPayload,
-  CompanyBasicInfoSuccess,
+  CompanyAddressDetailsFormPayload,
+  CompanyAddressDetailsSuccess,
 } from '@/src/flows/CreateCompany/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -9,15 +8,15 @@ import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
 import { CreateCompanyForm } from '@/src/flows/CreateCompany/components/CreateCompanyForm';
 import { handleStepError } from '@/src/lib/utils';
 
-type SelectCountryStepProps = {
+type AddressDetailsStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: CompanyBasicInfoFormPayload) => void | Promise<void>;
+  onSubmit?: (payload: CompanyAddressDetailsFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: CompanyBasicInfoSuccess) => void | Promise<void>;
+  onSuccess?: (data: CompanyAddressDetailsSuccess) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -32,32 +31,24 @@ type SelectCountryStepProps = {
   }) => void;
 };
 
-export function SelectCountryStep({
+export function AddressDetailsStep({
   onSubmit,
   onSuccess,
   onError,
-}: SelectCountryStepProps) {
+}: AddressDetailsStepProps) {
   const { createCompanyBag } = useCreateCompanyContext();
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
-      await onSubmit?.({ countryCode: payload.country_code,
-		         companyOwnerEmail: payload.company_owner_email,
-			 companyOwnerName: payload.company_owner_name,
-			 desiredCurrency: payload.desired_currency,
-			 phoneNumber: payload.phone_number,
-			 taxNumber: payload.tax_number,
-			 taxJobCategory: payload.tax_job_category
-      });
+      await onSubmit?.(payload);
       const response = await createCompanyBag.onSubmit(payload);
       if (response?.data) {
-        await onSuccess?.(response?.data as CompanyBasicInfoSuccess);
-        createCompanyBag?.next();
+        await onSuccess?.(response?.data as CompanyAddressDetailsSuccess);
         return;
       }
     } catch (error: unknown) {
       const structuredError = handleStepError(
         error,
-        createCompanyBag.meta?.fields?.select_country,
+        createCompanyBag.meta?.fields?.address_details,
       );
 
       onError?.(structuredError);
@@ -65,8 +56,8 @@ export function SelectCountryStep({
   };
 
   const initialValues =
-    createCompanyBag.stepState.values?.select_country ||
-    createCompanyBag.initialValues.select_country;
+    createCompanyBag.stepState.values?.address_details ||
+    createCompanyBag.initialValues.address_details;
 
   return (
     <CreateCompanyForm
@@ -75,3 +66,4 @@ export function SelectCountryStep({
     />
   );
 }
+

@@ -3,6 +3,7 @@ import { CreateCompanyFlowProps} from '@/src/flows/CreateCompany/types'
 import { useCreateCompany} from '@/src/flows/CreateCompany/hooks'
 import { CreateCompanyContext} from '@/src/flows/CreateCompany/context'
 import { SelectCountryStep } from '@/src/flows/CreateCompany/components/SelectCountryStep';
+import { AddressDetailsStep } from '@/src/flows/CreateCompany/components/AddressDetailsStep';
 import { CreateCompanySubmit } from '@/src/flows/CreateCompany/components/CreateCompanySubmit';
 import { useId } from 'react';
 export const CreateCompanyFlow = ({
@@ -23,6 +24,7 @@ export const CreateCompanyFlow = ({
         createCompanyBag,
         components: {
           SelectCountryStep: SelectCountryStep,
+          AddressDetailsStep: AddressDetailsStep,
 	  SubmitButton: CreateCompanySubmit
         },
       })}

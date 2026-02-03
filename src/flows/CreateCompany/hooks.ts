@@ -13,6 +13,8 @@ import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { CreateCompanyFlowProps } from '@/src/flows/CreateCompany/types';
 import {
   CreateCompanyParams,
+  getShowFormCountry,
+  UpdateCompanyParams,
 } from '@/src/client';
 
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -31,6 +33,7 @@ import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
 import {
   useCreateCompanyRequest,
+  useUpdateCompanyRequest,
 } from '@/src/flows/CreateCompany/api';
 
 type useCreateCompanyProps = Omit<
@@ -116,27 +119,76 @@ function nowUtcFormatted() {
     pad(now.getUTCSeconds()) + 'Z'
   );
 }
+const useAddressDetailsSchema = ({
+  countryCode,
+  fieldValues,
+  options,
+}: {
+  countryCode: string | null;
+  fieldValues: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['company-address-details-schema', countryCode],
+    retry: false,
+    queryFn: async () => {
+      if (!countryCode) {
+        throw new Error('Country code is required');
+      }
+      const response = await getShowFormCountry({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'address_details',
+        },
+        query: {
+          json_schema_version: options?.jsonSchemaVersion?.form_schema?.address_details || 'latest',
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch address details schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled && !!countryCode,
+    select: ({ data }) => {
+      const jsfSchema = data?.data || {};
+      return createHeadlessForm(jsfSchema, fieldValues, options);
+    },
+  });
+};
+
 export const useCreateCompany = ({
   countryCode,
   options,
 }: useCreateCompanyProps) => {
 
 const createCompanyMutation = useCreateCompanyRequest();
+const updateCompanyMutation = useUpdateCompanyRequest();
 
 const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
   createCompanyMutation,
 );
-
+const { mutateAsync: updateCompanyMutationAsync } = mutationToPromise(
+  updateCompanyMutation,
+);
 
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
+  const [createdCompanyId, setCreatedCompanyId] = useState<string | null>(null);
   const fieldsMetaRef = useRef<{
     select_country: Meta;
-    basic_information: Meta;
+    address_details: Meta;
   }>({
     select_country: {},
-    basic_information: {},
+    address_details: {},
   });
 
   const {
@@ -159,13 +211,30 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
       },
     });
 
+  const { data: addressDetailsForm, isLoading: isLoadingAddressDetails } =
+    useAddressDetailsSchema({
+      countryCode: internalCountryCode,
+      fieldValues: fieldValues.address_details || {},
+      options: {
+        ...options,
+        jsfModify: options?.jsfModify?.address_details,
+        queryOptions: {
+          enabled:
+            stepState.currentStep.name === 'address_details' &&
+            !!internalCountryCode &&
+            !!createdCompanyId,
+        },
+      },
+    });
+
   const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
-      review: [],
+      address_details: addressDetailsForm?.fields || [],
     }),
     [
       selectCountryForm?.fields,
+      addressDetailsForm?.fields,
     ],
   );
 
@@ -174,7 +243,7 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     JSFFieldset | null | undefined
   > = {
     select_country: null,
-    review: null
+    address_details: addressDetailsForm?.meta?.['x-jsf-fieldsets'] || null,
   };
 
 
@@ -186,13 +255,20 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     [stepFields.select_country, internalCountryCode],
   );
 
+  const addressDetailsInitialValues = useMemo(
+    () =>
+      getInitialValues(stepFields.address_details, {}),
+    [stepFields.address_details],
+  );
 
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
+      address_details: addressDetailsInitialValues,
     };
   }, [
     selectCountryInitialValues,
+    addressDetailsInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
@@ -201,6 +277,9 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
 
   const parseFormValues = async (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
+      return values;
+    }
+    if (addressDetailsForm && stepState.currentStep.name === 'address_details') {
       return values;
     }
     return {};
@@ -216,33 +295,53 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     const parsedValues = await parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'select_country': {
-        setInternalCountryCode(parsedValues.country);
-	console.log("PARSED")
-	console.log(parsedValues)
-          const payload: CreateCompanyParams = {
-	    address_details: {
-      address: "1709 Broderick St",
-      address_line_2: "Flat number 124",
-      city: "San Francisco",
-      postal_code: "94101-3344",
-      state: "CA"
+        setInternalCountryCode(parsedValues.country_code);
+        const payload: CreateCompanyParams = {
+          country_code: parsedValues.country_code,
+          company_owner_email: parsedValues.company_owner_email,
+          company_owner_name: parsedValues.company_owner_name,
+          desired_currency: parsedValues.desired_currency,
+          name: parsedValues.name,
+          phone_number: parsedValues.phone_number,
+          tax_number: parsedValues.tax_number,
+          terms_of_service_accepted_at: nowUtcFormatted(),
+        };
 
-	    },
-            country_code: parsedValues.country_code,
-	    company_owner_email: parsedValues.company_owner_email,
-	    company_owner_name: parsedValues.company_owner_name,
-	    desired_currency: parsedValues.desired_currency,
-	    name: parsedValues.name,
-	    phone_number: parsedValues.phone_number,
-	    tax_number: parsedValues.tax_number,
-	    terms_of_service_accepted_at: nowUtcFormatted()
-          };
-
-
-	console.log("FIRING")
         const response = await createCompanyMutationAsync(payload);
-	console.log("RESPONSE", response)
+        // Handle both CompanyResponse and CompanyWithTokensResponse structures
+        // CompanyResponse: { data: { company?: Company } }
+        // CompanyWithTokensResponse: { company?: Company; tokens?: OAuth2Tokens }
+        const responseData = response.data?.data;
+        let companyId: string | undefined;
+        if (responseData) {
+          if ('data' in responseData && responseData.data) {
+            // CompanyResponse structure: response.data.data.data.company.id
+            companyId = (responseData.data as { company?: { id: string } }).company?.id;
+          } else if ('company' in responseData) {
+            // CompanyWithTokensResponse structure: response.data.data.company.id
+            companyId = (responseData as { company?: { id: string } }).company?.id;
+          }
+        }
+        if (companyId) {
+          setCreatedCompanyId(companyId);
+        }
         return Promise.resolve({ data: { countryCode: parsedValues.country_code } });
+      }
+
+      case 'address_details': {
+        if (!createdCompanyId) {
+          throw createStructuredError('Company ID is required to update address details');
+        }
+        const payload: UpdateCompanyParams = {
+          address_details: parsedValues,
+        };
+
+        const response = await updateCompanyMutationAsync({
+          companyId: createdCompanyId,
+          payload,
+          jsonSchemaVersion: options?.jsonSchemaVersion?.form_schema?.address_details,
+        });
+        return Promise.resolve({ data: response.data });
       }
 
       default: {
@@ -252,7 +351,7 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
   }
 
   const isLoading =
-    isLoadingCountries
+    isLoadingCountries || isLoadingAddressDetails
 
   return {
     /**
@@ -332,6 +431,9 @@ const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     ): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
+      }
+      if (stepState.currentStep.name === 'address_details' && addressDetailsForm) {
+        return addressDetailsForm.handleValidation(values);
       }
 
       return null;

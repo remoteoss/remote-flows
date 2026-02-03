@@ -2,9 +2,9 @@ import { Step } from '@/src/flows/useStepState';
 
 type StepKeys =
   | 'select_country'
-  | 'review';
+  | 'address_details';
 
 export const STEPS: Record<StepKeys, Step<StepKeys>> = {
   select_country: { index: 0, name: 'select_country' },
-  review: { index: 1, name: 'review' },
+  address_details: { index: 1, name: 'address_details' },
 } as const;
