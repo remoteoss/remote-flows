@@ -63,3 +63,12 @@ export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
     subscription === contractorPlusProductIdentifier
   );
 };
+
+const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT'];
+
+/**
+ * Checks if the country code is a country code that requires nationality status field
+ */
+export const isNationalityCountryCode = (countryCode: string) => {
+  return NATIONALITY_COUNTRY_CODES.includes(countryCode);
+};

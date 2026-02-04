@@ -309,6 +309,17 @@ export const useContractorOnboarding = ({
     }
   }, [contractDocuments, internalContractDocumentId]);
 
+  const countryName = useMemo(() => {
+    // TODO: get the country name from the correct countries endpoint for contractors
+    const countryNames = {
+      SAU: 'Saudi Arabia',
+      KWT: 'Kuwait',
+      OMN: 'Oman',
+      QAT: 'Qatar',
+    };
+    return countryNames[internalCountryCode as keyof typeof countryNames];
+  }, [internalCountryCode]);
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -317,6 +328,7 @@ export const useContractorOnboarding = ({
     options: {
       jsfModify: buildBasicInformationJsfModify(
         internalCountryCode as string,
+        countryName,
         options,
       ),
       queryOptions: {
@@ -457,7 +469,7 @@ export const useContractorOnboarding = ({
       ...onboardingInitialValues,
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
-      saudi_nationality_status: employment?.contract_details?.nationality,
+      nationality_status: employment?.contract_details?.nationality,
       ...(convertedIr35File && {
         ir35_sds_file: [convertedIr35File],
       }),
@@ -704,7 +716,7 @@ export const useContractorOnboarding = ({
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const basicInformationParsedValues = omit(
             parsedValues,
-            'saudi_nationality_status',
+            'nationality_status',
             'ir35',
             'ir35_sds_file',
           );
@@ -731,7 +743,7 @@ export const useContractorOnboarding = ({
         } else if (internalEmploymentId) {
           const basicInformationParsedValues = omit(
             parsedValues,
-            'saudi_nationality_status',
+            'nationality_status',
             'ir35',
             'ir35_sds_file',
           );
