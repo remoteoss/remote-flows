@@ -372,6 +372,7 @@ type ContractorOnboardingFormData = {
 };
 
 export const ContractorOnboardingWithProps = ({
+  countryCode,
   employmentId,
   externalId,
 }: ContractorOnboardingFormData) => {
@@ -386,6 +387,8 @@ export const ContractorOnboardingWithProps = ({
             render={OnBoardingRender}
             employmentId={employmentId}
             externalId={externalId}
+            countryCode={countryCode}
+            skipSteps={countryCode ? ['select_country'] : undefined}
             options={{
               jsfModify: {
                 contract_details: {
@@ -413,6 +416,7 @@ export const ContractorOnboardingForm = () => {
     employmentId:
       import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID || '', // use your own employment ID
     externalId: '',
+    countryCode: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -454,6 +458,21 @@ export const ContractorOnboardingForm = () => {
             setFormData((prev) => ({ ...prev, externalId: e.target.value }))
           }
           placeholder='Enter External ID'
+          className='onboarding-form-input'
+        />
+      </div>
+      <div className='onboarding-form-group'>
+        <label htmlFor='countryCode' className='onboarding-form-label'>
+          Country Code:
+        </label>
+        <input
+          id='countryCode'
+          type='text'
+          value={formData.countryCode}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
+          }
+          placeholder='Enter Country Code'
           className='onboarding-form-input'
         />
       </div>
