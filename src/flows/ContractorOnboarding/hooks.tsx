@@ -141,9 +141,7 @@ export const useContractorOnboarding = ({
     queryParams: { exclude_files: true },
   });
 
-  const defaultLegalEntity = useDefaultLegalEntity(
-    employment?.company_id as string,
-  );
+  const defaultLegalEntity = useDefaultLegalEntity();
 
   const { status: employmentStatus } = employment || {};
 
