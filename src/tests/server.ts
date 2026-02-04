@@ -1,8 +1,7 @@
 import { setupServer } from 'msw/node';
+import { defaultHandlers } from '@/src/tests/handlers';
 
-export const restHandlers = [];
-
-export const server = setupServer(...restHandlers);
+export const server = setupServer(...defaultHandlers);
 
 // Start server before all tests
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
