@@ -58,6 +58,7 @@ import {
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
 import { useEmploymentQuery } from '@/src/common/api/employment';
+import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
@@ -139,6 +140,8 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const defaultLegalEntity = useDefaultLegalEntity();
 
   const { status: employmentStatus } = employment || {};
 
@@ -982,5 +985,11 @@ export const useContractorOnboarding = ({
      * @returns {Employment}
      */
     employment,
+
+    /**
+     * Default legal entity
+     * @returns {CompanyLegalEntity}
+     */
+    defaultLegalEntity,
   };
 };
