@@ -96,3 +96,37 @@ export const onboardingWorkflows: Record<
   [contractorPlusProductIdentifier]: standardOnboardingWorkflow,
   [corProductIdentifier]: corOnboardingWorkflow,
 };
+
+export const pricingPlan = {
+  [contractorStandardProductIdentifier]: {
+    title: 'Contractor Management',
+    subtitle: 'Engage and pay contractors compliantly',
+    listItems: [
+      'Ideal for businesses wanting a straightforward solution to manage and pay contractors directly.',
+      'Helps with everything from contractor onboarding, invoicing, payments, and compliance.',
+      'Full control remains with you.',
+    ],
+    contractPillText: 'Contract between you and contractor',
+  },
+  [contractorPlusProductIdentifier]: {
+    title: 'Contractor Management Plus',
+    subtitle: 'Engage and pay contractors with indemnity coverage',
+    listItems: [
+      'Great for businesses concerned about contractor classification risks.',
+      'Helps with everything from contractor onboarding, invoicing, payments, and compliance.',
+      "Offers a warranty on Remote's localized, compliant contracts.",
+      'Control remains with you',
+    ],
+    contractPillText: 'Contract between you and contractor',
+  },
+  [corProductIdentifier]: {
+    title: 'Contractor of Record',
+    subtitle: 'Remote reduces liability by directly engaging the contractor',
+    listItems: [
+      'Ideal for businesses who want admin relief and have low risk tolerance.',
+      'No need to be experts in local labor laws; Remote manages its compliance with contractors.',
+      'Indemnity protection, Remote backs its compliance in administering and paying contractors',
+    ],
+    contractPillText: 'Contract between Remote and contractor',
+  },
+};
