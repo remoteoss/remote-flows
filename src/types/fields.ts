@@ -119,7 +119,11 @@ export type StatementComponentProps = {
   };
 };
 
-type PricingPlanDataProps = {
+export type PricingPlanComponentProps = Omit<Partial<JSFField>, 'options'> & {
+  metadata?: Record<string, unknown>;
+  meta?: {
+    helpCenter?: HelpCenterDataProps;
+  };
   options: {
     value: string;
     label: string;
@@ -129,11 +133,4 @@ type PricingPlanDataProps = {
       price: { amount: number; currencyCode: string };
     };
   }[];
-};
-
-export type PricingPlanComponentProps = Omit<
-  FieldComponentProps,
-  'fieldData'
-> & {
-  fieldData: PricingPlanDataProps;
 };
