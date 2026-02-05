@@ -119,6 +119,7 @@ export type {
   TextFieldComponentProps,
   DatePickerComponentProps,
   WorkScheduleComponentProps,
+  PricingPlanComponentProps,
 } from '@/src/types/fields';
 
 export type {

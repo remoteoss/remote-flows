@@ -13,7 +13,7 @@ import {
   ContractPreviewResponse,
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
-  FieldComponentProps,
+  PricingPlanComponentProps,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -35,24 +35,34 @@ const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
-}: FieldComponentProps) => {
+}: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
   return (
     <div className='flex flex-row gap-2'>
-      {fieldData.options?.map((option) => (
-        <PricingPlanCard
-          key={option.value}
-          title={option.label}
-          description={option.description}
-          features={option.meta?.features as string[]}
-          price={option.meta?.price}
-          value={option.value}
-          onSelect={(value: string) => {
-            field.onChange(value);
-          }}
-          selected={field.value === option.value}
-        />
-      ))}
+      {fieldData.options?.map(
+        (option: {
+          value: string;
+          label: string;
+          description: string;
+          meta: {
+            features: string[];
+            price: { amount: number; currencyCode: string };
+          };
+        }) => (
+          <PricingPlanCard
+            key={option.value}
+            title={option.label}
+            description={option.description}
+            features={option.meta?.features as string[]}
+            price={option.meta?.price}
+            value={option.value}
+            onSelect={(value: string) => {
+              field.onChange(value);
+            }}
+            selected={field.value === option.value}
+          />
+        ),
+      )}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
