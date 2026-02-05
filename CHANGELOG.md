@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.11.0
+
+### Minor Changes
+
+#### Features
+
+- add zendesk pricing plan section links (#725) [#725](https://github.com/remoteoss/remote-flows/pull/725)
+- add defaultLegalEntity property to contractorOnboardingBag (#727) [#727](https://github.com/remoteoss/remote-flows/pull/727)
+- add onboarding workflows, pricingPlanDetails constants (#726) [#726](https://github.com/remoteoss/remote-flows/pull/726)
+- add prices to the pricing cards (#730) [#730](https://github.com/remoteoss/remote-flows/pull/730)
+
 ## 1.10.0
 
 ### Minor Changes
