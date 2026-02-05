@@ -131,6 +131,9 @@ type PricingPlanDataProps = {
   }[];
 };
 
-export type PricingPlanComponentProps = FieldComponentProps & {
+export type PricingPlanComponentProps = Omit<
+  FieldComponentProps,
+  'fieldData'
+> & {
   fieldData: PricingPlanDataProps;
 };
