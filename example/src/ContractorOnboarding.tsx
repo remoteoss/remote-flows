@@ -14,23 +14,12 @@ import {
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
   FieldComponentProps,
-  ZendeskTriggerButton,
-  zendeskArticles,
-  onboardingWorkflows,
-  corProductIdentifier,
 } from '@remoteoss/remote-flows';
 import {
   Card,
   Tabs,
   TabsTrigger,
   TabsList,
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
@@ -40,6 +29,7 @@ import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep
 import { PricingPlanCard } from './components/PricingPlanCard';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+import { EngagingContractorsModal } from './components/PricingPlanModals';
 
 const PricingPlanCards = ({
   field,
@@ -253,16 +243,7 @@ const MultiStepForm = ({
             <p className='text-sm text-[#71717A]'>
               Choose the plan that best fits your needs.
             </p>
-            <ZendeskTriggerButton
-              zendeskId={zendeskArticles.engagingContractors}
-            >
-              Explore our guide to engaging contractors ↗
-            </ZendeskTriggerButton>
-            <ZendeskTriggerButton
-              zendeskId={zendeskArticles.pricingPlanOptions}
-            >
-              Pricing plan options ↗
-            </ZendeskTriggerButton>
+            <EngagingContractorsModal />
           </div>
           <PricingPlanStep
             components={{
@@ -286,50 +267,6 @@ const MultiStepForm = ({
               setErrors({ apiError: error.message, fieldErrors })
             }
           />
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className='text-blue-600 hover:underline'>
-                View workflow steps ↗
-              </button>
-            </DialogTrigger>
-            <DialogContent className='max-w-2xl'>
-              <DialogHeader>
-                <DialogTitle>How this plan works</DialogTitle>
-                <DialogDescription>
-                  Here's what happens next once you select this pricing plan
-                </DialogDescription>
-              </DialogHeader>
-
-              {/* Workflow steps list */}
-              <div className='py-4'>
-                <ol className='space-y-3'>
-                  {onboardingWorkflows[corProductIdentifier].map(
-                    (step, index) => (
-                      <li key={step.id} className='flex gap-3'>
-                        <span className='flex-shrink-0 w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full text-sm font-semibold'>
-                          {index + 1}
-                        </span>
-                        <div className='flex-1'>
-                          <p className='font-medium text-sm'>{step.title}</p>
-                          {step.description && (
-                            <p className='text-xs text-gray-600 mt-1'>
-                              {step.description}
-                            </p>
-                          )}
-                        </div>
-                      </li>
-                    ),
-                  )}
-                </ol>
-              </div>
-
-              <DialogFooter>
-                <button className='px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'>
-                  Close
-                </button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
           <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
             <BackButton
