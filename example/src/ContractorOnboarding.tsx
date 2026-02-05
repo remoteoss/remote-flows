@@ -14,8 +14,6 @@ import {
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
   FieldComponentProps,
-  ZendeskTriggerButton,
-  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -31,6 +29,7 @@ import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep
 import { PricingPlanCard } from './components/PricingPlanCard';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+import { EngagingContractorsModal } from './components/PricingPlanModals';
 
 const PricingPlanCards = ({
   field,
@@ -244,11 +243,7 @@ const MultiStepForm = ({
             <p className='text-sm text-[#71717A]'>
               Choose the plan that best fits your needs.
             </p>
-            <ZendeskTriggerButton
-              zendeskId={zendeskArticles.engagingContractors}
-            >
-              Explore our guide to engaging contractors ↗
-            </ZendeskTriggerButton>
+            <EngagingContractorsModal />
           </div>
           <PricingPlanStep
             components={{

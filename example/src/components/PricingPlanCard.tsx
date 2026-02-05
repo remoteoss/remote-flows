@@ -7,8 +7,8 @@ import {
   CardFooter,
   cn,
 } from '@remoteoss/remote-flows/internals';
-import { ZendeskTriggerButton, zendeskArticles } from '@remoteoss/remote-flows';
 import { Check } from 'lucide-react';
+import { PricingPlanOptionsModal } from './PricingPlanModals';
 
 interface PricingPlanCardProps {
   title: React.ReactNode;
@@ -43,9 +43,7 @@ export function PricingPlanCard({
         <CardTitle className='text-xl font-bold'>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
         <div>
-          <ZendeskTriggerButton zendeskId={zendeskArticles.pricingPlanOptions}>
-            Read more ↗
-          </ZendeskTriggerButton>
+          <PricingPlanOptionsModal />
         </div>
         <div className='border-t mt-4 pt-4'></div>
       </CardHeader>
