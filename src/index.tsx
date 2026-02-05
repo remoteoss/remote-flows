@@ -120,6 +120,7 @@ export type {
   DatePickerComponentProps,
   WorkScheduleComponentProps,
   PricingPlanComponentProps,
+  PricingPlanDataProps,
 } from '@/src/types/fields';
 
 export type {

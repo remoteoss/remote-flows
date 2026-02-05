@@ -14,6 +14,7 @@ import {
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
   PricingPlanComponentProps,
+  PricingPlanDataProps,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -261,7 +262,7 @@ const MultiStepForm = ({
               radio: ({ field, fieldData, fieldState }) => {
                 return (
                   <PricingPlanCards
-                    fieldData={fieldData}
+                    fieldData={fieldData as PricingPlanDataProps}
                     fieldState={fieldState}
                     field={field}
                   />
