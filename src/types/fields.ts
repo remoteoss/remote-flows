@@ -118,3 +118,26 @@ export type StatementComponentProps = {
     severity: 'warning' | 'error' | 'success' | 'info' | undefined;
   };
 };
+
+export type PricingPlanDataProps = Omit<Partial<JSFField>, 'options'> & {
+  metadata?: Record<string, unknown>;
+  meta?: {
+    helpCenter?: HelpCenterDataProps;
+  };
+  options: {
+    value: string;
+    label: string;
+    description: string;
+    meta: {
+      features: string[];
+      price: { amount: number; currencyCode: string };
+    };
+  }[];
+};
+
+export type PricingPlanComponentProps = Omit<
+  FieldComponentProps,
+  'fieldData'
+> & {
+  fieldData: PricingPlanDataProps;
+};

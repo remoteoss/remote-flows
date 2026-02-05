@@ -13,7 +13,8 @@ import {
   ContractPreviewResponse,
   ContractPreviewFormPayload,
   JSFCustomComponentProps,
-  FieldComponentProps,
+  PricingPlanComponentProps,
+  PricingPlanDataProps,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -27,15 +28,15 @@ import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
+import { EngagingContractorsModal } from './components/PricingPlanModals';
 import './css/main.css';
 import './css/contractor-onboarding.css';
-import { EngagingContractorsModal } from './components/PricingPlanModals';
 
 const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
-}: FieldComponentProps) => {
+}: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
   return (
     <div className='flex flex-row gap-2'>
@@ -45,6 +46,7 @@ const PricingPlanCards = ({
           title={option.label}
           description={option.description}
           features={option.meta?.features as string[]}
+          price={option.meta?.price}
           value={option.value}
           onSelect={(value: string) => {
             field.onChange(value);
@@ -250,7 +252,7 @@ const MultiStepForm = ({
               radio: ({ field, fieldData, fieldState }) => {
                 return (
                   <PricingPlanCards
-                    fieldData={fieldData}
+                    fieldData={fieldData as PricingPlanDataProps}
                     fieldState={fieldState}
                     field={field}
                   />
