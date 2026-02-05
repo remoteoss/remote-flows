@@ -24,6 +24,8 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
   corProductIdentifier,
   IR35_FILE_SUBTYPE,
 } from '@/src/flows/ContractorOnboarding/constants';
@@ -251,10 +253,9 @@ export const useContractorOnboardingDetailsSchema = ({
 };
 
 const CONTRACT_PRODUCT_TITLES = {
-  ['urn:remotecom:resource:product:contractor:plus:monthly']:
-    'Contractor Management Plus',
-  ['urn:remotecom:resource:product:contractor:standard:monthly']:
-    'Contractor Management',
+  [contractorStandardProductIdentifier]: 'Contractor Management Plus',
+  [contractorPlusProductIdentifier]: 'Contractor Management',
+  [corProductIdentifier]: 'Contractor of Record',
 };
 
 export const useContractorSubscriptionSchemaField = (
@@ -280,31 +281,29 @@ export const useContractorSubscriptionSchemaField = (
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
     if (field) {
-      const options = contractorSubscriptions
-        .filter((opts) => opts.product.identifier !== corProductIdentifier)
-        .map((opts) => {
-          let formattedPrice = '';
-          if (opts.price.amount) {
-            formattedPrice = formatCurrency(
-              opts.price.amount,
-              opts.currency.code,
-            );
-          }
-          const product = opts.product;
-          const title =
-            CONTRACT_PRODUCT_TITLES[
-              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ?? '';
-          const label = title;
-          const value = product.identifier ?? '';
-          const description = product.description ?? '';
-          const features = product.features ?? [];
-          const meta = {
-            features,
-            price: formattedPrice,
-          };
-          return { label, value, description, meta };
-        });
+      const options = contractorSubscriptions.map((opts) => {
+        let formattedPrice = '';
+        if (opts.price.amount) {
+          formattedPrice = formatCurrency(
+            opts.price.amount,
+            opts.currency.code,
+          );
+        }
+        const product = opts.product;
+        const title =
+          CONTRACT_PRODUCT_TITLES[
+            product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+          ] ?? '';
+        const label = title;
+        const value = product.identifier ?? '';
+        const description = product.description ?? '';
+        const features = product.features ?? [];
+        const meta = {
+          features,
+          price: formattedPrice,
+        };
+        return { label, value, description, meta };
+      });
       field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
