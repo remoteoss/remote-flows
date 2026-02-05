@@ -97,7 +97,7 @@ export const onboardingWorkflows: Record<
   [corProductIdentifier]: corOnboardingWorkflow,
 };
 
-export const pricingPlan = {
+export const pricingPlanDetails = {
   [contractorStandardProductIdentifier]: {
     title: 'Contractor Management',
     subtitle: 'Engage and pay contractors compliantly',

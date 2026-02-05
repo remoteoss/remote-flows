@@ -67,6 +67,7 @@ export {
   contractorStandardProductIdentifier,
   corProductIdentifier,
   onboardingWorkflows,
+  pricingPlanDetails,
 } from '@/src/flows/ContractorOnboarding';
 
 export type {

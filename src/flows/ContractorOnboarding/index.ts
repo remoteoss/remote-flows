@@ -14,4 +14,5 @@ export {
   contractorPlusProductIdentifier,
   contractorStandardProductIdentifier,
   corProductIdentifier,
+  pricingPlanDetails,
 } from './constants';
