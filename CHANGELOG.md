@@ -213,6 +213,7 @@
 - add a fielset to be more similar to Remote's (#621) [#621](https://github.com/remoteoss/remote-flows/pull/621)
 - add automated bundle size tracking and monitoring (#616) [#616](https://github.com/remoteoss/remote-flows/pull/616)
 - add country-specific contract schema versioning (#614) [#614](https://github.com/remoteoss/remote-flows/pull/614)
+  - Germany contract_details v2.0 now available — [view changes](./docs/SCHEMA_VERSIONS.md#germany-deu)
 
 ## 1.0.0
 
