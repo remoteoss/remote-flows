@@ -18,7 +18,7 @@ import {
   FlowOptions,
   JSFModify,
 } from '@/src/flows/types';
-import { clearBase64Data, formatCurrency } from '@/src/lib/utils';
+import { clearBase64Data } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -36,6 +36,7 @@ import {
   useEmploymentFiles,
   useUploadFile,
 } from '@/src/common/api/files';
+import { convertFromCents } from '@/src/components/form/utils';
 
 /**
  * Get the contract document signature schema
@@ -282,14 +283,9 @@ export const useContractorSubscriptionSchemaField = (
     ) as JSFField | undefined;
     if (field) {
       const options = contractorSubscriptions.map((opts) => {
-        let formattedPrice = '';
-        if (opts.price.amount) {
-          formattedPrice = formatCurrency(
-            opts.price.amount,
-            opts.currency.code,
-          );
-        }
         const product = opts.product;
+        const price = opts.price.amount;
+        const currencyCode = opts.currency.code;
         const title =
           CONTRACT_PRODUCT_TITLES[
             product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
@@ -300,7 +296,10 @@ export const useContractorSubscriptionSchemaField = (
         const features = product.features ?? [];
         const meta = {
           features,
-          price: formattedPrice,
+          price: {
+            amount: convertFromCents(price),
+            currencyCode: currencyCode,
+          },
         };
         return { label, value, description, meta };
       });
