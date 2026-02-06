@@ -25,7 +25,7 @@ function isValidUrl(url: string) {
 }
 
 export function createClient(
-  auth: () => Promise<AuthResponse>,
+  auth?: () => Promise<AuthResponse>,
   options?: Options,
 ) {
   const sessionRef = {
@@ -50,6 +50,7 @@ export function createClient(
 
   return createHeyApiClient({
     ...clientConfig,
+    credentials: 'include',
     headers: {
       ...clientConfig.headers,
       ...(isValidProxy ? options?.proxy?.headers : {}),
@@ -58,6 +59,10 @@ export function createClient(
     },
     baseUrl: isValidProxy ? options.proxy?.url : baseUrl,
     auth: async () => {
+      if (!auth) {
+        return undefined;
+      }
+
       function hasTokenExpired(expiresAt: number | undefined) {
         return !expiresAt || Date.now() + 60000 > expiresAt;
       }
@@ -77,6 +82,7 @@ export function createClient(
           return undefined;
         }
       }
+
       return sessionRef.current?.accessToken;
     },
   });

@@ -47,6 +47,53 @@ async function fetchAccessToken() {
   return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
 
+async function fetchClientCredentialsAccessToken() {
+  const {
+    VITE_CLIENT_ID,
+    VITE_CLIENT_SECRET,
+    VITE_REMOTE_GATEWAY,
+    VITE_REFRESH_TOKEN,
+  } = process.env;
+
+  // for local development, we don't need a client secret
+  if (
+    !VITE_CLIENT_ID ||
+    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    !VITE_REMOTE_GATEWAY ||
+    !VITE_REFRESH_TOKEN
+  ) {
+    throw new Error(
+      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
+    );
+  }
+
+  const gatewayUrl = buildGatewayURL();
+
+  const encodedCredentials = Buffer.from(
+    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+  ).toString('base64');
+
+  const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${encodedCredentials}`,
+    },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return { accessToken: data.access_token, expiresIn: data.expires_in };
+}
+
+
 // Express route handler
 async function getToken(req, res) {
   const { NODE_ENV } = process.env;
@@ -70,4 +117,4 @@ async function getToken(req, res) {
   }
 }
 
-module.exports = { getToken, fetchAccessToken };
+module.exports = { getToken, fetchAccessToken, fetchClientCredentialsAccessToken };

@@ -1,0 +1,77 @@
+// TODO: Correct types later
+import {
+  CompanyBasicInfoFormPayload,
+  CompanyBasicInfoSuccess,
+} from '@/src/flows/CreateCompany/types';
+import { NormalizedFieldError } from '@/src/lib/mutations';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
+import { CreateCompanyForm } from '@/src/flows/CreateCompany/components/CreateCompanyForm';
+import { handleStepError } from '@/src/lib/utils';
+
+type SelectCountryStepProps = {
+  /*
+   * The function is called when the form is submitted. It receives the form values as an argument.
+   */
+  onSubmit?: (payload: CompanyBasicInfoFormPayload) => void | Promise<void>;
+  /*
+   * The function is called when the form submission is successful.
+   */
+  onSuccess?: (data: CompanyBasicInfoSuccess) => void | Promise<void>;
+  /*
+   * The function is called when an error occurs during form submission.
+   */
+  onError?: ({
+    error,
+    rawError,
+    fieldErrors,
+  }: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
+};
+
+export function SelectCountryStep({
+  onSubmit,
+  onSuccess,
+  onError,
+}: SelectCountryStepProps) {
+  const { createCompanyBag } = useCreateCompanyContext();
+  const handleSubmit = async (payload: $TSFixMe) => {
+    try {
+      await onSubmit?.({ countryCode: payload.country_code,
+		         companyOwnerEmail: payload.company_owner_email,
+			 companyOwnerName: payload.company_owner_name,
+			 desiredCurrency: payload.desired_currency,
+			 phoneNumber: payload.phone_number,
+			 taxNumber: payload.tax_number,
+			 taxJobCategory: payload.tax_job_category
+      });
+      const response = await createCompanyBag.onSubmit(payload);
+      if (response?.data) {
+        await onSuccess?.(response?.data as CompanyBasicInfoSuccess);
+        createCompanyBag?.next();
+        return;
+      }
+    } catch (error: unknown) {
+      const structuredError = handleStepError(
+        error,
+        createCompanyBag.meta?.fields?.select_country,
+      );
+
+      onError?.(structuredError);
+    }
+  };
+
+  const initialValues =
+    createCompanyBag.stepState.values?.select_country ||
+    createCompanyBag.initialValues.select_country;
+
+  return (
+    <CreateCompanyForm
+      defaultValues={initialValues}
+      onSubmit={handleSubmit}
+    />
+  );
+}
