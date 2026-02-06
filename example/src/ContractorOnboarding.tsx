@@ -37,8 +37,7 @@ const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
-  onSelect,
-}: PricingPlanComponentProps & { onSelect: (value: string) => void }) => {
+}: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
   return (
     <div className='grid grid-cols-3 gap-2'>
@@ -51,7 +50,9 @@ const PricingPlanCards = ({
           price={option.meta?.price}
           value={option.value}
           selected={field.value === option.value}
-          onSelect={onSelect}
+          onSelect={(value: string) => {
+            field.onChange(value);
+          }}
         />
       ))}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
@@ -106,7 +107,6 @@ const MultiStepForm = ({
     ContractPreviewStep,
     ContractReviewButton,
   } = components;
-  const [selectedPricingPlan, setSelectedPricingPlan] = useState<string>('');
   const [errors, setErrors] = useState<{
     apiError: string;
     fieldErrors: NormalizedFieldError[];
@@ -254,10 +254,6 @@ const MultiStepForm = ({
                 radio: ({ field, fieldData, fieldState }) => {
                   return (
                     <PricingPlanCards
-                      onSelect={(value: string) => {
-                        field.onChange(value);
-                        setSelectedPricingPlan(value);
-                      }}
                       fieldData={fieldData as PricingPlanDataProps}
                       fieldState={fieldState}
                       field={field}
@@ -277,8 +273,9 @@ const MultiStepForm = ({
             />
           </div>
           <AlertError errors={errors} />
-          {selectedPricingPlan &&
-            selectedPricingPlan === corProductIdentifier && (
+          {contractorOnboardingBag.fieldValues?.subscription &&
+            contractorOnboardingBag.fieldValues?.subscription ===
+              corProductIdentifier && (
               <p
                 className='text-sm text-[#71717A] mx-auto text-center'
                 style={{ maxWidth: '350px' }}
