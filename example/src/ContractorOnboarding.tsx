@@ -15,6 +15,7 @@ import {
   JSFCustomComponentProps,
   PricingPlanComponentProps,
   PricingPlanDataProps,
+  corProductIdentifier,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -36,7 +37,8 @@ const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
-}: PricingPlanComponentProps) => {
+  onSelect,
+}: PricingPlanComponentProps & { onSelect: (value: string) => void }) => {
   const hasError = !!fieldState.error;
   return (
     <div className='grid grid-cols-3 gap-2'>
@@ -48,10 +50,8 @@ const PricingPlanCards = ({
           features={option.meta?.features as string[]}
           price={option.meta?.price}
           value={option.value}
-          onSelect={(value: string) => {
-            field.onChange(value);
-          }}
           selected={field.value === option.value}
+          onSelect={onSelect}
         />
       ))}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
@@ -106,6 +106,7 @@ const MultiStepForm = ({
     ContractPreviewStep,
     ContractReviewButton,
   } = components;
+  const [selectedPricingPlan, setSelectedPricingPlan] = useState<string>('');
   const [errors, setErrors] = useState<{
     apiError: string;
     fieldErrors: NormalizedFieldError[];
@@ -247,29 +248,46 @@ const MultiStepForm = ({
             </p>
             <EngagingContractorsModal />
           </div>
-          <PricingPlanStep
-            components={{
-              radio: ({ field, fieldData, fieldState }) => {
-                return (
-                  <PricingPlanCards
-                    fieldData={fieldData as PricingPlanDataProps}
-                    fieldState={fieldState}
-                    field={field}
-                  />
-                );
-              },
-            }}
-            onSubmit={(payload: PricingPlanFormPayload) =>
-              console.log('payload', payload)
-            }
-            onSuccess={(response: PricingPlanResponse) =>
-              console.log('response', response)
-            }
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
-          />
+          <div className='mb-6'>
+            <PricingPlanStep
+              components={{
+                radio: ({ field, fieldData, fieldState }) => {
+                  return (
+                    <PricingPlanCards
+                      onSelect={(value: string) => {
+                        field.onChange(value);
+                        setSelectedPricingPlan(value);
+                      }}
+                      fieldData={fieldData as PricingPlanDataProps}
+                      fieldState={fieldState}
+                      field={field}
+                    />
+                  );
+                },
+              }}
+              onSubmit={(payload: PricingPlanFormPayload) =>
+                console.log('payload', payload)
+              }
+              onSuccess={(response: PricingPlanResponse) =>
+                console.log('response', response)
+              }
+              onError={({ error, fieldErrors }) =>
+                setErrors({ apiError: error.message, fieldErrors })
+              }
+            />
+          </div>
           <AlertError errors={errors} />
+          {selectedPricingPlan &&
+            selectedPricingPlan === corProductIdentifier && (
+              <p
+                className='text-sm text-[#71717A] mx-auto text-center'
+                style={{ maxWidth: '350px' }}
+              >
+                You'll complete a short questionnaire to check that you can use
+                Contractor of Record for this hire. This is to confirm that you
+                will not be treating them as an employee.
+              </p>
+            )}
           <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'
