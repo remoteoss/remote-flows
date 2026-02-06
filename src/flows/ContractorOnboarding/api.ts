@@ -9,6 +9,8 @@ import {
   postSignContractDocument,
   SignContractDocument,
   getIndexEmploymentContractDocument,
+  EligibilityQuestionnaireJsonSchemaResponse,
+  getShowEligibilityQuestionnaire,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -37,6 +39,7 @@ import {
   useUploadFile,
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
+import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
  * Get the contract document signature schema
@@ -417,5 +420,44 @@ export const useGetContractDocuments = (
     select: ({ data }) => {
       return data?.data?.contract_documents;
     },
+  });
+};
+
+export const useGetEligibilityQuestionnaire = ({
+  queryOptions,
+}: {
+  queryOptions?: { enabled?: boolean };
+}) => {
+  const { client } = useClient();
+  return useQuery<
+    EligibilityQuestionnaireJsonSchemaResponse['data'],
+    Error,
+    FormResult
+  >({
+    queryKey: ['eligibility-questionnaire'],
+    queryFn: async (): Promise<
+      EligibilityQuestionnaireJsonSchemaResponse['data']
+    > => {
+      const response = await getShowEligibilityQuestionnaire({
+        client: client as Client,
+        query: {
+          type: 'contractor_of_record',
+          json_schema_version: 1,
+        },
+      });
+
+      // Extract the data from the response wrapper
+      if (response.error) {
+        throw new Error('Failed to fetch eligibility questionnaire');
+      }
+
+      return response.data as EligibilityQuestionnaireJsonSchemaResponse['data'];
+    },
+    select: (data: EligibilityQuestionnaireJsonSchemaResponse['data']) => {
+      const schema = data?.schema || {};
+      // add fieldValues and maybe options
+      return createHeadlessForm(schema, {}, {});
+    },
+    ...queryOptions,
   });
 };

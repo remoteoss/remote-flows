@@ -23,6 +23,7 @@ import {
   useUpdateUKandSaudiFields,
   useGetIR35File,
   useGetContractDocuments,
+  useGetEligibilityQuestionnaire,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -350,6 +351,14 @@ export const useContractorOnboarding = ({
       ] || contractorStandardProductIdentifier
     );
   }, [employment]);
+
+  const { data: eligibilityQuestionnaire } = useGetEligibilityQuestionnaire({
+    queryOptions: {
+      enabled: selectedPricingPlan === corProductIdentifier,
+    },
+  });
+
+  console.log({ eligibilityQuestionnaire });
 
   const {
     data: contractorOnboardingDetailsForm,
