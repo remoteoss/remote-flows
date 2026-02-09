@@ -45,6 +45,13 @@ export function AddressDetailsStep({
         await onSuccess?.(response?.data as CompanyAddressDetailsSuccess);
         return;
       }
+      if (response?.error) {
+        const structuredError = handleStepError(
+          response,
+          createCompanyBag.meta?.fields?.address_details,
+        );
+        onError?.(structuredError);
+      }
     } catch (error: unknown) {
       const structuredError = handleStepError(
         error,

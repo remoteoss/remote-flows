@@ -11,7 +11,6 @@ type countryFormFields = {
   desiredCurrency: string;
   phoneNumber: string;
   taxNumber: string;
-  taxJobCategory: string;
 }
 
 export type CompanyBasicInfoFormPayload = countryFormFields;
@@ -83,7 +82,6 @@ export type BasicInformationFormPayload = {
   name: string;
   phone_number: string;
   tax_number: string;
-  tax_job_category: string;
   tax_servicing_countries: string[];
 };
 

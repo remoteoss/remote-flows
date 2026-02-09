@@ -39,7 +39,7 @@ export const selectCountryStepSchema = {
           type: 'string',
            oneOf: [],
           'x-jsf-presentation': {
-            inputType: 'text',
+            inputType: 'select',
           },
 
         },
@@ -65,16 +65,6 @@ export const selectCountryStepSchema = {
         },
         tax_number: {
           title: 'Tax Number',
-          description: '',
-          type: 'string',
-           oneOf: [],
-          'x-jsf-presentation': {
-            inputType: 'text',
-          },
-
-        },
-        tax_job_category: {
-          title: 'Tax Job Category',
           description: '',
           type: 'string',
            oneOf: [],

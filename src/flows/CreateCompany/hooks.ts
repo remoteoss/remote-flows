@@ -25,6 +25,7 @@ import {
 } from '@/src/flows/CreateCompany/utils';
 import {
   getSupportedCountry,
+  getIndexCompanyCurrency,
 } from '@/src/client';
 
 import { Step, useStepState } from '@/src/flows/useStepState';
@@ -76,12 +77,44 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
     },
   });
 };
+const useCompanyCurrencies = (queryOptions?: { enabled?: boolean }) => {
+  const { client } = useClient();
+  return useQuery({
+    ...queryOptions,
+    queryKey: ['company-currencies'],
+    retry: false,
+    queryFn: async () => {
+      const response = await getIndexCompanyCurrency({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch company currencies');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      return (
+        data?.data?.company_currencies.map((currency) => ({
+          value: currency.code,
+          label: currency.code,
+        })) || []
+      );
+    },
+  });
+};
+
 const useCountriesSchemaField = (
   options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };
   },
 ) => {
-  const { data: countries, isLoading } = useCountries(options?.queryOptions);
+  const { data: countries, isLoading: isLoadingCountries } = useCountries(options?.queryOptions);
+  const { data: currencies, isLoading: isLoadingCurrencies } = useCompanyCurrencies(options?.queryOptions);
 
   const selectCountryForm = createHeadlessForm(
     selectCountryStepSchema.data.schema,
@@ -98,8 +131,17 @@ const useCountriesSchemaField = (
     }
   }
 
+  if (currencies) {
+    const currencyField = selectCountryForm.fields.find(
+      (field) => field.name === 'desired_currency',
+    );
+    if (currencyField) {
+      currencyField.options = currencies;
+    }
+  }
+
   return {
-    isLoading,
+    isLoading: isLoadingCountries || isLoadingCurrencies,
     selectCountryForm,
   };
 };
@@ -308,6 +350,17 @@ const { mutateAsync: updateCompanyMutationAsync } = mutationToPromise(
         };
 
         const response = await createCompanyMutationAsync(payload);
+        
+        // Check for errors from the mutation
+        if (response.error) {
+          return Promise.resolve({
+            data: null,
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: response.fieldErrors,
+          });
+        }
+
         // Handle both CompanyResponse and CompanyWithTokensResponse structures
         // CompanyResponse: { data: { company?: Company } }
         // CompanyWithTokensResponse: { company?: Company; tokens?: OAuth2Tokens }
@@ -341,6 +394,17 @@ const { mutateAsync: updateCompanyMutationAsync } = mutationToPromise(
           payload,
           jsonSchemaVersion: options?.jsonSchemaVersion?.form_schema?.address_details,
         });
+        
+        // Check for errors from the mutation
+        if (response.error) {
+          return Promise.resolve({
+            data: null,
+            error: response.error,
+            rawError: response.rawError,
+            fieldErrors: response.fieldErrors,
+          });
+        }
+        
         return Promise.resolve({ data: response.data });
       }
 

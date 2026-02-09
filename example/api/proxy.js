@@ -41,7 +41,7 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   console.log("REQUIRES AUTH", requiresAuth)
 
   // Add authentication if required
-  if (requiresAuth && path.startsWith('/v1/companies/')) {
+  if (requiresAuth && (path.startsWith('/v1/countries') || path.startsWith('/v1/companies') || path.startsWith('/v1/company-currencies'))) {
     const { accessToken } = await fetchClientCredentialsAccessToken();
     requestConfig.headers.Authorization = `Bearer ${accessToken}`;
 

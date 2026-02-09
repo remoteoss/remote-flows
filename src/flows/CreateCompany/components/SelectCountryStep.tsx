@@ -45,14 +45,20 @@ export function SelectCountryStep({
 			 companyOwnerName: payload.company_owner_name,
 			 desiredCurrency: payload.desired_currency,
 			 phoneNumber: payload.phone_number,
-			 taxNumber: payload.tax_number,
-			 taxJobCategory: payload.tax_job_category
+			 taxNumber: payload.tax_number
       });
       const response = await createCompanyBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data as CompanyBasicInfoSuccess);
         createCompanyBag?.next();
         return;
+      }
+      if (response?.error) {
+        const structuredError = handleStepError(
+          response,
+          createCompanyBag.meta?.fields?.select_country,
+        );
+        onError?.(structuredError);
       }
     } catch (error: unknown) {
       const structuredError = handleStepError(
