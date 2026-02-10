@@ -13,6 +13,7 @@ import {
   getShowEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
   postCreateEligibilityQuestionnaire,
+  postManageContractorCorSubscriptionSubscription,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -487,6 +488,20 @@ export const usePostCreateEligibilityQuestionnaire = () => {
         },
         query: {
           json_schema_version: 1, // TODO: json_schema_version should be dynamic but fixed for now
+        },
+      });
+    },
+  });
+};
+
+export const usePostManageContractorCorSubscription = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({ employmentId }: { employmentId: string }) => {
+      return postManageContractorCorSubscriptionSubscription({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
         },
       });
     },

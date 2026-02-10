@@ -25,6 +25,7 @@ import {
   useGetContractDocuments,
   useGetEligibilityQuestionnaire,
   usePostCreateEligibilityQuestionnaire,
+  usePostManageContractorCorSubscription,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -180,6 +181,8 @@ export const useContractorOnboarding = ({
     );
   const createEligibilityQuestionnaireMutation =
     usePostCreateEligibilityQuestionnaire();
+  const manageContractorCorSubscriptionMutation =
+    usePostManageContractorCorSubscription();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -201,6 +204,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: createEligibilityQuestionnaireMutationAsync } =
     mutationToPromise(createEligibilityQuestionnaireMutation);
+
+  const { mutateAsyncOrThrow: manageContractorCorSubscriptionMutationAsync } =
+    mutationToPromise(manageContractorCorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -923,17 +929,13 @@ export const useContractorOnboarding = ({
       }
 
       case 'eligibility_questionnaire': {
-        try {
-          const response = await createEligibilityQuestionnaireMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: values,
-          });
-          console.log('response', response);
-          return response;
-        } catch (error) {
-          console.error('Error creating eligibility questionnaire', error);
-          throw error;
-        }
+        await createEligibilityQuestionnaireMutationAsync({
+          employmentId: internalEmploymentId as string,
+          payload: values,
+        });
+        return manageContractorCorSubscriptionMutationAsync({
+          employmentId: internalEmploymentId as string,
+        });
       }
 
       default: {

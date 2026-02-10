@@ -1,6 +1,5 @@
 import {
   CreateContractDocumentResponse,
-  EligibilityQuestionnaire,
   SignContractDocument,
   SuccessResponse,
 } from '@/src/client/types.gen';
@@ -139,4 +138,4 @@ export type EligibilityQuestionnaireFormPayload = {
   treating_contractors_as_employees: 'no' | 'yes';
 };
 
-export type EligibilityQuestionnaireResponse = EligibilityQuestionnaire;
+export type EligibilityQuestionnaireResponse = SuccessResponse;
