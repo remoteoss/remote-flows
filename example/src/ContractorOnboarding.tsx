@@ -104,6 +104,7 @@ const MultiStepForm = ({
     BackButton,
     SelectCountryStep,
     PricingPlanStep,
+    EligibilityQuestionnaireStep,
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
@@ -302,6 +303,35 @@ const MultiStepForm = ({
           </div>
         </div>
       );
+
+    case 'eligibility_questionnaire':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <EligibilityQuestionnaireStep
+            onSubmit={(payload) => console.log('payload', payload)}
+            onSuccess={(response) => console.log('response', response)}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
     case 'review': {
       return (
         <div className='contractor-onboarding-form-layout'>

@@ -15,6 +15,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
+import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -34,6 +35,7 @@ export type ContractorOnboardingRenderProps = {
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
    * @see {@link OnboardingInvite}
+   * @see {@link EligibilityQuestionnaireStep}
    */
   components: {
     BasicInformationStep: typeof BasicInformationStep;
@@ -45,6 +47,7 @@ export type ContractorOnboardingRenderProps = {
     ContractPreviewStep: typeof ContractPreviewStep;
     OnboardingInvite: typeof OnboardingInvite;
     ContractReviewButton: typeof ContractReviewButton;
+    EligibilityQuestionnaireStep: typeof EligibilityQuestionnaireStep;
   };
 };
 
@@ -86,6 +89,8 @@ export type ContractorOnboardingFlowProps = {
       basic_information?: JSFModify;
       contract_details?: JSFModify;
       contract_preview?: JSFModify;
+      eligibility_questionnaire?: JSFModify;
+      pricing_plan?: JSFModify;
     };
   };
 

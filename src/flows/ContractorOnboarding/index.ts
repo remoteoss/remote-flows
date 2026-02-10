@@ -9,6 +9,10 @@ export type {
   ContractPreviewFormPayload,
   ContractPreviewResponse,
 } from './types';
+export type {
+  EligibilityQuestionnaireFormPayload,
+  EligibilityQuestionnaireResponse,
+} from './components/EligibilityQuestionnaireStep';
 export {
   onboardingWorkflows,
   contractorPlusProductIdentifier,

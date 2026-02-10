@@ -424,9 +424,11 @@ export const useGetContractDocuments = (
 };
 
 export const useGetEligibilityQuestionnaire = ({
-  queryOptions,
+  options,
+  fieldValues,
 }: {
-  queryOptions?: { enabled?: boolean };
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  fieldValues: FieldValues;
 }) => {
   const { client } = useClient();
   return useQuery<
@@ -451,13 +453,15 @@ export const useGetEligibilityQuestionnaire = ({
         throw new Error('Failed to fetch eligibility questionnaire');
       }
 
-      return response.data as EligibilityQuestionnaireJsonSchemaResponse['data'];
+      return response.data
+        .data as EligibilityQuestionnaireJsonSchemaResponse['data'];
     },
     select: (data: EligibilityQuestionnaireJsonSchemaResponse['data']) => {
       const schema = data?.schema || {};
-      // add fieldValues and maybe options
-      return createHeadlessForm(schema, {}, {});
+      return createHeadlessForm(schema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
     },
-    ...queryOptions,
+    ...options?.queryOptions,
   });
 };

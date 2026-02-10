@@ -110,12 +110,14 @@ export const useContractorOnboarding = ({
     contract_details: Meta;
     contract_preview: Meta;
     pricing_plan: Meta;
+    eligibility_questionnaire: Meta;
   }>({
     select_country: {},
     basic_information: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
+    eligibility_questionnaire: {},
   });
 
   const stepsToUse = skipSteps?.includes('select_country')
@@ -218,6 +220,7 @@ export const useContractorOnboarding = ({
         stepState.currentStep.name === 'pricing_plan' ||
         (Boolean(employmentId) && isEmploymentReadOnly),
     },
+    jsfModify: options?.jsfModify?.pricing_plan,
   });
 
   const formType =
@@ -340,19 +343,17 @@ export const useContractorOnboarding = ({
   /**
    * When the user selects COR, the data isn't saved yet in the BE
    * We need to use the internalState to know what has happened
-   * TODO: After eligibility is submitted and okay we need to retrieve the employment to see where's the data stored
    */
   const selectedPricingPlan = useMemo(() => {
-    if (!employment?.contractor_type) {
-      return undefined;
-    }
     const subscriptions = {
       standard: contractorStandardProductIdentifier,
       plus: contractorPlusProductIdentifier,
       cor: corProductIdentifier,
     };
 
-    if (stepState.values?.pricing_plan?.subscription === corProductIdentifier) {
+    const subscription = stepState.values?.pricing_plan?.subscription;
+
+    if (subscription === corProductIdentifier) {
       return corProductIdentifier;
     }
 
@@ -361,17 +362,28 @@ export const useContractorOnboarding = ({
         employment?.contractor_type as keyof typeof subscriptions
       ] || contractorStandardProductIdentifier
     );
-  }, [employment, stepState.values?.pricing_plan?.subscription]);
+  }, [
+    stepState.values?.pricing_plan?.subscription,
+    employment?.contractor_type,
+  ]);
+
+  const eligibilityFields = {
+    ...onboardingInitialValues,
+    ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+    ...fieldValues,
+  };
 
   const { data: eligibilityQuestionnaireForm } = useGetEligibilityQuestionnaire(
     {
-      queryOptions: {
-        enabled: selectedPricingPlan === corProductIdentifier,
+      options: {
+        queryOptions: {
+          enabled: selectedPricingPlan === corProductIdentifier,
+        },
+        jsfModify: options?.jsfModify?.eligibility_questionnaire,
       },
+      fieldValues: eligibilityFields,
     },
   );
-
-  console.log({ eligibilityQuestionnaireForm });
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -547,6 +559,17 @@ export const useContractorOnboarding = ({
     return getInitialValues(stepFields.pricing_plan, initialValues);
   }, [stepFields.pricing_plan, onboardingInitialValues, selectedPricingPlan]);
 
+  const eligibilityQuestionnaireInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      // TODO: we need to retrieve the eligibility questionnaire data somehow from the BE, who is eligible
+    };
+    return getInitialValues(
+      stepFields.eligibility_questionnaire,
+      initialValues,
+    );
+  }, [stepFields.eligibility_questionnaire, onboardingInitialValues]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
@@ -554,6 +577,7 @@ export const useContractorOnboarding = ({
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
+      eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
     };
   }, [
     selectCountryInitialValues,
@@ -561,6 +585,7 @@ export const useContractorOnboarding = ({
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
+    eligibilityQuestionnaireInitialValues,
   ]);
 
   const shouldHandleReadOnlyEmployment = Boolean(
@@ -620,6 +645,11 @@ export const useContractorOnboarding = ({
           pricingPlanInitialValues,
           stepFields.pricing_plan,
         ),
+        // TODO: we have to check if this works well or not
+        eligibility_questionnaire: prettifyFormValues(
+          eligibilityQuestionnaireInitialValues,
+          stepFields.eligibility_questionnaire,
+        ),
       };
 
       setStepValues({
@@ -649,10 +679,62 @@ export const useContractorOnboarding = ({
     pricingPlanInitialValues,
     stepFields.contract_preview,
     contractPreviewInitialValues,
+    stepFields.eligibility_questionnaire,
+    eligibilityQuestionnaireInitialValues,
   ]);
 
   const goTo = (step: keyof typeof STEPS) => {
     goToStep(step);
+  };
+
+  // Custom next function with conditional navigation for eligibility questionnaire
+  const handleNext = () => {
+    const currentStepName = stepState.currentStep.name;
+
+    // After pricing_plan: check if COR is selected
+    if (currentStepName === 'pricing_plan') {
+      const isCORSelected =
+        stepState.values?.pricing_plan?.subscription === corProductIdentifier ||
+        fieldValues?.subscription === corProductIdentifier;
+
+      if (isCORSelected) {
+        setStepValues({
+          ...(stepState.values || {}),
+          eligibility_questionnaire: fieldValues,
+        } as Record<keyof typeof STEPS, FieldValues>);
+        goToStep('eligibility_questionnaire');
+      }
+    }
+
+    // Default behavior for other steps
+    nextStep();
+  };
+
+  // Custom back function with conditional navigation
+  const handleBack = () => {
+    const currentStepName = stepState.currentStep.name;
+
+    // From contract_details: check if we came from eligibility questionnaire
+    if (currentStepName === 'contract_details') {
+      const isCORSelected =
+        stepState.values?.pricing_plan?.subscription === corProductIdentifier;
+
+      if (isCORSelected) {
+        goToStep('eligibility_questionnaire');
+      } else {
+        goToStep('pricing_plan');
+      }
+      return;
+    }
+
+    // From eligibility_questionnaire: go back to pricing_plan
+    if (currentStepName === 'eligibility_questionnaire') {
+      goToStep('pricing_plan');
+      return;
+    }
+
+    // Default behavior for other steps
+    previousStep();
   };
 
   const parseFormValues = async (values: FieldValues) => {
@@ -698,6 +780,19 @@ export const useContractorOnboarding = ({
       return await parseJSFToValidate(
         values,
         selectContractorSubscriptionForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
+    }
+
+    if (
+      eligibilityQuestionnaireForm &&
+      stepState.currentStep.name === 'eligibility_questionnaire'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        eligibilityQuestionnaireForm?.fields,
         {
           isPartialValidation: false,
         },
@@ -824,6 +919,14 @@ export const useContractorOnboarding = ({
         throw createStructuredError('invalid selection');
       }
 
+      case 'eligibility_questionnaire': {
+        // TODO: Add API endpoint for submitting eligibility questionnaire
+        // For now, just store the values and proceed
+        return Promise.resolve({
+          data: { eligibility_questionnaire: values },
+        });
+      }
+
       default: {
         throw createStructuredError('Invalid step state');
       }
@@ -858,13 +961,13 @@ export const useContractorOnboarding = ({
      * Function to handle going back to the previous step
      * @returns {void}
      */
-    back: previousStep,
+    back: handleBack,
 
     /**
      * Function to handle going to the next step
      * @returns {void}
      */
-    next: nextStep,
+    next: handleNext,
 
     /**
      * Function to handle going to a specific step
@@ -958,6 +1061,18 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return selectContractorSubscriptionForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        eligibilityQuestionnaireForm &&
+        stepState.currentStep.name === 'eligibility_questionnaire'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          eligibilityQuestionnaireForm?.fields,
+          { isPartialValidation: false },
+        );
+        return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
       }
 
       return null;
