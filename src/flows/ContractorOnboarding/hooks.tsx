@@ -24,6 +24,7 @@ import {
   useGetIR35File,
   useGetContractDocuments,
   useGetEligibilityQuestionnaire,
+  usePostCreateEligibilityQuestionnaire,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -177,6 +178,8 @@ export const useContractorOnboarding = ({
       uploadFileMutation,
       fieldValues,
     );
+  const createEligibilityQuestionnaireMutation =
+    usePostCreateEligibilityQuestionnaire();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -195,6 +198,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: createEligibilityQuestionnaireMutationAsync } =
+    mutationToPromise(createEligibilityQuestionnaireMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -698,11 +704,8 @@ export const useContractorOnboarding = ({
         fieldValues?.subscription === corProductIdentifier;
 
       if (isCORSelected) {
-        setStepValues({
-          ...(stepState.values || {}),
-          eligibility_questionnaire: fieldValues,
-        } as Record<keyof typeof STEPS, FieldValues>);
-        goToStep('eligibility_questionnaire');
+        // TODO: see how to solve the dynamic navigation later as eligibility questionnaire is not a static step
+        nextStep();
       }
     }
 
@@ -920,11 +923,17 @@ export const useContractorOnboarding = ({
       }
 
       case 'eligibility_questionnaire': {
-        // TODO: Add API endpoint for submitting eligibility questionnaire
-        // For now, just store the values and proceed
-        return Promise.resolve({
-          data: { eligibility_questionnaire: values },
-        });
+        try {
+          const response = await createEligibilityQuestionnaireMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: values,
+          });
+          console.log('response', response);
+          return response;
+        } catch (error) {
+          console.error('Error creating eligibility questionnaire', error);
+          throw error;
+        }
       }
 
       default: {

@@ -8,11 +8,9 @@ export type {
   ContractorOnboardingContractDetailsResponse,
   ContractPreviewFormPayload,
   ContractPreviewResponse,
-} from './types';
-export type {
   EligibilityQuestionnaireFormPayload,
   EligibilityQuestionnaireResponse,
-} from './components/EligibilityQuestionnaireStep';
+} from './types';
 export {
   onboardingWorkflows,
   contractorPlusProductIdentifier,

@@ -3,14 +3,10 @@ import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
-
-// TODO: add correct types later and use it in types.ts and the shared form component
-export type EligibilityQuestionnaireFormPayload = Record<string, unknown>;
-
-// TODO: add correct types later and use it in types.ts and the shared form component
-export type EligibilityQuestionnaireResponse = {
-  eligibility_questionnaire?: Record<string, unknown>;
-};
+import {
+  EligibilityQuestionnaireFormPayload,
+  EligibilityQuestionnaireResponse,
+} from '@/src/flows/ContractorOnboarding/types';
 
 type EligibilityQuestionnaireStepProps = {
   /*

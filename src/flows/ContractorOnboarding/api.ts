@@ -11,6 +11,8 @@ import {
   getIndexEmploymentContractDocument,
   EligibilityQuestionnaireJsonSchemaResponse,
   getShowEligibilityQuestionnaire,
+  SubmitEligibilityQuestionnaireRequest,
+  postCreateEligibilityQuestionnaire,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -463,5 +465,30 @@ export const useGetEligibilityQuestionnaire = ({
       });
     },
     ...options?.queryOptions,
+  });
+};
+
+export const usePostCreateEligibilityQuestionnaire = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      payload,
+    }: {
+      employmentId: string;
+      payload: SubmitEligibilityQuestionnaireRequest['responses'];
+    }) => {
+      return postCreateEligibilityQuestionnaire({
+        client: client as Client,
+        body: {
+          employment_slug: employmentId,
+          responses: payload,
+          type: 'contractor_of_record',
+        },
+        query: {
+          json_schema_version: 1, // TODO: json_schema_version should be dynamic but fixed for now
+        },
+      });
+    },
   });
 };
