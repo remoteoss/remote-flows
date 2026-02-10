@@ -83,6 +83,7 @@ const STEPS = [
   'Select Country',
   'Basic Information',
   'Pricing Plan',
+  'Eligibility Questionnaire',
   'Statement of Work',
   'Contract Preview',
   'Review',
