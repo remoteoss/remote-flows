@@ -64,7 +64,7 @@ export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
   );
 };
 
-const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT'];
+const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
 
 /**
  * Checks if the country code is a country code that requires nationality status field

@@ -316,6 +316,7 @@ export const useContractorOnboarding = ({
       KWT: 'Kuwait',
       OMN: 'Oman',
       QAT: 'Qatar',
+      BHR: 'Bahrain',
     };
     return countryNames[internalCountryCode as keyof typeof countryNames];
   }, [internalCountryCode]);
