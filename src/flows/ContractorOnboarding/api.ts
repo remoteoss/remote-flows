@@ -329,7 +329,7 @@ export const useUpdateUKandSaudiFields = (
   return {
     mutateAsync: async ({ employmentId }: { employmentId: string }) => {
       const {
-        saudi_nationality_status: saudiNationalityStatus,
+        nationality_status: nationalityStatus,
         ir35: ir35Status,
         ir35_sds_file: ir35SdsFile,
       } = parsedValues;
@@ -338,9 +338,9 @@ export const useUpdateUKandSaudiFields = (
           ir_35: ir35Status,
         },
       };
-      const saudiContractDetailsPayload = {
+      const nationalityContractDetailsPayload = {
         contract_document: {
-          nationality: saudiNationalityStatus,
+          nationality: nationalityStatus,
         },
       };
       if (ir35Status) {
@@ -358,10 +358,11 @@ export const useUpdateUKandSaudiFields = (
         }
         return Promise.resolve();
       }
-      if (saudiNationalityStatus) {
+      // nationality status is sent for the countries SAU, KWT, OMN, QAT
+      if (nationalityStatus) {
         return createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
-          payload: saudiContractDetailsPayload,
+          payload: nationalityContractDetailsPayload,
         });
       }
 
