@@ -7,8 +7,8 @@ import {
   CardFooter,
   cn,
 } from '@remoteoss/remote-flows/internals';
-import { ZendeskTriggerButton, zendeskArticles } from '@remoteoss/remote-flows';
 import { Check } from 'lucide-react';
+import { PricingPlanOptionsModal } from './PricingPlanModals';
 
 interface PricingPlanCardProps {
   title: React.ReactNode;
@@ -17,12 +17,17 @@ interface PricingPlanCardProps {
   selected?: boolean;
   onSelect?: (value: string) => void;
   value: string;
+  price: {
+    amount: number;
+    currencyCode: string;
+  };
 }
 
 export function PricingPlanCard({
   title,
   description,
   features,
+  price,
   onSelect,
   selected,
   value,
@@ -39,18 +44,30 @@ export function PricingPlanCard({
         }
       }}
     >
-      <CardHeader className='pb-4'>
+      <CardHeader className='pb-2'>
         <CardTitle className='text-xl font-bold'>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
         <div>
-          <ZendeskTriggerButton zendeskId={zendeskArticles.pricingPlanOptions}>
-            Read more ↗
-          </ZendeskTriggerButton>
+          <PricingPlanOptionsModal />
         </div>
         <div className='border-t mt-4 pt-4'></div>
       </CardHeader>
 
       <CardContent>
+        <p className='text-sm mb-3'>
+          <span
+            className='font-bold text-[#09090B]'
+            style={{ fontSize: '24px' }}
+          >
+            {price.amount}
+          </span>{' '}
+          <span style={{ fontSize: '16px' }} className='text-sm text-[#71717A]'>
+            <span className='font-bold text-[#09090B]'>
+              {price.currencyCode}
+            </span>{' '}
+            / month
+          </span>
+        </p>
         <ul className='space-y-3'>
           {features.map((feature, index) => (
             <li key={index} className='flex items-start gap-2'>
