@@ -73,6 +73,7 @@ const stepToFormSchemaMap: Record<
   select_country: null,
   basic_information: 'employment_basic_information',
   contract_details: null,
+  eligibility_questionnaire: null,
   pricing_plan: null,
   contract_preview: null,
   review: null,
@@ -336,6 +337,11 @@ export const useContractorOnboarding = ({
     fieldValues?.service_duration?.provisional_start_date,
   ]);
 
+  /**
+   * When the user selects COR, the data isn't saved yet in the BE
+   * We need to use the internalState to know what has happened
+   * TODO: After eligibility is submitted and okay we need to retrieve the employment to see where's the data stored
+   */
   const selectedPricingPlan = useMemo(() => {
     if (!employment?.contractor_type) {
       return undefined;
@@ -345,20 +351,27 @@ export const useContractorOnboarding = ({
       plus: contractorPlusProductIdentifier,
       cor: corProductIdentifier,
     };
+
+    if (stepState.values?.pricing_plan?.subscription === corProductIdentifier) {
+      return corProductIdentifier;
+    }
+
     return (
       subscriptions[
         employment?.contractor_type as keyof typeof subscriptions
       ] || contractorStandardProductIdentifier
     );
-  }, [employment]);
+  }, [employment, stepState.values?.pricing_plan?.subscription]);
 
-  const { data: eligibilityQuestionnaire } = useGetEligibilityQuestionnaire({
-    queryOptions: {
-      enabled: selectedPricingPlan === corProductIdentifier,
+  const { data: eligibilityQuestionnaireForm } = useGetEligibilityQuestionnaire(
+    {
+      queryOptions: {
+        enabled: selectedPricingPlan === corProductIdentifier,
+      },
     },
-  });
+  );
 
-  console.log({ eligibilityQuestionnaire });
+  console.log({ eligibilityQuestionnaireForm });
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -412,6 +425,7 @@ export const useContractorOnboarding = ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
+      eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -422,6 +436,7 @@ export const useContractorOnboarding = ({
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
+      eligibilityQuestionnaireForm?.fields,
     ],
   );
 
@@ -433,6 +448,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
+    eligibility_questionnaire: null,
     contract_preview: null,
     review: null,
   };
@@ -610,8 +626,11 @@ export const useContractorOnboarding = ({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
+        // TODO: we need to retrieve the contract preview data somehow from the BE, who signed the document
         contract_preview: {},
         pricing_plan: pricingPlanInitialValues,
+        // TODO: we need to retrieve information somehow only for COR though
+        eligibility_questionnaire: {},
         review: {},
       });
       goToStep('review');
@@ -795,6 +814,10 @@ export const useContractorOnboarding = ({
             payload: {
               operation: 'upgrade',
             },
+          });
+        } else if (values.subscription == corProductIdentifier) {
+          return Promise.resolve({
+            data: { subscription: values.subscription },
           });
         }
 
