@@ -122,11 +122,15 @@ export const useContractorOnboarding = ({
 
   const selectedProductRef = useRef<string | undefined>(undefined);
 
-  const { steps, stepsArray } = buildSteps({
-    includeSelectCountry: !skipSteps?.includes('select_country'),
-    includeEligibilityQuestionnaire:
-      selectedProductRef.current === corProductIdentifier,
-  });
+  const { steps, stepsArray } = useMemo(
+    () =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEligibilityQuestionnaire:
+          selectedProductRef.current === corProductIdentifier,
+      }),
+    [skipSteps],
+  );
 
   const {
     fieldValues,
