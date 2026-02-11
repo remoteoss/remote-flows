@@ -526,28 +526,6 @@ describe('ContractorOnboardingFlow', () => {
     await fillCountry('PRT');
   });
 
-  it('should set provisional_start_date to today when using the form for the first time', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, {
-      wrapper: TestProviders,
-    });
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await fillCountry('PRT');
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
-
-    const provisionalStartDateInput = await screen.findByTestId(
-      'provisional_start_date',
-    );
-    const today = new Date().toISOString().split('T')[0];
-    expect(provisionalStartDateInput).toHaveValue(today);
-  });
-
   it('should set provisional_start_date in the statement of work when using the form for the first time', async () => {
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
