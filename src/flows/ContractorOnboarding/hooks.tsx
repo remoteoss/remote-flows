@@ -225,6 +225,7 @@ export const useContractorOnboarding = ({
   const {
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
+    contractorSubscriptions,
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
@@ -234,6 +235,28 @@ export const useContractorOnboarding = ({
     },
     jsfModify: options?.jsfModify?.pricing_plan,
   });
+
+  const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
+    return Boolean(
+      contractorSubscriptions?.find(
+        (subscription) => subscription.product.short_name === 'COR',
+      )?.eligibility_questionnaire?.submitted_at,
+    );
+  }, [contractorSubscriptions]);
+
+  const isEligibilityBlocked = useMemo(() => {
+    const corSubscription = contractorSubscriptions?.find(
+      (subscription) => subscription.product.short_name === 'COR',
+    );
+
+    return corSubscription?.eligibility_questionnaire?.is_blocking;
+  }, [contractorSubscriptions]);
+
+  const eligibilityAnswers = useMemo(() => {
+    return contractorSubscriptions?.find(
+      (subscription) => subscription.product.short_name === 'COR',
+    )?.eligibility_questionnaire?.responses;
+  }, [contractorSubscriptions]);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -365,7 +388,10 @@ export const useContractorOnboarding = ({
 
     const subscription = stepState.values?.pricing_plan?.subscription;
 
-    if (subscription === corProductIdentifier) {
+    if (
+      subscription === corProductIdentifier ||
+      hasEligibilityQuestionnaireSubmitted
+    ) {
       return corProductIdentifier;
     }
 
@@ -377,9 +403,11 @@ export const useContractorOnboarding = ({
   }, [
     stepState.values?.pricing_plan?.subscription,
     employment?.contractor_type,
+    hasEligibilityQuestionnaireSubmitted,
   ]);
 
   const eligibilityFields = {
+    ...eligibilityAnswers,
     ...onboardingInitialValues,
     ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
     ...fieldValues,
@@ -574,13 +602,17 @@ export const useContractorOnboarding = ({
   const eligibilityQuestionnaireInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
-      // TODO: we need to retrieve the eligibility questionnaire data somehow from the BE, who is eligible
+      ...eligibilityAnswers,
     };
     return getInitialValues(
       stepFields.eligibility_questionnaire,
       initialValues,
     );
-  }, [stepFields.eligibility_questionnaire, onboardingInitialValues]);
+  }, [
+    stepFields.eligibility_questionnaire,
+    onboardingInitialValues,
+    eligibilityAnswers,
+  ]);
 
   const initialValues = useMemo(() => {
     return {
@@ -712,6 +744,7 @@ export const useContractorOnboarding = ({
       if (isCORSelected) {
         // TODO: see how to solve the dynamic navigation later as eligibility questionnaire is not a static step
         nextStep();
+        return;
       }
     }
 
@@ -929,6 +962,13 @@ export const useContractorOnboarding = ({
       }
 
       case 'eligibility_questionnaire': {
+        // TODO: for now skip sending the questionnaire if it has been submitted or is blockedº
+        if (hasEligibilityQuestionnaireSubmitted || isEligibilityBlocked) {
+          return Promise.resolve({
+            data: { eligibility_questionnaire: values },
+          });
+        }
+
         await createEligibilityQuestionnaireMutationAsync({
           employmentId: internalEmploymentId as string,
           payload: values,
