@@ -398,26 +398,33 @@ export const useContractorOnboarding = ({
       cor: corProductIdentifier,
     };
 
-    const subscription = stepState.values?.pricing_plan?.subscription;
+    // HIGHEST PRIORITY: Current form value (user is actively selecting)
+    if (fieldValues.subscription) {
+      return fieldValues.subscription;
+    }
 
-    if (
-      subscription === corProductIdentifier ||
-      hasEligibilityQuestionnaireSubmitted ||
-      fieldValues.subscription === corProductIdentifier
-    ) {
+    // SECOND: Previously submitted value in this session
+    const subscription = stepState.values?.pricing_plan?.subscription;
+    if (subscription) {
+      return subscription;
+    }
+
+    // THIRD: Backend state (eligibility submitted or employment contractor_type)
+    if (hasEligibilityQuestionnaireSubmitted) {
       return corProductIdentifier;
     }
 
+    // FALLBACK: Employment contractor_type or default
     return (
       subscriptions[
         employment?.contractor_type as keyof typeof subscriptions
       ] || contractorStandardProductIdentifier
     );
   }, [
+    fieldValues.subscription,
     stepState.values?.pricing_plan?.subscription,
-    employment?.contractor_type,
     hasEligibilityQuestionnaireSubmitted,
-    fieldValues,
+    employment?.contractor_type,
   ]);
 
   useEffect(() => {
