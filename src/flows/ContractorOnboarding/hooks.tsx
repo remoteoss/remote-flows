@@ -905,7 +905,7 @@ export const useContractorOnboarding = ({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
           payload: {
-            signature: values.signature,
+            signature: parsedValues.signature,
           },
         });
       }
@@ -955,13 +955,13 @@ export const useContractorOnboarding = ({
         // TODO: for now skip sending the questionnaire if it has been submitted or is blockedº
         if (hasEligibilityQuestionnaireSubmitted || isEligibilityBlocked) {
           return Promise.resolve({
-            data: { eligibility_questionnaire: values },
+            data: { eligibility_questionnaire: parsedValues },
           });
         }
 
         await createEligibilityQuestionnaireMutationAsync({
           employmentId: internalEmploymentId as string,
-          payload: values,
+          payload: parsedValues,
         });
         const response = await manageContractorCorSubscriptionMutationAsync({
           employmentId: internalEmploymentId as string,
