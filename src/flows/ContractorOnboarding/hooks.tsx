@@ -83,8 +83,6 @@ const jsonSchemaToEmployment: Partial<
   employment_basic_information: 'basic_information',
 };
 
-const provisionalStartDate = new Date().toISOString().split('T')[0];
-
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -453,7 +451,6 @@ export const useContractorOnboarding = ({
 
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
-      provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
