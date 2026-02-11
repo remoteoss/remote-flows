@@ -26,6 +26,7 @@ import {
   useGetEligibilityQuestionnaire,
   usePostCreateEligibilityQuestionnaire,
   usePostManageContractorCorSubscription,
+  useDeleteContractorCorSubscription,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -189,6 +190,8 @@ export const useContractorOnboarding = ({
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
+  const deleteContractorCorSubscriptionMutation =
+    useDeleteContractorCorSubscription();
 
   const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
     mutationToPromise(createEmploymentMutation);
@@ -207,6 +210,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: manageContractorCorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorCorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: deleteContractorCorSubscriptionMutationAsync } =
+    mutationToPromise(deleteContractorCorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -938,6 +944,15 @@ export const useContractorOnboarding = ({
         });
       }
       case 'pricing_plan': {
+        if (
+          hasEligibilityQuestionnaireSubmitted &&
+          values.subscription !== corProductIdentifier
+        ) {
+          await deleteContractorCorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+          });
+        }
+
         if (values.subscription == contractorStandardProductIdentifier) {
           return manageContractorSubscriptionMutationAsync({
             employmentId: internalEmploymentId as string,

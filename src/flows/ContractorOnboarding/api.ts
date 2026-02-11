@@ -14,6 +14,7 @@ import {
   SubmitEligibilityQuestionnaireRequest,
   postCreateEligibilityQuestionnaire,
   postManageContractorCorSubscriptionSubscription,
+  deleteDeleteContractorCorSubscriptionSubscription,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -504,6 +505,18 @@ export const usePostManageContractorCorSubscription = () => {
         path: {
           employment_id: employmentId,
         },
+      });
+    },
+  });
+};
+
+export const useDeleteContractorCorSubscription = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({ employmentId }: { employmentId: string }) => {
+      return deleteDeleteContractorCorSubscriptionSubscription({
+        client: client as Client,
+        path: { employment_id: employmentId },
       });
     },
   });
