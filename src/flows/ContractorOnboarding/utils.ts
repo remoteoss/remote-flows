@@ -4,7 +4,7 @@ import {
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 
-type StepKeys =
+export type StepKeys =
   | 'select_country'
   | 'basic_information'
   | 'contract_details'
@@ -13,27 +13,77 @@ type StepKeys =
   | 'pricing_plan'
   | 'review';
 
-export const STEPS: Record<StepKeys, Step<StepKeys>> = {
-  select_country: { index: 0, name: 'select_country' },
-  basic_information: { index: 1, name: 'basic_information' },
-  pricing_plan: { index: 2, name: 'pricing_plan' },
-  eligibility_questionnaire: { index: 3, name: 'eligibility_questionnaire' },
-  contract_details: { index: 4, name: 'contract_details' },
-  contract_preview: { index: 5, name: 'contract_preview' },
-  review: { index: 6, name: 'review' },
-} as const;
+type StepConfig = {
+  includeSelectCountry?: boolean;
+  includeEligibilityQuestionnaire?: boolean;
+};
 
-export const STEPS_WITHOUT_SELECT_COUNTRY: Record<
-  Exclude<StepKeys, 'select_country'>,
-  Step<Exclude<StepKeys, 'select_country'>>
-> = {
-  basic_information: { index: 0, name: 'basic_information' },
-  pricing_plan: { index: 1, name: 'pricing_plan' },
-  eligibility_questionnaire: { index: 2, name: 'eligibility_questionnaire' },
-  contract_details: { index: 3, name: 'contract_details' },
-  contract_preview: { index: 4, name: 'contract_preview' },
-  review: { index: 5, name: 'review' },
-} as const;
+export function buildSteps(config: StepConfig = {}) {
+  const {
+    includeSelectCountry = true,
+    includeEligibilityQuestionnaire = true,
+  } = config;
+
+  const stepDefinitions: Array<{
+    name: StepKeys;
+    label: string;
+    include: boolean;
+  }> = [
+    {
+      name: 'select_country',
+      label: 'Select Country',
+      include: includeSelectCountry,
+    },
+    {
+      name: 'basic_information',
+      label: 'Basic Information',
+      include: true,
+    },
+    {
+      name: 'pricing_plan',
+      label: 'Pricing Plan',
+      include: true,
+    },
+    {
+      name: 'eligibility_questionnaire',
+      label: 'Eligibility Questionnaire',
+      include: includeEligibilityQuestionnaire,
+    },
+    {
+      name: 'contract_details',
+      label: 'Contract Details',
+      include: true,
+    },
+    {
+      name: 'contract_preview',
+      label: 'Contract Preview',
+      include: true,
+    },
+    {
+      name: 'review',
+      label: 'Review',
+      include: true,
+    },
+  ];
+
+  const activeSteps = stepDefinitions.filter((step) => step.include);
+
+  const stepsArray = activeSteps.map((step, index) => ({
+    name: step.name,
+    index,
+    label: step.label,
+  }));
+
+  const steps = stepsArray.reduce(
+    (acc, step) => {
+      acc[step.name] = { index: step.index, name: step.name };
+      return acc;
+    },
+    {} as Record<string, Step<StepKeys>>,
+  );
+
+  return { steps, stepsArray };
+}
 
 /**
  * Calculates the description for the provisional start date field

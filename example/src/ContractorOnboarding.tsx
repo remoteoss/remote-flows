@@ -79,16 +79,6 @@ const Switcher = (props: JSFCustomComponentProps) => {
   );
 };
 
-const STEPS = [
-  'Select Country',
-  'Basic Information',
-  'Pricing Plan',
-  'Eligibility Questionnaire',
-  'Statement of Work',
-  'Contract Preview',
-  'Review',
-];
-
 type MultiStepFormProps = {
   contractorOnboardingBag: ContractorOnboardingRenderProps['contractorOnboardingBag'];
   components: ContractorOnboardingRenderProps['components'];
@@ -373,12 +363,12 @@ const OnBoardingRender = ({
       <Card className='px-0 py-0'>
         <div className='steps-contractor-onboarding-navigation'>
           <ul>
-            {STEPS.map((step, index) => (
+            {contractorOnboardingBag.steps.map((step) => (
               <li
-                key={index}
-                className={`step-contractor-onboarding-item ${index === currentStepIndex ? 'active' : ''}`}
+                key={step.name}
+                className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
               >
-                {index + 1}. {step}
+                {step.index + 1}. {step.label}
               </li>
             ))}
           </ul>

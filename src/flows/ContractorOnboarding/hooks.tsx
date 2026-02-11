@@ -30,9 +30,9 @@ import {
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
-  STEPS,
-  STEPS_WITHOUT_SELECT_COUNTRY,
+  buildSteps,
   calculateProvisionalStartDateDescription,
+  StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCountriesSchemaField,
@@ -45,7 +45,7 @@ import {
   reviewStepAllowedEmploymentStatus,
 } from '@/src/flows/Onboarding/utils';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
-import { Step, useStepState } from '@/src/flows/useStepState';
+import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
@@ -69,10 +69,7 @@ type useContractorOnboardingProps = Omit<
   'render'
 >;
 
-const stepToFormSchemaMap: Record<
-  keyof typeof STEPS,
-  JSONSchemaFormType | null
-> = {
+const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
   contract_details: null,
@@ -123,9 +120,15 @@ export const useContractorOnboarding = ({
     eligibility_questionnaire: {},
   });
 
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
+  const selectedProductRef = useRef<string | undefined>(undefined);
+
+  console.log({ selectedProductRef: selectedProductRef.current });
+
+  const { steps, stepsArray } = buildSteps({
+    includeSelectCountry: skipSteps?.includes('select_country'),
+    includeEligibilityQuestionnaire:
+      selectedProductRef.current === corProductIdentifier,
+  });
 
   const {
     fieldValues,
@@ -135,9 +138,7 @@ export const useContractorOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
+  } = useStepState(steps);
 
   const {
     data: employment,
@@ -412,6 +413,16 @@ export const useContractorOnboarding = ({
     hasEligibilityQuestionnaireSubmitted,
   ]);
 
+  useEffect(() => {
+    if (
+      selectedPricingPlan &&
+      selectedPricingPlan !== selectedProductRef.current
+    ) {
+      console.log('set selected product ref', selectedPricingPlan);
+      selectedProductRef.current = selectedPricingPlan;
+    }
+  }, [selectedPricingPlan]);
+
   const eligibilityFields = {
     ...eligibilityAnswers,
     ...onboardingInitialValues,
@@ -478,7 +489,7 @@ export const useContractorOnboarding = ({
       },
     });
 
-  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
+  const stepFields: Record<StepKeys, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
@@ -733,56 +744,8 @@ export const useContractorOnboarding = ({
     eligibilityQuestionnaireInitialValues,
   ]);
 
-  const goTo = (step: keyof typeof STEPS) => {
+  const goTo = (step: StepKeys) => {
     goToStep(step);
-  };
-
-  // Custom next function with conditional navigation for eligibility questionnaire
-  const handleNext = () => {
-    const currentStepName = stepState.currentStep.name;
-
-    // After pricing_plan: check if COR is selected
-    if (currentStepName === 'pricing_plan') {
-      const isCORSelected =
-        stepState.values?.pricing_plan?.subscription === corProductIdentifier ||
-        fieldValues?.subscription === corProductIdentifier;
-
-      if (isCORSelected) {
-        // TODO: see how to solve the dynamic navigation later as eligibility questionnaire is not a static step
-        nextStep();
-        return;
-      }
-    }
-
-    // Default behavior for other steps
-    nextStep();
-  };
-
-  // Custom back function with conditional navigation
-  const handleBack = () => {
-    const currentStepName = stepState.currentStep.name;
-
-    // From contract_details: check if we came from eligibility questionnaire
-    if (currentStepName === 'contract_details') {
-      const isCORSelected =
-        stepState.values?.pricing_plan?.subscription === corProductIdentifier;
-
-      if (isCORSelected) {
-        goToStep('eligibility_questionnaire');
-      } else {
-        goToStep('pricing_plan');
-      }
-      return;
-    }
-
-    // From eligibility_questionnaire: go back to pricing_plan
-    if (currentStepName === 'eligibility_questionnaire') {
-      goToStep('pricing_plan');
-      return;
-    }
-
-    // Default behavior for other steps
-    previousStep();
   };
 
   const parseFormValues = async (values: FieldValues) => {
@@ -1027,13 +990,13 @@ export const useContractorOnboarding = ({
      * Function to handle going back to the previous step
      * @returns {void}
      */
-    back: handleBack,
+    back: previousStep,
 
     /**
      * Function to handle going to the next step
      * @returns {void}
      */
-    next: handleNext,
+    next: nextStep,
 
     /**
      * Function to handle going to a specific step
@@ -1204,5 +1167,10 @@ export const useContractorOnboarding = ({
      * @returns {CompanyLegalEntity}
      */
     defaultLegalEntity,
+    /**
+     * Steps array
+     * @returns {Array<{name: string, index: number, label: string}>}
+     */
+    steps: stepsArray,
   };
 };
