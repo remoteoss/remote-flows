@@ -1,12 +1,12 @@
+import { useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 import { JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
-import { useEffect } from 'react';
 import {
   EligibilityQuestionnaireFormPayload,
   PricingPlanFormPayload,
@@ -33,6 +33,7 @@ export function ContractorOnboardingForm({
 }: ContractorOnboardingFormProps) {
   const { formId, contractorOnboardingBag, formRef } =
     useContractorOnboardingContext();
+  const prevValuesRef = useRef(defaultValues);
 
   const resolver = useJsonSchemasValidationFormResolver(
     contractorOnboardingBag.handleValidation,
@@ -63,11 +64,12 @@ export function ContractorOnboardingForm({
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      const isFormDirty =
-        Object.keys(form.formState.dirtyFields).length > 0 ||
-        form.formState.isDirty;
-      if (isFormDirty) {
+      const hasChanged = Object.keys(values).some(
+        (key) => values[key] !== prevValuesRef.current[key],
+      );
+      if (hasChanged) {
         contractorOnboardingBag?.checkFieldUpdates(values);
+        prevValuesRef.current = { ...values };
       }
     });
     return () => subscription?.unsubscribe();
