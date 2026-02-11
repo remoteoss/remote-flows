@@ -237,6 +237,7 @@ export const useContractorOnboarding = ({
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
+    refetch: refetchContractorSubscriptions,
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
@@ -401,7 +402,8 @@ export const useContractorOnboarding = ({
 
     if (
       subscription === corProductIdentifier ||
-      hasEligibilityQuestionnaireSubmitted
+      hasEligibilityQuestionnaireSubmitted ||
+      fieldValues.subscription === corProductIdentifier
     ) {
       return corProductIdentifier;
     }
@@ -415,6 +417,7 @@ export const useContractorOnboarding = ({
     stepState.values?.pricing_plan?.subscription,
     employment?.contractor_type,
     hasEligibilityQuestionnaireSubmitted,
+    fieldValues,
   ]);
 
   useEffect(() => {
@@ -426,7 +429,7 @@ export const useContractorOnboarding = ({
   const eligibilityFields = {
     ...eligibilityAnswers,
     ...onboardingInitialValues,
-    ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+    ...stepState.values?.eligibility_questionnaire,
     ...fieldValues,
   };
 
@@ -914,6 +917,7 @@ export const useContractorOnboarding = ({
           await deleteContractorCorSubscriptionMutationAsync({
             employmentId: internalEmploymentId as string,
           });
+          await refetchContractorSubscriptions();
         }
 
         if (values.subscription == contractorStandardProductIdentifier) {
@@ -951,9 +955,12 @@ export const useContractorOnboarding = ({
           employmentId: internalEmploymentId as string,
           payload: values,
         });
-        return manageContractorCorSubscriptionMutationAsync({
+        const response = await manageContractorCorSubscriptionMutationAsync({
           employmentId: internalEmploymentId as string,
         });
+
+        await refetchContractorSubscriptions();
+        return response;
       }
 
       default: {

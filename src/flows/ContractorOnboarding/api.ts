@@ -270,13 +270,16 @@ export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
-  const { data: contractorSubscriptions, isLoading: isLoading } =
-    useGetContractorSubscriptions({
-      employmentId: employmentId,
-      options: {
-        queryOptions: options?.queryOptions,
-      },
-    });
+  const {
+    data: contractorSubscriptions,
+    isLoading: isLoading,
+    refetch,
+  } = useGetContractorSubscriptions({
+    employmentId: employmentId,
+    options: {
+      queryOptions: options?.queryOptions,
+    },
+  });
 
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
@@ -318,6 +321,7 @@ export const useContractorSubscriptionSchemaField = (
     isLoading,
     form,
     contractorSubscriptions,
+    refetch,
   };
 };
 
