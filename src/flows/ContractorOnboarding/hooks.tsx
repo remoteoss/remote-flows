@@ -120,16 +120,18 @@ export const useContractorOnboarding = ({
     eligibility_questionnaire: {},
   });
 
-  const selectedProductRef = useRef<string | undefined>(undefined);
+  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
+    undefined,
+  );
 
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire:
-          selectedProductRef.current === corProductIdentifier,
+          selectedProduct === corProductIdentifier,
       }),
-    [skipSteps],
+    [selectedProduct, skipSteps],
   );
 
   const {
@@ -416,13 +418,10 @@ export const useContractorOnboarding = ({
   ]);
 
   useEffect(() => {
-    if (
-      selectedPricingPlan &&
-      selectedPricingPlan !== selectedProductRef.current
-    ) {
-      selectedProductRef.current = selectedPricingPlan;
+    if (selectedPricingPlan && selectedPricingPlan !== selectedProduct) {
+      setSelectedProduct(selectedPricingPlan);
     }
-  }, [selectedPricingPlan]);
+  }, [selectedPricingPlan, selectedProduct]);
 
   const eligibilityFields = {
     ...eligibilityAnswers,
