@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import omit from 'lodash.omit';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -914,10 +914,18 @@ export const useContractorOnboarding = ({
           hasEligibilityQuestionnaireSubmitted &&
           values.subscription !== corProductIdentifier
         ) {
-          await deleteContractorCorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-          });
-          await refetchContractorSubscriptions();
+          try {
+            await deleteContractorCorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+            });
+            await refetchContractorSubscriptions();
+          } catch (error) {
+            if ((error as $TSFixMe)?.response?.status !== 404) {
+              throw error;
+            }
+            // Still refetch to update the UI state
+            await refetchContractorSubscriptions();
+          }
         }
 
         if (values.subscription == contractorStandardProductIdentifier) {
