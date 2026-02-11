@@ -510,7 +510,7 @@ export const useContractorOnboarding = ({
   );
 
   const stepFieldsWithFlatFieldsets: Record<
-    keyof typeof STEPS,
+    StepKeys,
     JSFFieldset | null | undefined
   > = {
     select_country: null,
