@@ -471,7 +471,7 @@ export const useGetEligibilityQuestionnaire = ({
         jsfModify: options?.jsfModify,
       });
     },
-    ...options?.queryOptions,
+    enabled: options?.queryOptions?.enabled,
   });
 };
 

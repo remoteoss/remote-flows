@@ -421,8 +421,8 @@ export const useContractorOnboarding = ({
       ] || contractorStandardProductIdentifier
     );
   }, [
-    fieldValues.subscription,
-    stepState.values?.pricing_plan?.subscription,
+    fieldValues,
+    stepState.values,
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
   ]);
@@ -973,16 +973,21 @@ export const useContractorOnboarding = ({
           });
         }
 
-        await createEligibilityQuestionnaireMutationAsync({
-          employmentId: internalEmploymentId as string,
-          payload: parsedValues,
-        });
-        const response = await manageContractorCorSubscriptionMutationAsync({
-          employmentId: internalEmploymentId as string,
-        });
+        try {
+          await createEligibilityQuestionnaireMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: parsedValues,
+          });
 
-        await refetchContractorSubscriptions();
-        return response;
+          const response = await manageContractorCorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+          });
+
+          return response;
+        } finally {
+          // Always refetch to keep state in sync, even on error
+          await refetchContractorSubscriptions();
+        }
       }
 
       default: {

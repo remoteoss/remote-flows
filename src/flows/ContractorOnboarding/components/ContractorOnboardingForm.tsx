@@ -63,11 +63,10 @@ export function ContractorOnboardingForm({
 
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      const isAnyFieldDirty = Object.keys(values).some(
-        (key) =>
-          values[key as keyof unknown] !== defaultValues[key as keyof unknown],
-      );
-      if (isAnyFieldDirty) {
+      const isFormDirty =
+        Object.keys(form.formState.dirtyFields).length > 0 ||
+        form.formState.isDirty;
+      if (isFormDirty) {
         contractorOnboardingBag?.checkFieldUpdates(values);
       }
     });
