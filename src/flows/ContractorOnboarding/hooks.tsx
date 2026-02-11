@@ -122,8 +122,6 @@ export const useContractorOnboarding = ({
 
   const selectedProductRef = useRef<string | undefined>(undefined);
 
-  console.log({ selectedProductRef: selectedProductRef.current });
-
   const { steps, stepsArray } = buildSteps({
     includeSelectCountry: skipSteps?.includes('select_country'),
     includeEligibilityQuestionnaire:
@@ -418,7 +416,6 @@ export const useContractorOnboarding = ({
       selectedPricingPlan &&
       selectedPricingPlan !== selectedProductRef.current
     ) {
-      console.log('set selected product ref', selectedPricingPlan);
       selectedProductRef.current = selectedPricingPlan;
     }
   }, [selectedPricingPlan]);

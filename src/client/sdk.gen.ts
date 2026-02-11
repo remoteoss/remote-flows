@@ -214,6 +214,9 @@ import type {
   GetShowBillingDocumentData,
   GetShowBillingDocumentErrors,
   GetShowBillingDocumentResponses,
+  GetShowCompanyComplianceProfileData,
+  GetShowCompanyComplianceProfileErrors,
+  GetShowCompanyComplianceProfileResponses,
   GetShowCompanyData,
   GetShowCompanyErrors,
   GetShowCompanyManagerData,
@@ -763,6 +766,7 @@ export const postCreateDataSync = <ThrowOnError extends boolean = false>(
  * List pricing plans
  *
  * List all pricing plans for a company.
+ * Currently the endpoint only returns the pricing plans for the EOR monthly product and the contractor products (Standard, Plus and COR).
  *
  */
 export const getIndexCompanyPricingPlan = <
@@ -1647,6 +1651,10 @@ export const postCreateSsoConfiguration = <
     PostCreateSsoConfigurationErrors,
     ThrowOnError
   >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sso-configuration',
     ...options,
     headers: {
@@ -2109,9 +2117,34 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Get Company Compliance Profile
+ *
+ * Returns the KYB and credit risk status for the company's default legal entity.
+ *
+ */
+export const getShowCompanyComplianceProfile = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowCompanyComplianceProfileData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyComplianceProfileResponses,
+    GetShowCompanyComplianceProfileErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/compliance-profile',
+    ...options,
+  });
+
+/**
  * Show product prices in the company's desired currency
  *
- * Show product prices in the company's desired currency.
+ * list product prices in the company's desired currency.
+ * the endpoint currently only returns the product prices for the EOR monthly product and the contractor products (Standard, Plus and COR).
  * the product prices are then used to create a pricing plan for the company.
  *
  */
@@ -2529,6 +2562,7 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * - global_payroll_administrative_details
  * - global_payroll_basic_information
  * - global_payroll_contract_details
+ * - global_payroll_federal_taxes
  * - global_payroll_personal_details
  * - benefit_renewal_request
  * - hris_personal_details
@@ -3444,7 +3478,10 @@ export const getIndexCompanyLegalEntities = <
     GetIndexCompanyLegalEntitiesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/companies/{company_id}/legal-entities',
     ...options,
   });

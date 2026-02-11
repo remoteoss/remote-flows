@@ -1,3 +1,4 @@
+import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   CreateContractDocument,
   getShowContractDocument,
@@ -43,7 +44,6 @@ import {
   useUploadFile,
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
-import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
  * Get the contract document signature schema

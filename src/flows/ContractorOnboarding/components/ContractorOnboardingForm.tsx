@@ -7,15 +7,19 @@ import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { useEffect } from 'react';
-import { PricingPlanFormPayload } from '@/src/flows/ContractorOnboarding/types';
-import { ContractorOnboardingContractDetailsFormPayload } from '@/src/flows/ContractorOnboarding/types';
+import {
+  EligibilityQuestionnaireFormPayload,
+  PricingPlanFormPayload,
+  ContractorOnboardingContractDetailsFormPayload,
+} from '@/src/flows/ContractorOnboarding/types';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
     payload:
       | BasicInformationFormPayload
       | PricingPlanFormPayload
-      | ContractorOnboardingContractDetailsFormPayload,
+      | ContractorOnboardingContractDetailsFormPayload
+      | EligibilityQuestionnaireFormPayload,
   ) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
