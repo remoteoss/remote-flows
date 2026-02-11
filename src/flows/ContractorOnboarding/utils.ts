@@ -19,11 +19,6 @@ type StepConfig = {
 };
 
 export function buildSteps(config: StepConfig = {}) {
-  const {
-    includeSelectCountry = true,
-    includeEligibilityQuestionnaire = true,
-  } = config;
-
   const stepDefinitions: Array<{
     name: StepKeys;
     label: string;
@@ -32,7 +27,7 @@ export function buildSteps(config: StepConfig = {}) {
     {
       name: 'select_country',
       label: 'Select Country',
-      include: includeSelectCountry,
+      include: Boolean(config?.includeSelectCountry),
     },
     {
       name: 'basic_information',
@@ -47,7 +42,7 @@ export function buildSteps(config: StepConfig = {}) {
     {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
-      include: includeEligibilityQuestionnaire,
+      include: Boolean(config?.includeEligibilityQuestionnaire),
     },
     {
       name: 'contract_details',

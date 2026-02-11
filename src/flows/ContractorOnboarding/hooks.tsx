@@ -433,12 +433,19 @@ export const useContractorOnboarding = ({
     }
   }, [selectedPricingPlan, selectedProduct]);
 
-  const eligibilityFields = {
-    ...eligibilityAnswers,
-    ...onboardingInitialValues,
-    ...stepState.values?.eligibility_questionnaire,
-    ...fieldValues,
-  };
+  const eligibilityFields = useMemo(() => {
+    return {
+      ...eligibilityAnswers,
+      ...onboardingInitialValues,
+      ...stepState.values?.eligibility_questionnaire,
+      ...fieldValues,
+    };
+  }, [
+    eligibilityAnswers,
+    onboardingInitialValues,
+    stepState.values?.eligibility_questionnaire,
+    fieldValues,
+  ]);
 
   const { data: eligibilityQuestionnaireForm } = useGetEligibilityQuestionnaire(
     {
