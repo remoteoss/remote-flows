@@ -261,8 +261,8 @@ export const useContractorOnboardingDetailsSchema = ({
 };
 
 const CONTRACT_PRODUCT_TITLES = {
-  [contractorStandardProductIdentifier]: 'Contractor Management Plus',
-  [contractorPlusProductIdentifier]: 'Contractor Management',
+  [contractorStandardProductIdentifier]: 'Contractor Management',
+  [contractorPlusProductIdentifier]: 'Contractor Management Plus',
   [corProductIdentifier]: 'Contractor of Record',
 };
 
