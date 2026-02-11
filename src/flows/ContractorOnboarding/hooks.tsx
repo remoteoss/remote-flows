@@ -1129,7 +1129,10 @@ export const useContractorOnboarding = ({
       createContractorContractDocumentMutation.isPending ||
       signContractDocumentMutation.isPending ||
       manageContractorSubscriptionMutation.isPending ||
-      uploadFileMutation.isPending,
+      uploadFileMutation.isPending ||
+      createEligibilityQuestionnaireMutation.isPending ||
+      manageContractorCorSubscriptionMutation.isPending ||
+      deleteContractorCorSubscriptionMutation.isPending,
 
     /**
      * Document preview PDF data
