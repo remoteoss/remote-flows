@@ -91,7 +91,7 @@ export const mockContractorSubscriptionWithEligibilityResponse = {
         active: true,
         name: 'Monthly Contractor Plus Subscription',
         identifier: 'urn:remotecom:resource:product:contractor:plus:monthly',
-        short_name: 'Plus',
+        short_name: 'CM+',
       },
       currency: {
         code: 'USD',
@@ -109,7 +109,7 @@ export const mockContractorSubscriptionWithEligibilityResponse = {
         name: 'Monthly Contractor Subscription',
         identifier:
           'urn:remotecom:resource:product:contractor:standard:monthly',
-        short_name: 'Standard',
+        short_name: 'CM',
       },
       currency: {
         code: 'USD',
