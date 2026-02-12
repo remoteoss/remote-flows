@@ -44,7 +44,9 @@ import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithRep
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
+import { CreateCompanyForm } from './CreateCompany';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
+import CreateCompanyCode from './CreateCompany?raw';
 
 const costCalculatorDemos = [
   {
@@ -148,6 +150,14 @@ const additionalDemos = [
     component: ContractorOnboardingForm,
     sourceCode: ContractorOnboardingCode,
   },
+  {
+    id: 'create-company',
+    title: 'Create Company',
+    description: 'Create a company',
+    component: CreateCompanyForm,
+    sourceCode: CreateCompanyCode,
+  },
+
 ];
 
 const demoStructure = [
