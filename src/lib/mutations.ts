@@ -96,6 +96,7 @@ export function mutationToPromise<
             } else {
               const fieldErrors = extractFieldErrors(response.error);
               const errorData = response.error.error || response.error;
+              const { response: httpResponse } = response;
               const errorMessage =
                 typeof errorData?.message === 'string'
                   ? errorData.message
@@ -104,6 +105,7 @@ export function mutationToPromise<
                 error: new Error(errorMessage),
                 rawError: response.error,
                 fieldErrors,
+                response: httpResponse,
               });
             }
           },
@@ -113,6 +115,7 @@ export function mutationToPromise<
               error: error as Error,
               rawError: error,
               fieldErrors,
+              response: error?.response,
             });
           },
         });

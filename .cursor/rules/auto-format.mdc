@@ -1,0 +1,17 @@
+---
+description: Automatically format and lint code after agentic changes
+globs: src/**/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+# Auto-Format After Agentic Coding
+
+**Always run these commands after making code changes:**
+
+1. Format all modified files:
+
+```bash
+   npm run format
+```
+
+**Never complete a task without running formatting first.**

@@ -1,3 +1,4 @@
+import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   CreateContractDocument,
   getShowContractDocument,
@@ -9,6 +10,12 @@ import {
   postSignContractDocument,
   SignContractDocument,
   getIndexEmploymentContractDocument,
+  EligibilityQuestionnaireJsonSchemaResponse,
+  getShowEligibilityQuestionnaire,
+  SubmitEligibilityQuestionnaireRequest,
+  postCreateEligibilityQuestionnaire,
+  postManageContractorCorSubscriptionSubscription,
+  deleteDeleteContractorCorSubscriptionSubscription,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -24,6 +31,8 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
   corProductIdentifier,
   IR35_FILE_SUBTYPE,
 } from '@/src/flows/ContractorOnboarding/constants';
@@ -252,23 +261,25 @@ export const useContractorOnboardingDetailsSchema = ({
 };
 
 const CONTRACT_PRODUCT_TITLES = {
-  ['urn:remotecom:resource:product:contractor:plus:monthly']:
-    'Contractor Management Plus',
-  ['urn:remotecom:resource:product:contractor:standard:monthly']:
-    'Contractor Management',
+  [contractorStandardProductIdentifier]: 'Contractor Management',
+  [contractorPlusProductIdentifier]: 'Contractor Management Plus',
+  [corProductIdentifier]: 'Contractor of Record',
 };
 
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
-  const { data: contractorSubscriptions, isLoading: isLoading } =
-    useGetContractorSubscriptions({
-      employmentId: employmentId,
-      options: {
-        queryOptions: options?.queryOptions,
-      },
-    });
+  const {
+    data: contractorSubscriptions,
+    isLoading: isLoading,
+    refetch,
+  } = useGetContractorSubscriptions({
+    employmentId: employmentId,
+    options: {
+      queryOptions: options?.queryOptions,
+    },
+  });
 
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
@@ -281,29 +292,27 @@ export const useContractorSubscriptionSchemaField = (
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
     if (field) {
-      const options = contractorSubscriptions
-        .filter((opts) => opts.product.identifier !== corProductIdentifier)
-        .map((opts) => {
-          const product = opts.product;
-          const price = opts.price.amount;
-          const currencyCode = opts.currency.code;
-          const title =
-            CONTRACT_PRODUCT_TITLES[
-              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ?? '';
-          const label = title;
-          const value = product.identifier ?? '';
-          const description = product.description ?? '';
-          const features = product.features ?? [];
-          const meta = {
-            features,
-            price: {
-              amount: convertFromCents(price),
-              currencyCode: currencyCode,
-            },
-          };
-          return { label, value, description, meta };
-        });
+      const options = contractorSubscriptions.map((opts) => {
+        const product = opts.product;
+        const price = opts.price.amount;
+        const currencyCode = opts.currency.code;
+        const title =
+          CONTRACT_PRODUCT_TITLES[
+            product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+          ] ?? '';
+        const label = title;
+        const value = product.identifier ?? '';
+        const description = product.description ?? '';
+        const features = product.features ?? [];
+        const meta = {
+          features,
+          price: {
+            amount: convertFromCents(price),
+            currencyCode: currencyCode,
+          },
+        };
+        return { label, value, description, meta };
+      });
       field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
@@ -311,6 +320,8 @@ export const useContractorSubscriptionSchemaField = (
   return {
     isLoading,
     form,
+    contractorSubscriptions,
+    refetch,
   };
 };
 
@@ -417,6 +428,100 @@ export const useGetContractDocuments = (
     enabled: options?.enabled,
     select: ({ data }) => {
       return data?.data?.contract_documents;
+    },
+  });
+};
+
+export const useGetEligibilityQuestionnaire = ({
+  options,
+  fieldValues,
+}: {
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  fieldValues: FieldValues;
+}) => {
+  const { client } = useClient();
+  return useQuery<
+    EligibilityQuestionnaireJsonSchemaResponse['data'],
+    Error,
+    FormResult
+  >({
+    queryKey: ['eligibility-questionnaire'],
+    queryFn: async (): Promise<
+      EligibilityQuestionnaireJsonSchemaResponse['data']
+    > => {
+      const response = await getShowEligibilityQuestionnaire({
+        client: client as Client,
+        query: {
+          type: 'contractor_of_record',
+          json_schema_version: 1,
+        },
+      });
+
+      // Extract the data from the response wrapper
+      if (response.error) {
+        throw new Error('Failed to fetch eligibility questionnaire');
+      }
+
+      return response.data
+        .data as EligibilityQuestionnaireJsonSchemaResponse['data'];
+    },
+    select: (data: EligibilityQuestionnaireJsonSchemaResponse['data']) => {
+      const schema = data?.schema || {};
+      return createHeadlessForm(schema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+};
+
+export const usePostCreateEligibilityQuestionnaire = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      payload,
+    }: {
+      employmentId: string;
+      payload: SubmitEligibilityQuestionnaireRequest['responses'];
+    }) => {
+      return postCreateEligibilityQuestionnaire({
+        client: client as Client,
+        body: {
+          employment_slug: employmentId,
+          responses: payload,
+          type: 'contractor_of_record',
+        },
+        query: {
+          json_schema_version: 1, // TODO: json_schema_version should be dynamic but fixed for now
+        },
+      });
+    },
+  });
+};
+
+export const usePostManageContractorCorSubscription = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({ employmentId }: { employmentId: string }) => {
+      return postManageContractorCorSubscriptionSubscription({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
+export const useDeleteContractorCorSubscription = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({ employmentId }: { employmentId: string }) => {
+      return deleteDeleteContractorCorSubscriptionSubscription({
+        client: client as Client,
+        path: { employment_id: employmentId },
+      });
     },
   });
 };
