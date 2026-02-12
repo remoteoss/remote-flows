@@ -3622,6 +3622,7 @@ export const mockContractorSubscriptionResponse = {
         active: true,
         name: 'Monthly Contractor of Record Subscription',
         identifier: 'urn:remotecom:resource:product:contractor:aor:monthly',
+        short_name: 'COR',
       },
       currency: {
         code: 'USD',
@@ -3638,6 +3639,7 @@ export const mockContractorSubscriptionResponse = {
         active: true,
         name: 'Monthly Contractor Plus Subscription',
         identifier: 'urn:remotecom:resource:product:contractor:plus:monthly',
+        short_name: 'CM+',
       },
       currency: {
         code: 'USD',
@@ -3655,6 +3657,7 @@ export const mockContractorSubscriptionResponse = {
         name: 'Monthly Contractor Subscription',
         identifier:
           'urn:remotecom:resource:product:contractor:standard:monthly',
+        short_name: 'CM',
       },
       currency: {
         code: 'USD',
@@ -3753,4 +3756,127 @@ export const contractDocumentsResponse = {
       },
     ],
   },
+};
+
+export const mockEligibilityQuestionnaireSchema = {
+  data: {
+    schema: {
+      type: 'object',
+      properties: {
+        control_the_way_contractors_work: {
+          type: 'string',
+          title: 'Do you control the way contractors work?',
+          oneOf: [
+            { const: 'no', title: 'No' },
+            { const: 'yes', title: 'Yes' },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+            direction: 'row',
+          },
+        },
+        previously_hired_contractors_as_employees: {
+          type: 'string',
+          title: 'Have you previously hired contractors as employees?',
+          oneOf: [
+            { const: 'no', title: 'No' },
+            { const: 'yes', title: 'Yes' },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+            direction: 'row',
+          },
+        },
+        treating_contractors_as_employees: {
+          type: 'string',
+          title: 'Are you treating contractors as employees?',
+          oneOf: [
+            { const: 'no', title: 'No' },
+            { const: 'yes', title: 'Yes' },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+            direction: 'row',
+          },
+        },
+      },
+      required: [
+        'control_the_way_contractors_work',
+        'previously_hired_contractors_as_employees',
+        'treating_contractors_as_employees',
+      ],
+    },
+  },
+};
+
+export const mockEligibilityQuestionnaireSubmissionResponse = {
+  data: {
+    status: 'ok',
+  },
+};
+
+export const mockContractorSubscriptionWithEligibilityResponse = {
+  data: [
+    {
+      product: {
+        active: true,
+        name: 'Monthly Contractor of Record Subscription',
+        identifier: 'urn:remotecom:resource:product:contractor:aor:monthly',
+        short_name: 'COR',
+      },
+      currency: {
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+      },
+      total_amount: 0,
+      price: {
+        amount: 32500,
+      },
+      eligibility_questionnaire: {
+        submitted_at: '2026-01-26T11:08:56Z',
+        is_blocking: false,
+        responses: {
+          control_the_way_contractors_work: 'no',
+          previously_hired_contractors_as_employees: 'no',
+          treating_contractors_as_employees: 'no',
+        },
+      },
+    },
+    {
+      product: {
+        active: true,
+        name: 'Monthly Contractor Plus Subscription',
+        identifier: 'urn:remotecom:resource:product:contractor:plus:monthly',
+        short_name: 'Plus',
+      },
+      currency: {
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+        slug: 'usd-72c1c0be-587c-4d0e-b705-8fe9f16028a3',
+      },
+      price: {
+        amount: 9900,
+      },
+    },
+    {
+      product: {
+        active: true,
+        name: 'Monthly Contractor Subscription',
+        identifier:
+          'urn:remotecom:resource:product:contractor:standard:monthly',
+        short_name: 'Standard',
+      },
+      currency: {
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+        slug: 'usd-72c1c0be-587c-4d0e-b705-8fe9f16028a3',
+      },
+      price: {
+        amount: 2900,
+      },
+    },
+  ],
 };
