@@ -14,7 +14,6 @@ import {
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
   mockContractDocumentSignedResponse,
-  mockContractorSubscriptionResponse,
   mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
@@ -22,7 +21,6 @@ import {
   filesResponseWithIR35,
   fileResponseWithIR35,
   contractDocumentsResponse,
-  mockEligibilityQuestionnaireSchema,
   mockEligibilityQuestionnaireSubmissionResponse,
   mockContractorSubscriptionWithEligibilityResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
@@ -411,24 +409,7 @@ describe('ContractorOnboardingFlow', () => {
       http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
         return HttpResponse.json(mockContractDocumentPreviewResponse);
       }),
-      http.get(
-        '*/v1/contractors/employments/*/contractor-subscriptions',
-        () => {
-          return HttpResponse.json(mockContractorSubscriptionResponse);
-        },
-      ),
-      http.get(
-        '*/v1/contractors/schemas/eligibility-questionnaire',
-        async () => {
-          return HttpResponse.json(mockEligibilityQuestionnaireSchema);
-        },
-      ),
-      http.post(
-        '*/v1/contractors/employments/*/contractor-plus-subscription',
-        () => {
-          return HttpResponse.json(mockManageSubscriptionResponse);
-        },
-      ),
+
       http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),

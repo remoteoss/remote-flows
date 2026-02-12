@@ -3615,63 +3615,6 @@ export const mockContractorContractDetailsSchema = {
   },
 };
 
-export const mockContractorSubscriptionResponse = {
-  data: [
-    {
-      product: {
-        active: true,
-        name: 'Monthly Contractor of Record Subscription',
-        identifier: 'urn:remotecom:resource:product:contractor:aor:monthly',
-        short_name: 'COR',
-      },
-      currency: {
-        code: 'USD',
-        name: 'United States Dollar',
-        symbol: '$',
-      },
-      total_amount: 0,
-      price: {
-        amount: 32500,
-      },
-    },
-    {
-      product: {
-        active: true,
-        name: 'Monthly Contractor Plus Subscription',
-        identifier: 'urn:remotecom:resource:product:contractor:plus:monthly',
-        short_name: 'CM+',
-      },
-      currency: {
-        code: 'USD',
-        name: 'United States Dollar',
-        symbol: '$',
-        slug: 'usd-72c1c0be-587c-4d0e-b705-8fe9f16028a3',
-      },
-      price: {
-        amount: 9900,
-      },
-    },
-    {
-      product: {
-        active: true,
-        name: 'Monthly Contractor Subscription',
-        identifier:
-          'urn:remotecom:resource:product:contractor:standard:monthly',
-        short_name: 'CM',
-      },
-      currency: {
-        code: 'USD',
-        name: 'United States Dollar',
-        symbol: '$',
-        slug: 'usd-72c1c0be-587c-4d0e-b705-8fe9f16028a3',
-      },
-      price: {
-        amount: 2900,
-      },
-    },
-  ],
-};
-
 export const mockContractDocumentPreviewResponse = {
   data: {
     contract_document: {
@@ -3687,12 +3630,6 @@ export const mockContractDocumentCreatedResponse = {
     contract_document: {
       id: 'f4f32dbf-4d15-42ef-a960-fea60ab3b68c',
     },
-  },
-};
-
-export const mockManageSubscriptionResponse = {
-  data: {
-    status: 'ok',
   },
 };
 
@@ -3755,57 +3692,6 @@ export const contractDocumentsResponse = {
         sub_type: 'ir_35',
       },
     ],
-  },
-};
-
-export const mockEligibilityQuestionnaireSchema = {
-  data: {
-    schema: {
-      type: 'object',
-      properties: {
-        control_the_way_contractors_work: {
-          type: 'string',
-          title: 'Do you control the way contractors work?',
-          oneOf: [
-            { const: 'no', title: 'No' },
-            { const: 'yes', title: 'Yes' },
-          ],
-          'x-jsf-presentation': {
-            inputType: 'radio',
-            direction: 'row',
-          },
-        },
-        previously_hired_contractors_as_employees: {
-          type: 'string',
-          title: 'Have you previously hired contractors as employees?',
-          oneOf: [
-            { const: 'no', title: 'No' },
-            { const: 'yes', title: 'Yes' },
-          ],
-          'x-jsf-presentation': {
-            inputType: 'radio',
-            direction: 'row',
-          },
-        },
-        treating_contractors_as_employees: {
-          type: 'string',
-          title: 'Are you treating contractors as employees?',
-          oneOf: [
-            { const: 'no', title: 'No' },
-            { const: 'yes', title: 'Yes' },
-          ],
-          'x-jsf-presentation': {
-            inputType: 'radio',
-            direction: 'row',
-          },
-        },
-      },
-      required: [
-        'control_the_way_contractors_work',
-        'previously_hired_contractors_as_employees',
-        'treating_contractors_as_employees',
-      ],
-    },
   },
 };
 
