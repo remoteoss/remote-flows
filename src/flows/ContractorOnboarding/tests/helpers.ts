@@ -84,8 +84,54 @@ export async function fillBasicInformation(
   }
 }
 
-export async function fillContractorSubscription() {
-  await fillRadio('Payment terms', 'Contractor Management Plus');
+export async function fillContractorSubscription(plan?: string) {
+  await fillRadio('Payment terms', plan || 'Contractor Management Plus');
+}
+
+export async function fillEligibilityQuestionnaire(
+  values?: Partial<{
+    controlTheWayContractorsWork: string;
+    previouslyHiredContractorsAsEmployees: string;
+    treatingContractorsAsEmployees: string;
+  }>,
+) {
+  const defaultValues = {
+    controlTheWayContractorsWork: 'No',
+    previouslyHiredContractorsAsEmployees: 'No',
+    treatingContractorsAsEmployees: 'No',
+  };
+
+  const newValues = {
+    ...defaultValues,
+    ...values,
+  };
+
+  await waitFor(() => {
+    expect(
+      screen.getByText(/Do you control the way contractors work?/i),
+    ).toBeInTheDocument();
+  });
+
+  if (newValues?.controlTheWayContractorsWork) {
+    await fillRadio(
+      'Do you control the way contractors work?',
+      newValues?.controlTheWayContractorsWork,
+    );
+  }
+
+  if (newValues?.previouslyHiredContractorsAsEmployees) {
+    await fillRadio(
+      'Have you previously hired contractors as employees?',
+      newValues?.previouslyHiredContractorsAsEmployees,
+    );
+  }
+
+  if (newValues?.treatingContractorsAsEmployees) {
+    await fillRadio(
+      'Are you treating contractors as employees?',
+      newValues?.treatingContractorsAsEmployees,
+    );
+  }
 }
 
 export async function fillContractDetails(
