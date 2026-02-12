@@ -231,11 +231,13 @@ export const useCreateContractorContractDocument = () => {
  */
 export const useContractorOnboardingDetailsSchema = ({
   countryCode,
+  employmentId,
   fieldValues,
   options,
 }: {
   countryCode: string;
   fieldValues: FieldValues;
+  employmentId: string;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
@@ -249,7 +251,8 @@ export const useContractorOnboardingDetailsSchema = ({
         path: { country_code: countryCode },
         query: {
           json_schema_version: 1,
-        },
+          employment_id: employmentId,
+        } as $TSFixMe, // TODO: fix this type when we can generate types from the API
       });
     },
     enabled: options?.queryOptions?.enabled,
