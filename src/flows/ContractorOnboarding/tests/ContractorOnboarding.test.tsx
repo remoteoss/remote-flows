@@ -14,15 +14,12 @@ import {
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
   mockContractDocumentSignedResponse,
-  mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
   filesResponseWithoutIR35,
   filesResponseWithIR35,
   fileResponseWithIR35,
   contractDocumentsResponse,
-  mockEligibilityQuestionnaireSubmissionResponse,
-  mockContractorSubscriptionWithEligibilityResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -42,6 +39,8 @@ import {
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
 import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
+import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import { mockContractorSubscriptionWithEligibilityResponse } from '@/src/common/api/fixtures/contractors-subscriptions';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -409,7 +408,6 @@ describe('ContractorOnboardingFlow', () => {
       http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
         return HttpResponse.json(mockContractDocumentPreviewResponse);
       }),
-
       http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),
@@ -2297,9 +2295,7 @@ describe('ContractorOnboardingFlow', () => {
           async ({ request }) => {
             const requestBody = await request.json();
             eligibilitySpy(requestBody);
-            return HttpResponse.json(
-              mockEligibilityQuestionnaireSubmissionResponse,
-            );
+            return HttpResponse.json(mockBaseResponse);
           },
         ),
         http.post(
