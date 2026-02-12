@@ -85,10 +85,7 @@ export async function fillBasicInformation(
 }
 
 export async function fillContractorSubscription(plan?: string) {
-  await fillRadio(
-    'Payment terms',
-    plan || 'Contractor Management Plus',
-  );
+  await fillRadio('Payment terms', plan || 'Contractor Management Plus');
 }
 
 export async function fillEligibilityQuestionnaire(
