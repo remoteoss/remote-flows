@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.12.0
+
+### Minor Changes
+
+- remove provisional_start_date by default (#733) [#733](https://github.com/remoteoss/remote-flows/pull/733)
+- create eligibility step for contractor of record (#732) [#732](https://github.com/remoteoss/remote-flows/pull/732)
+
 ## 1.11.0
 
 ### Minor Changes
