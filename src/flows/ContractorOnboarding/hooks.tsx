@@ -443,15 +443,26 @@ export const useContractorOnboarding = ({
     fieldValues,
   ]);
 
+  const isEligibilityQuestionnaireEnabled = useMemo(() => {
+    return (
+      (selectedPricingPlan === corProductIdentifier &&
+        stepState.currentStep.name === 'eligibility_questionnaire') ||
+      (Boolean(employmentId) && isEmploymentReadOnly)
+    );
+  }, [
+    selectedPricingPlan,
+    stepState.currentStep.name,
+    employmentId,
+    isEmploymentReadOnly,
+  ]);
+
   const {
     data: eligibilityQuestionnaireForm,
     isLoading: isLoadingEligibilityQuestionnaire,
   } = useGetEligibilityQuestionnaire({
     options: {
       queryOptions: {
-        enabled:
-          selectedPricingPlan === corProductIdentifier &&
-          stepState.currentStep.name === 'eligibility_questionnaire',
+        enabled: isEligibilityQuestionnaireEnabled,
       },
       jsfModify: options?.jsfModify?.eligibility_questionnaire,
     },
