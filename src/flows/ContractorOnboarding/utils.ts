@@ -3,6 +3,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
+import { Employment } from '@/src/flows/Onboarding/types';
 
 export type StepKeys =
   | 'select_country'
@@ -111,3 +112,17 @@ export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
     subscription === contractorPlusProductIdentifier
   );
 };
+
+/**
+ * Array of employment statuses that are allowed to proceed to the review step.
+ * These statuses indicate that the employment is in a final state and the employment cannot be modified further.
+ * @type {Employment['status'][]}
+ * @constant
+ */
+export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
+  'invited',
+];
+
+export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
+  'invited',
+];

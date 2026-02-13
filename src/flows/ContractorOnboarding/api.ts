@@ -231,17 +231,23 @@ export const useCreateContractorContractDocument = () => {
  */
 export const useContractorOnboardingDetailsSchema = ({
   countryCode,
+  employmentId,
   fieldValues,
   options,
 }: {
   countryCode: string;
   fieldValues: FieldValues;
+  employmentId: string;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['contractor-onboarding-details-schema', countryCode],
+    queryKey: [
+      'contractor-onboarding-details-schema',
+      countryCode,
+      employmentId,
+    ],
     retry: false,
     queryFn: async () => {
       return getShowContractorContractDetailsCountry({
@@ -249,6 +255,7 @@ export const useContractorOnboardingDetailsSchema = ({
         path: { country_code: countryCode },
         query: {
           json_schema_version: 1,
+          employment_id: employmentId,
         },
       });
     },

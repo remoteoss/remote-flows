@@ -32,6 +32,8 @@ import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/
 import {
   buildSteps,
   calculateProvisionalStartDateDescription,
+  reviewStepAllowedEmploymentStatus,
+  disabledInviteButtonEmploymentStatus,
   StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
@@ -40,10 +42,6 @@ import {
   useJSONSchemaForm,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import {
-  disabledInviteButtonEmploymentStatus,
-  reviewStepAllowedEmploymentStatus,
-} from '@/src/flows/Onboarding/utils';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -445,17 +443,33 @@ export const useContractorOnboarding = ({
     fieldValues,
   ]);
 
-  const { data: eligibilityQuestionnaireForm } = useGetEligibilityQuestionnaire(
-    {
-      options: {
-        queryOptions: {
-          enabled: selectedPricingPlan === corProductIdentifier,
-        },
-        jsfModify: options?.jsfModify?.eligibility_questionnaire,
+  const isEligibilityQuestionnaireEnabled = useMemo(() => {
+    return (
+      (selectedPricingPlan === corProductIdentifier &&
+        stepState.currentStep.name === 'eligibility_questionnaire') ||
+      (Boolean(employmentId) &&
+        isEmploymentReadOnly &&
+        selectedPricingPlan === corProductIdentifier)
+    );
+  }, [
+    selectedPricingPlan,
+    stepState.currentStep.name,
+    employmentId,
+    isEmploymentReadOnly,
+  ]);
+
+  const {
+    data: eligibilityQuestionnaireForm,
+    isLoading: isLoadingEligibilityQuestionnaire,
+  } = useGetEligibilityQuestionnaire({
+    options: {
+      queryOptions: {
+        enabled: isEligibilityQuestionnaireEnabled,
       },
-      fieldValues: eligibilityFields,
+      jsfModify: options?.jsfModify?.eligibility_questionnaire,
     },
-  );
+    fieldValues: eligibilityFields,
+  });
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -463,6 +477,7 @@ export const useContractorOnboarding = ({
   } = useContractorOnboardingDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
+    employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
@@ -677,7 +692,8 @@ export const useContractorOnboarding = ({
     isLoadingContractorSubscriptions ||
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
-    isLoadingContractDocuments;
+    isLoadingContractDocuments ||
+    isLoadingEligibilityQuestionnaire;
 
   const isNavigatingToReview = useMemo(() => {
     return Boolean(
@@ -720,7 +736,6 @@ export const useContractorOnboarding = ({
           pricingPlanInitialValues,
           stepFields.pricing_plan,
         ),
-        // TODO: we have to check if this works well or not
         eligibility_questionnaire: prettifyFormValues(
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
@@ -731,11 +746,9 @@ export const useContractorOnboarding = ({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
-        // TODO: we need to retrieve the contract preview data somehow from the BE, who signed the document
-        contract_preview: {},
+        contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
-        // TODO: we need to retrieve information somehow only for COR though
-        eligibility_questionnaire: {},
+        eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
         review: {},
       });
       goToStep('review');

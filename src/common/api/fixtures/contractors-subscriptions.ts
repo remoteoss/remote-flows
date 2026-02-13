@@ -57,7 +57,6 @@ export const mockContractorSubscriptionResponse = {
   ],
 };
 
-export const mockManageSubscriptionResponse = mockBaseResponse;
 export const mockContractorSubscriptionWithEligibilityResponse = {
   data: [
     {
@@ -123,3 +122,5 @@ export const mockContractorSubscriptionWithEligibilityResponse = {
     },
   ],
 };
+
+export const mockManageSubscriptionResponse = mockBaseResponse;
