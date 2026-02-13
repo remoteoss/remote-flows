@@ -32,6 +32,8 @@ import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/
 import {
   buildSteps,
   calculateProvisionalStartDateDescription,
+  reviewStepAllowedEmploymentStatus,
+  disabledInviteButtonEmploymentStatus,
   StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
@@ -40,10 +42,6 @@ import {
   useJSONSchemaForm,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import {
-  disabledInviteButtonEmploymentStatus,
-  reviewStepAllowedEmploymentStatus,
-} from '@/src/flows/Onboarding/utils';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -445,17 +443,18 @@ export const useContractorOnboarding = ({
     fieldValues,
   ]);
 
-  const { data: eligibilityQuestionnaireForm } = useGetEligibilityQuestionnaire(
-    {
-      options: {
-        queryOptions: {
-          enabled: selectedPricingPlan === corProductIdentifier,
-        },
-        jsfModify: options?.jsfModify?.eligibility_questionnaire,
+  const {
+    data: eligibilityQuestionnaireForm,
+    isLoading: isLoadingEligibilityQuestionnaire,
+  } = useGetEligibilityQuestionnaire({
+    options: {
+      queryOptions: {
+        enabled: selectedPricingPlan === corProductIdentifier,
       },
-      fieldValues: eligibilityFields,
+      jsfModify: options?.jsfModify?.eligibility_questionnaire,
     },
-  );
+    fieldValues: eligibilityFields,
+  });
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -677,7 +676,8 @@ export const useContractorOnboarding = ({
     isLoadingContractorSubscriptions ||
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
-    isLoadingContractDocuments;
+    isLoadingContractDocuments ||
+    isLoadingEligibilityQuestionnaire;
 
   const isNavigatingToReview = useMemo(() => {
     return Boolean(

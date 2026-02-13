@@ -107,12 +107,14 @@ export const ReviewContractorOnboardingStep = ({
         Edit Contract Preview
       </button>
 
-      {invitedStatus === 'not_invited' && (
-        <InviteSection
-          title={`Ready to invite ${onboardingBag.employment?.basic_information?.name as string} to Remote?`}
-          description="If you're ready to invite this employee to onboard with Remote, click the button below."
-        />
-      )}
+      {invitedStatus === 'not_invited' &&
+        typeof onboardingBag.employment?.basic_information?.name ===
+          'string' && (
+          <InviteSection
+            title={`Ready to invite ${onboardingBag.employment?.basic_information?.name as string} to Remote?`}
+            description="If you're ready to invite this employee to onboard with Remote, click the button below."
+          />
+        )}
 
       {invitedStatus === 'invited' && (
         <div className='invite-successful'>
