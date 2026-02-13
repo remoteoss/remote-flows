@@ -479,7 +479,6 @@ export const useGetEligibilityQuestionnaire = ({
       });
     },
     enabled: options?.queryOptions?.enabled,
-    staleTime: 3600,
   });
 };
 

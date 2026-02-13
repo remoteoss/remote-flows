@@ -447,7 +447,9 @@ export const useContractorOnboarding = ({
     return (
       (selectedPricingPlan === corProductIdentifier &&
         stepState.currentStep.name === 'eligibility_questionnaire') ||
-      (Boolean(employmentId) && isEmploymentReadOnly)
+      (Boolean(employmentId) &&
+        isEmploymentReadOnly &&
+        selectedPricingPlan === corProductIdentifier)
     );
   }, [
     selectedPricingPlan,
