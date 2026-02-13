@@ -2569,8 +2569,9 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  *
  * ```
  *
- * This endpoint requires a company access token, as forms are dependent on certain
- * properties of companies and their current employments.
+ * Most forms require a company access token, as they are dependent on certain
+ * properties of companies and their current employments. However, the `address_details`
+ * form can be accessed using client_credentials authentication (without a company).
  *
  *
  */
@@ -2583,6 +2584,7 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
