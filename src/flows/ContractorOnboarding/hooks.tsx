@@ -449,7 +449,9 @@ export const useContractorOnboarding = ({
   } = useGetEligibilityQuestionnaire({
     options: {
       queryOptions: {
-        enabled: selectedPricingPlan === corProductIdentifier,
+        enabled:
+          selectedPricingPlan === corProductIdentifier &&
+          stepState.currentStep.name === 'eligibility_questionnaire',
       },
       jsfModify: options?.jsfModify?.eligibility_questionnaire,
     },
