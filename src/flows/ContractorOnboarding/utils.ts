@@ -121,10 +121,8 @@ export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
  */
 export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'invited',
-  'initiated',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
-  'initiated',
   'invited',
 ];
