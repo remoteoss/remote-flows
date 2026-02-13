@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.13.0
+
+### Minor Changes
+
+### Features
+
+- add eligibility questionnaire to the review step (#737) [#737](https://github.com/remoteoss/remote-flows/pull/737)
+
 ## 1.12.0
 
 ### Minor Changes
