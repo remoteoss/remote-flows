@@ -80,6 +80,22 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Basic Information
       </button>
+      <h2 className='title'>Pricing plan</h2>
+      <ReviewMeta meta={onboardingBag.meta.fields.pricing_plan} />
+      <button
+        className='back-button'
+        onClick={() => onboardingBag.goTo('pricing_plan')}
+      >
+        Edit Pricing Plan
+      </button>
+      <h2 className='title'>Eligibility Questionnaire</h2>
+      <ReviewMeta meta={onboardingBag.meta.fields.eligibility_questionnaire} />
+      <button
+        className='back-button'
+        onClick={() => onboardingBag.goTo('eligibility_questionnaire')}
+      >
+        Edit Eligibility Questionnaire
+      </button>
       <h2 className='title'>Contract Details</h2>
       <ReviewMeta meta={onboardingBag.meta.fields.contract_details} />
       <button
@@ -94,15 +110,6 @@ export const ReviewContractorOnboardingStep = ({
       <button
         className='back-button'
         onClick={() => onboardingBag.goTo('contract_preview')}
-      >
-        Edit Contract Preview
-      </button>
-      <h2 className='title'>Pricing plan</h2>
-      <ReviewMeta meta={onboardingBag.meta.fields.pricing_plan} />
-
-      <button
-        className='back-button'
-        onClick={() => onboardingBag.goTo('pricing_plan')}
       >
         Edit Contract Preview
       </button>
