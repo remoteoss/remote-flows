@@ -243,7 +243,11 @@ export const useContractorOnboardingDetailsSchema = ({
 }): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['contractor-onboarding-details-schema', countryCode],
+    queryKey: [
+      'contractor-onboarding-details-schema',
+      countryCode,
+      employmentId,
+    ],
     retry: false,
     queryFn: async () => {
       return getShowContractorContractDetailsCountry({
