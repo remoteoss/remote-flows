@@ -462,6 +462,7 @@ export const useContractorOnboarding = ({
   } = useContractorOnboardingDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
+    employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
