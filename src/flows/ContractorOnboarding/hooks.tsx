@@ -721,7 +721,6 @@ export const useContractorOnboarding = ({
           pricingPlanInitialValues,
           stepFields.pricing_plan,
         ),
-        // TODO: we have to check if this works well or not
         eligibility_questionnaire: prettifyFormValues(
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
@@ -732,11 +731,9 @@ export const useContractorOnboarding = ({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
-        // TODO: we need to retrieve the contract preview data somehow from the BE, who signed the document
-        contract_preview: {},
+        contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
-        // TODO: we need to retrieve information somehow only for COR though
-        eligibility_questionnaire: {},
+        eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
         review: {},
       });
       goToStep('review');
