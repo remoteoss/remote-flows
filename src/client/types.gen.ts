@@ -3820,6 +3820,7 @@ export type MinimalEmployment = {
   work_address_details: {
     [key: string]: unknown;
   };
+  work_email: string | null;
 };
 
 /**
@@ -8914,6 +8915,10 @@ export type GetShowContractorContractDetailsCountryData = {
     country_code: string;
   };
   query?: {
+    /**
+     * Employment ID
+     */
+    employment_id?: string;
     /**
      * Version of the form schema
      */
