@@ -8,6 +8,8 @@ export type {
   ContractorOnboardingContractDetailsResponse,
   ContractPreviewFormPayload,
   ContractPreviewResponse,
+  EligibilityQuestionnaireFormPayload,
+  EligibilityQuestionnaireResponse,
 } from './types';
 export {
   onboardingWorkflows,

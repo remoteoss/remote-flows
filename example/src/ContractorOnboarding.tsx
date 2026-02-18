@@ -15,6 +15,7 @@ import {
   JSFCustomComponentProps,
   PricingPlanComponentProps,
   PricingPlanDataProps,
+  corProductIdentifier,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -39,7 +40,7 @@ const PricingPlanCards = ({
 }: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
   return (
-    <div className='flex flex-row gap-2'>
+    <div className='grid grid-cols-3 gap-2'>
       {fieldData.options?.map((option) => (
         <PricingPlanCard
           key={option.value}
@@ -48,10 +49,11 @@ const PricingPlanCards = ({
           features={option.meta?.features as string[]}
           price={option.meta?.price}
           value={option.value}
+          selected={field.value === option.value}
+          disabled={option.disabled}
           onSelect={(value: string) => {
             field.onChange(value);
           }}
-          selected={field.value === option.value}
         />
       ))}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
@@ -78,15 +80,6 @@ const Switcher = (props: JSFCustomComponentProps) => {
   );
 };
 
-const STEPS = [
-  'Select Country',
-  'Basic Information',
-  'Pricing Plan',
-  'Statement of Work',
-  'Contract Preview',
-  'Review',
-];
-
 type MultiStepFormProps = {
   contractorOnboardingBag: ContractorOnboardingRenderProps['contractorOnboardingBag'];
   components: ContractorOnboardingRenderProps['components'];
@@ -102,6 +95,7 @@ const MultiStepForm = ({
     BackButton,
     SelectCountryStep,
     PricingPlanStep,
+    EligibilityQuestionnaireStep,
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
@@ -247,24 +241,66 @@ const MultiStepForm = ({
             </p>
             <EngagingContractorsModal />
           </div>
-          <PricingPlanStep
-            components={{
-              radio: ({ field, fieldData, fieldState }) => {
-                return (
-                  <PricingPlanCards
-                    fieldData={fieldData as PricingPlanDataProps}
-                    fieldState={fieldState}
-                    field={field}
-                  />
-                );
-              },
-            }}
-            onSubmit={(payload: PricingPlanFormPayload) =>
-              console.log('payload', payload)
-            }
-            onSuccess={(response: PricingPlanResponse) =>
-              console.log('response', response)
-            }
+          <div className='mb-6'>
+            <PricingPlanStep
+              components={{
+                radio: ({ field, fieldData, fieldState }) => {
+                  return (
+                    <PricingPlanCards
+                      fieldData={fieldData as PricingPlanDataProps}
+                      fieldState={fieldState}
+                      field={field}
+                    />
+                  );
+                },
+              }}
+              onSubmit={(payload: PricingPlanFormPayload) =>
+                console.log('payload', payload)
+              }
+              onSuccess={(response: PricingPlanResponse) =>
+                console.log('response', response)
+              }
+              onError={({ error, fieldErrors }) =>
+                setErrors({ apiError: error.message, fieldErrors })
+              }
+            />
+          </div>
+          <AlertError errors={errors} />
+          {contractorOnboardingBag.fieldValues?.subscription &&
+            contractorOnboardingBag.fieldValues?.subscription ===
+              corProductIdentifier && (
+              <p
+                className='text-sm text-[#71717A] mx-auto text-center'
+                style={{ maxWidth: '350px' }}
+              >
+                You'll complete a short questionnaire to check that you can use
+                Contractor of Record for this hire. This is to confirm that you
+                will not be treating them as an employee.
+              </p>
+            )}
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'eligibility_questionnaire':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <EligibilityQuestionnaireStep
+            onSubmit={(payload) => console.log('payload', payload)}
+            onSuccess={(response) => console.log('response', response)}
             onError={({ error, fieldErrors }) =>
               setErrors({ apiError: error.message, fieldErrors })
             }
@@ -286,6 +322,7 @@ const MultiStepForm = ({
           </div>
         </div>
       );
+
     case 'review': {
       return (
         <div className='contractor-onboarding-form-layout'>
@@ -327,12 +364,12 @@ const OnBoardingRender = ({
       <Card className='px-0 py-0'>
         <div className='steps-contractor-onboarding-navigation'>
           <ul>
-            {STEPS.map((step, index) => (
+            {contractorOnboardingBag.steps.map((step) => (
               <li
-                key={index}
-                className={`step-contractor-onboarding-item ${index === currentStepIndex ? 'active' : ''}`}
+                key={step.name}
+                className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
               >
-                {index + 1}. {step}
+                {step.index + 1}. {step.label}
               </li>
             ))}
           </ul>

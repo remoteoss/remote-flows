@@ -438,6 +438,34 @@ export type CreateDataSyncParams = {
 };
 
 /**
+ * CompanyComplianceProfile
+ */
+export type CompanyComplianceProfile = {
+  /**
+   * Credit risk status of the LegalEntity
+   */
+  credit_risk_status:
+    | 'not_started'
+    | 'ready'
+    | 'in_progress'
+    | 'referred'
+    | 'fail'
+    | 'deposit_required'
+    | 'no_deposit_required';
+  /**
+   * Status of the LegalEntity's internal KYB/BOC process
+   */
+  kyb_status:
+    | 'not_started'
+    | 'ready'
+    | 'referred'
+    | 'in_progress'
+    | 'pass'
+    | 'fail'
+    | 'unresponsive';
+};
+
+/**
  * ResignationOrTerminationOffboarding
  */
 export type ResignationOrTerminationOffboarding =
@@ -768,6 +796,15 @@ export type BenefitOffersEmployment = {
  * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
  */
 export type CurrencyCode = string | null;
+
+/**
+ * CompanyComplianceProfileResponse
+ */
+export type CompanyComplianceProfileResponse = {
+  data?: {
+    compliance_profile: CompanyComplianceProfile;
+  };
+};
 
 /**
  * IdentityVerification
@@ -2951,6 +2988,28 @@ export type CreatePricingPlanResponse = {
 };
 
 /**
+ * Integrations.Scim.ErrorResponse
+ */
+export type IntegrationsScimErrorResponse = {
+  /**
+   * Human-readable error message
+   */
+  detail: string;
+  /**
+   * SCIM schema identifiers
+   */
+  schemas: Array<string>;
+  /**
+   * SCIM error type
+   */
+  scimType?: string | null;
+  /**
+   * HTTP status code
+   */
+  status: string;
+};
+
+/**
  * TimeoffDaysParams
  *
  * Timeoff days params
@@ -3761,6 +3820,7 @@ export type MinimalEmployment = {
   work_address_details: {
     [key: string]: unknown;
   };
+  work_email: string | null;
 };
 
 /**
@@ -5787,6 +5847,7 @@ export type ContractorSubscriptionsSummary = {
     percent?: Decimal;
   };
   currency: Currency;
+  eligibility_questionnaire?: EligibilityQuestionnaire;
   is_termination_fees_enabled?: boolean;
   price: {
     amount?: number;
@@ -8855,6 +8916,10 @@ export type GetShowContractorContractDetailsCountryData = {
   };
   query?: {
     /**
+     * Employment ID
+     */
+    employment_id?: string;
+    /**
      * Version of the form schema
      */
     json_schema_version?: number | 'latest';
@@ -11373,6 +11438,46 @@ export type PostCreateRiskReserveResponses = {
 export type PostCreateRiskReserveResponse =
   PostCreateRiskReserveResponses[keyof PostCreateRiskReserveResponses];
 
+export type GetShowCompanyComplianceProfileData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/compliance-profile';
+};
+
+export type GetShowCompanyComplianceProfileErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowCompanyComplianceProfileError =
+  GetShowCompanyComplianceProfileErrors[keyof GetShowCompanyComplianceProfileErrors];
+
+export type GetShowCompanyComplianceProfileResponses = {
+  /**
+   * Success
+   */
+  200: CompanyComplianceProfileResponse;
+};
+
+export type GetShowCompanyComplianceProfileResponse =
+  GetShowCompanyComplianceProfileResponses[keyof GetShowCompanyComplianceProfileResponses];
+
 export type GetIndexCompanyProductPriceData = {
   body?: never;
   path: {
@@ -13118,15 +13223,15 @@ export type GetGetGroupScimErrors = {
   /**
    * Unauthorized
    */
-  401: UnauthorizedResponse;
+  401: IntegrationsScimErrorResponse;
   /**
    * Forbidden
    */
-  403: ForbiddenResponse;
+  403: IntegrationsScimErrorResponse;
   /**
    * Not Found
    */
-  404: NotFoundResponse;
+  404: IntegrationsScimErrorResponse;
 };
 
 export type GetGetGroupScimError =
@@ -14348,7 +14453,7 @@ export type GetListUsersScimData = {
      */
     count?: number;
     /**
-     * Filter expression for user attributes
+     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
      */
     filter?: string;
   };
@@ -14357,17 +14462,21 @@ export type GetListUsersScimData = {
 
 export type GetListUsersScimErrors = {
   /**
+   * Bad Request
+   */
+  400: IntegrationsScimErrorResponse;
+  /**
    * Unauthorized
    */
-  401: UnauthorizedResponse;
+  401: IntegrationsScimErrorResponse;
   /**
    * Forbidden
    */
-  403: ForbiddenResponse;
+  403: IntegrationsScimErrorResponse;
   /**
    * Not Found
    */
-  404: NotFoundResponse;
+  404: IntegrationsScimErrorResponse;
 };
 
 export type GetListUsersScimError =
@@ -16472,7 +16581,7 @@ export type GetListGroupsScimData = {
      */
     count?: number;
     /**
-     * Filter expression for user attributes
+     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
      */
     filter?: string;
   };
@@ -16481,17 +16590,21 @@ export type GetListGroupsScimData = {
 
 export type GetListGroupsScimErrors = {
   /**
+   * Bad Request
+   */
+  400: IntegrationsScimErrorResponse;
+  /**
    * Unauthorized
    */
-  401: UnauthorizedResponse;
+  401: IntegrationsScimErrorResponse;
   /**
    * Forbidden
    */
-  403: ForbiddenResponse;
+  403: IntegrationsScimErrorResponse;
   /**
    * Not Found
    */
-  404: NotFoundResponse;
+  404: IntegrationsScimErrorResponse;
 };
 
 export type GetListGroupsScimError =
@@ -17735,15 +17848,15 @@ export type GetGetUserScimErrors = {
   /**
    * Unauthorized
    */
-  401: UnauthorizedResponse;
+  401: IntegrationsScimErrorResponse;
   /**
    * Forbidden
    */
-  403: ForbiddenResponse;
+  403: IntegrationsScimErrorResponse;
   /**
    * Not Found
    */
-  404: NotFoundResponse;
+  404: IntegrationsScimErrorResponse;
 };
 
 export type GetGetUserScimError =

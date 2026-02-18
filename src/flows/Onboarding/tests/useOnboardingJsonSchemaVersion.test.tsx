@@ -75,11 +75,6 @@ describe('useOnboarding jsonSchemaVersion', () => {
 
     // Mock server responses
     server.use(
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [{ code: 'PRT', name: 'Portugal', eor_onboarding: true }],
-        });
-      }),
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
           data: { id: 'test-company-id', desired_currency: 'USD' },

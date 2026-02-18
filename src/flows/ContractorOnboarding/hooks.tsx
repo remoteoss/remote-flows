@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import omit from 'lodash.omit';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -23,25 +23,27 @@ import {
   useUpdateUKandSaudiFields,
   useGetIR35File,
   useGetContractDocuments,
+  useGetEligibilityQuestionnaire,
+  usePostCreateEligibilityQuestionnaire,
+  usePostManageContractorCorSubscription,
+  useDeleteContractorCorSubscription,
+  useCountriesSchemaField,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
-  STEPS,
-  STEPS_WITHOUT_SELECT_COUNTRY,
+  buildSteps,
   calculateProvisionalStartDateDescription,
+  reviewStepAllowedEmploymentStatus,
+  disabledInviteButtonEmploymentStatus,
+  StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
-  useCountriesSchemaField,
   useCreateEmployment,
   useJSONSchemaForm,
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
-import {
-  disabledInviteButtonEmploymentStatus,
-  reviewStepAllowedEmploymentStatus,
-} from '@/src/flows/Onboarding/utils';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
-import { Step, useStepState } from '@/src/flows/useStepState';
+import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
@@ -65,13 +67,11 @@ type useContractorOnboardingProps = Omit<
   'render'
 >;
 
-const stepToFormSchemaMap: Record<
-  keyof typeof STEPS,
-  JSONSchemaFormType | null
-> = {
+const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
   contract_details: null,
+  eligibility_questionnaire: null,
   pricing_plan: null,
   contract_preview: null,
   review: null,
@@ -82,8 +82,6 @@ const jsonSchemaToEmployment: Partial<
 > = {
   employment_basic_information: 'basic_information',
 };
-
-const provisionalStartDate = new Date().toISOString().split('T')[0];
 
 export const useContractorOnboarding = ({
   countryCode,
@@ -108,17 +106,31 @@ export const useContractorOnboarding = ({
     contract_details: Meta;
     contract_preview: Meta;
     pricing_plan: Meta;
+    eligibility_questionnaire: Meta;
   }>({
     select_country: {},
     basic_information: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
+    eligibility_questionnaire: {},
   });
 
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
+  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
+    undefined,
+  );
+
+  const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
+    useState<boolean>(false);
+
+  const { steps, stepsArray } = useMemo(
+    () =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+      }),
+    [includeEligibilityQuestionnaire, skipSteps],
+  );
 
   const {
     fieldValues,
@@ -128,9 +140,7 @@ export const useContractorOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
+  } = useStepState(steps);
 
   const {
     data: employment,
@@ -173,12 +183,18 @@ export const useContractorOnboarding = ({
       uploadFileMutation,
       fieldValues,
     );
+  const createEligibilityQuestionnaireMutation =
+    usePostCreateEligibilityQuestionnaire();
+  const manageContractorCorSubscriptionMutation =
+    usePostManageContractorCorSubscription();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
   const signContractDocumentMutation = useSignContractDocument();
   const manageContractorSubscriptionMutation =
     usePostManageContractorSubscriptions();
+  const deleteContractorCorSubscriptionMutation =
+    useDeleteContractorCorSubscription();
 
   const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
     mutationToPromise(createEmploymentMutation);
@@ -191,6 +207,15 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: manageContractorSubscriptionMutationAsync } =
     mutationToPromise(manageContractorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: createEligibilityQuestionnaireMutationAsync } =
+    mutationToPromise(createEligibilityQuestionnaireMutation);
+
+  const { mutateAsyncOrThrow: manageContractorCorSubscriptionMutationAsync } =
+    mutationToPromise(manageContractorCorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: deleteContractorCorSubscriptionMutationAsync } =
+    mutationToPromise(deleteContractorCorSubscriptionMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -209,6 +234,9 @@ export const useContractorOnboarding = ({
   const {
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
+    contractorSubscriptions,
+    refetch: refetchContractorSubscriptions,
+    isEligibilityQuestionnaireBlocked,
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
@@ -216,7 +244,33 @@ export const useContractorOnboarding = ({
         stepState.currentStep.name === 'pricing_plan' ||
         (Boolean(employmentId) && isEmploymentReadOnly),
     },
+    jsfModify: options?.jsfModify?.pricing_plan,
   });
+
+  const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
+    return Boolean(
+      contractorSubscriptions?.find(
+        (subscription) => subscription.product.short_name === 'COR',
+      )?.eligibility_questionnaire?.submitted_at,
+    );
+  }, [contractorSubscriptions]);
+
+  useEffect(() => {
+    if (hasEligibilityQuestionnaireSubmitted) {
+      setIncludeEligibilityQuestionnaire(false);
+      return;
+    } else if (selectedProduct === corProductIdentifier) {
+      setIncludeEligibilityQuestionnaire(true);
+    } else {
+      setIncludeEligibilityQuestionnaire(false);
+    }
+  }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
+
+  const eligibilityAnswers = useMemo(() => {
+    return contractorSubscriptions?.find(
+      (subscription) => subscription.product.short_name === 'COR',
+    )?.eligibility_questionnaire?.responses;
+  }, [contractorSubscriptions]);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -348,21 +402,105 @@ export const useContractorOnboarding = ({
     fieldValues?.service_duration?.provisional_start_date,
   ]);
 
+  /**
+   * When the user selects COR, the data isn't saved yet in the BE
+   * We need to use the internalState to know what has happened
+   */
   const selectedPricingPlan = useMemo(() => {
-    if (!employment?.contractor_type) {
-      return undefined;
-    }
     const subscriptions = {
       standard: contractorStandardProductIdentifier,
       plus: contractorPlusProductIdentifier,
       cor: corProductIdentifier,
     };
+
+    // HIGHEST PRIORITY: Current form value (user is actively selecting)
+    if (fieldValues.subscription) {
+      return fieldValues.subscription;
+    }
+
+    // SECOND: Previously submitted value in this session
+    const subscription = stepState.values?.pricing_plan?.subscription;
+    if (subscription && !isEligibilityQuestionnaireBlocked) {
+      return subscription;
+    }
+
+    // THIRD: Backend state (eligibility submitted or employment contractor_type)
+    if (
+      hasEligibilityQuestionnaireSubmitted &&
+      !isEligibilityQuestionnaireBlocked
+    ) {
+      return corProductIdentifier;
+    }
+
+    // Fourth: If the eligibility questionnaire is blocked and has been submitted, return the standard product
+    if (
+      isEligibilityQuestionnaireBlocked &&
+      hasEligibilityQuestionnaireSubmitted
+    ) {
+      return contractorStandardProductIdentifier;
+    }
+
+    // FALLBACK: Employment contractor_type or default
     return (
       subscriptions[
         employment?.contractor_type as keyof typeof subscriptions
       ] || contractorStandardProductIdentifier
     );
-  }, [employment]);
+  }, [
+    fieldValues,
+    stepState.values,
+    hasEligibilityQuestionnaireSubmitted,
+    employment?.contractor_type,
+    isEligibilityQuestionnaireBlocked,
+  ]);
+
+  useEffect(() => {
+    if (selectedPricingPlan && selectedPricingPlan !== selectedProduct) {
+      setSelectedProduct(selectedPricingPlan);
+    }
+  }, [selectedPricingPlan, selectedProduct]);
+
+  const eligibilityFields = useMemo(() => {
+    return {
+      ...eligibilityAnswers,
+      ...onboardingInitialValues,
+      ...stepState.values?.eligibility_questionnaire,
+      ...fieldValues,
+    };
+  }, [
+    eligibilityAnswers,
+    onboardingInitialValues,
+    stepState.values?.eligibility_questionnaire,
+    fieldValues,
+  ]);
+
+  const isEligibilityQuestionnaireEnabled = useMemo(() => {
+    return (
+      (selectedPricingPlan === corProductIdentifier &&
+        stepState.currentStep.name === 'eligibility_questionnaire') ||
+      (Boolean(employmentId) &&
+        isEmploymentReadOnly &&
+        selectedPricingPlan === corProductIdentifier)
+    );
+  }, [
+    selectedPricingPlan,
+    stepState.currentStep.name,
+    employmentId,
+    isEmploymentReadOnly,
+  ]);
+
+  const {
+    data: eligibilityQuestionnaireForm,
+    isLoading: isLoadingEligibilityQuestionnaire,
+  } = useGetEligibilityQuestionnaire({
+    options: {
+      queryOptions: {
+        enabled: isEligibilityQuestionnaireEnabled,
+      },
+      jsfModify: options?.jsfModify?.eligibility_questionnaire,
+    },
+    fieldValues: eligibilityFields,
+  });
 
   const {
     data: contractorOnboardingDetailsForm,
@@ -370,6 +508,7 @@ export const useContractorOnboarding = ({
   } = useContractorOnboardingDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
+    employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
@@ -411,11 +550,12 @@ export const useContractorOnboarding = ({
       },
     });
 
-  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
+  const stepFields: Record<StepKeys, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
+      eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -426,17 +566,19 @@ export const useContractorOnboarding = ({
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
+      eligibilityQuestionnaireForm?.fields,
     ],
   );
 
   const stepFieldsWithFlatFieldsets: Record<
-    keyof typeof STEPS,
+    StepKeys,
     JSFFieldset | null | undefined
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
+    eligibility_questionnaire: null,
     contract_preview: null,
     review: null,
   };
@@ -466,7 +608,6 @@ export const useContractorOnboarding = ({
 
   const basicInformationInitialValues = useMemo(() => {
     const initialValues = {
-      provisional_start_date: provisionalStartDate,
       ...onboardingInitialValues,
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
@@ -535,6 +676,21 @@ export const useContractorOnboarding = ({
     return getInitialValues(stepFields.pricing_plan, initialValues);
   }, [stepFields.pricing_plan, onboardingInitialValues, selectedPricingPlan]);
 
+  const eligibilityQuestionnaireInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      ...eligibilityAnswers,
+    };
+    return getInitialValues(
+      stepFields.eligibility_questionnaire,
+      initialValues,
+    );
+  }, [
+    stepFields.eligibility_questionnaire,
+    onboardingInitialValues,
+    eligibilityAnswers,
+  ]);
+
   const initialValues = useMemo(() => {
     return {
       select_country: selectCountryInitialValues,
@@ -542,6 +698,7 @@ export const useContractorOnboarding = ({
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
+      eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
     };
   }, [
     selectCountryInitialValues,
@@ -549,6 +706,7 @@ export const useContractorOnboarding = ({
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
+    eligibilityQuestionnaireInitialValues,
   ]);
 
   const shouldHandleReadOnlyEmployment = Boolean(
@@ -565,7 +723,8 @@ export const useContractorOnboarding = ({
     isLoadingContractorSubscriptions ||
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
-    isLoadingContractDocuments;
+    isLoadingContractDocuments ||
+    isLoadingEligibilityQuestionnaire;
 
   const isNavigatingToReview = useMemo(() => {
     return Boolean(
@@ -608,14 +767,19 @@ export const useContractorOnboarding = ({
           pricingPlanInitialValues,
           stepFields.pricing_plan,
         ),
+        eligibility_questionnaire: prettifyFormValues(
+          eligibilityQuestionnaireInitialValues,
+          stepFields.eligibility_questionnaire,
+        ),
       };
 
       setStepValues({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
-        contract_preview: {},
+        contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
+        eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
         review: {},
       });
       goToStep('review');
@@ -634,9 +798,11 @@ export const useContractorOnboarding = ({
     pricingPlanInitialValues,
     stepFields.contract_preview,
     contractPreviewInitialValues,
+    stepFields.eligibility_questionnaire,
+    eligibilityQuestionnaireInitialValues,
   ]);
 
-  const goTo = (step: keyof typeof STEPS) => {
+  const goTo = (step: StepKeys) => {
     goToStep(step);
   };
 
@@ -683,6 +849,19 @@ export const useContractorOnboarding = ({
       return await parseJSFToValidate(
         values,
         selectContractorSubscriptionForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
+    }
+
+    if (
+      eligibilityQuestionnaireForm &&
+      stepState.currentStep.name === 'eligibility_questionnaire'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        eligibilityQuestionnaireForm?.fields,
         {
           isPartialValidation: false,
         },
@@ -781,11 +960,29 @@ export const useContractorOnboarding = ({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
           payload: {
-            signature: values.signature,
+            signature: parsedValues.signature,
           },
         });
       }
       case 'pricing_plan': {
+        if (
+          hasEligibilityQuestionnaireSubmitted &&
+          values.subscription !== corProductIdentifier
+        ) {
+          try {
+            await deleteContractorCorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+            });
+            await refetchContractorSubscriptions();
+          } catch (error) {
+            if ((error as $TSFixMe)?.response?.status !== 404) {
+              throw error;
+            }
+            // Still refetch to update the UI state
+            await refetchContractorSubscriptions();
+          }
+        }
+
         if (values.subscription == contractorStandardProductIdentifier) {
           return manageContractorSubscriptionMutationAsync({
             employmentId: internalEmploymentId as string,
@@ -800,9 +997,31 @@ export const useContractorOnboarding = ({
               operation: 'upgrade',
             },
           });
+        } else if (values.subscription == corProductIdentifier) {
+          return Promise.resolve({
+            data: { subscription: values.subscription },
+          });
         }
 
         throw createStructuredError('invalid selection');
+      }
+
+      case 'eligibility_questionnaire': {
+        try {
+          await createEligibilityQuestionnaireMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: parsedValues,
+          });
+
+          const response = await manageContractorCorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+          });
+
+          return response;
+        } finally {
+          // Always refetch to keep state in sync, even on error
+          await refetchContractorSubscriptions();
+        }
       }
 
       default: {
@@ -941,6 +1160,18 @@ export const useContractorOnboarding = ({
         return selectContractorSubscriptionForm?.handleValidation(parsedValues);
       }
 
+      if (
+        eligibilityQuestionnaireForm &&
+        stepState.currentStep.name === 'eligibility_questionnaire'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          eligibilityQuestionnaireForm?.fields,
+          { isPartialValidation: false },
+        );
+        return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
 
@@ -969,7 +1200,10 @@ export const useContractorOnboarding = ({
       createContractorContractDocumentMutation.isPending ||
       signContractDocumentMutation.isPending ||
       manageContractorSubscriptionMutation.isPending ||
-      uploadFileMutation.isPending,
+      uploadFileMutation.isPending ||
+      createEligibilityQuestionnaireMutation.isPending ||
+      manageContractorCorSubscriptionMutation.isPending ||
+      deleteContractorCorSubscriptionMutation.isPending,
 
     /**
      * Document preview PDF data
@@ -1004,5 +1238,10 @@ export const useContractorOnboarding = ({
      * @returns {CompanyLegalEntity}
      */
     defaultLegalEntity,
+    /**
+     * Steps array
+     * @returns {Array<{name: string, index: number, label: string}>}
+     */
+    steps: stepsArray,
   };
 };

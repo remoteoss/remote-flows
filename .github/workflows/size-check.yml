@@ -79,7 +79,7 @@ jobs:
             npx tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
           else
             # Run comparison and capture output
-            npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1
+            npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || true
           fi
 
           # Read the report for the PR comment

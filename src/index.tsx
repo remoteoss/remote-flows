@@ -79,6 +79,8 @@ export type {
   ContractorOnboardingContractDetailsResponse,
   ContractPreviewFormPayload,
   ContractPreviewResponse,
+  EligibilityQuestionnaireFormPayload,
+  EligibilityQuestionnaireResponse,
 } from '@/src/flows/ContractorOnboarding';
 
 export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';

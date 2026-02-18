@@ -1,5 +1,6 @@
 import {
   ContractorOnboardingRenderProps,
+  corProductIdentifier,
   NormalizedFieldError,
   useMagicLink,
 } from '@remoteoss/remote-flows';
@@ -80,6 +81,29 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Basic Information
       </button>
+      <h2 className='title'>Pricing plan</h2>
+      <ReviewMeta meta={onboardingBag.meta.fields.pricing_plan} />
+      <button
+        className='back-button'
+        onClick={() => onboardingBag.goTo('pricing_plan')}
+      >
+        Edit Pricing Plan
+      </button>
+      {onboardingBag.stepState.values?.pricing_plan?.subscription ===
+        corProductIdentifier && (
+        <>
+          <h2 className='title'>Eligibility Questionnaire</h2>
+          <ReviewMeta
+            meta={onboardingBag.meta.fields.eligibility_questionnaire}
+          />
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('eligibility_questionnaire')}
+          >
+            Edit Eligibility Questionnaire
+          </button>
+        </>
+      )}
       <h2 className='title'>Contract Details</h2>
       <ReviewMeta meta={onboardingBag.meta.fields.contract_details} />
       <button
@@ -97,22 +121,15 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Contract Preview
       </button>
-      <h2 className='title'>Pricing plan</h2>
-      <ReviewMeta meta={onboardingBag.meta.fields.pricing_plan} />
 
-      <button
-        className='back-button'
-        onClick={() => onboardingBag.goTo('pricing_plan')}
-      >
-        Edit Contract Preview
-      </button>
-
-      {invitedStatus === 'not_invited' && (
-        <InviteSection
-          title={`Ready to invite ${onboardingBag.employment?.basic_information?.name as string} to Remote?`}
-          description="If you're ready to invite this employee to onboard with Remote, click the button below."
-        />
-      )}
+      {invitedStatus === 'not_invited' &&
+        typeof onboardingBag.employment?.basic_information?.name ===
+          'string' && (
+          <InviteSection
+            title={`Ready to invite ${onboardingBag.employment?.basic_information?.name as string} to Remote?`}
+            description="If you're ready to invite this employee to onboard with Remote, click the button below."
+          />
+        )}
 
       {invitedStatus === 'invited' && (
         <div className='invite-successful'>

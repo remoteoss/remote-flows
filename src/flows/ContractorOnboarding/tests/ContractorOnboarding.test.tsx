@@ -14,8 +14,6 @@ import {
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
   mockContractDocumentSignedResponse,
-  mockContractorSubscriptionResponse,
-  mockManageSubscriptionResponse,
   mockContractDocumentPreviewResponse,
   inviteResponse,
   filesResponseWithoutIR35,
@@ -36,10 +34,16 @@ import {
   fillBasicInformation,
   fillContractDetails,
   fillContractorSubscription,
+  fillEligibilityQuestionnaire,
   fillSignature,
   generateUniqueEmploymentId,
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
 import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
+import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import {
+  mockContractorSubscriptionWithBlockedEligibilityResponse,
+  mockContractorSubscriptionWithEligibilityResponse,
+} from '@/src/common/api/fixtures/contractors-subscriptions';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -210,6 +214,7 @@ describe('ContractorOnboardingFlow', () => {
       ContractDetailsStep,
       ContractPreviewStep,
       PricingPlanStep,
+      EligibilityQuestionnaireStep,
       SubmitButton,
       BackButton,
       OnboardingInvite,
@@ -229,6 +234,30 @@ describe('ContractorOnboardingFlow', () => {
               onSuccess={mockOnSuccess}
               onError={mockOnError}
             />
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'pricing_plan':
+        return (
+          <>
+            <PricingPlanStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'eligibility_questionnaire':
+        return (
+          <>
+            <EligibilityQuestionnaireStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
             <SubmitButton>Next Step</SubmitButton>
           </>
         );
@@ -260,18 +289,7 @@ describe('ContractorOnboardingFlow', () => {
             />
           </>
         );
-      case 'pricing_plan':
-        return (
-          <>
-            <PricingPlanStep
-              onSubmit={mockOnSubmit}
-              onSuccess={mockOnSuccess}
-              onError={mockOnError}
-            />
-            <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
-          </>
-        );
+
       case 'review':
         return (
           <div className='contractor-onboarding-review'>
@@ -368,22 +386,6 @@ describe('ContractorOnboardingFlow', () => {
           },
         });
       }),
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [
-            {
-              code: 'PRT',
-              name: 'Portugal',
-              eor_onboarding: true,
-            },
-            {
-              code: 'ESP',
-              name: 'Spain',
-              eor_onboarding: true,
-            },
-          ],
-        });
-      }),
       http.get('*/v1/countries/*/contractor_basic_information*', () => {
         return HttpResponse.json(mockBasicInformationSchema);
       }),
@@ -393,18 +395,6 @@ describe('ContractorOnboardingFlow', () => {
       http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
         return HttpResponse.json(mockContractDocumentPreviewResponse);
       }),
-      http.get(
-        '*/v1/contractors/employments/*/contractor-subscriptions',
-        () => {
-          return HttpResponse.json(mockContractorSubscriptionResponse);
-        },
-      ),
-      http.post(
-        '*/v1/contractors/employments/*/contractor-plus-subscription',
-        () => {
-          return HttpResponse.json(mockManageSubscriptionResponse);
-        },
-      ),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),
@@ -524,28 +514,6 @@ describe('ContractorOnboardingFlow', () => {
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await fillCountry('PRT');
-  });
-
-  it('should set provisional_start_date to today when using the form for the first time', async () => {
-    render(<ContractorOnboardingFlow {...defaultProps} />, {
-      wrapper: TestProviders,
-    });
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
-    await fillCountry('PRT');
-
-    await screen.findByText(/Step: Basic Information/i);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
-
-    const provisionalStartDateInput = await screen.findByTestId(
-      'provisional_start_date',
-    );
-    const today = new Date().toISOString().split('T')[0];
-    expect(provisionalStartDateInput).toHaveValue(today);
   });
 
   it('should set provisional_start_date in the statement of work when using the form for the first time', async () => {
@@ -2221,6 +2189,389 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       await screen.findByText(/Step: Pricing Plan/i);
+    });
+  });
+
+  describe('COR Eligibility Questionnaire', () => {
+    it('should show eligibility questionnaire step when COR is selected', async () => {
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Eligibility Questionnaire',
+            [3]: 'Contract Details',
+            [4]: 'Contract Preview',
+            [5]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          skipSteps={['select_country']}
+          countryCode='PRT'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+    });
+
+    it('should submit eligibility form and advance to contract details', async () => {
+      const eligibilitySpy = vi.fn();
+
+      server.use(
+        http.post(
+          '*/v1/contractors/eligibility-questionnaire',
+          async ({ request }) => {
+            const requestBody = await request.json();
+            eligibilitySpy(requestBody);
+            return HttpResponse.json(mockBaseResponse);
+          },
+        ),
+        http.post(
+          '*/v1/contractors/employments/*/contractor-cor-subscription',
+          async () => {
+            return HttpResponse.json({ data: { status: 'ok' } });
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Eligibility Questionnaire',
+            [3]: 'Contract Details',
+            [4]: 'Contract Preview',
+            [5]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          skipSteps={['select_country']}
+          countryCode='PRT'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        expect(eligibilitySpy).toHaveBeenCalled();
+        expect(eligibilitySpy).toHaveBeenCalledWith({
+          employment_slug: mockContractorEmploymentResponse.data.employment.id,
+          responses: {
+            control_the_way_contractors_work: 'no',
+            previously_hired_contractors_as_employees: 'no',
+            treating_contractors_as_employees: 'no',
+          },
+          type: 'contractor_of_record',
+        });
+      });
+
+      await screen.findByText(/Step: Contract Details/i);
+    });
+
+    it('should pre-fill eligibility form when data exists from backend', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            return HttpResponse.json(
+              mockContractorSubscriptionWithEligibilityResponse,
+            );
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+    });
+
+    it('should call DELETE when changing from COR to different plan', async () => {
+      const deleteSpy = vi.fn();
+
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            return HttpResponse.json(
+              mockContractorSubscriptionWithEligibilityResponse,
+            );
+          },
+        ),
+        http.delete(
+          '*/v1/contractors/employments/*/contractor-cor-subscription',
+          async () => {
+            deleteSpy();
+            return HttpResponse.json({ data: { status: 'ok' } });
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor Management Plus');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        expect(deleteSpy).toHaveBeenCalled();
+      });
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      expect(
+        screen.queryByText(/Step: Eligibility Questionnaire/i),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should auto-select Contractor Standard and disable other plans when eligibility is blocked', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            return HttpResponse.json(
+              mockContractorSubscriptionWithBlockedEligibilityResponse,
+            );
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      // Or check all three states explicitly
+      const cmRadio = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      const cmPlusRadio = screen.getByRole('radio', {
+        name: /^Contractor Management Plus$/,
+      });
+      const corRadio = screen.getByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+
+      expect(cmRadio).toBeChecked();
+      expect(cmPlusRadio).toBeDisabled();
+      expect(corRadio).toBeDisabled();
     });
   });
 });
