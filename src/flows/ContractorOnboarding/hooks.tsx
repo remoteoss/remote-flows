@@ -121,7 +121,7 @@ export const useContractorOnboarding = ({
   );
 
   const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   const { steps, stepsArray } = useMemo(
     () =>
