@@ -271,6 +271,17 @@ export const useContractorOnboarding = ({
     )?.eligibility_questionnaire?.responses;
   }, [contractorSubscriptions]);
 
+  const isEligibilityQuestionnaireBlocked = useMemo(() => {
+    return contractorSubscriptions?.find(
+      (subscription) => subscription.product.short_name === 'COR',
+    )?.eligibility_questionnaire?.is_blocking;
+  }, [contractorSubscriptions]);
+
+  console.log(
+    'isEligibilityQuestionnaireBlocked',
+    isEligibilityQuestionnaireBlocked,
+  );
+
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'contractor_basic_information';
@@ -411,8 +422,19 @@ export const useContractorOnboarding = ({
     }
 
     // THIRD: Backend state (eligibility submitted or employment contractor_type)
-    if (hasEligibilityQuestionnaireSubmitted) {
+    if (
+      hasEligibilityQuestionnaireSubmitted &&
+      !isEligibilityQuestionnaireBlocked
+    ) {
       return corProductIdentifier;
+    }
+
+    // Fourth: If the eligibility questionnaire is blocked and has been submitted, return the standard product
+    if (
+      isEligibilityQuestionnaireBlocked &&
+      hasEligibilityQuestionnaireSubmitted
+    ) {
+      return contractorStandardProductIdentifier;
     }
 
     // FALLBACK: Employment contractor_type or default
@@ -426,6 +448,7 @@ export const useContractorOnboarding = ({
     stepState.values,
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
+    isEligibilityQuestionnaireBlocked,
   ]);
 
   useEffect(() => {
