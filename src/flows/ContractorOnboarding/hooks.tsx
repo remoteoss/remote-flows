@@ -412,7 +412,7 @@ export const useContractorOnboarding = ({
 
     // SECOND: Previously submitted value in this session
     const subscription = stepState.values?.pricing_plan?.subscription;
-    if (subscription) {
+    if (subscription && !isEligibilityQuestionnaireBlocked) {
       return subscription;
     }
 
