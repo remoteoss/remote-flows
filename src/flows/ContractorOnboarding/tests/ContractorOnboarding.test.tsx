@@ -2589,5 +2589,115 @@ describe('ContractorOnboardingFlow', () => {
       expect(cmPlusRadio).toBeDisabled();
       expect(corRadio).toBeDisabled();
     });
+
+    it('should show choose_alternative_plan step when eligibility questionnaire is blocked', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            return HttpResponse.json(
+              mockContractorSubscriptionWithBlockedEligibilityResponse,
+            );
+          },
+        ),
+        http.post(
+          '*/v1/contractors/employments/*/eligibility-questionnaire',
+          async () => {
+            return HttpResponse.json({
+              data: {
+                is_blocking: true,
+                responses: {
+                  control_the_way_contractors_work: 'yes',
+                  previously_hired_contractors_as_employees: 'yes',
+                  treating_contractors_as_employees: 'yes',
+                },
+              },
+            });
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Eligibility Questionnaire',
+            [3]: 'Choose Alternative Plan',
+            [4]: 'Contract Details',
+            [5]: 'Contract Preview',
+            [6]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corRadio = screen.getByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      corRadio.click();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      const noRadio1 = screen.getAllByRole('radio', { name: /^No$/i })[0];
+      const noRadio2 = screen.getAllByRole('radio', { name: /^No$/i })[1];
+      const noRadio3 = screen.getAllByRole('radio', { name: /^No$/i })[2];
+
+      noRadio1.click();
+      noRadio2.click();
+      noRadio3.click();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      const cmRadio = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      
+      expect(cmRadio).toBeInTheDocument();
+      expect(screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      })).not.toBeInTheDocument();
+    });
   });
 });

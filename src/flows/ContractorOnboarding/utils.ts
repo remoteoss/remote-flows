@@ -10,6 +10,7 @@ export type StepKeys =
   | 'basic_information'
   | 'contract_details'
   | 'eligibility_questionnaire'
+  | 'choose_alternative_plan'
   | 'contract_preview'
   | 'pricing_plan'
   | 'review';
@@ -17,6 +18,7 @@ export type StepKeys =
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
+  includeChooseAlternativePlan?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
@@ -24,6 +26,7 @@ export function buildSteps(config: StepConfig = {}) {
     name: StepKeys;
     label: string;
     include: boolean;
+    visible?: boolean;
   }> = [
     {
       name: 'select_country',
@@ -44,6 +47,12 @@ export function buildSteps(config: StepConfig = {}) {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
       include: Boolean(config?.includeEligibilityQuestionnaire),
+    },
+    {
+      name: 'choose_alternative_plan',
+      label: 'Choose Alternative Plan',
+      include: Boolean(config?.includeChooseAlternativePlan),
+      visible: false,
     },
     {
       name: 'contract_details',
@@ -68,11 +77,12 @@ export function buildSteps(config: StepConfig = {}) {
     name: step.name,
     index,
     label: step.label,
+    visible: step.visible ?? true,
   }));
 
   const steps = stepsArray.reduce(
     (acc, step) => {
-      acc[step.name] = { index: step.index, name: step.name };
+      acc[step.name] = { index: step.index, name: step.name, visible: step.visible };
       return acc;
     },
     {} as Record<string, Step<StepKeys>>,

@@ -4,6 +4,7 @@ import { FieldValues } from 'react-hook-form';
 export type Step<T extends string> = {
   index: number;
   name: T;
+  visible?: boolean;
 };
 
 type StepState<T extends string, Fields = FieldValues> = {

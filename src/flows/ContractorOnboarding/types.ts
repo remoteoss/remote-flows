@@ -16,6 +16,7 @@ import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
+import { ChooseAlternativePlanStep } from '@/src/flows/ContractorOnboarding/components/ChooseAlternativePlanStep';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -48,6 +49,7 @@ export type ContractorOnboardingRenderProps = {
     OnboardingInvite: typeof OnboardingInvite;
     ContractReviewButton: typeof ContractReviewButton;
     EligibilityQuestionnaireStep: typeof EligibilityQuestionnaireStep;
+    ChooseAlternativePlanStep: typeof ChooseAlternativePlanStep;
   };
 };
 

@@ -73,6 +73,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
+  choose_alternative_plan: null,
   contract_preview: null,
   review: null,
 };
@@ -107,6 +108,7 @@ export const useContractorOnboarding = ({
     contract_preview: Meta;
     pricing_plan: Meta;
     eligibility_questionnaire: Meta;
+    choose_alternative_plan: Meta;
   }>({
     select_country: {},
     basic_information: {},
@@ -114,6 +116,7 @@ export const useContractorOnboarding = ({
     contract_preview: {},
     pricing_plan: {},
     eligibility_questionnaire: {},
+    choose_alternative_plan: {},
   });
 
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
@@ -123,13 +126,17 @@ export const useContractorOnboarding = ({
   const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
     useState<boolean>(false);
 
+  const [includeChooseAlternativePlan, setIncludeChooseAlternativePlan] =
+    useState<boolean>(false);
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+        includeChooseAlternativePlan: includeChooseAlternativePlan,
       }),
-    [includeEligibilityQuestionnaire, skipSteps],
+    [includeEligibilityQuestionnaire, includeChooseAlternativePlan, skipSteps],
   );
 
   const {
@@ -543,6 +550,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
+      choose_alternative_plan: [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -566,6 +574,7 @@ export const useContractorOnboarding = ({
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
+    choose_alternative_plan: null,
     contract_preview: null,
     review: null,
   };
@@ -758,6 +767,7 @@ export const useContractorOnboarding = ({
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
         ),
+        choose_alternative_plan: {},
       };
 
       setStepValues({
@@ -767,6 +777,7 @@ export const useContractorOnboarding = ({
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
         eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
+        choose_alternative_plan: {},
         review: {},
       });
       goToStep('review');
@@ -1003,6 +1014,7 @@ export const useContractorOnboarding = ({
           const isEligibilityQuestionnaireBlocked = response?.data?.is_blocking;
 
           if (isEligibilityQuestionnaireBlocked) {
+            setIncludeChooseAlternativePlan(true);
             return response;
           }
 
@@ -1013,6 +1025,16 @@ export const useContractorOnboarding = ({
           // Always refetch to keep state in sync, even on error
           await refetchContractorSubscriptions();
         }
+      }
+
+      case 'choose_alternative_plan': {
+        const subscription = parsedValues.subscription;
+
+        setIncludeChooseAlternativePlan(false);
+
+        return Promise.resolve({
+          data: { subscription },
+        });
       }
 
       default: {

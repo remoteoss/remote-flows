@@ -96,6 +96,7 @@ const MultiStepForm = ({
     SelectCountryStep,
     PricingPlanStep,
     EligibilityQuestionnaireStep,
+    ChooseAlternativePlanStep,
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
@@ -313,6 +314,52 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'choose_alternative_plan':
+      return (
+        <div className='pricing-plan-form-layout'>
+          <div className='flex flex-col gap-2 text-center mb-6'>
+            <h1 className='text-2xl font-bold text-[#000000]'>
+              Choose Your Plan
+            </h1>
+            <p className='text-sm text-[#71717A]'>
+              This individual is not eligible for Contractor of Record. The
+              engagement terms imply an employer-employee relationship. We
+              suggest the plans below and recommend a legal review before
+              deciding. For any questions, contact help@remote.com.
+            </p>
+          </div>
+          <div className='mb-6'>
+            <ChooseAlternativePlanStep
+              components={{
+                radio: ({ field, fieldData, fieldState }) => {
+                  return (
+                    <PricingPlanCards
+                      fieldData={fieldData as PricingPlanDataProps}
+                      fieldState={fieldState}
+                      field={field}
+                    />
+                  );
+                },
+              }}
+              onSubmit={(payload) => console.log('payload', payload)}
+              onSuccess={(response) => console.log('response', response)}
+              onError={({ error, fieldErrors }) =>
+                setErrors({ apiError: error.message, fieldErrors })
+              }
+            />
+          </div>
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
