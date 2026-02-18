@@ -589,5 +589,6 @@ export const useCountriesSchemaField = (
   return {
     isLoading,
     selectCountryForm,
+    countries,
   };
 };

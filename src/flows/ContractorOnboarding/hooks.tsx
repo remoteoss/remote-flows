@@ -223,13 +223,16 @@ export const useContractorOnboarding = ({
     setInternalCountryCode(employment.country.code);
   }
 
-  const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField({
-      jsfModify: options?.jsfModify?.select_country,
-      queryOptions: {
-        enabled: stepState.currentStep.name === 'select_country',
-      },
-    });
+  const {
+    selectCountryForm,
+    isLoading: isLoadingCountries,
+    countries,
+  } = useCountriesSchemaField({
+    jsfModify: options?.jsfModify?.select_country,
+    queryOptions: {
+      enabled: stepState.currentStep.name === 'select_country',
+    },
+  });
 
   const {
     form: selectContractorSubscriptionForm,
@@ -364,16 +367,9 @@ export const useContractorOnboarding = ({
   }, [contractDocuments, internalContractDocumentId]);
 
   const countryName = useMemo(() => {
-    // TODO: get the country name from the correct countries endpoint for contractors
-    const countryNames = {
-      SAU: 'Saudi Arabia',
-      KWT: 'Kuwait',
-      OMN: 'Oman',
-      QAT: 'Qatar',
-      BHR: 'Bahrain',
-    };
-    return countryNames[internalCountryCode as keyof typeof countryNames];
-  }, [internalCountryCode]);
+    return countries?.find((country) => country.value === internalCountryCode)
+      ?.label;
+  }, [countries, internalCountryCode]);
 
   const {
     data: basicInformationForm,
