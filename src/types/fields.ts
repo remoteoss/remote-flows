@@ -132,6 +132,7 @@ export type PricingPlanDataProps = Omit<Partial<JSFField>, 'options'> & {
       features: string[];
       price: { amount: number; currencyCode: string };
     };
+    disabled: boolean;
   }[];
 };
 

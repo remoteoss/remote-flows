@@ -120,14 +120,16 @@ export const useContractorOnboarding = ({
     undefined,
   );
 
+  const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
+    useState<boolean>(false);
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
-        includeEligibilityQuestionnaire:
-          selectedProduct === corProductIdentifier,
+        includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
       }),
-    [selectedProduct, skipSteps],
+    [includeEligibilityQuestionnaire, skipSteps],
   );
 
   const {
@@ -234,6 +236,7 @@ export const useContractorOnboarding = ({
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
     refetch: refetchContractorSubscriptions,
+    isEligibilityQuestionnaireBlocked,
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
@@ -252,13 +255,16 @@ export const useContractorOnboarding = ({
     );
   }, [contractorSubscriptions]);
 
-  const isEligibilityBlocked = useMemo(() => {
-    const corSubscription = contractorSubscriptions?.find(
-      (subscription) => subscription.product.short_name === 'COR',
-    );
-
-    return corSubscription?.eligibility_questionnaire?.is_blocking;
-  }, [contractorSubscriptions]);
+  useEffect(() => {
+    if (hasEligibilityQuestionnaireSubmitted) {
+      setIncludeEligibilityQuestionnaire(false);
+      return;
+    } else if (selectedProduct === corProductIdentifier) {
+      setIncludeEligibilityQuestionnaire(true);
+    } else {
+      setIncludeEligibilityQuestionnaire(false);
+    }
+  }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -401,13 +407,24 @@ export const useContractorOnboarding = ({
 
     // SECOND: Previously submitted value in this session
     const subscription = stepState.values?.pricing_plan?.subscription;
-    if (subscription) {
+    if (subscription && !isEligibilityQuestionnaireBlocked) {
       return subscription;
     }
 
     // THIRD: Backend state (eligibility submitted or employment contractor_type)
-    if (hasEligibilityQuestionnaireSubmitted) {
+    if (
+      hasEligibilityQuestionnaireSubmitted &&
+      !isEligibilityQuestionnaireBlocked
+    ) {
       return corProductIdentifier;
+    }
+
+    // Fourth: If the eligibility questionnaire is blocked and has been submitted, return the standard product
+    if (
+      isEligibilityQuestionnaireBlocked &&
+      hasEligibilityQuestionnaireSubmitted
+    ) {
+      return contractorStandardProductIdentifier;
     }
 
     // FALLBACK: Employment contractor_type or default
@@ -421,6 +438,7 @@ export const useContractorOnboarding = ({
     stepState.values,
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
+    isEligibilityQuestionnaireBlocked,
   ]);
 
   useEffect(() => {
@@ -976,13 +994,6 @@ export const useContractorOnboarding = ({
       }
 
       case 'eligibility_questionnaire': {
-        // TODO: for now skip sending the questionnaire if it has been submitted or is blockedº
-        if (hasEligibilityQuestionnaireSubmitted || isEligibilityBlocked) {
-          return Promise.resolve({
-            data: { eligibility_questionnaire: parsedValues },
-          });
-        }
-
         try {
           await createEligibilityQuestionnaireMutationAsync({
             employmentId: internalEmploymentId as string,

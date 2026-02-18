@@ -50,6 +50,7 @@ const PricingPlanCards = ({
           price={option.meta?.price}
           value={option.value}
           selected={field.value === option.value}
+          disabled={option.disabled}
           onSelect={(value: string) => {
             field.onChange(value);
           }}
