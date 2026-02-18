@@ -21,6 +21,7 @@ interface PricingPlanCardProps {
     amount: number;
     currencyCode: string;
   };
+  disabled: boolean;
 }
 
 export function PricingPlanCard({
@@ -31,6 +32,7 @@ export function PricingPlanCard({
   onSelect,
   selected,
   value,
+  disabled,
 }: PricingPlanCardProps) {
   return (
     <Card
@@ -39,7 +41,7 @@ export function PricingPlanCard({
         selected && 'border-solid border-[#9AA6B2] ring-2 ring-[#9AA6B2]',
       )}
       onClick={() => {
-        if (!selected) {
+        if (!selected && !disabled) {
           onSelect?.(value);
         }
       }}
@@ -47,6 +49,11 @@ export function PricingPlanCard({
       <CardHeader className='pb-2'>
         <CardTitle className='text-xl font-bold'>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
+        {disabled && (
+          <p className='text-sm text-[red] font-bold'>
+            This plan is not available
+          </p>
+        )}
         <div>
           <PricingPlanOptionsModal />
         </div>

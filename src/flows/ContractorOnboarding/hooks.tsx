@@ -277,11 +277,6 @@ export const useContractorOnboarding = ({
     )?.eligibility_questionnaire?.is_blocking;
   }, [contractorSubscriptions]);
 
-  console.log(
-    'isEligibilityQuestionnaireBlocked',
-    isEligibilityQuestionnaireBlocked,
-  );
-
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'contractor_basic_information';

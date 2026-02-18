@@ -299,6 +299,12 @@ export const useContractorSubscriptionSchemaField = (
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
     if (field) {
+      const corSubscription = contractorSubscriptions.find(
+        (subscription) => subscription.product.short_name === 'COR',
+      );
+      const isEligibilityQuestionnaireBlocked =
+        corSubscription?.eligibility_questionnaire?.is_blocking;
+
       const options = contractorSubscriptions.map((opts) => {
         const product = opts.product;
         const price = opts.price.amount;
@@ -318,7 +324,15 @@ export const useContractorSubscriptionSchemaField = (
             currencyCode: currencyCode,
           },
         };
-        return { label, value, description, meta };
+        return {
+          label,
+          value,
+          description,
+          meta,
+          disabled:
+            isEligibilityQuestionnaireBlocked &&
+            product.identifier !== contractorStandardProductIdentifier,
+        };
       });
       field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
