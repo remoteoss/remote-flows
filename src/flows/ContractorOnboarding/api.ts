@@ -393,7 +393,7 @@ export const useUpdateUKandSaudiFields = (
         }
         return Promise.resolve();
       }
-      // nationality status is sent for the countries SAU, KWT, OMN, QAT
+      // nationality status is sent for the countries SAU, KWT, OMN, QAT, BHR
       if (nationalityStatus) {
         return createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
