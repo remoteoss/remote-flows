@@ -44,6 +44,8 @@ import {
   useUploadFile,
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
+import { useCountries } from '@/src/common/api/countries';
+import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 
 /**
  * Get the contract document signature schema
@@ -546,4 +548,45 @@ export const useDeleteContractorCorSubscription = () => {
       });
     },
   });
+};
+
+export const useCountriesSchemaField = (
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { data: countries, isLoading } = useCountries({
+    queryKey: 'contractor-onboarding-countries',
+    select: ({ data }) => {
+      return (
+        data?.data?.map((country) => {
+          return {
+            label: country.name,
+            value: country.code,
+          };
+        }) || []
+      );
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+
+  const selectCountryForm = createHeadlessForm(
+    selectCountryStepSchema.data.schema,
+    {},
+    options,
+  );
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+  };
 };

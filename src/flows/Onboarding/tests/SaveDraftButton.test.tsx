@@ -121,20 +121,6 @@ describe('SaveDraftButton', () => {
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json(companyResponse);
       }),
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [
-            {
-              code: 'PRT',
-              name: 'Portugal',
-            },
-            {
-              code: 'ESP',
-              name: 'Spain',
-            },
-          ],
-        });
-      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchema);
       }),

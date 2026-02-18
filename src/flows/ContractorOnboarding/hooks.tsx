@@ -27,6 +27,7 @@ import {
   usePostCreateEligibilityQuestionnaire,
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
+  useCountriesSchemaField,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -37,7 +38,6 @@ import {
   StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
-  useCountriesSchemaField,
   useCreateEmployment,
   useJSONSchemaForm,
   useUpdateEmployment,
