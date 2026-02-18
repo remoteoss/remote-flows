@@ -229,9 +229,6 @@ export const useContractorOnboarding = ({
     countries,
   } = useCountriesSchemaField({
     jsfModify: options?.jsfModify?.select_country,
-    queryOptions: {
-      enabled: stepState.currentStep.name === 'select_country',
-    },
   });
 
   const {
