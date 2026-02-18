@@ -40,7 +40,10 @@ import {
 } from '@/src/flows/ContractorOnboarding/tests/helpers';
 import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
-import { mockContractorSubscriptionWithEligibilityResponse } from '@/src/common/api/fixtures/contractors-subscriptions';
+import {
+  mockContractorSubscriptionWithBlockedEligibilityResponse,
+  mockContractorSubscriptionWithEligibilityResponse,
+} from '@/src/common/api/fixtures/contractors-subscriptions';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -2509,6 +2512,82 @@ describe('ContractorOnboardingFlow', () => {
       expect(
         screen.queryByText(/Step: Eligibility Questionnaire/i),
       ).not.toBeInTheDocument();
+    });
+
+    it('should auto-select Contractor Standard and disable other plans when eligibility is blocked', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            return HttpResponse.json(
+              mockContractorSubscriptionWithBlockedEligibilityResponse,
+            );
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        ({
+          contractorOnboardingBag,
+          components,
+        }: ContractorOnboardingRenderProps) => {
+          const currentStepIndex =
+            contractorOnboardingBag.stepState.currentStep.index;
+
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Pricing Plan',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
+          };
+
+          return (
+            <>
+              <h1>Step: {steps[currentStepIndex]}</h1>
+              <MultiStepFormWithoutCountry
+                contractorOnboardingBag={contractorOnboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      // Or check all three states explicitly
+      const cmRadio = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      const cmPlusRadio = screen.getByRole('radio', {
+        name: /^Contractor Management Plus$/,
+      });
+      const corRadio = screen.getByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+
+      expect(cmRadio).toBeChecked();
+      expect(cmPlusRadio).toBeDisabled();
+      expect(corRadio).toBeDisabled();
     });
   });
 });
