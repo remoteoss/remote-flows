@@ -120,14 +120,16 @@ export const useContractorOnboarding = ({
     undefined,
   );
 
+  const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
+    useState<boolean>(true);
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
-        includeEligibilityQuestionnaire:
-          selectedProduct === corProductIdentifier,
+        includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
       }),
-    [selectedProduct, skipSteps],
+    [includeEligibilityQuestionnaire, skipSteps],
   );
 
   const {
@@ -252,13 +254,16 @@ export const useContractorOnboarding = ({
     );
   }, [contractorSubscriptions]);
 
-  const isEligibilityBlocked = useMemo(() => {
-    const corSubscription = contractorSubscriptions?.find(
-      (subscription) => subscription.product.short_name === 'COR',
-    );
-
-    return corSubscription?.eligibility_questionnaire?.is_blocking;
-  }, [contractorSubscriptions]);
+  useEffect(() => {
+    if (hasEligibilityQuestionnaireSubmitted) {
+      setIncludeEligibilityQuestionnaire(false);
+      return;
+    } else if (selectedProduct === corProductIdentifier) {
+      setIncludeEligibilityQuestionnaire(true);
+    } else {
+      setIncludeEligibilityQuestionnaire(false);
+    }
+  }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -976,13 +981,6 @@ export const useContractorOnboarding = ({
       }
 
       case 'eligibility_questionnaire': {
-        // TODO: for now skip sending the questionnaire if it has been submitted or is blockedº
-        if (hasEligibilityQuestionnaireSubmitted || isEligibilityBlocked) {
-          return Promise.resolve({
-            data: { eligibility_questionnaire: parsedValues },
-          });
-        }
-
         try {
           await createEligibilityQuestionnaireMutationAsync({
             employmentId: internalEmploymentId as string,

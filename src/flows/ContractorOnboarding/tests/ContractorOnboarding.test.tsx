@@ -2383,10 +2383,9 @@ describe('ContractorOnboardingFlow', () => {
           const steps: Record<number, string> = {
             [0]: 'Basic Information',
             [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Contract Details',
-            [4]: 'Contract Preview',
-            [5]: 'Review',
+            [2]: 'Contract Details',
+            [3]: 'Contract Preview',
+            [4]: 'Review',
           };
 
           return (
@@ -2424,9 +2423,7 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Eligibility Questionnaire/i);
-
-      await assertRadioValue('Do you control the way contractors work?', 'no');
+      await screen.findByText(/Step: Contract Details/i);
     });
 
     it('should call DELETE when changing from COR to different plan', async () => {
