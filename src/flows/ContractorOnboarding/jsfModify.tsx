@@ -175,11 +175,11 @@ export const buildBasicInformationJsfModify = (
 
   const label = isSaudiArabia
     ? 'Is your contractor a Saudi Arabia national, or a non-Saudi national contracting via a local business entity or under a Special Privilege Iqama visa?'
-    : `Is the contractor a ${countryName} national, or a non-${countryName} national contracting through their local business entity?`;
+    : `Is the contractor a ${countryName ?? 'selected country'} national, or a non-${countryName ?? 'selected country'} national contracting through their local business entity?`;
 
   const descriptionNonNationalRadio = isSaudiArabia
     ? `Please be aware that contracting with non-Saudi Arabia nationals that are not operating as a company or under a Special Privilege Iqama visa can lead to fines for operating without proper work authorization. If you are concerned, please speak with the Contractor and/or local Saudi Arabia counsel to ensure compliance.`
-    : `Be aware that the Contractor must be a ${countryName} national, or a non-${countryName} national operating through their company to comply with the legal requirements for performing services and deliverables as a contractor in ${countryName}. If you are concerned, speak with the Contractor and/or local counsel to ensure compliance.`;
+    : `Be aware that the Contractor must be a ${countryName ?? 'selected country'} national, or a non-${countryName ?? 'selected country'} national operating through their company to comply with the legal requirements for performing services and deliverables as a contractor in ${countryName ?? 'selected country'}. If you are concerned, speak with the Contractor and/or local counsel to ensure compliance.`;
 
   return {
     ...options?.jsfModify?.basic_information,
