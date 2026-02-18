@@ -236,6 +236,7 @@ export const useContractorOnboarding = ({
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
     refetch: refetchContractorSubscriptions,
+    isEligibilityQuestionnaireBlocked,
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
@@ -269,12 +270,6 @@ export const useContractorOnboarding = ({
     return contractorSubscriptions?.find(
       (subscription) => subscription.product.short_name === 'COR',
     )?.eligibility_questionnaire?.responses;
-  }, [contractorSubscriptions]);
-
-  const isEligibilityQuestionnaireBlocked = useMemo(() => {
-    return contractorSubscriptions?.find(
-      (subscription) => subscription.product.short_name === 'COR',
-    )?.eligibility_questionnaire?.is_blocking;
   }, [contractorSubscriptions]);
 
   const formType =
