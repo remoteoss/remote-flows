@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -7,6 +8,7 @@ import {
   EligibilityQuestionnaireFormPayload,
   EligibilityQuestionnaireResponse,
 } from '@/src/flows/ContractorOnboarding/types';
+import { Drawer } from '@/src/components/shared/drawer/Drawer';
 
 type EligibilityQuestionnaireStepProps = {
   /*
@@ -39,6 +41,7 @@ export function EligibilityQuestionnaireStep({
   onError,
 }: EligibilityQuestionnaireStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
@@ -46,6 +49,18 @@ export function EligibilityQuestionnaireStep({
         await contractorOnboardingBag.parseFormValues(payload);
       await onSubmit?.(parsedValues as EligibilityQuestionnaireFormPayload);
       const response = await contractorOnboardingBag.onSubmit(payload);
+
+      if (
+        response &&
+        'data' in response &&
+        response.data &&
+        'is_blocking' in response.data &&
+        response?.data?.is_blocking
+      ) {
+        setOpenDrawer(true);
+        return;
+      }
+
       if (response?.data) {
         await onSuccess?.(response?.data as EligibilityQuestionnaireResponse);
         contractorOnboardingBag?.next();
@@ -65,9 +80,27 @@ export function EligibilityQuestionnaireStep({
     contractorOnboardingBag.initialValues.eligibility_questionnaire;
 
   return (
-    <ContractorOnboardingForm
-      defaultValues={initialValues}
-      onSubmit={handleSubmit}
-    />
+    <>
+      <ContractorOnboardingForm
+        defaultValues={initialValues}
+        onSubmit={handleSubmit}
+      />
+      {openDrawer && (
+        <Drawer
+          title='Eligibility Questionnaire Blocked'
+          open={openDrawer}
+          onOpenChange={setOpenDrawer}
+          trigger={<></>}
+          direction='bottom'
+        >
+          <div>
+            <p>
+              The eligibility questionnaire has been blocked. Please contact
+              support.
+            </p>
+          </div>
+        </Drawer>
+      )}
+    </>
   );
 }

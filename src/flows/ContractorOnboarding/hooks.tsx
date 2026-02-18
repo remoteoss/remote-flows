@@ -1000,16 +1000,20 @@ export const useContractorOnboarding = ({
 
       case 'eligibility_questionnaire': {
         try {
-          await createEligibilityQuestionnaireMutationAsync({
+          const response = await createEligibilityQuestionnaireMutationAsync({
             employmentId: internalEmploymentId as string,
             payload: parsedValues,
           });
 
-          const response = await manageContractorCorSubscriptionMutationAsync({
+          const isEligibilityQuestionnaireBlocked = response?.data?.is_blocking;
+
+          if (isEligibilityQuestionnaireBlocked) {
+            return response;
+          }
+
+          return await manageContractorCorSubscriptionMutationAsync({
             employmentId: internalEmploymentId as string,
           });
-
-          return response;
         } finally {
           // Always refetch to keep state in sync, even on error
           await refetchContractorSubscriptions();
