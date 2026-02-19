@@ -844,7 +844,7 @@ describe('ContractorOnboardingFlow', () => {
     },
   );
 
-  it.skip('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
+  it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
     const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
     const employmentId = generateUniqueEmploymentId();
     server.use(
@@ -1061,7 +1061,7 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it.skip('should override field labels using jsfModify options', async () => {
+  it('should override field labels using jsfModify options', async () => {
     const customLabel = 'Custom Contractor Field Label';
 
     mockRender.mockImplementation(
@@ -1091,10 +1091,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-
-    // Verify that the custom label is displayed
-    const labelElement = screen.getByLabelText(customLabel);
-    expect(labelElement).toBeInTheDocument();
+    await waitFor(() => {
+      const labelElement = screen.getByLabelText(customLabel);
+      expect(labelElement).toBeInTheDocument();
+    });
   });
 
   it('should display description message when service_duration.provisional_start_date differs from employment provisional_start_date', async () => {
@@ -1318,7 +1318,7 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   describe('Saudi Arabia edge case', () => {
-    it.skip('should correctly retrieve saudi nationality status from employment.contract_details.nationality', async () => {
+    it('should correctly retrieve saudi nationality status from employment.contract_details.nationality', async () => {
       const employmentId = generateUniqueEmploymentId();
 
       server.use(
@@ -1358,7 +1358,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await assertRadioValue(
         'Is your contractor a Saudi Arabia national',
@@ -1805,7 +1808,7 @@ describe('ContractorOnboardingFlow', () => {
       await screen.findByText(/Step: Contract Details/i);
     });
 
-    it.skip('should pre-fill eligibility form when data exists from backend', async () => {
+    it('should pre-fill eligibility form when data exists from backend', async () => {
       server.use(
         http.get(
           '*/v1/contractors/employments/*/contractor-subscriptions',
@@ -1832,7 +1835,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -1847,7 +1853,7 @@ describe('ContractorOnboardingFlow', () => {
       await screen.findByText(/Step: Contract Details/i);
     });
 
-    it.skip('should call DELETE when changing from COR to different plan', async () => {
+    it('should call DELETE when changing from COR to different plan', async () => {
       const deleteSpy = vi.fn();
 
       server.use(
@@ -1883,7 +1889,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -1908,7 +1916,7 @@ describe('ContractorOnboardingFlow', () => {
       ).not.toBeInTheDocument();
     });
 
-    it.skip('should auto-select Contractor Standard and disable other plans when eligibility is blocked', async () => {
+    it('should auto-select Contractor Standard and disable other plans when eligibility is blocked', async () => {
       server.use(
         http.get(
           '*/v1/contractors/employments/*/contractor-subscriptions',
@@ -1935,7 +1943,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -2002,7 +2012,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 

@@ -514,16 +514,12 @@ export const useContractorOnboarding = ({
     fieldValues: eligibilityFields,
   });
 
-  const isChooseAlternativePlanEnabled = useMemo(() => {
-    return includeChooseAlternativePlan;
-  }, [includeChooseAlternativePlan]);
-
   const {
     form: chooseAlternativePlanForm,
     isLoading: isLoadingChooseAlternativePlan,
   } = useGetChooseAlternativePlan(employmentId as string, {
     queryOptions: {
-      enabled: isChooseAlternativePlanEnabled,
+      enabled: includeChooseAlternativePlan,
     },
   });
 
@@ -581,7 +577,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
-      choose_alternative_plan: [],
+      choose_alternative_plan: chooseAlternativePlanForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -593,6 +589,7 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
       eligibilityQuestionnaireForm?.fields,
+      chooseAlternativePlanForm?.fields,
     ],
   );
 
