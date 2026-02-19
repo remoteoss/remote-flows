@@ -296,4 +296,19 @@ describe('useStepState', () => {
     expect(onStepChange).toHaveBeenCalledTimes(1);
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
   });
+
+  it('should emit onStepChange with correct initialStep when first step is not visible', () => {
+    const onStepChange = vi.fn();
+    const mockSteps = {
+      step1: { index: 0, name: 'step1', visible: false },
+      step2: { index: 1, name: 'step2', visible: true },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
+    expect(onStepChange).toHaveBeenCalledTimes(1);
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
+  });
 });
