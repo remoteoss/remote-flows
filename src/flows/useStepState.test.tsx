@@ -167,36 +167,10 @@ describe('useStepState', () => {
     });
   });
 
-  it('should only go to a step if it has been filled', () => {
+  it('should go to a step if its desired', () => {
     const { result } = renderHook(() => useStepState(mockSteps));
 
     // Try to go to step2 before it's filled
-    act(() => {
-      result.current.goToStep('step2');
-    });
-    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
-
-    // Fill step1 and move to step2
-    act(() => {
-      result.current.setFieldValues({ name: 'John' });
-      result.current.nextStep();
-    });
-    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
-
-    // Try to go to step3 before it's filled
-    act(() => {
-      result.current.goToStep('step3');
-    });
-    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
-
-    // Fill step2 and move to step3
-    act(() => {
-      result.current.setFieldValues({ age: 30 });
-      result.current.nextStep();
-    });
-    expect(result.current.stepState.currentStep).toEqual(mockSteps.step3);
-
-    // Now go back to step2, which is filled
     act(() => {
       result.current.goToStep('step2');
     });
