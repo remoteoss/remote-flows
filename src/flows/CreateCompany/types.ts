@@ -4,18 +4,19 @@ import { AddressDetailsStep } from '@/src/flows/CreateCompany/components/Address
 import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { CreateCompanySubmit } from '@/src/flows/CreateCompany/components/CreateCompanySubmit';
 
-type countryFormFields = {
+type CountryFormFields = {
   countryCode: string;
   companyOwnerEmail: string;
   companyOwnerName: string;
   desiredCurrency: string;
+  name: string;
   phoneNumber: string;
   taxNumber: string;
 };
 
-export type CompanyBasicInfoFormPayload = countryFormFields;
+export type CompanyBasicInfoFormPayload = CountryFormFields;
 
-export type CompanyBasicInfoSuccess = countryFormFields;
+export type CompanyBasicInfoSuccess = CountryFormFields;
 
 export type CompanyAddressDetailsFormPayload = Record<string, unknown>;
 

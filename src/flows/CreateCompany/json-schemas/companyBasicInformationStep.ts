@@ -17,7 +17,6 @@ export const companyBasicInformationStepSchema = {
           title: 'Company Owner Email',
           description: '',
           type: 'string',
-          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -26,7 +25,6 @@ export const companyBasicInformationStepSchema = {
           title: 'Company Owner Name',
           description: '',
           type: 'string',
-          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -44,7 +42,6 @@ export const companyBasicInformationStepSchema = {
           title: 'Name',
           description: '',
           type: 'string',
-          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -53,7 +50,6 @@ export const companyBasicInformationStepSchema = {
           title: 'Phone Number',
           description: '',
           type: 'string',
-          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -62,7 +58,6 @@ export const companyBasicInformationStepSchema = {
           title: 'Tax Number',
           description: '',
           type: 'string',
-          oneOf: [],
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -77,7 +72,15 @@ export const companyBasicInformationStepSchema = {
         'company_owner_name',
       ],
       type: 'object',
-      'x-jsf-order': ['country_code', 'company_owner_email'],
+      'x-jsf-order': [
+        'country_code',
+        'name',
+        'phone_number',
+        'desired_currency',
+        'tax_number',
+        'company_owner_name',
+        'company_owner_email',
+      ],
     },
   },
 };

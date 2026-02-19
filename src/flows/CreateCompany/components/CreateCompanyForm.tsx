@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { Components } from '@/src/types/remoteFlows';
 import { useCreateCompanyContext } from '@/src/flows/CreateCompany/context';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 type CreateCompanyFormProps = {
   onSubmit: (payload: Record<string, unknown>) => Promise<void>;
@@ -19,7 +19,8 @@ export function CreateCompanyForm({
   onSubmit,
   components,
 }: CreateCompanyFormProps) {
-  const { formId, createCompanyBag, formRef } = useCreateCompanyContext();
+  const { formId, createCompanyBag } = useCreateCompanyContext();
+  const prevValuesRef = useRef(defaultValues);
 
   const resolver = useJsonSchemasValidationFormResolver(
     createCompanyBag.handleValidation,
@@ -32,12 +33,19 @@ export function CreateCompanyForm({
     mode: 'onBlur',
   });
 
-  // Register the form's setValue method with the context so other components can access it
   useEffect(() => {
-    if (formRef?.setValue) {
-      formRef.setValue.current = form.setValue;
-    }
-  }, [form.setValue, formRef]);
+    const subscription = form?.watch((values) => {
+      const hasChanged = Object.keys(values).some(
+        (key) => values[key] !== prevValuesRef.current[key],
+      );
+      if (hasChanged) {
+        createCompanyBag?.checkFieldUpdates(values);
+        prevValuesRef.current = { ...values };
+      }
+    });
+    return () => subscription?.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     await onSubmit(values);

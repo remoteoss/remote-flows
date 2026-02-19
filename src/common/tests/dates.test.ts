@@ -1,4 +1,4 @@
-import { getYearMonthDate } from '../dates';
+import { nowUtcFormatted, getYearMonthDate } from '../dates';
 
 describe('getYearMonthDate', () => {
   it('should return formatted year, month, and day', () => {
@@ -19,5 +19,18 @@ describe('getYearMonthDate', () => {
       month: '01',
       day: '01',
     });
+  });
+});
+
+describe('nowUtcFormatted', () => {
+  it('should return a properly formatted UTC datetime string', () => {
+    const result = nowUtcFormatted();
+
+    const regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}Z$/;
+    expect(regex.test(result)).toBe(true);
+
+    const isoLike = result.replace(' ', 'T');
+    const parsed = new Date(isoLike);
+    expect(isNaN(parsed.getTime())).toBe(false);
   });
 });

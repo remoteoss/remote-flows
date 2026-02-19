@@ -3,7 +3,6 @@ import { server } from '@/src/tests/server';
 import { http, HttpResponse } from 'msw';
 import { useCreateCompany } from '@/src/flows/CreateCompany/hooks';
 import {
-  countriesResponse,
   currenciesResponse,
   companyCreatedResponse,
   addressDetailsSchema,
@@ -15,19 +14,16 @@ describe('useCreateCompany', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
+
+    server.use(
+      http.get('*/v1/company-currencies', () => {
+        return HttpResponse.json(currenciesResponse.data);
+      }),
+    );
   });
 
   describe('Initial state', () => {
     it('should initialize with company_basic_information step', () => {
-      server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
-      );
-
       const { result } = renderHook(() => useCreateCompany({}), {
         wrapper: TestProviders,
       });
@@ -39,15 +35,6 @@ describe('useCreateCompany', () => {
     });
 
     it('should initialize with provided country code', () => {
-      server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
-      );
-
       const { result } = renderHook(
         () => useCreateCompany({ countryCode: 'USA' }),
         {
@@ -64,12 +51,6 @@ describe('useCreateCompany', () => {
   describe('Step navigation', () => {
     it('should navigate to next step', async () => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(companyCreatedResponse.data, {
             status: 201,
@@ -98,7 +79,6 @@ describe('useCreateCompany', () => {
       const response = await result.current.onSubmit(payload);
       expect(response.data).toBeDefined();
 
-      // Manually navigate to next step (component does this automatically, but in hook tests we need to do it manually)
       act(() => {
         result.current.next();
       });
@@ -112,12 +92,6 @@ describe('useCreateCompany', () => {
 
     it('should navigate back to previous step', async () => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(companyCreatedResponse.data, {
             status: 201,
@@ -149,7 +123,6 @@ describe('useCreateCompany', () => {
       const response = await result.current.onSubmit(payload);
       expect(response.data).toBeDefined();
 
-      // Manually navigate to next step
       act(() => {
         result.current.next();
       });
@@ -175,12 +148,6 @@ describe('useCreateCompany', () => {
   describe('Company creation', () => {
     it('should create company and store company ID', async () => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(companyCreatedResponse.data, {
             status: 201,
@@ -216,12 +183,6 @@ describe('useCreateCompany', () => {
 
     it('should handle company creation with tokens response', async () => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(
             {
@@ -267,12 +228,6 @@ describe('useCreateCompany', () => {
   describe('Address details update', () => {
     beforeEach(() => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(companyCreatedResponse.data, {
             status: 201,
@@ -314,7 +269,6 @@ describe('useCreateCompany', () => {
       const createResponse = await result.current.onSubmit(createPayload);
       expect(createResponse.data).toBeDefined();
 
-      // Manually navigate to next step
       act(() => {
         result.current.next();
       });
@@ -338,18 +292,6 @@ describe('useCreateCompany', () => {
     });
 
     it('should throw error if company ID is missing when submitting address details', async () => {
-      server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
-        http.get('*/v1/countries/:countryCode/address_details', () => {
-          return HttpResponse.json(addressDetailsSchema.data);
-        }),
-      );
-
       const { result } = renderHook(() => useCreateCompany({}), {
         wrapper: TestProviders,
       });
@@ -358,21 +300,6 @@ describe('useCreateCompany', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      // To test the error case, we need to be on address_details step
-      // But goTo only works if the step has been visited (has values)
-      // So we need to create a company first, navigate to address_details,
-      // then test the error handling
-      // However, once we create a company, the company ID is set and we can't easily clear it
-      //
-      // The actual error case (company ID missing) would only happen if:
-      // 1. We're on address_details step
-      // 2. The createdCompanyId state is null/undefined
-      //
-      // Since we can't easily simulate this without exposing internal state,
-      // we'll test that the error handling logic exists by verifying the hook
-      // properly handles the address_details step submission
-
-      // Create company and navigate to address_details
       const createPayload = {
         country_code: 'USA',
         company_owner_email: 'owner@example.com',
@@ -395,9 +322,6 @@ describe('useCreateCompany', () => {
         );
       });
 
-      // Now we're on address_details with a company ID, so submission should work
-      // The error case (missing company ID) is tested in the hook implementation
-      // and would be caught by TypeScript/flow logic
       const addressPayload = {
         address: '123 Main St',
         city: 'San Francisco',
@@ -405,7 +329,6 @@ describe('useCreateCompany', () => {
         state: 'CA',
       };
 
-      // This should succeed because we have a company ID
       const response = await result.current.onSubmit(addressPayload);
       expect(response.data).toBeDefined();
     });
@@ -414,12 +337,6 @@ describe('useCreateCompany', () => {
   describe('Error handling', () => {
     it('should return error response when company creation fails', async () => {
       server.use(
-        http.get('*/v1/countries', () => {
-          return HttpResponse.json(countriesResponse.data);
-        }),
-        http.get('*/v1/company-currencies', () => {
-          return HttpResponse.json(currenciesResponse.data);
-        }),
         http.post('*/v1/companies', () => {
           return HttpResponse.json(
             {
@@ -457,7 +374,6 @@ describe('useCreateCompany', () => {
 
       const response = await result.current.onSubmit(payload);
 
-      // Verify error response structure
       expect('error' in response).toBe(true);
       if ('error' in response) {
         expect(response.error).toBeDefined();

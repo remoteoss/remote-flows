@@ -1,24 +1,20 @@
 import { useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
 import { JSFFields } from '@/src/types/remoteFlows';
-import { Client } from '@/src/client/client';
-import { getInitialValues } from '@/src/components/form/utils';
-import { FlowOptions } from '@/src/flows/types';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { CreateCompanyFlowProps } from '@/src/flows/CreateCompany/types';
-import {
-  CreateCompanyParams,
-  getShowFormCountry,
-  UpdateCompanyParams,
-} from '@/src/client';
+import { CreateCompanyParams, UpdateCompanyParams } from '@/src/client';
+import { nowUtcFormatted } from '@/src/common/dates';
 
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { useClient } from '@/src/context';
-import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { STEPS } from '@/src/flows/CreateCompany/utils';
-import { getSupportedCountry, getIndexCompanyCurrency } from '@/src/client';
-
+import {
+  useCountriesSchemaField,
+  useAddressDetailsSchema,
+} from '@/src/flows/CreateCompany/api';
 import { Step, useStepState } from '@/src/flows/useStepState';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
@@ -29,192 +25,6 @@ import {
 } from '@/src/flows/CreateCompany/api';
 
 type useCreateCompanyProps = Omit<CreateCompanyFlowProps, 'render'>;
-
-/**
- * Hook to fetch supported countries for company creation
- * @param queryOptions - Query options including enabled flag
- * @returns Query result with countries filtered for EOR onboarding
- */
-const useCountries = (queryOptions?: { enabled?: boolean }) => {
-  const { client } = useClient();
-  return useQuery({
-    ...queryOptions,
-    queryKey: ['countries'],
-    retry: false,
-    queryFn: async () => {
-      const response = await getSupportedCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch supported countries');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      return (
-        data?.data
-          ?.filter((country) => country.eor_onboarding)
-          .map((country) => ({
-            label: country.name,
-            value: country.code,
-          })) || []
-      );
-    },
-  });
-};
-/**
- * Hook to fetch company currencies
- * @param queryOptions - Query options including enabled flag
- * @returns Query result with currencies formatted for select dropdown
- */
-const useCompanyCurrencies = (queryOptions?: { enabled?: boolean }) => {
-  const { client } = useClient();
-  return useQuery({
-    ...queryOptions,
-    queryKey: ['company-currencies'],
-    retry: false,
-    queryFn: async () => {
-      const response = await getIndexCompanyCurrency({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch company currencies');
-      }
-
-      return response;
-    },
-    select: ({ data }) => {
-      return (
-        data?.data?.company_currencies.map((currency) => ({
-          value: currency.code,
-          label: currency.code,
-        })) || []
-      );
-    },
-  });
-};
-
-/**
- * Hook to create the select country form with populated country and currency options
- * @param options - Flow options including jsfModify and queryOptions
- * @returns Form with populated country and currency fields, and loading state
- */
-const useCountriesSchemaField = (
-  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
-    queryOptions?: { enabled?: boolean };
-  },
-) => {
-  const { data: countries, isLoading: isLoadingCountries } = useCountries(
-    options?.queryOptions,
-  );
-  const { data: currencies, isLoading: isLoadingCurrencies } =
-    useCompanyCurrencies(options?.queryOptions);
-
-  const companyBasicInformationForm = createHeadlessForm(
-    companyBasicInformationStepSchema.data.schema,
-    {},
-    options,
-  );
-
-  if (countries) {
-    const countryField = companyBasicInformationForm.fields.find(
-      (field) => field.name === 'country_code',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
-
-  if (currencies) {
-    const currencyField = companyBasicInformationForm.fields.find(
-      (field) => field.name === 'desired_currency',
-    );
-    if (currencyField) {
-      currencyField.options = currencies;
-    }
-  }
-
-  return {
-    isLoading: isLoadingCountries || isLoadingCurrencies,
-    companyBasicInformationForm,
-  };
-};
-
-/**
- * Formats current UTC date/time as ISO string for terms of service acceptance
- * @returns Formatted UTC datetime string (YYYY-MM-DD HH:mm:ssZ)
- */
-function nowUtcFormatted(): string {
-  const now = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-
-  return (
-    `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ` +
-    `${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}Z`
-  );
-}
-/**
- * Hook to fetch address details schema for a given country
- * @param countryCode - The country code to fetch schema for
- * @param fieldValues - Current field values for the form
- * @param options - Flow options including jsfModify and queryOptions
- * @returns Query result with address details form schema
- */
-const useAddressDetailsSchema = ({
-  countryCode,
-  fieldValues,
-  options,
-}: {
-  countryCode: string | null;
-  fieldValues: FieldValues;
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['company-address-details-schema', countryCode],
-    retry: false,
-    queryFn: async () => {
-      if (!countryCode) {
-        throw new Error('Country code is required');
-      }
-      const response = await getShowFormCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          country_code: countryCode,
-          form: 'address_details',
-        },
-        query: {
-          json_schema_version:
-            options?.jsonSchemaVersion?.form_schema?.address_details ||
-            'latest',
-        },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch address details schema');
-      }
-
-      return response;
-    },
-    enabled: options?.queryOptions?.enabled && !!countryCode,
-    select: ({ data }) => {
-      const jsfSchema = data?.data || {};
-      return createHeadlessForm(jsfSchema, fieldValues, options);
-    },
-  });
-};
 
 /**
  * Main hook for the CreateCompany flow
@@ -272,7 +82,13 @@ export const useCreateCompany = ({
   const { data: addressDetailsForm, isLoading: isLoadingAddressDetails } =
     useAddressDetailsSchema({
       countryCode: internalCountryCode,
-      fieldValues: fieldValues.address_details || {},
+      fieldValues:
+        stepState.currentStep.name === 'address_details'
+          ? {
+              ...(stepState.values?.address_details || {}),
+              ...fieldValues,
+            }
+          : stepState.values?.address_details || {},
       options: {
         ...options,
         jsfModify: options?.jsfModify?.address_details,
@@ -336,17 +152,21 @@ export const useCreateCompany = ({
   };
 
   const parseFormValues = async (values: FieldValues) => {
+    const currentStepName = stepState.currentStep.name;
+    const currentStepFields = stepFields[currentStepName];
+
     if (
       companyBasicInformationForm &&
-      stepState.currentStep.name === 'company_basic_information'
+      currentStepName === 'company_basic_information'
     ) {
-      return values;
+      return await parseJSFToValidate(values, currentStepFields, {
+        isPartialValidation: false,
+      });
     }
-    if (
-      addressDetailsForm &&
-      stepState.currentStep.name === 'address_details'
-    ) {
-      return values;
+    if (addressDetailsForm && currentStepName === 'address_details') {
+      return await parseJSFToValidate(values, currentStepFields, {
+        isPartialValidation: false,
+      });
     }
     return {};
   };
@@ -362,6 +182,22 @@ export const useCreateCompany = ({
     switch (stepState.currentStep.name) {
       case 'company_basic_information': {
         setInternalCountryCode(parsedValues.country_code);
+
+        // If company already exists, skip creation and return current form values
+        if (createdCompanyId) {
+          return Promise.resolve({
+            data: {
+              countryCode: parsedValues.country_code ?? '',
+              companyOwnerEmail: parsedValues.company_owner_email ?? '',
+              companyOwnerName: parsedValues.company_owner_name ?? '',
+              desiredCurrency: parsedValues.desired_currency ?? '',
+              name: parsedValues.name ?? '',
+              phoneNumber: parsedValues.phone_number ?? '',
+              taxNumber: parsedValues.tax_number ?? '',
+            },
+          });
+        }
+
         const payload: CreateCompanyParams = {
           country_code: parsedValues.country_code,
           company_owner_email: parsedValues.company_owner_email,
@@ -396,6 +232,7 @@ export const useCreateCompany = ({
               company_owner_email?: string;
               company_owner_name?: string;
               desired_currency?: string;
+              name?: string;
               phone_number?: string;
               tax_number?: string;
             }
@@ -432,6 +269,7 @@ export const useCreateCompany = ({
               '',
             desiredCurrency:
               company?.desired_currency ?? parsedValues.desired_currency ?? '',
+            name: company?.name ?? parsedValues.name ?? '',
             phoneNumber:
               company?.phone_number ?? parsedValues.phone_number ?? '',
             taxNumber: company?.tax_number ?? parsedValues.tax_number ?? '',
@@ -559,14 +397,27 @@ export const useCreateCompany = ({
     handleValidation: async (
       values: FieldValues,
     ): Promise<ValidationResult | null> => {
-      if (stepState.currentStep.name === 'company_basic_information') {
-        return companyBasicInformationForm.handleValidation(values);
+      if (
+        stepState.currentStep.name === 'company_basic_information' &&
+        companyBasicInformationForm
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          companyBasicInformationForm.fields,
+          { isPartialValidation: false },
+        );
+        return companyBasicInformationForm.handleValidation(parsedValues);
       }
       if (
         stepState.currentStep.name === 'address_details' &&
         addressDetailsForm
       ) {
-        return addressDetailsForm.handleValidation(values);
+        const parsedValues = await parseJSFToValidate(
+          values,
+          addressDetailsForm.fields,
+          { isPartialValidation: false },
+        );
+        return addressDetailsForm.handleValidation(parsedValues);
       }
 
       return null;

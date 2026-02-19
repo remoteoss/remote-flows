@@ -48,6 +48,7 @@ export function CompanyBasicInformationStep({
         companyOwnerEmail: payload.company_owner_email,
         companyOwnerName: payload.company_owner_name,
         desiredCurrency: payload.desired_currency,
+        name: payload.name,
         phoneNumber: payload.phone_number,
         taxNumber: payload.tax_number,
       });

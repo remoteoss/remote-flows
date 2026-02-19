@@ -150,9 +150,11 @@ export type Components = {
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   /**
    * Function to authenticate the user and obtain an access token.
+   * Optional when using cookie-based authentication (via the `credentials` prop).
+   * When provided, bearer token authentication will be used.
    * @returns A promise that resolves to an object containing the access token and its expiration time.
    */
-  auth: () => Promise<AuthResponse>;
+  auth?: () => Promise<AuthResponse>;
   /**
    * Components to override the default field components used in the SDK.
    */

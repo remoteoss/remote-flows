@@ -737,7 +737,7 @@ describe('CreateCompanyFlow', () => {
           await new Promise((resolve) => setTimeout(resolve, 100));
           return HttpResponse.json(countriesResponse.data);
         }),
-        http.get('*/v1/companies/currencies', async () => {
+        http.get('*/v1/company-currencies', async () => {
           await new Promise((resolve) => setTimeout(resolve, 100));
           return HttpResponse.json(currenciesResponse.data);
         }),

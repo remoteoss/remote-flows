@@ -9,7 +9,7 @@ export function CreateCompanySubmit({
 }: PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
 >) {
-  const { formId } = useCreateCompanyContext();
+  const { formId, createCompanyBag } = useCreateCompanyContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -22,7 +22,7 @@ export function CreateCompanySubmit({
       {...props}
       form={formId}
       type={type}
-      disabled={props.disabled}
+      disabled={props.disabled || createCompanyBag.isSubmitting}
     >
       {children}
     </CustomButton>

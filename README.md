@@ -61,15 +61,16 @@ function App() {
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop            | Type                                                                                          | Required | Deprecated | Description                                                                 |
-| --------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | --------------------------------------------------------------------------- |
-| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | Yes      | -          | Function to fetch authentication token                                      |
-| `environment`   | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                   |
-| `theme`         | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                  |
-| `components`    | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                  |
-| `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                   |
-| `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       |  -         | Error boundary configuration to prevent crashes and show custom fallback UI |
-| `debug`         | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                |
+| Prop            | Type                                                                                          | Required | Deprecated | Description                                                                                                    |
+| --------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| `auth`          | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | No       | -          | Function to fetch authentication token. Optional when using cookie-based authentication via `credentials` prop |
+| `environment`   | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                                                      |
+| `theme`         | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                                                     |
+| `components`    | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                                                     |
+| `proxy`         | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                                                      |
+| `errorBoundary` | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       | -          | Error boundary configuration to prevent crashes and show custom fallback UI                                    |
+| `debug`         | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                                                   |
+| `credentials`   | `'include' \| 'same-origin'`                                                                  | No       | -          | Credentials mode for fetch requests. Use `'include'` for cookie-based authentication without bearer tokens     |
 
 #### Error Boundary
 
