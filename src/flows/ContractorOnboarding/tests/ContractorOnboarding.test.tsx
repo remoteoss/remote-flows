@@ -338,9 +338,11 @@ describe('ContractorOnboardingFlow', () => {
         [0]: 'Select Country',
         [1]: 'Basic Information',
         [2]: 'Pricing Plan',
-        [3]: 'Contract Details',
-        [4]: 'Contract Preview',
-        [5]: 'Review',
+        [3]: 'Eligibility Questionnaire',
+        [4]: 'Choose Alternative Plan',
+        [5]: 'Contract Details',
+        [6]: 'Contract Preview',
+        [7]: 'Review',
       };
 
       return (
@@ -458,11 +460,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -638,11 +643,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -706,11 +714,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -787,11 +798,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -882,11 +896,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -965,11 +982,14 @@ describe('ContractorOnboardingFlow', () => {
         const currentStepIndex =
           contractorOnboardingBag.stepState.currentStep.index;
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         const currentStepName = steps[currentStepIndex];
@@ -1052,11 +1072,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1126,11 +1149,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1183,11 +1209,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1269,11 +1298,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         if (contractorOnboardingBag.isLoading) {
@@ -1333,11 +1365,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1414,11 +1449,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         if (contractorOnboardingBag.isLoading) {
@@ -1511,11 +1549,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1592,11 +1633,14 @@ describe('ContractorOnboardingFlow', () => {
           contractorOnboardingBag.stepState.currentStep.index;
 
         const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
+          [0]: 'Select Country',
+          [1]: 'Basic Information',
+          [2]: 'Pricing Plan',
+          [3]: 'Eligibility Questionnaire',
+          [4]: 'Choose Alternative Plan',
+          [5]: 'Contract Details',
+          [6]: 'Contract Preview',
+          [7]: 'Review',
         };
 
         return (
@@ -1676,11 +1720,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -1726,11 +1773,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -1814,11 +1864,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -1909,11 +1962,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -1961,11 +2017,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2043,11 +2102,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2133,11 +2195,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2203,12 +2268,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Contract Details',
-            [4]: 'Contract Preview',
-            [5]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2280,12 +2347,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Contract Details',
-            [4]: 'Contract Preview',
-            [5]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2519,11 +2588,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2610,13 +2682,14 @@ describe('ContractorOnboardingFlow', () => {
             contractorOnboardingBag.stepState.currentStep.index;
 
           const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Choose Alternative Plan',
-            [4]: 'Contract Details',
-            [5]: 'Contract Preview',
-            [6]: 'Review',
+            [0]: 'Select Country',
+            [1]: 'Basic Information',
+            [2]: 'Pricing Plan',
+            [3]: 'Eligibility Questionnaire',
+            [4]: 'Choose Alternative Plan',
+            [5]: 'Contract Details',
+            [6]: 'Contract Preview',
+            [7]: 'Review',
           };
 
           return (
@@ -2677,11 +2750,13 @@ describe('ContractorOnboardingFlow', () => {
       const cmRadio = screen.getByRole('radio', {
         name: /^Contractor Management$/,
       });
-      
+
       expect(cmRadio).toBeInTheDocument();
-      expect(screen.queryByRole('radio', {
-        name: /^Contractor of Record$/,
-      })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('radio', {
+          name: /^Contractor of Record$/,
+        }),
+      ).not.toBeInTheDocument();
     });
   });
 });

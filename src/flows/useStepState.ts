@@ -17,6 +17,12 @@ type StepState<T extends string, Fields = FieldValues> = {
     | null;
 };
 
+const getInitialStep = <T extends string>(steps: Record<T, Step<T>>) => {
+  const stepValues = Object.values(steps) as Step<T>[];
+  const firstVisibleStep = stepValues.find((step) => step.visible !== false);
+  return firstVisibleStep || steps[Object.keys(steps)[0] as T]; // Fallback to first if none found
+};
+
 export const useStepState = <T extends string, Fields = FieldValues>(
   steps: Record<T, Step<T>>,
   onStepChange?: (step: Step<T>) => void,
@@ -29,7 +35,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
-    currentStep: steps[stepKeys[0]],
+    currentStep: getInitialStep(steps),
     totalSteps: stepKeys.length,
     values: null,
   });
@@ -45,7 +51,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   function nextStep() {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
-    const nextStep = stepValues.find((step) => step.index === index + 1);
+    const nextStep = stepValues.find(
+      (step) => step.index > index && step.visible !== false,
+    );
 
     if (nextStep) {
       setStepState((previousState) => ({
@@ -67,7 +75,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   function previousStep() {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
-    const previousStep = stepValues.find((step) => step.index === index - 1);
+    const previousStep = stepValues
+      .reverse()
+      .find((step) => step.index < index && step.visible !== false);
 
     if (previousStep) {
       setStepState((previousState) => ({
