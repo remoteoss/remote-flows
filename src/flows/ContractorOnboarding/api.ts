@@ -372,7 +372,11 @@ export const useGetChooseAlternativePlan = (
     },
   });
 
-  const form = createHeadlessForm(chooseAlternativePlanSchema, {}, options);
+  const form = createHeadlessForm(
+    chooseAlternativePlanSchema.data.schema,
+    {},
+    options,
+  );
 
   if (contractorSubscriptions) {
     const field: JSFField | undefined = form.fields.find(
