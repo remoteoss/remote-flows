@@ -874,7 +874,40 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(MultiStepFormWithoutCountry),
+      ({
+        contractorOnboardingBag,
+        components,
+      }: ContractorOnboardingRenderProps) => {
+        const currentStepIndex =
+          contractorOnboardingBag.stepState.currentStep.index;
+
+        const currentStepName = CONTRACTOR_ONBOARDING_STEPS[currentStepIndex];
+
+        // Track every step that gets rendered
+        if (!contractorOnboardingBag.isLoading && currentStepName) {
+          renderSequence.push({
+            isLoading: contractorOnboardingBag.isLoading,
+            step: contractorOnboardingBag.isLoading
+              ? undefined
+              : currentStepName,
+          });
+        }
+
+        // Return the current step or loading state
+        if (contractorOnboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {currentStepName}</h1>
+            <MultiStepFormWithoutCountry
+              contractorOnboardingBag={contractorOnboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
     );
 
     render(
