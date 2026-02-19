@@ -411,14 +411,16 @@ const OnBoardingRender = ({
       <Card className='px-0 py-0'>
         <div className='steps-contractor-onboarding-navigation'>
           <ul>
-            {contractorOnboardingBag.steps.map((step) => (
-              <li
-                key={step.name}
-                className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
-              >
-                {step.index + 1}. {step.label}
-              </li>
-            ))}
+            {contractorOnboardingBag.steps
+              .filter((step) => step.visible)
+              .map((step, index) => (
+                <li
+                  key={step.name}
+                  className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
+                >
+                  {index + 1}. {step.label}
+                </li>
+              ))}
           </ul>
         </div>
 

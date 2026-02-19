@@ -19,70 +19,71 @@ type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
   includeChooseAlternativePlan?: boolean;
+  canNavigateToChooseAlternativePlan?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
   const stepDefinitions: Array<{
     name: StepKeys;
     label: string;
-    include: boolean;
-    visible?: boolean;
+    visible: boolean;
   }> = [
     {
       name: 'select_country',
       label: 'Select Country',
-      include: Boolean(config?.includeSelectCountry),
+      visible: Boolean(config?.includeSelectCountry),
     },
     {
       name: 'basic_information',
       label: 'Basic Information',
-      include: true,
+      visible: true,
     },
     {
       name: 'pricing_plan',
       label: 'Pricing Plan',
-      include: true,
+      visible: true,
     },
     {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
-      include: Boolean(config?.includeEligibilityQuestionnaire),
+      visible: Boolean(config?.includeEligibilityQuestionnaire),
     },
     {
       name: 'choose_alternative_plan',
       label: 'Choose Alternative Plan',
-      include: Boolean(config?.includeChooseAlternativePlan),
       visible: false,
     },
     {
       name: 'contract_details',
       label: 'Contract Details',
-      include: true,
+      visible: true,
     },
     {
       name: 'contract_preview',
       label: 'Contract Preview',
-      include: true,
+      visible: true,
     },
     {
       name: 'review',
       label: 'Review',
-      include: true,
+      visible: true,
     },
   ];
 
-  const activeSteps = stepDefinitions.filter((step) => step.include);
-
-  const stepsArray = activeSteps.map((step, index) => ({
+  const stepsArray = stepDefinitions.map((step, index) => ({
     name: step.name,
     index,
     label: step.label,
-    visible: step.visible ?? true,
+    visible: step.visible,
   }));
 
   const steps = stepsArray.reduce(
     (acc, step) => {
-      acc[step.name] = { index: step.index, name: step.name, visible: step.visible };
+      acc[step.name] = {
+        index: step.index,
+        name: step.name,
+        visible: step.visible,
+      };
       return acc;
     },
     {} as Record<string, Step<StepKeys>>,

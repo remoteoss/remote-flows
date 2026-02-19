@@ -87,13 +87,11 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   function goToStep(step: T) {
-    if (stepState.values?.[step]) {
-      setStepState((previousState) => ({
-        ...previousState,
-        currentStep: steps[step],
-      }));
-      onStepChange?.(steps[step]);
-    }
+    setStepState((previousState) => ({
+      ...previousState,
+      currentStep: steps[step],
+    }));
+    onStepChange?.(steps[step]);
   }
 
   function setStepValues(values: Record<T, Fields>) {

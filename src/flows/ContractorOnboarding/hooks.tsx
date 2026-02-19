@@ -130,6 +130,9 @@ export const useContractorOnboarding = ({
   const [includeChooseAlternativePlan, setIncludeChooseAlternativePlan] =
     useState<boolean>(false);
 
+  const [pendingNavigationStep, setPendingNavigationStep] =
+    useState<StepKeys | null>(null);
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
@@ -149,6 +152,14 @@ export const useContractorOnboarding = ({
     goToStep,
     setStepValues,
   } = useStepState(steps);
+
+  useEffect(() => {
+    if (pendingNavigationStep) {
+      // Now steps have been updated
+      goToStep(pendingNavigationStep);
+      setPendingNavigationStep(null);
+    }
+  }, [pendingNavigationStep, goToStep]);
 
   const {
     data: employment,
@@ -1050,7 +1061,8 @@ export const useContractorOnboarding = ({
 
           if (isEligibilityQuestionnaireBlocked) {
             setIncludeChooseAlternativePlan(true);
-            return response;
+            setPendingNavigationStep('choose_alternative_plan');
+            return { ...response, _skipNextStep: true };
           }
 
           return await manageContractorCorSubscriptionMutationAsync({

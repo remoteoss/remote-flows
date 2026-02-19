@@ -49,7 +49,9 @@ export function EligibilityQuestionnaireStep({
 
       if (response?.data) {
         await onSuccess?.(response?.data as EligibilityQuestionnaireResponse);
-        contractorOnboardingBag?.next();
+        if (!(response as $TSFixMe)?._skipNextStep) {
+          contractorOnboardingBag?.next();
+        }
         return;
       }
     } catch (error: unknown) {
