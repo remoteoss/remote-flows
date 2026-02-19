@@ -113,6 +113,15 @@ export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
   );
 };
 
+const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
+
+/**
+ * Checks if the country code is a country code that requires nationality status field
+ */
+export const isNationalityCountryCode = (countryCode: string) => {
+  return NATIONALITY_COUNTRY_CODES.includes(countryCode);
+};
+
 /**
  * Array of employment statuses that are allowed to proceed to the review step.
  * These statuses indicate that the employment is in a final state and the employment cannot be modified further.

@@ -6,6 +6,7 @@ import {
   mockContractorSubscriptionResponse,
   mockManageSubscriptionResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
+import { countriesMock } from '@/src/common/api/fixtures/countries';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -36,10 +37,15 @@ const manageSubscriptionHandler = http.post(
   },
 );
 
+export const countriesHandler = http.get('*/v1/countries', () => {
+  return HttpResponse.json(countriesMock);
+});
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
   eligibilityQuestionnaireHandler,
   contractorSubscriptionHandler,
   manageSubscriptionHandler,
+  countriesHandler,
 ];

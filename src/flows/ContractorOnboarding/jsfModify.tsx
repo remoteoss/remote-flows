@@ -5,6 +5,7 @@ import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/componen
 import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
+import { isNationalityCountryCode } from '@/src/flows/ContractorOnboarding/utils';
 import { JSFModify } from '@/src/flows/types';
 import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
@@ -76,17 +77,20 @@ export const buildContractDetailsJsfModify = (
 /**
  * Builds the basic information jsf modify for the contractor onboarding flow
  * @param countryCode - The country code to use for the onboarding.
+ * @param countryName - The name of the country to use for the onboarding.
  * @param options - The options to use for the onboarding.
  * @returns The basic information jsf modify for the contractor onboarding flow
  */
 export const buildBasicInformationJsfModify = (
   countryCode: string,
+  countryName: string | undefined,
   options: ContractorOnboardingFlowProps['options'] | undefined,
 ) => {
   const isSaudiArabia = countryCode === 'SAU';
   const isUk = countryCode === 'GBR';
+  const hasNationalityStatusField = isNationalityCountryCode(countryCode);
 
-  if (!isSaudiArabia && !isUk) {
+  if (!isSaudiArabia && !isUk && !hasNationalityStatusField) {
     return options?.jsfModify?.basic_information;
   }
 
@@ -169,13 +173,20 @@ export const buildBasicInformationJsfModify = (
     };
   }
 
+  const label = isSaudiArabia
+    ? 'Is your contractor a Saudi Arabia national, or a non-Saudi national contracting via a local business entity or under a Special Privilege Iqama visa?'
+    : `Is the contractor a ${countryName ?? 'selected country'} national, or a non-${countryName ?? 'selected country'} national contracting through their local business entity?`;
+
+  const descriptionNonNationalRadio = isSaudiArabia
+    ? `Please be aware that contracting with non-Saudi Arabia nationals that are not operating as a company or under a Special Privilege Iqama visa can lead to fines for operating without proper work authorization. If you are concerned, please speak with the Contractor and/or local Saudi Arabia counsel to ensure compliance.`
+    : `Be aware that the Contractor must be a ${countryName ?? 'selected country'} national, or a non-${countryName ?? 'selected country'} national operating through their company to comply with the legal requirements for performing services and deliverables as a contractor in ${countryName ?? 'selected country'}. If you are concerned, speak with the Contractor and/or local counsel to ensure compliance.`;
+
   return {
     ...options?.jsfModify?.basic_information,
     create: {
       ...options?.jsfModify?.basic_information?.create,
-      saudi_nationality_status: {
-        title:
-          'Is your contractor a Saudi Arabia national, or a non-Saudi national contracting via a local business entity or under a Special Privilege Iqama visa?',
+      nationality_status: {
+        title: label,
         description: '',
         type: 'string',
         oneOf: [
@@ -186,8 +197,7 @@ export const buildBasicInformationJsfModify = (
           },
           {
             const: 'non-national',
-            description:
-              'Please be aware that contracting with non-Saudi Arabia nationals that are not operating as a company or under a Special Privilege Iqama visa can lead to fines for operating without proper work authorization. If you are concerned, please speak with the Contractor and/or local Saudi Arabia counsel to ensure compliance.',
+            description: descriptionNonNationalRadio,
             title: 'No',
           },
         ],
@@ -196,9 +206,9 @@ export const buildBasicInformationJsfModify = (
         },
       },
     },
-    required: ['saudi_nationality_status'],
+    required: ['nationality_status'],
     orderRoot: (originalOrder: string[]) => {
-      return [...originalOrder, 'saudi_nationality_status'];
+      return [...originalOrder, 'nationality_status'];
     },
   };
 };

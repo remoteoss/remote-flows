@@ -386,22 +386,6 @@ describe('ContractorOnboardingFlow', () => {
           },
         });
       }),
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [
-            {
-              code: 'PRT',
-              name: 'Portugal',
-              eor_onboarding: true,
-            },
-            {
-              code: 'ESP',
-              name: 'Spain',
-              eor_onboarding: true,
-            },
-          ],
-        });
-      }),
       http.get('*/v1/countries/*/contractor_basic_information*', () => {
         return HttpResponse.json(mockBasicInformationSchema);
       }),

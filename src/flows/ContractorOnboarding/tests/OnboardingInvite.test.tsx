@@ -73,18 +73,6 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/countries', () => {
-        return HttpResponse.json({
-          data: [
-            {
-              code: 'PRT',
-              name: 'Portugal',
-              eor_onboarding: true,
-            },
-          ],
-        });
-      }),
-
       http.get('*/v1/countries/*/employment_basic_information*', () => {
         return HttpResponse.json(mockBasicInformationSchema);
       }),
