@@ -11,7 +11,6 @@ import {
   getShowEmployment,
   getShowFormCountry,
   getShowSchema,
-  getSupportedCountry,
   patchUpdateEmployment2,
   postConvertRawCurrencyConverter,
   postConvertWithSpreadCurrencyConverter,
@@ -34,6 +33,7 @@ import {
 } from '@/src/flows/types';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useCountries } from '@/src/common/api/countries';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -362,27 +362,13 @@ export const useUpdateBenefitsOffers = (
   });
 };
 
-const useCountries = (queryOptions?: { enabled?: boolean }) => {
-  const { client } = useClient();
-  return useQuery({
-    ...queryOptions,
-    queryKey: ['countries'],
-    retry: false,
-    queryFn: async () => {
-      const response = await getSupportedCountry({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch supported countries');
-      }
-
-      return response;
-    },
+export const useCountriesSchemaField = (
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { data: countries, isLoading } = useCountries({
+    queryKey: 'onboarding-countries',
     select: ({ data }) => {
       return (
         data?.data
@@ -395,15 +381,8 @@ const useCountries = (queryOptions?: { enabled?: boolean }) => {
           }) || []
       );
     },
+    enabled: options?.queryOptions?.enabled,
   });
-};
-
-export const useCountriesSchemaField = (
-  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
-    queryOptions?: { enabled?: boolean };
-  },
-) => {
-  const { data: countries, isLoading } = useCountries(options?.queryOptions);
 
   const selectCountryForm = createHeadlessForm(
     selectCountryStepSchema.data.schema,

@@ -27,6 +27,7 @@ import {
   usePostCreateEligibilityQuestionnaire,
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
+  useCountriesSchemaField,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -37,7 +38,6 @@ import {
   StepKeys,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
-  useCountriesSchemaField,
   useCreateEmployment,
   useJSONSchemaForm,
   useUpdateEmployment,
@@ -230,13 +230,13 @@ export const useContractorOnboarding = ({
     setInternalCountryCode(employment.country.code);
   }
 
-  const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField({
-      jsfModify: options?.jsfModify?.select_country,
-      queryOptions: {
-        enabled: stepState.currentStep.name === 'select_country',
-      },
-    });
+  const {
+    selectCountryForm,
+    isLoading: isLoadingCountries,
+    countries,
+  } = useCountriesSchemaField({
+    jsfModify: options?.jsfModify?.select_country,
+  });
 
   const {
     form: selectContractorSubscriptionForm,
@@ -370,6 +370,11 @@ export const useContractorOnboarding = ({
     }
   }, [contractDocuments, internalContractDocumentId]);
 
+  const countryName = useMemo(() => {
+    return countries?.find((country) => country.value === internalCountryCode)
+      ?.label;
+  }, [countries, internalCountryCode]);
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
@@ -378,6 +383,7 @@ export const useContractorOnboarding = ({
     options: {
       jsfModify: buildBasicInformationJsfModify(
         internalCountryCode as string,
+        countryName,
         options,
       ),
       queryOptions: {
@@ -607,7 +613,7 @@ export const useContractorOnboarding = ({
       ...onboardingInitialValues,
       ...employmentBasicInformation,
       ir35: employment?.contract_details?.ir_35,
-      saudi_nationality_status: employment?.contract_details?.nationality,
+      nationality_status: employment?.contract_details?.nationality,
       ...(convertedIr35File && {
         ir35_sds_file: [convertedIr35File],
       }),
@@ -894,7 +900,7 @@ export const useContractorOnboarding = ({
         if (isEmploymentNotLoaded || hasChangedCountry) {
           const basicInformationParsedValues = omit(
             parsedValues,
-            'saudi_nationality_status',
+            'nationality_status',
             'ir35',
             'ir35_sds_file',
           );
@@ -921,7 +927,7 @@ export const useContractorOnboarding = ({
         } else if (internalEmploymentId) {
           const basicInformationParsedValues = omit(
             parsedValues,
-            'saudi_nationality_status',
+            'nationality_status',
             'ir35',
             'ir35_sds_file',
           );

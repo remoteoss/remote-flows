@@ -45,6 +45,8 @@ import {
   useUploadFile,
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
+import { useCountries } from '@/src/common/api/countries';
+import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 
 /**
  * Get the contract document signature schema
@@ -438,7 +440,7 @@ export const useUpdateUKandSaudiFields = (
   return {
     mutateAsync: async ({ employmentId }: { employmentId: string }) => {
       const {
-        saudi_nationality_status: saudiNationalityStatus,
+        nationality_status: nationalityStatus,
         ir35: ir35Status,
         ir35_sds_file: ir35SdsFile,
       } = parsedValues;
@@ -447,9 +449,9 @@ export const useUpdateUKandSaudiFields = (
           ir_35: ir35Status,
         },
       };
-      const saudiContractDetailsPayload = {
+      const nationalityContractDetailsPayload = {
         contract_document: {
-          nationality: saudiNationalityStatus,
+          nationality: nationalityStatus,
         },
       };
       if (ir35Status) {
@@ -467,10 +469,11 @@ export const useUpdateUKandSaudiFields = (
         }
         return Promise.resolve();
       }
-      if (saudiNationalityStatus) {
+      // nationality status is sent for the countries SAU, KWT, OMN, QAT, BHR
+      if (nationalityStatus) {
         return createContractorContractDocumentMutationAsync({
           employmentId: employmentId,
-          payload: saudiContractDetailsPayload,
+          payload: nationalityContractDetailsPayload,
         });
       }
 
@@ -622,4 +625,46 @@ export const useDeleteContractorCorSubscription = () => {
       });
     },
   });
+};
+
+export const useCountriesSchemaField = (
+  options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { data: countries, isLoading } = useCountries({
+    queryKey: 'contractor-onboarding-countries',
+    select: ({ data }) => {
+      return (
+        data?.data?.map((country) => {
+          return {
+            label: country.name,
+            value: country.code,
+          };
+        }) || []
+      );
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+
+  const selectCountryForm = createHeadlessForm(
+    selectCountryStepSchema.data.schema,
+    {},
+    options,
+  );
+
+  if (countries) {
+    const countryField = selectCountryForm.fields.find(
+      (field) => field.name === 'country',
+    );
+    if (countryField) {
+      countryField.options = countries;
+    }
+  }
+
+  return {
+    isLoading,
+    selectCountryForm,
+    countries,
+  };
 };
