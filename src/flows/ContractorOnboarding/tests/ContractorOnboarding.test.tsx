@@ -82,6 +82,56 @@ function Review({ values }: { values: Record<string, unknown> }) {
   );
 }
 
+const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
+  [0]: 'Select Country',
+  [1]: 'Basic Information',
+  [2]: 'Pricing Plan',
+  [3]: 'Contract Details',
+  [4]: 'Contract Preview',
+  [5]: 'Review',
+};
+
+const CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY: Record<number, string> = {
+  [0]: 'Basic Information',
+  [1]: 'Pricing Plan',
+  [2]: 'Contract Details',
+  [3]: 'Contract Preview',
+  [4]: 'Review',
+};
+
+const CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR: Record<number, string> =
+  {
+    [0]: 'Basic Information',
+    [1]: 'Pricing Plan',
+    [2]: 'Eligibility Questionnaire',
+    [3]: 'Contract Details',
+    [4]: 'Contract Preview',
+    [5]: 'Review',
+  };
+
+function createMockRenderImplementation(
+  FormComponent: $TSFixMe,
+  stepsMap: Record<number, string> = CONTRACTOR_ONBOARDING_STEPS,
+) {
+  return ({
+    contractorOnboardingBag,
+    components,
+  }: ContractorOnboardingRenderProps) => {
+    const currentStepIndex =
+      contractorOnboardingBag.stepState.currentStep.index;
+
+    return (
+      <>
+        <h1>Step: {stepsMap[currentStepIndex]}</h1>
+        <FormComponent
+          contractorOnboardingBag={contractorOnboardingBag}
+          components={components}
+        />
+      </>
+    );
+  };
+}
+
 describe('ContractorOnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
     components,
@@ -334,18 +384,9 @@ describe('ContractorOnboardingFlow', () => {
       const currentStepIndex =
         contractorOnboardingBag.stepState.currentStep.index;
 
-      const steps: Record<number, string> = {
-        [0]: 'Select Country',
-        [1]: 'Basic Information',
-        [2]: 'Pricing Plan',
-        [3]: 'Contract Details',
-        [4]: 'Contract Preview',
-        [5]: 'Review',
-      };
-
       return (
         <>
-          <h1>Step: {steps[currentStepIndex]}</h1>
+          <h1>Step: {CONTRACTOR_ONBOARDING_STEPS[currentStepIndex]}</h1>
           <MultiStepFormWithCountry
             contractorOnboardingBag={contractorOnboardingBag}
             components={components}
@@ -450,31 +491,10 @@ describe('ContractorOnboardingFlow', () => {
 
   it('should skip rendering the select country step when skipSteps is provided', async () => {
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -630,31 +650,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -698,31 +697,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -779,31 +757,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -874,31 +831,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -964,15 +900,9 @@ describe('ContractorOnboardingFlow', () => {
       }: ContractorOnboardingRenderProps) => {
         const currentStepIndex =
           contractorOnboardingBag.stepState.currentStep.index;
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
 
-        const currentStepName = steps[currentStepIndex];
+        const currentStepName =
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY[currentStepIndex];
 
         // Track every step that gets rendered
         if (!contractorOnboardingBag.isLoading && currentStepName) {
@@ -1044,31 +974,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1118,31 +1027,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1175,31 +1063,10 @@ describe('ContractorOnboardingFlow', () => {
 
   it("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1261,35 +1128,10 @@ describe('ContractorOnboardingFlow', () => {
     const customLabel = 'Custom Contractor Field Label';
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        if (contractorOnboardingBag.isLoading) {
-          return <div data-testid='spinner'>Loading...</div>;
-        }
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1316,40 +1158,21 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Basic Information/i);
 
-    // Verify that the custom label is displayed
-    const labelElement = screen.getByLabelText(customLabel);
-    expect(labelElement).toBeInTheDocument();
+    await waitFor(() => {
+      // Verify that the custom label is displayed
+      const labelElement = screen.getByLabelText(customLabel);
+      expect(labelElement).toBeInTheDocument();
+    });
   });
 
   it('should display description message when service_duration.provisional_start_date differs from employment provisional_start_date', async () => {
     const employmentId = generateUniqueEmploymentId();
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1406,35 +1229,10 @@ describe('ContractorOnboardingFlow', () => {
     const customSignatureTitle = 'Digital Signature';
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        if (contractorOnboardingBag.isLoading) {
-          return <div data-testid='spinner'>Loading...</div>;
-        }
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1503,31 +1301,10 @@ describe('ContractorOnboardingFlow', () => {
 
   it('should display standard CSA disclaimer in contract details step when subscription is standard', async () => {
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1584,31 +1361,10 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      ({
-        contractorOnboardingBag,
-        components,
-      }: ContractorOnboardingRenderProps) => {
-        const currentStepIndex =
-          contractorOnboardingBag.stepState.currentStep.index;
-
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Pricing Plan',
-          [2]: 'Contract Details',
-          [3]: 'Contract Preview',
-          [4]: 'Review',
-        };
-
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              contractorOnboardingBag={contractorOnboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
+      createMockRenderImplementation(
+        MultiStepFormWithoutCountry,
+        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+      ),
     );
 
     render(
@@ -1668,31 +1424,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <div>Step: {steps[currentStepIndex]}</div>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -1718,31 +1453,10 @@ describe('ContractorOnboardingFlow', () => {
   describe('UK edge case', () => {
     it('should show file upload field when ir35 status is inside or outside', async () => {
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -1806,31 +1520,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -1901,31 +1594,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -1953,31 +1625,10 @@ describe('ContractorOnboardingFlow', () => {
 
     it('should not show file upload field when ir35 status is exempt', async () => {
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -2035,31 +1686,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <div>Step: {steps[currentStepIndex]}</div>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -2125,31 +1755,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -2195,32 +1804,10 @@ describe('ContractorOnboardingFlow', () => {
   describe('COR Eligibility Questionnaire', () => {
     it('should show eligibility questionnaire step when COR is selected', async () => {
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Contract Details',
-            [4]: 'Contract Preview',
-            [5]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR,
+        ),
       );
 
       render(
@@ -2272,32 +1859,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Eligibility Questionnaire',
-            [3]: 'Contract Details',
-            [4]: 'Contract Preview',
-            [5]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR,
+        ),
       );
 
       render(
@@ -2360,31 +1925,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -2435,31 +1979,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
@@ -2511,31 +2034,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        ({
-          contractorOnboardingBag,
-          components,
-        }: ContractorOnboardingRenderProps) => {
-          const currentStepIndex =
-            contractorOnboardingBag.stepState.currentStep.index;
-
-          const steps: Record<number, string> = {
-            [0]: 'Basic Information',
-            [1]: 'Pricing Plan',
-            [2]: 'Contract Details',
-            [3]: 'Contract Preview',
-            [4]: 'Review',
-          };
-
-          return (
-            <>
-              <h1>Step: {steps[currentStepIndex]}</h1>
-              <MultiStepFormWithoutCountry
-                contractorOnboardingBag={contractorOnboardingBag}
-                components={components}
-              />
-            </>
-          );
-        },
+        createMockRenderImplementation(
+          MultiStepFormWithoutCountry,
+          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
+        ),
       );
 
       render(
