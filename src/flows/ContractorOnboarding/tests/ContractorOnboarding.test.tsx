@@ -377,23 +377,10 @@ describe('ContractorOnboardingFlow', () => {
   };
 
   const mockRender = vi.fn(
-    ({
-      contractorOnboardingBag,
-      components,
-    }: ContractorOnboardingRenderProps) => {
-      const currentStepIndex =
-        contractorOnboardingBag.stepState.currentStep.index;
-
-      return (
-        <>
-          <h1>Step: {CONTRACTOR_ONBOARDING_STEPS[currentStepIndex]}</h1>
-          <MultiStepFormWithCountry
-            contractorOnboardingBag={contractorOnboardingBag}
-            components={components}
-          />
-        </>
-      );
-    },
+    createMockRenderImplementation(
+      MultiStepFormWithCountry,
+      CONTRACTOR_ONBOARDING_STEPS,
+    ),
   );
 
   const defaultProps = {
