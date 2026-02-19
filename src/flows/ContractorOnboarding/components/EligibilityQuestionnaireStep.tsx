@@ -9,10 +9,19 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 
 type EligibilityQuestionnaireStepProps = {
+  /*
+   * The function is called when the form is submitted. It receives the form values as an argument.
+   */
   onSubmit?: (
     payload: EligibilityQuestionnaireFormPayload,
   ) => void | Promise<void>;
+  /*
+   * The function is called when the form submission is successful.
+   */
   onSuccess?: (data: EligibilityQuestionnaireResponse) => void | Promise<void>;
+  /*
+   * The function is called when an error occurs during form submission.
+   */
   onError?: ({
     error,
     rawError,

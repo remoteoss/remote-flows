@@ -5,8 +5,17 @@ import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/compo
 import { handleStepError } from '@/src/lib/utils';
 
 type ChooseAlternativePlanStepProps = {
+  /*
+   * The function is called when the form is submitted. It receives the form values as an argument.
+   */
   onSubmit?: (payload: { subscription: string }) => void | Promise<void>;
+  /*
+   * The function is called when the form submission is successful.
+   */
   onSuccess?: (data: { subscription: string }) => void | Promise<void>;
+  /*
+   * The function is called when an error occurs during form submission.
+   */
   onError?: ({
     error,
     rawError,
@@ -16,14 +25,12 @@ type ChooseAlternativePlanStepProps = {
     rawError: Record<string, unknown>;
     fieldErrors: NormalizedFieldError[];
   }) => void;
-  components?: $TSFixMe;
 };
 
 export function ChooseAlternativePlanStep({
   onSubmit,
   onSuccess,
   onError,
-  components,
 }: ChooseAlternativePlanStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
@@ -31,11 +38,11 @@ export function ChooseAlternativePlanStep({
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
-      await onSubmit?.(parsedValues);
+      await onSubmit?.(parsedValues as $TSFixMe);
       const response = await contractorOnboardingBag.onSubmit(payload);
 
       if (response?.data) {
-        await onSuccess?.(response?.data);
+        await onSuccess?.(response?.data as $TSFixMe);
         contractorOnboardingBag?.next();
         return;
       }
@@ -49,13 +56,12 @@ export function ChooseAlternativePlanStep({
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.choose_alternative_plan;
+    contractorOnboardingBag.stepState.values?.choose_alternative_plan || {};
 
   return (
     <ContractorOnboardingForm
       defaultValues={initialValues}
       onSubmit={handleSubmit}
-      components={components}
     />
   );
 }

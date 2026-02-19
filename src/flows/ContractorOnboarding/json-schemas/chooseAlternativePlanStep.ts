@@ -1,16 +1,21 @@
-import { JSFSchema } from '@/src/types/remoteFlows';
-
-export const chooseAlternativePlanSchema: JSFSchema = {
-  title: 'Choose Your Plan',
-  description: 'Select an alternative contractor management plan',
-  type: 'object',
-  properties: {
-    subscription: {
-      type: 'string',
-      title: 'Select a plan',
-      enum: [],
-      enumNames: [],
+export const chooseAlternativePlanSchema = {
+  data: {
+    version: 7,
+    schema: {
+      additionalProperties: false,
+      properties: {
+        subscription: {
+          title: 'Choose a plan',
+          type: 'string',
+          oneOf: [],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+          },
+        },
+      },
+      required: ['subscription'],
+      type: 'object',
+      'x-jsf-order': ['subscription'],
     },
   },
-  required: ['subscription'],
 };

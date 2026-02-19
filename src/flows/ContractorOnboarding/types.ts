@@ -92,6 +92,7 @@ export type ContractorOnboardingFlowProps = {
       contract_details?: JSFModify;
       contract_preview?: JSFModify;
       eligibility_questionnaire?: JSFModify;
+      choose_alternative_plan?: JSFModify;
       pricing_plan?: JSFModify;
     };
   };

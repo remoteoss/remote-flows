@@ -356,10 +356,11 @@ export const useContractorSubscriptionSchemaField = (
   };
 };
 
-export const useAlternativePlanSchemaField = (
+export const useGetChooseAlternativePlan = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
+  // TODO: as the alternative plan only loads when eligibility is blocked I believe we can hardcode the CM + EOR data
   const {
     data: contractorSubscriptions,
     isLoading,
@@ -371,17 +372,13 @@ export const useAlternativePlanSchemaField = (
     },
   });
 
-  const form = createHeadlessForm(
-    chooseAlternativePlanSchema,
-    {},
-    options,
-  );
+  const form = createHeadlessForm(chooseAlternativePlanSchema, {}, options);
 
   if (contractorSubscriptions) {
     const field: JSFField | undefined = form.fields.find(
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
-    
+
     if (field) {
       const availablePlans = contractorSubscriptions.filter(
         (sub) => sub.product.short_name !== 'COR',
@@ -411,6 +408,7 @@ export const useAlternativePlanSchemaField = (
           value,
           description,
           meta,
+          disabled: false, // TODO: think if we need this
         };
       });
       field.options = options.sort((a, b) => a.label.localeCompare(b.label));

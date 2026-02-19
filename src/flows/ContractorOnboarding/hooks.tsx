@@ -28,6 +28,7 @@ import {
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
+  useGetChooseAlternativePlan,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -502,6 +503,19 @@ export const useContractorOnboarding = ({
     fieldValues: eligibilityFields,
   });
 
+  const isChooseAlternativePlanEnabled = useMemo(() => {
+    return includeChooseAlternativePlan;
+  }, [includeChooseAlternativePlan]);
+
+  const {
+    form: chooseAlternativePlanForm,
+    isLoading: isLoadingChooseAlternativePlan,
+  } = useGetChooseAlternativePlan(employmentId as string, {
+    queryOptions: {
+      enabled: isChooseAlternativePlanEnabled,
+    },
+  });
+
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
@@ -726,7 +740,8 @@ export const useContractorOnboarding = ({
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
     isLoadingContractDocuments ||
-    isLoadingEligibilityQuestionnaire;
+    isLoadingEligibilityQuestionnaire ||
+    isLoadingChooseAlternativePlan;
 
   const isNavigatingToReview = useMemo(() => {
     return Boolean(
@@ -773,6 +788,7 @@ export const useContractorOnboarding = ({
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
         ),
+        // we don't need to tell the user about this values
         choose_alternative_plan: {},
       };
 
@@ -866,6 +882,19 @@ export const useContractorOnboarding = ({
       return await parseJSFToValidate(
         values,
         eligibilityQuestionnaireForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
+    }
+
+    if (
+      chooseAlternativePlanForm &&
+      stepState.currentStep.name === 'choose_alternative_plan'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        chooseAlternativePlanForm?.fields,
         {
           isPartialValidation: false,
         },
