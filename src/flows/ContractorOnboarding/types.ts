@@ -86,6 +86,13 @@ export type ContractorOnboardingFlowProps = {
    * The options for the contractor onboarding flow.
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
+    /**
+     * Products to exclude from the available options in pricing_plan and choose_alternative_plan steps.
+     * By default, all products are shown. Use this to hide specific products.
+     * @example excludeProducts: ['eor'] // Hide EOR option
+     * @example excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
+     */
+    excludeProducts?: Array<'cm' | 'cm+' | 'cor' | 'eor'>;
     jsfModify?: {
       select_country?: JSFModify;
       basic_information?: JSFModify;

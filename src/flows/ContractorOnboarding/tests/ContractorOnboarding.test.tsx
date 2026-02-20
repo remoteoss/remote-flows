@@ -2128,4 +2128,191 @@ describe('ContractorOnboardingFlow', () => {
       ).toBeInTheDocument();
     });
   });
+
+  describe('excludeProducts', () => {
+    it('should hide EOR option when excludeProducts includes "eor"', async () => {
+      server.use(
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['eor'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should hide COR option when excludeProducts includes "cor" in pricing plan', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['cor'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should hide multiple products when excludeProducts includes multiple values', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['cor', 'cm+'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).not.toBeInTheDocument();
+
+      const cmPlusOption = screen.queryByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      expect(cmPlusOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should show all products when excludeProducts is not provided', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.getByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).toBeInTheDocument();
+
+      const cmPlusOption = screen.getByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      expect(cmPlusOption).toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+  });
 });

@@ -2,6 +2,8 @@ import { Step } from '@/src/flows/useStepState';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
+  ProductType,
+  PRODUCT_IDENTIFIER_MAP,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
@@ -129,6 +131,25 @@ const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
  */
 export const isNationalityCountryCode = (countryCode: string) => {
   return NATIONALITY_COUNTRY_CODES.includes(countryCode);
+};
+
+/**
+ * Checks if a product should be included based on the excludeProducts list
+ * @param productIdentifier - The product identifier to check
+ * @param excludeProducts - Array of products to exclude
+ * @returns true if the product should be included, false otherwise
+ */
+export const shouldIncludeProduct = (
+  productIdentifier: string,
+  excludeProducts?: ProductType[],
+): boolean => {
+  if (!excludeProducts || excludeProducts.length === 0) {
+    return true;
+  }
+
+  return !excludeProducts.some(
+    (excluded) => PRODUCT_IDENTIFIER_MAP[excluded] === productIdentifier,
+  );
 };
 
 /**
