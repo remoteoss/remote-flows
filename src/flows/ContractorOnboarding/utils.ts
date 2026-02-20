@@ -19,7 +19,6 @@ type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
   includeChooseAlternativePlan?: boolean;
-  canNavigateToChooseAlternativePlan?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
