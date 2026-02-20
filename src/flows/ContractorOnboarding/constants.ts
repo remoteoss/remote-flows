@@ -4,6 +4,17 @@ export const contractorPlusProductIdentifier =
   'urn:remotecom:resource:product:contractor:plus:monthly';
 export const corProductIdentifier =
   'urn:remotecom:resource:product:contractor:aor:monthly';
+export const eorProductIdentifier =
+  'urn:remotecom:resource:product:eor:monthly';
+
+export type ProductType = 'cm' | 'cm+' | 'cor' | 'eor';
+
+export const PRODUCT_IDENTIFIER_MAP: Record<ProductType, string> = {
+  cm: contractorStandardProductIdentifier,
+  'cm+': contractorPlusProductIdentifier,
+  cor: corProductIdentifier,
+  eor: eorProductIdentifier,
+};
 
 export const IR35_FILE_SUBTYPE = 'ir_35';
 

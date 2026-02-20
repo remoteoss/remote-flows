@@ -16,12 +16,15 @@ import {
   PricingPlanComponentProps,
   PricingPlanDataProps,
   corProductIdentifier,
+  eorProductIdentifier,
+  useDiscardEmploymentMutation,
 } from '@remoteoss/remote-flows';
 import {
   Card,
   Tabs,
   TabsTrigger,
   TabsList,
+  cn,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
@@ -37,10 +40,13 @@ const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
-}: PricingPlanComponentProps) => {
+  showPrice = true,
+}: PricingPlanComponentProps & { showPrice?: boolean }) => {
   const hasError = !!fieldState.error;
+  const items = fieldData.options?.length;
+
   return (
-    <div className='grid grid-cols-3 gap-2'>
+    <div className={cn('grid gap-2', `grid-cols-${items ?? 3}`)}>
       {fieldData.options?.map((option) => (
         <PricingPlanCard
           key={option.value}
@@ -51,6 +57,7 @@ const PricingPlanCards = ({
           value={option.value}
           selected={field.value === option.value}
           disabled={option.disabled}
+          showPrice={showPrice}
           onSelect={(value: string) => {
             field.onChange(value);
           }}
@@ -96,6 +103,7 @@ const MultiStepForm = ({
     SelectCountryStep,
     PricingPlanStep,
     EligibilityQuestionnaireStep,
+    ChooseAlternativePlanStep,
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
@@ -107,6 +115,7 @@ const MultiStepForm = ({
     apiError: '',
     fieldErrors: [],
   });
+  const { mutateAsync: discardEmployment } = useDiscardEmploymentMutation();
 
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'select_country':
@@ -323,6 +332,71 @@ const MultiStepForm = ({
         </div>
       );
 
+    case 'choose_alternative_plan':
+      return (
+        <div className='pricing-plan-form-layout'>
+          <div className='flex flex-col gap-2 text-center mb-6'>
+            <h1 className='text-2xl font-bold text-[#000000]'>
+              Choose Your Plan
+            </h1>
+            <p className='text-sm text-[#71717A]'>
+              This individual is not eligible for Contractor of Record. The
+              engagement terms imply an employer-employee relationship. We
+              suggest the plans below and recommend a legal review before
+              deciding. For any questions, contact help@remote.com.
+            </p>
+          </div>
+          <div className='mb-6'>
+            <ChooseAlternativePlanStep
+              components={{
+                radio: ({ field, fieldData, fieldState }) => {
+                  return (
+                    <PricingPlanCards
+                      fieldData={fieldData as PricingPlanDataProps}
+                      fieldState={fieldState}
+                      field={field}
+                      showPrice={false}
+                    />
+                  );
+                },
+              }}
+              onSubmit={(payload) => {
+                console.log(
+                  'submitted choose alternative plan payload',
+                  payload,
+                );
+              }}
+              onSuccess={async (response) => {
+                if (response.subscription === eorProductIdentifier) {
+                  try {
+                    await discardEmployment({
+                      employmentId:
+                        contractorOnboardingBag.employmentId as string,
+                    });
+                  } catch (error) {
+                    console.error('error discarding employment', error);
+                  } finally {
+                    window.location.href = '?demo=onboarding-basic';
+                  }
+                }
+              }}
+              onError={({ error, fieldErrors }) =>
+                setErrors({ apiError: error.message, fieldErrors })
+              }
+            />
+          </div>
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
     case 'review': {
       return (
         <div className='contractor-onboarding-form-layout'>
@@ -364,14 +438,16 @@ const OnBoardingRender = ({
       <Card className='px-0 py-0'>
         <div className='steps-contractor-onboarding-navigation'>
           <ul>
-            {contractorOnboardingBag.steps.map((step) => (
-              <li
-                key={step.name}
-                className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
-              >
-                {step.index + 1}. {step.label}
-              </li>
-            ))}
+            {contractorOnboardingBag.steps
+              .filter((step) => step.visible)
+              .map((step, index) => (
+                <li
+                  key={step.name}
+                  className={`step-contractor-onboarding-item ${step.index === currentStepIndex ? 'active' : ''}`}
+                >
+                  {index + 1}. {step.label}
+                </li>
+              ))}
           </ul>
         </div>
 
@@ -421,6 +497,10 @@ export const ContractorOnboardingWithProps = ({
             employmentId={employmentId}
             externalId={externalId}
             options={{
+              // Uncomment to hide specific products from the pricing selection:
+              // excludeProducts: ['eor'] // Hide EOR option
+              // excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
+              // excludeProducts: ['cm+'] // Hide Contractor Management Plus
               jsfModify: {
                 contract_details: {
                   fields: {

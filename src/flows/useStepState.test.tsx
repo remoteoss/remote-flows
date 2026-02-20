@@ -207,7 +207,7 @@ describe('useStepState', () => {
     });
   });
 
-  it('should only go to a step if it has been filled', () => {
+  it('should go to a step if its desired', () => {
     const { result } = renderHook(() => useStepState(mockSteps));
 
     // Try to go to step2 before it's filled

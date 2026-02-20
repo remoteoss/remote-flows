@@ -1,24 +1,23 @@
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
-import {
-  EligibilityQuestionnaireFormPayload,
-  EligibilityQuestionnaireResponse,
-} from '@/src/flows/ContractorOnboarding/types';
+import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 
-type EligibilityQuestionnaireStepProps = {
+type ChooseAlternativePlanStepProps = {
+  /**
+   * Components to override the default field components used in the form.
+   */
+  components?: Components;
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (
-    payload: EligibilityQuestionnaireFormPayload,
-  ) => void | Promise<void>;
+  onSubmit?: (payload: { subscription: string }) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: EligibilityQuestionnaireResponse) => void | Promise<void>;
+  onSuccess?: (data: { subscription: string }) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -33,23 +32,26 @@ type EligibilityQuestionnaireStepProps = {
   }) => void;
 };
 
-export function EligibilityQuestionnaireStep({
+export function ChooseAlternativePlanStep({
   onSubmit,
   onSuccess,
   onError,
-}: EligibilityQuestionnaireStepProps) {
+  components,
+}: ChooseAlternativePlanStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
-      await onSubmit?.(parsedValues as EligibilityQuestionnaireFormPayload);
+      await onSubmit?.(parsedValues as $TSFixMe);
       const response = await contractorOnboardingBag.onSubmit(payload);
 
       if (response?.data) {
-        await onSuccess?.(response?.data as EligibilityQuestionnaireResponse);
-        if (!(response as $TSFixMe)?._skipNextStep) {
+        await onSuccess?.(response?.data as $TSFixMe);
+        if (
+          (response?.data as $TSFixMe)?.subscription !== eorProductIdentifier
+        ) {
           contractorOnboardingBag?.next();
         }
         return;
@@ -57,20 +59,20 @@ export function EligibilityQuestionnaireStep({
     } catch (error: unknown) {
       const structuredError = handleStepError(
         error,
-        contractorOnboardingBag.meta?.fields?.eligibility_questionnaire,
+        contractorOnboardingBag.meta?.fields?.choose_alternative_plan,
       );
       onError?.(structuredError);
     }
   };
 
   const initialValues =
-    contractorOnboardingBag.stepState.values?.eligibility_questionnaire ||
-    contractorOnboardingBag.initialValues.eligibility_questionnaire;
+    contractorOnboardingBag.stepState.values?.choose_alternative_plan || {};
 
   return (
     <ContractorOnboardingForm
       defaultValues={initialValues}
       onSubmit={handleSubmit}
+      components={components}
     />
   );
 }

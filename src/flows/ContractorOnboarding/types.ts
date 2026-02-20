@@ -16,6 +16,8 @@ import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
+import { ChooseAlternativePlanStep } from '@/src/flows/ContractorOnboarding/components/ChooseAlternativePlanStep';
+import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -48,6 +50,7 @@ export type ContractorOnboardingRenderProps = {
     OnboardingInvite: typeof OnboardingInvite;
     ContractReviewButton: typeof ContractReviewButton;
     EligibilityQuestionnaireStep: typeof EligibilityQuestionnaireStep;
+    ChooseAlternativePlanStep: typeof ChooseAlternativePlanStep;
   };
 };
 
@@ -84,12 +87,20 @@ export type ContractorOnboardingFlowProps = {
    * The options for the contractor onboarding flow.
    */
   options?: Omit<FlowOptions, 'jsfModify'> & {
+    /**
+     * Products to exclude from the available options in pricing_plan and choose_alternative_plan steps.
+     * By default, all products are shown. Use this to hide specific products.
+     * @example excludeProducts: ['eor'] // Hide EOR option
+     * @example excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
+     */
+    excludeProducts?: ProductType[];
     jsfModify?: {
       select_country?: JSFModify;
       basic_information?: JSFModify;
       contract_details?: JSFModify;
       contract_preview?: JSFModify;
       eligibility_questionnaire?: JSFModify;
+      choose_alternative_plan?: JSFModify;
       pricing_plan?: JSFModify;
     };
   };

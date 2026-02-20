@@ -24,6 +24,7 @@ import {
 import {
   assertRadioValue,
   fillDatePickerByTestId,
+  fillRadio,
   fillSelect,
   queryClient,
   TestProviders,
@@ -44,6 +45,8 @@ import {
   mockContractorSubscriptionWithBlockedEligibilityResponse,
   mockContractorSubscriptionWithEligibilityResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
+import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -86,28 +89,12 @@ const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [0]: 'Select Country',
   [1]: 'Basic Information',
   [2]: 'Pricing Plan',
-  [3]: 'Contract Details',
-  [4]: 'Contract Preview',
-  [5]: 'Review',
+  [3]: 'Eligibility Questionnaire',
+  [4]: 'Choose Alternative Plan',
+  [5]: 'Contract Details',
+  [6]: 'Contract Preview',
+  [7]: 'Review',
 };
-
-const CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY: Record<number, string> = {
-  [0]: 'Basic Information',
-  [1]: 'Pricing Plan',
-  [2]: 'Contract Details',
-  [3]: 'Contract Preview',
-  [4]: 'Review',
-};
-
-const CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR: Record<number, string> =
-  {
-    [0]: 'Basic Information',
-    [1]: 'Pricing Plan',
-    [2]: 'Eligibility Questionnaire',
-    [3]: 'Contract Details',
-    [4]: 'Contract Preview',
-    [5]: 'Review',
-  };
 
 function createMockRenderImplementation(
   FormComponent: $TSFixMe,
@@ -147,6 +134,7 @@ describe('ContractorOnboardingFlow', () => {
       OnboardingInvite,
       SelectCountryStep,
       ContractReviewButton,
+      ChooseAlternativePlanStep,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -219,6 +207,18 @@ describe('ContractorOnboardingFlow', () => {
             <SubmitButton>Next Step</SubmitButton>
           </>
         );
+      case 'choose_alternative_plan':
+        return (
+          <>
+            <ChooseAlternativePlanStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
       case 'review':
         return (
           <div className='contractor-onboarding-review'>
@@ -269,6 +269,7 @@ describe('ContractorOnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
       ContractReviewButton,
+      ChooseAlternativePlanStep,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -303,6 +304,18 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <>
             <EligibilityQuestionnaireStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'choose_alternative_plan':
+        return (
+          <>
+            <ChooseAlternativePlanStep
               onSubmit={mockOnSubmit}
               onSuccess={mockOnSuccess}
               onError={mockOnError}
@@ -377,10 +390,7 @@ describe('ContractorOnboardingFlow', () => {
   };
 
   const mockRender = vi.fn(
-    createMockRenderImplementation(
-      MultiStepFormWithCountry,
-      CONTRACTOR_ONBOARDING_STEPS,
-    ),
+    createMockRenderImplementation(MultiStepFormWithCountry),
   );
 
   const defaultProps = {
@@ -478,10 +488,7 @@ describe('ContractorOnboardingFlow', () => {
 
   it('should skip rendering the select country step when skipSteps is provided', async () => {
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -637,10 +644,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -684,10 +688,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -744,10 +745,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -818,10 +816,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -888,8 +883,7 @@ describe('ContractorOnboardingFlow', () => {
         const currentStepIndex =
           contractorOnboardingBag.stepState.currentStep.index;
 
-        const currentStepName =
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY[currentStepIndex];
+        const currentStepName = CONTRACTOR_ONBOARDING_STEPS[currentStepIndex];
 
         // Track every step that gets rendered
         if (!contractorOnboardingBag.isLoading && currentStepName) {
@@ -961,10 +955,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1014,10 +1005,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1050,10 +1038,7 @@ describe('ContractorOnboardingFlow', () => {
 
   it("should invite the contractor when the user clicks on the 'Invite Contractor' button", async () => {
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1115,10 +1100,7 @@ describe('ContractorOnboardingFlow', () => {
     const customLabel = 'Custom Contractor Field Label';
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1144,9 +1126,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-
     await waitFor(() => {
-      // Verify that the custom label is displayed
       const labelElement = screen.getByLabelText(customLabel);
       expect(labelElement).toBeInTheDocument();
     });
@@ -1156,10 +1136,7 @@ describe('ContractorOnboardingFlow', () => {
     const employmentId = generateUniqueEmploymentId();
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1216,10 +1193,7 @@ describe('ContractorOnboardingFlow', () => {
     const customSignatureTitle = 'Digital Signature';
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1288,10 +1262,7 @@ describe('ContractorOnboardingFlow', () => {
 
   it('should display standard CSA disclaimer in contract details step when subscription is standard', async () => {
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1348,10 +1319,7 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     mockRender.mockImplementation(
-      createMockRenderImplementation(
-        MultiStepFormWithoutCountry,
-        CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-      ),
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
     );
 
     render(
@@ -1411,10 +1379,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1428,7 +1393,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await assertRadioValue(
         'Is your contractor a Saudi Arabia national',
@@ -1440,10 +1408,7 @@ describe('ContractorOnboardingFlow', () => {
   describe('UK edge case', () => {
     it('should show file upload field when ir35 status is inside or outside', async () => {
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1507,10 +1472,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1581,10 +1543,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1612,10 +1571,7 @@ describe('ContractorOnboardingFlow', () => {
 
     it('should not show file upload field when ir35 status is exempt', async () => {
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1673,10 +1629,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1742,10 +1695,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1791,10 +1741,7 @@ describe('ContractorOnboardingFlow', () => {
   describe('COR Eligibility Questionnaire', () => {
     it('should show eligibility questionnaire step when COR is selected', async () => {
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1846,10 +1793,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY_COR,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1912,10 +1856,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1929,7 +1870,10 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -1966,10 +1910,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -1983,7 +1924,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -2021,10 +1964,7 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       mockRender.mockImplementation(
-        createMockRenderImplementation(
-          MultiStepFormWithoutCountry,
-          CONTRACTOR_ONBOARDING_STEPS_WITHOUT_COUNTRY,
-        ),
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
 
       render(
@@ -2038,7 +1978,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
 
       await fillBasicInformation();
 
@@ -2061,6 +2003,316 @@ describe('ContractorOnboardingFlow', () => {
       expect(cmRadio).toBeChecked();
       expect(cmPlusRadio).toBeDisabled();
       expect(corRadio).toBeDisabled();
+    });
+
+    it('should show choose_alternative_plan step when eligibility questionnaire is blocked and click EOR plan', async () => {
+      server.use(
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      await fillRadio('Choose a plan', 'Employer of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+        expect(mockOnSuccess.mock.calls[3][0]).toEqual({
+          subscription: eorProductIdentifier,
+        });
+      });
+    });
+  });
+
+  it('should show contract_details step when eligibility questionnaire is blocked and Contractor Management plan is selected', async () => {
+    server.use(
+      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        employmentId='test-employment-id'
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor of Record');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+    await fillEligibilityQuestionnaire();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Choose Alternative Plan/i);
+
+    await fillRadio('Choose a plan', 'Contractor Management');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Assert that we navigate to contract_details step
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Optionally verify form fields are present
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('service_duration.provisional_start_date'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('excludeProducts', () => {
+    it('should hide EOR option when excludeProducts includes "eor"', async () => {
+      server.use(
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['eor'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should hide COR option when excludeProducts includes "cor" in pricing plan', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['cor'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should hide multiple products when excludeProducts includes multiple values', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['cor', 'cm+'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).not.toBeInTheDocument();
+
+      const cmPlusOption = screen.queryByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      expect(cmPlusOption).not.toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should show all products when excludeProducts is not provided', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      const corOption = screen.getByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      expect(corOption).toBeInTheDocument();
+
+      const cmPlusOption = screen.getByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      expect(cmPlusOption).toBeInTheDocument();
+
+      const cmOption = screen.getByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      expect(cmOption).toBeInTheDocument();
     });
   });
 });

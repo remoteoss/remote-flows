@@ -20,6 +20,7 @@ import {
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
+import { chooseAlternativePlanSchema } from '@/src/flows/ContractorOnboarding/json-schemas/chooseAlternativePlanStep';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -34,7 +35,9 @@ import {
   contractorPlusProductIdentifier,
   contractorStandardProductIdentifier,
   corProductIdentifier,
+  eorProductIdentifier,
   IR35_FILE_SUBTYPE,
+  ProductType,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -46,6 +49,7 @@ import {
 import { convertFromCents } from '@/src/components/form/utils';
 import { useCountries } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
+import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 
 /**
  * Get the contract document signature schema
@@ -277,7 +281,10 @@ const CONTRACT_PRODUCT_TITLES = {
 
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    excludeProducts?: ProductType[];
+  },
 ) => {
   const {
     data: contractorSubscriptions,
@@ -307,7 +314,122 @@ export const useContractorSubscriptionSchemaField = (
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
     if (field) {
-      const options = contractorSubscriptions.map((opts) => {
+      const fieldOptions = contractorSubscriptions
+        .filter((opts) =>
+          shouldIncludeProduct(
+            opts.product.identifier ?? '',
+            options?.excludeProducts,
+          ),
+        )
+        .map((opts) => {
+          const product = opts.product;
+          const price = opts.price.amount;
+          const currencyCode = opts.currency.code;
+          const title =
+            CONTRACT_PRODUCT_TITLES[
+              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+            ] ?? '';
+          const label = title;
+          const value = product.identifier ?? '';
+          const description = product.description ?? '';
+          const features = product.features ?? [];
+          const meta = {
+            features,
+            price: {
+              amount: convertFromCents(price),
+              currencyCode: currencyCode,
+            },
+          };
+          return {
+            label,
+            value,
+            description,
+            meta,
+            disabled:
+              isEligibilityQuestionnaireBlocked &&
+              product.identifier !== contractorStandardProductIdentifier,
+          };
+        });
+      field.options = fieldOptions.sort((a, b) =>
+        a.label.localeCompare(b.label),
+      );
+    }
+  }
+
+  return {
+    isLoading,
+    form,
+    contractorSubscriptions,
+    refetch,
+    isEligibilityQuestionnaireBlocked,
+  };
+};
+
+export const useGetChooseAlternativePlan = (
+  employmentId: string,
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    jsfModify?: JSFModify;
+    excludeProducts?: ProductType[];
+  },
+) => {
+  const {
+    data: contractorSubscriptions,
+    isLoading,
+    refetch,
+  } = useGetContractorSubscriptions({
+    employmentId: employmentId,
+    options: {
+      queryOptions: options?.queryOptions,
+    },
+  });
+
+  const eorSubscription = {
+    product: {
+      identifier: eorProductIdentifier,
+      short_name: 'EOR',
+    },
+    currency: {
+      code: 'USD',
+      name: 'United States Dollar',
+      symbol: '$',
+    },
+    price: {
+      amount: 39900,
+    },
+    features: [
+      'Contract between Remote and employee',
+      'Remote manages onboarding, payroll, and compliance',
+      'Manages taxes, benefits, and time-off tracking',
+      'Handles contracts, transfers, and terminations',
+    ],
+    description: 'Enables hiring in countries without a local entity',
+    label: 'Employer of Record',
+    value: eorProductIdentifier,
+  };
+
+  const form = createHeadlessForm(
+    chooseAlternativePlanSchema.data.schema,
+    {},
+    options,
+  );
+
+  if (contractorSubscriptions) {
+    const field: JSFField | undefined = form.fields.find(
+      (field) => field.name === 'subscription',
+    ) as JSFField | undefined;
+
+    if (field) {
+      const availablePlans = contractorSubscriptions.filter(
+        (sub) =>
+          sub.product.short_name === 'CM' &&
+          shouldIncludeProduct(
+            sub.product.identifier ?? '',
+            options?.excludeProducts,
+          ),
+      );
+
+      const fieldOptions = availablePlans.map((opts) => {
         const product = opts.product;
         const price = opts.price.amount;
         const currencyCode = opts.currency.code;
@@ -331,12 +453,31 @@ export const useContractorSubscriptionSchemaField = (
           value,
           description,
           meta,
-          disabled:
-            isEligibilityQuestionnaireBlocked &&
-            product.identifier !== contractorStandardProductIdentifier,
+          disabled: false,
         };
       });
-      field.options = options.sort((a, b) => a.label.localeCompare(b.label));
+
+      if (
+        shouldIncludeProduct(eorProductIdentifier, options?.excludeProducts)
+      ) {
+        fieldOptions.push({
+          label: eorSubscription.label,
+          value: eorSubscription.value,
+          description: eorSubscription.description,
+          meta: {
+            features: eorSubscription.features,
+            price: {
+              amount: convertFromCents(eorSubscription.price.amount),
+              currencyCode: eorSubscription.currency.code,
+            },
+          },
+          disabled: false,
+        });
+      }
+
+      field.options = fieldOptions.sort((a, b) =>
+        a.label.localeCompare(b.label),
+      );
     }
   }
 
@@ -345,7 +486,6 @@ export const useContractorSubscriptionSchemaField = (
     form,
     contractorSubscriptions,
     refetch,
-    isEligibilityQuestionnaireBlocked,
   };
 };
 

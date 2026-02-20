@@ -2,6 +2,8 @@ import { Step } from '@/src/flows/useStepState';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
+  ProductType,
+  PRODUCT_IDENTIFIER_MAP,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
@@ -10,6 +12,7 @@ export type StepKeys =
   | 'basic_information'
   | 'contract_details'
   | 'eligibility_questionnaire'
+  | 'choose_alternative_plan'
   | 'contract_preview'
   | 'pricing_plan'
   | 'review';
@@ -23,56 +26,64 @@ export function buildSteps(config: StepConfig = {}) {
   const stepDefinitions: Array<{
     name: StepKeys;
     label: string;
-    include: boolean;
+    visible: boolean;
   }> = [
     {
       name: 'select_country',
       label: 'Select Country',
-      include: Boolean(config?.includeSelectCountry),
+      visible: Boolean(config?.includeSelectCountry),
     },
     {
       name: 'basic_information',
       label: 'Basic Information',
-      include: true,
+      visible: true,
     },
     {
       name: 'pricing_plan',
       label: 'Pricing Plan',
-      include: true,
+      visible: true,
     },
     {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
-      include: Boolean(config?.includeEligibilityQuestionnaire),
+      visible: Boolean(config?.includeEligibilityQuestionnaire),
+    },
+    {
+      name: 'choose_alternative_plan',
+      label: 'Choose Alternative Plan',
+      visible: false,
     },
     {
       name: 'contract_details',
       label: 'Contract Details',
-      include: true,
+      visible: true,
     },
     {
       name: 'contract_preview',
       label: 'Contract Preview',
-      include: true,
+      visible: true,
     },
     {
       name: 'review',
       label: 'Review',
-      include: true,
+      visible: true,
     },
   ];
 
-  const activeSteps = stepDefinitions.filter((step) => step.include);
-
-  const stepsArray = activeSteps.map((step, index) => ({
+  const stepsArray = stepDefinitions.map((step, index) => ({
     name: step.name,
     index,
     label: step.label,
+    visible: step.visible,
   }));
 
   const steps = stepsArray.reduce(
     (acc, step) => {
-      acc[step.name] = { index: step.index, name: step.name };
+      acc[step.name] = {
+        index: step.index,
+        name: step.name,
+        visible: step.visible,
+      };
       return acc;
     },
     {} as Record<string, Step<StepKeys>>,
@@ -120,6 +131,25 @@ const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
  */
 export const isNationalityCountryCode = (countryCode: string) => {
   return NATIONALITY_COUNTRY_CODES.includes(countryCode);
+};
+
+/**
+ * Checks if a product should be included based on the excludeProducts list
+ * @param productIdentifier - The product identifier to check
+ * @param excludeProducts - Array of products to exclude
+ * @returns true if the product should be included, false otherwise
+ */
+export const shouldIncludeProduct = (
+  productIdentifier: string,
+  excludeProducts?: ProductType[],
+): boolean => {
+  if (!excludeProducts || excludeProducts.length === 0) {
+    return true;
+  }
+
+  return !excludeProducts.some(
+    (excluded) => PRODUCT_IDENTIFIER_MAP[excluded] === productIdentifier,
+  );
 };
 
 /**

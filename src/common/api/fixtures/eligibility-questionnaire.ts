@@ -48,3 +48,14 @@ export const mockEligibilityQuestionnaireSchema = {
     },
   },
 };
+
+export const mockBlockedEligibilityQuestionnaireResponse = {
+  data: {
+    is_blocking: true,
+    responses: {
+      control_the_way_contractors_work: 'yes',
+      previously_hired_contractors_as_employees: 'yes',
+      treating_contractors_as_employees: 'yes',
+    },
+  },
+};
