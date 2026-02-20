@@ -40,7 +40,7 @@ const PricingPlanCards = ({
   fieldData,
   fieldState,
   showPrice = true,
-}: PricingPlanComponentProps) => {
+}: PricingPlanComponentProps & { showPrice?: boolean }) => {
   const hasError = !!fieldState.error;
   const items = fieldData.options?.length;
 
