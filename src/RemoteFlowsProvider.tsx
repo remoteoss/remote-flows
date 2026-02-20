@@ -72,9 +72,10 @@ export function RemoteFlows({
   environment,
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
+  credentials,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   const remoteApiClient = useRef(
-    createClient(auth, { proxy, environment }),
+    createClient(auth, { proxy, environment, credentials }),
   ).current;
 
   return (

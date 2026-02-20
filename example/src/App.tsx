@@ -44,7 +44,9 @@ import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithRep
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
+import { CreateCompanyForm } from './CreateCompany';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
+import CreateCompanyCode from './CreateCompany?raw';
 
 const costCalculatorDemos = [
   {
@@ -147,6 +149,13 @@ const additionalDemos = [
     description: 'Onboarding flow of a new contractor',
     component: ContractorOnboardingForm,
     sourceCode: ContractorOnboardingCode,
+  },
+  {
+    id: 'create-company',
+    title: 'Create Company',
+    description: 'Create a company',
+    component: CreateCompanyForm,
+    sourceCode: CreateCompanyCode,
   },
 ];
 
@@ -270,59 +279,63 @@ function App() {
             </CardHeader>
             <CardContent>
               <div className='flex flex-col space-y-1'>
-                {demoStructure.map((category) => (
-                  <div key={category.id} className='space-y-1'>
-                    {category.children ? (
-                      // Category with children
-                      <Collapsible
-                        open={expandedCategories[category.id]}
-                        onOpenChange={() => toggleCategory(category.id)}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            className='w-full justify-between'
-                          >
-                            {category.title}
-                            {expandedCategories[category.id] ? (
-                              <ChevronDown className='h-4 w-4' />
-                            ) : (
-                              <ChevronRight className='h-4 w-4' />
-                            )}
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <div className='pl-4 space-y-1 mt-1'>
-                            {category.children.map((child) => (
-                              <Button
-                                key={child.id}
-                                variant={
-                                  activeDemo === child.id ? 'default' : 'ghost'
-                                }
-                                size='sm'
-                                className='w-full justify-start'
-                                onClick={() => selectDemo(child.id)}
-                              >
-                                {child.title}
-                              </Button>
-                            ))}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      // Standalone item
-                      <Button
-                        variant={
-                          activeDemo === category.id ? 'default' : 'ghost'
-                        }
-                        className='w-full justify-start'
-                        onClick={() => selectDemo(category.id)}
-                      >
-                        {category.title}
-                      </Button>
-                    )}
-                  </div>
-                ))}
+                {demoStructure
+                  .filter((category) => category.id !== 'create-company')
+                  .map((category) => (
+                    <div key={category.id} className='space-y-1'>
+                      {category.children ? (
+                        // Category with children
+                        <Collapsible
+                          open={expandedCategories[category.id]}
+                          onOpenChange={() => toggleCategory(category.id)}
+                        >
+                          <CollapsibleTrigger asChild>
+                            <Button
+                              variant='ghost'
+                              className='w-full justify-between'
+                            >
+                              {category.title}
+                              {expandedCategories[category.id] ? (
+                                <ChevronDown className='h-4 w-4' />
+                              ) : (
+                                <ChevronRight className='h-4 w-4' />
+                              )}
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className='pl-4 space-y-1 mt-1'>
+                              {category.children.map((child) => (
+                                <Button
+                                  key={child.id}
+                                  variant={
+                                    activeDemo === child.id
+                                      ? 'default'
+                                      : 'ghost'
+                                  }
+                                  size='sm'
+                                  className='w-full justify-start'
+                                  onClick={() => selectDemo(child.id)}
+                                >
+                                  {child.title}
+                                </Button>
+                              ))}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ) : (
+                        // Standalone item
+                        <Button
+                          variant={
+                            activeDemo === category.id ? 'default' : 'ghost'
+                          }
+                          className='w-full justify-start'
+                          onClick={() => selectDemo(category.id)}
+                        >
+                          {category.title}
+                        </Button>
+                      )}
+                    </div>
+                  ))}
               </div>
             </CardContent>
           </Card>

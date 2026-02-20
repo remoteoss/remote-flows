@@ -81,4 +81,13 @@ describe('createClient', () => {
     expect(consoleSpy).toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
+
+  it('should return undefined when auth is not provided (cookie-based auth)', async () => {
+    const heyApiClient = createClient(undefined);
+    const authCallback = (heyApiClient as $TSFixMe).auth;
+
+    const token = await authCallback();
+
+    expect(token).toBeUndefined();
+  });
 });
