@@ -22,6 +22,7 @@ import {
   Tabs,
   TabsTrigger,
   TabsList,
+  cn,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
@@ -39,8 +40,10 @@ const PricingPlanCards = ({
   fieldState,
 }: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
+  const items = fieldData.options?.length;
+
   return (
-    <div className='grid grid-cols-3 gap-2'>
+    <div className={cn('grid gap-2', `grid-cols-${items ?? 3}`)}>
       {fieldData.options?.map((option) => (
         <PricingPlanCard
           key={option.value}

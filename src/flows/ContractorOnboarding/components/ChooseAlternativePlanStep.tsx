@@ -1,10 +1,14 @@
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
 
 type ChooseAlternativePlanStepProps = {
+  /**
+   * Components to override the default field components used in the form.
+   */
+  components?: Components;
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
@@ -31,6 +35,7 @@ export function ChooseAlternativePlanStep({
   onSubmit,
   onSuccess,
   onError,
+  components,
 }: ChooseAlternativePlanStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
@@ -62,6 +67,7 @@ export function ChooseAlternativePlanStep({
     <ContractorOnboardingForm
       defaultValues={initialValues}
       onSubmit={handleSubmit}
+      components={components}
     />
   );
 }

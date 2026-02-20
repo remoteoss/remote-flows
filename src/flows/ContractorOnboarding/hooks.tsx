@@ -1074,6 +1074,15 @@ export const useContractorOnboarding = ({
       case 'choose_alternative_plan': {
         const subscription = parsedValues.subscription;
 
+        if (subscription === contractorStandardProductIdentifier) {
+          await manageContractorSubscriptionMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload: {
+              operation: 'downgrade',
+            },
+          });
+        }
+
         setIncludeChooseAlternativePlan(false);
 
         return Promise.resolve({
