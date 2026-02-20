@@ -23,6 +23,16 @@ describe('useStepState', () => {
     expect(result.current.fieldValues).toEqual({});
   });
 
+  it('should initialize with second step when step1 is not visible', () => {
+    const mockSteps = {
+      step1: { index: 0, name: 'step1', visible: false },
+      step2: { index: 1, name: 'step2', visible: true },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+    const { result } = renderHook(() => useStepState(mockSteps));
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
+  });
+
   it('should move to next step and store values', () => {
     const onStepChange = vi.fn();
     const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
@@ -42,6 +52,19 @@ describe('useStepState', () => {
     expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
   });
 
+  it('should move to the next visible step', () => {
+    const mockSteps = {
+      step1: { index: 0, name: 'step1', visible: true },
+      step2: { index: 1, name: 'step2', visible: false },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+    const { result } = renderHook(() => useStepState(mockSteps));
+    act(() => {
+      result.current.nextStep();
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step3);
+  });
+
   it('should move back to previous step', () => {
     const onStepChange = vi.fn();
     const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
@@ -59,6 +82,23 @@ describe('useStepState', () => {
 
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
     expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
+  });
+
+  it('should move back to the previous visible step', () => {
+    const mockSteps = {
+      step1: { index: 0, name: 'step1', visible: true },
+      step2: { index: 1, name: 'step2', visible: false },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+    const { result } = renderHook(() => useStepState(mockSteps));
+    act(() => {
+      result.current.goToStep('step3');
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step3);
+    act(() => {
+      result.current.previousStep();
+    });
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
   });
 
   it('should not move next if at last step', () => {
@@ -255,5 +295,20 @@ describe('useStepState', () => {
     expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
     expect(onStepChange).toHaveBeenCalledTimes(1);
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+  });
+
+  it('should emit onStepChange with correct initialStep when first step is not visible', () => {
+    const onStepChange = vi.fn();
+    const mockSteps = {
+      step1: { index: 0, name: 'step1', visible: false },
+      step2: { index: 1, name: 'step2', visible: true },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+
+    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+
+    expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
+    expect(onStepChange).toHaveBeenCalledTimes(1);
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
 });

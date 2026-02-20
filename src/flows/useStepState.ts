@@ -34,8 +34,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
+  const initialStep = getInitialStep(steps);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
-    currentStep: getInitialStep(steps),
+    currentStep: initialStep,
     totalSteps: stepKeys.length,
     values: null,
   });
@@ -44,7 +45,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   // Note: intentionally no deps to only run on mount and avoid re-renders
   // when onStepChange/steps references change
   useEffect(() => {
-    onStepChange?.(steps[stepKeys[0]]);
+    onStepChange?.(initialStep);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
