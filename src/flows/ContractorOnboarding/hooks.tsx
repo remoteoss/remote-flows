@@ -516,7 +516,7 @@ export const useContractorOnboarding = ({
   const {
     form: chooseAlternativePlanForm,
     isLoading: isLoadingChooseAlternativePlan,
-  } = useGetChooseAlternativePlan(employmentId as string, {
+  } = useGetChooseAlternativePlan(internalEmploymentId as string, {
     queryOptions: {
       enabled: includeChooseAlternativePlan,
     },
@@ -1235,6 +1235,17 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        chooseAlternativePlanForm &&
+        stepState.currentStep.name === 'choose_alternative_plan'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          chooseAlternativePlanForm?.fields,
+        );
+        return chooseAlternativePlanForm?.handleValidation(parsedValues);
       }
 
       return null;
