@@ -46,6 +46,7 @@ import {
   mockContractorSubscriptionWithEligibilityResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -2007,16 +2008,7 @@ describe('ContractorOnboardingFlow', () => {
     it('should show choose_alternative_plan step when eligibility questionnaire is blocked and click EOR plan', async () => {
       server.use(
         http.post('*/v1/contractors/eligibility-questionnaire', async () => {
-          return HttpResponse.json({
-            data: {
-              is_blocking: true,
-              responses: {
-                control_the_way_contractors_work: 'yes',
-                previously_hired_contractors_as_employees: 'yes',
-                treating_contractors_as_employees: 'yes',
-              },
-            },
-          });
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
         }),
       );
 
@@ -2060,12 +2052,6 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText(/Step: Choose Alternative Plan/i);
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole('radio', { name: /^Employer of Record$/i }),
-        ).toBeInTheDocument();
-      });
-
       await fillRadio('Choose a plan', 'Employer of Record');
 
       nextButton = screen.getByText(/Next Step/i);
@@ -2077,6 +2063,69 @@ describe('ContractorOnboardingFlow', () => {
           subscription: eorProductIdentifier,
         });
       });
+    });
+  });
+
+  it('should show contract_details step when eligibility questionnaire is blocked and Contractor Management plan is selected', async () => {
+    server.use(
+      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        employmentId='test-employment-id'
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor of Record');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+    await fillEligibilityQuestionnaire();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Choose Alternative Plan/i);
+
+    await fillRadio('Choose a plan', 'Contractor Management');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Assert that we navigate to contract_details step
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Optionally verify form fields are present
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('service_duration.provisional_start_date'),
+      ).toBeInTheDocument();
     });
   });
 });
