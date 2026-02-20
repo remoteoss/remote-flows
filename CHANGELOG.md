@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.14.0
+
+### Minor Changes
+
+- make cor and cm+ disabled when eligibility questionnaire is blocked (#740) [#740](https://github.com/remoteoss/remote-flows/pull/740)
+- add KWT, Oman, Qatar, Bahrain edge cases (#729) [#729](https://github.com/remoteoss/remote-flows/pull/729)
+- refactor mocks (#743) [#743](https://github.com/remoteoss/remote-flows/pull/743)
+- choose different product when eligibility is blocked (#742) [#742](https://github.com/remoteoss/remote-flows/pull/742)
+
 ## 1.13.0
 
 ### Minor Changes
