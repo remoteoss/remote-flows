@@ -353,7 +353,10 @@ export const useContractorSubscriptionSchemaField = (
 
 export const useGetChooseAlternativePlan = (
   employmentId: string,
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    jsfModify?: JSFModify;
+  },
 ) => {
   const {
     data: contractorSubscriptions,

@@ -517,6 +517,7 @@ export const useContractorOnboarding = ({
     form: chooseAlternativePlanForm,
     isLoading: isLoadingChooseAlternativePlan,
   } = useGetChooseAlternativePlan(internalEmploymentId as string, {
+    jsfModify: options?.jsfModify?.choose_alternative_plan,
     queryOptions: {
       enabled: includeChooseAlternativePlan,
     },
