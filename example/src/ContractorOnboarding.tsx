@@ -17,6 +17,7 @@ import {
   PricingPlanDataProps,
   corProductIdentifier,
   eorProductIdentifier,
+  useDiscardEmploymentMutation,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -114,6 +115,7 @@ const MultiStepForm = ({
     apiError: '',
     fieldErrors: [],
   });
+  const { mutateAsync: discardEmployment } = useDiscardEmploymentMutation();
 
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'select_country':
@@ -364,9 +366,18 @@ const MultiStepForm = ({
                   payload,
                 );
               }}
-              onSuccess={(response) => {
+              onSuccess={async (response) => {
                 if (response.subscription === eorProductIdentifier) {
-                  window.location.href = '?demo=onboarding-basic';
+                  try {
+                    await discardEmployment({
+                      employmentId:
+                        contractorOnboardingBag.employmentId as string,
+                    });
+                  } catch (error) {
+                    console.error('error discarding employment', error);
+                  } finally {
+                    window.location.href = '?demo=onboarding-basic';
+                  }
                 }
               }}
               onError={({ error, fieldErrors }) =>

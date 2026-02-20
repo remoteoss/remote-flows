@@ -1,7 +1,11 @@
-import { getShowEmployment, GetShowEmploymentResponse } from '@/src/client';
+import {
+  getShowEmployment,
+  GetShowEmploymentResponse,
+  postUpdateCancelOnboarding,
+} from '@/src/client';
 import { useClient } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Client } from '@/src/client/client';
 
 /**
@@ -37,5 +41,20 @@ export const useEmploymentQuery = ({
     },
     enabled: !!employmentId,
     select: ({ data }) => data?.data?.employment,
+  });
+};
+
+export const useDiscardEmploymentMutation = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({ employmentId }: { employmentId: string }) => {
+      return postUpdateCancelOnboarding({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { employment_id: employmentId },
+      });
+    },
   });
 };
