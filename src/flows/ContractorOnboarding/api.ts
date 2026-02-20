@@ -35,6 +35,7 @@ import {
   contractorPlusProductIdentifier,
   contractorStandardProductIdentifier,
   corProductIdentifier,
+  eorProductIdentifier,
   IR35_FILE_SUBTYPE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
@@ -360,7 +361,6 @@ export const useGetChooseAlternativePlan = (
   employmentId: string,
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } },
 ) => {
-  // TODO: as the alternative plan only loads when eligibility is blocked I believe we can hardcode the CM + EOR data
   const {
     data: contractorSubscriptions,
     isLoading,
@@ -371,6 +371,30 @@ export const useGetChooseAlternativePlan = (
       queryOptions: options?.queryOptions,
     },
   });
+
+  const eorSubscription = {
+    product: {
+      identifier: eorProductIdentifier,
+      short_name: 'EOR',
+    },
+    currency: {
+      code: 'USD',
+      name: 'United States Dollar',
+      symbol: '$',
+    },
+    price: {
+      amount: 39900,
+    },
+    features: [
+      'Contract between Remote and employee',
+      'Remote manages onboarding, payroll, and compliance',
+      'Manages taxes, benefits, and time-off tracking',
+      'Handles contracts, transfers, and terminations',
+    ],
+    description: 'Enables hiring in countries without a local entity',
+    label: 'Employer of Record',
+    value: eorProductIdentifier,
+  };
 
   const form = createHeadlessForm(
     chooseAlternativePlanSchema.data.schema,
@@ -385,7 +409,7 @@ export const useGetChooseAlternativePlan = (
 
     if (field) {
       const availablePlans = contractorSubscriptions.filter(
-        (sub) => sub.product.short_name !== 'COR',
+        (sub) => sub.product.short_name === 'CM',
       );
 
       const options = availablePlans.map((opts) => {
@@ -412,8 +436,21 @@ export const useGetChooseAlternativePlan = (
           value,
           description,
           meta,
-          disabled: false, // TODO: think if we need this
+          disabled: false,
         };
+      });
+      options.push({
+        label: eorSubscription.label,
+        value: eorSubscription.value,
+        description: eorSubscription.description,
+        meta: {
+          features: eorSubscription.features,
+          price: {
+            amount: convertFromCents(eorSubscription.price.amount),
+            currencyCode: eorSubscription.currency.code,
+          },
+        },
+        disabled: false,
       });
       field.options = options.sort((a, b) => a.label.localeCompare(b.label));
     }
