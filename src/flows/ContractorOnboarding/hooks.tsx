@@ -93,6 +93,7 @@ export const useContractorOnboarding = ({
   options,
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
+  const excludeProducts = options?.excludeProducts || [];
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
@@ -249,6 +250,10 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.select_country,
   });
 
+  const isPricingPlanEnabled =
+    stepState.currentStep.name === 'pricing_plan' ||
+    (Boolean(employmentId) && isEmploymentReadOnly);
+
   const {
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
@@ -258,10 +263,9 @@ export const useContractorOnboarding = ({
   } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
     jsonSchemaVersion: options?.jsonSchemaVersion,
     queryOptions: {
-      enabled:
-        stepState.currentStep.name === 'pricing_plan' ||
-        (Boolean(employmentId) && isEmploymentReadOnly),
+      enabled: isPricingPlanEnabled,
     },
+    excludeProducts: excludeProducts,
     jsfModify: options?.jsfModify?.pricing_plan,
   });
 
@@ -521,6 +525,7 @@ export const useContractorOnboarding = ({
     queryOptions: {
       enabled: includeChooseAlternativePlan,
     },
+    excludeProducts: excludeProducts,
   });
 
   const {

@@ -11,6 +11,7 @@ export type {
   EligibilityQuestionnaireFormPayload,
   EligibilityQuestionnaireResponse,
 } from './types';
+export type { ProductType } from './constants';
 export {
   onboardingWorkflows,
   contractorPlusProductIdentifier,
@@ -18,4 +19,5 @@ export {
   corProductIdentifier,
   eorProductIdentifier,
   pricingPlanDetails,
+  PRODUCT_IDENTIFIER_MAP,
 } from './constants';

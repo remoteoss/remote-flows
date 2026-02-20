@@ -497,6 +497,10 @@ export const ContractorOnboardingWithProps = ({
             employmentId={employmentId}
             externalId={externalId}
             options={{
+              // Uncomment to hide specific products from the pricing selection:
+              // excludeProducts: ['eor'] // Hide EOR option
+              // excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
+              // excludeProducts: ['cm+'] // Hide Contractor Management Plus
               jsfModify: {
                 contract_details: {
                   fields: {
