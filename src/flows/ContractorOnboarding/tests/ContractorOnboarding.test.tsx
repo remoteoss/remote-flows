@@ -24,6 +24,7 @@ import {
 import {
   assertRadioValue,
   fillDatePickerByTestId,
+  fillRadio,
   fillSelect,
   queryClient,
   TestProviders,
@@ -44,6 +45,7 @@ import {
   mockContractorSubscriptionWithBlockedEligibilityResponse,
   mockContractorSubscriptionWithEligibilityResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
+import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -131,6 +133,7 @@ describe('ContractorOnboardingFlow', () => {
       OnboardingInvite,
       SelectCountryStep,
       ContractReviewButton,
+      ChooseAlternativePlanStep,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -203,6 +206,18 @@ describe('ContractorOnboardingFlow', () => {
             <SubmitButton>Next Step</SubmitButton>
           </>
         );
+      case 'choose_alternative_plan':
+        return (
+          <>
+            <ChooseAlternativePlanStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
       case 'review':
         return (
           <div className='contractor-onboarding-review'>
@@ -253,6 +268,7 @@ describe('ContractorOnboardingFlow', () => {
       BackButton,
       OnboardingInvite,
       ContractReviewButton,
+      ChooseAlternativePlanStep,
     } = components;
 
     if (contractorOnboardingBag.isLoading) {
@@ -287,6 +303,18 @@ describe('ContractorOnboardingFlow', () => {
         return (
           <>
             <EligibilityQuestionnaireStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
+      case 'choose_alternative_plan':
+        return (
+          <>
+            <ChooseAlternativePlanStep
               onSubmit={mockOnSubmit}
               onSuccess={mockOnSuccess}
               onError={mockOnError}
@@ -1976,31 +2004,20 @@ describe('ContractorOnboardingFlow', () => {
       expect(corRadio).toBeDisabled();
     });
 
-    it.skip('should show choose_alternative_plan step when eligibility questionnaire is blocked', async () => {
+    it('should show choose_alternative_plan step when eligibility questionnaire is blocked and click EOR plan', async () => {
       server.use(
-        http.get(
-          '*/v1/contractors/employments/*/contractor-subscriptions',
-          async () => {
-            return HttpResponse.json(
-              mockContractorSubscriptionWithBlockedEligibilityResponse,
-            );
-          },
-        ),
-        http.post(
-          '*/v1/contractors/employments/*/eligibility-questionnaire',
-          async () => {
-            return HttpResponse.json({
-              data: {
-                is_blocking: true,
-                responses: {
-                  control_the_way_contractors_work: 'yes',
-                  previously_hired_contractors_as_employees: 'yes',
-                  treating_contractors_as_employees: 'yes',
-                },
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json({
+            data: {
+              is_blocking: true,
+              responses: {
+                control_the_way_contractors_work: 'yes',
+                previously_hired_contractors_as_employees: 'yes',
+                treating_contractors_as_employees: 'yes',
               },
-            });
-          },
-        ),
+            },
+          });
+        }),
       );
 
       mockRender.mockImplementation(
@@ -2029,39 +2046,37 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText(/Step: Pricing Plan/i);
 
-      const corRadio = screen.getByRole('radio', {
-        name: /^Contractor of Record$/,
-      });
-      corRadio.click();
+      await fillContractorSubscription('Contractor of Record');
 
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
       await screen.findByText(/Step: Eligibility Questionnaire/i);
 
-      const noRadio1 = screen.getAllByRole('radio', { name: /^No$/i })[0];
-      const noRadio2 = screen.getAllByRole('radio', { name: /^No$/i })[1];
-      const noRadio3 = screen.getAllByRole('radio', { name: /^No$/i })[2];
-
-      noRadio1.click();
-      noRadio2.click();
-      noRadio3.click();
+      await fillEligibilityQuestionnaire();
 
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
       await screen.findByText(/Step: Choose Alternative Plan/i);
 
-      const cmRadio = screen.getByRole('radio', {
-        name: /^Contractor Management$/,
+      await waitFor(() => {
+        expect(
+          screen.getByRole('radio', { name: /^Employer of Record$/i }),
+        ).toBeInTheDocument();
       });
 
-      expect(cmRadio).toBeInTheDocument();
-      expect(
-        screen.queryByRole('radio', {
-          name: /^Contractor of Record$/,
-        }),
-      ).not.toBeInTheDocument();
+      await fillRadio('Choose a plan', 'Employer of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await waitFor(() => {
+        expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+        expect(mockOnSuccess.mock.calls[3][0]).toEqual({
+          subscription: eorProductIdentifier,
+        });
+      });
     });
   });
 });
