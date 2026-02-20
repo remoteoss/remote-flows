@@ -18,7 +18,6 @@ export type StepKeys =
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
-  includeChooseAlternativePlan?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {

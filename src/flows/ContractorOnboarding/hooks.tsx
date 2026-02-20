@@ -138,9 +138,8 @@ export const useContractorOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
-        includeChooseAlternativePlan: includeChooseAlternativePlan,
       }),
-    [includeEligibilityQuestionnaire, includeChooseAlternativePlan, skipSteps],
+    [includeEligibilityQuestionnaire, skipSteps],
   );
 
   const {
