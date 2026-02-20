@@ -89,7 +89,10 @@ export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboar
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useMagicLink } from '@/src/common/api';
-export { useEmploymentQuery } from '@/src/common/api/employment';
+export {
+  useEmploymentQuery,
+  useDiscardEmploymentMutation,
+} from '@/src/common/api/employment';
 
 export {
   useTimeOffQuery,
