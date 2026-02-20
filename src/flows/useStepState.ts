@@ -4,6 +4,7 @@ import { FieldValues } from 'react-hook-form';
 export type Step<T extends string> = {
   index: number;
   name: T;
+  visible?: boolean;
 };
 
 type StepState<T extends string, Fields = FieldValues> = {
@@ -14,6 +15,12 @@ type StepState<T extends string, Fields = FieldValues> = {
         [key in T]: Fields;
       }
     | null;
+};
+
+const getInitialStep = <T extends string>(steps: Record<T, Step<T>>) => {
+  const stepValues = Object.values(steps) as Step<T>[];
+  const firstVisibleStep = stepValues.find((step) => step.visible !== false);
+  return firstVisibleStep || steps[Object.keys(steps)[0] as T]; // Fallback to first if none found
 };
 
 export const useStepState = <T extends string, Fields = FieldValues>(
@@ -27,8 +34,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
+  const initialStep = getInitialStep(steps);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
-    currentStep: steps[stepKeys[0]],
+    currentStep: initialStep,
     totalSteps: stepKeys.length,
     values: null,
   });
@@ -37,14 +45,16 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   // Note: intentionally no deps to only run on mount and avoid re-renders
   // when onStepChange/steps references change
   useEffect(() => {
-    onStepChange?.(steps[stepKeys[0]]);
+    onStepChange?.(initialStep);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function nextStep() {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
-    const nextStep = stepValues.find((step) => step.index === index + 1);
+    const nextStep = stepValues.find(
+      (step) => step.index > index && step.visible !== false,
+    );
 
     if (nextStep) {
       setStepState((previousState) => ({
@@ -66,7 +76,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   function previousStep() {
     const { index } = stepState.currentStep;
     const stepValues = Object.values<Step<T>>(steps);
-    const previousStep = stepValues.find((step) => step.index === index - 1);
+    const previousStep = stepValues
+      .reverse()
+      .find((step) => step.index < index && step.visible !== false);
 
     if (previousStep) {
       setStepState((previousState) => ({
@@ -86,13 +98,11 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   function goToStep(step: T) {
-    if (stepState.values?.[step]) {
-      setStepState((previousState) => ({
-        ...previousState,
-        currentStep: steps[step],
-      }));
-      onStepChange?.(steps[step]);
-    }
+    setStepState((previousState) => ({
+      ...previousState,
+      currentStep: steps[step],
+    }));
+    onStepChange?.(steps[step]);
   }
 
   function setStepValues(values: Record<T, Fields>) {
