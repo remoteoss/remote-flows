@@ -39,6 +39,7 @@ const PricingPlanCards = ({
   field,
   fieldData,
   fieldState,
+  showPrice = true,
 }: PricingPlanComponentProps) => {
   const hasError = !!fieldState.error;
   const items = fieldData.options?.length;
@@ -55,6 +56,7 @@ const PricingPlanCards = ({
           value={option.value}
           selected={field.value === option.value}
           disabled={option.disabled}
+          showPrice={showPrice}
           onSelect={(value: string) => {
             field.onChange(value);
           }}
@@ -351,6 +353,7 @@ const MultiStepForm = ({
                       fieldData={fieldData as PricingPlanDataProps}
                       fieldState={fieldState}
                       field={field}
+                      showPrice={false}
                     />
                   );
                 },

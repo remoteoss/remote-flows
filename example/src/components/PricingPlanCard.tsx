@@ -22,6 +22,7 @@ interface PricingPlanCardProps {
     currencyCode: string;
   };
   disabled: boolean;
+  showPrice?: boolean;
 }
 
 export function PricingPlanCard({
@@ -33,6 +34,7 @@ export function PricingPlanCard({
   selected,
   value,
   disabled,
+  showPrice = true,
 }: PricingPlanCardProps) {
   return (
     <Card
@@ -61,20 +63,25 @@ export function PricingPlanCard({
       </CardHeader>
 
       <CardContent>
-        <p className='text-sm mb-3'>
-          <span
-            className='font-bold text-[#09090B]'
-            style={{ fontSize: '24px' }}
-          >
-            {price.amount}
-          </span>{' '}
-          <span style={{ fontSize: '16px' }} className='text-sm text-[#71717A]'>
-            <span className='font-bold text-[#09090B]'>
-              {price.currencyCode}
+        {showPrice && (
+          <p className='text-sm mb-3'>
+            <span
+              className='font-bold text-[#09090B]'
+              style={{ fontSize: '24px' }}
+            >
+              {price.amount}
             </span>{' '}
-            / month
-          </span>
-        </p>
+            <span
+              style={{ fontSize: '16px' }}
+              className='text-sm text-[#71717A]'
+            >
+              <span className='font-bold text-[#09090B]'>
+                {price.currencyCode}
+              </span>{' '}
+              / month
+            </span>
+          </p>
+        )}
         <ul className='space-y-3'>
           {features.map((feature, index) => (
             <li key={index} className='flex items-start gap-2'>
