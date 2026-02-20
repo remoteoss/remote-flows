@@ -3,6 +3,7 @@ import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
+import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 
 type ChooseAlternativePlanStepProps = {
   /**
@@ -48,7 +49,11 @@ export function ChooseAlternativePlanStep({
 
       if (response?.data) {
         await onSuccess?.(response?.data as $TSFixMe);
-        contractorOnboardingBag?.next();
+        if (
+          (response?.data as $TSFixMe)?.subscription !== eorProductIdentifier
+        ) {
+          contractorOnboardingBag?.next();
+        }
         return;
       }
     } catch (error: unknown) {

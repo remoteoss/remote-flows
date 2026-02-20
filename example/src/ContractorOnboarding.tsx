@@ -16,6 +16,7 @@ import {
   PricingPlanComponentProps,
   PricingPlanDataProps,
   corProductIdentifier,
+  eorProductIdentifier,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -354,8 +355,17 @@ const MultiStepForm = ({
                   );
                 },
               }}
-              onSubmit={(payload) => console.log('payload', payload)}
-              onSuccess={(response) => console.log('response', response)}
+              onSubmit={(payload) => {
+                console.log(
+                  'submitted choose alternative plan payload',
+                  payload,
+                );
+              }}
+              onSuccess={(response) => {
+                if (response.subscription === eorProductIdentifier) {
+                  window.location.href = '?demo=onboarding-basic';
+                }
+              }}
               onError={({ error, fieldErrors }) =>
                 setErrors({ apiError: error.message, fieldErrors })
               }
