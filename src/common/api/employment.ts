@@ -44,6 +44,11 @@ export const useEmploymentQuery = ({
   });
 };
 
+/**
+ * Hook to discard an employment.
+ *
+ * @returns {UseMutationResult<void, unknown, { employmentId: string }, unknown>} - The mutation result.
+ */
 export const useDiscardEmploymentMutation = () => {
   const { client } = useClient();
   return useMutation({
