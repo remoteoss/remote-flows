@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.14.0
+
+### Minor Changes
+
+### Features
+
+- modify `useStepState` to support dynamic steps (#743) [#744](https://github.com/remoteoss/remote-flows/pull/743)
+- unlock more countries in the contractor onboarding && add KWT, Oman, Qatar, Bahrain edge cases to contractor onboarding (#729) [#729](https://github.com/remoteoss/remote-flows/pull/729)
+- make cor and cm+ disabled when eligibility questionnaire is blocked (#740) [#740](https://github.com/remoteoss/remote-flows/pull/740)
+- choose different product when eligibility is blocked (#742) [#742](https://github.com/remoteoss/remote-flows/pull/742)
+
 ## 1.13.0
 
 ### Minor Changes
