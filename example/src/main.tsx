@@ -2,8 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits.tsx';
 import { ContractorOnboardingWithProps } from './ContractorOnboarding.tsx';
-// import App from './App.tsx';
-import { UILibraryTest } from './UILibraryTest.tsx';
+import App from './App.tsx';
+import '@remoteoss/remote-flows-ui/styles.css';
 
 const RenderApplication = () => {
   if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS === 'true') {
@@ -14,7 +14,7 @@ const RenderApplication = () => {
     return <ContractorOnboardingWithProps />;
   }
 
-  return <UILibraryTest />;
+  return <App />;
 };
 
 createRoot(document.getElementById('root')!).render(

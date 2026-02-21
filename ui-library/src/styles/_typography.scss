@@ -13,3 +13,52 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: var(--font-size-2xl); }
 h2 { font-size: var(--font-size-xl); }
 h3 { font-size: var(--font-size-lg); }
+
+// ─── Semantic text utilities ────────────────────────────────────────────────
+
+// Heading 1 — 32/38 w500 #0A0A0A
+.rf-text-h1 {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-h1);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+// Button label — 14/24 w500 #ffffff (on dark surface)
+.rf-text-button {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-inverse);
+}
+
+// Tab button label — 14/14 w500 #171717
+.rf-text-tab {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-default);
+}
+
+// Input / form label — 14/20 w500 #0F172A
+.rf-text-label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-label);
+}
+
+// Description body — 14/22 w400 #4B5865 (SM/Normal)
+.rf-text-body {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
+}
+
+// Description label — 14/20 w400 #71717A (SDK/500)
+.rf-text-description-subtle {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-subtle);
+}

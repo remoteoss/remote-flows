@@ -32,21 +32,6 @@ It should be done in the body to affect all pages && demos
   margin-bottom: 32px;
 }
 
-.premium-benefits-header h1 {
-  font-size: 32px;
-  font-weight: 500;
-  line-height: 38px;
-  color: #0a0a0a;
-  margin-bottom: 4px;
-}
-
-.premium-benefits-header p {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
-  color: #4b5865;
-}
-
 .premium-benefits-action-toolbar__button {
   cursor: pointer;
   padding: 8px 16px;

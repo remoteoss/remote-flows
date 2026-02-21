@@ -90,13 +90,23 @@ const Header = ({
 }) => {
   return (
     <div className='premium-benefits-header'>
-      <h1 data-testid={`${dataSelector}-header-title`}>{title}</h1>
-      <p data-testid={`${dataSelector}-header-description`}>{description}</p>
+      <h1
+        data-testid={`${dataSelector}-header-title`}
+        className='rf-text-h1 rf-mb-xs'
+      >
+        {title}
+      </h1>
+      <p
+        data-testid={`${dataSelector}-header-description`}
+        className='rf-text-muted rf-text-body'
+      >
+        {description}
+      </p>
       <ZendeskTriggerButton
         className='text-sm'
         zendeskId={zendeskArticles.disclaimerCostCalculator}
       >
-        Disclaimer ↗
+        Learn more ↗
       </ZendeskTriggerButton>
     </div>
   );
