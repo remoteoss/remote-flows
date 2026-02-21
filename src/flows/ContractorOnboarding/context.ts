@@ -1,11 +1,13 @@
 import type { useContractorOnboarding } from '@/src/flows/ContractorOnboarding/hooks';
-import { createContext, useContext, RefObject } from 'react';
+import { createContext, useContext, MutableRefObject } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
 export const ContractorOnboardingContext = createContext<{
   formId: string | undefined;
   contractorOnboardingBag: ReturnType<typeof useContractorOnboarding> | null;
   formRef?: {
-    setValue: RefObject<UseFormSetValue<Record<string, unknown>> | undefined>;
+    setValue: MutableRefObject<
+      UseFormSetValue<Record<string, unknown>> | undefined
+    >;
   };
 }>({
   formId: undefined,

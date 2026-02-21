@@ -146,7 +146,7 @@
     "@types/lodash.omit": "^4.5.9",
     "@types/lodash.omitby": "^4.6.9",
     "@types/node": "^22.19.1",
-    "@types/react": "^19.2.6",
+    "@types/react": "^18.3.1",
     "@vitest/coverage-istanbul": "^4.0.13",
     "chalk": "^5.3.0",
     "eslint-plugin-react-hooks": "^5.2.0",
