@@ -19,7 +19,7 @@
   "scripts": {
     "build:css": "sass src/styles/index.scss dist/styles.css --no-source-map",
     "build:js": "tsup",
-    "build": "npm run build:css && npm run build:js",
+    "build": "rm -rf dist && npm run build:css && npm run build:js",
     "dev": "npm run build:css && tsup --watch",
     "dev:css": "sass src/styles/index.scss dist/styles.css --watch",
     "type-check": "tsc --noEmit"
