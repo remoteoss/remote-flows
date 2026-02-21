@@ -365,20 +365,6 @@ a:active {
   margin-top: 24px;
 }
 
-/* Only style cost calculator action buttons */
-button.submit-button {
-  background-color: black;
-  border: none;
-  color: white;
-
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: opacity 0.2s;
-}
-
 button.submit-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;

@@ -1,8 +1,12 @@
 .rf-button {
+  --button-primary-bg: var(--color-gray-950);
+  --button-primary-color: var(--color-text-inverse);
+ 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 500;
+  font-size: var(--font-size-sm);
   border-radius: var(--radius-md);
   transition: all 0.2s;
 
@@ -14,23 +18,20 @@
   // Sizes
   &--sm {
     padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-sm);
   }
 
   &--md {
     padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-base);
   }
 
   &--lg {
     padding: var(--spacing-md) var(--spacing-lg);
-    font-size: var(--font-size-lg);
   }
 
   // Variants
   &--primary {
-    background-color: var(--color-primary);
-    color: white;
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-color);
 
     &:hover:not(:disabled) {
       opacity: 0.9;

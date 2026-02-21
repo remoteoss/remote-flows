@@ -7,6 +7,7 @@ import type {
   PDFPreviewComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
+import { Button as RMFButton } from '@remoteoss/remote-flows-ui';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -19,12 +20,12 @@ const Button = ({
   const isInline = dataType === 'inline';
 
   return (
-    <button
+    <RMFButton
       className={isInline ? `button-inline ${className}` : className}
       {...buttonProps}
     >
       {children}
-    </button>
+    </RMFButton>
   );
 };
 
