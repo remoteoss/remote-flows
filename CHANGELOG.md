@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.15.0
+
+### Minor Changes
+
+- Add company creation
+- address feedback
+- override compensation currencies (#748) [#748](https://github.com/remoteoss/remote-flows/pull/748)
+
 ## 1.14.0
 
 ### Minor Changes
