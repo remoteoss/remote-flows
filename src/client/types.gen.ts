@@ -793,7 +793,7 @@ export type BenefitOffersEmployment = {
 /**
  * CurrencyCode
  *
- * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
+ * Currency code of the SWIFT fee. Only present when processing_fee is set.
  */
 export type CurrencyCode = string | null;
 
@@ -1612,6 +1612,10 @@ export type IntegrationsScimGroupListResponse = {
 export type Country = {
   alpha_2_code: string;
   code: string;
+  /**
+   * Contractor product names available for this country
+   */
+  contractor_products_available?: Array<'standard' | 'plus' | 'cor'>;
   country_subdivisions?: Array<CountrySubdivision> | null;
   eor_onboarding?: boolean;
   locked_benefits?: string;
@@ -2412,6 +2416,8 @@ export type CreateWebhookCallbackParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_of_record_termination.executed'
+    | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
@@ -2895,6 +2901,8 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_of_record_termination.executed'
+    | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
@@ -2971,7 +2979,7 @@ export type WebhookTriggerEmploymentParams = {
  * ListCompanyLegalEntitiesResponse
  */
 export type ListCompanyLegalEntitiesResponse = {
-  data?: {
+  data: {
     legal_entities: Array<CompanyLegalEntity>;
   };
 };
@@ -3186,6 +3194,15 @@ export type ProbationCompletionLetter = {
   status: 'submitted' | 'in_review' | 'done' | 'canceled' | 'deleted';
   submitted_at: DateTimeIso8601;
   zendesk_ticket_url: string | null;
+};
+
+/**
+ * ContractorCurrencyResponse
+ *
+ * Schema for listing contractor currencies
+ */
+export type ContractorCurrencyResponse = {
+  data: Array<ContractorCurrencyItem>;
 };
 
 /**
@@ -4441,6 +4458,10 @@ export type CreateContractDocument = {
   contract_document: {
     [key: string]: unknown;
   };
+  /**
+   * When true, skips AI-based compliance checks (e.g. services and deliverables classification). Defaults to false.
+   */
+  skip_ai_checks?: boolean;
 };
 
 /**
@@ -4576,6 +4597,10 @@ export type Signatory = {
 export type NullableCountry = {
   alpha_2_code: string;
   code: string;
+  /**
+   * Contractor product names available for this country
+   */
+  contractor_products_available?: Array<'standard' | 'plus' | 'cor'>;
   country_subdivisions?: Array<CountrySubdivision> | null;
   eor_onboarding?: boolean;
   locked_benefits?: string;
@@ -5851,6 +5876,10 @@ export type ContractorSubscriptionsSummary = {
   is_termination_fees_enabled?: boolean;
   price: {
     amount?: number;
+    /**
+     * The price after applying the company discount, in cents
+     */
+    final_amount?: number;
   };
   product: Product;
   total_amount: number | null;
@@ -6047,6 +6076,26 @@ export type ConflictResponse = {
 };
 
 /**
+ * ContractorEligibilityResponse
+ */
+export type ContractorEligibilityResponse = {
+  data: {
+    /**
+     * Which contractor products the legal entity can use (standard, plus, cor).
+     */
+    contractor_eligibility: {
+      cor: boolean;
+      plus: boolean;
+      standard: boolean;
+    };
+    /**
+     * ISO 3166-1 alpha-3 country codes where COR is supported for this legal entity. Empty when not COR-eligible.
+     */
+    cor_supported_country_codes: Array<string>;
+  };
+};
+
+/**
  * CountrySummariesResponse
  */
 export type CountrySummariesResponse = {
@@ -6111,6 +6160,8 @@ export type WebhookCallback = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_of_record_termination.executed'
+    | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
@@ -6312,6 +6363,14 @@ export type PayProcessingFeature = {
    * API for variance analysis section
    */
   varianceAnalysisPath?: string;
+};
+
+/**
+ * ContractorCurrencyItem
+ */
+export type ContractorCurrencyItem = {
+  code: string;
+  source: string;
 };
 
 /**
@@ -7433,6 +7492,8 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_of_record_termination.executed'
+    | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
     | 'employment.eor_hiring.invoice_created'
@@ -8237,6 +8298,10 @@ export type ContractorInvoice = {
    */
   employment_id?: string;
   /**
+   * The guaranteed FX rate applied for the payment. Only present for guaranteed payout invoices.
+   */
+  fx_rate?: number | null;
+  /**
    * ContractorInvoiceID
    *
    * Contractor Invoice identifier.
@@ -8254,6 +8319,24 @@ export type ContractorInvoice = {
    * Date and time which invoice was paid to contractor.
    */
   paid_out_at?: string | null;
+  /**
+   * Payment method used for the payout: local (e.g. bank transfer), swift (SHA), or swift_our (OUR). Only present for guaranteed payout invoices.
+   */
+  pay_out_method?: 'local' | 'swift' | 'swift_our';
+  /**
+   * SWIFT fee amount in cents. Only present when pay_out_method is swift or swift_our.
+   */
+  processing_fee?: number | null;
+  /**
+   * CurrencyCode
+   *
+   * Currency code of the SWIFT fee. Only present when processing_fee is set.
+   */
+  processing_fee_currency?: string | null;
+  /**
+   * Entity responsible for paying the SWIFT fee. Only present when processing_fee is set.
+   */
+  processing_fee_payer?: 'company' | 'contractor';
   /**
    * The amount the company needs to pay (pay in amount).
    */
@@ -10644,6 +10727,55 @@ export type PutApproveContractAmendmentResponses = {
 
 export type PutApproveContractAmendmentResponse =
   PutApproveContractAmendmentResponses[keyof PutApproveContractAmendmentResponses];
+
+export type GetIndexContractorCurrencyData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Restrict to currencies which payout is guaranteed (default: true)
+     */
+    restrict_to_guaranteed_pay_out_currencies?: boolean;
+  };
+  url: '/v1/contractors/employments/{employment_id}/contractor-currencies';
+};
+
+export type GetIndexContractorCurrencyErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Internal Server Error
+   */
+  500: InternalServerErrorResponse;
+};
+
+export type GetIndexContractorCurrencyError =
+  GetIndexContractorCurrencyErrors[keyof GetIndexContractorCurrencyErrors];
+
+export type GetIndexContractorCurrencyResponses = {
+  /**
+   * Success
+   */
+  200: ContractorCurrencyResponse;
+};
+
+export type GetIndexContractorCurrencyResponse =
+  GetIndexContractorCurrencyResponses[keyof GetIndexContractorCurrencyResponses];
 
 export type PostReplayWebhookEventData = {
   /**
@@ -15802,6 +15934,46 @@ export type GetIndexWebhookCallbackResponses = {
 export type GetIndexWebhookCallbackResponse =
   GetIndexWebhookCallbackResponses[keyof GetIndexWebhookCallbackResponses];
 
+export type GetContractorEligibilityCompanyLegalEntitiesData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+    /**
+     * Legal entity ID
+     */
+    legal_entity_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility';
+};
+
+export type GetContractorEligibilityCompanyLegalEntitiesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetContractorEligibilityCompanyLegalEntitiesError =
+  GetContractorEligibilityCompanyLegalEntitiesErrors[keyof GetContractorEligibilityCompanyLegalEntitiesErrors];
+
+export type GetContractorEligibilityCompanyLegalEntitiesResponses = {
+  /**
+   * Success
+   */
+  200: ContractorEligibilityResponse;
+};
+
+export type GetContractorEligibilityCompanyLegalEntitiesResponse =
+  GetContractorEligibilityCompanyLegalEntitiesResponses[keyof GetContractorEligibilityCompanyLegalEntitiesResponses];
+
 export type GetShowEmploymentCustomFieldValueData = {
   body?: never;
   path: {
@@ -15947,6 +16119,50 @@ export type PatchUpdateEmploymentCustomFieldValueResponses = {
 
 export type PatchUpdateEmploymentCustomFieldValueResponse =
   PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
+
+export type PostTerminateContractorOfRecordEmploymentSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment';
+};
+
+export type PostTerminateContractorOfRecordEmploymentSubscriptionErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostTerminateContractorOfRecordEmploymentSubscriptionError =
+  PostTerminateContractorOfRecordEmploymentSubscriptionErrors[keyof PostTerminateContractorOfRecordEmploymentSubscriptionErrors];
+
+export type PostTerminateContractorOfRecordEmploymentSubscriptionResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostTerminateContractorOfRecordEmploymentSubscriptionResponse =
+  PostTerminateContractorOfRecordEmploymentSubscriptionResponses[keyof PostTerminateContractorOfRecordEmploymentSubscriptionResponses];
 
 export type PostSignContractDocumentData = {
   /**
