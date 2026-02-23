@@ -798,17 +798,16 @@ export const useContractorOnboardingDetailsSchemaWithCurrencies = ({
 
     const form = { ...schemaQuery.data };
 
-    // Find the compensation_currency_code field
     const paymentTermsFieldSet = form.fields.find(
       (field) => field.name === 'payment_terms',
     ) as $TSFixMe | undefined;
     const compensationCurrencyCodeField = paymentTermsFieldSet?.fields?.find(
       (field: $TSFixMe) => field.name === 'compensation_currency_code',
     ) as JSFField | undefined;
+
     if (compensationCurrencyCodeField && currencies.length > 0) {
-      // Override options with currencies from the API
       compensationCurrencyCodeField.options = currencies.map((currency) => ({
-        label: currency.code, // or format as "Currency Name (CODE)" if we have currency names
+        label: currency.code,
         value: currency.code,
         meta: {
           source: currency.source,
