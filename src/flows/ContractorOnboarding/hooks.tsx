@@ -13,7 +13,6 @@ import {
 } from '@/src/components/form/utils';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
-  useContractorOnboardingDetailsSchema,
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
   usePostManageContractorSubscriptions,
@@ -29,6 +28,7 @@ import {
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
   useGetChooseAlternativePlan,
+  useContractorOnboardingDetailsSchemaWithCurrencies,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -531,7 +531,7 @@ export const useContractorOnboarding = ({
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
-  } = useContractorOnboardingDetailsSchema({
+  } = useContractorOnboardingDetailsSchemaWithCurrencies({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
     employmentId: internalEmploymentId as string,

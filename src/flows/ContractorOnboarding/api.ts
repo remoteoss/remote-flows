@@ -16,6 +16,7 @@ import {
   postCreateEligibilityQuestionnaire,
   postManageContractorCorSubscriptionSubscription,
   deleteDeleteContractorCorSubscriptionSubscription,
+  getIndexContractorCurrency,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -50,6 +51,33 @@ import { convertFromCents } from '@/src/components/form/utils';
 import { useCountries } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
+import { useMemo } from 'react';
+
+const useContractorCurrencies = ({
+  employmentId,
+  options,
+}: {
+  employmentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contractor-currencies', employmentId],
+    queryFn: async () => {
+      return getIndexContractorCurrency({
+        client: client as Client,
+        path: { employment_id: employmentId },
+        query: {
+          restrict_to_guaranteed_pay_out_currencies: false,
+        },
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => {
+      return data?.data;
+    },
+  });
+};
 
 /**
  * Get the contract document signature schema
@@ -235,7 +263,7 @@ export const useCreateContractorContractDocument = () => {
  * @param options - The options
  * @returns The contractor onboarding details schema
  */
-export const useContractorOnboardingDetailsSchema = ({
+const useContractorOnboardingDetailsSchema = ({
   countryCode,
   employmentId,
   fieldValues,
@@ -730,5 +758,70 @@ export const useCountriesSchemaField = (
     isLoading,
     selectCountryForm,
     countries,
+  };
+};
+
+/**
+ * Get contractor onboarding details schema with currency options overridden
+ * from the getIndexContractorCurrency endpoint
+ */
+export const useContractorOnboardingDetailsSchemaWithCurrencies = ({
+  countryCode,
+  employmentId,
+  fieldValues,
+  options,
+}: {
+  countryCode: string;
+  fieldValues: FieldValues;
+  employmentId: string;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+}) => {
+  const schemaQuery = useContractorOnboardingDetailsSchema({
+    countryCode,
+    employmentId,
+    fieldValues,
+    options,
+  });
+
+  const { data: currencies, isLoading: isLoadingCurrencies } =
+    useContractorCurrencies({
+      employmentId,
+      options: {
+        queryOptions: { enabled: options?.queryOptions?.enabled },
+      },
+    });
+
+  const dataWithCurrencies = useMemo(() => {
+    if (!schemaQuery.data || !currencies) {
+      return schemaQuery.data;
+    }
+
+    const form = { ...schemaQuery.data };
+
+    // Find the compensation_currency_code field
+    const paymentTermsFieldSet = form.fields.find(
+      (field) => field.name === 'payment_terms',
+    ) as $TSFixMe | undefined;
+    const compensationCurrencyCodeField = paymentTermsFieldSet?.fields?.find(
+      (field: $TSFixMe) => field.name === 'compensation_currency_code',
+    ) as JSFField | undefined;
+    if (compensationCurrencyCodeField && currencies.length > 0) {
+      // Override options with currencies from the API
+      compensationCurrencyCodeField.options = currencies.map((currency) => ({
+        label: currency.code, // or format as "Currency Name (CODE)" if we have currency names
+        value: currency.code,
+        meta: {
+          source: currency.source,
+        },
+      }));
+    }
+
+    return form;
+  }, [schemaQuery.data, currencies]);
+
+  return {
+    ...schemaQuery,
+    data: dataWithCurrencies,
+    isLoading: schemaQuery.isLoading || isLoadingCurrencies,
   };
 };
