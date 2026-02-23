@@ -26,6 +26,9 @@ import type {
   GetCategoriesExpenseData,
   GetCategoriesExpenseErrors,
   GetCategoriesExpenseResponses,
+  GetContractorEligibilityCompanyLegalEntitiesData,
+  GetContractorEligibilityCompanyLegalEntitiesErrors,
+  GetContractorEligibilityCompanyLegalEntitiesResponses,
   GetCurrentIdentityData,
   GetCurrentIdentityErrors,
   GetCurrentIdentityResponses,
@@ -101,6 +104,9 @@ import type {
   GetIndexContractAmendmentData,
   GetIndexContractAmendmentErrors,
   GetIndexContractAmendmentResponses,
+  GetIndexContractorCurrencyData,
+  GetIndexContractorCurrencyErrors,
+  GetIndexContractorCurrencyResponses,
   GetIndexContractorInvoiceData,
   GetIndexContractorInvoiceErrors,
   GetIndexContractorInvoiceResponses,
@@ -546,6 +552,9 @@ import type {
   PostSignContractDocumentData,
   PostSignContractDocumentErrors,
   PostSignContractDocumentResponses,
+  PostTerminateContractorOfRecordEmploymentSubscriptionData,
+  PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
+  PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
   PostTokenOAuth2TokenData,
   PostTokenOAuth2TokenErrors,
   PostTokenOAuth2TokenResponses,
@@ -1685,6 +1694,33 @@ export const putApproveContractAmendment = <
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
+    ...options,
+  });
+
+/**
+ * List all currencies for the contractor, in the following order:
+ *
+ * 1. billing currency of the company
+ * 2. currencies of contractor’s existing withdrawal methods
+ * 3. currency of the contractor’s country
+ * 4. the rest, alphabetical.
+ *
+ */
+export const getIndexContractorCurrency = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexContractorCurrencyData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexContractorCurrencyResponses,
+    GetIndexContractorCurrencyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/contractor-currencies',
     ...options,
   });
 
@@ -3465,7 +3501,7 @@ export const postCreateTokenCompanyToken = <
   });
 
 /**
- * List Company Legal Entitites
+ * List Company Legal Entities
  *
  * Lists all active legal entities for the authorized company specified in the request.
  *
@@ -4379,6 +4415,36 @@ export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Show contractor eligibility and COR-supported countries for legal entity
+ *
+ * Returns which contractor products (standard, plus, cor) the legal entity is eligible to use,
+ * and the list of country codes where COR is supported for this legal entity.
+ * COR-supported countries exclude sanctioned and signup-prevented countries and apply entity rules (same-country, local-to-local).
+ * When the legal entity is not COR-eligible, `cor_supported_country_codes` is an empty list.
+ *
+ */
+export const getContractorEligibilityCompanyLegalEntities = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetContractorEligibilityCompanyLegalEntitiesData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetContractorEligibilityCompanyLegalEntitiesResponses,
+    GetContractorEligibilityCompanyLegalEntitiesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
+    ...options,
+  });
+
+/**
  * Show a custom field value
  *
  * Returns a custom field value for a given employment
@@ -4453,6 +4519,35 @@ export const patchUpdateEmploymentCustomFieldValue = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Terminate contractor of record employment
+ *
+ * Initiates a termination request for a Contractor of Record employment.
+ * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
+ * Currently, only Contractor of Record employments can be terminated.
+ *
+ */
+export const postTerminateContractorOfRecordEmploymentSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostTerminateContractorOfRecordEmploymentSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
+    PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment',
+    ...options,
   });
 
 /**
