@@ -4,15 +4,16 @@
 
 ### Minor Changes
 
-- Add company creation
-- address feedback
+#### Features
+
+- add company creation flow (#717) [#717](https://github.com/remoteoss/remote-flows/pull/717)
 - override compensation currencies (#748) [#748](https://github.com/remoteoss/remote-flows/pull/748)
 
 ## 1.14.0
 
 ### Minor Changes
 
-### Features
+#### Features
 
 - modify `useStepState` to support dynamic steps (#743) [#744](https://github.com/remoteoss/remote-flows/pull/743)
 - unlock more countries in the contractor onboarding && add KWT, Oman, Qatar, Bahrain edge cases to contractor onboarding (#729) [#729](https://github.com/remoteoss/remote-flows/pull/729)
@@ -23,7 +24,7 @@
 
 ### Minor Changes
 
-### Features
+#### Features
 
 - add eligibility questionnaire to the review step (#737) [#737](https://github.com/remoteoss/remote-flows/pull/737)
 
