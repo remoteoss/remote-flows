@@ -796,31 +796,40 @@ export const useContractorOnboardingDetailsSchemaWithCurrencies = ({
       return schemaQuery.data;
     }
 
-    const form = { ...schemaQuery.data };
+    const form = {
+      ...schemaQuery.data,
+      fields: schemaQuery.data.fields.map((field) => {
+        if (field.name !== 'payment_terms') {
+          return field;
+        }
 
-    const paymentTermsFieldSet = form.fields.find(
-      (field) => field.name === 'payment_terms',
-    ) as $TSFixMe | undefined;
-    const compensationCurrencyCodeField = paymentTermsFieldSet?.fields?.find(
-      (field: $TSFixMe) => field.name === 'compensation_currency_code',
-    ) as JSFField | undefined;
+        return {
+          ...field,
+          fields: (field.fields as $TSFixMe[])?.map((nestedField: $TSFixMe) => {
+            if (nestedField.name !== 'compensation_currency_code') {
+              return nestedField;
+            }
 
-    if (compensationCurrencyCodeField && currencies.length > 0) {
-      compensationCurrencyCodeField.options = currencies.map((currency) => ({
-        label: currency.code,
-        value: currency.code,
-        meta: {
-          source: currency.source,
-        },
-      }));
-    }
+            // Return a new object with overridden options
+            return {
+              ...nestedField,
+              options: currencies.map((currency) => ({
+                label: currency.code,
+                value: currency.code,
+                meta: { source: currency.source },
+              })),
+            };
+          }),
+        };
+      }),
+    };
 
     return form;
   }, [schemaQuery.data, currencies]);
 
   return {
     ...schemaQuery,
-    data: dataWithCurrencies,
+    data: dataWithCurrencies as $TSFixMe,
     isLoading: schemaQuery.isLoading || isLoadingCurrencies,
   };
 };
