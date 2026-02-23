@@ -13,6 +13,7 @@ type AuthResponse = {
 type Options = Partial<{
   environment: keyof typeof ENVIRONMENTS;
   proxy: RemoteFlowsSDKProps['proxy'];
+  credentials: RemoteFlowsSDKProps['credentials'];
 }>;
 
 function isValidUrl(url: string) {
@@ -25,7 +26,7 @@ function isValidUrl(url: string) {
 }
 
 export function createClient(
-  auth: () => Promise<AuthResponse>,
+  auth?: () => Promise<AuthResponse>,
   options?: Options,
 ) {
   const sessionRef = {
@@ -50,6 +51,7 @@ export function createClient(
 
   return createHeyApiClient({
     ...clientConfig,
+    ...(options?.credentials && { credentials: options.credentials }),
     headers: {
       ...clientConfig.headers,
       ...(isValidProxy ? options?.proxy?.headers : {}),
@@ -58,6 +60,10 @@ export function createClient(
     },
     baseUrl: isValidProxy ? options.proxy?.url : baseUrl,
     auth: async () => {
+      if (!auth) {
+        return undefined;
+      }
+
       function hasTokenExpired(expiresAt: number | undefined) {
         return !expiresAt || Date.now() + 60000 > expiresAt;
       }
@@ -77,6 +83,7 @@ export function createClient(
           return undefined;
         }
       }
+
       return sessionRef.current?.accessToken;
     },
   });

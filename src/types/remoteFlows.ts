@@ -150,9 +150,11 @@ export type Components = {
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   /**
    * Function to authenticate the user and obtain an access token.
+   * Optional when using cookie-based authentication (via the `credentials` prop).
+   * When provided, bearer token authentication will be used.
    * @returns A promise that resolves to an object containing the access token and its expiration time.
    */
-  auth: () => Promise<AuthResponse>;
+  auth?: () => Promise<AuthResponse>;
   /**
    * Components to override the default field components used in the SDK.
    */
@@ -196,6 +198,14 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * @default false
    */
   debug?: boolean;
+  /**
+   * Credentials mode for fetch requests.
+   * If not provided, credentials will not be included in requests.
+   * Set to 'include' to include credentials (cookies, authorization headers) in cross-origin requests.
+   * Set to 'same-origin' to only include credentials for same-origin requests.
+   * @default undefined (credentials not included)
+   */
+  credentials?: RequestCredentials;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
