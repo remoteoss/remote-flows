@@ -402,7 +402,8 @@ export const useGetChooseAlternativePlan = (
     excludeProducts?: ProductType[];
   },
 ) => {
-  const { data: pricingPlans } = useCompanyPricingPlans();
+  const { data: pricingPlans, isLoading: isLoadingPricingPlans } =
+    useCompanyPricingPlans();
   const eorPricingPlan = pricingPlans?.find(
     (plan) => plan.product.name === 'EOR Monthly',
   );
@@ -512,7 +513,7 @@ export const useGetChooseAlternativePlan = (
   }
 
   return {
-    isLoading,
+    isLoading: isLoading || isLoadingPricingPlans,
     form,
     contractorSubscriptions,
     refetch,
