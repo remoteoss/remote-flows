@@ -1,4 +1,5 @@
 import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
+import { useMemo } from 'react';
 import {
   CreateContractDocument,
   getShowContractDocument,
@@ -51,7 +52,7 @@ import { convertFromCents } from '@/src/components/form/utils';
 import { useCountries } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
-import { useMemo } from 'react';
+import { useCompanyPricingPlans } from '@/src/common/api/companies';
 
 const useContractorCurrencies = ({
   employmentId,
@@ -401,6 +402,11 @@ export const useGetChooseAlternativePlan = (
     excludeProducts?: ProductType[];
   },
 ) => {
+  const { data: pricingPlans } = useCompanyPricingPlans();
+  const eorPricingPlan = pricingPlans?.find(
+    (plan) => plan.product.name === 'EOR Monthly',
+  );
+
   const {
     data: contractorSubscriptions,
     isLoading,
@@ -417,13 +423,9 @@ export const useGetChooseAlternativePlan = (
       identifier: eorProductIdentifier,
       short_name: 'EOR',
     },
-    currency: {
-      code: 'USD',
-      name: 'United States Dollar',
-      symbol: '$',
-    },
+    currency: eorPricingPlan?.price.currency,
     price: {
-      amount: 39900,
+      amount: convertFromCents(eorPricingPlan?.price.amount ?? 0),
     },
     features: [
       'Contract between Remote and employee',
@@ -495,8 +497,8 @@ export const useGetChooseAlternativePlan = (
           meta: {
             features: eorSubscription.features,
             price: {
-              amount: convertFromCents(eorSubscription.price.amount),
-              currencyCode: eorSubscription.currency.code,
+              amount: eorSubscription.price.amount,
+              currencyCode: eorSubscription.currency?.code ?? '',
             },
           },
           disabled: false,

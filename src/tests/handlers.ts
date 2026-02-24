@@ -8,6 +8,7 @@ import {
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { countriesMock } from '@/src/common/api/fixtures/countries';
 import { mockContractorCurrenciesResponse } from '@/src/common/api/fixtures/contractors';
+import { mockCompanyPricingPlansResponse } from '@/src/common/api/fixtures/companies';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -49,6 +50,13 @@ const contractorCurrenciesHandler = http.get(
   },
 );
 
+export const companyPricingPlansHandler = http.get(
+  '*/v1/companies/*/pricing-plans',
+  () => {
+    return HttpResponse.json(mockCompanyPricingPlansResponse);
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -57,4 +65,5 @@ export const defaultHandlers = [
   manageSubscriptionHandler,
   countriesHandler,
   contractorCurrenciesHandler,
+  companyPricingPlansHandler,
 ];
