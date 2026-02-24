@@ -1,20 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  getIndexCompanyLegalEntities,
-  IdentityCurrentResponse,
-} from '@/src/client';
+import { getIndexCompanyLegalEntities } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useIdentity } from '@/src/common/api/identity';
-
-function hasCompany(
-  identity: IdentityCurrentResponse['data'] | undefined,
-): identity is Extract<
-  IdentityCurrentResponse['data'],
-  { company: { id: string } }
-> {
-  return identity != null && 'company' in identity;
-}
+import { hasCompany } from '@/src/common/api/companies';
 
 /**
  * Hook to get the legal entities for a company

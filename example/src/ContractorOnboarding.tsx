@@ -355,7 +355,6 @@ const MultiStepForm = ({
                       fieldData={fieldData as PricingPlanDataProps}
                       fieldState={fieldState}
                       field={field}
-                      showPrice={false}
                     />
                   );
                 },
