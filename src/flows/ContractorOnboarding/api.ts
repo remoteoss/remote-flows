@@ -444,11 +444,13 @@ export const useContractorSubscriptionSchemaField = (
               product.identifier !== contractorStandardProductIdentifier,
           };
         });
-      addEorToFieldOptions(
-        fieldOptions,
-        eorSubscription,
-        options?.excludeProducts,
-      );
+      if (isOnlyCORSubscription) {
+        addEorToFieldOptions(
+          fieldOptions,
+          eorSubscription,
+          options?.excludeProducts,
+        );
+      }
       field.options = fieldOptions.sort((a, b) =>
         a.label.localeCompare(b.label),
       );
