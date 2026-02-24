@@ -30,6 +30,6 @@ export const useCompanyPricingPlans = (
         path: { company_id: companyId },
       }),
     select: (data) => data.data?.data?.pricing_plans,
-    enabled: queryOptions?.enabled && !!companyId,
+    enabled: Boolean(queryOptions?.enabled) && !!companyId,
   });
 };
