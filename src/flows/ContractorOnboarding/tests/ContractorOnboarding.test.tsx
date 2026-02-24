@@ -44,6 +44,7 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
   mockContractorSubscriptionWithBlockedEligibilityResponse,
   mockContractorSubscriptionWithEligibilityResponse,
+  mockCOROnlyResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
@@ -2313,6 +2314,43 @@ describe('ContractorOnboardingFlow', () => {
         name: /^Contractor Management$/,
       });
       expect(cmOption).toBeInTheDocument();
+    });
+
+    it('should show Employer of Record option when only COR subscription is available', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          () => {
+            return HttpResponse.json(mockCOROnlyResponse);
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          {...defaultProps}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await waitFor(() => {
+        const eorOption = screen.getByLabelText(/Employer of Record/i);
+        expect(eorOption).toBeInTheDocument();
+      });
     });
   });
 });
