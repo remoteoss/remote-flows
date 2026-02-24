@@ -2314,6 +2314,11 @@ describe('ContractorOnboardingFlow', () => {
         name: /^Contractor Management$/,
       });
       expect(cmOption).toBeInTheDocument();
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
     });
 
     it('should show Employer of Record option when only COR subscription is available', async () => {
