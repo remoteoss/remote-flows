@@ -16,7 +16,9 @@ export function hasCompany(
   return identity != null && 'company' in identity;
 }
 
-export const useCompanyPricingPlans = () => {
+export const useCompanyPricingPlans = (
+  queryOptions: { enabled?: boolean } = { enabled: true },
+) => {
   const { data: identity } = useIdentity();
   const companyId = hasCompany(identity) ? (identity?.company?.id ?? '') : '';
   const { client } = useClient();
@@ -28,6 +30,6 @@ export const useCompanyPricingPlans = () => {
         path: { company_id: companyId },
       }),
     select: (data) => data.data?.data?.pricing_plans,
-    enabled: !!companyId,
+    enabled: queryOptions?.enabled && !!companyId,
   });
 };
