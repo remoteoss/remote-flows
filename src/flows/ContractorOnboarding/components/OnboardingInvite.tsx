@@ -5,6 +5,7 @@ import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
+import { isStructuredError } from '@/src/lib/utils';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -58,12 +59,15 @@ export function OnboardingInvite({
         contractorOnboardingBag.refetchEmployment();
       }
     } catch (error: unknown) {
-      const structuredError = error as {
-        error: Error;
-        rawError: Record<string, unknown>;
-        fieldErrors: FieldError[];
-      };
-      onError?.(omit(structuredError, 'response'));
+      if (isStructuredError(error)) {
+        onError?.(omit(error, 'response'));
+      } else {
+        onError?.({
+          error: error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: [],
+        });
+      }
     }
   };
 
