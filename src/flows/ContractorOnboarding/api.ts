@@ -18,6 +18,7 @@ import {
   postManageContractorCorSubscriptionSubscription,
   deleteDeleteContractorCorSubscriptionSubscription,
   getIndexContractorCurrency,
+  Country,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -308,8 +309,71 @@ const CONTRACT_PRODUCT_TITLES = {
   [corProductIdentifier]: 'Contractor of Record',
 };
 
+const useEorSubscription = (options?: { enabled?: boolean }) => {
+  const { data: pricingPlans, isLoading: isLoadingPricingPlans } =
+    useCompanyPricingPlans({
+      enabled: options?.enabled,
+    });
+
+  const eorPricingPlan = pricingPlans?.find(
+    (plan) => plan.product.name === 'EOR Monthly',
+  );
+
+  const eorSubscription = {
+    product: {
+      identifier: eorProductIdentifier,
+      short_name: 'EOR',
+    },
+    currency: eorPricingPlan?.price.currency,
+    price: {
+      amount: convertFromCents(eorPricingPlan?.price.amount ?? 0),
+    },
+    features: [
+      'Contract between Remote and employee',
+      'Remote manages onboarding, payroll, and compliance',
+      'Manages taxes, benefits, and time-off tracking',
+      'Handles contracts, transfers, and terminations',
+    ],
+    description: 'Enables hiring in countries without a local entity',
+    label: 'Employer of Record',
+    value: eorProductIdentifier,
+  };
+
+  return { eorSubscription, isLoading: isLoadingPricingPlans };
+};
+
+type SelectedCountry =
+  | (Pick<Country, 'eor_onboarding' | 'contractor_products_available'> & {
+      label: string;
+    })
+  | undefined;
+
+const addEorToFieldOptions = (
+  fieldOptions: $TSFixMe[],
+  eorSubscription: ReturnType<typeof useEorSubscription>['eorSubscription'],
+  excludeProducts?: ProductType[],
+) => {
+  if (shouldIncludeProduct(eorProductIdentifier, excludeProducts)) {
+    fieldOptions.push({
+      label: eorSubscription.label,
+      value: eorSubscription.value,
+      description: eorSubscription.description,
+      meta: {
+        features: eorSubscription.features,
+        price: {
+          amount: eorSubscription.price.amount,
+          currencyCode: eorSubscription.currency?.code ?? '',
+        },
+      },
+      disabled: false,
+    });
+  }
+  return fieldOptions;
+};
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
+  selectedCountry: SelectedCountry,
   options?: FlowOptions & {
     queryOptions?: { enabled?: boolean };
     excludeProducts?: ProductType[];
@@ -325,6 +389,15 @@ export const useContractorSubscriptionSchemaField = (
       queryOptions: options?.queryOptions,
     },
   });
+
+  const isOnlyCORSubscription =
+    contractorSubscriptions?.length === 1 &&
+    contractorSubscriptions[0].product.short_name === 'COR';
+
+  const { eorSubscription, isLoading: isLoadingEorSubscription } =
+    useEorSubscription({
+      enabled: isOnlyCORSubscription,
+    });
 
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
@@ -379,6 +452,13 @@ export const useContractorSubscriptionSchemaField = (
               product.identifier !== contractorStandardProductIdentifier,
           };
         });
+      if (isOnlyCORSubscription && selectedCountry?.eor_onboarding) {
+        addEorToFieldOptions(
+          fieldOptions,
+          eorSubscription,
+          options?.excludeProducts,
+        );
+      }
       field.options = fieldOptions.sort((a, b) =>
         a.label.localeCompare(b.label),
       );
@@ -386,7 +466,7 @@ export const useContractorSubscriptionSchemaField = (
   }
 
   return {
-    isLoading,
+    isLoading: isLoading || isLoadingEorSubscription,
     form,
     contractorSubscriptions,
     refetch,
@@ -396,17 +476,15 @@ export const useContractorSubscriptionSchemaField = (
 
 export const useGetChooseAlternativePlan = (
   employmentId: string,
+  selectedCountry: SelectedCountry,
   options?: FlowOptions & {
     queryOptions?: { enabled?: boolean };
     jsfModify?: JSFModify;
     excludeProducts?: ProductType[];
   },
 ) => {
-  const { data: pricingPlans, isLoading: isLoadingPricingPlans } =
-    useCompanyPricingPlans();
-  const eorPricingPlan = pricingPlans?.find(
-    (plan) => plan.product.name === 'EOR Monthly',
-  );
+  const { eorSubscription, isLoading: isLoadingEorSubscription } =
+    useEorSubscription();
 
   const {
     data: contractorSubscriptions,
@@ -418,26 +496,6 @@ export const useGetChooseAlternativePlan = (
       queryOptions: options?.queryOptions,
     },
   });
-
-  const eorSubscription = {
-    product: {
-      identifier: eorProductIdentifier,
-      short_name: 'EOR',
-    },
-    currency: eorPricingPlan?.price.currency,
-    price: {
-      amount: convertFromCents(eorPricingPlan?.price.amount ?? 0),
-    },
-    features: [
-      'Contract between Remote and employee',
-      'Remote manages onboarding, payroll, and compliance',
-      'Manages taxes, benefits, and time-off tracking',
-      'Handles contracts, transfers, and terminations',
-    ],
-    description: 'Enables hiring in countries without a local entity',
-    label: 'Employer of Record',
-    value: eorProductIdentifier,
-  };
 
   const form = createHeadlessForm(
     chooseAlternativePlanSchema.data.schema,
@@ -488,22 +546,12 @@ export const useGetChooseAlternativePlan = (
         };
       });
 
-      if (
-        shouldIncludeProduct(eorProductIdentifier, options?.excludeProducts)
-      ) {
-        fieldOptions.push({
-          label: eorSubscription.label,
-          value: eorSubscription.value,
-          description: eorSubscription.description,
-          meta: {
-            features: eorSubscription.features,
-            price: {
-              amount: eorSubscription.price.amount,
-              currencyCode: eorSubscription.currency?.code ?? '',
-            },
-          },
-          disabled: false,
-        });
+      if (selectedCountry?.eor_onboarding) {
+        addEorToFieldOptions(
+          fieldOptions,
+          eorSubscription,
+          options?.excludeProducts,
+        );
       }
 
       field.options = fieldOptions.sort((a, b) =>
@@ -513,7 +561,7 @@ export const useGetChooseAlternativePlan = (
   }
 
   return {
-    isLoading: isLoading || isLoadingPricingPlans,
+    isLoading: isLoading || isLoadingEorSubscription,
     form,
     contractorSubscriptions,
     refetch,
@@ -735,6 +783,9 @@ export const useCountriesSchemaField = (
           return {
             label: country.name,
             value: country.code,
+            eor_onboarding: country.eor_onboarding,
+            contractor_products_available:
+              country.contractor_products_available,
           };
         }) || []
       );
