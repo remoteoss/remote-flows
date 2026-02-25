@@ -35,6 +35,7 @@ export const useInvoices = (options?: { enabled?: boolean }) => {
 ```
 
 **Problems:**
+
 - Can only be used in components
 - Limited configurability (only accepts `enabled`)
 - Cannot use with `useSuspenseQuery` or `useQueries`
@@ -59,7 +60,7 @@ const { data } = useQuery({
   ...invoicesOptions(client),
   enabled: someCondition,
   staleTime: 5000,
-  select: (data) => data.filter(x => x.active),
+  select: (data) => data.filter((x) => x.active),
 });
 
 // Works with useSuspenseQuery
@@ -67,7 +68,7 @@ const { data } = useSuspenseQuery(invoicesOptions(client));
 
 // Works with useQueries
 const queries = useQueries({
-  queries: [invoicesOptions(client1), invoicesOptions(client2)]
+  queries: [invoicesOptions(client1), invoicesOptions(client2)],
 });
 
 // Works with prefetching
@@ -109,7 +110,7 @@ export const countriesOptions = (client: Client) => {
 // ❌ BAD - Too many parameters
 export const countriesOptions = (
   client: Client,
-  options: { retry?: boolean; staleTime?: number }
+  options: { retry?: boolean; staleTime?: number },
 ) => {
   return queryOptions({
     queryKey: ['countries'] as const,
@@ -129,7 +130,7 @@ const { client } = useClient();
 const { data } = useQuery({
   ...countriesOptions(client),
   // User adds their own options
-  select: (data) => data.filter(c => c.active),
+  select: (data) => data.filter((c) => c.active),
   enabled: isReady,
   staleTime: 60000,
 });
@@ -158,20 +159,76 @@ export const useCountries = (options?: UseQueryOptions) => {
 };
 ```
 
-## When to Use Each Approach
+## Decision Guide: Custom Hook vs queryOptions Factory
 
-### Use queryOptions when:
+### Use Custom Hook When:
 
-- Creating a new query abstraction
-- Need to share query configuration across multiple hooks
-- Want to enable prefetching or imperative usage
-- Building a reusable query configuration
+**The data transformation is always the same** - When you always want to `select` the same data shape and every consumer should get identical behavior.
 
-### Keep custom hooks only when:
+```typescript
+// ✅ Good: Always returns same shape, no customization needed
+export const useIdentity = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['identity'],
+    queryFn: () =>
+      getCurrentIdentity({
+        client: client as Client,
+        headers: { Authorization: `` },
+      }),
+    select: (data) => data.data?.data,
+  });
+};
+```
 
+**When to use custom hooks:**
+
+- Fixed data transformation that never varies
+- Idempotent usage everywhere - every consumer needs identical behavior
+- No need for composability or customization
 - The hook adds business logic beyond just query configuration
 - The hook composes multiple queries/mutations together
-- The hook manages complex state transformations
+
+### Use queryOptions Factory When:
+
+**Different consumers need different transformations** - When `select` varies by usage or consumers need to add their own options.
+
+```typescript
+// ✅ Good: Returns raw response, consumers add their own select
+export const countriesOptions = (
+  client: Client,
+  queryKeySuffix = 'default',
+) => {
+  return queryOptions({
+    queryKey: ['countries', queryKeySuffix] as const,
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client,
+        headers: { Authorization: `` },
+      });
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+      return response;
+    },
+  });
+};
+
+// Usage: consumers add their own transformations
+const { data } = useQuery({
+  ...countriesOptions(client),
+  select: (response) => response.data?.filter((c) => c.active),
+  staleTime: 60000,
+});
+```
+
+**When to use queryOptions:**
+
+- Different consumers need different data transformations
+- Need composability (enabled, select, staleTime, etc.)
+- Want to enable prefetching or imperative usage
+- Used outside React components (loaders, prefetching)
 
 ## Migration from Custom Hooks
 
@@ -186,11 +243,18 @@ When refactoring existing custom hooks to `queryOptions`:
 ## Examples in Codebase
 
 See these files for reference:
-- `src/common/api/countries.ts` - Simple queryOptions pattern
+
+**Custom Hook Pattern:**
+
+- `src/common/api/identity.ts` - Custom hook with fixed select transformation
+
+**queryOptions Pattern:**
+
+- `src/common/api/countries.ts` - Simple queryOptions pattern with composable select
 - `src/flows/ContractorOnboarding/api.ts` - Usage with select transformation
 - `src/flows/Onboarding/api.ts` - Usage with filtering
 - `src/flows/CreateCompany/api.ts` - Usage with multiple queries
 
 ## Key Takeaway
 
-**Export queryOptions functions, not custom hooks.** Users can compose them with `useQuery()` to get exactly the behavior they need.
+**Choose the pattern based on usage:** Use custom hooks when the data transformation is always identical and idempotent. Use queryOptions factories when consumers need flexibility to add their own transformations or options.

@@ -222,52 +222,80 @@ export const useEmploymentQuery = ({ id, options }) => {
 
 ### 6. React Query Abstractions
 
-When creating query abstractions, follow the `queryOptions` pattern:
+When creating query abstractions, choose between custom hooks and queryOptions factories based on the use case:
 
-- **Export queryOptions factories** - Not custom hooks with limited options
-- **Minimal configuration** - Only include truly shared options (queryKey, queryFn, retry)
-- **Compose at usage sites** - Let consumers add their own options via spread operator
-- **Type inference** - Let TypeScript infer types, avoid manual generics
-- **Reusable everywhere** - Works with useQuery, useSuspenseQuery, useQueries, prefetching
+#### Custom Hook Pattern (for idempotent data)
 
-**Reference:** See `.cursor/rules/react-query-abstractions.mdc` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
-
-**Pattern:**
+Use when the data transformation is always the same:
 
 ```typescript
-// ✅ Export queryOptions factory
-export const resourceOptions = (client: Client, id: string) => {
+// ✅ Good: Always returns same shape, no customization needed
+export const useIdentity = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['identity'],
+    queryFn: () =>
+      getCurrentIdentity({
+        client: client as Client,
+        headers: { Authorization: `` },
+      }),
+    select: (data) => data.data?.data,
+  });
+};
+```
+
+**When to use:**
+
+- Fixed data transformation that never varies
+- Every consumer needs identical behavior (idempotent usage)
+- No need for composability or customization
+- The hook adds business logic beyond just query configuration
+
+#### queryOptions Factory Pattern (for flexible data)
+
+Use when consumers need to manipulate or transform data differently:
+
+```typescript
+// ✅ Good: Returns raw response, consumers add their own select
+export const countriesOptions = (
+  client: Client,
+  queryKeySuffix = 'default',
+) => {
   return queryOptions({
-    queryKey: ['resource', id] as const,
-    queryFn: () => fetchResource(client, id),
+    queryKey: ['countries', queryKeySuffix] as const,
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client,
+        headers: { Authorization: `` },
+      });
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+      return response;
+    },
   });
 };
 
-// Usage with full composability
+// Usage: consumers add their own transformations
 const { client } = useClient();
 const { data } = useQuery({
-  ...resourceOptions(client, id),
-  select: (data) => transformData(data),
-  enabled: isReady,
-  staleTime: 5000,
+  ...countriesOptions(client),
+  select: (response) => response.data?.filter((c) => c.active),
+  staleTime: 60000,
 });
 ```
 
-**❌ Avoid:**
+**When to use:**
 
-```typescript
-// Don't create custom hooks with limited options
-export const useResource = (id: string, enabled?: boolean) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['resource', id],
-    queryFn: () => fetchResource(client, id),
-    enabled, // Limited to just one option
-  });
-};
-```
+- Different consumers need different data transformations
+- Need composability (enabled, select, staleTime, etc.)
+- Used in prefetching or outside components
+- Want to enable maximum flexibility
 
-**Check:** Are new query hooks using `queryOptions` pattern? Are they composable?
+**Reference:** See `.cursor/rules/react-query-abstractions.mdc` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
+
+**Check:** Does the query need flexible transformations? Use `queryOptions`. Always returns same data? Use custom hook.
 
 ### 7. Theme and Styling
 
