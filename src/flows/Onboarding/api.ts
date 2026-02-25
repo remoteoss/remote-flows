@@ -33,7 +33,7 @@ import {
 } from '@/src/flows/types';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { useCountries } from '@/src/common/api/countries';
+import { countriesOptions } from '@/src/common/api/countries';
 
 export const useEmployment = (employmentId: string | undefined) => {
   const { client } = useClient();
@@ -367,11 +367,12 @@ export const useCountriesSchemaField = (
     queryOptions?: { enabled?: boolean };
   },
 ) => {
-  const { data: countries, isLoading } = useCountries({
-    queryKey: 'onboarding-countries',
-    select: ({ data }) => {
+  const { client } = useClient();
+  const { data: countries, isLoading } = useQuery({
+    ...countriesOptions(client as Client, 'onboarding-countries'),
+    select: (response) => {
       return (
-        data?.data
+        response.data?.data
           ?.filter((country) => country.eor_onboarding)
           .map((country) => {
             return {
