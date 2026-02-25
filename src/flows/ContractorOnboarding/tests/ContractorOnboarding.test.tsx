@@ -2408,5 +2408,78 @@ describe('ContractorOnboardingFlow', () => {
       const eorOption = screen.queryByLabelText(/Employer of Record/i);
       expect(eorOption).not.toBeInTheDocument();
     });
+
+    it('should NOT show EOR option in Choose Alternative Plan when eor_onboarding is false', async () => {
+      server.use(
+        http.get('*/v1/countries', () => {
+          return HttpResponse.json({
+            data: [
+              {
+                code: 'PRT',
+                name: 'Portugal',
+                eor_onboarding: false,
+              },
+            ],
+          });
+        }),
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire({
+        controlTheWayContractorsWork: 'Yes',
+        previouslyHiredContractorsAsEmployees: 'Yes',
+        treatingContractorsAsEmployees: 'Yes',
+      });
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      await waitFor(() => {
+        const cmOption = screen.getByRole('radio', {
+          name: /Contractor Management$/,
+        });
+        expect(cmOption).toBeInTheDocument();
+      });
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
+    });
   });
 });
