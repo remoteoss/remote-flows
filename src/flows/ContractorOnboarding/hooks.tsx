@@ -364,9 +364,7 @@ export const useContractorOnboarding = ({
   );
 
   const isContractorOnboardingDetailsEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
+    internalCountryCode && stepState.currentStep.name === 'contract_details',
   );
 
   const isIR35FileEnabled = Boolean(
@@ -1013,13 +1011,15 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
+        const response = await signContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
           payload: {
             signature: parsedValues.signature,
           },
         });
+        await refetchEmployment();
+        return response;
       }
       case 'pricing_plan': {
         if (

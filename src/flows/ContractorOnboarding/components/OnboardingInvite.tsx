@@ -44,9 +44,16 @@ export function OnboardingInvite({
   const { mutateAsyncOrThrow: employmentInviteMutationAsync } =
     mutationToPromise(employmentInviteMutation);
 
+  const isCOR = contractorOnboardingBag.employment?.contractor_type === 'cor';
+
+  console.log('isCOR', isCOR);
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
+      const isCOR =
+        contractorOnboardingBag.employment?.contractor_type === 'cor';
+      console.log('isCOR', isCOR);
       if (contractorOnboardingBag.employmentId) {
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
