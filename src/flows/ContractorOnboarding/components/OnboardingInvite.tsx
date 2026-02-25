@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
+import omit from 'lodash.omit';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
@@ -40,39 +41,29 @@ export function OnboardingInvite({
   const { contractorOnboardingBag } = useContractorOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
 
-  const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
-    employmentInviteMutation,
-  );
+  const { mutateAsyncOrThrow: employmentInviteMutationAsync } =
+    mutationToPromise(employmentInviteMutation);
 
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
       if (contractorOnboardingBag.employmentId) {
-        const response = await employmentInviteMutationAsync({
+        const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
-        if (response.data) {
-          await onSuccess?.({
-            data: response.data as SuccessResponse,
-            employmentStatus: 'invited',
-          });
-          contractorOnboardingBag.refetchEmployment();
-          return;
-        }
-        if (response.error) {
-          onError?.({
-            error: response.error,
-            rawError: response.rawError,
-            fieldErrors: [],
-          });
-        }
+        await onSuccess?.({
+          data: data as SuccessResponse,
+          employmentStatus: 'invited',
+        });
+        contractorOnboardingBag.refetchEmployment();
       }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      const structuredError = error as {
+        error: Error;
+        rawError: Record<string, unknown>;
+        fieldErrors: FieldError[];
+      };
+      onError?.(omit(structuredError, 'response'));
     }
   };
 
