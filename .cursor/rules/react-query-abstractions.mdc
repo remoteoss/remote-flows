@@ -1,0 +1,196 @@
+---
+alwaysApply: true
+description: Use queryOptions pattern for React Query abstractions instead of custom hooks
+glob: 'src/**/*.{ts,tsx}'
+---
+
+# React Query Abstractions Rule
+
+## Philosophy: queryOptions over Custom Hooks
+
+When creating abstractions for React Query, prefer the `queryOptions` pattern over custom hooks. This provides better composability, reusability, and type safety.
+
+**Reference:** [Creating Query Abstractions by TkDodo](https://tkdodo.eu/blog/creating-query-abstractions)
+
+## Why queryOptions?
+
+1. **Works everywhere** - Not limited to React components (can be used in loaders, prefetching, etc.)
+2. **Maximum composability** - Users can add any React Query option at usage sites
+3. **Type inference** - Perfect TypeScript inference without manual generics
+4. **Reusable** - Works with `useQuery`, `useSuspenseQuery`, `useQueries`, and imperative functions
+
+## Pattern to Follow
+
+### ❌ DON'T: Custom Hook with Limited Options
+
+```typescript
+export const useInvoices = (options?: { enabled?: boolean }) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['invoices'],
+    queryFn: () => fetchInvoices(client),
+    enabled: options?.enabled,
+  });
+};
+```
+
+**Problems:**
+- Can only be used in components
+- Limited configurability (only accepts `enabled`)
+- Cannot use with `useSuspenseQuery` or `useQueries`
+
+### ✅ DO: queryOptions Factory
+
+```typescript
+export const invoicesOptions = (client: Client) => {
+  return queryOptions({
+    queryKey: ['invoices'] as const,
+    queryFn: () => fetchInvoices(client),
+  });
+};
+```
+
+**Usage:**
+
+```typescript
+// In a component with full composability
+const { client } = useClient();
+const { data } = useQuery({
+  ...invoicesOptions(client),
+  enabled: someCondition,
+  staleTime: 5000,
+  select: (data) => data.filter(x => x.active),
+});
+
+// Works with useSuspenseQuery
+const { data } = useSuspenseQuery(invoicesOptions(client));
+
+// Works with useQueries
+const queries = useQueries({
+  queries: [invoicesOptions(client1), invoicesOptions(client2)]
+});
+
+// Works with prefetching
+await queryClient.prefetchQuery(invoicesOptions(client));
+```
+
+## Implementation Guidelines
+
+### 1. Export queryOptions Factory
+
+Create a function that returns `queryOptions()`:
+
+```typescript
+import { queryOptions } from '@tanstack/react-query';
+
+export const resourceOptions = (client: Client, id?: string) => {
+  return queryOptions({
+    queryKey: ['resource', id] as const,
+    queryFn: () => fetchResource(client, id),
+    // Only include truly shared options (retry, staleTime if always the same)
+  });
+};
+```
+
+### 2. Keep It Minimal
+
+**The best abstractions are not configurable** - only include what's truly shared:
+
+```typescript
+// ✅ GOOD - Only shared configuration
+export const countriesOptions = (client: Client) => {
+  return queryOptions({
+    queryKey: ['countries'] as const,
+    retry: false, // Always disabled for this endpoint
+    queryFn: () => getCountries(client),
+  });
+};
+
+// ❌ BAD - Too many parameters
+export const countriesOptions = (
+  client: Client,
+  options: { retry?: boolean; staleTime?: number }
+) => {
+  return queryOptions({
+    queryKey: ['countries'] as const,
+    retry: options.retry,
+    staleTime: options.staleTime,
+    queryFn: () => getCountries(client),
+  });
+};
+```
+
+### 3. Compose at Usage Sites
+
+Let users add their own options:
+
+```typescript
+const { client } = useClient();
+const { data } = useQuery({
+  ...countriesOptions(client),
+  // User adds their own options
+  select: (data) => data.filter(c => c.active),
+  enabled: isReady,
+  staleTime: 60000,
+});
+```
+
+### 4. Optional: Convenience Hook
+
+If a convenience hook is needed, build it on top of `queryOptions`:
+
+```typescript
+// Export the queryOptions factory
+export const countriesOptions = (client: Client) => {
+  return queryOptions({
+    queryKey: ['countries'] as const,
+    queryFn: () => getCountries(client),
+  });
+};
+
+// Optional: Convenience hook that uses queryOptions
+export const useCountries = (options?: UseQueryOptions) => {
+  const { client } = useClient();
+  return useQuery({
+    ...countriesOptions(client as Client),
+    ...options,
+  });
+};
+```
+
+## When to Use Each Approach
+
+### Use queryOptions when:
+
+- Creating a new query abstraction
+- Need to share query configuration across multiple hooks
+- Want to enable prefetching or imperative usage
+- Building a reusable query configuration
+
+### Keep custom hooks only when:
+
+- The hook adds business logic beyond just query configuration
+- The hook composes multiple queries/mutations together
+- The hook manages complex state transformations
+
+## Migration from Custom Hooks
+
+When refactoring existing custom hooks to `queryOptions`:
+
+1. Create the `queryOptions` function first
+2. Update all usages to use `useQuery` + spread operator
+3. Add `useClient()` call at usage sites (client can't be imported directly)
+4. Update `select` functions to use full response object (not destructured)
+5. Remove the old custom hook if no longer needed
+
+## Examples in Codebase
+
+See these files for reference:
+- `src/common/api/countries.ts` - Simple queryOptions pattern
+- `src/flows/ContractorOnboarding/api.ts` - Usage with select transformation
+- `src/flows/Onboarding/api.ts` - Usage with filtering
+- `src/flows/CreateCompany/api.ts` - Usage with multiple queries
+
+## Key Takeaway
+
+**Export queryOptions functions, not custom hooks.** Users can compose them with `useQuery()` to get exactly the behavior they need.

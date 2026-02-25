@@ -220,7 +220,56 @@ export const useEmploymentQuery = ({ id, options }) => {
 };
 ```
 
-### 6. Theme and Styling
+### 6. React Query Abstractions
+
+When creating query abstractions, follow the `queryOptions` pattern:
+
+- **Export queryOptions factories** - Not custom hooks with limited options
+- **Minimal configuration** - Only include truly shared options (queryKey, queryFn, retry)
+- **Compose at usage sites** - Let consumers add their own options via spread operator
+- **Type inference** - Let TypeScript infer types, avoid manual generics
+- **Reusable everywhere** - Works with useQuery, useSuspenseQuery, useQueries, prefetching
+
+**Reference:** See `.cursor/rules/react-query-abstractions.mdc` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
+
+**Pattern:**
+
+```typescript
+// ✅ Export queryOptions factory
+export const resourceOptions = (client: Client, id: string) => {
+  return queryOptions({
+    queryKey: ['resource', id] as const,
+    queryFn: () => fetchResource(client, id),
+  });
+};
+
+// Usage with full composability
+const { client } = useClient();
+const { data } = useQuery({
+  ...resourceOptions(client, id),
+  select: (data) => transformData(data),
+  enabled: isReady,
+  staleTime: 5000,
+});
+```
+
+**❌ Avoid:**
+
+```typescript
+// Don't create custom hooks with limited options
+export const useResource = (id: string, enabled?: boolean) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['resource', id],
+    queryFn: () => fetchResource(client, id),
+    enabled, // Limited to just one option
+  });
+};
+```
+
+**Check:** Are new query hooks using `queryOptions` pattern? Are they composable?
+
+### 7. Theme and Styling
 
 Custom theming system - maintain consistency:
 
@@ -232,7 +281,7 @@ Custom theming system - maintain consistency:
 - **Dark mode support** - Test with `class="dark"` on root element
 - **Theme customization** - Changes must work with theme overrides via `applyTheme()`
 
-### 7. Performance
+### 8. Performance
 
 - **Memoization** - Use `useMemo` for expensive computations, `useCallback` for function props
 - **Query invalidation** - Invalidate React Query cache appropriately on mutations
@@ -241,7 +290,7 @@ Custom theming system - maintain consistency:
 - **Virtualization** - Long lists should use virtualization (if applicable)
 - **Bundle splitting** - Verify code splitting works for flows
 
-### 8. Accessibility
+### 9. Accessibility
 
 Radix UI provides foundation - maintain it:
 
@@ -252,7 +301,7 @@ Radix UI provides foundation - maintain it:
 - **Color contrast** - Ensure text meets WCAG AA standards
 - **Form labels** - All form fields have associated labels
 
-### 9. Flow Structure and Organization
+### 10. Flow Structure and Organization
 
 Each flow should follow this structure:
 
@@ -284,7 +333,7 @@ flows/[FlowName]/
 - **Headless hook** - Expose `use[FlowName]()` hook for custom implementations
 - **Tests co-located** - All tests in flow's `tests/` directory
 
-### 10. Documentation
+### 11. Documentation
 
 - **JSDoc for public APIs** - All exported functions, hooks, and components need JSDoc
 - **README updates** - Update main README when adding new flows or features
