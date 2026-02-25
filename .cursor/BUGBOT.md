@@ -220,7 +220,84 @@ export const useEmploymentQuery = ({ id, options }) => {
 };
 ```
 
-### 6. Theme and Styling
+### 6. React Query Abstractions
+
+When creating query abstractions, choose between custom hooks and queryOptions factories based on the use case:
+
+#### Custom Hook Pattern (for idempotent data)
+
+Use when the data transformation is always the same:
+
+```typescript
+// ✅ Good: Always returns same shape, no customization needed
+export const useIdentity = () => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['identity'],
+    queryFn: () =>
+      getCurrentIdentity({
+        client: client as Client,
+        headers: { Authorization: `` },
+      }),
+    select: (data) => data.data?.data,
+  });
+};
+```
+
+**When to use:**
+
+- Fixed data transformation that never varies
+- Every consumer needs identical behavior (idempotent usage)
+- No need for composability or customization
+- The hook adds business logic beyond just query configuration
+
+#### queryOptions Factory Pattern (for flexible data)
+
+Use when consumers need to manipulate or transform data differently:
+
+```typescript
+// ✅ Good: Returns raw response, consumers add their own select
+export const countriesOptions = (
+  client: Client,
+  queryKeySuffix = 'default',
+) => {
+  return queryOptions({
+    queryKey: ['countries', queryKeySuffix] as const,
+    retry: false,
+    queryFn: async () => {
+      const response = await getSupportedCountry({
+        client,
+        headers: { Authorization: `` },
+      });
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch supported countries');
+      }
+      return response;
+    },
+  });
+};
+
+// Usage: consumers add their own transformations
+const { client } = useClient();
+const { data } = useQuery({
+  ...countriesOptions(client),
+  select: (response) => response.data?.filter((c) => c.active),
+  staleTime: 60000,
+});
+```
+
+**When to use:**
+
+- Different consumers need different data transformations
+- Need composability (enabled, select, staleTime, etc.)
+- Used in prefetching or outside components
+- Want to enable maximum flexibility
+
+**Reference:** See `.cursor/rules/react-query-abstractions.mdc` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
+
+**Check:** Does the query need flexible transformations? Use `queryOptions`. Always returns same data? Use custom hook.
+
+### 7. Theme and Styling
 
 Custom theming system - maintain consistency:
 
@@ -232,7 +309,7 @@ Custom theming system - maintain consistency:
 - **Dark mode support** - Test with `class="dark"` on root element
 - **Theme customization** - Changes must work with theme overrides via `applyTheme()`
 
-### 7. Performance
+### 8. Performance
 
 - **Memoization** - Use `useMemo` for expensive computations, `useCallback` for function props
 - **Query invalidation** - Invalidate React Query cache appropriately on mutations
@@ -241,7 +318,7 @@ Custom theming system - maintain consistency:
 - **Virtualization** - Long lists should use virtualization (if applicable)
 - **Bundle splitting** - Verify code splitting works for flows
 
-### 8. Accessibility
+### 9. Accessibility
 
 Radix UI provides foundation - maintain it:
 
@@ -252,7 +329,7 @@ Radix UI provides foundation - maintain it:
 - **Color contrast** - Ensure text meets WCAG AA standards
 - **Form labels** - All form fields have associated labels
 
-### 9. Flow Structure and Organization
+### 10. Flow Structure and Organization
 
 Each flow should follow this structure:
 
@@ -284,7 +361,7 @@ flows/[FlowName]/
 - **Headless hook** - Expose `use[FlowName]()` hook for custom implementations
 - **Tests co-located** - All tests in flow's `tests/` directory
 
-### 10. Documentation
+### 11. Documentation
 
 - **JSDoc for public APIs** - All exported functions, hooks, and components need JSDoc
 - **README updates** - Update main README when adding new flows or features

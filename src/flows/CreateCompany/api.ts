@@ -7,7 +7,7 @@ import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { useQuery } from '@tanstack/react-query';
 import { getIndexCompanyCurrency } from '@/src/client';
-import { useCountries } from '@/src/common/api/countries';
+import { countriesOptions } from '@/src/common/api/countries';
 import {
   CreateCompanyParams,
   getShowFormCountry,
@@ -63,6 +63,9 @@ export const useCreateCompanyRequest = () => {
           Authorization: ``,
         },
         body: payload,
+        query: {
+          action: 'send_create_password_email',
+        },
       });
     },
   });
@@ -111,11 +114,12 @@ export const useCountriesSchemaField = (
     queryOptions?: { enabled?: boolean };
   },
 ) => {
-  const { data: countries, isLoading: isLoadingCountries } = useCountries({
-    queryKey: 'create-company-countries',
-    select: ({ data }) => {
+  const { client } = useClient();
+  const { data: countries, isLoading: isLoadingCountries } = useQuery({
+    ...countriesOptions(client as Client, 'create-company-countries'),
+    select: (response) => {
       return (
-        data?.data
+        response.data?.data
           ?.filter((country) => country.eor_onboarding)
           .map((country) => ({
             label: country.name,

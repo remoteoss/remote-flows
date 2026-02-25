@@ -50,7 +50,7 @@ import {
   useUploadFile,
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
-import { useCountries } from '@/src/common/api/countries';
+import { countriesOptions } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans } from '@/src/common/api/companies';
@@ -775,11 +775,12 @@ export const useCountriesSchemaField = (
     queryOptions?: { enabled?: boolean };
   },
 ) => {
-  const { data: countries, isLoading } = useCountries({
-    queryKey: 'contractor-onboarding-countries',
-    select: ({ data }) => {
+  const { client } = useClient();
+  const { data: countries, isLoading } = useQuery({
+    ...countriesOptions(client as Client, 'contractor-onboarding-countries'),
+    select: (response) => {
       return (
-        data?.data?.map((country) => {
+        response.data?.data?.map((country) => {
           return {
             label: country.name,
             value: country.code,
