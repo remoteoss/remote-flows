@@ -4,8 +4,11 @@
 
 ### Minor Changes
 
+#### Features
+
 - retrieve correct price for eor (#750) [#750](https://github.com/remoteoss/remote-flows/pull/750)
 - add eor product card when COR is available (#752) [#752](https://github.com/remoteoss/remote-flows/pull/752)
+- exclude eor card when eor_onboarding is false (#753) [#753](https://github.com/remoteoss/remote-flows/pull/753)
 
 ## 1.15.0
 
