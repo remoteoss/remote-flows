@@ -250,6 +250,14 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.select_country,
   });
 
+  const selectedCountry = useMemo(() => {
+    return countries?.find((country) => country.value === internalCountryCode);
+  }, [countries, internalCountryCode]);
+
+  const countryName = useMemo(() => {
+    return selectedCountry?.label;
+  }, [selectedCountry]);
+
   const isPricingPlanEnabled =
     stepState.currentStep.name === 'pricing_plan' ||
     (Boolean(employmentId) && isEmploymentReadOnly);
@@ -260,14 +268,18 @@ export const useContractorOnboarding = ({
     contractorSubscriptions,
     refetch: refetchContractorSubscriptions,
     isEligibilityQuestionnaireBlocked,
-  } = useContractorSubscriptionSchemaField(internalEmploymentId as string, {
-    jsonSchemaVersion: options?.jsonSchemaVersion,
-    queryOptions: {
-      enabled: isPricingPlanEnabled,
+  } = useContractorSubscriptionSchemaField(
+    internalEmploymentId as string,
+    selectedCountry,
+    {
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+      queryOptions: {
+        enabled: isPricingPlanEnabled,
+      },
+      excludeProducts: excludeProducts,
+      jsfModify: options?.jsfModify?.pricing_plan,
     },
-    excludeProducts: excludeProducts,
-    jsfModify: options?.jsfModify?.pricing_plan,
-  });
+  );
 
   const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
     return Boolean(
@@ -384,11 +396,6 @@ export const useContractorOnboarding = ({
       setInternalContractDocumentId(contractDocuments[0].id);
     }
   }, [contractDocuments, internalContractDocumentId]);
-
-  const countryName = useMemo(() => {
-    return countries?.find((country) => country.value === internalCountryCode)
-      ?.label;
-  }, [countries, internalCountryCode]);
 
   const {
     data: basicInformationForm,
@@ -520,13 +527,17 @@ export const useContractorOnboarding = ({
   const {
     form: chooseAlternativePlanForm,
     isLoading: isLoadingChooseAlternativePlan,
-  } = useGetChooseAlternativePlan(internalEmploymentId as string, {
-    jsfModify: options?.jsfModify?.choose_alternative_plan,
-    queryOptions: {
-      enabled: includeChooseAlternativePlan,
+  } = useGetChooseAlternativePlan(
+    internalEmploymentId as string,
+    selectedCountry,
+    {
+      jsfModify: options?.jsfModify?.choose_alternative_plan,
+      queryOptions: {
+        enabled: includeChooseAlternativePlan,
+      },
+      excludeProducts: excludeProducts,
     },
-    excludeProducts: excludeProducts,
-  });
+  );
 
   const {
     data: contractorOnboardingDetailsForm,
