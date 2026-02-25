@@ -63,6 +63,9 @@ export const useCreateCompanyRequest = () => {
           Authorization: ``,
         },
         body: payload,
+        query: {
+          action: 'send_create_password_email',
+        },
       });
     },
   });
