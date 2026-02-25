@@ -18,6 +18,7 @@ import {
   postManageContractorCorSubscriptionSubscription,
   deleteDeleteContractorCorSubscriptionSubscription,
   getIndexContractorCurrency,
+  Country,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -341,6 +342,12 @@ const useEorSubscription = (options?: { enabled?: boolean }) => {
   return { eorSubscription, isLoading: isLoadingPricingPlans };
 };
 
+type SelectedCountry =
+  | (Pick<Country, 'eor_onboarding' | 'contractor_products_available'> & {
+      label: string;
+    })
+  | undefined;
+
 const addEorToFieldOptions = (
   fieldOptions: $TSFixMe[],
   eorSubscription: ReturnType<typeof useEorSubscription>['eorSubscription'],
@@ -366,6 +373,7 @@ const addEorToFieldOptions = (
 
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
+  selectedCountry: SelectedCountry,
   options?: FlowOptions & {
     queryOptions?: { enabled?: boolean };
     excludeProducts?: ProductType[];
@@ -444,7 +452,7 @@ export const useContractorSubscriptionSchemaField = (
               product.identifier !== contractorStandardProductIdentifier,
           };
         });
-      if (isOnlyCORSubscription) {
+      if (isOnlyCORSubscription && selectedCountry?.eor_onboarding) {
         addEorToFieldOptions(
           fieldOptions,
           eorSubscription,
@@ -468,6 +476,7 @@ export const useContractorSubscriptionSchemaField = (
 
 export const useGetChooseAlternativePlan = (
   employmentId: string,
+  selectedCountry: SelectedCountry,
   options?: FlowOptions & {
     queryOptions?: { enabled?: boolean };
     jsfModify?: JSFModify;
@@ -537,11 +546,13 @@ export const useGetChooseAlternativePlan = (
         };
       });
 
-      addEorToFieldOptions(
-        fieldOptions,
-        eorSubscription,
-        options?.excludeProducts,
-      );
+      if (selectedCountry?.eor_onboarding) {
+        addEorToFieldOptions(
+          fieldOptions,
+          eorSubscription,
+          options?.excludeProducts,
+        );
+      }
 
       field.options = fieldOptions.sort((a, b) =>
         a.label.localeCompare(b.label),
@@ -772,6 +783,9 @@ export const useCountriesSchemaField = (
           return {
             label: country.name,
             value: country.code,
+            eor_onboarding: country.eor_onboarding,
+            contractor_products_available:
+              country.contractor_products_available,
           };
         }) || []
       );

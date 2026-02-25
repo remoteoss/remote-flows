@@ -2357,5 +2357,129 @@ describe('ContractorOnboardingFlow', () => {
         expect(eorOption).toBeInTheDocument();
       });
     });
+
+    it('should NOT show Employer of Record option when eor_onboarding is false', async () => {
+      server.use(
+        http.get('*/v1/countries', () => {
+          return HttpResponse.json({
+            data: [
+              {
+                code: 'PRT',
+                name: 'Portugal',
+                eor_onboarding: false, // Key change!
+              },
+            ],
+          });
+        }),
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          () => {
+            return HttpResponse.json(mockCOROnlyResponse);
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          {...defaultProps}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await waitFor(() => {
+        const corOption = screen.getByLabelText(/Contractor of Record/i);
+        expect(corOption).toBeInTheDocument();
+      });
+
+      const eorOption = screen.queryByLabelText(/Employer of Record/i);
+      expect(eorOption).not.toBeInTheDocument();
+    });
+
+    it('should NOT show EOR option in Choose Alternative Plan when eor_onboarding is false', async () => {
+      server.use(
+        http.get('*/v1/countries', () => {
+          return HttpResponse.json({
+            data: [
+              {
+                code: 'PRT',
+                name: 'Portugal',
+                eor_onboarding: false,
+              },
+            ],
+          });
+        }),
+        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+      await fillEligibilityQuestionnaire({
+        controlTheWayContractorsWork: 'Yes',
+        previouslyHiredContractorsAsEmployees: 'Yes',
+        treatingContractorsAsEmployees: 'Yes',
+      });
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Choose Alternative Plan/i);
+
+      await waitFor(() => {
+        const cmOption = screen.getByRole('radio', {
+          name: /Contractor Management$/,
+        });
+        expect(cmOption).toBeInTheDocument();
+      });
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
+    });
   });
 });
