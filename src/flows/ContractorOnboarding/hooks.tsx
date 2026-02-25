@@ -534,7 +534,9 @@ export const useContractorOnboarding = ({
   );
 
   const isContractorOnboardingDetailsEnabled = Boolean(
-    internalCountryCode && stepState.currentStep.name === 'contract_details',
+    (internalCountryCode &&
+      stepState.currentStep.name === 'contract_details') ||
+      isEmploymentReadOnly,
   );
 
   const {
