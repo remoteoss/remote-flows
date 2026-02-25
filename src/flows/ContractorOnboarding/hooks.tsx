@@ -363,12 +363,6 @@ export const useContractorOnboarding = ({
         Boolean(employmentId)),
   );
 
-  const isContractorOnboardingDetailsEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
-  );
-
   const isIR35FileEnabled = Boolean(
     internalCountryCode === 'GBR' &&
       employmentId &&
@@ -537,6 +531,10 @@ export const useContractorOnboarding = ({
       },
       excludeProducts: excludeProducts,
     },
+  );
+
+  const isContractorOnboardingDetailsEnabled = Boolean(
+    internalCountryCode && stepState.currentStep.name === 'contract_details',
   );
 
   const {
