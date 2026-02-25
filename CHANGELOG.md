@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.16.0
+
+### Minor Changes
+
+- retrieve correct price for eor (#750) [#750](https://github.com/remoteoss/remote-flows/pull/750)
+- add eor product card when COR is available (#752) [#752](https://github.com/remoteoss/remote-flows/pull/752)
+
 ## 1.15.0
 
 ### Minor Changes
