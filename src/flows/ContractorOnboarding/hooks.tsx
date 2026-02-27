@@ -1023,9 +1023,9 @@ export const useContractorOnboarding = ({
           throw createStructuredError('Contract document ID not found');
         }
         setInternalContractDocumentId(contractDocumentId);
-        
+
         await refetchEmployment();
-        
+
         return response;
       }
 
