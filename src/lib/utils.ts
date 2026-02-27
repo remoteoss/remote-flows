@@ -270,7 +270,7 @@ export function createStructuredError(message: string) {
  * @param err - The error
  * @returns True if the error is a structured error
  */
-function isStructuredError(err: unknown): err is {
+export function isStructuredError(err: unknown): err is {
   error: Error;
   rawError: Record<string, unknown>;
   fieldErrors: NormalizedFieldError[];

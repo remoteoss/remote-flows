@@ -9,7 +9,6 @@ import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import {
-  mockBasicInformationSchema,
   mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
@@ -424,9 +423,6 @@ describe('ContractorOnboardingFlow', () => {
             },
           },
         });
-      }),
-      http.get('*/v1/countries/*/contractor_basic_information*', () => {
-        return HttpResponse.json(mockBasicInformationSchema);
       }),
       http.get('*/v1/countries/*/contractor-contract-details*', () => {
         return HttpResponse.json(mockContractorContractDetailsSchema);

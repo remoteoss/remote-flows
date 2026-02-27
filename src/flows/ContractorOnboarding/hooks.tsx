@@ -1013,13 +1013,15 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
+        const response = await signContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
           payload: {
             signature: parsedValues.signature,
           },
         });
+        await refetchEmployment();
+        return response;
       }
       case 'pricing_plan': {
         if (
