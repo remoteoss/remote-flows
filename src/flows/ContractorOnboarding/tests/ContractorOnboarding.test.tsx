@@ -9,7 +9,6 @@ import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import {
-  mockBasicInformationSchema,
   mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
@@ -425,9 +424,6 @@ describe('ContractorOnboardingFlow', () => {
           },
         });
       }),
-      http.get('*/v1/countries/*/contractor_basic_information*', () => {
-        return HttpResponse.json(mockBasicInformationSchema);
-      }),
       http.get('*/v1/countries/*/contractor-contract-details*', () => {
         return HttpResponse.json(mockContractorContractDetailsSchema);
       }),
@@ -782,8 +778,6 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillSignature();
 
     // Mock signature field would be here in real scenario
@@ -1073,8 +1067,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Preview/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillSignature();
 

@@ -1,9 +1,11 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
+import omit from 'lodash.omit';
 import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
+import { isStructuredError } from '@/src/lib/utils';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -40,39 +42,32 @@ export function OnboardingInvite({
   const { contractorOnboardingBag } = useContractorOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
 
-  const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
-    employmentInviteMutation,
-  );
+  const { mutateAsyncOrThrow: employmentInviteMutationAsync } =
+    mutationToPromise(employmentInviteMutation);
 
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
       if (contractorOnboardingBag.employmentId) {
-        const response = await employmentInviteMutationAsync({
+        const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
-        if (response.data) {
-          await onSuccess?.({
-            data: response.data as SuccessResponse,
-            employmentStatus: 'invited',
-          });
-          contractorOnboardingBag.refetchEmployment();
-          return;
-        }
-        if (response.error) {
-          onError?.({
-            error: response.error,
-            rawError: response.rawError,
-            fieldErrors: [],
-          });
-        }
+        await onSuccess?.({
+          data: data as SuccessResponse,
+          employmentStatus: 'invited',
+        });
+        contractorOnboardingBag.refetchEmployment();
       }
     } catch (error: unknown) {
-      onError?.({
-        error: error as Error,
-        rawError: error as Record<string, unknown>,
-        fieldErrors: [],
-      });
+      if (isStructuredError(error)) {
+        onError?.(omit(error, 'response'));
+      } else {
+        onError?.({
+          error: error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: [],
+        });
+      }
     }
   };
 

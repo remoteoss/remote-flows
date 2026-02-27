@@ -10,7 +10,10 @@ import {
   mockManageSubscriptionResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { countriesMock } from '@/src/common/api/fixtures/countries';
-import { mockContractorCurrenciesResponse } from '@/src/common/api/fixtures/contractors';
+import {
+  mockContractorBasicInformationSchema,
+  mockContractorCurrenciesResponse,
+} from '@/src/common/api/fixtures/contractors';
 import { mockCompanyPricingPlansResponse } from '@/src/common/api/fixtures/companies';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 
@@ -50,16 +53,16 @@ const manageSubscriptionHandler = http.post(
   },
 );
 
+const countriesHandler = http.get('*/v1/countries', () => {
+  return HttpResponse.json(countriesMock);
+});
+
 const contractorCORSubscriptionHandler = http.post(
   '*/v1/contractors/employments/*/contractor-cor-subscription',
   async () => {
     return HttpResponse.json(mockBaseResponse);
   },
 );
-
-export const countriesHandler = http.get('*/v1/countries', () => {
-  return HttpResponse.json(countriesMock);
-});
 
 const contractorCurrenciesHandler = http.get(
   '*/v1/contractors/employments/*/contractor-currencies',
@@ -68,10 +71,17 @@ const contractorCurrenciesHandler = http.get(
   },
 );
 
-export const companyPricingPlansHandler = http.get(
+const companyPricingPlansHandler = http.get(
   '*/v1/companies/*/pricing-plans',
   () => {
     return HttpResponse.json(mockCompanyPricingPlansResponse);
+  },
+);
+
+const contractorBasicInformationHandler = http.get(
+  '*/v1/countries/*/contractor_basic_information*',
+  () => {
+    return HttpResponse.json(mockContractorBasicInformationSchema);
   },
 );
 
@@ -86,4 +96,5 @@ export const defaultHandlers = [
   countriesHandler,
   contractorCurrenciesHandler,
   companyPricingPlansHandler,
+  contractorBasicInformationHandler,
 ];
