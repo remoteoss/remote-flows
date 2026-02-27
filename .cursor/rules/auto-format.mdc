@@ -4,7 +4,7 @@ globs: src/**/*.{ts,tsx,js,jsx}
 alwaysApply: false
 ---
 
-# Auto-Format After Agentic Coding
+# 🚨 CRITICAL: Auto-Format After Agentic Coding
 
 **Always run these commands after making code changes:**
 
