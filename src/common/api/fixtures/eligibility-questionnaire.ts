@@ -1,3 +1,5 @@
+import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+
 export const mockEligibilityQuestionnaireSchema = {
   data: {
     schema: {
@@ -48,6 +50,8 @@ export const mockEligibilityQuestionnaireSchema = {
     },
   },
 };
+
+export const mockEligibilityQuestionnaireResponse = mockBaseResponse;
 
 export const mockBlockedEligibilityQuestionnaireResponse = {
   data: {

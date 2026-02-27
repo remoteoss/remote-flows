@@ -181,6 +181,48 @@ describe('useCreateCompany', () => {
       }
     });
 
+    it('should include action=send_create_password_email query parameter when creating company', async () => {
+      let requestUrl: URL | null = null;
+
+      server.use(
+        http.post('*/v1/companies', ({ request }) => {
+          requestUrl = new URL(request.url);
+          return HttpResponse.json(companyCreatedResponse.data, {
+            status: 201,
+          });
+        }),
+      );
+
+      const { result } = renderHook(() => useCreateCompany({}), {
+        wrapper: TestProviders,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      const payload = {
+        country_code: 'USA',
+        company_owner_email: 'owner@example.com',
+        company_owner_name: 'John Doe',
+        desired_currency: 'USD',
+        name: 'Test Company',
+        phone_number: '+1234567890',
+        tax_number: 'TAX123',
+      };
+
+      await result.current.onSubmit(payload);
+
+      await waitFor(() => {
+        expect(requestUrl).not.toBeNull();
+      });
+
+      expect(requestUrl).not.toBeNull();
+      expect(requestUrl!.searchParams.get('action')).toBe(
+        'send_create_password_email',
+      );
+    });
+
     it('should handle company creation with tokens response', async () => {
       server.use(
         http.post('*/v1/companies', () => {

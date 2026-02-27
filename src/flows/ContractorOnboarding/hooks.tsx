@@ -128,6 +128,9 @@ export const useContractorOnboarding = ({
   const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
     useState<boolean>(false);
 
+  const [includeContractPreview, setIncludeContractPreview] =
+    useState<boolean>(true);
+
   const [includeChooseAlternativePlan, setIncludeChooseAlternativePlan] =
     useState<boolean>(false);
 
@@ -139,8 +142,9 @@ export const useContractorOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+        includeContractPreview: includeContractPreview,
       }),
-    [includeEligibilityQuestionnaire, skipSteps],
+    [includeEligibilityQuestionnaire, includeContractPreview, skipSteps],
   );
 
   const {
@@ -300,6 +304,11 @@ export const useContractorOnboarding = ({
     }
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
+  useEffect(() => {
+    const isCor = employment?.contractor_type === 'cor';
+    setIncludeContractPreview(!isCor);
+  }, [employment?.contractor_type]);
+
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
       (subscription) => subscription.product.short_name === 'COR',
@@ -360,12 +369,6 @@ export const useContractorOnboarding = ({
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
       (stepState.currentStep.name === 'basic_information' ||
-        Boolean(employmentId)),
-  );
-
-  const isContractorOnboardingDetailsEnabled = Boolean(
-    internalCountryCode &&
-      (stepState.currentStep.name === 'contract_details' ||
         Boolean(employmentId)),
   );
 
@@ -537,6 +540,12 @@ export const useContractorOnboarding = ({
       },
       excludeProducts: excludeProducts,
     },
+  );
+
+  const isContractorOnboardingDetailsEnabled = Boolean(
+    (internalCountryCode &&
+      stepState.currentStep.name === 'contract_details') ||
+      isEmploymentReadOnly,
   );
 
   const {
@@ -768,13 +777,17 @@ export const useContractorOnboarding = ({
     isLoadingChooseAlternativePlan;
 
   const isNavigatingToReview = useMemo(() => {
+    const isCor = employment?.contractor_type === 'cor';
+    const hasContractPreviewFields =
+      isCor || stepFields.contract_preview.length > 0;
+
     return Boolean(
       shouldHandleReadOnlyEmployment &&
         !initialLoading &&
         Boolean(internalContractDocumentId) &&
         stepFields.basic_information.length > 0 &&
         stepFields.contract_details.length > 0 &&
-        stepFields.contract_preview.length > 0,
+        hasContractPreviewFields,
     );
   }, [
     shouldHandleReadOnlyEmployment,
@@ -783,6 +796,7 @@ export const useContractorOnboarding = ({
     stepFields.basic_information.length,
     stepFields.contract_details.length,
     stepFields.contract_preview.length,
+    employment?.contractor_type,
   ]);
 
   useEffect(() => {
@@ -1009,6 +1023,9 @@ export const useContractorOnboarding = ({
           throw createStructuredError('Contract document ID not found');
         }
         setInternalContractDocumentId(contractDocumentId);
+
+        await refetchEmployment();
+
         return response;
       }
 
