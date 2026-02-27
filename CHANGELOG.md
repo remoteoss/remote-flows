@@ -1,5 +1,26 @@
 # @remoteoss/remote-flows
 
+## 1.16.0
+
+### Minor Changes
+
+#### Features
+
+- retrieve correct price for eor (#750) [#750](https://github.com/remoteoss/remote-flows/pull/750)
+- add eor product card when COR is available (#752) [#752](https://github.com/remoteoss/remote-flows/pull/752)
+- add send_create_password_email to query parameters (company flow) (#755) [#755](https://github.com/remoteoss/remote-flows/pull/755)
+- skip contract_review for COR (#761) [#761](https://github.com/remoteoss/remote-flows/pull/761)
+
+#### Refactors
+
+- use factory queryOptions pattern (#756) [#756](https://github.com/remoteoss/remote-flows/pull/756)
+- use new mutation method in the OnboardingInvite (#757) [#757](https://github.com/remoteoss/remote-flows/pull/757)
+
+#### Fixes
+
+- fetch the contract details only when we're on the step (#758) [#758](https://github.com/remoteoss/remote-flows/pull/758)
+- fix state form bug related to network request failing when creating an employment (#759) [#759](https://github.com/remoteoss/remote-flows/pull/759)
+
 ## 1.15.0
 
 ### Minor Changes
