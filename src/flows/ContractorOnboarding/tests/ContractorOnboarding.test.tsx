@@ -778,8 +778,6 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-
     await fillSignature();
 
     // Mock signature field would be here in real scenario
@@ -1069,8 +1067,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Contract Preview/i);
-
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillSignature();
 
