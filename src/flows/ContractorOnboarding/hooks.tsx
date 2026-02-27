@@ -985,10 +985,13 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Employment ID not found');
           }
 
-          setInternalEmploymentId(employmentId);
           await updateUKandSaudiFieldsMutation({
             employmentId: employmentId as string,
           });
+
+          // Only update state (triggers queries with fully consistent backend state) if not caused a bug
+          // if one of the updateUKandSaudiFieldsMutation fails with a 422 for example
+          setInternalEmploymentId(employmentId);
 
           return response;
         } else if (internalEmploymentId) {
