@@ -1785,12 +1785,6 @@ describe('ContractorOnboardingFlow', () => {
             return HttpResponse.json(mockBaseResponse);
           },
         ),
-        http.post(
-          '*/v1/contractors/employments/*/contractor-cor-subscription',
-          async () => {
-            return HttpResponse.json({ data: { status: 'ok' } });
-          },
-        ),
       );
 
       mockRender.mockImplementation(
@@ -2480,6 +2474,128 @@ describe('ContractorOnboardingFlow', () => {
         name: /Employer of Record/i,
       });
       expect(eorOption).not.toBeInTheDocument();
+    });
+  });
+
+  describe('COR Contract Preview Skip', () => {
+    it('should skip contract_preview step when COR is selected', async () => {
+      const contractDocumentSpy = vi.fn();
+
+      server.use(
+        http.post(
+          '*/v1/contractors/employments/*/contract-documents',
+          async ({ request }) => {
+            const requestBody = await request.json();
+            contractDocumentSpy(requestBody);
+            return HttpResponse.json(mockContractDocumentCreatedResponse);
+          },
+        ),
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                contractor_type: 'cor',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          skipSteps={['select_country']}
+          countryCode='PRT'
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Review/i);
+    });
+
+    it('should navigate to review for read-only COR employment without contract_preview step', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'invited',
+                contractor_type: 'cor',
+                contract_details: {
+                  service_duration: {
+                    provisional_start_date: '2025-11-26',
+                  },
+                  payment_terms: {
+                    compensation_currency_code: 'USD',
+                    rate: 5000,
+                    rate_unit: 'monthly',
+                  },
+                },
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        {
+          wrapper: TestProviders,
+        },
+      );
+
+      await screen.findByText(/Step: Review/i);
+
+      expect(
+        screen.queryByText(/Step: Contract Preview/i),
+      ).not.toBeInTheDocument();
+
+      expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
     });
   });
 });
