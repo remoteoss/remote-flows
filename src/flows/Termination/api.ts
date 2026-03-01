@@ -1,5 +1,7 @@
 import {
   CreateOffboardingParams,
+  getIndexOffboarding,
+  ListOffboardingResponse,
   postCreateOffboarding,
   Timeoff,
 } from '@/src/client';
@@ -314,5 +316,49 @@ export const useTerminationSchema = ({
         jsfModify,
       });
     },
+  });
+};
+
+/**
+ * Hook to retrieve list of offboardings or filter offboardings by employmentId.
+ *
+ * @param {Object} params - The parameters for the query.
+ * @param {string} [params.employmentId] - The ID of the employment to fetch offboardings for.
+ * @param {boolean} [params.includeConfidential] - Whether to include confidential offboardings in the response.
+ * @returns {TData} - The offboardings data.
+ */
+export const useGetOffboardings = <TData = ListOffboardingResponse['data']>({
+  params,
+  options,
+}: {
+  params: Partial<{
+    employmentId?: string;
+    includeConfidential?: boolean;
+  }>;
+  options?: Partial<{
+    enabled?: boolean;
+    select?: (data: ListOffboardingResponse['data']) => TData;
+  }>;
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: [
+      'rmt-flows-get-offboardings',
+      params.employmentId,
+      params.includeConfidential,
+    ],
+    queryFn: () => {
+      return getIndexOffboarding({
+        client: client as Client,
+        query: {
+          employment_id: params.employmentId,
+          include_confidential: params.includeConfidential ? 'true' : 'false',
+        },
+      });
+    },
+    select: ({ data }) => {
+      return (options?.select?.(data?.data) ?? data?.data) as TData;
+    },
+    enabled: options?.enabled,
   });
 };
