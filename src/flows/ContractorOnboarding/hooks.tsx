@@ -28,6 +28,7 @@ import {
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
   useContractorOnboardingDetailsSchemaWithCurrencies,
+  CONTRACT_PRODUCT_TITLES,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -1001,6 +1002,23 @@ export const useContractorOnboarding = ({
         });
       }
       case 'pricing_plan': {
+        const blockedProductsEligibility = [
+          corProductIdentifier,
+          contractorPlusProductIdentifier,
+        ];
+
+        if (
+          isEligibilityQuestionnaireBlocked &&
+          blockedProductsEligibility.includes(values.subscription)
+        ) {
+          throw createStructuredError(
+            `This individual is not eligible for ${
+              CONTRACT_PRODUCT_TITLES[
+                values.subscription as keyof typeof CONTRACT_PRODUCT_TITLES
+              ]
+            }.`,
+          );
+        }
         // Handle EOR selection (from merged options)
         if (values.subscription === eorProductIdentifier) {
           // EOR selection - no API call needed at this step

@@ -302,7 +302,7 @@ const useContractorOnboardingDetailsSchema = ({
   });
 };
 
-const CONTRACT_PRODUCT_TITLES = {
+export const CONTRACT_PRODUCT_TITLES = {
   [contractorStandardProductIdentifier]: 'Contractor Management',
   [contractorPlusProductIdentifier]: 'Contractor Management Plus',
   [corProductIdentifier]: 'Contractor of Record',
