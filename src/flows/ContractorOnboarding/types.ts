@@ -11,7 +11,6 @@ import { BasicInformationStep } from '@/src/flows/ContractorOnboarding/component
 import { ContractDetailsStep } from '@/src/flows/ContractorOnboarding/components/ContractDetailsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { FlowOptions, JSFModify } from '@/src/flows/types';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStep';
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
