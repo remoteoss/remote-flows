@@ -401,9 +401,8 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    isOnlyCORSubscription ||
-    (isEligibilityQuestionnaireBlocked === true &&
-      selectedCountry?.eor_onboarding);
+    (isOnlyCORSubscription || isEligibilityQuestionnaireBlocked === true) &&
+    selectedCountry?.eor_onboarding;
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({

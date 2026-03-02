@@ -88,10 +88,9 @@ const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [1]: 'Basic Information',
   [2]: 'Pricing Plan',
   [3]: 'Eligibility Questionnaire',
-  [4]: 'Choose Alternative Plan',
-  [5]: 'Contract Details',
-  [6]: 'Contract Preview',
-  [7]: 'Review',
+  [4]: 'Contract Details',
+  [5]: 'Contract Preview',
+  [6]: 'Review',
 };
 
 function createMockRenderImplementation(
@@ -2014,8 +2013,12 @@ describe('ContractorOnboardingFlow', () => {
 
       // Verify CoR and CM+ are disabled
       await waitFor(() => {
-        const cmRadio = screen.getByLabelText(/Contractor Management/i);
-        const corRadio = screen.getByLabelText(/Contractor of Record/i);
+        const cmRadio = screen.getByRole('radio', {
+          name: /^Contractor Management$/,
+        });
+        const corRadio = screen.getByRole('radio', {
+          name: /^Contractor of Record$/,
+        });
         expect(cmRadio).toBeInTheDocument();
         expect(corRadio).toBeDisabled();
       });
@@ -2318,7 +2321,7 @@ describe('ContractorOnboardingFlow', () => {
       expect(eorOption).not.toBeInTheDocument();
     });
 
-    it('should NOT show EOR option in Choose Alternative Plan when eor_onboarding is false', async () => {
+    it('should show Employer of Record option in Pricing Plan when eor_onboarding is true', async () => {
       server.use(
         http.get('*/v1/countries', () => {
           return HttpResponse.json({
@@ -2326,14 +2329,17 @@ describe('ContractorOnboardingFlow', () => {
               {
                 code: 'PRT',
                 name: 'Portugal',
-                eor_onboarding: false,
+                eor_onboarding: true,
               },
             ],
           });
         }),
-        http.post('*/v1/contractors/eligibility-questionnaire', async () => {
-          return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
-        }),
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          () => {
+            return HttpResponse.json(mockCOROnlyResponse);
+          },
+        ),
       );
 
       mockRender.mockImplementation(
@@ -2342,53 +2348,37 @@ describe('ContractorOnboardingFlow', () => {
 
       render(
         <ContractorOnboardingFlow
+          {...defaultProps}
           countryCode='PRT'
           skipSteps={['select_country']}
-          employmentId='test-employment-id'
-          {...defaultProps}
         />,
         { wrapper: TestProviders },
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitFor(() => {
-        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-      });
       await fillBasicInformation();
 
-      let nextButton = screen.getByText(/Next Step/i);
+      const nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
-      await fillContractorSubscription('Contractor of Record');
-
-      nextButton = screen.getByText(/Next Step/i);
-      nextButton.click();
-
-      await screen.findByText(/Step: Eligibility Questionnaire/i);
-
-      await fillEligibilityQuestionnaire({
-        controlTheWayContractorsWork: 'Yes',
-        previouslyHiredContractorsAsEmployees: 'Yes',
-        treatingContractorsAsEmployees: 'Yes',
-      });
-
-      nextButton = screen.getByText(/Next Step/i);
-      nextButton.click();
-
-      await screen.findByText(/Step: Choose Alternative Plan/i);
 
       await waitFor(() => {
-        const cmOption = screen.getByRole('radio', {
-          name: /Contractor Management$/,
+        const eorOption = screen.getByRole('radio', {
+          name: /Employer of Record/i,
         });
-        expect(cmOption).toBeInTheDocument();
+        expect(eorOption).toBeInTheDocument();
       });
 
-      const eorOption = screen.queryByRole('radio', {
+      // Verify it can be selected
+      const eorOption = screen.getByRole('radio', {
         name: /Employer of Record/i,
       });
-      expect(eorOption).not.toBeInTheDocument();
+      eorOption.click();
+
+      await waitFor(() => {
+        expect(eorOption).toBeChecked();
+      });
     });
   });
 
