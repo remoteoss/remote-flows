@@ -16,13 +16,14 @@ import {
   PricingPlanComponentProps,
   PricingPlanDataProps,
   corProductIdentifier,
+  eorProductIdentifier,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import {
   Card,
   Tabs,
   TabsTrigger,
   TabsList,
-  cn,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
@@ -34,6 +35,26 @@ import { EngagingContractorsModal } from './components/PricingPlanModals';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
+const groupOptionsBySeparator = (options: $TSFixMe[]) => {
+  const groups: $TSFixMe[][] = [];
+  let currentGroup: $TSFixMe[] = [];
+
+  options?.forEach((option) => {
+    if (option.meta?.groupSeparator?.show && currentGroup.length > 0) {
+      groups.push(currentGroup);
+      currentGroup = [option];
+    } else {
+      currentGroup.push(option);
+    }
+  });
+
+  if (currentGroup.length > 0) {
+    groups.push(currentGroup);
+  }
+
+  return groups;
+};
+
 const PricingPlanCards = ({
   field,
   fieldData,
@@ -41,25 +62,48 @@ const PricingPlanCards = ({
   showPrice = true,
 }: PricingPlanComponentProps & { showPrice?: boolean }) => {
   const hasError = !!fieldState.error;
-  const items = fieldData.options?.length;
+
+  // Group options by separator
+  const groups = groupOptionsBySeparator(fieldData.options);
 
   return (
-    <div className={cn('grid gap-2', `grid-cols-${items ?? 3}`)}>
-      {fieldData.options?.map((option) => (
-        <PricingPlanCard
-          key={option.value}
-          title={option.label}
-          description={option.description}
-          features={option.meta?.features as string[]}
-          price={option.meta?.price}
-          value={option.value}
-          selected={field.value === option.value}
-          disabled={option.disabled}
-          showPrice={showPrice}
-          onSelect={(value: string) => {
-            field.onChange(value);
-          }}
-        />
+    <div className='flex flex-col gap-6'>
+      {groups.map((group, groupIndex) => (
+        <React.Fragment key={groupIndex}>
+          {/* Render separator if first option in group has one */}
+          {group[0]?.meta?.groupSeparator?.show && (
+            <div className='mt-4 mb-2'>
+              <h2 className='text-xl font-bold text-[#22863a]'>
+                Other available hiring plans
+              </h2>
+              <p className='text-sm text-[#71717A] mt-1'>
+                Based on the responses in your questionnaire, this individual
+                may also be eligible for our Employer of Record plan. For any
+                questions, please contact help@remote.com
+              </p>
+            </div>
+          )}
+
+          {/* Render all cards in this group in a single grid */}
+          <div className='grid gap-2 grid-cols-3'>
+            {group.map((option) => (
+              <PricingPlanCard
+                key={option.value}
+                title={option.label}
+                description={option.description}
+                features={option.meta?.features as string[]}
+                price={option.meta?.price}
+                value={option.value}
+                selected={field.value === option.value}
+                disabled={option.disabled}
+                showPrice={showPrice}
+                onSelect={(value: string) => {
+                  field.onChange(value);
+                }}
+              />
+            ))}
+          </div>
+        </React.Fragment>
       ))}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
@@ -258,9 +302,12 @@ const MultiStepForm = ({
                   );
                 },
               }}
-              onSubmit={(payload: PricingPlanFormPayload) =>
-                console.log('payload', payload)
-              }
+              onSubmit={(payload: PricingPlanFormPayload) => {
+                console.log('payload', payload);
+                if (payload.subscription === eorProductIdentifier) {
+                  window.location.href = '?demo=onboarding-basic';
+                }
+              }}
               onSuccess={(response: PricingPlanResponse) =>
                 console.log('response', response)
               }

@@ -51,6 +51,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   corProductIdentifier,
+  eorProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
@@ -1000,6 +1001,16 @@ export const useContractorOnboarding = ({
         });
       }
       case 'pricing_plan': {
+        // Handle EOR selection (from merged options)
+        if (values.subscription === eorProductIdentifier) {
+          // EOR selection - no API call needed at this step
+          return Promise.resolve({
+            data: {
+              subscription: values.subscription,
+            },
+          });
+        }
+
         if (
           hasEligibilityQuestionnaireSubmitted &&
           values.subscription !== corProductIdentifier

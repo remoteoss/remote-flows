@@ -110,9 +110,13 @@ export type ContractorOnboardingFlowProps = {
   initialValues?: Record<string, unknown>;
 };
 
-export type PricingPlanFormPayload = $TSFixMe;
+export type PricingPlanFormPayload = {
+  subscription: string;
+};
 
-export type PricingPlanResponse = $TSFixMe;
+export type PricingPlanResponse = {
+  subscription: string;
+};
 
 export type ContractorOnboardingContractDetailsFormPayload = {
   services_and_deliverables: string;
