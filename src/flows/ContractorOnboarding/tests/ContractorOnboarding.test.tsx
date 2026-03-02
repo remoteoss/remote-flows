@@ -40,6 +40,7 @@ import {
 import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
+  mockContractorSubscriptionResponse,
   mockContractorSubscriptionWithBlockedEligibilityResponse,
   mockContractorSubscriptionWithEligibilityResponse,
   mockCOROnlyResponse,
@@ -1964,10 +1965,25 @@ describe('ContractorOnboardingFlow', () => {
     });
 
     it('should navigate back to pricing_plan and emit onError when eligibility questionnaire is blocked', async () => {
+      let eligibilitySubmitted = false;
+
       server.use(
         http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+          eligibilitySubmitted = true; // Mark as submitted
           return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
         }),
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          async () => {
+            // Return different response based on whether eligibility was submitted
+            if (eligibilitySubmitted) {
+              return HttpResponse.json(
+                mockContractorSubscriptionWithBlockedEligibilityResponse,
+              );
+            }
+            return HttpResponse.json(mockContractorSubscriptionResponse);
+          },
+        ),
       );
 
       mockRender.mockImplementation(
