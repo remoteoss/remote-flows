@@ -23,7 +23,6 @@ import {
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
-import { chooseAlternativePlanSchema } from '@/src/flows/ContractorOnboarding/json-schemas/chooseAlternativePlanStep';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -471,100 +470,6 @@ export const useContractorSubscriptionSchemaField = (
     contractorSubscriptions,
     refetch,
     isEligibilityQuestionnaireBlocked,
-  };
-};
-
-export const useGetChooseAlternativePlan = (
-  employmentId: string,
-  selectedCountry: SelectedCountry,
-  options?: FlowOptions & {
-    queryOptions?: { enabled?: boolean };
-    jsfModify?: JSFModify;
-    excludeProducts?: ProductType[];
-  },
-) => {
-  const { eorSubscription, isLoading: isLoadingEorSubscription } =
-    useEorSubscription();
-
-  const {
-    data: contractorSubscriptions,
-    isLoading,
-    refetch,
-  } = useGetContractorSubscriptions({
-    employmentId: employmentId,
-    options: {
-      queryOptions: options?.queryOptions,
-    },
-  });
-
-  const form = createHeadlessForm(
-    chooseAlternativePlanSchema.data.schema,
-    {},
-    options,
-  );
-
-  if (contractorSubscriptions) {
-    const field: JSFField | undefined = form.fields.find(
-      (field) => field.name === 'subscription',
-    ) as JSFField | undefined;
-
-    if (field) {
-      const availablePlans = contractorSubscriptions.filter(
-        (sub) =>
-          sub.product.short_name === 'CM' &&
-          shouldIncludeProduct(
-            sub.product.identifier ?? '',
-            options?.excludeProducts,
-          ),
-      );
-
-      const fieldOptions = availablePlans.map((opts) => {
-        const product = opts.product;
-        const price = opts.price.amount;
-        const currencyCode = opts.currency.code;
-        const title =
-          CONTRACT_PRODUCT_TITLES[
-            product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-          ] ?? '';
-        const label = title;
-        const value = product.identifier ?? '';
-        const description = product.description ?? '';
-        const features = product.features ?? [];
-        const meta = {
-          features,
-          price: {
-            amount: convertFromCents(price),
-            currencyCode: currencyCode,
-          },
-        };
-        return {
-          label,
-          value,
-          description,
-          meta,
-          disabled: false,
-        };
-      });
-
-      if (selectedCountry?.eor_onboarding) {
-        addEorToFieldOptions(
-          fieldOptions,
-          eorSubscription,
-          options?.excludeProducts,
-        );
-      }
-
-      field.options = fieldOptions.sort((a, b) =>
-        a.label.localeCompare(b.label),
-      );
-    }
-  }
-
-  return {
-    isLoading: isLoading || isLoadingEorSubscription,
-    form,
-    contractorSubscriptions,
-    refetch,
   };
 };
 
