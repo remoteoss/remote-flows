@@ -4,11 +4,19 @@
 
 ### Minor Changes
 
+#### Features
+
 - use pricing plan to render the EOR card (#763) [#763](https://github.com/remoteoss/remote-flows/pull/763)
 - show eor when there are no subscriptions (#764) [#764](https://github.com/remoteoss/remote-flows/pull/764)
-- update ci yml files to get correct coverage (#765) [#765](https://github.com/remoteoss/remote-flows/pull/765)
 - show eor card when only cm is available (#766) [#766](https://github.com/remoteoss/remote-flows/pull/766)
-- parse benefits values (#769) [#769](https://github.com/remoteoss/remote-flows/pull/769)
+
+#### Fixes
+
+- parse benefits values before sending them in the onboarding flow (#769) [#769](https://github.com/remoteoss/remote-flows/pull/769)
+
+#### Miscellaneous
+
+- update ci yml files to get correct coverage (#765) [#765](https://github.com/remoteoss/remote-flows/pull/765)
 
 ## 1.16.0
 
