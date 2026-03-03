@@ -30,6 +30,7 @@ import {
   useCompany,
   useCountriesSchemaField,
   useCreateEmployment,
+  useEmploymentOnboardingReservesStatus,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -211,6 +212,13 @@ export const useOnboarding = ({
     isLoading: isLoadingCompany,
     refetch: refetchCompany,
   } = useCompany(companyId);
+
+  const { data: onboardingReservesStatus } =
+    useEmploymentOnboardingReservesStatus(
+      companyId,
+      internalEmploymentId,
+      stepState.currentStep.name === 'review',
+    );
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
@@ -798,6 +806,11 @@ export const useOnboarding = ({
      */
 
     creditRiskStatus: company?.default_legal_entity_credit_risk_status,
+    /**
+     * Onboarding reserves status for the employment
+     * Returns 'deposit_required' if a deposit is required based on onboarding reserves policies
+     */
+    onboardingReservesStatus: onboardingReservesStatus,
     /**
      * Current state of the form fields for the current step.
      */

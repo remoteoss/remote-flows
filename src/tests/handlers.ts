@@ -85,6 +85,20 @@ const contractorBasicInformationHandler = http.get(
   },
 );
 
+const employmentOnboardingReservesStatus = http.get(
+  '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
+  () => {
+    return HttpResponse.json({
+      data: {
+        data: {
+          status: 'no_deposit_required',
+          policies: [],
+        },
+      },
+    });
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -92,6 +106,7 @@ export const defaultHandlers = [
   eligibilityQuestionnaireResponseHandler,
   contractorSubscriptionHandler,
   contractorCORSubscriptionHandler,
+  employmentOnboardingReservesStatus,
   manageSubscriptionHandler,
   countriesHandler,
   contractorCurrenciesHandler,

@@ -8,6 +8,7 @@ import {
   EmploymentFullParams,
   getIndexBenefitOffer,
   getShowCompany,
+  getShowCompanyEmploymentOnboardingReservesStatus,
   getShowEmployment,
   getShowFormCountry,
   getShowSchema,
@@ -441,5 +442,50 @@ export const useUpsertContractEligibility = () => {
         body: payload,
       });
     },
+  });
+};
+
+/**
+ * Hook to fetch onboarding reserves status for an employment
+ * @param companyId - Company ID
+ * @param employmentId - Employment ID
+ * @param enabled - Whether the query should be enabled
+ * @returns Query result with onboarding reserves status
+ */
+export const useEmploymentOnboardingReservesStatus = (
+  companyId: string | undefined,
+  employmentId: string | undefined,
+  enabled = true,
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: [
+      'employment-onboarding-reserves-status',
+      companyId,
+      employmentId,
+    ],
+    retry: false,
+    enabled: enabled && !!companyId && !!employmentId,
+    queryFn: async () => {
+      const response = await getShowCompanyEmploymentOnboardingReservesStatus({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          company_id: companyId as string,
+          employment_id: employmentId as string,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error(
+          'Failed to fetch employment onboarding reserves status',
+        );
+      }
+
+      return response;
+    },
+    select: ({ data }) => data?.data?.status,
   });
 };

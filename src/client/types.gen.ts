@@ -1290,6 +1290,17 @@ export type RefreshTokenParams = {
 };
 
 /**
+ * BackgroundChecks.BackgroundCheckResponse
+ *
+ * Background Check Response
+ */
+export type BackgroundChecksBackgroundCheckResponse = {
+  data: {
+    background_check: BackgroundChecksBackgroundCheck;
+  };
+};
+
+/**
  * BenefitRenewalRequests.UpdateBenefitRenewalRequest
  *
  * Upsert benefit offers Renewal Request.
@@ -1756,6 +1767,18 @@ export type ContractDocumentResponse = {
       content: Blob | File;
       name: string;
       signatories: Array<Signatory>;
+      /**
+       * Contract document status
+       */
+      status:
+        | 'draft'
+        | 'awaiting_signatures'
+        | 'finished'
+        | 'archived'
+        | 'revised'
+        | 'awaiting_customer_approval'
+        | 'approved_by_customer'
+        | 'rejected_by_customer';
     };
   };
 };
@@ -2388,6 +2411,7 @@ export type CostCalculatorCountryLevelRegion = {
  */
 export type CreateWebhookCallbackParams = {
   subscribed_events?: Array<
+    | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
@@ -2408,6 +2432,7 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
+    | 'contract_document.status.changed'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -2808,6 +2833,16 @@ export type TaskStatus = 'completed' | 'pending';
 export type RegionStatus = 'active' | 'inactive';
 
 /**
+ * TimeoffTypeResponse
+ *
+ * A single time off type with name and description
+ */
+export type TimeoffTypeResponse = {
+  description?: string | null;
+  name: TimeoffType;
+};
+
+/**
  * CostCalculatorCost
  */
 export type CostCalculatorCost = {
@@ -2873,6 +2908,7 @@ export type ApprovedWorkAuthozation = {
 export type WebhookTriggerEmploymentParams = {
   employment_id: string;
   event_type:
+    | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
@@ -2893,6 +2929,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
+    | 'contract_document.status.changed'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -3663,6 +3700,36 @@ export type CostCalculatorListCountryResponse = {
 export type CostCalculatorCountryAvailability = 'active' | 'coming_soon';
 
 /**
+ * BackgroundChecks.BackgroundCheckRequestItem
+ */
+export type BackgroundChecksBackgroundCheckRequestItem = {
+  /**
+   * Unique identifier of the background check request item
+   */
+  id: string;
+  /**
+   * Status of the background check item
+   */
+  status:
+    | 'employer_requested'
+    | 'in_progress'
+    | 'needs_employee_response'
+    | 'needs_employer_review'
+    | 'needs_remote_review'
+    | 'approved'
+    | 'rejected'
+    | 'canceled';
+  /**
+   * Display title of the background check item
+   */
+  title: string;
+  /**
+   * Type of background check (e.g. criminal, education)
+   */
+  type: string;
+};
+
+/**
  * BillingDocument
  *
  * Information of a billing document
@@ -4131,6 +4198,27 @@ export type IndexContractDocuments = {
    * Total number of pages
    */
   total_pages: number;
+};
+
+/**
+ * OnboardingReservesStatus
+ */
+export type OnboardingReservesStatus = {
+  /**
+   * List of applicable onboarding reserves policies
+   */
+  policies: Array<string>;
+  /**
+   * Onboarding reserves status (same as credit risk status but takes onboarding reserves policies into account)
+   */
+  status:
+    | 'not_started'
+    | 'ready'
+    | 'in_progress'
+    | 'referred'
+    | 'fail'
+    | 'deposit_required'
+    | 'no_deposit_required';
 };
 
 /**
@@ -5517,6 +5605,13 @@ export type CreateSsoConfigurationParams = {
 };
 
 /**
+ * OnboardingReservesStatusResponse
+ */
+export type OnboardingReservesStatusResponse = {
+  data: OnboardingReservesStatus;
+};
+
+/**
  * MagicLinkParams
  *
  * Magic link params
@@ -6132,6 +6227,7 @@ export type WebhookCallback = {
    */
   signing_key?: string;
   subscribed_events?: Array<
+    | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
@@ -6152,6 +6248,7 @@ export type WebhookCallback = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
+    | 'contract_document.status.changed'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -6731,6 +6828,17 @@ export type CompanyStructureNodesResponse = {
 };
 
 /**
+ * TimeoffTypesEmploymentType
+ *
+ * Optional query parameter for the List Time Off Types endpoint.
+ * - `contractor` — time off types for contractor employments (e.g. includes `time_off`).
+ * - `full_time` — time off types for full-time employments (e.g. includes `paid_time_off`).
+ * When omitted, the response is unchanged from previous API versions (full-time types).
+ *
+ */
+export type TimeoffTypesEmploymentType = 'contractor' | 'full_time';
+
+/**
  * WorkAuthorizationUser
  *
  * Work Authorization User
@@ -6981,8 +7089,10 @@ export type CancelTimeoffParams = {
  */
 export type ListTimeoffTypesResponse = {
   data?: {
-    description?: string | null;
-    name?: TimeoffType;
+    /**
+     * List of time off types available for the requested employment type
+     */
+    timeoff_types: Array<TimeoffTypeResponse>;
   };
 };
 
@@ -7052,6 +7162,23 @@ export type CostCalculatorBenefitParam = {
    * Benefit Tier Slug
    */
   benefit_tier_slug: string;
+};
+
+/**
+ * EmploymentFederalTaxesParams
+ *
+ * Federal taxes schema compatible params.
+ *
+ */
+export type EmploymentFederalTaxesParams = {
+  /**
+   * Federal taxes params. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `global_payroll_federal_taxes` as path parameters.
+   */
+  federal_taxes: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -7464,6 +7591,7 @@ export type CreateContractEligibilityParams = {
  */
 export type UpdateWebhookCallbackParams = {
   subscribed_events: Array<
+    | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
     | 'company.activated'
@@ -7484,6 +7612,7 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.review_started'
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
+    | 'contract_document.status.changed'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -7673,6 +7802,35 @@ export type Price = {
    */
   amount: number;
   currency: CurrencyDefinition;
+};
+
+/**
+ * BackgroundChecks.BackgroundCheck
+ */
+export type BackgroundChecksBackgroundCheck = {
+  /**
+   * Individual checks that make up this background check request
+   */
+  background_check_request_items: Array<BackgroundChecksBackgroundCheckRequestItem>;
+  created_at: DateTime;
+  /**
+   * Unique identifier of the associated employment
+   */
+  employment_id: string;
+  /**
+   * Unique identifier of the background check request
+   */
+  id: string;
+  /**
+   * Overall status of the background check request
+   */
+  status:
+    | 'employer_requested'
+    | 'in_progress'
+    | 'needs_review'
+    | 'complete'
+    | 'rejected'
+    | 'canceled';
 };
 
 /**
@@ -8249,6 +8407,18 @@ export type PayDifference = {
  */
 export type ContractDocument = {
   id: string;
+  /**
+   * Contract document status
+   */
+  status:
+    | 'draft'
+    | 'awaiting_signatures'
+    | 'finished'
+    | 'archived'
+    | 'revised'
+    | 'awaiting_customer_approval'
+    | 'approved_by_customer'
+    | 'rejected_by_customer';
 };
 
 /**
@@ -9191,6 +9361,50 @@ export type PostCreateEmployment2Responses = {
 
 export type PostCreateEmployment2Response =
   PostCreateEmployment2Responses[keyof PostCreateEmployment2Responses];
+
+export type GetShowCompanyEmploymentOnboardingReservesStatusData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+    /**
+     * Employment ID
+     */
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status';
+};
+
+export type GetShowCompanyEmploymentOnboardingReservesStatusErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowCompanyEmploymentOnboardingReservesStatusError =
+  GetShowCompanyEmploymentOnboardingReservesStatusErrors[keyof GetShowCompanyEmploymentOnboardingReservesStatusErrors];
+
+export type GetShowCompanyEmploymentOnboardingReservesStatusResponses = {
+  /**
+   * Success
+   */
+  200: OnboardingReservesStatusResponse;
+};
+
+export type GetShowCompanyEmploymentOnboardingReservesStatusResponse =
+  GetShowCompanyEmploymentOnboardingReservesStatusResponses[keyof GetShowCompanyEmploymentOnboardingReservesStatusResponses];
 
 export type GetShowHelpCenterArticleData = {
   body?: never;
@@ -10815,6 +11029,50 @@ export type PostReplayWebhookEventResponses = {
 export type PostReplayWebhookEventResponse =
   PostReplayWebhookEventResponses[keyof PostReplayWebhookEventResponses];
 
+export type GetShowBackgroundCheckData = {
+  body?: never;
+  path: {
+    /**
+     * Employment Id
+     */
+    employment_id: UuidSlug;
+    /**
+     * Background Check Id
+     */
+    background_check_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/background-checks/{background_check_id}';
+};
+
+export type GetShowBackgroundCheckErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetShowBackgroundCheckError =
+  GetShowBackgroundCheckErrors[keyof GetShowBackgroundCheckErrors];
+
+export type GetShowBackgroundCheckResponses = {
+  /**
+   * Success
+   */
+  200: BackgroundChecksBackgroundCheckResponse;
+};
+
+export type GetShowBackgroundCheckResponse =
+  GetShowBackgroundCheckResponses[keyof GetShowBackgroundCheckResponses];
+
 export type GetSchemaBenefitRenewalRequestData = {
   body?: never;
   headers: {
@@ -11898,6 +12156,61 @@ export type GetDownloadResignationLetterResponses = {
 
 export type GetDownloadResignationLetterResponse =
   GetDownloadResignationLetterResponses[keyof GetDownloadResignationLetterResponses];
+
+export type PostUpdateEmploymentFederalTaxesData = {
+  /**
+   * Employment federal taxes params
+   */
+  body?: EmploymentFederalTaxesParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/federal-taxes';
+};
+
+export type PostUpdateEmploymentFederalTaxesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostUpdateEmploymentFederalTaxesError =
+  PostUpdateEmploymentFederalTaxesErrors[keyof PostUpdateEmploymentFederalTaxesErrors];
+
+export type PostUpdateEmploymentFederalTaxesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostUpdateEmploymentFederalTaxesResponse =
+  PostUpdateEmploymentFederalTaxesResponses[keyof PostUpdateEmploymentFederalTaxesResponses];
 
 export type GetIndexContractAmendmentData = {
   body?: never;
@@ -14322,7 +14635,12 @@ export type GetTimeoffTypesTimeoffData = {
     Authorization: string;
   };
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Optional. Employment type to list time off types for: `contractor` or `full_time`. Omit for backward-compatible behavior (full-time types).
+     */
+    type?: TimeoffTypesEmploymentType;
+  };
   url: '/v1/timeoff/types';
 };
 

@@ -57,6 +57,48 @@ describe('ReviewStep Component', () => {
       });
     });
 
+    it('should render with creditRiskState "deposit_required" when onboardingReservesStatus is deposit_required', () => {
+      (useOnboardingContext as any).mockReturnValue({
+        onboardingBag: {
+          creditRiskStatus: 'no_deposit_required',
+          onboardingReservesStatus: 'deposit_required',
+          employment: { status: 'created' },
+        },
+        creditScore: {
+          showReserveInvoice: false,
+          showInviteSuccessful: false,
+        },
+      });
+
+      render(<ReviewStep render={mockRender} />);
+
+      expect(mockRender).toHaveBeenCalledWith({
+        creditRiskState: 'deposit_required',
+        creditRiskStatus: 'no_deposit_required',
+      });
+    });
+
+    it('should render with creditRiskState "deposit_required" when either creditRiskStatus or onboardingReservesStatus is deposit_required', () => {
+      (useOnboardingContext as any).mockReturnValue({
+        onboardingBag: {
+          creditRiskStatus: 'deposit_required',
+          onboardingReservesStatus: 'no_deposit_required',
+          employment: { status: 'created' },
+        },
+        creditScore: {
+          showReserveInvoice: false,
+          showInviteSuccessful: false,
+        },
+      });
+
+      render(<ReviewStep render={mockRender} />);
+
+      expect(mockRender).toHaveBeenCalledWith({
+        creditRiskState: 'deposit_required',
+        creditRiskStatus: 'deposit_required',
+      });
+    });
+
     it('should not show deposit_required when employment status is "invited"', () => {
       (useOnboardingContext as any).mockReturnValue({
         onboardingBag: {
