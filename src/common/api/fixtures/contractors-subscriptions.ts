@@ -253,3 +253,57 @@ export const mockCOROnlyResponse = {
     },
   ],
 };
+
+export const mockCMOnlyResponse = {
+  data: [
+    {
+      product: {
+        active: true,
+        name: 'Monthly Contractor Subscription',
+        description: 'Engage and pay contractors compliantly',
+        features: [
+          'Localized contract templates',
+          'Only pay for active contractors',
+          'Work with contractors in 200+ countries and jurisdictions',
+          'AI-powered features to reduce misclassification risks',
+        ],
+        identifier:
+          'urn:remotecom:resource:product:contractor:standard:monthly',
+        slug: '8af901a0-25d7-4989-8105-dbd939cc4c82',
+        inserted_at: '2025-06-10',
+        short_name: 'CM',
+        frequency: 'monthly',
+        tier: 'standard',
+        employment_type: 'contractor',
+      },
+      currency: {
+        code: 'USD',
+        name: 'United States Dollar',
+        symbol: '$',
+        slug: '1b2c181d-24c9-44ff-a8e1-2a7025ca491c',
+      },
+      price: {
+        amount: 2900,
+        final_amount: 2900,
+      },
+      total_amount: 0,
+      company_product: {
+        slug: '20278d56-b4cf-43f0-80a4-725b53f9e4ff',
+      },
+      company_product_discount: {
+        percent: '0.000000',
+        expiration_date: null,
+      },
+      free_trial: {
+        status: 'ineligible',
+        start_date: null,
+        end_date: null,
+      },
+      active_contractors_count: 0,
+      billable_contractors: [],
+      billable_contractors_count: 0,
+      next_invoice_date: '2026-04-01',
+      summary_period: '2026-03',
+    },
+  ],
+};

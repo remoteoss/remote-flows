@@ -391,9 +391,7 @@ export const useContractorSubscriptionSchemaField = (
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
 
-  const isOnlyCORSubscription =
-    contractorSubscriptions?.length === 1 &&
-    contractorSubscriptions[0].product.short_name === 'COR';
+  const isSingleSubscription = contractorSubscriptions?.length === 1;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
@@ -403,7 +401,7 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    (isOnlyCORSubscription ||
+    (isSingleSubscription ||
       isEligibilityQuestionnaireBlocked === true ||
       isEmptyContractorSubscriptions) &&
     selectedCountry?.eor_onboarding;
