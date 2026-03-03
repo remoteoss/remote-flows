@@ -389,6 +389,8 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
+
   const isOnlyCORSubscription =
     contractorSubscriptions?.length === 1 &&
     contractorSubscriptions[0].product.short_name === 'COR';
@@ -401,7 +403,9 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    (isOnlyCORSubscription || isEligibilityQuestionnaireBlocked === true) &&
+    (isOnlyCORSubscription ||
+      isEligibilityQuestionnaireBlocked === true ||
+      isEmptyContractorSubscriptions) &&
     selectedCountry?.eor_onboarding;
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
