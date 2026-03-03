@@ -115,6 +115,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Install dependencies (PR branch)
+        if: steps.check-scripts.outputs.exists == 'true'
+        run: npm ci --ignore-scripts
+
       - name: Download current coverage
         uses: actions/download-artifact@v4
         with:
