@@ -44,6 +44,7 @@ import {
   mockContractorSubscriptionWithBlockedEligibilityResponse,
   mockContractorSubscriptionWithEligibilityResponse,
   mockCOROnlyResponse,
+  mockCMOnlyResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
 
@@ -2294,6 +2295,45 @@ describe('ContractorOnboardingFlow', () => {
             return HttpResponse.json({
               data: [],
             });
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          {...defaultProps}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await waitFor(() => {
+        const eorOption = screen.getByRole('radio', {
+          name: /Employer of Record/i,
+        });
+        expect(eorOption).toBeInTheDocument();
+      });
+    });
+
+    it('should show Employer of Record option when only CM subscription is available', async () => {
+      server.use(
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          () => {
+            return HttpResponse.json(mockCMOnlyResponse);
           },
         ),
       );
