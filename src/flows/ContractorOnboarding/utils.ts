@@ -12,7 +12,6 @@ export type StepKeys =
   | 'basic_information'
   | 'contract_details'
   | 'eligibility_questionnaire'
-  | 'choose_alternative_plan'
   | 'contract_preview'
   | 'pricing_plan'
   | 'review';
@@ -48,11 +47,6 @@ export function buildSteps(config: StepConfig = {}) {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
       visible: Boolean(config?.includeEligibilityQuestionnaire),
-    },
-    {
-      name: 'choose_alternative_plan',
-      label: 'Choose Alternative Plan',
-      visible: false,
     },
     {
       name: 'contract_details',

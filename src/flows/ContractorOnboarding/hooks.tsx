@@ -27,8 +27,8 @@ import {
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
-  useGetChooseAlternativePlan,
   useContractorOnboardingDetailsSchemaWithCurrencies,
+  CONTRACT_PRODUCT_TITLES,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -52,6 +52,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   corProductIdentifier,
+  eorProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
@@ -74,7 +75,6 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
-  choose_alternative_plan: null,
   contract_preview: null,
   review: null,
 };
@@ -110,7 +110,6 @@ export const useContractorOnboarding = ({
     contract_preview: Meta;
     pricing_plan: Meta;
     eligibility_questionnaire: Meta;
-    choose_alternative_plan: Meta;
   }>({
     select_country: {},
     basic_information: {},
@@ -118,7 +117,6 @@ export const useContractorOnboarding = ({
     contract_preview: {},
     pricing_plan: {},
     eligibility_questionnaire: {},
-    choose_alternative_plan: {},
   });
 
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
@@ -130,9 +128,6 @@ export const useContractorOnboarding = ({
 
   const [includeContractPreview, setIncludeContractPreview] =
     useState<boolean>(true);
-
-  const [includeChooseAlternativePlan, setIncludeChooseAlternativePlan] =
-    useState<boolean>(false);
 
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
@@ -527,21 +522,6 @@ export const useContractorOnboarding = ({
     fieldValues: eligibilityFields,
   });
 
-  const {
-    form: chooseAlternativePlanForm,
-    isLoading: isLoadingChooseAlternativePlan,
-  } = useGetChooseAlternativePlan(
-    internalEmploymentId as string,
-    selectedCountry,
-    {
-      jsfModify: options?.jsfModify?.choose_alternative_plan,
-      queryOptions: {
-        enabled: includeChooseAlternativePlan,
-      },
-      excludeProducts: excludeProducts,
-    },
-  );
-
   const isContractorOnboardingDetailsEnabled = Boolean(
     (internalCountryCode &&
       stepState.currentStep.name === 'contract_details') ||
@@ -602,7 +582,6 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
-      choose_alternative_plan: chooseAlternativePlanForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -614,7 +593,6 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
       eligibilityQuestionnaireForm?.fields,
-      chooseAlternativePlanForm?.fields,
     ],
   );
 
@@ -627,7 +605,6 @@ export const useContractorOnboarding = ({
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
-    choose_alternative_plan: null,
     contract_preview: null,
     review: null,
   };
@@ -773,8 +750,7 @@ export const useContractorOnboarding = ({
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
     isLoadingContractDocuments ||
-    isLoadingEligibilityQuestionnaire ||
-    isLoadingChooseAlternativePlan;
+    isLoadingEligibilityQuestionnaire;
 
   const isNavigatingToReview = useMemo(() => {
     const isCor = employment?.contractor_type === 'cor';
@@ -826,8 +802,6 @@ export const useContractorOnboarding = ({
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
         ),
-        // we don't need to tell the user about this values
-        choose_alternative_plan: {},
       };
 
       setStepValues({
@@ -837,7 +811,6 @@ export const useContractorOnboarding = ({
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
         eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
-        choose_alternative_plan: {},
         review: {},
       });
       goToStep('review');
@@ -920,19 +893,6 @@ export const useContractorOnboarding = ({
       return await parseJSFToValidate(
         values,
         eligibilityQuestionnaireForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
-    }
-
-    if (
-      chooseAlternativePlanForm &&
-      stepState.currentStep.name === 'choose_alternative_plan'
-    ) {
-      return await parseJSFToValidate(
-        values,
-        chooseAlternativePlanForm?.fields,
         {
           isPartialValidation: false,
         },
@@ -1042,6 +1002,33 @@ export const useContractorOnboarding = ({
         });
       }
       case 'pricing_plan': {
+        const blockedProductsEligibility = [
+          corProductIdentifier,
+          contractorPlusProductIdentifier,
+        ];
+
+        if (
+          isEligibilityQuestionnaireBlocked &&
+          blockedProductsEligibility.includes(values.subscription)
+        ) {
+          throw createStructuredError(
+            `This individual is not eligible for ${
+              CONTRACT_PRODUCT_TITLES[
+                values.subscription as keyof typeof CONTRACT_PRODUCT_TITLES
+              ]
+            }.`,
+          );
+        }
+        // Handle EOR selection (from merged options)
+        if (values.subscription === eorProductIdentifier) {
+          // EOR selection - no API call needed at this step
+          return Promise.resolve({
+            data: {
+              subscription: values.subscription,
+            },
+          });
+        }
+
         if (
           hasEligibilityQuestionnaireSubmitted &&
           values.subscription !== corProductIdentifier
@@ -1093,9 +1080,11 @@ export const useContractorOnboarding = ({
           const isEligibilityQuestionnaireBlocked = response?.data?.is_blocking;
 
           if (isEligibilityQuestionnaireBlocked) {
-            setIncludeChooseAlternativePlan(true);
-            setPendingNavigationStep('choose_alternative_plan');
-            return { ...response, _skipNextStep: true };
+            setIncludeEligibilityQuestionnaire(false);
+            setPendingNavigationStep('pricing_plan');
+            throw createStructuredError(
+              'This individual is not eligible for Contractor of Record.',
+            );
           }
 
           return await manageContractorCorSubscriptionMutationAsync({
@@ -1105,25 +1094,6 @@ export const useContractorOnboarding = ({
           // Always refetch to keep state in sync, even on error
           await refetchContractorSubscriptions();
         }
-      }
-
-      case 'choose_alternative_plan': {
-        const subscription = parsedValues.subscription;
-
-        if (subscription === contractorStandardProductIdentifier) {
-          await manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'downgrade',
-            },
-          });
-        }
-
-        setIncludeChooseAlternativePlan(false);
-
-        return Promise.resolve({
-          data: { subscription },
-        });
       }
 
       default: {
@@ -1272,17 +1242,6 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
-      }
-
-      if (
-        chooseAlternativePlanForm &&
-        stepState.currentStep.name === 'choose_alternative_plan'
-      ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          chooseAlternativePlanForm?.fields,
-        );
-        return chooseAlternativePlanForm?.handleValidation(parsedValues);
       }
 
       return null;
