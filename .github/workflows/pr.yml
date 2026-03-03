@@ -132,7 +132,7 @@ jobs:
         id: compare
         run: |
           # Run comparison (will handle missing base file gracefully)
-          npx tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
+          npm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
 
           # Read the report for the PR comment
           REPORT=$(cat out/coverage-report.md)
