@@ -118,7 +118,7 @@
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
     "lucide-react": "0.477.0",
-    "pdfjs-dist": "^5.4.296",
+    "pdfjs-dist": "^2.16.105",
     "postcss": "^8.5.3",
     "react-day-picker": "^8.10.1",
     "react-flagpack": "^2.0.6",
