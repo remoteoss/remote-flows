@@ -47,7 +47,7 @@ jobs:
       - name: Generate badge and history data
         run: |
           # Generate the badge data
-          npx tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
+          npm exec tsx scripts/update-size-badge.ts out/bundle-analysis.json > out/size-data.json
 
       - name: Update GitHub Gist
         if: env.GIST_ID != '' && env.GIST_TOKEN != ''
