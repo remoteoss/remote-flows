@@ -267,7 +267,8 @@ export const mockCMOnlyResponse = {
           'Work with contractors in 200+ countries and jurisdictions',
           'AI-powered features to reduce misclassification risks',
         ],
-        identifier: 'urn:remotecom:resource:product:contractor:standard:monthly',
+        identifier:
+          'urn:remotecom:resource:product:contractor:standard:monthly',
         slug: '8af901a0-25d7-4989-8105-dbd939cc4c82',
         inserted_at: '2025-06-10',
         short_name: 'CM',
