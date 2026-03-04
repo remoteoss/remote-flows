@@ -28,5 +28,10 @@ export const tsup: Options = {
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
   external: ['react', 'react-dom'],
-  noExternal: ['react-hook-form', '@hookform/resolvers'],
+  noExternal: [
+    'react-hook-form',
+    '@hookform/resolvers',
+    '@tanstack/react-query',
+    'react-flagpack',
+  ],
 };
