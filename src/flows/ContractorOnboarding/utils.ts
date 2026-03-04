@@ -12,7 +12,6 @@ export type StepKeys =
   | 'basic_information'
   | 'contract_details'
   | 'eligibility_questionnaire'
-  | 'choose_alternative_plan'
   | 'contract_preview'
   | 'pricing_plan'
   | 'review';
@@ -20,6 +19,7 @@ export type StepKeys =
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
+  includeContractPreview?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
@@ -49,11 +49,6 @@ export function buildSteps(config: StepConfig = {}) {
       visible: Boolean(config?.includeEligibilityQuestionnaire),
     },
     {
-      name: 'choose_alternative_plan',
-      label: 'Choose Alternative Plan',
-      visible: false,
-    },
-    {
       name: 'contract_details',
       label: 'Contract Details',
       visible: true,
@@ -61,7 +56,7 @@ export function buildSteps(config: StepConfig = {}) {
     {
       name: 'contract_preview',
       label: 'Contract Preview',
-      visible: true,
+      visible: Boolean(config?.includeContractPreview),
     },
     {
       name: 'review',

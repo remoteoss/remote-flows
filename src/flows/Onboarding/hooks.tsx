@@ -665,6 +665,12 @@ export const useOnboarding = ({
       });
     }
 
+    if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
+      return await parseJSFToValidate(values, benefitOffersSchema?.fields, {
+        isPartialValidation: false,
+      });
+    }
+
     return {};
   };
 
@@ -754,7 +760,7 @@ export const useOnboarding = ({
       case 'benefits': {
         return updateBenefitsOffersMutationAsync({
           employmentId: internalEmploymentId as string,
-          ...values,
+          ...parsedValues,
         });
       }
     }

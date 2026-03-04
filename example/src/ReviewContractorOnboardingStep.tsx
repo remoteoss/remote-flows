@@ -112,15 +112,13 @@ export const ReviewContractorOnboardingStep = ({
       >
         Edit Contract Details
       </button>
-      <h2 className='title'>Contract Preview</h2>
-      <ReviewMeta meta={onboardingBag.meta.fields.contract_preview} />
-
-      <button
-        className='back-button'
-        onClick={() => onboardingBag.goTo('contract_preview')}
-      >
-        Edit Contract Preview
-      </button>
+      {onboardingBag.stepState.values?.pricing_plan?.subscription !==
+        corProductIdentifier && (
+        <>
+          <h2 className='title'>Contract Preview</h2>
+          <ReviewMeta meta={onboardingBag.meta.fields.contract_preview} />
+        </>
+      )}
 
       {invitedStatus === 'not_invited' &&
         typeof onboardingBag.employment?.basic_information?.name ===

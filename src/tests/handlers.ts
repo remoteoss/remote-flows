@@ -1,7 +1,10 @@
 import { http, HttpResponse } from 'msw';
 import { identityMock } from '@/src/common/api/fixtures/identity';
 import { legalEntitiesMock } from '@/src/common/api/fixtures/legal-entities';
-import { mockEligibilityQuestionnaireSchema } from '@/src/common/api/fixtures/eligibility-questionnaire';
+import {
+  mockEligibilityQuestionnaireResponse,
+  mockEligibilityQuestionnaireSchema,
+} from '@/src/common/api/fixtures/eligibility-questionnaire';
 import {
   mockContractorSubscriptionResponse,
   mockManageSubscriptionResponse,
@@ -12,6 +15,7 @@ import {
   mockContractorCurrenciesResponse,
 } from '@/src/common/api/fixtures/contractors';
 import { mockCompanyPricingPlansResponse } from '@/src/common/api/fixtures/companies';
+import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -25,6 +29,13 @@ const eligibilityQuestionnaireHandler = http.get(
   '*/v1/contractors/schemas/eligibility-questionnaire',
   async () => {
     return HttpResponse.json(mockEligibilityQuestionnaireSchema);
+  },
+);
+
+const eligibilityQuestionnaireResponseHandler = http.post(
+  '*/v1/contractors/eligibility-questionnaire',
+  async () => {
+    return HttpResponse.json(mockEligibilityQuestionnaireResponse);
   },
 );
 
@@ -45,6 +56,13 @@ const manageSubscriptionHandler = http.post(
 const countriesHandler = http.get('*/v1/countries', () => {
   return HttpResponse.json(countriesMock);
 });
+
+const contractorCORSubscriptionHandler = http.post(
+  '*/v1/contractors/employments/*/contractor-cor-subscription',
+  async () => {
+    return HttpResponse.json(mockBaseResponse);
+  },
+);
 
 const contractorCurrenciesHandler = http.get(
   '*/v1/contractors/employments/*/contractor-currencies',
@@ -71,7 +89,9 @@ export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
   eligibilityQuestionnaireHandler,
+  eligibilityQuestionnaireResponseHandler,
   contractorSubscriptionHandler,
+  contractorCORSubscriptionHandler,
   manageSubscriptionHandler,
   countriesHandler,
   contractorCurrenciesHandler,

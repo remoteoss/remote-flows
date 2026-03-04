@@ -27,8 +27,8 @@ import {
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
-  useGetChooseAlternativePlan,
   useContractorOnboardingDetailsSchemaWithCurrencies,
+  CONTRACT_PRODUCT_TITLES,
 } from '@/src/flows/ContractorOnboarding/api';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import {
@@ -52,6 +52,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   corProductIdentifier,
+  eorProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
@@ -74,7 +75,6 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
-  choose_alternative_plan: null,
   contract_preview: null,
   review: null,
 };
@@ -110,7 +110,6 @@ export const useContractorOnboarding = ({
     contract_preview: Meta;
     pricing_plan: Meta;
     eligibility_questionnaire: Meta;
-    choose_alternative_plan: Meta;
   }>({
     select_country: {},
     basic_information: {},
@@ -118,7 +117,6 @@ export const useContractorOnboarding = ({
     contract_preview: {},
     pricing_plan: {},
     eligibility_questionnaire: {},
-    choose_alternative_plan: {},
   });
 
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
@@ -128,8 +126,8 @@ export const useContractorOnboarding = ({
   const [includeEligibilityQuestionnaire, setIncludeEligibilityQuestionnaire] =
     useState<boolean>(false);
 
-  const [includeChooseAlternativePlan, setIncludeChooseAlternativePlan] =
-    useState<boolean>(false);
+  const [includeContractPreview, setIncludeContractPreview] =
+    useState<boolean>(true);
 
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
@@ -139,8 +137,9 @@ export const useContractorOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+        includeContractPreview: includeContractPreview,
       }),
-    [includeEligibilityQuestionnaire, skipSteps],
+    [includeEligibilityQuestionnaire, includeContractPreview, skipSteps],
   );
 
   const {
@@ -299,6 +298,11 @@ export const useContractorOnboarding = ({
       setIncludeEligibilityQuestionnaire(false);
     }
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
+
+  useEffect(() => {
+    const isCor = employment?.contractor_type === 'cor';
+    setIncludeContractPreview(!isCor);
+  }, [employment?.contractor_type]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -518,21 +522,6 @@ export const useContractorOnboarding = ({
     fieldValues: eligibilityFields,
   });
 
-  const {
-    form: chooseAlternativePlanForm,
-    isLoading: isLoadingChooseAlternativePlan,
-  } = useGetChooseAlternativePlan(
-    internalEmploymentId as string,
-    selectedCountry,
-    {
-      jsfModify: options?.jsfModify?.choose_alternative_plan,
-      queryOptions: {
-        enabled: includeChooseAlternativePlan,
-      },
-      excludeProducts: excludeProducts,
-    },
-  );
-
   const isContractorOnboardingDetailsEnabled = Boolean(
     (internalCountryCode &&
       stepState.currentStep.name === 'contract_details') ||
@@ -593,7 +582,6 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
-      choose_alternative_plan: chooseAlternativePlanForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
       contract_preview: signatureSchemaForm?.fields || [],
       review: [],
@@ -605,7 +593,6 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
       eligibilityQuestionnaireForm?.fields,
-      chooseAlternativePlanForm?.fields,
     ],
   );
 
@@ -618,7 +605,6 @@ export const useContractorOnboarding = ({
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
-    choose_alternative_plan: null,
     contract_preview: null,
     review: null,
   };
@@ -764,17 +750,20 @@ export const useContractorOnboarding = ({
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
     isLoadingContractDocuments ||
-    isLoadingEligibilityQuestionnaire ||
-    isLoadingChooseAlternativePlan;
+    isLoadingEligibilityQuestionnaire;
 
   const isNavigatingToReview = useMemo(() => {
+    const isCor = employment?.contractor_type === 'cor';
+    const hasContractPreviewFields =
+      isCor || stepFields.contract_preview.length > 0;
+
     return Boolean(
       shouldHandleReadOnlyEmployment &&
         !initialLoading &&
         Boolean(internalContractDocumentId) &&
         stepFields.basic_information.length > 0 &&
         stepFields.contract_details.length > 0 &&
-        stepFields.contract_preview.length > 0,
+        hasContractPreviewFields,
     );
   }, [
     shouldHandleReadOnlyEmployment,
@@ -783,6 +772,7 @@ export const useContractorOnboarding = ({
     stepFields.basic_information.length,
     stepFields.contract_details.length,
     stepFields.contract_preview.length,
+    employment?.contractor_type,
   ]);
 
   useEffect(() => {
@@ -812,8 +802,6 @@ export const useContractorOnboarding = ({
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
         ),
-        // we don't need to tell the user about this values
-        choose_alternative_plan: {},
       };
 
       setStepValues({
@@ -823,7 +811,6 @@ export const useContractorOnboarding = ({
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
         eligibility_questionnaire: eligibilityQuestionnaireInitialValues,
-        choose_alternative_plan: {},
         review: {},
       });
       goToStep('review');
@@ -912,19 +899,6 @@ export const useContractorOnboarding = ({
       );
     }
 
-    if (
-      chooseAlternativePlanForm &&
-      stepState.currentStep.name === 'choose_alternative_plan'
-    ) {
-      return await parseJSFToValidate(
-        values,
-        chooseAlternativePlanForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
-    }
-
     return {};
   };
 
@@ -971,10 +945,13 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Employment ID not found');
           }
 
-          setInternalEmploymentId(employmentId);
           await updateUKandSaudiFieldsMutation({
             employmentId: employmentId as string,
           });
+
+          // Only update state (triggers queries with fully consistent backend state) if not caused a bug
+          // if one of the updateUKandSaudiFieldsMutation fails with a 422 for example
+          setInternalEmploymentId(employmentId);
 
           return response;
         } else if (internalEmploymentId) {
@@ -1009,6 +986,7 @@ export const useContractorOnboarding = ({
           throw createStructuredError('Contract document ID not found');
         }
         setInternalContractDocumentId(contractDocumentId);
+
         return response;
       }
 
@@ -1020,10 +998,36 @@ export const useContractorOnboarding = ({
             signature: parsedValues.signature,
           },
         });
-        await refetchEmployment();
         return response;
       }
       case 'pricing_plan': {
+        const blockedProductsEligibility = [
+          corProductIdentifier,
+          contractorPlusProductIdentifier,
+        ];
+
+        if (
+          isEligibilityQuestionnaireBlocked &&
+          blockedProductsEligibility.includes(values.subscription)
+        ) {
+          throw createStructuredError(
+            `This individual is not eligible for ${
+              CONTRACT_PRODUCT_TITLES[
+                values.subscription as keyof typeof CONTRACT_PRODUCT_TITLES
+              ]
+            }.`,
+          );
+        }
+        // Handle EOR selection (from merged options)
+        if (values.subscription === eorProductIdentifier) {
+          // EOR selection - no API call needed at this step
+          return Promise.resolve({
+            data: {
+              subscription: values.subscription,
+            },
+          });
+        }
+
         if (
           hasEligibilityQuestionnaireSubmitted &&
           values.subscription !== corProductIdentifier
@@ -1075,9 +1079,11 @@ export const useContractorOnboarding = ({
           const isEligibilityQuestionnaireBlocked = response?.data?.is_blocking;
 
           if (isEligibilityQuestionnaireBlocked) {
-            setIncludeChooseAlternativePlan(true);
-            setPendingNavigationStep('choose_alternative_plan');
-            return { ...response, _skipNextStep: true };
+            setIncludeEligibilityQuestionnaire(false);
+            setPendingNavigationStep('pricing_plan');
+            throw createStructuredError(
+              'This individual is not eligible for Contractor of Record.',
+            );
           }
 
           return await manageContractorCorSubscriptionMutationAsync({
@@ -1089,25 +1095,6 @@ export const useContractorOnboarding = ({
         }
       }
 
-      case 'choose_alternative_plan': {
-        const subscription = parsedValues.subscription;
-
-        if (subscription === contractorStandardProductIdentifier) {
-          await manageContractorSubscriptionMutationAsync({
-            employmentId: internalEmploymentId as string,
-            payload: {
-              operation: 'downgrade',
-            },
-          });
-        }
-
-        setIncludeChooseAlternativePlan(false);
-
-        return Promise.resolve({
-          data: { subscription },
-        });
-      }
-
       default: {
         throw createStructuredError('Invalid step state');
       }
@@ -1115,6 +1102,11 @@ export const useContractorOnboarding = ({
   }
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+
+  const handleNextStep = () => {
+    nextStep();
+    refetchEmployment();
+  };
 
   return {
     /**
@@ -1148,7 +1140,7 @@ export const useContractorOnboarding = ({
      * Function to handle going to the next step
      * @returns {void}
      */
-    next: nextStep,
+    next: handleNextStep,
 
     /**
      * Function to handle going to a specific step
@@ -1254,17 +1246,6 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
-      }
-
-      if (
-        chooseAlternativePlanForm &&
-        stepState.currentStep.name === 'choose_alternative_plan'
-      ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          chooseAlternativePlanForm?.fields,
-        );
-        return chooseAlternativePlanForm?.handleValidation(parsedValues);
       }
 
       return null;

@@ -23,7 +23,6 @@ import {
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
-import { chooseAlternativePlanSchema } from '@/src/flows/ContractorOnboarding/json-schemas/chooseAlternativePlanStep';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -303,7 +302,7 @@ const useContractorOnboardingDetailsSchema = ({
   });
 };
 
-const CONTRACT_PRODUCT_TITLES = {
+export const CONTRACT_PRODUCT_TITLES = {
   [contractorStandardProductIdentifier]: 'Contractor Management',
   [contractorPlusProductIdentifier]: 'Contractor Management Plus',
   [corProductIdentifier]: 'Contractor of Record',
@@ -390,13 +389,26 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
-  const isOnlyCORSubscription =
-    contractorSubscriptions?.length === 1 &&
-    contractorSubscriptions[0].product.short_name === 'COR';
+  const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
+
+  const isSingleSubscription = contractorSubscriptions?.length === 1;
+
+  const corSubscription = contractorSubscriptions?.find(
+    (subscription) => subscription.product.short_name === 'COR',
+  );
+
+  const isEligibilityQuestionnaireBlocked =
+    corSubscription?.eligibility_questionnaire?.is_blocking;
+
+  const showEorSubscription =
+    (isSingleSubscription ||
+      isEligibilityQuestionnaireBlocked === true ||
+      isEmptyContractorSubscriptions) &&
+    selectedCountry?.eor_onboarding;
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
-      enabled: isOnlyCORSubscription,
+      enabled: showEorSubscription,
     });
 
   const form = createHeadlessForm(
@@ -405,18 +417,14 @@ export const useContractorSubscriptionSchemaField = (
     options,
   );
 
-  const corSubscription = contractorSubscriptions?.find(
-    (subscription) => subscription.product.short_name === 'COR',
-  );
-  const isEligibilityQuestionnaireBlocked =
-    corSubscription?.eligibility_questionnaire?.is_blocking;
-
   if (contractorSubscriptions) {
     const field: JSFField | undefined = form.fields.find(
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
+
     if (field) {
-      const fieldOptions = contractorSubscriptions
+      // Start with contractor management options
+      const contractorOptions = contractorSubscriptions
         .filter((opts) =>
           shouldIncludeProduct(
             opts.product.identifier ?? '',
@@ -452,16 +460,33 @@ export const useContractorSubscriptionSchemaField = (
               product.identifier !== contractorStandardProductIdentifier,
           };
         });
-      if (isOnlyCORSubscription && selectedCountry?.eor_onboarding) {
+
+      // Sort contractor options
+      contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
+
+      // Build otherSubscriptions (EOR) with separator metadata
+      const otherOptions: $TSFixMe[] = [];
+      if (showEorSubscription) {
         addEorToFieldOptions(
-          fieldOptions,
+          otherOptions as unknown as $TSFixMe[],
           eorSubscription,
           options?.excludeProducts,
         );
+
+        // Add separator metadata to first "other" option
+        // only the first option to avoid problems when iterating over the options
+        if (otherOptions.length > 0) {
+          otherOptions[0].meta = {
+            ...otherOptions[0].meta,
+            groupSeparator: {
+              show: true,
+            },
+          };
+        }
       }
-      field.options = fieldOptions.sort((a, b) =>
-        a.label.localeCompare(b.label),
-      );
+
+      // Combine all options into the single field
+      field.options = [...contractorOptions, ...otherOptions];
     }
   }
 
@@ -471,100 +496,6 @@ export const useContractorSubscriptionSchemaField = (
     contractorSubscriptions,
     refetch,
     isEligibilityQuestionnaireBlocked,
-  };
-};
-
-export const useGetChooseAlternativePlan = (
-  employmentId: string,
-  selectedCountry: SelectedCountry,
-  options?: FlowOptions & {
-    queryOptions?: { enabled?: boolean };
-    jsfModify?: JSFModify;
-    excludeProducts?: ProductType[];
-  },
-) => {
-  const { eorSubscription, isLoading: isLoadingEorSubscription } =
-    useEorSubscription();
-
-  const {
-    data: contractorSubscriptions,
-    isLoading,
-    refetch,
-  } = useGetContractorSubscriptions({
-    employmentId: employmentId,
-    options: {
-      queryOptions: options?.queryOptions,
-    },
-  });
-
-  const form = createHeadlessForm(
-    chooseAlternativePlanSchema.data.schema,
-    {},
-    options,
-  );
-
-  if (contractorSubscriptions) {
-    const field: JSFField | undefined = form.fields.find(
-      (field) => field.name === 'subscription',
-    ) as JSFField | undefined;
-
-    if (field) {
-      const availablePlans = contractorSubscriptions.filter(
-        (sub) =>
-          sub.product.short_name === 'CM' &&
-          shouldIncludeProduct(
-            sub.product.identifier ?? '',
-            options?.excludeProducts,
-          ),
-      );
-
-      const fieldOptions = availablePlans.map((opts) => {
-        const product = opts.product;
-        const price = opts.price.amount;
-        const currencyCode = opts.currency.code;
-        const title =
-          CONTRACT_PRODUCT_TITLES[
-            product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-          ] ?? '';
-        const label = title;
-        const value = product.identifier ?? '';
-        const description = product.description ?? '';
-        const features = product.features ?? [];
-        const meta = {
-          features,
-          price: {
-            amount: convertFromCents(price),
-            currencyCode: currencyCode,
-          },
-        };
-        return {
-          label,
-          value,
-          description,
-          meta,
-          disabled: false,
-        };
-      });
-
-      if (selectedCountry?.eor_onboarding) {
-        addEorToFieldOptions(
-          fieldOptions,
-          eorSubscription,
-          options?.excludeProducts,
-        );
-      }
-
-      field.options = fieldOptions.sort((a, b) =>
-        a.label.localeCompare(b.label),
-      );
-    }
-  }
-
-  return {
-    isLoading: isLoading || isLoadingEorSubscription,
-    form,
-    contractorSubscriptions,
-    refetch,
   };
 };
 

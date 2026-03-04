@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
@@ -77,7 +77,7 @@ export function ContractorOnboardingForm({
   }, []);
 
   const handleSubmit = async (values: Record<string, unknown>) => {
-    await onSubmit(values);
+    await onSubmit(values as $TSFixMe);
   };
 
   return (

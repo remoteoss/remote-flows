@@ -17,14 +17,13 @@ import {
   PricingPlanDataProps,
   corProductIdentifier,
   eorProductIdentifier,
-  useDiscardEmploymentMutation,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import {
   Card,
   Tabs,
   TabsTrigger,
   TabsList,
-  cn,
 } from '@remoteoss/remote-flows/internals';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
@@ -36,6 +35,26 @@ import { EngagingContractorsModal } from './components/PricingPlanModals';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
+const groupOptionsBySeparator = (options: $TSFixMe[]) => {
+  const groups: $TSFixMe[][] = [];
+  let currentGroup: $TSFixMe[] = [];
+
+  options?.forEach((option) => {
+    if (option.meta?.groupSeparator?.show && currentGroup.length > 0) {
+      groups.push(currentGroup);
+      currentGroup = [option];
+    } else {
+      currentGroup.push(option);
+    }
+  });
+
+  if (currentGroup.length > 0) {
+    groups.push(currentGroup);
+  }
+
+  return groups;
+};
+
 const PricingPlanCards = ({
   field,
   fieldData,
@@ -43,25 +62,48 @@ const PricingPlanCards = ({
   showPrice = true,
 }: PricingPlanComponentProps & { showPrice?: boolean }) => {
   const hasError = !!fieldState.error;
-  const items = fieldData.options?.length;
+
+  // Group options by separator
+  const groups = groupOptionsBySeparator(fieldData.options);
 
   return (
-    <div className={cn('grid gap-2', `grid-cols-${items ?? 3}`)}>
-      {fieldData.options?.map((option) => (
-        <PricingPlanCard
-          key={option.value}
-          title={option.label}
-          description={option.description}
-          features={option.meta?.features as string[]}
-          price={option.meta?.price}
-          value={option.value}
-          selected={field.value === option.value}
-          disabled={option.disabled}
-          showPrice={showPrice}
-          onSelect={(value: string) => {
-            field.onChange(value);
-          }}
-        />
+    <div className='flex flex-col gap-6'>
+      {groups.map((group, groupIndex) => (
+        <React.Fragment key={groupIndex}>
+          {/* Render separator if first option in group has one */}
+          {group[0]?.meta?.groupSeparator?.show && (
+            <div className='mt-4 mb-2'>
+              <h2 className='text-xl font-bold text-[#22863a]'>
+                Other available hiring plans
+              </h2>
+              <p className='text-sm text-[#71717A] mt-1'>
+                Based on the responses in your questionnaire, this individual
+                may also be eligible for our Employer of Record plan. For any
+                questions, please contact help@remote.com
+              </p>
+            </div>
+          )}
+
+          {/* Render all cards in this group in a single grid */}
+          <div className='grid gap-2 grid-cols-3'>
+            {group.map((option) => (
+              <PricingPlanCard
+                key={option.value}
+                title={option.label}
+                description={option.description}
+                features={option.meta?.features as string[]}
+                price={option.meta?.price}
+                value={option.value}
+                selected={field.value === option.value}
+                disabled={option.disabled}
+                showPrice={showPrice}
+                onSelect={(value: string) => {
+                  field.onChange(value);
+                }}
+              />
+            ))}
+          </div>
+        </React.Fragment>
       ))}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
@@ -103,7 +145,6 @@ const MultiStepForm = ({
     SelectCountryStep,
     PricingPlanStep,
     EligibilityQuestionnaireStep,
-    ChooseAlternativePlanStep,
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
@@ -115,8 +156,6 @@ const MultiStepForm = ({
     apiError: '',
     fieldErrors: [],
   });
-  const { mutateAsync: discardEmployment } = useDiscardEmploymentMutation();
-
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'select_country':
       return (
@@ -263,9 +302,12 @@ const MultiStepForm = ({
                   );
                 },
               }}
-              onSubmit={(payload: PricingPlanFormPayload) =>
-                console.log('payload', payload)
-              }
+              onSubmit={(payload: PricingPlanFormPayload) => {
+                console.log('payload', payload);
+                if (payload.subscription === eorProductIdentifier) {
+                  window.location.href = '?demo=onboarding-basic';
+                }
+              }}
               onSuccess={(response: PricingPlanResponse) =>
                 console.log('response', response)
               }
@@ -310,9 +352,9 @@ const MultiStepForm = ({
           <EligibilityQuestionnaireStep
             onSubmit={(payload) => console.log('payload', payload)}
             onSuccess={(response) => console.log('response', response)}
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
+            onError={({ error, fieldErrors }) => {
+              setErrors({ apiError: error.message, fieldErrors });
+            }}
           />
           <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
@@ -322,70 +364,6 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
-            <SubmitButton
-              className='submit-button'
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-            >
-              Continue
-            </SubmitButton>
-          </div>
-        </div>
-      );
-
-    case 'choose_alternative_plan':
-      return (
-        <div className='pricing-plan-form-layout'>
-          <div className='flex flex-col gap-2 text-center mb-6'>
-            <h1 className='text-2xl font-bold text-[#000000]'>
-              Choose Your Plan
-            </h1>
-            <p className='text-sm text-[#71717A]'>
-              This individual is not eligible for Contractor of Record. The
-              engagement terms imply an employer-employee relationship. We
-              suggest the plans below and recommend a legal review before
-              deciding. For any questions, contact help@remote.com.
-            </p>
-          </div>
-          <div className='mb-6'>
-            <ChooseAlternativePlanStep
-              components={{
-                radio: ({ field, fieldData, fieldState }) => {
-                  return (
-                    <PricingPlanCards
-                      fieldData={fieldData as PricingPlanDataProps}
-                      fieldState={fieldState}
-                      field={field}
-                    />
-                  );
-                },
-              }}
-              onSubmit={(payload) => {
-                console.log(
-                  'submitted choose alternative plan payload',
-                  payload,
-                );
-              }}
-              onSuccess={async (response) => {
-                if (response.subscription === eorProductIdentifier) {
-                  try {
-                    await discardEmployment({
-                      employmentId:
-                        contractorOnboardingBag.employmentId as string,
-                    });
-                  } catch (error) {
-                    console.error('error discarding employment', error);
-                  } finally {
-                    window.location.href = '?demo=onboarding-basic';
-                  }
-                }
-              }}
-              onError={({ error, fieldErrors }) =>
-                setErrors({ apiError: error.message, fieldErrors })
-              }
-            />
-          </div>
-          <AlertError errors={errors} />
-          <div className='contractor-onboarding-buttons-container'>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
