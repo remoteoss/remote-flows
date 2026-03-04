@@ -33,5 +33,6 @@ export const tsup: Options = {
     '@hookform/resolvers',
     '@tanstack/react-query',
     'react-flagpack',
+    'lucide-react',
   ],
 };
