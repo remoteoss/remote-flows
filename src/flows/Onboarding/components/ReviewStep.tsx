@@ -52,6 +52,12 @@ export function ReviewStep({ render }: ReviewStepProps) {
   const isDepositRequiredCreditRisk =
     onboardingBag.creditRiskStatus === 'deposit_required';
 
+  const isDepositRequiredReservesStatus =
+    onboardingBag.onboardingReservesStatus === 'deposit_required';
+
+  const isDepositRequired =
+    isDepositRequiredCreditRisk || isDepositRequiredReservesStatus;
+
   const isReferred = onboardingBag.creditRiskStatus === 'referred';
 
   const hasEmploymentStatusThatHidesDeposit =
@@ -63,12 +69,14 @@ export function ReviewStep({ render }: ReviewStepProps) {
     CREDIT_RISK_STATUSES.includes(onboardingBag.creditRiskStatus);
 
   const shouldShowDepositFlow =
-    isDepositRequiredCreditRisk &&
+    isDepositRequired &&
     onboardingBag.employment?.status &&
     !hasEmploymentStatusThatHidesDeposit;
 
   const shouldShowInviteFlow =
-    (onboardingBag.creditRiskStatus && !isCreditRiskStatusInExclusionList) ||
+    (!isDepositRequired &&
+      onboardingBag.creditRiskStatus &&
+      !isCreditRiskStatusInExclusionList) ||
     (onboardingBag.employment?.status && hasEmploymentStatusThatHidesDeposit);
 
   const getCreditRiskState = (): CreditRiskState => {
