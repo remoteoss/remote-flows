@@ -210,7 +210,9 @@ jobs:
           node-version: '20'
 
       - name: Build library
-        run: npm run build
+        run: |
+          npm ci --ignore-scripts
+          npm run build
 
       - name: Deploy remote-flows to vercel
         id: vercel-remote-flows
@@ -245,7 +247,9 @@ jobs:
           node-version: '20'
 
       - name: Build library
-        run: npm run build
+        run: |
+          npm ci --ignore-scripts
+          npm run build
 
       - name: Deploy remote-flows-example-app to vercel
         id: vercel-example-app
