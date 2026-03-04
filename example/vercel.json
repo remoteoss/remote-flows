@@ -4,5 +4,5 @@
   "github": {
     "enabled": false
   },
-  "installCommand": "node scripts/set-commit-hash.js && cd .. && npm run build && cd example && npm install"
+  "installCommand": "node scripts/set-commit-hash.js && npm install"
 }
