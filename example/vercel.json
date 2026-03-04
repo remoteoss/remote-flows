@@ -5,5 +5,5 @@
     "enabled": false
   },
   "installCommand": "node scripts/set-commit-hash.js && cd .. && npm ci --ignore-scripts",
-  "buildCommand": "cd .. && npm run build && cd example && npm install && npm run build"
+  "buildCommand": "cd .. && npm run build && cd example && npm install --force && npm run build"
 }
