@@ -214,6 +214,9 @@ import type {
   GetSchemaBenefitRenewalRequestData,
   GetSchemaBenefitRenewalRequestErrors,
   GetSchemaBenefitRenewalRequestResponses,
+  GetShowBackgroundCheckData,
+  GetShowBackgroundCheckErrors,
+  GetShowBackgroundCheckResponses,
   GetShowBenefitRenewalRequestData,
   GetShowBenefitRenewalRequestErrors,
   GetShowBenefitRenewalRequestResponses,
@@ -224,6 +227,9 @@ import type {
   GetShowCompanyComplianceProfileErrors,
   GetShowCompanyComplianceProfileResponses,
   GetShowCompanyData,
+  GetShowCompanyEmploymentOnboardingReservesStatusData,
+  GetShowCompanyEmploymentOnboardingReservesStatusErrors,
+  GetShowCompanyEmploymentOnboardingReservesStatusResponses,
   GetShowCompanyErrors,
   GetShowCompanyManagerData,
   GetShowCompanyManagerErrors,
@@ -567,6 +573,9 @@ import type {
   PostUpdateCancelOnboardingData,
   PostUpdateCancelOnboardingErrors,
   PostUpdateCancelOnboardingResponses,
+  PostUpdateEmploymentFederalTaxesData,
+  PostUpdateEmploymentFederalTaxesErrors,
+  PostUpdateEmploymentFederalTaxesResponses,
   PostUploadEmployeeFileFileData,
   PostUploadEmployeeFileFileErrors,
   PostUploadEmployeeFileFileResponses,
@@ -788,7 +797,10 @@ export const getIndexCompanyPricingPlan = <
     GetIndexCompanyPricingPlanErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/companies/{company_id}/pricing-plans',
     ...options,
   });
@@ -1005,6 +1017,35 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Get Onboarding Reserves Status for Employment
+ *
+ * Returns the onboarding reserves status for a specific employment.
+ *
+ * The status is the same as the credit risk status but takes the onboarding reserves policies into account.
+ *
+ */
+export const getShowCompanyEmploymentOnboardingReservesStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetShowCompanyEmploymentOnboardingReservesStatusData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyEmploymentOnboardingReservesStatusResponses,
+    GetShowCompanyEmploymentOnboardingReservesStatusErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
+    ...options,
   });
 
 /**
@@ -1698,8 +1739,9 @@ export const putApproveContractAmendment = <
   });
 
 /**
- * List all currencies for the contractor, in the following order:
+ * List all currencies for the contractor
  *
+ * The currencies are listed in the following order:
  * 1. billing currency of the company
  * 2. currencies of contractor’s existing withdrawal methods
  * 3. currency of the contractor’s country
@@ -1744,6 +1786,24 @@ export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Show Background Check
+ *
+ * Show Background Check details for a given employment and background check request.
+ */
+export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowBackgroundCheckData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowBackgroundCheckResponses,
+    GetShowBackgroundCheckErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employments/{employment_id}/background-checks/{background_check_id}',
+    ...options,
   });
 
 /**
@@ -2320,6 +2380,56 @@ export const getDownloadResignationLetter = <
     ],
     url: '/v1/resignations/{offboarding_request_id}/resignation-letter',
     ...options,
+  });
+
+/**
+ * Update federal taxes
+ *
+ * Updates employment's federal taxes.
+ *
+ * Requirements to update federal taxes successfully:
+ * * Employment should be Global Payroll
+ * * Employment should be in the post-enrollment state
+ * * Employment should belong to USA
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ */
+export const postUpdateEmploymentFederalTaxes = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostUpdateEmploymentFederalTaxesData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostUpdateEmploymentFederalTaxesResponses,
+    PostUpdateEmploymentFederalTaxesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/federal-taxes',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -3576,7 +3686,12 @@ export const getIndexLeavePoliciesDetails = <
 /**
  * List Time Off Types
  *
- * Lists all time off types that can be used for the `timeoff_type` parameter
+ * Lists all time off types that can be used for the `timeoff_type` parameter.
+ *
+ * **Backward compatibility:** Calling this endpoint without the `type` query parameter returns the same response as before (time off types for full-time employments). Existing integrations do not need to change.
+ *
+ * Optionally, pass `type=contractor` to get time off types for contractor employments, or `type=full_time` for full-time employments (same as omitting the parameter).
+ *
  */
 export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<GetTimeoffTypesTimeoffData, ThrowOnError>,

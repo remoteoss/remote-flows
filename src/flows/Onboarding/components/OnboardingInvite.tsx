@@ -52,11 +52,15 @@ export function OnboardingInvite({
     useCreateReserveInvoiceMutation,
   );
 
+  const isDepositRequired =
+    onboardingBag.creditRiskStatus === 'deposit_required' ||
+    onboardingBag.onboardingReservesStatus === 'deposit_required';
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
       if (
-        onboardingBag.creditRiskStatus === 'deposit_required' &&
+        isDepositRequired &&
         onboardingBag.employmentId &&
         onboardingBag.employment?.status &&
         !onboardingBag.isEmploymentReadOnly
@@ -118,7 +122,7 @@ export function OnboardingInvite({
   };
 
   const isReserveFlow =
-    onboardingBag.creditRiskStatus === 'deposit_required' &&
+    isDepositRequired &&
     onboardingBag.employment?.status &&
     !onboardingBag.isEmploymentReadOnly;
 
