@@ -1,0 +1,2 @@
+import{a}from"../../../../chunk-G5HVKXCF.js";import"../../../../chunk-SFWCSF6V.js";import"../../../../chunk-376DMAND.js";import"../../../../chunk-VIGKOVHP.js";import"../../../../chunk-X6ZAR7ZL.js";import"../../../../chunk-KQPDXXG3.js";import"../../../../chunk-P37U34EQ.js";export{a as AcknowledgeInformationFees};
+//# sourceMappingURL=AcknowledgeInformationFees.js.map

@@ -1,0 +1,2 @@
+import{a as t}from"./chunk-P37U34EQ.js";import{createContext as r,useContext as e}from"react";var a=r({form:null,formId:void 0,costCalculatorBag:void 0}),n=t(()=>{let o=e(a);if(!o.form)throw new Error("useCostCalculatorContext must be used within a CostCalculatorProvider");return{form:o.form,formId:o.formId,costCalculatorBag:o.costCalculatorBag}},"useCostCalculatorContext");export{a,n as b};
+//# sourceMappingURL=chunk-KSHK3ZPX.js.map

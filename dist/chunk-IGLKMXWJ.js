@@ -1,0 +1,2 @@
+import{b as t}from"./chunk-RJY6AEJB.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as r}from"react/jsx-runtime";var u=n(p=>{let{"data-type":e,...o}=p;return e==="inline"?r(t,{size:"link",variant:"link",...o}):r(t,{...o})},"ButtonDefault");export{u as a};
+//# sourceMappingURL=chunk-IGLKMXWJ.js.map

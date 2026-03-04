@@ -1,0 +1,2 @@
+import{a,b as i,c as s}from"./chunk-TNN3W5TU.js";import{g as o}from"./chunk-DCQRTUIR.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as t,jsxs as c}from"react/jsx-runtime";function g({data:l}){let{title:e,description:r,severity:m}=l,p={warning:"warning",error:"destructive",info:"default",success:"warning"}[m]??"warning";return c(a,{variant:p,children:[t(o,{className:"h-4 w-4"}),e&&t(i,{dangerouslySetInnerHTML:{__html:e}}),r&&t(s,{dangerouslySetInnerHTML:{__html:r}})]})}n(g,"StatementDefault");export{g as a};
+//# sourceMappingURL=chunk-P6LFJMQE.js.map

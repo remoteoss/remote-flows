@@ -1,0 +1,2 @@
+import{K as e}from"./chunk-376DMAND.js";import{a as t}from"./chunk-P37U34EQ.js";var s=t((o,n="default")=>({queryKey:["countries",n],retry:!1,queryFn:t(async()=>{let r=await e({client:o,headers:{Authorization:""}});if(r.error||!r.data)throw new Error("Failed to fetch supported countries");return r},"queryFn")}),"countriesOptions");export{s as a};
+//# sourceMappingURL=chunk-DUNOJROD.js.map

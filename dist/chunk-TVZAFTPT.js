@@ -1,0 +1,2 @@
+import{a as n}from"./chunk-P37U34EQ.js";import{createContext as e,useContext as o}from"react";var r=e({formId:void 0,contractAmendmentBag:null}),c=n(()=>{let t=o(r);if(!t.contractAmendmentBag)throw new Error("useContractAmendmentContext must be used within a ContractAmendmentProvider");return{formId:t.formId,contractAmendment:t.contractAmendmentBag}},"useContractAmendmentContext");export{r as a,c as b};
+//# sourceMappingURL=chunk-TVZAFTPT.js.map

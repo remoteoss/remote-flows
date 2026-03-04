@@ -1,0 +1,2 @@
+import{b as t}from"./chunk-SFWCSF6V.js";import{a as r}from"./chunk-P37U34EQ.js";import{jsx as n}from"react/jsx-runtime";function p({helpCenter:e}){return e?n(t,{zendeskId:e.id,children:e.callToAction}):null}r(p,"HelpCenter");export{p as a};
+//# sourceMappingURL=chunk-KJ43CRLF.js.map

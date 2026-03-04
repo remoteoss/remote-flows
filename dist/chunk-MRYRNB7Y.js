@@ -1,0 +1,2 @@
+import{a as n}from"./chunk-P37U34EQ.js";import{createContext as e,useContext as o}from"react";var r=e({formId:void 0,terminationBag:null}),m=n(()=>{let t=o(r);if(!t.formId||!t.terminationBag)throw new Error("useTerminationContext must be used within a TerminationContextProvider");return{formId:t.formId,terminationBag:t.terminationBag}},"useTerminationContext");export{r as a,m as b};
+//# sourceMappingURL=chunk-MRYRNB7Y.js.map

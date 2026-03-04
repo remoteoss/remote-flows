@@ -1,0 +1,2 @@
+import{a,b as l,c as p}from"./chunk-TNN3W5TU.js";import{b as n,j as m}from"./chunk-DCQRTUIR.js";import{a as r}from"./chunk-P37U34EQ.js";import{jsx as t,jsxs as i}from"react/jsx-runtime";var P=r(({reviewCompleted:s,label:e,description:o})=>i(a,{variant:"default",children:[s?t(n,{className:"h-4 w-4"}):t(m,{className:"h-4 w-4"}),e&&t(l,{dangerouslySetInnerHTML:{__html:e}}),o&&t(p,{dangerouslySetInnerHTML:{__html:o}})]}),"ContractPreviewStatement");export{P as a};
+//# sourceMappingURL=chunk-BR4SH7KZ.js.map

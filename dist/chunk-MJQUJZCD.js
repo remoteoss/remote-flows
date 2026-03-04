@@ -1,0 +1,2 @@
+import{b as r}from"./chunk-MRYRNB7Y.js";import{b as i}from"./chunk-KQPDXXG3.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as d}from"react/jsx-runtime";function B({children:e,...t}){let{formId:m,terminationBag:u}=r(),{components:s}=i(),o=s?.button;if(!o)throw new Error("Button component not found");return d(o,{...t,form:m,disabled:t.disabled||u.isSubmitting,children:e})}n(B,"TerminationSubmit");export{B as a};
+//# sourceMappingURL=chunk-MJQUJZCD.js.map

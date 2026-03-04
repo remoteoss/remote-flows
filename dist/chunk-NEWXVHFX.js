@@ -1,0 +1,2 @@
+import{a as t}from"./chunk-VIGKOVHP.js";import{a as e}from"./chunk-P37U34EQ.js";import*as o from"@radix-ui/react-label";import{jsx as r}from"react/jsx-runtime";function l({className:a,...i}){return r(o.Root,{"data-slot":"label",className:t("flex items-center gap-2 text-sm leading-none select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50",a),...i})}e(l,"Label");export{l as a};
+//# sourceMappingURL=chunk-NEWXVHFX.js.map

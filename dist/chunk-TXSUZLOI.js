@@ -1,0 +1,2 @@
+import{a as n}from"./chunk-P37U34EQ.js";var o=n(t=>{let[e,r,a]=t.split("-").map(Number);return new Date(e,r-1,a)},"parseLocalDate");function g(){let t=new Date,e=n(r=>String(r).padStart(2,"0"),"pad");return`${t.getUTCFullYear()}-${e(t.getUTCMonth()+1)}-${e(t.getUTCDate())} ${e(t.getUTCHours())}:${e(t.getUTCMinutes())}:${e(t.getUTCSeconds())}Z`}n(g,"nowUtcFormatted");export{o as a,g as b};
+//# sourceMappingURL=chunk-TXSUZLOI.js.map

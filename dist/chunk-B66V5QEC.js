@@ -1,0 +1,2 @@
+import{a as o}from"./chunk-TOQPDTGG.js";import{a as e}from"./chunk-P37U34EQ.js";import{jsx as r}from"react/jsx-runtime";function n({field:t,fieldData:p}){return r(o,{type:"text",inputMode:"decimal",pattern:"^[0-9.]*$",...t,...p})}e(n,"NumberFieldDefault");export{n as a};
+//# sourceMappingURL=chunk-B66V5QEC.js.map

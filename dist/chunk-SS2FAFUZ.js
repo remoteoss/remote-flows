@@ -1,0 +1,2 @@
+import{b as e}from"./chunk-RJY6AEJB.js";import{a as t}from"./chunk-VIGKOVHP.js";import{a as o}from"./chunk-P37U34EQ.js";import{jsx as p}from"react/jsx-runtime";var s=o(({isExpanded:l,onToggle:n,className:m,...i})=>p(e,{type:"button",className:t("RemoteFlows__Button RemoteFlows__FieldSetField__ToggleButton",m),variant:"default",onClick:n,...i,children:l?"Remove":"Define"}),"FieldsetToggleButtonDefault");export{s as a};
+//# sourceMappingURL=chunk-SS2FAFUZ.js.map

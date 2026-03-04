@@ -1,0 +1,2 @@
+import{a}from"../../chunk-U6LRMWRI.js";import"../../chunk-TVZAFTPT.js";import"../../chunk-KQPDXXG3.js";import"../../chunk-P37U34EQ.js";export{a as ContractAmendmentSubmit};
+//# sourceMappingURL=ContractAmendmentSubmit.js.map

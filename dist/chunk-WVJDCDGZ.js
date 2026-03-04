@@ -1,0 +1,2 @@
+var e={data:{version:7,schema:{additionalProperties:!1,properties:{country:{title:"Country",description:"",type:"string",oneOf:[],"x-jsf-presentation":{inputType:"select"}}},required:["country"],type:"object","x-jsf-order":["country"]}}};export{e as a};
+//# sourceMappingURL=chunk-WVJDCDGZ.js.map

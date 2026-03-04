@@ -1,0 +1,2 @@
+import{a as n}from"./chunk-LBVUZ3RU.js";import{b as e}from"./chunk-MRYRNB7Y.js";import{a as r}from"./chunk-P37U34EQ.js";import{jsx as u}from"react/jsx-runtime";function F({onSubmit:t,onSuccess:s,onError:m}){let{terminationBag:o}=e(),d=r(async a=>{let l=await o?.parseFormValues(a,!0);await t?.(l);let i=await o?.onSubmit(a);i?.error?m?.(i.rawError):i?.data&&await s?.(i.data)},"handleSubmit");return u(n,{defaultValues:o.fieldValues,fields:o?.fields,onSubmit:d})}r(F,"AdditionalDetailsForm");export{F as a};
+//# sourceMappingURL=chunk-CCEDHXOE.js.map
