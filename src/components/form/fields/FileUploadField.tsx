@@ -5,7 +5,7 @@ import {
   FieldValues,
   useFormContext,
 } from 'react-hook-form';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { FieldDataProps } from '@/src/types/fields';
 
 const validateFileSize = (files: File[], maxSize?: number): string | null => {

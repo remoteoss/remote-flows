@@ -1,5 +1,4 @@
 import { PaidTimeoffBreakdownResponse } from '@/src/common/api/timeoff';
-import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { Table } from '@/src/components/shared/table/Table';
@@ -162,9 +161,9 @@ const DrawerTimeOff = ({
       onOpenChange={onOpenChange}
       title={`${employeeName} paid time off breakdown`}
       trigger={
-        <Button variant='link' className='text-xs text-[#3B82F6] font-bold p-0'>
+        <button className='text-xs text-[#3B82F6] font-bold p-0'>
           See detailed time off breakdown ↗
-        </Button>
+        </button>
       }
       className='h-full w-[540px] mt-0 ml-auto px-4 RemoteFlows_DrawerTimeOff'
     >

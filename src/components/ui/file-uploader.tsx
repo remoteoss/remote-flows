@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -71,10 +70,10 @@ export function FileUploader({
         multiple={multiple}
         accept={accept}
       />
-      <Button type='button' onClick={handleClick} className='gap-2'>
+      <button type='button' onClick={handleClick} className='gap-2'>
         <Upload className='h-4 w-4' />
         Choose File
-      </Button>
+      </button>
       {acceptedFormats && (
         <div className='text-sm text-gray-600'>
           Accepted formats:{' '}
@@ -97,13 +96,9 @@ export function FileUploader({
           <div key={index} className='text-sm flex items-center gap-2'>
             Selected file: <span className='font-medium'>{file.name}</span> (
             {Math.round(file.size / 1024)} KB)
-            <Button
-              type='button'
-              variant='ghost'
-              onClick={() => onRemoveFile(file)}
-            >
+            <button type='button' onClick={() => onRemoveFile(file)}>
               <X />
-            </Button>
+            </button>
           </div>
         ))}
     </div>

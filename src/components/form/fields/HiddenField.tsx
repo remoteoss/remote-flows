@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { Field } from '@/src/flows/types';
 
 export function HiddenField(props: Field) {

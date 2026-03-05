@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { TextFieldDataProps } from '@/src/types/fields';
 
 export type TextFieldProps = React.ComponentProps<'input'> & {

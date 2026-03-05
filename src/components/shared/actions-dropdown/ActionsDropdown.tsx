@@ -1,4 +1,3 @@
-import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 import { MoreHorizontal } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
@@ -28,15 +27,14 @@ export function ActionsDropdown({
 
   return (
     <div className={cn('relative', className)}>
-      <Button
+      <button
         data-testid={dataSelector}
-        variant='ghost'
         aria-label={label}
         className='h-8 w-8 p-0'
         onClick={() => setIsOpen(!isOpen)}
       >
         <MoreHorizontal className='h-4 w-4' />
-      </Button>
+      </button>
 
       {isOpen && (
         <>

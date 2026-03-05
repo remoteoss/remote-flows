@@ -2,7 +2,7 @@
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '../../ui/form';
+import { FormField } from '@/src/components/form/FormField';
 
 type MultiSelectFieldProps = JSFField & {
   placeholder?: string;
