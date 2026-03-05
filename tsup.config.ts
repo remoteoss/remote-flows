@@ -36,5 +36,7 @@ export const tsup: Options = {
     '@radix-ui/react-popover',
     '@radix-ui/react-scroll-area',
     '@radix-ui/react-select',
+    'cmdk',
+    'vaul',
   ],
 };
