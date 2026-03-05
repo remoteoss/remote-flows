@@ -1,0 +1,2 @@
+import{a}from"../../../../chunk-BZIO3ZAB.js";import"../../../../chunk-SGRQGLPM.js";import"../../../../chunk-X6ZAR7ZL.js";import"../../../../chunk-P37U34EQ.js";export{a as TerminationReasonsDetailContent};
+//# sourceMappingURL=TerminationReasonsDetailContent.js.map

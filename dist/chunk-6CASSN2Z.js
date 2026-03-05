@@ -1,0 +1,2 @@
+import{a as m}from"./chunk-NX7MM6XR.js";import{a as e}from"./chunk-ZXGAFQXW.js";import{a as i}from"./chunk-LMYJ6V44.js";import{a as o}from"./chunk-TC7EQZJK.js";var p={employee_communication:o,termination_details:e,paid_time_off:m,additional_information:i};export{p as a};
+//# sourceMappingURL=chunk-6CASSN2Z.js.map

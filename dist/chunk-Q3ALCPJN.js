@@ -1,0 +1,2 @@
+import{a as r}from"./chunk-P37U34EQ.js";import{createContext as n,useContext as t}from"react";var e=n({formId:void 0,contractorOnboardingBag:null,formRef:void 0}),c=r(()=>{let o=t(e);if(!o.formId||!o.contractorOnboardingBag)throw new Error("useContractorOnboardingContext must be used within a ContractorOnboardingContextProvider");return{formId:o.formId,contractorOnboardingBag:o.contractorOnboardingBag,formRef:o.formRef}},"useContractorOnboardingContext");export{e as a,c as b};
+//# sourceMappingURL=chunk-Q3ALCPJN.js.map

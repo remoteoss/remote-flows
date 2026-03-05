@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/components/form/fields/default/WorkScheduleFieldDefault.tsx"],"sourcesContent":["export const WorkScheduleFieldDefault = () => null;\n"],"mappings":"wCAAO,IAAMA,EAA2BC,EAAA,IAAM,KAAN","names":["WorkScheduleFieldDefault","__name"]}

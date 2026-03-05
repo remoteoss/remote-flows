@@ -1,0 +1,2 @@
+import{b as r}from"./chunk-PGWKJ6FK.js";import{b as n}from"./chunk-KQPDXXG3.js";import{a as o}from"./chunk-P37U34EQ.js";import{jsx as p}from"react/jsx-runtime";function l({children:e,onClick:i,...s}){let{onboardingBag:{back:u,isEmploymentReadOnly:c}}=r(),{components:m}=n(),a=o(d=>{c||u(),i?.(d)},"onBackHandler"),t=m?.button;if(!t)throw new Error("Button component not found");return p(t,{...s,onClick:a,children:e})}o(l,"OnboardingBack");export{l as a};
+//# sourceMappingURL=chunk-KRJETP7I.js.map

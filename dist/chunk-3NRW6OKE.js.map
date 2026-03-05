@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/components/shared/zendesk-drawer/ZendeskDrawerDefault.tsx"],"sourcesContent":["export function ZendeskDrawerDefault() {\n  return null as React.ReactNode;\n  return null;\n}\n"],"mappings":"wCAAO,SAASA,GAAuB,CACrC,OAAO,IAET,CAHgBC,EAAAD,EAAA","names":["ZendeskDrawerDefault","__name"]}

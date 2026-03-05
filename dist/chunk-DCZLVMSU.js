@@ -1,0 +1,2 @@
+import{d as t}from"./chunk-SGRQGLPM.js";import{b as m}from"./chunk-KQPDXXG3.js";import{a as e}from"./chunk-P37U34EQ.js";import{jsx as s}from"react/jsx-runtime";function f({title:o,description:r,severity:p}){let{components:a}=m(),n=a.statement;if(!n)throw new Error("Statement component not found");return s(n,{data:{title:o?t(o):void 0,description:t(r),severity:p}})}e(f,"Statement");export{f as a};
+//# sourceMappingURL=chunk-DCZLVMSU.js.map

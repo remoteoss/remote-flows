@@ -1,0 +1,2 @@
+import{a as n,b as m,c as a}from"./chunk-2JP4VV6H.js";import{a as r}from"./chunk-P37U34EQ.js";import{CheckIcon as p,FileText as s}from"lucide-react";import{jsx as t,jsxs as i}from"react/jsx-runtime";var P=r(({reviewCompleted:l,label:e,description:o})=>i(n,{variant:"default",children:[l?t(p,{className:"h-4 w-4"}):t(s,{className:"h-4 w-4"}),e&&t(m,{dangerouslySetInnerHTML:{__html:e}}),o&&t(a,{dangerouslySetInnerHTML:{__html:o}})]}),"ContractPreviewStatement");export{P as a};
+//# sourceMappingURL=chunk-4XCDLGCY.js.map

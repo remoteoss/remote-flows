@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/components/form/fields/default/NumberFieldDefault.tsx"],"sourcesContent":["export function NumberFieldDefault() {\n  return null;\n}\n"],"mappings":"wCAAO,SAASA,GAAqB,CACnC,OAAO,IACT,CAFgBC,EAAAD,EAAA","names":["NumberFieldDefault","__name"]}

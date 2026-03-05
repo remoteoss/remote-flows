@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/components/form/fields/default/CheckboxFieldDefault.tsx"],"sourcesContent":["export const CheckboxFieldDefault = () => null;\n"],"mappings":"wCAAO,IAAMA,EAAuBC,EAAA,IAAM,KAAN","names":["CheckboxFieldDefault","__name"]}

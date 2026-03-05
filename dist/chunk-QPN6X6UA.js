@@ -1,0 +1,2 @@
+import{b as e}from"./chunk-76ZDXC2T.js";import{b as r}from"./chunk-KQPDXXG3.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as p}from"react/jsx-runtime";function b({children:i,type:m="submit",...t}){let{formId:u,createCompanyBag:s}=e(),{components:d}=r(),o=d?.button;if(!o)throw new Error("Button component not found");return p(o,{...t,form:u,type:m,disabled:t.disabled||s.isSubmitting,children:i})}n(b,"CreateCompanySubmit");export{b as a};
+//# sourceMappingURL=chunk-QPN6X6UA.js.map

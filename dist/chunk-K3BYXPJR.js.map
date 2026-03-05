@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/components/shared/drawer/DrawerDefault.tsx"],"sourcesContent":["export function DrawerDefault() {\n  return null as React.ReactNode;\n}\n"],"mappings":"wCAAO,SAASA,GAAgB,CAC9B,OAAO,IACT,CAFgBC,EAAAD,EAAA","names":["DrawerDefault","__name"]}

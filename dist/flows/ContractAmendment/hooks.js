@@ -1,0 +1,2 @@
+import{a}from"../../chunk-UWYEWGDZ.js";import"../../chunk-PGVAOMQU.js";import"../../chunk-EAF6XPH6.js";import"../../chunk-EUSCQL4H.js";import"../../chunk-2IA5ZHU4.js";import"../../chunk-T7O3YYOG.js";import"../../chunk-X6ZAR7ZL.js";import"../../chunk-TSPDJUGG.js";import"../../chunk-Z5WMKCRJ.js";import"../../chunk-KQPDXXG3.js";import"../../chunk-P37U34EQ.js";export{a as useContractAmendment};
+//# sourceMappingURL=hooks.js.map
