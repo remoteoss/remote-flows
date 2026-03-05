@@ -28,5 +28,13 @@ export const tsup: Options = {
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
   external: ['react', 'react-dom'],
-  noExternal: ['react-hook-form', '@hookform/resolvers'],
+  noExternal: [
+    'react-hook-form',
+    '@hookform/resolvers',
+    '@radix-ui/react-collapsible',
+    '@radix-ui/react-dialog',
+    '@radix-ui/react-popover',
+    '@radix-ui/react-scroll-area',
+    '@radix-ui/react-select',
+  ],
 };
