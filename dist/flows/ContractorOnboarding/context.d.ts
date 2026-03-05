@@ -1,22 +1,22 @@
 import * as _tanstack_query_core from '@tanstack/query-core';
 import * as _remoteoss_remote_json_schema_form_kit from '@remoteoss/remote-json-schema-form-kit';
-import { J as JSFFields, M as Meta, a as JSFFieldset } from '../../remoteFlows-S2ZmIMR3.js';
-import { d as EmploymentCreationResponse, S as SuccessResponse, e as EmploymentResponse, f as CreateContractDocumentResponse, E as Employment, g as Signatory, h as CompanyLegalEntity } from '../../types.gen-BSxAhJ_V.js';
+import { J as JSFFields, M as Meta, a as JSFFieldset } from '../../remoteFlows-c5WoOLBg.js';
+import { d as EmploymentCreationResponse, S as SuccessResponse, e as EmploymentResponse, f as CreateContractDocumentResponse, E as Employment, g as Signatory, h as CompanyLegalEntity } from '../../types.gen-C7DkFdEI.js';
 import * as React from 'react';
 import { RefObject } from 'react';
 import * as react_hook_form from 'react-hook-form';
 import { UseFormSetValue } from 'react-hook-form';
 import { Step } from '../useStepState.js';
-import { u as useContractorOnboarding } from '../../types-Ba9j16SK.js';
+import { u as useContractorOnboarding } from '../../types-C8jJ4JYu.js';
 import { StepKeys } from './utils.js';
 import 'yup';
 import '../../types-ZWIpiFgj.js';
 import './components/OnboardingBack.js';
 import 'react/jsx-runtime';
 import './components/OnboardingSubmit.js';
-import '../../mutations-C70g1hf2.js';
+import '../../mutations-DRPi1_As.js';
 import './components/BasicInformationStep.js';
-import '../../types-BAWh17UT.js';
+import '../../types-DhuiAwAz.js';
 import '../Onboarding/components/OnboardingBack.js';
 import '../Onboarding/components/OnboardingInvite.js';
 import '../Onboarding/components/OnboardingSubmit.js';
@@ -41,8 +41,8 @@ declare const useContractorOnboardingContext: () => {
             currentStep: Step<StepKeys>;
             totalSteps: number;
             values: {
-                contract_details: react_hook_form.FieldValues;
                 review: react_hook_form.FieldValues;
+                contract_details: react_hook_form.FieldValues;
                 select_country: react_hook_form.FieldValues;
                 basic_information: react_hook_form.FieldValues;
                 eligibility_questionnaire: react_hook_form.FieldValues;

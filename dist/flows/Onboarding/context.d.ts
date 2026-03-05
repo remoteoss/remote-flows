@@ -1,9 +1,9 @@
 import * as _tanstack_query_core from '@tanstack/query-core';
-import { u as useOnboarding, S as STEPS } from '../../types-BAWh17UT.js';
-import { S as SuccessResponse, E as ErrorResponse } from '../../mutations-C70g1hf2.js';
-import { d as EmploymentCreationResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, x as ConflictResponse, B as BadRequestResponse, F as ForbiddenResponse, e as EmploymentResponse, S as SuccessResponse$1, N as NotFoundResponse, a as UnauthorizedResponse, E as Employment } from '../../types.gen-BSxAhJ_V.js';
+import { u as useOnboarding, S as STEPS } from '../../types-DhuiAwAz.js';
+import { S as SuccessResponse, E as ErrorResponse } from '../../mutations-DRPi1_As.js';
+import { d as EmploymentCreationResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, w as ConflictResponse, B as BadRequestResponse, F as ForbiddenResponse, e as EmploymentResponse, S as SuccessResponse$1, N as NotFoundResponse, a as UnauthorizedResponse, E as Employment } from '../../types.gen-C7DkFdEI.js';
 import * as React$1 from 'react';
-import { J as JSFFields, M as Meta, a as JSFFieldset } from '../../remoteFlows-S2ZmIMR3.js';
+import { J as JSFFields, M as Meta, a as JSFFieldset } from '../../remoteFlows-c5WoOLBg.js';
 import * as _remoteoss_remote_json_schema_form_kit from '@remoteoss/remote-json-schema-form-kit';
 import * as react_hook_form from 'react-hook-form';
 import { Step } from '../useStepState.js';
@@ -36,12 +36,12 @@ declare const useOnboardingContext: () => {
         onboardingReservesStatus: "not_started" | "ready" | "in_progress" | "referred" | "fail" | "deposit_required" | "no_deposit_required" | undefined;
         fieldValues: react_hook_form.FieldValues;
         stepState: {
-            currentStep: Step<"contract_details" | "benefits" | "review" | "select_country" | "basic_information">;
+            currentStep: Step<"benefits" | "review" | "contract_details" | "select_country" | "basic_information">;
             totalSteps: number;
             values: {
-                contract_details: react_hook_form.FieldValues;
                 benefits: react_hook_form.FieldValues;
                 review: react_hook_form.FieldValues;
+                contract_details: react_hook_form.FieldValues;
                 select_country: react_hook_form.FieldValues;
                 basic_information: react_hook_form.FieldValues;
             } | null;
