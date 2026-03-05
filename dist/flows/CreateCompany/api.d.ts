@@ -1,7 +1,7 @@
-import { a as JSFFieldset } from '../../remoteFlows-DagBfxnm.js';
+import { a as JSFFieldset } from '../../remoteFlows-S2ZmIMR3.js';
 import * as _remoteoss_remote_json_schema_form_kit from '@remoteoss/remote-json-schema-form-kit';
 import * as _tanstack_react_query from '@tanstack/react-query';
-import { y as CompanyCreationResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, B as BadRequestResponse, F as ForbiddenResponse, z as CompanyCreationConflictErrorResponse, A as CreateCompanyParams, D as CompanyResponse, N as NotFoundResponse, a as UnauthorizedResponse, G as UpdateCompanyParams } from '../../types.gen-DZuOPZbG.js';
+import { q as CompanyCreationResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, B as BadRequestResponse, F as ForbiddenResponse, r as CompanyCreationConflictErrorResponse, s as CreateCompanyParams, t as CompanyResponse, N as NotFoundResponse, a as UnauthorizedResponse, u as UpdateCompanyParams } from '../../types.gen-BSxAhJ_V.js';
 import { FieldValues } from 'react-hook-form';
 import { FlowOptions } from '../types.js';
 import 'react';

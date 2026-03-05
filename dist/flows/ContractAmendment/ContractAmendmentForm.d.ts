@@ -1,5 +1,5 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import { c as PostAutomatableContractAmendmentError, C as ContractAmendmentAutomatableResponse } from '../../types.gen-DZuOPZbG.js';
+import { c as PostAutomatableContractAmendmentError, C as ContractAmendmentAutomatableResponse } from '../../types.gen-BSxAhJ_V.js';
 import { FieldValues } from 'react-hook-form';
 
 type ContractAmendmentFormProps = {

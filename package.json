@@ -82,10 +82,10 @@
     "dist"
   ],
   "peerDependencies": {
-    "@radix-ui/react-collapsible": "^1.1.12",
-    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-collapsible": "^1.1.0",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.1.15",
-    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-scroll-area": "^1.2.0-rc.7",
     "@radix-ui/react-select": "^2.2.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -129,10 +129,10 @@
     "@arethetypeswrong/cli": "^0.18.2",
     "@eslint/js": "^9.39.1",
     "@hey-api/openapi-ts": "^0.88.0",
-    "@radix-ui/react-collapsible": "^1.1.12",
-    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-collapsible": "^1.1.0",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.1.15",
-    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-scroll-area": "^1.2.0-rc.7",
     "@radix-ui/react-select": "^2.2.6",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
