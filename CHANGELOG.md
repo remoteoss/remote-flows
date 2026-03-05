@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.18.0
+
+### Minor Changes
+
+- handle employment onboarding status
+- drop unused packages (#771) [#771](https://github.com/remoteoss/remote-flows/pull/771)
+
 ## 1.17.0
 
 ### Minor Changes
