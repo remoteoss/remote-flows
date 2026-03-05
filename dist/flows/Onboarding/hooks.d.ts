@@ -5,7 +5,7 @@ import 'react';
 import '@remoteoss/remote-json-schema-form-kit';
 import '../../remoteFlows-S2ZmIMR3.js';
 import '../useStepState.js';
-export { u as useOnboarding } from '../../types-DXC7D8qf.js';
+export { u as useOnboarding } from '../../types-BAWh17UT.js';
 import 'react-hook-form';
 import 'yup';
 import '../../types-ZWIpiFgj.js';

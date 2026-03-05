@@ -7,7 +7,7 @@ import { RefObject } from 'react';
 import * as react_hook_form from 'react-hook-form';
 import { UseFormSetValue } from 'react-hook-form';
 import { Step } from '../useStepState.js';
-import { u as useContractorOnboarding } from '../../types-DAJZFuKz.js';
+import { u as useContractorOnboarding } from '../../types-Ba9j16SK.js';
 import { StepKeys } from './utils.js';
 import 'yup';
 import '../../types-ZWIpiFgj.js';
@@ -16,7 +16,7 @@ import 'react/jsx-runtime';
 import './components/OnboardingSubmit.js';
 import '../../mutations-C70g1hf2.js';
 import './components/BasicInformationStep.js';
-import '../../types-DXC7D8qf.js';
+import '../../types-BAWh17UT.js';
 import '../Onboarding/components/OnboardingBack.js';
 import '../Onboarding/components/OnboardingInvite.js';
 import '../Onboarding/components/OnboardingSubmit.js';
@@ -41,8 +41,8 @@ declare const useContractorOnboardingContext: () => {
             currentStep: Step<StepKeys>;
             totalSteps: number;
             values: {
-                review: react_hook_form.FieldValues;
                 contract_details: react_hook_form.FieldValues;
+                review: react_hook_form.FieldValues;
                 select_country: react_hook_form.FieldValues;
                 basic_information: react_hook_form.FieldValues;
                 eligibility_questionnaire: react_hook_form.FieldValues;

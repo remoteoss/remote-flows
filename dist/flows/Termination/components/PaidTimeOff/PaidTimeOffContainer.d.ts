@@ -9,7 +9,7 @@ import 'yup';
 import '../../../../types-ZWIpiFgj.js';
 import 'react-hook-form';
 import '@remoteoss/remote-json-schema-form-kit';
-import '../../../../types-DXC7D8qf.js';
+import '../../../../types-BAWh17UT.js';
 import 'react/jsx-runtime';
 import '../../../Onboarding/components/OnboardingBack.js';
 import '../../../Onboarding/components/OnboardingInvite.js';

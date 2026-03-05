@@ -4,7 +4,7 @@ import * as _tanstack_react_query from '@tanstack/react-query';
 import { UseQueryResult } from '@tanstack/react-query';
 import { E as Employment, w as Company, S as SuccessResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, x as ConflictResponse, B as BadRequestResponse, N as NotFoundResponse, a as UnauthorizedResponse, d as EmploymentCreationResponse, F as ForbiddenResponse, y as EmploymentCreateParams, e as EmploymentResponse, z as EmploymentFullParams, A as UnifiedEmploymentUpsertBenefitOffersRequest, D as ConvertCurrencyResponse, G as ConvertCurrencyParams, H as CreateContractEligibilityParams } from '../../types.gen-BSxAhJ_V.js';
 import { FieldValues } from 'react-hook-form';
-import { O as OnboardingFlowProps } from '../../types-DXC7D8qf.js';
+import { O as OnboardingFlowProps } from '../../types-BAWh17UT.js';
 import { JSONSchemaFormType, FlowOptions, JSONSchemaFormResultWithFieldsets } from '../types.js';
 import 'react';
 import 'yup';

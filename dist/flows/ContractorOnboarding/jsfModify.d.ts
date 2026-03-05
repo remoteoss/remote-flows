@@ -1,4 +1,4 @@
-import { C as ContractorOnboardingFlowProps } from '../../types-DAJZFuKz.js';
+import { C as ContractorOnboardingFlowProps } from '../../types-Ba9j16SK.js';
 import { JSFModify } from '../types.js';
 import { FieldValues } from 'react-hook-form';
 import '../../types.gen-BSxAhJ_V.js';
@@ -15,7 +15,7 @@ import '../useStepState.js';
 import '@remoteoss/remote-json-schema-form-kit';
 import './utils.js';
 import './constants.js';
-import '../../types-DXC7D8qf.js';
+import '../../types-BAWh17UT.js';
 import '../Onboarding/components/OnboardingBack.js';
 import '../Onboarding/components/OnboardingInvite.js';
 import '../Onboarding/components/OnboardingSubmit.js';

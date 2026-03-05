@@ -1,5 +1,5 @@
 import * as _tanstack_query_core from '@tanstack/query-core';
-import { u as useOnboarding, S as STEPS } from '../../types-DXC7D8qf.js';
+import { u as useOnboarding, S as STEPS } from '../../types-BAWh17UT.js';
 import { S as SuccessResponse, E as ErrorResponse } from '../../mutations-C70g1hf2.js';
 import { d as EmploymentCreationResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, x as ConflictResponse, B as BadRequestResponse, F as ForbiddenResponse, e as EmploymentResponse, S as SuccessResponse$1, N as NotFoundResponse, a as UnauthorizedResponse, E as Employment } from '../../types.gen-BSxAhJ_V.js';
 import * as React$1 from 'react';
@@ -36,12 +36,12 @@ declare const useOnboardingContext: () => {
         onboardingReservesStatus: "not_started" | "ready" | "in_progress" | "referred" | "fail" | "deposit_required" | "no_deposit_required" | undefined;
         fieldValues: react_hook_form.FieldValues;
         stepState: {
-            currentStep: Step<"benefits" | "review" | "contract_details" | "select_country" | "basic_information">;
+            currentStep: Step<"contract_details" | "benefits" | "review" | "select_country" | "basic_information">;
             totalSteps: number;
             values: {
+                contract_details: react_hook_form.FieldValues;
                 benefits: react_hook_form.FieldValues;
                 review: react_hook_form.FieldValues;
-                contract_details: react_hook_form.FieldValues;
                 select_country: react_hook_form.FieldValues;
                 basic_information: react_hook_form.FieldValues;
             } | null;

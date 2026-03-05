@@ -24,7 +24,7 @@ import '../../types-Bt3Nvzma.js';
 import '@tanstack/react-query';
 import '@tanstack/query-core';
 import './api.js';
-import '../../types-DXC7D8qf.js';
+import '../../types-BAWh17UT.js';
 import '../Onboarding/components/OnboardingBack.js';
 import '../Onboarding/components/OnboardingInvite.js';
 import '../Onboarding/components/OnboardingSubmit.js';

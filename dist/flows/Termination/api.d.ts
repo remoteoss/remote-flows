@@ -2,7 +2,7 @@ import { a as JSFFieldset } from '../../remoteFlows-S2ZmIMR3.js';
 import * as _remoteoss_remote_json_schema_form_kit from '@remoteoss/remote-json-schema-form-kit';
 import { O as OffboardingResponse, N as NotFoundResponse, U as UnprocessableEntityResponse, T as TooManyRequestsResponse, B as BadRequestResponse, a as UnauthorizedResponse, R as RequestError, a6 as CreateOffboardingParams } from '../../types.gen-BSxAhJ_V.js';
 import * as _tanstack_react_query from '@tanstack/react-query';
-import { E as Employment } from '../../types-DXC7D8qf.js';
+import { E as Employment } from '../../types-BAWh17UT.js';
 import { T as TerminationFormValues } from '../../types-Dq-2OENN.js';
 import { JSFModify } from '../types.js';
 import 'react';

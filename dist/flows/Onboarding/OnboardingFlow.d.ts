@@ -1,5 +1,5 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import { O as OnboardingFlowProps } from '../../types-DXC7D8qf.js';
+import { O as OnboardingFlowProps } from '../../types-BAWh17UT.js';
 import './components/OnboardingInvite.js';
 import '../../types.gen-BSxAhJ_V.js';
 import './components/OnboardingBack.js';
