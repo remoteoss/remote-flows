@@ -27,14 +27,20 @@ export const tsup: Options = {
     REMOTE_GATEWAY_URL:
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
-  external: ['react', 'react-dom'],
-  noExternal: [
-    'react-hook-form',
-    '@hookform/resolvers',
+  external: [
+    'react',
+    'react-dom',
+    '@radix-ui/react-accordion',
+    '@radix-ui/react-checkbox',
     '@radix-ui/react-collapsible',
     '@radix-ui/react-dialog',
+    '@radix-ui/react-label',
     '@radix-ui/react-popover',
+    '@radix-ui/react-radio-group',
     '@radix-ui/react-scroll-area',
     '@radix-ui/react-select',
+    '@radix-ui/react-slot',
+    '@radix-ui/react-tabs',
   ],
+  noExternal: ['react-hook-form', '@hookform/resolvers'],
 };
