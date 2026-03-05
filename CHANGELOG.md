@@ -4,8 +4,13 @@
 
 ### Minor Changes
 
-- handle employment onboarding status
-- drop unused packages (#771) [#771](https://github.com/remoteoss/remote-flows/pull/771)
+#### Features
+
+- onboarding handle onboarding status reserves (#767) [#767](https://github.com/remoteoss/remote-flows/pull/767)
+
+#### Chores
+
+- drop unused radix packages (#771) [#771](https://github.com/remoteoss/remote-flows/pull/771)
 
 ## 1.17.0
 
