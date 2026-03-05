@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { useFormFields } from '@/src/context';
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { Components } from '@/src/types/remoteFlows';
 import { TextFieldProps } from './TextField';
 
@@ -15,7 +15,7 @@ export function NumberField(props: NumberFieldProps) {
 
   const Component = props.component || components.number;
   if (!Component) {
-    throw new Error(`Number component not found for field ${props.name}`);
+    return null;
   }
   return (
     <FormField

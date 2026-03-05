@@ -5,7 +5,7 @@ import { useConvertCurrency } from '@/src/flows/Onboarding/api';
 import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
-import { FormDescription } from '@/src/components/ui/form';
+import { FormDescription } from '@/src/components/form/FormField';
 import {
   convertFromCents,
   convertToCents,
@@ -34,7 +34,7 @@ const DescriptionWithConversion = ({
 
   const CustomButton = components?.button;
   if (!CustomButton) {
-    throw new Error(`Button component not found`);
+    return null;
   }
 
   return (

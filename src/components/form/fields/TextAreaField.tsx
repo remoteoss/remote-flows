@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 
 export type TextAreaFieldProps = JSFField & {
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -28,7 +28,7 @@ export function TextAreaField({
       render={({ field, fieldState }) => {
         const Component = component || components.textarea;
         if (!Component) {
-          throw new Error(`Text area component not found for field ${name}`);
+          throw new Error(`Textarea component not found for field ${name}`);
         }
         const customTextAreaFieldProps = {
           name,

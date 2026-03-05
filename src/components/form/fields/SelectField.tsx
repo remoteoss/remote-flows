@@ -1,7 +1,7 @@
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 
 type SelectFieldProps = JSFField & {
   placeholder?: string;

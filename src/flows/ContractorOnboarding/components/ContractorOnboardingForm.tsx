@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { Form } from '@/src/components/ui/form';
+import { Form } from '@/src/components/form/FormField';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';

@@ -1,4 +1,4 @@
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
@@ -28,7 +28,7 @@ export function RadioGroupField({
       render={({ field, fieldState }) => {
         const Component = component || components?.radio;
         if (!Component) {
-          throw new Error(`Radio group component not found for field ${name}`);
+          throw new Error(`Radio component not found for field ${name}`);
         }
         const customRadioGroupFieldProps = {
           name,

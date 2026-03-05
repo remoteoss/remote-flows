@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { JSFField } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { Components } from '@/src/types/remoteFlows';
 
 import {
@@ -45,9 +45,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
 
   const Component = props.component || components['work-schedule'];
   if (!Component) {
-    throw new Error(
-      `Work schedule component not found for field ${props.name}`,
-    );
+    return null;
   }
 
   const fieldData = {

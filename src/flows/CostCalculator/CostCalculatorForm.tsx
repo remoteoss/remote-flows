@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { Form } from '@/src/components/ui/form';
+import { Form } from '@/src/components/form/FormField';
 import { useCostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
   CostCalculatorEstimationResponse,

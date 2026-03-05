@@ -1,4 +1,4 @@
-import { FormField } from '@/src/components/ui/form';
+import { FormField } from '@/src/components/form/FormField';
 import { useFormFields } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
@@ -12,7 +12,7 @@ export type CheckBoxFieldProps = {
 } & Partial<
   JSFField & {
     onChange?: (checked: boolean, optionId?: string) => void;
-    component?: Components['checkbox'];
+    component?: Components['checkbox'] | null;
   }
 >;
 

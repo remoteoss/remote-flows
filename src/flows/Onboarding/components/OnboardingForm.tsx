@@ -1,5 +1,5 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { Form } from '@/src/components/ui/form';
+import { Form } from '@/src/components/form/FormField';
 import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useForm } from 'react-hook-form';

@@ -1,6 +1,6 @@
 import { JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { Form } from '@/src/components/ui/form';
+import { Form } from '@/src/components/form/FormField';
 import { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';

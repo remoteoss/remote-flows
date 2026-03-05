@@ -3,7 +3,7 @@ import {
   PostCreateContractAmendmentError,
 } from '@/src/client';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { Form } from '@/src/components/ui/form';
+import { Form } from '@/src/components/form/FormField';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useContractAmendmentContext } from './context';
 
