@@ -1,7 +1,7 @@
-import { C as ContractAmendmentAutomatableResponse, N as NotFoundResponse, U as UnprocessableEntityResponse, a as UnauthorizedResponse, b as ContractAmendmentResponse } from '../../types.gen-C6jD_TP6.js';
+import { C as ContractAmendmentAutomatableResponse, N as NotFoundResponse, U as UnprocessableEntityResponse, a as UnauthorizedResponse, b as ContractAmendmentResponse } from '../../types.gen-DZuOPZbG.js';
 import * as React from 'react';
-import { E as ErrorResponse, S as SuccessResponse } from '../../mutations-qZ0G6FAl.js';
-import '../../remoteFlows-DL-yjkRb.js';
+import { E as ErrorResponse, S as SuccessResponse } from '../../mutations-Bz0Iad09.js';
+import '../../remoteFlows-DagBfxnm.js';
 import * as react_hook_form from 'react-hook-form';
 import { useContractAmendment } from './hooks.js';
 import * as _remoteoss_json_schema_form from '@remoteoss/json-schema-form';
