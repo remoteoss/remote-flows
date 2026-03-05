@@ -1,0 +1,2 @@
+import{a as i}from"./chunk-V6LOIP27.js";import{b as e}from"./chunk-MRYRNB7Y.js";import{a as m}from"./chunk-P37U34EQ.js";import{jsx as u}from"react/jsx-runtime";function p({onSubmit:n}){let{terminationBag:o}=e(),a=m(async t=>{let r=await o?.parseFormValues(t);await n?.(r),o?.next()},"handleSubmit");return u(i,{defaultValues:o.fieldValues,onSubmit:a})}m(p,"EmployeeCommunicationForm");export{p as a};
+//# sourceMappingURL=chunk-5D4AKL3N.js.map

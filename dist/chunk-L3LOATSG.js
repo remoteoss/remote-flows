@@ -1,0 +1,2 @@
+import{a as o,b as a,c as i}from"./chunk-TNN3W5TU.js";import{a as n}from"./chunk-P37U34EQ.js";import{AlertCircle as p}from"lucide-react";import{jsx as t,jsxs as c}from"react/jsx-runtime";function g({data:s}){let{title:e,description:r,severity:l}=s,m={warning:"warning",error:"destructive",info:"default",success:"warning"}[l]??"warning";return c(o,{variant:m,children:[t(p,{className:"h-4 w-4"}),e&&t(a,{dangerouslySetInnerHTML:{__html:e}}),r&&t(i,{dangerouslySetInnerHTML:{__html:r}})]})}n(g,"StatementDefault");export{g as a};
+//# sourceMappingURL=chunk-L3LOATSG.js.map

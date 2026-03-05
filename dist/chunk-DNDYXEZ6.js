@@ -1,0 +1,2 @@
+import{a as o}from"./chunk-TOQPDTGG.js";import{a as e}from"./chunk-P37U34EQ.js";import{jsx as n}from"react/jsx-runtime";function t({field:m,fieldData:i}){return n(o,{name:m.name,...i,type:"email"})}e(t,"EmailFieldDefault");export{t as a};
+//# sourceMappingURL=chunk-DNDYXEZ6.js.map
