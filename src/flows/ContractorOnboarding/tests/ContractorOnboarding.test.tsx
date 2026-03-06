@@ -765,7 +765,7 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it.each(['invited'])(
+  it.each(['invited', 'created_awaiting_reserve'])(
     'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
       const employmentId = generateUniqueEmploymentId();
