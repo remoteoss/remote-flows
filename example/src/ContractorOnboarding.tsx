@@ -275,6 +275,12 @@ const MultiStepForm = ({
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             />
+            <button
+              className='submit-button'
+              onClick={() => contractorOnboardingBag.markContractAsReviewed()}
+            >
+              Mark as reviewed
+            </button>
           </div>
         </div>
       );
