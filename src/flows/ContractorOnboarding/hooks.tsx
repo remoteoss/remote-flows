@@ -1114,224 +1114,220 @@ export const useContractorOnboarding = ({
       refetchEmployment();
     }
     nextStep();
+  };
 
-    const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
-    return {
-      /**
-       * Loading state indicating if the flow is loading data
-       */
-      isLoading,
+  return {
+    /**
+     * Loading state indicating if the flow is loading data
+     */
+    isLoading,
 
-      /**
-       * Current state of the form fields for the current step.
-       */
-      fieldValues,
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
 
-      /**
-       * Current step state containing the current step and total number of steps
-       */
-      stepState,
+    /**
+     * Current step state containing the current step and total number of steps
+     */
+    stepState,
 
-      /**
-       * Function to update the current form field values
-       * @param values - New form values to set
-       */
-      checkFieldUpdates: setFieldValues,
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
+    checkFieldUpdates: setFieldValues,
 
-      /**
-       * Function to handle going back to the previous step
-       * @returns {void}
-       */
-      back: previousStep,
+    /**
+     * Function to handle going back to the previous step
+     * @returns {void}
+     */
+    back: previousStep,
 
-      /**
-       * Function to handle going to the next step
-       * @returns {void}
-       */
-      next: handleNextStep,
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    next: handleNextStep,
 
-      /**
-       * Function to handle going to a specific step
-       * @param step The step to go to.
-       * @returns {void}
-       */
-      goTo: goTo,
+    /**
+     * Function to handle going to a specific step
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goTo: goTo,
 
-      /**
-       * Function to handle form submission
-       * @param values - Form values to submit
-       * @returns Promise resolving to the mutation result
-       */
-      onSubmit,
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
+    onSubmit,
 
-      /**
-       * Array of form fields from the onboarding schema
-       */
-      fields: stepFields[stepState.currentStep.name],
+    /**
+     * Array of form fields from the onboarding schema
+     */
+    fields: stepFields[stepState.currentStep.name],
 
-      /**
-       * Fields metadata for each step
-       */
-      meta: {
-        fields: fieldsMetaRef.current,
-        fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
-      },
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+    },
 
-      /**
-       * Function to parse form values before submission
-       * @param values - Form values to parse
-       * @returns Parsed form values
-       */
-      parseFormValues,
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
+    parseFormValues,
 
-      /**
-       * Function to validate form values against the onboarding schema
-       * @param values - Form values to validate
-       * @returns Validation result or null if no schema is available
-       */
-      handleValidation: async (
-        values: FieldValues,
-      ): Promise<ValidationResult | null> => {
-        if (stepState.currentStep.name === 'select_country') {
-          return selectCountryForm.handleValidation(values);
-        }
+    /**
+     * Function to validate form values against the onboarding schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
+    handleValidation: async (
+      values: FieldValues,
+    ): Promise<ValidationResult | null> => {
+      if (stepState.currentStep.name === 'select_country') {
+        return selectCountryForm.handleValidation(values);
+      }
 
-        if (
-          basicInformationForm &&
-          stepState.currentStep.name === 'basic_information'
-        ) {
-          const parsedValues = await parseJSFToValidate(
-            values,
-            basicInformationForm?.fields,
-            { isPartialValidation: false },
-          );
-          return basicInformationForm?.handleValidation(parsedValues);
-        }
+      if (
+        basicInformationForm &&
+        stepState.currentStep.name === 'basic_information'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          basicInformationForm?.fields,
+          { isPartialValidation: false },
+        );
+        return basicInformationForm?.handleValidation(parsedValues);
+      }
 
-        if (
-          contractorOnboardingDetailsForm &&
-          stepState.currentStep.name === 'contract_details'
-        ) {
-          const parsedValues = await parseJSFToValidate(
-            values,
-            contractorOnboardingDetailsForm?.fields,
-            { isPartialValidation: false },
-          );
-          return contractorOnboardingDetailsForm?.handleValidation(
-            parsedValues,
-          );
-        }
+      if (
+        contractorOnboardingDetailsForm &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          contractorOnboardingDetailsForm?.fields,
+          { isPartialValidation: false },
+        );
+        return contractorOnboardingDetailsForm?.handleValidation(parsedValues);
+      }
 
-        if (
-          signatureSchemaForm &&
-          stepState.currentStep.name === 'contract_preview'
-        ) {
-          const parsedValues = await parseJSFToValidate(
-            values,
-            signatureSchemaForm?.fields,
-            { isPartialValidation: true },
-          );
-          return signatureSchemaForm?.handleValidation(parsedValues);
-        }
+      if (
+        signatureSchemaForm &&
+        stepState.currentStep.name === 'contract_preview'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          signatureSchemaForm?.fields,
+          { isPartialValidation: true },
+        );
+        return signatureSchemaForm?.handleValidation(parsedValues);
+      }
 
-        if (
-          selectContractorSubscriptionForm &&
-          stepState.currentStep.name === 'pricing_plan'
-        ) {
-          const parsedValues = await parseJSFToValidate(
-            values,
-            selectContractorSubscriptionForm?.fields,
-            { isPartialValidation: false },
-          );
-          return selectContractorSubscriptionForm?.handleValidation(
-            parsedValues,
-          );
-        }
+      if (
+        selectContractorSubscriptionForm &&
+        stepState.currentStep.name === 'pricing_plan'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          selectContractorSubscriptionForm?.fields,
+          { isPartialValidation: false },
+        );
+        return selectContractorSubscriptionForm?.handleValidation(parsedValues);
+      }
 
-        if (
-          eligibilityQuestionnaireForm &&
-          stepState.currentStep.name === 'eligibility_questionnaire'
-        ) {
-          const parsedValues = await parseJSFToValidate(
-            values,
-            eligibilityQuestionnaireForm?.fields,
-            { isPartialValidation: false },
-          );
-          return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
-        }
+      if (
+        eligibilityQuestionnaireForm &&
+        stepState.currentStep.name === 'eligibility_questionnaire'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          eligibilityQuestionnaireForm?.fields,
+          { isPartialValidation: false },
+        );
+        return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
+      }
 
-        return null;
-      },
+      return null;
+    },
 
-      /**
-       * Initial form values
-       */
-      initialValues,
+    /**
+     * Initial form values
+     */
+    initialValues,
 
-      /**
-       * Employment id
-       */
-      employmentId: internalEmploymentId,
+    /**
+     * Employment id
+     */
+    employmentId: internalEmploymentId,
 
-      /**
-       * Function to refetch the employment data
-       * @returns {void}
-       */
-      refetchEmployment: refetchEmployment,
+    /**
+     * Function to refetch the employment data
+     * @returns {void}
+     */
+    refetchEmployment: refetchEmployment,
 
-      /**
-       * Loading state indicating if the onboarding mutation is in progress
-       */
-      isSubmitting:
-        createEmploymentMutation.isPending ||
-        updateEmploymentMutation.isPending ||
-        createContractorContractDocumentMutation.isPending ||
-        signContractDocumentMutation.isPending ||
-        manageContractorSubscriptionMutation.isPending ||
-        uploadFileMutation.isPending ||
-        createEligibilityQuestionnaireMutation.isPending ||
-        manageContractorCorSubscriptionMutation.isPending ||
-        deleteContractorCorSubscriptionMutation.isPending,
+    /**
+     * Loading state indicating if the onboarding mutation is in progress
+     */
+    isSubmitting:
+      createEmploymentMutation.isPending ||
+      updateEmploymentMutation.isPending ||
+      createContractorContractDocumentMutation.isPending ||
+      signContractDocumentMutation.isPending ||
+      manageContractorSubscriptionMutation.isPending ||
+      uploadFileMutation.isPending ||
+      createEligibilityQuestionnaireMutation.isPending ||
+      manageContractorCorSubscriptionMutation.isPending ||
+      deleteContractorCorSubscriptionMutation.isPending,
 
-      /**
-       * Document preview PDF data
-       */
-      documentPreviewPdf,
+    /**
+     * Document preview PDF data
+     */
+    documentPreviewPdf,
 
-      /**
-       * let's the user know if the company can invite employees
-       * @returns {boolean}
-       */
-      canInvite,
+    /**
+     * let's the user know if the company can invite employees
+     * @returns {boolean}
+     */
+    canInvite,
 
-      /**
-       * let's the user know that the employment cannot be edited, happens when employment.status is invited
-       * @returns {boolean}
-       */
-      isEmploymentReadOnly,
-      /**
-       * let's the user know if the employment is invited or not
-       * @returns {'invited' | 'not_invited'}
-       */
-      invitedStatus,
+    /**
+     * let's the user know that the employment cannot be edited, happens when employment.status is invited
+     * @returns {boolean}
+     */
+    isEmploymentReadOnly,
+    /**
+     * let's the user know if the employment is invited or not
+     * @returns {'invited' | 'not_invited'}
+     */
+    invitedStatus,
 
-      /**
-       * Employment data
-       * @returns {Employment}
-       */
-      employment,
+    /**
+     * Employment data
+     * @returns {Employment}
+     */
+    employment,
 
-      /**
-       * Default legal entity
-       * @returns {CompanyLegalEntity}
-       */
-      defaultLegalEntity,
-      /**
-       * Steps array
-       * @returns {Array<{name: string, index: number, label: string}>}
-       */
-      steps: stepsArray,
-    };
+    /**
+     * Default legal entity
+     * @returns {CompanyLegalEntity}
+     */
+    defaultLegalEntity,
+    /**
+     * Steps array
+     * @returns {Array<{name: string, index: number, label: string}>}
+     */
+    steps: stepsArray,
   };
 };
