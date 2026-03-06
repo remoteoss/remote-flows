@@ -381,8 +381,8 @@ export const useContractorOnboarding = ({
   );
 
   const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
-    useGetContractDocuments(employmentId as string, {
-      enabled: Boolean(employmentId),
+    useGetContractDocuments(internalEmploymentId as string, {
+      enabled: Boolean(internalEmploymentId),
     });
 
   useEffect(() => {
@@ -976,6 +976,7 @@ export const useContractorOnboarding = ({
       case 'contract_details': {
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
+          skip_ai_checks: true,
         };
         const response = await createContractorContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
@@ -991,13 +992,14 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_preview': {
-        return signContractDocumentMutationAsync({
+        const response = await signContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
           payload: {
             signature: parsedValues.signature,
           },
         });
+        return response;
       }
       case 'pricing_plan': {
         const blockedProductsEligibility = [

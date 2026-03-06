@@ -155,8 +155,11 @@ export const shouldIncludeProduct = (
  */
 export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'invited',
+  'created_awaiting_reserve',
+  'created_reserve_paid',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'invited',
+  'created_awaiting_reserve',
 ];
