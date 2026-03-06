@@ -987,8 +987,6 @@ export const useContractorOnboarding = ({
         }
         setInternalContractDocumentId(contractDocumentId);
 
-        await refetchEmployment();
-
         return response;
       }
 
@@ -1102,6 +1100,11 @@ export const useContractorOnboarding = ({
     }
   }
 
+  const handleNextStep = () => {
+    nextStep();
+    refetchEmployment();
+  };
+
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   return {
@@ -1136,7 +1139,7 @@ export const useContractorOnboarding = ({
      * Function to handle going to the next step
      * @returns {void}
      */
-    next: nextStep,
+    next: handleNextStep,
 
     /**
      * Function to handle going to a specific step
