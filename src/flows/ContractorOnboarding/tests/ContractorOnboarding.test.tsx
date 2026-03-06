@@ -522,6 +522,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -568,6 +569,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     await waitFor(() => {
@@ -683,6 +686,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -740,6 +744,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -1033,6 +1038,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1206,6 +1213,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1257,6 +1266,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -1736,6 +1746,7 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       await fillContractorSubscription('Contractor of Record');
 
@@ -1782,6 +1793,8 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       await fillContractorSubscription('Contractor of Record');
 
