@@ -3014,10 +3014,24 @@ export type WebhookTriggerEmploymentParams = {
 
 /**
  * ListCompanyLegalEntitiesResponse
+ *
+ * Response schema listing many legal_entities
  */
 export type ListCompanyLegalEntitiesResponse = {
-  data: {
-    legal_entities: Array<CompanyLegalEntity>;
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    legal_entities?: Array<CompanyLegalEntity>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
   };
 };
 
@@ -4602,6 +4616,10 @@ export type LeavePolicyDetails = {
     | 'rol'
     | 'ex_festivita';
   name: string;
+  /**
+   * Whether leave balance is determined by accruals
+   */
+  uses_accrual_as_balance?: boolean;
 };
 
 /**
@@ -14690,7 +14708,16 @@ export type GetIndexCompanyLegalEntitiesData = {
      */
     company_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
   url: '/v1/companies/{company_id}/legal-entities';
 };
 
