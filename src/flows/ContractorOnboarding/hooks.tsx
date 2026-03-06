@@ -1101,6 +1101,11 @@ export const useContractorOnboarding = ({
     }
   }
 
+  const handleNextStep = () => {
+    nextStep();
+    refetchEmployment();
+  };
+
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   const handleNextStep = () => {
