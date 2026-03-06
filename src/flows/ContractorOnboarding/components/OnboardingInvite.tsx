@@ -62,6 +62,8 @@ export function OnboardingInvite({
 
       if (
         isCOR &&
+        contractorOnboardingBag.employment?.status !==
+          'created_awaiting_reserve' &&
         !contractorOnboardingBag.isEmploymentReadOnly &&
         contractorOnboardingBag.employmentId
       ) {
@@ -112,10 +114,17 @@ export function OnboardingInvite({
     contractorOnboardingBag.employment?.status &&
     !contractorOnboardingBag.isEmploymentReadOnly;
 
+  const disabled =
+    employmentInviteMutation.isPending ||
+    createReserveInvoiceMutation.isPending ||
+    contractorOnboardingBag.employment?.status === 'created_awaiting_reserve' ||
+    contractorOnboardingBag.employment?.status === 'invited' ||
+    props.disabled;
+
   return (
     <CustomButton
       {...props}
-      disabled={employmentInviteMutation.isPending || props.disabled}
+      disabled={disabled}
       onClick={(evt) => {
         handleSubmit();
         props.onClick?.(evt);

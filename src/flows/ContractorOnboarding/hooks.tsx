@@ -976,6 +976,7 @@ export const useContractorOnboarding = ({
       case 'contract_details': {
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
+          skip_ai_checks: true,
         };
         const response = await createContractorContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
