@@ -1102,6 +1102,12 @@ export const useContractorOnboarding = ({
     }
   }
 
+  const markContractAsReviewed = () => {
+    setFieldValues({
+      review_completed: true,
+    });
+  };
+
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   return {
@@ -1125,6 +1131,13 @@ export const useContractorOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates: setFieldValues,
+
+    /**
+     * Function to mark the contract as reviewed
+     * @param values - New form values to check
+     * @returns {boolean}
+     */
+    markContractAsReviewed,
 
     /**
      * Function to handle going back to the previous step
