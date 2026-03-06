@@ -9,5 +9,8 @@ export const legalEntitiesMock = {
         global_payroll_enabled: false,
       },
     ],
+    current_page: 1,
+    total_pages: 1,
+    total_count: 1,
   },
 };

@@ -987,8 +987,6 @@ export const useContractorOnboarding = ({
         }
         setInternalContractDocumentId(contractDocumentId);
 
-        await refetchEmployment();
-
         return response;
       }
 
@@ -1062,9 +1060,18 @@ export const useContractorOnboarding = ({
             },
           });
         } else if (values.subscription == corProductIdentifier) {
-          return Promise.resolve({
-            data: { subscription: values.subscription },
-          });
+          if (
+            hasEligibilityQuestionnaireSubmitted &&
+            employment?.contractor_type !== 'cor'
+          ) {
+            return manageContractorCorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+            });
+          } else {
+            return Promise.resolve({
+              data: { subscription: values.subscription },
+            });
+          }
         }
 
         throw createStructuredError('invalid selection');
@@ -1108,6 +1115,13 @@ export const useContractorOnboarding = ({
     });
   };
 
+  const handleNextStep = () => {
+    if (internalEmploymentId) {
+      refetchEmployment();
+    }
+    nextStep();
+  };
+
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
   return {
@@ -1149,7 +1163,7 @@ export const useContractorOnboarding = ({
      * Function to handle going to the next step
      * @returns {void}
      */
-    next: nextStep,
+    next: handleNextStep,
 
     /**
      * Function to handle going to a specific step
