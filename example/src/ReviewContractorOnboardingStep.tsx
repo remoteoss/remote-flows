@@ -155,8 +155,10 @@ export const ReviewContractorOnboardingStep = ({
         <OnboardingInvite
           className='submit-button'
           disabled={!onboardingBag.canInvite}
-          render={() => {
-            return 'Invite Contractor';
+          render={({ employmentStatus }) => {
+            return employmentStatus === 'created_awaiting_reserve'
+              ? 'Create Reserve'
+              : 'Invite Contractor';
           }}
           onSuccess={() => {
             console.log('Contractor invited');
