@@ -1108,11 +1108,6 @@ export const useContractorOnboarding = ({
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
 
-  const handleNextStep = () => {
-    nextStep();
-    refetchEmployment();
-  };
-
   return {
     /**
      * Loading state indicating if the flow is loading data
