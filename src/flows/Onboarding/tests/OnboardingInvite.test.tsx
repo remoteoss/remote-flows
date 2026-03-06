@@ -16,6 +16,7 @@ import {
   waitForElementToBeRemoved,
   fireEvent,
   waitFor,
+  act,
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
@@ -627,6 +628,81 @@ describe('OnboardingInvite', () => {
         employmentStatus: 'created_awaiting_reserve',
       });
     });
+  });
+
+  it('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
+    let onboardingBagRef: OnboardingRenderProps['onboardingBag'] | null = null;
+
+    const testRender = ({
+      onboardingBag,
+      components,
+    }: OnboardingRenderProps) => {
+      onboardingBagRef = onboardingBag;
+      return mockRender({ onboardingBag, components });
+    };
+
+    server.use(
+      http.get('*/v1/companies/:companyId', () => {
+        return HttpResponse.json({
+          ...companyResponse,
+          data: {
+            ...companyResponse.data,
+            company: {
+              ...companyResponse.data.company,
+              default_legal_entity_credit_risk_status: 'no_deposit_required',
+            },
+          },
+        });
+      }),
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.get(
+        '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
+        () => {
+          return HttpResponse.json({
+            data: {
+              status: 'deposit_required',
+              policies: [],
+            },
+          });
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        skipSteps={['select_country']}
+        render={testRender}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Manually navigate to review step
+    await waitFor(() => {
+      expect(onboardingBagRef).not.toBeNull();
+    });
+
+    if (onboardingBagRef) {
+      act(() => {
+        onboardingBagRef!.goTo('review');
+      });
+    }
+
+    const button = await screen.findByText(/Create Reserve/i);
+    expect(button).toBeInTheDocument();
   });
 
   it('should call onSuccess with "invited" status when inviting an employee', async () => {
