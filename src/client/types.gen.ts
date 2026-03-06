@@ -3014,10 +3014,24 @@ export type WebhookTriggerEmploymentParams = {
 
 /**
  * ListCompanyLegalEntitiesResponse
+ *
+ * Response schema listing many legal_entities
  */
 export type ListCompanyLegalEntitiesResponse = {
-  data: {
-    legal_entities: Array<CompanyLegalEntity>;
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    legal_entities?: Array<CompanyLegalEntity>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
   };
 };
 
@@ -4602,6 +4616,10 @@ export type LeavePolicyDetails = {
     | 'rol'
     | 'ex_festivita';
   name: string;
+  /**
+   * Whether leave balance is determined by accruals
+   */
+  uses_accrual_as_balance?: boolean;
 };
 
 /**
@@ -5637,7 +5655,7 @@ export type MagicLinkParams =
        * Some **Valid** examples for `path`:
        * - o `/dashboard`
        * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=exclude_linked_drafts&filters%5B0%5D%5Bvalue%5D=true`
+       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
        * - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
@@ -5674,7 +5692,7 @@ export type MagicLinkParams =
        * Some **Valid** examples for `path`:
        * - o `/dashboard`
        * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=exclude_linked_drafts&filters%5B0%5D%5Bvalue%5D=true`
+       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
        * - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
@@ -8286,6 +8304,24 @@ export type HelpCenterArticle = {
    * Zendesk ID of the article
    */
   zendesk_id: number;
+};
+
+/**
+ * EmploymentPersonalDetailsParams
+ *
+ * Employment personal details.
+ *
+ */
+export type EmploymentPersonalDetailsParams = {
+  /**
+   * Employment personal details. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   *
+   */
+  personal_details: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -13321,6 +13357,57 @@ export type PatchUpdateWebhookCallbackResponses = {
 export type PatchUpdateWebhookCallbackResponse =
   PatchUpdateWebhookCallbackResponses[keyof PatchUpdateWebhookCallbackResponses];
 
+export type PutUpdateEmploymentPersonalDetailsData = {
+  /**
+   * Employment personal details params
+   */
+  body?: EmploymentPersonalDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/personal_details';
+};
+
+export type PutUpdateEmploymentPersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutUpdateEmploymentPersonalDetailsError =
+  PutUpdateEmploymentPersonalDetailsErrors[keyof PutUpdateEmploymentPersonalDetailsErrors];
+
+export type PutUpdateEmploymentPersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutUpdateEmploymentPersonalDetailsResponse =
+  PutUpdateEmploymentPersonalDetailsResponses[keyof PutUpdateEmploymentPersonalDetailsResponses];
+
 export type GetIndexTravelLetterRequestData = {
   body?: never;
   path?: never;
@@ -14621,7 +14708,16 @@ export type GetIndexCompanyLegalEntitiesData = {
      */
     company_id: UuidSlug;
   };
-  query?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
   url: '/v1/companies/{company_id}/legal-entities';
 };
 
