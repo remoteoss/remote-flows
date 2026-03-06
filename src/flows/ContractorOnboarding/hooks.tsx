@@ -1061,9 +1061,18 @@ export const useContractorOnboarding = ({
             },
           });
         } else if (values.subscription == corProductIdentifier) {
-          return Promise.resolve({
-            data: { subscription: values.subscription },
-          });
+          if (
+            hasEligibilityQuestionnaireSubmitted &&
+            employment?.contractor_type !== 'cor'
+          ) {
+            return manageContractorCorSubscriptionMutationAsync({
+              employmentId: internalEmploymentId as string,
+            });
+          } else {
+            return Promise.resolve({
+              data: { subscription: values.subscription },
+            });
+          }
         }
 
         throw createStructuredError('invalid selection');
@@ -1102,8 +1111,10 @@ export const useContractorOnboarding = ({
   }
 
   const handleNextStep = () => {
+    if (internalEmploymentId) {
+      refetchEmployment();
+    }
     nextStep();
-    refetchEmployment();
   };
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;

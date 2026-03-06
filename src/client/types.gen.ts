@@ -7332,6 +7332,24 @@ export type ProbationExtensionFile = {
 };
 
 /**
+ * EmploymentBasicInformationParams
+ *
+ * Employment basic information params.
+ *
+ */
+export type EmploymentBasicInformationParams = {
+  /**
+   * Employment basic information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `employment_basic_information` as path parameters.
+   *
+   */
+  basic_information: {
+    [key: string]: unknown;
+  };
+};
+
+/**
  * Date
  *
  * UTC date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
@@ -9437,6 +9455,46 @@ export type GetShowHelpCenterArticleResponses = {
 
 export type GetShowHelpCenterArticleResponse =
   GetShowHelpCenterArticleResponses[keyof GetShowHelpCenterArticleResponses];
+
+export type GetGetUserScimData = {
+  body?: never;
+  path: {
+    /**
+     * User ID (slug)
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/scim/v2/Users/{id}';
+};
+
+export type GetGetUserScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: IntegrationsScimErrorResponse;
+  /**
+   * Forbidden
+   */
+  403: IntegrationsScimErrorResponse;
+  /**
+   * Not Found
+   */
+  404: IntegrationsScimErrorResponse;
+};
+
+export type GetGetUserScimError =
+  GetGetUserScimErrors[keyof GetGetUserScimErrors];
+
+export type GetGetUserScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimUser;
+};
+
+export type GetGetUserScimResponse =
+  GetGetUserScimResponses[keyof GetGetUserScimResponses];
 
 export type GetShowEmployeeDocumentData = {
   body?: never;
@@ -12157,7 +12215,7 @@ export type GetDownloadResignationLetterResponses = {
 export type GetDownloadResignationLetterResponse =
   GetDownloadResignationLetterResponses[keyof GetDownloadResignationLetterResponses];
 
-export type PostUpdateEmploymentFederalTaxesData = {
+export type PutUpdateEmploymentFederalTaxesData = {
   /**
    * Employment federal taxes params
    */
@@ -12172,7 +12230,7 @@ export type PostUpdateEmploymentFederalTaxesData = {
   url: '/v1/employments/{employment_id}/federal-taxes';
 };
 
-export type PostUpdateEmploymentFederalTaxesErrors = {
+export type PutUpdateEmploymentFederalTaxesErrors = {
   /**
    * Bad Request
    */
@@ -12199,18 +12257,18 @@ export type PostUpdateEmploymentFederalTaxesErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostUpdateEmploymentFederalTaxesError =
-  PostUpdateEmploymentFederalTaxesErrors[keyof PostUpdateEmploymentFederalTaxesErrors];
+export type PutUpdateEmploymentFederalTaxesError =
+  PutUpdateEmploymentFederalTaxesErrors[keyof PutUpdateEmploymentFederalTaxesErrors];
 
-export type PostUpdateEmploymentFederalTaxesResponses = {
+export type PutUpdateEmploymentFederalTaxesResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostUpdateEmploymentFederalTaxesResponse =
-  PostUpdateEmploymentFederalTaxesResponses[keyof PostUpdateEmploymentFederalTaxesResponses];
+export type PutUpdateEmploymentFederalTaxesResponse =
+  PutUpdateEmploymentFederalTaxesResponses[keyof PutUpdateEmploymentFederalTaxesResponses];
 
 export type GetIndexContractAmendmentData = {
   body?: never;
@@ -12599,6 +12657,57 @@ export type GetShowTimeoffBalanceResponses = {
 
 export type GetShowTimeoffBalanceResponse =
   GetShowTimeoffBalanceResponses[keyof GetShowTimeoffBalanceResponses];
+
+export type PutUpdateEmploymentBasicInformationData = {
+  /**
+   * Employment basic information params
+   */
+  body?: EmploymentBasicInformationParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/basic_information';
+};
+
+export type PutUpdateEmploymentBasicInformationErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutUpdateEmploymentBasicInformationError =
+  PutUpdateEmploymentBasicInformationErrors[keyof PutUpdateEmploymentBasicInformationErrors];
+
+export type PutUpdateEmploymentBasicInformationResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutUpdateEmploymentBasicInformationResponse =
+  PutUpdateEmploymentBasicInformationResponses[keyof PutUpdateEmploymentBasicInformationResponses];
 
 export type GetCategoriesExpenseData = {
   body?: never;
@@ -13652,46 +13761,6 @@ export type PostDeclineCancellationRequestResponses = {
 export type PostDeclineCancellationRequestResponse =
   PostDeclineCancellationRequestResponses[keyof PostDeclineCancellationRequestResponses];
 
-export type GetGetGroupScimData = {
-  body?: never;
-  path: {
-    /**
-     * Group ID (slug)
-     */
-    id: string;
-  };
-  query?: never;
-  url: '/scim/v2/Groups/{id}';
-};
-
-export type GetGetGroupScimErrors = {
-  /**
-   * Unauthorized
-   */
-  401: IntegrationsScimErrorResponse;
-  /**
-   * Forbidden
-   */
-  403: IntegrationsScimErrorResponse;
-  /**
-   * Not Found
-   */
-  404: IntegrationsScimErrorResponse;
-};
-
-export type GetGetGroupScimError =
-  GetGetGroupScimErrors[keyof GetGetGroupScimErrors];
-
-export type GetGetGroupScimResponses = {
-  /**
-   * Success
-   */
-  200: IntegrationsScimGroup;
-};
-
-export type GetGetGroupScimResponse =
-  GetGetGroupScimResponses[keyof GetGetGroupScimResponses];
-
 export type GetShowSchemaData = {
   body?: never;
   path: {
@@ -14110,6 +14179,58 @@ export type PatchUpdateEmploymentResponses = {
 
 export type PatchUpdateEmploymentResponse =
   PatchUpdateEmploymentResponses[keyof PatchUpdateEmploymentResponses];
+
+export type GetListUsersScimData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 1-based index of the first result
+     */
+    startIndex?: number;
+    /**
+     * Maximum number of results per page
+     */
+    count?: number;
+    /**
+     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
+     */
+    filter?: string;
+  };
+  url: '/v1/scim/v2/Users';
+};
+
+export type GetListUsersScimErrors = {
+  /**
+   * Bad Request
+   */
+  400: IntegrationsScimErrorResponse;
+  /**
+   * Unauthorized
+   */
+  401: IntegrationsScimErrorResponse;
+  /**
+   * Forbidden
+   */
+  403: IntegrationsScimErrorResponse;
+  /**
+   * Not Found
+   */
+  404: IntegrationsScimErrorResponse;
+};
+
+export type GetListUsersScimError =
+  GetListUsersScimErrors[keyof GetListUsersScimErrors];
+
+export type GetListUsersScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimUserListResponse;
+};
+
+export type GetListUsersScimResponse =
+  GetListUsersScimResponses[keyof GetListUsersScimResponses];
 
 export type GetIndexPayrollCalendarData = {
   body?: never;
@@ -14714,6 +14835,58 @@ export type PostCreateEstimationCsvResponses = {
 export type PostCreateEstimationCsvResponse =
   PostCreateEstimationCsvResponses[keyof PostCreateEstimationCsvResponses];
 
+export type GetListGroupsScimData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * 1-based index of the first result
+     */
+    startIndex?: number;
+    /**
+     * Maximum number of results per page
+     */
+    count?: number;
+    /**
+     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
+     */
+    filter?: string;
+  };
+  url: '/v1/scim/v2/Groups';
+};
+
+export type GetListGroupsScimErrors = {
+  /**
+   * Bad Request
+   */
+  400: IntegrationsScimErrorResponse;
+  /**
+   * Unauthorized
+   */
+  401: IntegrationsScimErrorResponse;
+  /**
+   * Forbidden
+   */
+  403: IntegrationsScimErrorResponse;
+  /**
+   * Not Found
+   */
+  404: IntegrationsScimErrorResponse;
+};
+
+export type GetListGroupsScimError =
+  GetListGroupsScimErrors[keyof GetListGroupsScimErrors];
+
+export type GetListGroupsScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimGroupListResponse;
+};
+
+export type GetListGroupsScimResponse =
+  GetListGroupsScimResponses[keyof GetListGroupsScimResponses];
+
 export type PostCreateContractDocumentData = {
   /**
    * CreateContractDocumentParams
@@ -14889,58 +15062,6 @@ export type PostConvertWithSpreadCurrencyConverterResponses = {
 
 export type PostConvertWithSpreadCurrencyConverterResponse =
   PostConvertWithSpreadCurrencyConverterResponses[keyof PostConvertWithSpreadCurrencyConverterResponses];
-
-export type GetListUsersScimData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * 1-based index of the first result
-     */
-    startIndex?: number;
-    /**
-     * Maximum number of results per page
-     */
-    count?: number;
-    /**
-     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
-     */
-    filter?: string;
-  };
-  url: '/scim/v2/Users';
-};
-
-export type GetListUsersScimErrors = {
-  /**
-   * Bad Request
-   */
-  400: IntegrationsScimErrorResponse;
-  /**
-   * Unauthorized
-   */
-  401: IntegrationsScimErrorResponse;
-  /**
-   * Forbidden
-   */
-  403: IntegrationsScimErrorResponse;
-  /**
-   * Not Found
-   */
-  404: IntegrationsScimErrorResponse;
-};
-
-export type GetListUsersScimError =
-  GetListUsersScimErrors[keyof GetListUsersScimErrors];
-
-export type GetListUsersScimResponses = {
-  /**
-   * Success
-   */
-  200: IntegrationsScimUserListResponse;
-};
-
-export type GetListUsersScimResponse =
-  GetListUsersScimResponses[keyof GetListUsersScimResponses];
 
 export type GetShowTimeoffData = {
   body?: never;
@@ -17102,58 +17223,6 @@ export type PostCreateEmployeeTimeoffResponses = {
 export type PostCreateEmployeeTimeoffResponse =
   PostCreateEmployeeTimeoffResponses[keyof PostCreateEmployeeTimeoffResponses];
 
-export type GetListGroupsScimData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * 1-based index of the first result
-     */
-    startIndex?: number;
-    /**
-     * Maximum number of results per page
-     */
-    count?: number;
-    /**
-     * Filter expression for attributes (supports eq, ne, co, sw, ew, pr, lt, le, gt, ge)
-     */
-    filter?: string;
-  };
-  url: '/scim/v2/Groups';
-};
-
-export type GetListGroupsScimErrors = {
-  /**
-   * Bad Request
-   */
-  400: IntegrationsScimErrorResponse;
-  /**
-   * Unauthorized
-   */
-  401: IntegrationsScimErrorResponse;
-  /**
-   * Forbidden
-   */
-  403: IntegrationsScimErrorResponse;
-  /**
-   * Not Found
-   */
-  404: IntegrationsScimErrorResponse;
-};
-
-export type GetListGroupsScimError =
-  GetListGroupsScimErrors[keyof GetListGroupsScimErrors];
-
-export type GetListGroupsScimResponses = {
-  /**
-   * Success
-   */
-  200: IntegrationsScimGroupListResponse;
-};
-
-export type GetListGroupsScimResponse =
-  GetListGroupsScimResponses[keyof GetListGroupsScimResponses];
-
 export type GetShowProbationExtensionData = {
   body?: never;
   path: {
@@ -17590,6 +17659,46 @@ export type GetIndexPayrollRunResponses = {
 
 export type GetIndexPayrollRunResponse =
   GetIndexPayrollRunResponses[keyof GetIndexPayrollRunResponses];
+
+export type GetGetGroupScimData = {
+  body?: never;
+  path: {
+    /**
+     * Group ID (slug)
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/scim/v2/Groups/{id}';
+};
+
+export type GetGetGroupScimErrors = {
+  /**
+   * Unauthorized
+   */
+  401: IntegrationsScimErrorResponse;
+  /**
+   * Forbidden
+   */
+  403: IntegrationsScimErrorResponse;
+  /**
+   * Not Found
+   */
+  404: IntegrationsScimErrorResponse;
+};
+
+export type GetGetGroupScimError =
+  GetGetGroupScimErrors[keyof GetGetGroupScimErrors];
+
+export type GetGetGroupScimResponses = {
+  /**
+   * Success
+   */
+  200: IntegrationsScimGroup;
+};
+
+export type GetGetGroupScimResponse =
+  GetGetGroupScimResponses[keyof GetGetGroupScimResponses];
 
 export type GetIndexEmploymentContractData = {
   body?: never;
@@ -18365,46 +18474,6 @@ export type PostApproveCancellationRequestResponses = {
 
 export type PostApproveCancellationRequestResponse =
   PostApproveCancellationRequestResponses[keyof PostApproveCancellationRequestResponses];
-
-export type GetGetUserScimData = {
-  body?: never;
-  path: {
-    /**
-     * User ID (slug)
-     */
-    id: string;
-  };
-  query?: never;
-  url: '/scim/v2/Users/{id}';
-};
-
-export type GetGetUserScimErrors = {
-  /**
-   * Unauthorized
-   */
-  401: IntegrationsScimErrorResponse;
-  /**
-   * Forbidden
-   */
-  403: IntegrationsScimErrorResponse;
-  /**
-   * Not Found
-   */
-  404: IntegrationsScimErrorResponse;
-};
-
-export type GetGetUserScimError =
-  GetGetUserScimErrors[keyof GetGetUserScimErrors];
-
-export type GetGetUserScimResponses = {
-  /**
-   * Success
-   */
-  200: IntegrationsScimUser;
-};
-
-export type GetGetUserScimResponse =
-  GetGetUserScimResponses[keyof GetGetUserScimResponses];
 
 export type PostVerifyIdentityVerificationData = {
   body?: never;
