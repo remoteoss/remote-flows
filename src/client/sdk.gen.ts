@@ -573,9 +573,6 @@ import type {
   PostUpdateCancelOnboardingData,
   PostUpdateCancelOnboardingErrors,
   PostUpdateCancelOnboardingResponses,
-  PostUpdateEmploymentFederalTaxesData,
-  PostUpdateEmploymentFederalTaxesErrors,
-  PostUpdateEmploymentFederalTaxesResponses,
   PostUploadEmployeeFileFileData,
   PostUploadEmployeeFileFileErrors,
   PostUploadEmployeeFileFileResponses,
@@ -591,6 +588,12 @@ import type {
   PutUpdateBenefitOfferData,
   PutUpdateBenefitOfferErrors,
   PutUpdateBenefitOfferResponses,
+  PutUpdateEmploymentBasicInformationData,
+  PutUpdateEmploymentBasicInformationErrors,
+  PutUpdateEmploymentBasicInformationResponses,
+  PutUpdateEmploymentFederalTaxesData,
+  PutUpdateEmploymentFederalTaxesErrors,
+  PutUpdateEmploymentFederalTaxesResponses,
   PutValidateResignationData,
   PutValidateResignationErrors,
   PutValidateResignationResponses,
@@ -1066,6 +1069,24 @@ export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/help-center-articles/{id}',
+    ...options,
+  });
+
+/**
+ * Get user by ID via SCIM v2.0
+ *
+ * Retrieves a single user for the authenticated company by user ID
+ */
+export const getGetUserScim = <ThrowOnError extends boolean = false>(
+  options: Options<GetGetUserScimData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetGetUserScimResponses,
+    GetGetUserScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/scim/v2/Users/{id}',
     ...options,
   });
 
@@ -2410,14 +2431,14 @@ export const getDownloadResignationLetter = <
  *
  *
  */
-export const postUpdateEmploymentFederalTaxes = <
+export const putUpdateEmploymentFederalTaxes = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostUpdateEmploymentFederalTaxesData, ThrowOnError>,
+  options: Options<PutUpdateEmploymentFederalTaxesData, ThrowOnError>,
 ) =>
-  (options.client ?? client).post<
-    PostUpdateEmploymentFederalTaxesResponses,
-    PostUpdateEmploymentFederalTaxesErrors,
+  (options.client ?? client).put<
+    PutUpdateEmploymentFederalTaxesResponses,
+    PutUpdateEmploymentFederalTaxesErrors,
     ThrowOnError
   >({
     security: [
@@ -2645,6 +2666,53 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/timeoff-balances/{employment_id}',
     ...options,
+  });
+
+/**
+ * Update basic information
+ *
+ * Updates employment's basic information.
+ *
+ * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ */
+export const putUpdateEmploymentBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutUpdateEmploymentBasicInformationData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutUpdateEmploymentBasicInformationResponses,
+    PutUpdateEmploymentBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/basic_information',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -3155,24 +3223,6 @@ export const postDeclineCancellationRequest = <
   });
 
 /**
- * Get group by ID via SCIM v2.0
- *
- * Retrieves a single group (department) for the authenticated company by group ID
- */
-export const getGetGroupScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetGroupScimData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetGetGroupScimResponses,
-    GetGetGroupScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/scim/v2/Groups/{id}',
-    ...options,
-  });
-
-/**
  * Get a employment benefit offers JSON schema
  */
 export const getShowSchema = <ThrowOnError extends boolean = false>(
@@ -3421,6 +3471,24 @@ export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List users via SCIM v2.0
+ *
+ * Retrieves a list of users for the authenticated company following SCIM 2.0 standard
+ */
+export const getListUsersScim = <ThrowOnError extends boolean = false>(
+  options?: Options<GetListUsersScimData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetListUsersScimResponses,
+    GetListUsersScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/scim/v2/Users',
+    ...options,
   });
 
 /**
@@ -3737,6 +3805,24 @@ export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * List groups via SCIM v2.0
+ *
+ * Retrieves a list of groups (departments) for the authenticated company following SCIM 2.0 standard
+ */
+export const getListGroupsScim = <ThrowOnError extends boolean = false>(
+  options?: Options<GetListGroupsScimData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetListGroupsScimResponses,
+    GetListGroupsScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/scim/v2/Groups',
+    ...options,
+  });
+
+/**
  * Create a contract document for a contractor
  *
  * Create a contract document for a contractor.
@@ -3840,24 +3926,6 @@ export const postConvertWithSpreadCurrencyConverter = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
-  });
-
-/**
- * List users via SCIM v2.0
- *
- * Retrieves a list of users for the authenticated company following SCIM 2.0 standard
- */
-export const getListUsersScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListUsersScimData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetListUsersScimResponses,
-    GetListUsersScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/scim/v2/Users',
-    ...options,
   });
 
 /**
@@ -4946,24 +5014,6 @@ export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * List groups via SCIM v2.0
- *
- * Retrieves a list of groups (departments) for the authenticated company following SCIM 2.0 standard
- */
-export const getListGroupsScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListGroupsScimData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetListGroupsScimResponses,
-    GetListGroupsScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/scim/v2/Groups',
-    ...options,
-  });
-
-/**
  * Show Probation Extension
  *
  * Shows a Probation Extension Request.
@@ -5147,6 +5197,24 @@ export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/payroll-runs',
+    ...options,
+  });
+
+/**
+ * Get group by ID via SCIM v2.0
+ *
+ * Retrieves a single group (department) for the authenticated company by group ID
+ */
+export const getGetGroupScim = <ThrowOnError extends boolean = false>(
+  options: Options<GetGetGroupScimData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetGetGroupScimResponses,
+    GetGetGroupScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/scim/v2/Groups/{id}',
     ...options,
   });
 
@@ -5507,24 +5575,6 @@ export const postApproveCancellationRequest = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
-    ...options,
-  });
-
-/**
- * Get user by ID via SCIM v2.0
- *
- * Retrieves a single user for the authenticated company by user ID
- */
-export const getGetUserScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetUserScimData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetGetUserScimResponses,
-    GetGetUserScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/scim/v2/Users/{id}',
     ...options,
   });
 
