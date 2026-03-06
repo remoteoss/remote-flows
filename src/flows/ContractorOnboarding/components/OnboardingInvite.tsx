@@ -9,6 +9,7 @@ import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { isStructuredError } from '@/src/lib/utils';
+import { disabledInviteButtonEmploymentStatus } from '@/src/flows/ContractorOnboarding/utils';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -62,8 +63,6 @@ export function OnboardingInvite({
 
       if (
         isCOR &&
-        contractorOnboardingBag.employment?.status !==
-          'created_awaiting_reserve' &&
         !contractorOnboardingBag.isEmploymentReadOnly &&
         contractorOnboardingBag.employmentId
       ) {
@@ -117,8 +116,10 @@ export function OnboardingInvite({
   const disabled =
     employmentInviteMutation.isPending ||
     createReserveInvoiceMutation.isPending ||
-    contractorOnboardingBag.employment?.status === 'created_awaiting_reserve' ||
-    contractorOnboardingBag.employment?.status === 'invited' ||
+    (contractorOnboardingBag.employment?.status &&
+      disabledInviteButtonEmploymentStatus.includes(
+        contractorOnboardingBag.employment?.status,
+      )) ||
     props.disabled;
 
   return (

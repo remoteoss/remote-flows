@@ -47,6 +47,7 @@ import {
   mockCMOnlyResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
+import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -376,6 +377,9 @@ describe('ContractorOnboardingFlow', () => {
     mockRender.mockReset();
 
     server.use(
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(mockContractorBasicInformationSchema);
+      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         const employmentId = params?.id;
 
