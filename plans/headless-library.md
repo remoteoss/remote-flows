@@ -22,11 +22,8 @@ Decouple all Radix UI (and other visual) dependencies from the library core, mak
 
 ### Visual components embedded in flows/shared (must be made overridable or moved)
 
-- `EstimationResults` — uses `Card`, `Accordion`, `BasicTooltip`, `ActionsDropdown`
-- `SummaryResults` — uses `Card`, `Accordion`
-- `Termination/PaidTimeOff` — uses `Button`
-- `ContractorOnboarding/ContractPreviewStatement` — uses `Alert`
-- `ActionsDropdown` — uses `Button` from `ui/button`
+- `EstimationResults` — uses `Accordion`
+- `SummaryResults` — uses `Accordion`
 
 ---
 
@@ -166,18 +163,6 @@ type EstimationResultsComponents = {
 ```
 
 The default for each slot is a plain HTML fallback (no Radix).
-
-#### 4b. `SummaryResults`
-
-Same approach — accept `Card` and `Accordion` overrides. Provide plain HTML defaults.
-
-#### 4d. `Termination/PaidTimeOff`
-
-Replace `Button` import with a `components?.button` override or a plain `<button>`.
-
-#### 4f. `ActionsDropdown`
-
-Replace `Button` from `ui/button` with a native `<button>` element directly. `ActionsDropdown` is already a plain dropdown with no Radix — only the `Button` wrapper is Radix-backed.
 
 ---
 
