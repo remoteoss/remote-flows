@@ -158,7 +158,7 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   /**
    * Components to override the default field components used in the SDK.
    */
-  components?: Components;
+  components: Components;
   /**
    * Environment to use for API calls.
    * If not provided, the SDK will use production environment.

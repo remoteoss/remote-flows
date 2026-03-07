@@ -1,7 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-// TODO: we can remove this import in the next major version, we can import styles with import '@remoteoss/remote-flows/styles.css'
-import './styles/global.css';
-
 export {
   buildCostCalculatorEstimationPayload,
   CostCalculatorFlow,

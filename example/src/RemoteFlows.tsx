@@ -2,9 +2,9 @@ import {
   RemoteFlows as RemoteFlowsAuth,
   RemoteFlowsSDKProps,
 } from '@remoteoss/remote-flows';
-import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import { ReactNode, useMemo } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
+import { defaultComponents } from './DefaultComponents';
 
 const fetchCompanyToken = () => {
   return fetch('/api/fetch-refresh-token')
@@ -53,6 +53,7 @@ export const RemoteFlows = ({
   children,
   isClientToken,
   authType,
+  components = defaultComponents,
   ...props
 }: RemoteFlowsProps) => {
   const auth = useMemo(() => {
@@ -70,8 +71,8 @@ export const RemoteFlows = ({
       <RemoteFlowsAuth
         environment={import.meta.env.VITE_REMOTE_GATEWAY || 'partners'}
         auth={auth}
-        components={defaultComponents}
         debug
+        components={components}
         errorBoundary={{
           useParentErrorBoundary: true,
         }}
