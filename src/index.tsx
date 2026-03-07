@@ -153,3 +153,9 @@ export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
 export { zendeskArticles } from './components/shared/zendesk-drawer/utils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+
+export {
+  FormFieldContext,
+  FormItemContext,
+  useFormField,
+} from '@/src/components/ui/form';
