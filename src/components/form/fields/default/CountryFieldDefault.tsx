@@ -12,13 +12,14 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryComponentProps } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { useFormFields } from '@/src/context';
+import { type Option } from '@/src/components/ui/multi-select';
 
 export function CountryFieldDefault({
   field,
   fieldState,
   fieldData,
 }: CountryComponentProps) {
-  const [selected, setSelected] = useState<(typeof Option)[]>([]);
+  const [selected, setSelected] = useState<Option[]>([]);
 
   useEffect(() => {
     if (field.value && fieldData.options) {
@@ -75,7 +76,7 @@ export function CountryFieldDefault({
       <FormControl>
         <MultiSelect
           options={countryOptions}
-          selected={selected}
+          selected={selected as Option[]}
           onChange={handleChange}
         />
       </FormControl>
