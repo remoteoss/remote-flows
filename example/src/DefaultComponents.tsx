@@ -16,6 +16,8 @@ import { FileUploadFieldDefault } from './components/defaults/FileUploadFieldDef
 import { DrawerDefault } from './components/defaults/DrawerDefault';
 import { TableFieldDefault } from './components/defaults/TableFieldDefault';
 import { ZendeskDrawerDefault } from './components/defaults/ZendeskDrawerDefault';
+import { FieldsetToggleButtonDefault } from './components/defaults/FieldsetToggleButtonDefault';
+import { WorkScheduleFieldDefault } from './components/defaults/WorkScheduleFieldDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -35,4 +37,6 @@ export const defaultComponents: Components = {
   drawer: DrawerDefault,
   table: TableFieldDefault,
   zendeskDrawer: ZendeskDrawerDefault,
+  fieldsetToggle: FieldsetToggleButtonDefault,
+  'work-schedule': WorkScheduleFieldDefault,
 };

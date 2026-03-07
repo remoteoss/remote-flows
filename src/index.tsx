@@ -154,6 +154,13 @@ export type {
 export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
 export { zendeskArticles } from './components/shared/zendesk-drawer/utils';
+
+export {
+  calculateHours,
+  DAYS_OF_THE_WEEK,
+  getShortWeekday,
+} from './components/form/fields/workScheduleUtils';
+export type { DailySchedule } from './components/form/fields/workScheduleUtils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';
 export { HelpCenter } from './components/shared/zendesk-drawer/HelpCenter';
 
