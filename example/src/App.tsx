@@ -4,7 +4,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Button,
   cn,
 } from '@remoteoss/remote-flows/internals';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
@@ -13,7 +12,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './components/ui/collapsible';
-
+import { Button } from './components/ui/button';
 import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
 
 import { useState } from 'react';
