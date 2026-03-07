@@ -12,6 +12,7 @@ import { EmailFieldDefault } from './components/defaults/EmailFieldDefault';
 import { NumberFieldDefault } from './components/defaults/NumberFieldDefault';
 import { StatementDefault } from './components/defaults/StatementDefault';
 import { PDFPreviewDefault } from './components/defaults/PDFPreviewDefault';
+import { FileUploadFieldDefault } from './components/defaults/FileUploadFieldDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -27,4 +28,5 @@ export const defaultComponents: Components = {
   countries: CountryFieldDefault,
   'multi-select': MultiSelectFieldDefault,
   pdfViewer: PDFPreviewDefault,
+  file: FileUploadFieldDefault,
 };
