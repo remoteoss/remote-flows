@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 
 import { cn, sanitizeHtml } from '@/src/lib/utils';
+import { Label } from '@/src/components/ui/label';
 
 const Form = FormProvider;
 
@@ -82,14 +83,11 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function FormLabel({
-  className,
-  ...props
-}: React.ComponentProps<'label'>) {
+function FormLabel({ className, ...props }: React.ComponentProps<'label'>) {
   const { error, formItemId } = useFormField();
 
   return (
-    <label
+    <Label
       data-slot='form-label'
       data-error={!!error}
       className={cn(
