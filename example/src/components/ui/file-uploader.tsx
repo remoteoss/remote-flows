@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/src/components/ui/button';
+import { Button } from './button';
 import { Upload, X } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
+import { cn } from '@remoteoss/remote-flows/internals';
 
 // Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {

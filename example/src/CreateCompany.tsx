@@ -9,6 +9,7 @@ import { Card } from '@remoteoss/remote-flows/internals';
 import React, { useState, useCallback } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
@@ -178,6 +179,7 @@ export const CreateCompanyWithProps = ({
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
+        components={defaultComponents}
         authType='company-manager'
         proxy={{ url: window.location.origin }}
       >

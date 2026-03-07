@@ -6,6 +6,7 @@ import {
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
+import { defaultComponents } from './DefaultComponents';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -20,7 +21,7 @@ export function BasicCostCalculator() {
   };
 
   return (
-    <RemoteFlows isClientToken>
+    <RemoteFlows isClientToken components={defaultComponents}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         render={(props) => {
