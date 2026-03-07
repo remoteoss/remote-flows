@@ -8,7 +8,7 @@
  */
 
 // Internal utilities
-export { cn, sanitizeHtml } from './lib/utils';
+export { cn } from './lib/utils';
 
 // UI Components for internal use
 export { Button, buttonVariants } from './components/ui/button';
@@ -21,12 +21,6 @@ export {
   CardContent,
   CardFooter,
 } from './components/ui/card';
-
-export {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './components/ui/collapsible';
 
 export {
   Drawer,
@@ -46,7 +40,6 @@ export {
   DialogFooter,
 } from './components/ui/dialog';
 
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 
@@ -66,4 +59,3 @@ export {
   SelectTrigger,
   SelectValue,
 } from './components/ui/select';
-export { ScrollArea } from './components/ui/scroll-area';

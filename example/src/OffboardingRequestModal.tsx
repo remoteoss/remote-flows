@@ -6,8 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
   Button,
-  ScrollArea,
 } from '@remoteoss/remote-flows/internals';
+import { ScrollArea } from './components/ui/scroll-area';
 
 export function OffboardingRequestModal({
   employee,

@@ -5,9 +5,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  ScrollArea,
   DialogTrigger,
 } from '@remoteoss/remote-flows/internals';
+import { ScrollArea } from './components/ui/scroll-area';
 import type { ZendeskDrawerComponentProps } from '@remoteoss/remote-flows';
 
 export function ZendeskDialog({
