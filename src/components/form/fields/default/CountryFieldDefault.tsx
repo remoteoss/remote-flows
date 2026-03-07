@@ -18,17 +18,7 @@ export function CountryFieldDefault({
   fieldState,
   fieldData,
 }: CountryComponentProps) {
-  const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) {
-    console.log('Missing component: CountryFieldDefault');
-    return null;
-  }
-  const [selected, setSelected] = useState<$TSFixMe[]>([]);
-  const handleChange = (rawValues: $TSFixMe[]) => {
-    const values = rawValues.map(({ value }) => value);
-    field.onChange(values);
-    setSelected(rawValues);
-  };
+  const [selected, setSelected] = useState<(typeof Option)[]>([]);
 
   useEffect(() => {
     if (field.value && fieldData.options) {
@@ -42,6 +32,17 @@ export function CountryFieldDefault({
       );
     }
   }, [field.value, fieldData.options]);
+
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: CountryFieldDefault');
+    return null;
+  }
+  const handleChange = (rawValues: $TSFixMe[]) => {
+    const values = rawValues.map(({ value }) => value);
+    field.onChange(values);
+    setSelected(rawValues);
+  };
 
   const countryOptions = [
     ...Object.entries(fieldData.$meta?.regions || {}).map(([key, value]) => ({
