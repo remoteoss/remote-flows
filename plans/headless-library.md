@@ -164,18 +164,6 @@ type EstimationResultsComponents = {
 
 The default for each slot is a plain HTML fallback (no Radix).
 
-#### 4b. `SummaryResults`
-
-Same approach — accept `Card` and `Accordion` overrides. Provide plain HTML defaults.
-
-#### 4d. `Termination/PaidTimeOff`
-
-Replace `Button` import with a `components?.button` override or a plain `<button>`.
-
-#### 4f. `ActionsDropdown`
-
-Replace `Button` from `ui/button` with a native `<button>` element directly. `ActionsDropdown` is already a plain dropdown with no Radix — only the `Button` wrapper is Radix-backed.
-
 ---
 
 ### Phase 5 — Remove all `@radix-ui/*` from `package.json`
