@@ -24,7 +24,6 @@ Decouple all Radix UI (and other visual) dependencies from the library core, mak
 
 - `EstimationResults` — uses `Card`, `Accordion`, `BasicTooltip`, `ActionsDropdown`
 - `SummaryResults` — uses `Card`, `Accordion`
-- `Termination/AcknowledgeInformation` — uses `Card`
 - `Termination/PaidTimeOff` — uses `Button`
 - `ContractorOnboarding/ContractPreviewStatement` — uses `Alert`
 - `ActionsDropdown` — uses `Button` from `ui/button`
@@ -156,7 +155,6 @@ Currently accepts a partial `components` prop. Extend it to cover all internal v
 
 ```ts
 type EstimationResultsComponents = {
-  Card?: React.ComponentType<{ className?: string; children: React.ReactNode }>;
   Accordion?: React.ComponentType<...>;
   Tooltip?: React.ComponentType<{ content: React.ReactNode; children: React.ReactNode }>;
   ActionsDropdown?: React.ComponentType<ActionsDropdownProps>;
@@ -173,17 +171,9 @@ The default for each slot is a plain HTML fallback (no Radix).
 
 Same approach — accept `Card` and `Accordion` overrides. Provide plain HTML defaults.
 
-#### 4c. `Termination/AcknowledgeInformation`
-
-Replace `Card` import with a `components?.card` override or a plain `<div>`.
-
 #### 4d. `Termination/PaidTimeOff`
 
 Replace `Button` import with a `components?.button` override or a plain `<button>`.
-
-#### 4e. `ContractorOnboarding/ContractPreviewStatement`
-
-Replace `Alert` / `AlertDescription` / `AlertTitle` with a `components?.alert` override or plain `<div role="alert">`.
 
 #### 4f. `ActionsDropdown`
 
