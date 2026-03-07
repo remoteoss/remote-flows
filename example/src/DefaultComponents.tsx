@@ -1,5 +1,6 @@
 import { Components } from '@remoteoss/remote-flows';
 import { CountryFieldDefault } from './components/defaults/CountryFieldDefault';
+import { MultiSelectFieldDefault } from './components/defaults/MultiSelectFieldDefault';
 import { TextFieldDefault } from './components/defaults/TextFieldDefault';
 import { TextAreaFieldDefault } from './components/defaults/TextAreaFieldDefault';
 import { SelectFieldDefault } from './components/defaults/SelectFieldDefault';
@@ -24,5 +25,6 @@ export const defaultComponents: Components = {
   number: NumberFieldDefault,
   statement: StatementDefault,
   countries: CountryFieldDefault,
+  'multi-select': MultiSelectFieldDefault,
   pdfViewer: PDFPreviewDefault,
 };

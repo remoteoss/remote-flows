@@ -1,8 +1,15 @@
-import { useState } from 'react';
-import { ChevronDownIcon, X } from 'lucide-react';
+import { Fragment, useState } from 'react';
+import { Check, ChevronDownIcon, X } from 'lucide-react';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Button } from './button';
-import { Checkbox } from './checkbox';
 import { cn } from '@remoteoss/remote-flows/internals';
 
 export type Option = {
@@ -28,15 +35,6 @@ export function MultiSelect({
 
   const handleUnselect = (option: Option) => {
     onChange(selected.filter((item) => item.value !== option.value));
-  };
-
-  const handleToggle = (option: Option) => {
-    const isSelected = selected.some((item) => item.value === option.value);
-    onChange(
-      isSelected
-        ? selected.filter((item) => item.value !== option.value)
-        : [...selected, option],
-    );
   };
 
   const hasCategories = options.some((option) => option.category);
@@ -67,15 +65,15 @@ export function MultiSelect({
             {selected.length > 0 ? (
               selected.map((option) => (
                 <span
-                  key={String(option.value)}
-                  className='inline-flex items-center gap-1 bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 text-xs mr-1'
+                  key={option.label}
+                  className='inline-flex items-center gap-1 bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 text-xs mr-1 mb-1'
                 >
                   {option.label}
                   <span
                     role='button'
                     tabIndex={0}
                     aria-label={`remove ${option.label}`}
-                    className='cursor-pointer'
+                    className='ml-1 rounded-full outline-none focus:ring-2 cursor-pointer'
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleUnselect(option);
                     }}
@@ -85,7 +83,7 @@ export function MultiSelect({
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className='h-3 w-3' />
+                    <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
                   </span>
                 </span>
               ))
@@ -93,40 +91,51 @@ export function MultiSelect({
               <span className='text-foreground'>{placeholder}</span>
             )}
           </div>
-          <ChevronDownIcon className='size-4 shrink-0' />
+          <ChevronDownIcon className='size-4' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align='start' className='w-72 p-0 max-h-64 overflow-y-auto'>
-        {Object.entries(groupedOptions).map(([category, categoryOptions]) => (
-          <div key={category}>
-            {hasCategories && (
-              <div className='px-2 py-1.5 text-xs font-semibold text-muted-foreground'>
-                {category}
-              </div>
+      <PopoverContent align='start' className='w-full p-0'>
+        <Command>
+          <CommandList>
+            <CommandEmpty>No item found.</CommandEmpty>
+            {Object.entries(groupedOptions).map(
+              ([category, categoryOptions], index) => (
+                <Fragment key={category}>
+                  {index > 0 && <CommandSeparator />}
+                  <CommandGroup heading={hasCategories ? category : undefined}>
+                    {categoryOptions.map((option) => {
+                      const isSelected = selected.some(
+                        (item) => item.value === option.value,
+                      );
+                      return (
+                        <CommandItem
+                          key={option.label}
+                          onSelect={() => {
+                            onChange(
+                              isSelected
+                                ? selected.filter(
+                                    (item) => item.value !== option.value,
+                                  )
+                                : [...selected, option],
+                            );
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              isSelected ? 'opacity-100' : 'opacity-0',
+                            )}
+                          />
+                          {option.label}
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Fragment>
+              ),
             )}
-            {categoryOptions.map((option) => {
-              const isSelected = selected.some(
-                (item) => item.value === option.value,
-              );
-              return (
-                <div
-                  key={String(option.value)}
-                  className={cn(
-                    'flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-accent text-sm',
-                  )}
-                  onClick={() => handleToggle(option)}
-                >
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => handleToggle(option)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  {option.label}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+          </CommandList>
+        </Command>
       </PopoverContent>
     </Popover>
   );
