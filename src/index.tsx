@@ -158,4 +158,5 @@ export {
   FormFieldContext,
   FormItemContext,
   useFormField,
+  FormDescription,
 } from '@/src/components/ui/form';
