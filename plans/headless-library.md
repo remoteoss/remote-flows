@@ -24,9 +24,6 @@ Decouple all Radix UI (and other visual) dependencies from the library core, mak
 
 - `EstimationResults` — uses `Card`, `Accordion`, `BasicTooltip`, `ActionsDropdown`
 - `SummaryResults` — uses `Card`, `Accordion`
-- `Termination/PaidTimeOff` — uses `Button`
-- `ContractorOnboarding/ContractPreviewStatement` — uses `Alert`
-- `ActionsDropdown` — uses `Button` from `ui/button`
 
 ---
 
