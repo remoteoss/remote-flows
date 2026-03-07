@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldComponentProps, WorkScheduleComponentProps, StatementComponentProps } from '@/src/types/fields';
 import {
   Components,
@@ -203,6 +203,45 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
           <button type='button' onClick={handleSave}>
             Save Schedule
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ZendeskDrawerDefault({
+  open,
+  onClose,
+  data,
+  isLoading,
+  error,
+  zendeskURL,
+  Trigger,
+}: ZendeskDrawerComponentProps) {
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
+  return (
+    <div>
+      {Trigger}
+      {open && (
+        <div data-testid='zendesk-drawer'>
+          {isLoading && <div>Loading...</div>}
+          {error && <div>Error loading article</div>}
+          {data?.title && <strong>{data.title}</strong>}
+          {data?.body && (
+            <div dangerouslySetInnerHTML={{ __html: data.body }} />
+          )}
+          <a href={zendeskURL} target='_blank' rel='noopener noreferrer'>
+            help article
+          </a>
+          <button onClick={onClose}>Close</button>
         </div>
       )}
     </div>
@@ -518,31 +557,5 @@ export const defaultComponents: Components = {
       )}
     </div>
   ),
-  zendeskDrawer: ({
-    open,
-    onClose,
-    data,
-    isLoading,
-    error,
-    zendeskURL,
-    Trigger,
-  }: ZendeskDrawerComponentProps) => (
-    <div>
-      {Trigger}
-      {open && (
-        <div data-testid='zendesk-drawer'>
-          {isLoading && <div>Loading...</div>}
-          {error && <div>Error loading article</div>}
-          {data?.title && <strong>{data.title}</strong>}
-          {data?.body && (
-            <div dangerouslySetInnerHTML={{ __html: data.body }} />
-          )}
-          <a href={zendeskURL} target='_blank' rel='noopener noreferrer'>
-            help article
-          </a>
-          <button onClick={onClose}>Close</button>
-        </div>
-      )}
-    </div>
-  ),
+  zendeskDrawer: ZendeskDrawerDefault,
 };
