@@ -9,6 +9,7 @@ import { ButtonDefault } from './components/defaults/ButtonDefault';
 import { EmailFieldDefault } from './components/defaults/EmailFieldDefault';
 import { NumberFieldDefault } from './components/defaults/NumberFieldDefault';
 import { StatementDefault } from './components/defaults/StatementDefault';
+import { PDFPreviewDefault } from './components/defaults/PDFPreviewDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -21,4 +22,5 @@ export const defaultComponents: Components = {
   email: EmailFieldDefault,
   number: NumberFieldDefault,
   statement: StatementDefault,
+  pdfViewer: PDFPreviewDefault,
 };
