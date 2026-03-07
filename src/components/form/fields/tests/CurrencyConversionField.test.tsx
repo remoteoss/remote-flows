@@ -17,8 +17,6 @@ import {
 import { useState } from 'react';
 import { defaultComponents } from '@/src/tests/defaultComponents';
 
-const queryClient = new QueryClient();
-
 const defaultProps: CurrencyConversionFieldProps = {
   name: 'test_salary',
   label: 'Test Salary',
@@ -38,38 +36,13 @@ const defaultProps: CurrencyConversionFieldProps = {
   type: 'text',
 };
 
-// Helper function to render the component with a form context
-const renderWithFormContext = (props = defaultProps) => {
-  const TestComponent = () => {
-    const methods = useForm({
-      defaultValues: {
-        [props.name]: '',
-        [props.conversionFieldName]: '',
-      },
-      mode: 'onChange',
-    });
-
-    return (
-      <QueryClientProvider client={queryClient}>
-        <FormFieldsProvider
-          components={{ text: defaultComponents.text, button: defaultComponents.button }}
-        >
-          <FormProvider {...methods}>
-            <CurrencyConversionField {...props} />
-          </FormProvider>
-        </FormFieldsProvider>
-      </QueryClientProvider>
-    );
-  };
-
-  return render(<TestComponent />);
-};
-
-// Helper function to render with a custom button
-const renderWithCustomButton = (
-  CustomButton: React.ComponentType<ButtonComponentProps>,
+const renderWithFormContext = (
   props = defaultProps,
+  buttonComponent:
+    | React.ComponentType<ButtonComponentProps>
+    | undefined = defaultComponents.button,
 ) => {
+  const queryClient = new QueryClient();
   const TestComponent = () => {
     const methods = useForm({
       defaultValues: {
@@ -82,7 +55,7 @@ const renderWithCustomButton = (
     return (
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider
-          components={{ text: defaultComponents.text, button: CustomButton }}
+          components={{ text: defaultComponents.text, button: buttonComponent }}
         >
           <FormProvider {...methods}>
             <CurrencyConversionField {...props} />
@@ -156,7 +129,7 @@ describe('CurrencyFieldWithConversion', () => {
     // Wait for the main field to be updated
     await waitFor(() => {
       const mainInput = screen.getByLabelText('Test Salary');
-      expect(mainInput).toHaveValue('1176.47'); // 1000 EUR = 1176.47 USD (using 0.85 exchange rate)
+      expect(mainInput).toHaveValue('1176.47'); // 1000 EUR = 1176.47 USD (using 1.17647 exchange rate)
     });
   });
 
@@ -301,9 +274,12 @@ describe('CurrencyFieldWithConversion', () => {
       });
 
       return (
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={new QueryClient()}>
           <FormFieldsProvider
-            components={{ text: defaultComponents.text, button: defaultComponents.button }}
+            components={{
+              text: defaultComponents.text,
+              button: defaultComponents.button,
+            }}
           >
             <FormProvider {...methods}>
               <CurrencyConversionField
@@ -340,8 +316,10 @@ describe('CurrencyFieldWithConversion', () => {
   });
 
   describe('with custom button component', () => {
-    it('passes all props to custom button component', () => {
-      const CustomButton = vi
+    let CustomButton: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      CustomButton = vi
         .fn()
         .mockImplementation(({ children, onClick, ...props }) => (
           <button
@@ -353,8 +331,10 @@ describe('CurrencyFieldWithConversion', () => {
             {children}
           </button>
         ));
+    });
 
-      renderWithCustomButton(CustomButton);
+    it('passes all props to custom button component', () => {
+      renderWithFormContext(defaultProps, CustomButton);
 
       expect(CustomButton).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -372,20 +352,7 @@ describe('CurrencyFieldWithConversion', () => {
     });
 
     it('toggles button text correctly', () => {
-      const CustomButton = vi
-        .fn()
-        .mockImplementation(({ children, onClick, ...props }) => (
-          <button
-            data-testid='custom-button'
-            onClick={onClick}
-            data-type={props['data-type']}
-            className={props.className}
-          >
-            {children}
-          </button>
-        ));
-
-      renderWithCustomButton(CustomButton);
+      renderWithFormContext(defaultProps, CustomButton);
 
       const button = screen.getByTestId('custom-button');
 

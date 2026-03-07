@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { FieldComponentProps, WorkScheduleComponentProps, StatementComponentProps } from '@/src/types/fields';
+import {
+  FieldComponentProps,
+  WorkScheduleComponentProps,
+  StatementComponentProps,
+} from '@/src/types/fields';
 import {
   Components,
   FieldSetToggleComponentProps,
@@ -27,7 +31,11 @@ const DAY_ABBREVS: Record<string, string> = {
   sunday: 'Sun',
 };
 
-function MultiSelectField({ field, fieldData, fieldState }: FieldComponentProps) {
+function MultiSelectField({
+  field,
+  fieldData,
+  fieldState,
+}: FieldComponentProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selected: string[] = Array.isArray(field.value) ? field.value : [];
   const options: { value: string; label: string }[] = fieldData.options ?? [];
@@ -260,7 +268,7 @@ export const defaultComponents: Components = {
         ref={field.ref}
         onBlur={field.onBlur}
         placeholder={fieldData.label as string}
-        onChange={(e) => field.onChange(e.target.value)}
+        onChange={(e) => field.onChange(e)}
       />
       {fieldData.description && (
         <p className='input-description'>{fieldData.description as string}</p>
@@ -430,20 +438,18 @@ export const defaultComponents: Components = {
       return (
         <div className='input-container'>
           <label>{fieldData.label as string}</label>
-          {fieldData.options.map(
-            (option: { value: string; label: string }) => (
-              <div key={option.value}>
-                <input
-                  type='checkbox'
-                  id={option.value}
-                  onChange={(e) =>
-                    field?.onChange?.(e.target.checked, option.value)
-                  }
-                />
-                <label htmlFor={option.value}>{option.label}</label>
-              </div>
-            ),
-          )}
+          {fieldData.options.map((option: { value: string; label: string }) => (
+            <div key={option.value}>
+              <input
+                type='checkbox'
+                id={option.value}
+                onChange={(e) =>
+                  field?.onChange?.(e.target.checked, option.value)
+                }
+              />
+              <label htmlFor={option.value}>{option.label}</label>
+            </div>
+          ))}
           {fieldState.error && (
             <p className='error-message'>{fieldState.error.message}</p>
           )}
@@ -509,7 +515,11 @@ export const defaultComponents: Components = {
       {data.description && <p>{data.description}</p>}
     </div>
   ),
-  table: ({ data = [], columns, className = '' }: TableComponentProps<$TSFixMe>) => (
+  table: ({
+    data = [],
+    columns,
+    className = '',
+  }: TableComponentProps<$TSFixMe>) => (
     <table className={`RemoteFlows__Table ${className}`}>
       <thead>
         <tr>
