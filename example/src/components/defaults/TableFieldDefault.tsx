@@ -1,14 +1,13 @@
 import {
-  Table as TablePrimitive,
-  TableBody,
-  TableCell,
-  TableHead,
+  Table,
   TableHeader,
+  TableBody,
+  TableHead,
   TableRow,
-} from '@/src/components/ui/table';
-import { cn } from '@/src/lib/utils';
-import { $TSFixMe, TableComponentProps } from '@/src/types/remoteFlows';
-import { useFormFields } from '@/src/context';
+  TableCell,
+} from '../ui/table';
+import { cn } from '@remoteoss/remote-flows/internals';
+import { TableComponentProps } from '@remoteoss/remote-flows';
 
 export const TableFieldDefault = ({
   data,
@@ -16,13 +15,8 @@ export const TableFieldDefault = ({
   className,
   ref,
 }: TableComponentProps) => {
-  const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) {
-    console.log('Missing component: TableFieldDefault');
-    return null;
-  }
   return (
-    <TablePrimitive ref={ref} className={cn('RemoteFlows__Table', className)}>
+    <Table ref={ref} className={cn('RemoteFlows__Table', className)}>
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
@@ -37,7 +31,7 @@ export const TableFieldDefault = ({
       </TableHeader>
       <TableBody>
         {data?.map((row, rowIndex) => (
-          <TableRow key={getRowKey(row, rowIndex)}>
+          <TableRow key={String(row.id ?? rowIndex)}>
             {columns.map((column) => (
               <TableCell
                 key={String(column.id)}
@@ -59,10 +53,6 @@ export const TableFieldDefault = ({
           </TableRow>
         ))}
       </TableBody>
-    </TablePrimitive>
+    </Table>
   );
 };
-
-function getRowKey(row: $TSFixMe, index: number): string {
-  return String(row.id ?? index);
-}

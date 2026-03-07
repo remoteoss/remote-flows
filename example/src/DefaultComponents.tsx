@@ -13,6 +13,9 @@ import { NumberFieldDefault } from './components/defaults/NumberFieldDefault';
 import { StatementDefault } from './components/defaults/StatementDefault';
 import { PDFPreviewDefault } from './components/defaults/PDFPreviewDefault';
 import { FileUploadFieldDefault } from './components/defaults/FileUploadFieldDefault';
+import { DrawerDefault } from './components/defaults/DrawerDefault';
+import { TableFieldDefault } from './components/defaults/TableFieldDefault';
+import { ZendeskDrawerDefault } from './components/defaults/ZendeskDrawerDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -29,4 +32,7 @@ export const defaultComponents: Components = {
   'multi-select': MultiSelectFieldDefault,
   pdfViewer: PDFPreviewDefault,
   file: FileUploadFieldDefault,
+  drawer: DrawerDefault,
+  table: TableFieldDefault,
+  zendeskDrawer: ZendeskDrawerDefault,
 };

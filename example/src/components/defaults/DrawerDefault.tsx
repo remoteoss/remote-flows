@@ -1,13 +1,12 @@
-import { DrawerComponentProps } from '@/src/types/remoteFlows';
 import {
-  Drawer as DrawerPrimitive,
-  DrawerTrigger,
+  Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-} from '@/src/components/ui/drawer';
-import { cn } from '@/src/lib/utils';
-import { useFormFields } from '@/src/context';
+  DrawerTrigger,
+} from '../ui/drawer';
+import { cn } from '@remoteoss/remote-flows/internals';
+import { DrawerComponentProps } from '@remoteoss/remote-flows';
 
 export function DrawerDefault({
   open,
@@ -18,17 +17,8 @@ export function DrawerDefault({
   trigger,
   children,
 }: DrawerComponentProps) {
-  const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) {
-    console.log('Missing component: DrawerDefault');
-    return null;
-  }
   return (
-    <DrawerPrimitive
-      open={open}
-      onOpenChange={onOpenChange}
-      direction={direction}
-    >
+    <Drawer open={open} onOpenChange={onOpenChange} direction={direction}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent
         className={cn(
@@ -43,6 +33,6 @@ export function DrawerDefault({
           <div className='flex-1 overflow-y-auto'>{children}</div>
         </div>
       </DrawerContent>
-    </DrawerPrimitive>
+    </Drawer>
   );
 }
