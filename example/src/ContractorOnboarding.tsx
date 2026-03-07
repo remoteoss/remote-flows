@@ -34,6 +34,7 @@ import { PricingPlanCard } from './components/PricingPlanCard';
 import { EngagingContractorsModal } from './components/PricingPlanModals';
 import './css/main.css';
 import './css/contractor-onboarding.css';
+import { defaultComponents } from './DefaultComponents';
 
 const groupOptionsBySeparator = (options: $TSFixMe[]) => {
   const groups: $TSFixMe[][] = [];
@@ -471,6 +472,7 @@ export const ContractorOnboardingWithProps = ({
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
+        components={defaultComponents}
         authType='company-manager'
         proxy={{ url: window.location.origin }}
       >
