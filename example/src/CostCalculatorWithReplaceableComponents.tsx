@@ -4,7 +4,7 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
-import { components } from './Components';
+import { components } from './CostCalculatorComponents';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
