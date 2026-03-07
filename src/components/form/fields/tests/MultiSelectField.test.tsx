@@ -5,7 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { array } from 'yup';
 import { MultiSelectField } from '../MultiSelectField';
-import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 type MultiSelectFieldProps = React.ComponentProps<typeof MultiSelectField>;
 
@@ -61,7 +61,7 @@ describe('MultiSelectField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        'multi-select': MultiSelectFieldDefault,
+        'multi-select': defaultComponents['multi-select'],
       },
     });
   });

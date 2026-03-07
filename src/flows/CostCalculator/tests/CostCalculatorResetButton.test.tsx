@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { CostCalculatorResetButton } from '../CostCalculatorResetButton';
 import { useCostCalculatorContext } from '../context';
 import { useFormFields } from '@/src/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock the hooks
 vi.mock('../context');
@@ -31,7 +31,7 @@ describe('CostCalculatorResetButton', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: { button: ButtonDefault },
+      components: { button: defaultComponents.button},
       makeComponentsRequired: false,
     });
   });

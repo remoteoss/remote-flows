@@ -5,7 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextAreaField, TextAreaFieldProps } from '../TextAreaField';
-import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -49,7 +49,7 @@ describe('TextAreaField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        textarea: TextAreaFieldDefault,
+        textarea: defaultComponents.textarea,
       },
     });
   });
