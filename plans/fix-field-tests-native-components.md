@@ -24,12 +24,12 @@ const NativeCheckbox = ({ field, fieldData }) => {
   if (fieldData.multiple && fieldData.options) {
     return (
       <div>
-        {fieldData.options.map(opt => (
+        {fieldData.options.map((opt) => (
           <div key={opt.value}>
             <input
-              type="checkbox"
+              type='checkbox'
               id={opt.value}
-              onChange={e => field.onChange(e.target.checked, opt.value)}
+              onChange={(e) => field.onChange(e.target.checked, opt.value)}
             />
             <label htmlFor={opt.value}>{opt.label}</label>
           </div>
@@ -40,7 +40,10 @@ const NativeCheckbox = ({ field, fieldData }) => {
   return (
     <div>
       <label>{fieldData.label}</label>
-      <input type="checkbox" onChange={e => field.onChange(e.target.checked)} />
+      <input
+        type='checkbox'
+        onChange={(e) => field.onChange(e.target.checked)}
+      />
       <p>{fieldData.description}</p>
     </div>
   );
@@ -61,7 +64,11 @@ Add inline:
 const NativeTextField = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
-    <input placeholder={fieldData.label} {...field} onChange={e => field.onChange(e)} />
+    <input
+      placeholder={fieldData.label}
+      {...field}
+      onChange={(e) => field.onChange(e)}
+    />
     <p>{fieldData.description}</p>
   </div>
 );
@@ -74,6 +81,7 @@ Use in `beforeEach`: `components: { text: NativeTextField }`
 ### NumberField.test.tsx
 
 Remove both:
+
 - `import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault'`
 - `import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault'`
 
@@ -93,7 +101,7 @@ Add inline:
 const NativeTextArea = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
-    <textarea {...field} onChange={e => field.onChange(e)} />
+    <textarea {...field} onChange={(e) => field.onChange(e)} />
     <p>{fieldData.description}</p>
   </div>
 );
@@ -114,10 +122,10 @@ const NativeRadioGroup = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
     <p>{fieldData.description}</p>
-    {fieldData.options?.map(opt => (
+    {fieldData.options?.map((opt) => (
       <div key={opt.value}>
         <input
-          type="radio"
+          type='radio'
           id={opt.value}
           disabled={opt.disabled}
           onChange={() => field.onChange(opt.value)}
@@ -136,6 +144,7 @@ Use in `beforeEach`: `components: { radio: NativeRadioGroup }`
 ### FieldSetField.test.tsx
 
 Remove both:
+
 - `import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault'`
 - `import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault'`
 
@@ -143,13 +152,15 @@ Add inline:
 
 ```tsx
 const NativeFieldsetToggle = ({ isExpanded, onToggle, children, ...props }) => (
-  <button onClick={onToggle} {...props}>{children}</button>
+  <button onClick={onToggle} {...props}>
+    {children}
+  </button>
 );
 
 const NativeTextField = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
-    <input {...field} onChange={e => field.onChange(e)} />
+    <input {...field} onChange={(e) => field.onChange(e)} />
   </div>
 );
 ```
@@ -170,9 +181,15 @@ Add inline:
 const NativeSelect = ({ field, fieldData }) => (
   <div>
     <label htmlFor={fieldData.name}>{fieldData.label}</label>
-    <select id={fieldData.name} {...field} onChange={e => field.onChange(e.target.value)}>
-      {fieldData.options?.map(opt => (
-        <option key={opt.value} value={opt.value}>{opt.label}</option>
+    <select
+      id={fieldData.name}
+      {...field}
+      onChange={(e) => field.onChange(e.target.value)}
+    >
+      {fieldData.options?.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
       ))}
     </select>
     <p>{fieldData.description}</p>
@@ -197,6 +214,7 @@ fireEvent.change(select, { target: { value: 'option1' } });
 ```
 
 Affected tests:
+
 - `'handles selection change correctly'`
 - `'converts value to number when jsonType is "number" in default implementation'`
 - `'keeps value as string when jsonType is "string" in default implementation'`
@@ -213,8 +231,12 @@ Add inline:
 const NativeFileUpload = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
-    <button type="button">Upload</button>
-    <input type="file" aria-label="File upload" onChange={e => field.onChange(e)} />
+    <button type='button'>Upload</button>
+    <input
+      type='file'
+      aria-label='File upload'
+      onChange={(e) => field.onChange(e)}
+    />
     <p>{fieldData.description}</p>
   </div>
 );
@@ -237,7 +259,12 @@ Add inline:
 const NativeDatePicker = ({ field, fieldData }) => (
   <div>
     <label>{fieldData.label}</label>
-    <input type="date" aria-label={fieldData.label} {...field} onChange={e => field.onChange(new Date(e.target.value))} />
+    <input
+      type='date'
+      aria-label={fieldData.label}
+      {...field}
+      onChange={(e) => field.onChange(new Date(e.target.value))}
+    />
     <p>{fieldData.description}</p>
   </div>
 );
@@ -258,6 +285,7 @@ fireEvent.change(input, { target: { value: '2024-01-15' } });
 ```
 
 Affected tests:
+
 - `'renders the default implementation correctly'` — change `getByRole('button')` to `getByRole('textbox')` or use `getByLabelText`
 - `'handles date selection correctly'` — replace calendar click with `fireEvent.change`
 
@@ -268,6 +296,7 @@ Affected tests:
 This test uses `FormFieldsProvider` directly (not a mock), so it exercises the real render path.
 
 Remove both:
+
 - `import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault'`
 - `import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault'`
 
@@ -277,16 +306,23 @@ Add inline:
 const NativeTextField = ({ field, fieldData }) => (
   <div>
     <label htmlFor={fieldData.name}>{fieldData.label}</label>
-    <input id={fieldData.name} {...field} onChange={e => field.onChange(e.target.value)} />
+    <input
+      id={fieldData.name}
+      {...field}
+      onChange={(e) => field.onChange(e.target.value)}
+    />
   </div>
 );
 
 const NativeButton = ({ children, onClick, ...props }) => (
-  <button onClick={onClick} {...props}>{children}</button>
+  <button onClick={onClick} {...props}>
+    {children}
+  </button>
 );
 ```
 
 Pass directly to `FormFieldsProvider`:
+
 ```tsx
 <FormFieldsProvider components={{ text: NativeTextField, button: NativeButton }}>
 ```
@@ -304,6 +340,7 @@ No test assertion changes required.
 Remove: `import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault'`
 
 Tests expect:
+
 - `getByRole('combobox')` — a select/combobox
 - Clicking shows grouped regions: 'North America', 'Northern America', 'United States', 'Canada'
 - `getByRole('option', { name: 'United States' })` — option elements
@@ -320,6 +357,7 @@ tests to test `CountryField`'s data transformation logic separately.
 Remove: `import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault'`
 
 Tests expect:
+
 - `getByRole('combobox')` — trigger button
 - After clicking: `getByRole('option', { name: 'Option 1' })` — listbox options
 - Selected badges with `getByLabelText('remove Option 1')` remove buttons
@@ -335,6 +373,7 @@ itself rather than the default — check before assuming it needs to be in the n
 ### WorkScheduleField.test.tsx
 
 Remove all three:
+
 - `import { WorkScheduleFieldDefault } from '...'`
 - `import { CheckboxFieldDefault } from '...'`
 - `import { TextFieldDefault } from '...'`
@@ -344,6 +383,7 @@ Tests expect a rich UI: "Work hours" summary, "Edit Schedule" button, a dialog w
 button, and live total hours calculation.
 
 This is essentially the full `WorkScheduleFieldDefault` UI. Options:
+
 1. Move these tests to an integration/e2e test that provides real components
 2. Create a minimal native work-schedule component that replicates the same structure and logic
 3. Keep `WorkScheduleFieldDefault` (don't delete it) and only remove the others

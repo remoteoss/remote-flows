@@ -26,7 +26,9 @@ export const TableFieldDefault = forwardRef<
                 .filter(Boolean)
                 .join(' ')}
             >
-              {col.render ? col.render(row[col.id], row, rowIndex) : row[col.id]}
+              {col.render
+                ? col.render(row[col.id], row, rowIndex)
+                : row[col.id]}
             </td>
           ))}
         </tr>

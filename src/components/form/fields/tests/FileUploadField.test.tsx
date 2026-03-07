@@ -212,5 +212,4 @@ describe('FileUploadField Component', () => {
       expect(mockOnChange.mock.calls[0][0]).toEqual([smallFile]);
     });
   });
-
 });
