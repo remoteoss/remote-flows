@@ -51,7 +51,9 @@ export function FormFieldsProvider({
   }, [userComponents]);
 
   return (
-    <FormFieldsContext.Provider value={{ components: resolvedComponents, makeComponentsRequired }}>
+    <FormFieldsContext.Provider
+      value={{ components: resolvedComponents, makeComponentsRequired }}
+    >
       <Suspense
         fallback={
           <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
@@ -90,7 +92,10 @@ export function RemoteFlows({
         client={remoteApiClient}
       >
         <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider components={components} makeComponentsRequired={makeComponentsRequired}>
+          <FormFieldsProvider
+            components={components}
+            makeComponentsRequired={makeComponentsRequired}
+          >
             <RemoteFlowContextWrapper
               environment={environment}
               debug={debug}

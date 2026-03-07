@@ -8,7 +8,9 @@ When `true`, the built-in **default** components read the flag from context and 
 ## Files to change
 
 ### 1. `src/types/remoteFlows.ts`
+
 Add to `RemoteFlowsSDKProps`:
+
 ```ts
 /**
  * When true, built-in default components render nothing.
@@ -21,7 +23,9 @@ makeComponentsRequired?: boolean;
 ---
 
 ### 2. `src/context.ts`
+
 Add `makeComponentsRequired` to `FormFieldsContext` and expose via `useFormFields()`:
+
 ```ts
 export const FormFieldsContext = createContext<{
   components: Components;
@@ -42,6 +46,7 @@ export const useFormFields = () => {
 ### 3. `src/RemoteFlowsProvider.tsx`
 
 **`FormFieldsProvider`** — accept and forward the new prop (lazy defaults logic unchanged):
+
 ```ts
 export function FormFieldsProvider({
   children,
@@ -64,6 +69,7 @@ export function FormFieldsProvider({
 ```
 
 **`RemoteFlows`** — pass through the new prop:
+
 ```ts
 export function RemoteFlows({ makeComponentsRequired, ... }) {
   return (
@@ -82,7 +88,11 @@ If `true`, returns `null` immediately. Otherwise renders as normal.
 
 ```ts
 // example: CheckboxFieldDefault.tsx
-export const CheckboxFieldDefault = ({ field, fieldState, fieldData }: FieldComponentProps) => {
+export const CheckboxFieldDefault = ({
+  field,
+  fieldState,
+  fieldData,
+}: FieldComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
   if (makeComponentsRequired) return null;
   // ... existing render
@@ -91,23 +101,23 @@ export const CheckboxFieldDefault = ({ field, fieldState, fieldData }: FieldComp
 
 Files to update:
 
-| File |
-|------|
-| `CheckboxFieldDefault.tsx` |
-| `TextFieldDefault.tsx` |
-| `TextAreaFieldDefault.tsx` |
-| `SelectFieldDefault.tsx` |
-| `RadioGroupFieldDefault.tsx` |
-| `DatePickerFieldDefault.tsx` |
-| `NumberFieldDefault.tsx` |
-| `EmailFieldDefault.tsx` |
-| `CountryFieldDefault.tsx` |
-| `FileUploadFieldDefault.tsx` |
-| `MultiSelectFieldDefault.tsx` |
-| `ButtonDefault.tsx` |
-| `StatementDefault.tsx` |
+| File                              |
+| --------------------------------- |
+| `CheckboxFieldDefault.tsx`        |
+| `TextFieldDefault.tsx`            |
+| `TextAreaFieldDefault.tsx`        |
+| `SelectFieldDefault.tsx`          |
+| `RadioGroupFieldDefault.tsx`      |
+| `DatePickerFieldDefault.tsx`      |
+| `NumberFieldDefault.tsx`          |
+| `EmailFieldDefault.tsx`           |
+| `CountryFieldDefault.tsx`         |
+| `FileUploadFieldDefault.tsx`      |
+| `MultiSelectFieldDefault.tsx`     |
+| `ButtonDefault.tsx`               |
+| `StatementDefault.tsx`            |
 | `FieldsetToggleButtonDefault.tsx` |
-| `WorkScheduleFieldDefault.tsx` |
+| `WorkScheduleFieldDefault.tsx`    |
 
 Field wrapper `throw` logic is **not changed** — it still fires if no component at all is registered.
 

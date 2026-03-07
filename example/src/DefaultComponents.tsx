@@ -7,6 +7,7 @@ import { RadioGroupFieldDefault } from './components/defaults/RadioGroupFieldDef
 import { DatePickerFieldDefault } from './components/defaults/DatePickerFieldDefault';
 import { ButtonDefault } from './components/defaults/ButtonDefault';
 import { EmailFieldDefault } from './components/defaults/EmailFieldDefault';
+import { NumberFieldDefault } from './components/defaults/NumberFieldDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -17,4 +18,5 @@ export const defaultComponents: Components = {
   date: DatePickerFieldDefault,
   button: ButtonDefault,
   email: EmailFieldDefault,
+  number: NumberFieldDefault,
 };

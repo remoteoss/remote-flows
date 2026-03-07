@@ -20,9 +20,9 @@ This is the only reason we touch the library: export the context primitives from
 
 ## Step 1 — Rename `Components.tsx`
 
-| Action | File |
-|---|---|
-| Rename | `example/src/Components.tsx` → `example/src/CostCalculatorComponents.tsx` |
+| Action        | File                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| Rename        | `example/src/Components.tsx` → `example/src/CostCalculatorComponents.tsx`                        |
 | Update import | `CostCalculatorWithReplaceableComponents.tsx`: `'./Components'` → `'./CostCalculatorComponents'` |
 
 ---
@@ -32,7 +32,11 @@ This is the only reason we touch the library: export the context primitives from
 ### `src/index.tsx` — add
 
 ```ts
-export { FormFieldContext, FormItemContext, useFormField } from '@/src/components/ui/form';
+export {
+  FormFieldContext,
+  FormItemContext,
+  useFormField,
+} from '@/src/components/ui/form';
 ```
 
 ### `src/internals.ts` — add
@@ -48,20 +52,21 @@ export { sanitizeHtml } from './lib/utils';
 ## Step 3 — Copy UI components to `example/src/components/ui/`
 
 Copy from `src/components/ui/`. Replace in every file:
+
 - `@/src/lib/utils` → `@remoteoss/remote-flows/internals` (for `cn`)
 - `@/src/components/ui/X` → `./X`
 
-| File | External packages required |
-|---|---|
-| `label.tsx` | _(pure HTML, none)_ |
-| `input.tsx` | _(pure HTML, none)_ |
-| `textarea.tsx` | _(pure HTML, none)_ |
-| `button.tsx` | `class-variance-authority` |
-| `checkbox.tsx` | `@radix-ui/react-checkbox`, `lucide-react` |
+| File              | External packages required                    |
+| ----------------- | --------------------------------------------- |
+| `label.tsx`       | _(pure HTML, none)_                           |
+| `input.tsx`       | _(pure HTML, none)_                           |
+| `textarea.tsx`    | _(pure HTML, none)_                           |
+| `button.tsx`      | `class-variance-authority`                    |
+| `checkbox.tsx`    | `@radix-ui/react-checkbox`, `lucide-react`    |
 | `radio-group.tsx` | `@radix-ui/react-radio-group`, `lucide-react` |
-| `select.tsx` | `@radix-ui/react-select`, `lucide-react` |
-| `popover.tsx` | `@radix-ui/react-popover` |
-| `calendar.tsx` | `react-day-picker`, `lucide-react` |
+| `select.tsx`      | `@radix-ui/react-select`, `lucide-react`      |
+| `popover.tsx`     | `@radix-ui/react-popover`                     |
+| `calendar.tsx`    | `react-day-picker`, `lucide-react`            |
 
 ### `form.tsx` — written from scratch (not a verbatim copy)
 
@@ -70,7 +75,11 @@ reference. Does NOT include `FormField` (stays in library). Does NOT import
 `react-hook-form` — consumers should not need to install it.
 
 ```ts
-import { FormFieldContext, FormItemContext, useFormField } from '@remoteoss/remote-flows';
+import {
+  FormFieldContext,
+  FormItemContext,
+  useFormField,
+} from '@remoteoss/remote-flows';
 import { cn, sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import { Label } from './label';
 
@@ -84,6 +93,7 @@ export { useFormField };
 ## Step 4 — Copy HelpCenter to `example/src/components/shared/`
 
 Copy `src/components/shared/zendesk-drawer/HelpCenter.tsx`. Replace:
+
 - `@/src/types/fields` → `@remoteoss/remote-flows`
 - `ZendeskTriggerButton` → `@remoteoss/remote-flows` (already exported from library)
 
@@ -93,14 +103,14 @@ Copy `src/components/shared/zendesk-drawer/HelpCenter.tsx`. Replace:
 
 Copy from `src/components/form/fields/default/`. Import mapping for every file:
 
-| Old | New |
-|---|---|
-| `@/src/components/ui/*` | `../ui/*` |
-| `@/src/lib/utils` | `@remoteoss/remote-flows/internals` (cn) |
-| `@/src/types/fields` | `@remoteoss/remote-flows` |
-| `@/src/types/remoteFlows` | `@remoteoss/remote-flows` |
-| `@/src/components/shared/zendesk-drawer/HelpCenter` | `../shared/HelpCenter` |
-| `CheckedState` from `@radix-ui/react-checkbox` | inline as `boolean \| 'indeterminate'` |
+| Old                                                 | New                                      |
+| --------------------------------------------------- | ---------------------------------------- |
+| `@/src/components/ui/*`                             | `../ui/*`                                |
+| `@/src/lib/utils`                                   | `@remoteoss/remote-flows/internals` (cn) |
+| `@/src/types/fields`                                | `@remoteoss/remote-flows`                |
+| `@/src/types/remoteFlows`                           | `@remoteoss/remote-flows`                |
+| `@/src/components/shared/zendesk-drawer/HelpCenter` | `../shared/HelpCenter`                   |
+| `CheckedState` from `@radix-ui/react-checkbox`      | inline as `boolean \| 'indeterminate'`   |
 
 Files to copy:
 
