@@ -21,6 +21,7 @@ import {
 } from '@/src/components/ui/dialog';
 import { WorkScheduleComponentProps } from '@/src/types/fields';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { useFormFields } from '@/src/context';
 
 type WorkScheduleFormData = {
   schedule: DailySchedule[];
@@ -245,6 +246,8 @@ function WorkScheduleSelectionForm({
 export const WorkScheduleFieldDefault = ({
   fieldData,
 }: WorkScheduleComponentProps) => {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const { defaultFormattedValue, currentSchedule, onSubmit } = fieldData;
   const { workHoursSummary, breakSummary, totalWorkHours } =
     defaultFormattedValue;

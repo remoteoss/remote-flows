@@ -8,12 +8,15 @@ import {
 } from '@/src/components/ui/form';
 import { MultiSelect, Option } from '@/src/components/ui/multi-select';
 import { FieldComponentProps } from '@/src/types/fields';
+import { useFormFields } from '@/src/context';
 
 export const MultiSelectFieldDefault = ({
   field,
   fieldState,
   fieldData,
 }: FieldComponentProps) => {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const [selected, setSelected] = useState<Option[]>([]);
   const { name, label, description, options } = fieldData;
   const selectedOptions =

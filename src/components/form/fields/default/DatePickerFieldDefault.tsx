@@ -18,12 +18,15 @@ import {
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { useFormFields } from '@/src/context';
 
 export function DatePickerFieldDefault({
   field,
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const { name, label, description, minDate, maxDate } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;

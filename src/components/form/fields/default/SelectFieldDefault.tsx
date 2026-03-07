@@ -14,12 +14,15 @@ import {
   SelectContent,
   SelectItem,
 } from '@/src/components/ui/select';
+import { useFormFields } from '@/src/context';
 
 export function SelectFieldDefault({
   field,
   fieldState,
   fieldData,
 }: FieldComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const { name, label, description, options } = fieldData;
 
   return (

@@ -11,12 +11,15 @@ import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryComponentProps } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { useFormFields } from '@/src/context';
 
 export function CountryFieldDefault({
   field,
   fieldState,
   fieldData,
 }: CountryComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const [selected, setSelected] = useState<$TSFixMe[]>([]);
   const handleChange = (rawValues: $TSFixMe[]) => {
     const values = rawValues.map(({ value }) => value);

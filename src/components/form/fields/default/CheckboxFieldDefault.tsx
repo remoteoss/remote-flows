@@ -9,12 +9,15 @@ import {
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
 import { CheckedState } from '@radix-ui/react-checkbox';
+import { useFormFields } from '@/src/context';
 
 export const CheckboxFieldDefault = ({
   field,
   fieldState,
   fieldData,
 }: FieldComponentProps) => {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) return null;
   const { name, label, description, options, multiple } = fieldData;
 
   return (
