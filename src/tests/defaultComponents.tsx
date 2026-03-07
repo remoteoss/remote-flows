@@ -23,6 +23,188 @@ const DAY_ABBREVS: Record<string, string> = {
   sunday: 'Sun',
 };
 
+function MultiSelectField({ field, fieldData, fieldState }: FieldComponentProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const selected: string[] = Array.isArray(field.value) ? field.value : [];
+  const options: { value: string; label: string }[] = fieldData.options ?? [];
+
+  const toggleOption = (value: string) => {
+    const next = selected.includes(value)
+      ? selected.filter((v) => v !== value)
+      : [...selected, value];
+    field.onChange(next);
+  };
+
+  return (
+    <div>
+      <label>{fieldData.label as string}</label>
+      {selected.map((val) => {
+        const opt = options.find((o) => o.value === val);
+        return opt ? (
+          <span key={val}>
+            {opt.label}
+            <button
+              aria-label={`remove ${opt.label}`}
+              onClick={() => field.onChange(selected.filter((v) => v !== val))}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter')
+                  field.onChange(selected.filter((v) => v !== val));
+              }}
+            >
+              ×
+            </button>
+          </span>
+        ) : null;
+      })}
+      <div
+        role='combobox'
+        aria-expanded={isOpen}
+        aria-haspopup='listbox'
+        onClick={() => setIsOpen((o) => !o)}
+      >
+        Select...
+      </div>
+      {isOpen && (
+        <ul role='listbox'>
+          {options.length === 0 ? (
+            <li>No item found.</li>
+          ) : (
+            options.map((opt) => (
+              <li
+                key={opt.value}
+                role='option'
+                aria-selected={selected.includes(opt.value)}
+                onClick={() => toggleOption(opt.value)}
+              >
+                {opt.label}
+              </li>
+            ))
+          )}
+        </ul>
+      )}
+      {fieldData.description && <p>{fieldData.description as string}</p>}
+      {fieldState.error && <p>{fieldState.error.message}</p>}
+    </div>
+  );
+}
+
+function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [timeErrors, setTimeErrors] = useState<string[]>([]);
+  const [localSchedule, setLocalSchedule] = useState<DailySchedule[]>(() =>
+    DAYS_OF_THE_WEEK.map((day) => {
+      const existing = fieldData.currentSchedule?.find(
+        (d) => d.day.toLowerCase() === day,
+      );
+      return (
+        existing ?? {
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          checked: false,
+          start_time: '',
+          end_time: '',
+          hours: 0,
+          break_duration_minutes: '0',
+        }
+      );
+    }),
+  );
+
+  const handleCheckboxChange = (idx: number, checked: boolean) => {
+    const next = localSchedule.map((d, i) =>
+      i === idx ? { ...d, checked } : d,
+    );
+    // Recalculate hours for all days on checked state change
+    setLocalSchedule(next.map((d) => ({ ...d, hours: calculateHours(d) })));
+  };
+
+  const handleTimeChange = (
+    idx: number,
+    field: 'start_time' | 'end_time',
+    value: string,
+  ) => {
+    setLocalSchedule((prev) =>
+      prev.map((d, i) => (i === idx ? { ...d, [field]: value } : d)),
+    );
+  };
+
+  const handleSave = () => {
+    const errors: string[] = [];
+    localSchedule.forEach((day) => {
+      if (day.checked) {
+        if (!TIME_REGEX.test(day.start_time))
+          errors.push('Invalid time format (HH:mm)');
+        if (!TIME_REGEX.test(day.end_time))
+          errors.push('Invalid time format (HH:mm)');
+      }
+    });
+    if (errors.length > 0) {
+      setTimeErrors(errors);
+      return;
+    }
+    setTimeErrors([]);
+    fieldData.onSubmit(localSchedule);
+    setIsOpen(false);
+  };
+
+  const { totalWorkHours } = fieldData.defaultFormattedValue;
+
+  return (
+    <div>
+      <p>Work hours</p>
+      <p>
+        {'Total of '}
+        {totalWorkHours}
+        {' hours per week'}
+      </p>
+      <button type='button' onClick={() => setIsOpen(true)}>
+        Edit Schedule
+      </button>
+      {isOpen && (
+        <div>
+          <h2>Edit employee working hours</h2>
+          {localSchedule.map((day, idx) => (
+            <div key={day.day}>
+              <input
+                type='checkbox'
+                id={`ws-${day.day}`}
+                checked={day.checked}
+                onChange={(e) => handleCheckboxChange(idx, e.target.checked)}
+              />
+              <label htmlFor={`ws-${day.day}`}>
+                {DAY_ABBREVS[day.day.toLowerCase()]}
+              </label>
+              {day.checked && (
+                <>
+                  <input
+                    type='text'
+                    value={day.start_time}
+                    onChange={(e) =>
+                      handleTimeChange(idx, 'start_time', e.target.value)
+                    }
+                  />
+                  <input
+                    type='text'
+                    value={day.end_time}
+                    onChange={(e) =>
+                      handleTimeChange(idx, 'end_time', e.target.value)
+                    }
+                  />
+                </>
+              )}
+            </div>
+          ))}
+          {timeErrors.map((err, i) => (
+            <p key={i}>{err}</p>
+          ))}
+          <button type='button' onClick={handleSave}>
+            Save Schedule
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export const defaultComponents: Components = {
   text: ({ field, fieldData, fieldState }: FieldComponentProps) => (
     <div className='input-container'>
@@ -262,73 +444,7 @@ export const defaultComponents: Components = {
       )}
     </div>
   ),
-  'multi-select': ({ field, fieldData, fieldState }: FieldComponentProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const selected: string[] = Array.isArray(field.value) ? field.value : [];
-    const options: { value: string; label: string }[] =
-      fieldData.options ?? [];
-
-    const toggleOption = (value: string) => {
-      const next = selected.includes(value)
-        ? selected.filter((v) => v !== value)
-        : [...selected, value];
-      field.onChange(next);
-    };
-
-    return (
-      <div>
-        <label>{fieldData.label as string}</label>
-        {selected.map((val) => {
-          const opt = options.find((o) => o.value === val);
-          return opt ? (
-            <span key={val}>
-              {opt.label}
-              <button
-                aria-label={`remove ${opt.label}`}
-                onClick={() => field.onChange(selected.filter((v) => v !== val))}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter')
-                    field.onChange(selected.filter((v) => v !== val));
-                }}
-              >
-                ×
-              </button>
-            </span>
-          ) : null;
-        })}
-        <div
-          role='combobox'
-          aria-expanded={isOpen}
-          aria-haspopup='listbox'
-          onClick={() => setIsOpen((o) => !o)}
-        >
-          Select...
-        </div>
-        {isOpen && (
-          <ul role='listbox'>
-            {options.length === 0 ? (
-              <li>No item found.</li>
-            ) : (
-              options.map((opt) => (
-                <li
-                  key={opt.value}
-                  role='option'
-                  aria-selected={selected.includes(opt.value)}
-                  onClick={() => toggleOption(opt.value)}
-                >
-                  {opt.label}
-                </li>
-              ))
-            )}
-          </ul>
-        )}
-        {fieldData.description && (
-          <p>{fieldData.description as string}</p>
-        )}
-        {fieldState.error && <p>{fieldState.error.message}</p>}
-      </div>
-    );
-  },
+  'multi-select': MultiSelectField,
   fieldsetToggle: ({
     onToggle,
     children,
@@ -343,122 +459,5 @@ export const defaultComponents: Components = {
       {children}
     </button>
   ),
-  'work-schedule': ({ fieldData }: WorkScheduleComponentProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [timeErrors, setTimeErrors] = useState<string[]>([]);
-    const [localSchedule, setLocalSchedule] = useState<DailySchedule[]>(() =>
-      DAYS_OF_THE_WEEK.map((day) => {
-        const existing = fieldData.currentSchedule?.find(
-          (d) => d.day.toLowerCase() === day,
-        );
-        return (
-          existing ?? {
-            day: day.charAt(0).toUpperCase() + day.slice(1),
-            checked: false,
-            start_time: '',
-            end_time: '',
-            hours: 0,
-            break_duration_minutes: '0',
-          }
-        );
-      }),
-    );
-
-    const handleCheckboxChange = (idx: number, checked: boolean) => {
-      const next = localSchedule.map((d, i) =>
-        i === idx ? { ...d, checked } : d,
-      );
-      // Recalculate hours for all days on checked state change
-      setLocalSchedule(next.map((d) => ({ ...d, hours: calculateHours(d) })));
-    };
-
-    const handleTimeChange = (
-      idx: number,
-      field: 'start_time' | 'end_time',
-      value: string,
-    ) => {
-      setLocalSchedule((prev) =>
-        prev.map((d, i) => (i === idx ? { ...d, [field]: value } : d)),
-      );
-    };
-
-    const handleSave = () => {
-      const errors: string[] = [];
-      localSchedule.forEach((day) => {
-        if (day.checked) {
-          if (!TIME_REGEX.test(day.start_time))
-            errors.push('Invalid time format (HH:mm)');
-          if (!TIME_REGEX.test(day.end_time))
-            errors.push('Invalid time format (HH:mm)');
-        }
-      });
-      if (errors.length > 0) {
-        setTimeErrors(errors);
-        return;
-      }
-      setTimeErrors([]);
-      fieldData.onSubmit(localSchedule);
-      setIsOpen(false);
-    };
-
-    const { totalWorkHours } = fieldData.defaultFormattedValue;
-
-    return (
-      <div>
-        <p>Work hours</p>
-        <p>
-          {'Total of '}
-          {totalWorkHours}
-          {' hours per week'}
-        </p>
-        <button type='button' onClick={() => setIsOpen(true)}>
-          Edit Schedule
-        </button>
-        {isOpen && (
-          <div>
-            <h2>Edit employee working hours</h2>
-            {localSchedule.map((day, idx) => (
-              <div key={day.day}>
-                <input
-                  type='checkbox'
-                  id={`ws-${day.day}`}
-                  checked={day.checked}
-                  onChange={(e) =>
-                    handleCheckboxChange(idx, e.target.checked)
-                  }
-                />
-                <label htmlFor={`ws-${day.day}`}>
-                  {DAY_ABBREVS[day.day.toLowerCase()]}
-                </label>
-                {day.checked && (
-                  <>
-                    <input
-                      type='text'
-                      value={day.start_time}
-                      onChange={(e) =>
-                        handleTimeChange(idx, 'start_time', e.target.value)
-                      }
-                    />
-                    <input
-                      type='text'
-                      value={day.end_time}
-                      onChange={(e) =>
-                        handleTimeChange(idx, 'end_time', e.target.value)
-                      }
-                    />
-                  </>
-                )}
-              </div>
-            ))}
-            {timeErrors.map((err, i) => (
-              <p key={i}>{err}</p>
-            ))}
-            <button type='button' onClick={handleSave}>
-              Save Schedule
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  },
+  'work-schedule': WorkScheduleField,
 };
