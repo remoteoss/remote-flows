@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { FormFieldsContext } from '@/src/context';
 import { ReactNode } from 'react';
-import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 const mockComponents = {
-  components: { drawer: DrawerDefault },
+  components: { drawer: defaultComponents.drawer },
   makeComponentsRequired: false,
 };
 
