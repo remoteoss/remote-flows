@@ -13,10 +13,13 @@ const MockStatement = ({ data }: StatementComponentProps) => (
   </div>
 );
 
+import { defaultComponents } from '@/src/tests/defaultComponents';
+
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(() => ({
     components: {
       statement: MockStatement,
+      fieldsetToggle: defaultComponents.fieldsetToggle,
     },
   })),
 }));
