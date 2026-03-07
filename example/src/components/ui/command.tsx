@@ -67,10 +67,7 @@ function CommandEmpty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
   return (
-    <CommandPrimitive.Empty
-      className='py-6 text-center text-sm'
-      {...props}
-    />
+    <CommandPrimitive.Empty className='py-6 text-center text-sm' {...props} />
   );
 }
 
