@@ -5,7 +5,10 @@ import { FormFieldsContext } from '@/src/context';
 import { ReactNode } from 'react';
 import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
 
-const mockComponents = { components: { drawer: DrawerDefault } };
+const mockComponents = {
+  components: { drawer: DrawerDefault },
+  makeComponentsRequired: false,
+};
 
 const FormFieldsProvider = ({ children }: { children: ReactNode }) => (
   <FormFieldsContext.Provider value={mockComponents}>
@@ -93,7 +96,10 @@ describe('Drawer', () => {
 
   it('should use custom drawer component from components prop', () => {
     const CustomDrawer = vi.fn(() => <div>Custom Drawer</div>);
-    const customComponents = { components: { drawer: CustomDrawer } };
+    const customComponents = {
+      components: { drawer: CustomDrawer },
+      makeComponentsRequired: false,
+    };
 
     render(
       <FormFieldsContext.Provider value={customComponents}>

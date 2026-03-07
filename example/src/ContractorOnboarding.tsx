@@ -32,6 +32,7 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
 import { EngagingContractorsModal } from './components/PricingPlanModals';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
@@ -471,6 +472,8 @@ export const ContractorOnboardingWithProps = ({
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
+        components={defaultComponents}
+        makeComponentsRequired
         authType='company-manager'
         proxy={{ url: window.location.origin }}
       >

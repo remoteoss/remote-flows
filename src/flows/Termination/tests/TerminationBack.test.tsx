@@ -30,6 +30,7 @@ describe('TerminationBack', () => {
       components: {
         button: ButtonDefault,
       },
+      makeComponentsRequired: false,
     });
   });
 
@@ -91,6 +92,7 @@ describe('TerminationBack', () => {
         components: {
           button: CustomButton,
         },
+        makeComponentsRequired: false,
       });
     });
 

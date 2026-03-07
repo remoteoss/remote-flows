@@ -4,6 +4,7 @@ import { Components } from './types/remoteFlows';
 
 export const FormFieldsContext = createContext<{
   components: Components;
+  makeComponentsRequired: boolean;
 } | null>(null);
 
 export const useFormFields = () => {
@@ -14,6 +15,7 @@ export const useFormFields = () => {
 
   return {
     components: context.components,
+    makeComponentsRequired: context.makeComponentsRequired,
   };
 };
 

@@ -7,6 +7,7 @@ import {
   DrawerTitle,
 } from '@/src/components/ui/drawer';
 import { cn } from '@/src/lib/utils';
+import { useFormFields } from '@/src/context';
 
 export function DrawerDefault({
   open,
@@ -17,6 +18,11 @@ export function DrawerDefault({
   trigger,
   children,
 }: DrawerComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: DrawerDefault');
+    return null;
+  }
   return (
     <DrawerPrimitive
       open={open}

@@ -10,12 +10,18 @@ import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { useFormFields } from '@/src/context';
 
 export const RadioGroupFieldDefault = ({
   field,
   fieldData,
   fieldState,
 }: FieldComponentProps) => {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: RadioGroupFieldDefault');
+    return null;
+  }
   const { name, label, description, options } = fieldData;
   return (
     <fieldset
