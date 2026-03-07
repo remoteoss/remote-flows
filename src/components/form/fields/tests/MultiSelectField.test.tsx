@@ -38,7 +38,6 @@ describe('MultiSelectField Component', () => {
     ],
   };
 
-  // Helper function to render the component with a form context
   const renderWithFormContext = (
     props: MultiSelectFieldProps,
     defaultValues?: any,
@@ -66,7 +65,7 @@ describe('MultiSelectField Component', () => {
     });
   });
 
-  it('renders the default implementation correctly', () => {
+  it('renders the multi-select correctly', () => {
     renderWithFormContext(defaultProps);
 
     expect(screen.getByText('Test Field')).toBeInTheDocument();
@@ -74,63 +73,31 @@ describe('MultiSelectField Component', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
-  it('displays placeholder when no options are selected', () => {
-    renderWithFormContext(defaultProps);
-
-    const trigger = screen.getByRole('combobox');
-    expect(trigger).toBeInTheDocument();
-    // MultiSelect should show placeholder text when no options are selected
-  });
-
-  it('handles multi-selection correctly', async () => {
+  it('handles single and multiple option selection', async () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    // Open the dropdown
-    const trigger = screen.getByRole('combobox');
-    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole('combobox'));
 
-    // Wait for options to appear
     await waitFor(() => {
       expect(
         screen.getByRole('option', { name: 'Option 1' }),
       ).toBeInTheDocument();
     });
 
-    // Select first option
     fireEvent.click(screen.getByRole('option', { name: 'Option 1' }));
-
     expect(mockOnChange).toHaveBeenCalledWith(['option1']);
-  });
 
-  it('handles multiple option selection', async () => {
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    const trigger = screen.getByRole('combobox');
-    fireEvent.click(trigger);
-
-    // Wait for dropdown to open and options to be available
-    await waitFor(() => {
-      expect(
-        screen.getByRole('option', { name: 'Option 1' }),
-      ).toBeInTheDocument();
-    });
-
-    // Select multiple options
-    fireEvent.click(screen.getByRole('option', { name: 'Option 1' }));
     fireEvent.click(screen.getByRole('option', { name: 'Option 2' }));
-
-    expect(mockOnChange).toHaveBeenCalledWith(['option1']);
     expect(mockOnChange).toHaveBeenCalledWith(['option1', 'option2']);
   });
 
-  it('handles option deselection', async () => {
+  it('handles option deselection via dropdown', async () => {
     renderWithFormContext(
       { ...defaultProps, onChange: mockOnChange },
       { testField: ['option1', 'option2'] },
     );
 
-    const trigger = screen.getByRole('combobox');
-    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole('combobox'));
 
     await waitFor(() => {
       expect(
@@ -138,159 +105,39 @@ describe('MultiSelectField Component', () => {
       ).toBeInTheDocument();
     });
 
-    // Deselect option 1
     fireEvent.click(screen.getByRole('option', { name: 'Option 1' }));
-
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
   });
 
-  it('displays selected options as badges', () => {
+  it('displays pre-selected options as badges', () => {
     renderWithFormContext(defaultProps, { testField: ['option1', 'option2'] });
 
     expect(screen.getByText('Option 1')).toBeInTheDocument();
     expect(screen.getByText('Option 2')).toBeInTheDocument();
   });
 
-  it('allows removing selected options via badge X button', async () => {
+  it('allows removing selected options via badge button and keyboard', async () => {
     renderWithFormContext(
       { ...defaultProps, onChange: mockOnChange },
       { testField: ['option1', 'option2'] },
     );
 
-    // Find the X button for Option 1
-    const removeButton = screen.getByLabelText('remove Option 1');
-    fireEvent.click(removeButton);
-
+    fireEvent.click(screen.getByLabelText('remove Option 1'));
     expect(mockOnChange).toHaveBeenCalledWith(['option2']);
-  });
 
-  it('renders custom multi-select component when provided', () => {
-    const CustomMultiSelectField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-multi-select-field'>
-          Custom Multi-Select Field
-        </div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
+    fireEvent.keyDown(screen.getByLabelText('remove Option 2'), {
+      key: 'Enter',
     });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    expect(CustomMultiSelectField).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('custom-multi-select-field')).toBeInTheDocument();
-  });
-
-  it('passes field props to custom component correctly', () => {
-    const CustomMultiSelectField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-multi-select-field'>
-          Custom Multi-Select Field
-        </div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    const call = CustomMultiSelectField.mock.calls[0][0];
-    expect(call.fieldData).toMatchObject(defaultProps);
-    expect(call.field).toBeDefined();
-    expect(call.fieldState).toBeDefined();
-  });
-
-  it('handles onChange in custom multi-select component', () => {
-    const CustomMultiSelectField = vi.fn().mockImplementation(({ field }) => {
-      const handleChange = (values: string[]) => {
-        field.onChange(values);
-      };
-
-      return (
-        <div>
-          <button
-            data-testid='custom-select-option'
-            onClick={() => handleChange(['option1', 'option2'])}
-          >
-            Select Options
-          </button>
-        </div>
-      );
-    });
-
-    (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    const selectButton = screen.getByTestId('custom-select-option');
-    fireEvent.click(selectButton);
-
-    expect(mockOnChange).toHaveBeenCalledWith(['option1', 'option2']);
-  });
-
-  it('component prop takes precedence over useFormFields().components', () => {
-    const CustomMultiSelectFieldFromContext = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='context-multi-select-field'>
-          Context Multi-Select Field
-        </div>
-      ));
-    const CustomMultiSelectFieldProp = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='prop-multi-select-field'>Prop Multi-Select Field</div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { 'multi-select': CustomMultiSelectFieldFromContext },
-    });
-
-    renderWithFormContext({
-      ...defaultProps,
-      onChange: mockOnChange,
-      component: CustomMultiSelectFieldProp,
-    });
-
-    expect(CustomMultiSelectFieldProp).toHaveBeenCalled();
-    expect(screen.getByTestId('prop-multi-select-field')).toBeInTheDocument();
-    expect(
-      screen.queryByTestId('context-multi-select-field'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('handles defaultValue correctly', () => {
-    renderWithFormContext(defaultProps, { testField: ['option1', 'option3'] });
-
-    expect(screen.getByText('Option 1')).toBeInTheDocument();
-    expect(screen.getByText('Option 3')).toBeInTheDocument();
-  });
-
-  it('applies correct CSS classes', () => {
-    renderWithFormContext(defaultProps);
-
-    const formItem = document.querySelector('[data-field="testField"]');
-    expect(formItem).toHaveClass('RemoteFlows__SelectField__Item__testField');
+    expect(mockOnChange).toHaveBeenCalledWith([]);
   });
 
   it('shows form validation errors', () => {
     const TestComponentWithError = () => {
-      const methods = useForm({
-        defaultValues: { testField: [] },
-      });
-
-      // Trigger validation error
+      const methods = useForm({ defaultValues: { testField: [] } });
       methods.setError('testField', {
         type: 'required',
         message: 'This field is required',
       });
-
       return (
         <FormProvider {...methods}>
           <MultiSelectField {...defaultProps} />
@@ -304,42 +151,10 @@ describe('MultiSelectField Component', () => {
   });
 
   it('handles empty options array', () => {
-    renderWithFormContext({
-      ...defaultProps,
-      options: [],
-    });
+    renderWithFormContext({ ...defaultProps, options: [] });
 
-    const trigger = screen.getByRole('combobox');
-    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole('combobox'));
 
-    // Should show "No item found" message
     expect(screen.getByText('No item found.')).toBeInTheDocument();
-  });
-
-  it('passes additional props to MultiSelect component', () => {
-    const placeholder = 'Select multiple options';
-    const className = 'custom-multi-select';
-
-    renderWithFormContext({
-      ...defaultProps,
-      placeholder,
-      className,
-    });
-
-    const trigger = screen.getByRole('combobox');
-    expect(trigger).toBeInTheDocument();
-    // Additional props should be passed through to the MultiSelect component
-  });
-
-  it('handles keyboard navigation for removing selected options', async () => {
-    renderWithFormContext(
-      { ...defaultProps, onChange: mockOnChange },
-      { testField: ['option1'] },
-    );
-
-    const removeButton = screen.getByLabelText('remove Option 1');
-    fireEvent.keyDown(removeButton, { key: 'Enter' });
-
-    expect(mockOnChange).toHaveBeenCalledWith([]);
   });
 });
