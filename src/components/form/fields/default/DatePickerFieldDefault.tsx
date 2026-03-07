@@ -26,7 +26,10 @@ export function DatePickerFieldDefault({
   fieldState,
 }: DatePickerComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: DatePickerFieldDefault');
+    return null;
+  }
   const { name, label, description, minDate, maxDate } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;

@@ -17,7 +17,10 @@ export const CheckboxFieldDefault = ({
   fieldData,
 }: FieldComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: CheckboxFieldDefault');
+    return null;
+  }
   const { name, label, description, options, multiple } = fieldData;
 
   return (

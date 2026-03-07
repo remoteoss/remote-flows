@@ -247,7 +247,10 @@ export const WorkScheduleFieldDefault = ({
   fieldData,
 }: WorkScheduleComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: WorkScheduleFieldDefault');
+    return null;
+  }
   const { defaultFormattedValue, currentSchedule, onSubmit } = fieldData;
   const { workHoursSummary, breakSummary, totalWorkHours } =
     defaultFormattedValue;

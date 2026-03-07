@@ -18,7 +18,10 @@ export const RadioGroupFieldDefault = ({
   fieldState,
 }: FieldComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: RadioGroupFieldDefault');
+    return null;
+  }
   const { name, label, description, options } = fieldData;
   return (
     <fieldset

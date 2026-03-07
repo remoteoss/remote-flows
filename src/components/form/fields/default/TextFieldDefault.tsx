@@ -10,7 +10,10 @@ export function TextFieldDefault({
   fieldData,
 }: TextFieldComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: TextFieldDefault');
+    return null;
+  }
   const { name, label, description, maxLength, includeErrorMessage } =
     fieldData;
   return (

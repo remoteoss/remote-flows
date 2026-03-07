@@ -4,7 +4,10 @@ import { useFormFields } from '@/src/context';
 
 export function NumberFieldDefault({ field, fieldData }: FieldComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: NumberFieldDefault');
+    return null;
+  }
   return (
     <TextField
       type='text'

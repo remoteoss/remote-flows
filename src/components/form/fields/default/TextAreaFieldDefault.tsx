@@ -16,7 +16,10 @@ export function TextAreaFieldDefault({
   fieldData,
 }: FieldComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: TextAreaFieldDefault');
+    return null;
+  }
   const { name, label, description, maxLength } = fieldData;
   const valueLength = field.value?.length ?? 0;
   return (

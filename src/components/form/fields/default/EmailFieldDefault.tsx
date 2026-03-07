@@ -4,6 +4,9 @@ import { useFormFields } from '@/src/context';
 
 export function EmailFieldDefault({ field, fieldData }: FieldComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: EmailFieldDefault');
+    return null;
+  }
   return <TextField name={field.name} {...fieldData} type='email' />;
 }

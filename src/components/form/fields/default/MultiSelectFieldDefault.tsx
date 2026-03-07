@@ -16,7 +16,10 @@ export const MultiSelectFieldDefault = ({
   fieldData,
 }: FieldComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: MultiSelectFieldDefault');
+    return null;
+  }
   const [selected, setSelected] = useState<Option[]>([]);
   const { name, label, description, options } = fieldData;
   const selectedOptions =

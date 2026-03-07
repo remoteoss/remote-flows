@@ -5,7 +5,10 @@ import { useFormFields } from '@/src/context';
 
 export function StatementDefault({ data }: StatementComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: StatementDefault');
+    return null;
+  }
   const { title, description, severity } = data;
 
   const mapSeverityToVariant: Record<

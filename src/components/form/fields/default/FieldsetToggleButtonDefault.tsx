@@ -10,7 +10,10 @@ export const FieldsetToggleButtonDefault = ({
   ...props
 }: FieldSetToggleComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: FieldsetToggleButtonDefault');
+    return null;
+  }
   return (
     <Button
       type='button'

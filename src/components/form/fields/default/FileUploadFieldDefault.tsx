@@ -16,7 +16,10 @@ export function FileUploadFieldDefault({
   fieldData,
 }: FileComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: FileUploadFieldDefault');
+    return null;
+  }
   const { name, label, description, multiple, accept } = fieldData;
 
   return (

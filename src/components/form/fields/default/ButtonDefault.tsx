@@ -4,7 +4,10 @@ import { useFormFields } from '@/src/context';
 
 export const ButtonDefault = (props: ButtonComponentProps) => {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: ButtonDefault');
+    return null;
+  }
   const { 'data-type': dataType, ...buttonProps } = props;
 
   if (dataType === 'inline') {

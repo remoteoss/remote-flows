@@ -19,7 +19,10 @@ export function CountryFieldDefault({
   fieldData,
 }: CountryComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: CountryFieldDefault');
+    return null;
+  }
   const [selected, setSelected] = useState<$TSFixMe[]>([]);
   const handleChange = (rawValues: $TSFixMe[]) => {
     const values = rawValues.map(({ value }) => value);

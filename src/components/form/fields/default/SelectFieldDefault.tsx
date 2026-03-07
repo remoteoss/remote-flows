@@ -22,7 +22,10 @@ export function SelectFieldDefault({
   fieldData,
 }: FieldComponentProps) {
   const { makeComponentsRequired } = useFormFields();
-  if (makeComponentsRequired) return null;
+  if (makeComponentsRequired) {
+    console.log('Missing component: SelectFieldDefault');
+    return null;
+  }
   const { name, label, description, options } = fieldData;
 
   return (
