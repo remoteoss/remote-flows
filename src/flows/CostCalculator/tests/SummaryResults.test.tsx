@@ -201,10 +201,11 @@ describe('SummaryResults', () => {
     await user.click(screen.getByText('Summary Overview'));
 
     // Content should be hidden
-    expect(
-      screen.queryByText('Cost for all employees'),
-    ).not.toBeInTheDocument();
-
+    // the content is still in the DOM, but it's not visible because the accordion is collapsed
+    const mainContent = screen
+      .getByText('Summary Overview')
+      .closest('[data-state]');
+    expect(mainContent).toHaveAttribute('data-state', 'closed');
     // Expand again
     await user.click(screen.getByText('Summary Overview'));
 
