@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { FieldComponentProps, WorkScheduleComponentProps } from '@/src/types/fields';
+import { FieldComponentProps, WorkScheduleComponentProps, StatementComponentProps } from '@/src/types/fields';
 import {
   Components,
   FieldSetToggleComponentProps,
   ButtonComponentProps,
+  ZendeskDrawerComponentProps,
 } from '@/src/types/remoteFlows';
 import {
   DAYS_OF_THE_WEEK,
@@ -460,4 +461,37 @@ export const defaultComponents: Components = {
     </button>
   ),
   'work-schedule': WorkScheduleField,
+  statement: ({ data }: StatementComponentProps) => (
+    <div>
+      {data.title && <strong>{data.title}</strong>}
+      {data.description && <p>{data.description}</p>}
+    </div>
+  ),
+  zendeskDrawer: ({
+    open,
+    onClose,
+    data,
+    isLoading,
+    error,
+    zendeskURL,
+    Trigger,
+  }: ZendeskDrawerComponentProps) => (
+    <div>
+      {Trigger}
+      {open && (
+        <div data-testid='zendesk-drawer'>
+          {isLoading && <div>Loading...</div>}
+          {error && <div>Error loading article</div>}
+          {data?.title && <strong>{data.title}</strong>}
+          {data?.body && (
+            <div dangerouslySetInnerHTML={{ __html: data.body }} />
+          )}
+          <a href={zendeskURL} target='_blank' rel='noopener noreferrer'>
+            help article
+          </a>
+          <button onClick={onClose}>Close</button>
+        </div>
+      )}
+    </div>
+  ),
 };
