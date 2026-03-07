@@ -203,9 +203,22 @@ function AccordionContent({
   className,
   children,
   ...props
-}: AccordionContentProps) {
+}: AccordionContentProps): React.ReactElement | null {
   const { isOpen } = useAccordionItem();
   const contentId = React.useId();
+  const [shouldRender, setShouldRender] = React.useState(isOpen);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      return;
+    }
+
+    const timer = setTimeout(() => setShouldRender(false), 200);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  if (!shouldRender) return null;
 
   return (
     <div
