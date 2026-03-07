@@ -89,14 +89,15 @@ type AccordionItemContextValue = {
   isOpen: boolean;
 };
 
-const AccordionItemContext = React.createContext<AccordionItemContextValue | null>(
-  null,
-);
+const AccordionItemContext =
+  React.createContext<AccordionItemContextValue | null>(null);
 
 const useAccordionItem = () => {
   const context = React.useContext(AccordionItemContext);
   if (!context) {
-    throw new Error('AccordionItem components must be used within AccordionItem');
+    throw new Error(
+      'AccordionItem components must be used within AccordionItem',
+    );
   }
   return context;
 };
@@ -107,7 +108,12 @@ type AccordionItemProps = {
   children: React.ReactNode;
 };
 
-function AccordionItem({ value, className, children, ...props }: AccordionItemProps) {
+function AccordionItem({
+  value,
+  className,
+  children,
+  ...props
+}: AccordionItemProps) {
   const { openItem } = useAccordion();
   const isOpen = openItem === value;
 
