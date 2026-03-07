@@ -5,6 +5,8 @@ import { SelectFieldDefault } from './components/defaults/SelectFieldDefault';
 import { CheckboxFieldDefault } from './components/defaults/CheckboxFieldDefault';
 import { RadioGroupFieldDefault } from './components/defaults/RadioGroupFieldDefault';
 import { DatePickerFieldDefault } from './components/defaults/DatePickerFieldDefault';
+import { ButtonDefault } from './components/defaults/ButtonDefault';
+import { EmailFieldDefault } from './components/defaults/EmailFieldDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -13,4 +15,6 @@ export const defaultComponents: Components = {
   checkbox: CheckboxFieldDefault,
   radio: RadioGroupFieldDefault,
   date: DatePickerFieldDefault,
+  button: ButtonDefault,
+  email: EmailFieldDefault,
 };
