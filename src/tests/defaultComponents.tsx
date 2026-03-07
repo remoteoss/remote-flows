@@ -477,7 +477,7 @@ export const defaultComponents: Components = {
       <input
         type='file'
         aria-label='File upload'
-        onChange={(e) => field?.onChange?.(e)}
+        onChange={(e) => field?.onChange?.(Array.from(e.target.files ?? []))}
       />
       {fieldData.description && (
         <p className='input-description'>{fieldData.description as string}</p>
