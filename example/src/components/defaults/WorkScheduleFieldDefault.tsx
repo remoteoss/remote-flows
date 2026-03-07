@@ -178,11 +178,7 @@ function WorkScheduleSelectionForm({
             )}
 
             <div className='flex gap-4 pt-4'>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={handleCancel}
-              >
+              <Button type='button' variant='outline' onClick={handleCancel}>
                 Cancel
               </Button>
               <Button
