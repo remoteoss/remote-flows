@@ -8,6 +8,7 @@ import { DatePickerFieldDefault } from './components/defaults/DatePickerFieldDef
 import { ButtonDefault } from './components/defaults/ButtonDefault';
 import { EmailFieldDefault } from './components/defaults/EmailFieldDefault';
 import { NumberFieldDefault } from './components/defaults/NumberFieldDefault';
+import { StatementDefault } from './components/defaults/StatementDefault';
 
 export const defaultComponents: Components = {
   text: TextFieldDefault,
@@ -19,4 +20,5 @@ export const defaultComponents: Components = {
   button: ButtonDefault,
   email: EmailFieldDefault,
   number: NumberFieldDefault,
+  statement: StatementDefault,
 };
