@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ContractAmendmentBack } from '../ContractAmendmentBack';
 import { useContractAmendmentContext } from '../context';
 import { useFormFields } from '@/src/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock the hooks
 vi.mock('../context');
@@ -27,9 +27,8 @@ describe('ContractAmendmentBack', () => {
     });
 
     mockUseFormFields.mockReturnValue({
-      components: {
-        button: ButtonDefault,
-      },
+      components: { button: defaultComponents.button },
+      makeComponentsRequired: false,
     });
   });
 
@@ -95,6 +94,7 @@ describe('ContractAmendmentBack', () => {
         components: {
           button: CustomButton,
         },
+        makeComponentsRequired: false,
       });
     });
 

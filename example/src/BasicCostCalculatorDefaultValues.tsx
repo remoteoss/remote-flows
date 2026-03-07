@@ -5,6 +5,7 @@ import {
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 
 const estimationOptions = {
@@ -15,7 +16,7 @@ const estimationOptions = {
 
 export function BasicCostCalculatorWithDefaultValues() {
   return (
-    <RemoteFlows isClientToken>
+    <RemoteFlows isClientToken components={defaultComponents}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{

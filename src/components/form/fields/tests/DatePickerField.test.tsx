@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { addBusinessDays } from 'date-fns';
 import { DatePickerField, DatePickerFieldProps } from '../DatePickerField';
-import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -57,7 +57,7 @@ describe('DatePickerField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        date: DatePickerFieldDefault,
+        date: defaultComponents.date,
       },
     });
     (addBusinessDays as any).mockClear();
@@ -67,19 +67,15 @@ describe('DatePickerField Component', () => {
     renderWithFormContext(defaultProps);
 
     expect(screen.getByText('Test Field')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByLabelText('Test Field')).toBeInTheDocument();
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
   it('handles date selection correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    // Assuming the calendar is now visible, we can select a date
-    const dateCell = screen.getByText('15');
-    fireEvent.click(dateCell);
+    const input = screen.getByLabelText('Test Field');
+    fireEvent.change(input, { target: { value: '2024-01-15' } });
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });

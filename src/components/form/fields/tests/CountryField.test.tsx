@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { CountryField } from '../CountryField';
 import { JSFField } from '@/src/types/remoteFlows';
-import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context');
@@ -76,7 +70,7 @@ describe('CountryField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockImplementation(() => ({
       components: {
-        countries: CountryFieldDefault,
+        countries: defaultComponents.countries,
       },
     }));
   });
@@ -93,11 +87,7 @@ describe('CountryField Component', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     const select = screen.getByRole('combobox');
-    fireEvent.click(select);
-
-    // Now options should be visible
-    const option = screen.getByText('United States');
-    fireEvent.click(option);
+    fireEvent.change(select, { target: { value: 'US' } });
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
@@ -165,59 +155,6 @@ describe('CountryField Component', () => {
     fireEvent.change(customSelect, { target: { value: 'US' } });
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
-  });
-
-  it('displays regions and subregions in the options list', () => {
-    renderWithFormContext(defaultProps);
-
-    const select = screen.getByRole('combobox');
-    fireEvent.click(select);
-
-    // Check if regions and subregions are displayed
-    expect(screen.getByText('North America')).toBeInTheDocument();
-    expect(screen.getByText('Northern America')).toBeInTheDocument();
-    expect(screen.getByText('United States')).toBeInTheDocument();
-    expect(screen.getByText('Canada')).toBeInTheDocument();
-  });
-
-  it('handles selecting and removing a country', async () => {
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    // Open the select
-    const select = screen.getByRole('combobox');
-    await act(async () => {
-      fireEvent.click(select);
-    });
-
-    // Wait for the popover to open and options to be visible
-    await waitFor(() => {
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
-    });
-
-    // Select a country
-    const option = screen.getByRole('option', { name: 'United States' });
-    await act(async () => {
-      fireEvent.click(option);
-    });
-
-    // Wait for the selection to be processed
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledWith(['US']);
-    });
-
-    // Find and click the remove button
-    const removeButton = screen.getByRole('button', {
-      name: /remove United States/i,
-    });
-    await act(async () => {
-      fireEvent.click(removeButton);
-    });
-
-    // Wait for the removal to be processed
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledWith([]);
-      expect(screen.queryByText('United States')).not.toBeInTheDocument();
-    });
   });
 
   it('component prop takes precedence over useFormFields().components', () => {

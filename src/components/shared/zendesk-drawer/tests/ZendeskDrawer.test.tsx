@@ -112,27 +112,6 @@ describe('ZendeskDrawer', () => {
     );
   });
 
-  it('renders custom zendesk dialog component when provided', () => {
-    const CustomComponent = vi.fn(() => null);
-    const customWrapper = ({ children }: PropsWithChildren) => (
-      <TestProviders components={{ zendeskDrawer: CustomComponent }}>
-        {children}
-      </TestProviders>
-    );
-
-    render(<ZendeskDrawer {...defaultProps} />, { wrapper: customWrapper });
-
-    expect(CustomComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        open: defaultProps.open,
-        onClose: expect.any(Function),
-        zendeskURL: expect.stringContaining(String(defaultProps.zendeskId)),
-        Trigger: defaultProps.Trigger,
-      }),
-      expect.any(Object),
-    );
-  });
-
   it('only fetches article data when drawer is open', async () => {
     const fetchSpy = vi.fn();
     server.use(

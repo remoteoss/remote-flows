@@ -19,12 +19,8 @@ import {
   eorProductIdentifier,
   $TSFixMe,
 } from '@remoteoss/remote-flows';
-import {
-  Card,
-  Tabs,
-  TabsTrigger,
-  TabsList,
-} from '@remoteoss/remote-flows/internals';
+import { Card } from '@remoteoss/remote-flows/internals';
+import { Tabs, TabsTrigger, TabsList } from './components/ui/tabs';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
@@ -32,6 +28,7 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
 import { EngagingContractorsModal } from './components/PricingPlanModals';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
@@ -471,6 +468,8 @@ export const ContractorOnboardingWithProps = ({
   return (
     <div className='contractor-onboarding-container'>
       <RemoteFlows
+        components={defaultComponents}
+        makeComponentsRequired
         authType='company-manager'
         proxy={{ url: window.location.origin }}
       >

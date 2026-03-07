@@ -4,7 +4,7 @@ import {
   NormalizedFieldError,
   useMagicLink,
 } from '@remoteoss/remote-flows';
-import { Button } from '@remoteoss/remote-flows/internals';
+import { Button } from './components/ui/button';
 import { InfoIcon } from 'lucide-react';
 import { InviteSection, ReviewMeta } from './ReviewOnboardingStep';
 import { AlertError } from './AlertError';

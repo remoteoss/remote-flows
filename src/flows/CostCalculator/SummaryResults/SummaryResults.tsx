@@ -298,7 +298,7 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
         type='single'
         collapsible
         defaultValue={accordionValue}
-        onValueChange={setAccordionValue}
+        onValueChange={(value) => setAccordionValue(value ?? 'summary')}
         className='RemoteFlows__SummaryResults__Accordion w-full'
       >
         <AccordionItem

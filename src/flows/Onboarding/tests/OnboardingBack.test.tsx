@@ -3,7 +3,7 @@ import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { OnboardingBack } from '../components/OnboardingBack';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -28,7 +28,7 @@ describe('OnboardingBack Component', () => {
     });
     (useFormFields as any).mockReturnValue({
       components: {
-        button: ButtonDefault,
+        button: defaultComponents.button,
       },
     });
   });
@@ -202,7 +202,7 @@ describe('OnboardingBack Component', () => {
         },
       });
       (useFormFields as any).mockReturnValue({
-        components: { button: ButtonDefault },
+        components: { button: defaultComponents.button },
       });
     });
 

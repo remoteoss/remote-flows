@@ -5,7 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { SelectField } from '../SelectField';
-import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 type SelectFieldProps = React.ComponentProps<typeof SelectField>;
 
@@ -55,7 +55,7 @@ describe('SelectField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        select: SelectFieldDefault,
+        select: defaultComponents.select,
       },
     });
   });
@@ -79,9 +79,7 @@ describe('SelectField Component', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     const select = screen.getByRole('combobox');
-    fireEvent.click(select);
-    const option = screen.getByText('Option 1');
-    fireEvent.click(option);
+    fireEvent.change(select, { target: { value: 'option1' } });
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
@@ -195,9 +193,7 @@ describe('SelectField Component', () => {
       });
 
       const select = screen.getByRole('combobox');
-      fireEvent.click(select);
-      const option = screen.getByText('One');
-      fireEvent.click(option);
+      fireEvent.change(select, { target: { value: '1' } });
 
       expect(mockOnChange).toHaveBeenCalledWith(1);
     });
@@ -210,9 +206,7 @@ describe('SelectField Component', () => {
       });
 
       const select = screen.getByRole('combobox');
-      fireEvent.click(select);
-      const option = screen.getByText('Option 1');
-      fireEvent.click(option);
+      fireEvent.change(select, { target: { value: 'option1' } });
 
       expect(mockOnChange).toHaveBeenCalledWith('option1');
     });

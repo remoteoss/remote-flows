@@ -14,6 +14,7 @@ import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 
 type MultiStepFormProps = {
@@ -226,7 +227,7 @@ const OnboardingWithCustomBenefits = ({
   countryCode,
 }: OnboardingWithCustomBenefitsProps) => {
   return (
-    <RemoteFlows>
+    <RemoteFlows components={defaultComponents}>
       <OnboardingFlow
         companyId={companyId}
         countryCode={countryCode}

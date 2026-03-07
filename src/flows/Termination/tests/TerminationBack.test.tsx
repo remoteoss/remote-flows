@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { TerminationBack } from '../TerminationBack';
 import { useTerminationContext } from '../context';
 import { useFormFields } from '@/src/context';
-import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock the hooks
 vi.mock('../context');
@@ -28,8 +28,9 @@ describe('TerminationBack', () => {
 
     mockUseFormFields.mockReturnValue({
       components: {
-        button: ButtonDefault,
+        button: defaultComponents.button,
       },
+      makeComponentsRequired: false,
     });
   });
 
@@ -91,6 +92,7 @@ describe('TerminationBack', () => {
         components: {
           button: CustomButton,
         },
+        makeComponentsRequired: false,
       });
     });
 

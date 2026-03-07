@@ -5,7 +5,7 @@ import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
-import { FileUploadFieldDefault } from '@/src/components/form/fields/default/FileUploadFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -49,7 +49,7 @@ describe('FileUploadField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        file: FileUploadFieldDefault,
+        file: defaultComponents.file,
       },
     });
   });
@@ -210,37 +210,6 @@ describe('FileUploadField Component', () => {
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();
       expect(mockOnChange.mock.calls[0][0]).toEqual([smallFile]);
-    });
-  });
-
-  it('should preserve existing files when uploading additional files', async () => {
-    const TestComponent = () => {
-      const methods = useForm();
-      return (
-        <FormProvider {...methods}>
-          <FileUploadField {...defaultProps} onChange={mockOnChange} />
-        </FormProvider>
-      );
-    };
-
-    render(<TestComponent />);
-
-    const fileInput = screen.getByLabelText('File upload');
-
-    // Upload first file
-    const file1 = new File(['content1'], 'file1.txt', { type: 'text/plain' });
-    fireEvent.change(fileInput, { target: { files: [file1] } });
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledWith([file1]);
-    });
-
-    // Upload second file
-    const file2 = new File(['content2'], 'file2.txt', { type: 'text/plain' });
-    fireEvent.change(fileInput, { target: { files: [file2] } });
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenLastCalledWith([file1, file2]);
     });
   });
 });

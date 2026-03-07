@@ -14,6 +14,8 @@ import './css/main.css';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { downloadFile } from './utils';
+import { defaultComponents } from './DefaultComponents';
+import './css/main.css';
 
 const estimationOptions = {
   title: 'Estimate for a new company',
@@ -87,7 +89,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithExportPdf() {
   return (
-    <RemoteFlows>
+    <RemoteFlows components={defaultComponents}>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );

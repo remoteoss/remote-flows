@@ -1,13 +1,13 @@
 import { TerminationDialogInfoContent } from '@remoteoss/remote-flows';
+import { Button } from './components/ui/button';
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  Button,
-  ScrollArea,
-} from '@remoteoss/remote-flows/internals';
+} from './components/ui/dialog';
+import { ScrollArea } from './components/ui/scroll-area';
 
 export function OffboardingRequestModal({
   employee,

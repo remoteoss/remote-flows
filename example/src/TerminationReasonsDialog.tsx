@@ -3,9 +3,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTrigger,
-  ScrollArea,
   DialogTitle,
-} from '@remoteoss/remote-flows/internals';
+} from './components/ui/dialog';
+import { ScrollArea } from './components/ui/scroll-area';
 import { TerminationReasonsDetailContent } from '@remoteoss/remote-flows';
 
 export function TerminationReasonsDialog() {

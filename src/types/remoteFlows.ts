@@ -158,7 +158,7 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   /**
    * Components to override the default field components used in the SDK.
    */
-  components?: Components;
+  components: Components;
   /**
    * Environment to use for API calls.
    * If not provided, the SDK will use production environment.
@@ -193,6 +193,12 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
      */
     fallback?: ReactNode | ((error: Error) => ReactNode);
   };
+  /**
+   * When true, built-in default components render nothing.
+   * Users must provide all required components via the `components` prop.
+   * @default false
+   */
+  makeComponentsRequired?: boolean;
   /**
    * Debug mode to enable logging of telemetry errors to the console.
    * @default false

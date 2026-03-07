@@ -1,62 +1,40 @@
-import {
-  Table as TablePrimitive,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/src/components/ui/table';
-import { cn } from '@/src/lib/utils';
-import { $TSFixMe, TableComponentProps } from '@/src/types/remoteFlows';
+import { forwardRef } from 'react';
+import { TableComponentProps } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
-export const TableFieldDefault = ({
-  data,
-  columns,
-  className,
-  ref,
-}: TableComponentProps) => {
-  return (
-    <TablePrimitive ref={ref} className={cn('RemoteFlows__Table', className)}>
-      <TableHeader>
-        <TableRow>
-          {columns.map((column) => (
-            <TableHead
-              key={String(column.id)}
-              className={cn('RemoteFlows__TableHead', column.className)}
-            >
-              {column.label}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data?.map((row, rowIndex) => (
-          <TableRow key={getRowKey(row, rowIndex)}>
-            {columns.map((column) => (
-              <TableCell
-                key={String(column.id)}
-                className={cn(
-                  'RemoteFlows__TableCell',
-                  column.className,
-                  column.cellClassName,
-                )}
-              >
-                {column.render
-                  ? column.render(
-                      row[column.id as keyof typeof row],
-                      row,
-                      rowIndex,
-                    )
-                  : row[column.id as keyof typeof row]}
-              </TableCell>
-            ))}
-          </TableRow>
+export const TableFieldDefault = forwardRef<
+  HTMLTableElement,
+  TableComponentProps<$TSFixMe>
+>(({ data = [], columns, className = '' }, ref) => (
+  <table ref={ref} className={`RemoteFlows__Table ${className}`.trim()}>
+    <thead>
+      <tr>
+        {columns.map((col) => (
+          <th key={String(col.id)} className={col.className}>
+            {col.label}
+          </th>
         ))}
-      </TableBody>
-    </TablePrimitive>
-  );
-};
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((row, rowIndex) => (
+        <tr key={rowIndex}>
+          {columns.map((col) => (
+            <td
+              key={String(col.id)}
+              className={[col.className, col.cellClassName]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {col.render
+                ? col.render(row[col.id], row, rowIndex)
+                : row[col.id]}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+));
 
-function getRowKey(row: $TSFixMe, index: number): string {
-  return String(row.id ?? index);
-}
+TableFieldDefault.displayName = 'TableFieldDefault';

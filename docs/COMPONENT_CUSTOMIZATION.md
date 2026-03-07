@@ -86,7 +86,7 @@ function App() {
 
 ### Supported Field Types
 
-For a complete list of all component types you can override, see the [default components registry](../src/default-components.ts). This file shows all the default implementations used internally by Remote Flows and serves as a reference for building custom components.
+For a complete list of all component types you can override. This file shows all the default implementations used internally by Remote Flows and serves as a reference for building custom components.
 
 Available component types include:
 
@@ -121,8 +121,9 @@ and their typescript definitions
 - `DatePickerComponentProps`: for datepicker components
 - `WorkScheduleComponentProps`: for workschedule components
 - `PDFPreviewComponentProps`: for the pdf viewer component
+- `TableComponentProps`: for the table component
 
-> **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
+> **Tip:** Check [example/src/DefaultComponents.ts](../example/src/DefaultComponents.tsx) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
 ### Important Notes
 
