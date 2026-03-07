@@ -21,5 +21,3 @@ export {
 } from './components/ui/card';
 
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
-
-export { FileUploader } from './components/ui/file-uploader';

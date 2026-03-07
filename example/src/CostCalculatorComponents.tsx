@@ -6,7 +6,7 @@ import type {
   FileComponentProps,
   PDFPreviewComponentProps,
 } from '@remoteoss/remote-flows';
-import { FileUploader } from '@remoteoss/remote-flows/internals';
+import { FileUploader } from './components/ui/file-uploader';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.

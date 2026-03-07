@@ -5,7 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { FileUploader } from '@remoteoss/remote-flows/internals';
+import { FileUploader } from '../ui/file-uploader';
 import { FileComponentProps } from '@remoteoss/remote-flows';
 
 export function FileUploadFieldDefault({
