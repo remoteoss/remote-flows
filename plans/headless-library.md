@@ -22,8 +22,8 @@ Decouple all Radix UI (and other visual) dependencies from the library core, mak
 
 ### Visual components embedded in flows/shared (must be made overridable or moved)
 
-- `EstimationResults` — uses `Card`, `Accordion`, `BasicTooltip`, `ActionsDropdown`
-- `SummaryResults` — uses `Card`, `Accordion`
+- `EstimationResults` — uses `Accordion`
+- `SummaryResults` — uses `Accordion`
 
 ---
 
