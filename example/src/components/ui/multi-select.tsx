@@ -9,7 +9,7 @@ import {
   CommandSeparator,
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { Button } from './button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import { cn } from '@remoteoss/remote-flows/internals';
 
 export type Option = {

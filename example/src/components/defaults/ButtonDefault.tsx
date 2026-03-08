@@ -1,4 +1,4 @@
-import { Button } from '../ui/button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import { ButtonComponentProps } from '@remoteoss/remote-flows';
 
 export const ButtonDefault = (props: ButtonComponentProps) => {

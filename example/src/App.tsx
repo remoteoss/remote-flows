@@ -12,7 +12,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './components/ui/collapsible';
-import { Button } from './components/ui/button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
 
 import { useState } from 'react';

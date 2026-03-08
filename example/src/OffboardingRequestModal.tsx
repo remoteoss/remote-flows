@@ -1,5 +1,5 @@
 import { TerminationDialogInfoContent } from '@remoteoss/remote-flows';
-import { Button } from './components/ui/button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import {
   Dialog,
   DialogTrigger,

@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { useFieldArray, useForm, Controller } from 'react-hook-form';
-import { Button } from '../ui/button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import {

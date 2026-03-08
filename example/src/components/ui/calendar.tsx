@@ -2,8 +2,7 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 
-import { cn } from '@remoteoss/remote-flows/internals';
-import { buttonVariants } from './button';
+import { cn, buttonVariants } from '@remoteoss/remote-flows/internals';
 
 function Calendar({
   className,

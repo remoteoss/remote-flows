@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from './button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@remoteoss/remote-flows/internals';
 

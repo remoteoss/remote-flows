@@ -1,4 +1,4 @@
-import { Button } from '../ui/button';
+import { Button } from '@remoteoss/remote-flows/internals';
 import {
   FormControl,
   FormDescription,
