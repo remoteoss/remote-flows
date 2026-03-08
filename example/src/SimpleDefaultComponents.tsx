@@ -49,37 +49,85 @@ function MultiSelectField({
 
   return (
     <div>
-      <label>{fieldData.label as string}</label>
-      {selected.map((val) => {
-        const opt = options.find((o) => o.value === val);
-        return opt ? (
-          <span key={val}>
-            {opt.label}
-            <button
-              aria-label={`remove ${opt.label}`}
-              onClick={() => field.onChange(selected.filter((v) => v !== val))}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter')
-                  field.onChange(selected.filter((v) => v !== val));
+      <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>
+        {fieldData.label as string}
+      </label>
+      <div
+        style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 4 }}
+      >
+        {selected.map((val) => {
+          const opt = options.find((o) => o.value === val);
+          return opt ? (
+            <span
+              key={val}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                background: '#e5e7eb',
+                borderRadius: 4,
+                padding: '2px 6px',
+                fontSize: 13,
               }}
             >
-              ×
-            </button>
-          </span>
-        ) : null;
-      })}
+              {opt.label}
+              <button
+                aria-label={`remove ${opt.label}`}
+                onClick={() =>
+                  field.onChange(selected.filter((v) => v !== val))
+                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter')
+                    field.onChange(selected.filter((v) => v !== val));
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0 2px',
+                  lineHeight: 1,
+                }}
+              >
+                ×
+              </button>
+            </span>
+          ) : null;
+        })}
+      </div>
       <div
         role='combobox'
         aria-expanded={isOpen}
         aria-haspopup='listbox'
         onClick={() => setIsOpen((o) => !o)}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '6px 10px',
+          cursor: 'pointer',
+          background: '#fff',
+          userSelect: 'none',
+        }}
       >
         Select...
       </div>
       {isOpen && (
-        <ul role='listbox'>
+        <ul
+          role='listbox'
+          style={{
+            margin: 0,
+            padding: 0,
+            listStyle: 'none',
+            border: '1px solid #d1d5db',
+            borderRadius: 6,
+            background: '#fff',
+            maxHeight: 200,
+            overflowY: 'auto',
+          }}
+        >
           {options.length === 0 ? (
-            <li>No item found.</li>
+            <li style={{ padding: '8px 10px', color: '#6b7280' }}>
+              No item found.
+            </li>
           ) : (
             options.map((opt) => (
               <li
@@ -87,6 +135,13 @@ function MultiSelectField({
                 role='option'
                 aria-selected={selected.includes(opt.value)}
                 onClick={() => toggleOption(opt.value)}
+                style={{
+                  padding: '8px 10px',
+                  cursor: 'pointer',
+                  background: selected.includes(opt.value)
+                    ? '#eff6ff'
+                    : undefined,
+                }}
               >
                 {opt.label}
               </li>
@@ -94,8 +149,16 @@ function MultiSelectField({
           )}
         </ul>
       )}
-      {fieldData.description && <p>{fieldData.description as string}</p>}
-      {fieldState.error && <p>{fieldState.error.message}</p>}
+      {fieldData.description && (
+        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6b7280' }}>
+          {fieldData.description as string}
+        </p>
+      )}
+      {fieldState.error && (
+        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#dc2626' }}>
+          {fieldState.error.message}
+        </p>
+      )}
     </div>
   );
 }
@@ -161,27 +224,56 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
 
   return (
     <div>
-      <p>Work hours</p>
-      <p>
+      <p style={{ fontWeight: 600, margin: '0 0 2px' }}>Work hours</p>
+      <p style={{ margin: '0 0 8px', color: '#6b7280', fontSize: 14 }}>
         {'Total of '}
         {totalWorkHours}
         {' hours per week'}
       </p>
-      <button type='button' onClick={() => setIsOpen(true)}>
+      <button
+        type='button'
+        onClick={() => setIsOpen(true)}
+        style={{
+          padding: '6px 14px',
+          borderRadius: 6,
+          border: '1px solid #d1d5db',
+          cursor: 'pointer',
+        }}
+      >
         Edit Schedule
       </button>
       {isOpen && (
-        <div>
-          <h2>Edit employee working hours</h2>
+        <div
+          style={{
+            marginTop: 12,
+            padding: 16,
+            border: '1px solid #e5e7eb',
+            borderRadius: 8,
+          }}
+        >
+          <h2 style={{ margin: '0 0 12px', fontSize: 16 }}>
+            Edit employee working hours
+          </h2>
           {localSchedule.map((day, idx) => (
-            <div key={day.day}>
+            <div
+              key={day.day}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
               <input
                 type='checkbox'
                 id={`ws-${day.day}`}
                 checked={day.checked}
                 onChange={(e) => handleCheckboxChange(idx, e.target.checked)}
               />
-              <label htmlFor={`ws-${day.day}`}>
+              <label
+                htmlFor={`ws-${day.day}`}
+                style={{ width: 36, fontWeight: 500 }}
+              >
                 {DAY_ABBREVS[day.day.toLowerCase()]}
               </label>
               {day.checked && (
@@ -192,6 +284,12 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
                     onChange={(e) =>
                       handleTimeChange(idx, 'start_time', e.target.value)
                     }
+                    style={{
+                      border: '1px solid #d1d5db',
+                      borderRadius: 4,
+                      padding: '4px 8px',
+                      width: 80,
+                    }}
                   />
                   <input
                     type='text'
@@ -199,15 +297,36 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
                     onChange={(e) =>
                       handleTimeChange(idx, 'end_time', e.target.value)
                     }
+                    style={{
+                      border: '1px solid #d1d5db',
+                      borderRadius: 4,
+                      padding: '4px 8px',
+                      width: 80,
+                    }}
                   />
                 </>
               )}
             </div>
           ))}
           {timeErrors.map((err, i) => (
-            <p key={i}>{err}</p>
+            <p
+              key={i}
+              style={{ color: '#dc2626', fontSize: 13, margin: '4px 0' }}
+            >
+              {err}
+            </p>
           ))}
-          <button type='button' onClick={handleSave}>
+          <button
+            type='button'
+            onClick={handleSave}
+            style={{
+              marginTop: 8,
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              cursor: 'pointer',
+            }}
+          >
             Save Schedule
           </button>
         </div>
@@ -238,17 +357,53 @@ function ZendeskDrawerSimple({
     <div>
       {Trigger}
       {open && (
-        <div data-testid='zendesk-drawer'>
+        <div
+          data-testid='zendesk-drawer'
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: 360,
+            height: '100%',
+            background: '#fff',
+            boxShadow: '-2px 0 8px rgba(0,0,0,0.1)',
+            padding: 24,
+            overflowY: 'auto',
+            zIndex: 100,
+          }}
+        >
           {isLoading && <div>Loading...</div>}
-          {error && <div>Error loading article</div>}
-          {data?.title && <strong>{data.title}</strong>}
+          {error && (
+            <div style={{ color: '#dc2626' }}>Error loading article</div>
+          )}
+          {data?.title && (
+            <strong style={{ display: 'block', marginBottom: 8 }}>
+              {data.title}
+            </strong>
+          )}
           {data?.body && (
             <div dangerouslySetInnerHTML={{ __html: data.body }} />
           )}
-          <a href={zendeskURL} target='_blank' rel='noopener noreferrer'>
+          <a
+            href={zendeskURL}
+            target='_blank'
+            rel='noopener noreferrer'
+            style={{ color: '#2563eb', display: 'block', marginTop: 12 }}
+          >
             help article
           </a>
-          <button onClick={onClose}>Close</button>
+          <button
+            onClick={onClose}
+            style={{
+              marginTop: 16,
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              cursor: 'pointer',
+            }}
+          >
+            Close
+          </button>
         </div>
       )}
     </div>
@@ -257,8 +412,18 @@ function ZendeskDrawerSimple({
 
 export const defaultComponents: Components = {
   text: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <input
         type='text'
         id={field.name}
@@ -268,18 +433,45 @@ export const defaultComponents: Components = {
         onBlur={field.onBlur}
         placeholder={fieldData.label as string}
         onChange={(e) => field.onChange(e)}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+        }}
       />
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   email: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <input
         type='email'
         id={field.name}
@@ -288,15 +480,37 @@ export const defaultComponents: Components = {
         ref={field.ref}
         onBlur={field.onBlur}
         onChange={(e) => field.onChange(e)}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+        }}
       />
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   number: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <input
         type='text'
         id={field.name}
@@ -306,18 +520,45 @@ export const defaultComponents: Components = {
         onBlur={field.onBlur}
         placeholder={fieldData.label as string}
         onChange={(e) => field.onChange(e)}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+        }}
       />
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   textarea: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <textarea
         id={field.name}
         name={field.name}
@@ -325,18 +566,47 @@ export const defaultComponents: Components = {
         ref={field.ref}
         onBlur={field.onBlur}
         onChange={(e) => field.onChange(e)}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+          minHeight: 80,
+          resize: 'vertical',
+        }}
       />
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   date: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <input
         type='date'
         id={field.name}
@@ -345,24 +615,59 @@ export const defaultComponents: Components = {
         onChange={(e) => {
           field?.onChange?.(e.target.value);
         }}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+        }}
       />
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   select: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <select
         id={field.name}
         data-testid={field.name}
         value={field.value ?? ''}
         onChange={(e) => {
           field?.onChange?.(e.target.value);
+        }}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+          background: '#fff',
         }}
       >
         <option value=''>Select an option</option>
@@ -373,22 +678,50 @@ export const defaultComponents: Components = {
         ))}
       </select>
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   countries: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label htmlFor={field.name}>{fieldData.label}</label>
+    <div
+      className='input-container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        marginBottom: 12,
+      }}
+    >
+      <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+        {fieldData.label}
+      </label>
       <select
         id={field.name}
         data-testid={field.name}
         value={field.value ?? ''}
         onChange={(e) => {
           field?.onChange?.(e.target.value);
+        }}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: 6,
+          padding: '8px 10px',
+          fontSize: 14,
+          outline: 'none',
+          background: '#fff',
         }}
       >
         <option value=''>Select a country</option>
@@ -399,65 +732,141 @@ export const defaultComponents: Components = {
         ))}
       </select>
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </div>
   ),
   radio: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <fieldset role='radiogroup' aria-label={fieldData.label as string}>
-      <legend>{fieldData.label}</legend>
+    <fieldset
+      role='radiogroup'
+      aria-label={(fieldData.label || fieldData.name) as string}
+      style={{ border: 'none', padding: 0, margin: '0 0 12px' }}
+    >
+      <legend style={{ fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
+        {fieldData.label}
+      </legend>
       {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
+        <p
+          className='input-description'
+          style={{ margin: '0 0 6px', fontSize: 12, color: '#6b7280' }}
+        >
+          {fieldData.description as string}
+        </p>
       )}
-      {fieldData.options?.map(
-        (option: { value: string; label: string; disabled?: boolean }) => (
-          <label key={option.value}>
-            <input
-              type='radio'
-              name={field.name}
-              value={option.value}
-              checked={field.value === option.value}
-              disabled={option.disabled}
-              onChange={() => field?.onChange?.(option.value)}
-            />
-            {option.label}
-          </label>
-        ),
-      )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {fieldData.options?.map(
+          (option: { value: string; label: string; disabled?: boolean }) => (
+            <label
+              key={option.value}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: option.disabled ? 'not-allowed' : 'pointer',
+                opacity: option.disabled ? 0.5 : 1,
+              }}
+            >
+              <input
+                type='radio'
+                name={field.name}
+                value={option.value}
+                checked={field.value === option.value}
+                disabled={option.disabled}
+                onChange={() => field?.onChange?.(option.value)}
+              />
+              {option.label}
+            </label>
+          ),
+        )}
+      </div>
       {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
+        <p
+          className='error-message'
+          style={{ margin: '4px 0 0', fontSize: 12, color: '#dc2626' }}
+        >
+          {fieldState.error.message}
+        </p>
       )}
     </fieldset>
   ),
   checkbox: ({ field, fieldData, fieldState }: FieldComponentProps) => {
     if (fieldData.multiple && fieldData.options) {
       return (
-        <div className='input-container'>
-          <label>{fieldData.label as string}</label>
-          {fieldData.options.map((option: { value: string; label: string }) => (
-            <div key={option.value}>
-              <input
-                {...field}
-                type='checkbox'
-                id={option.value}
-                onChange={(e) => field.onChange(e.target.checked, option.value)}
-                checked={field.value?.includes(option.value)}
-              />
-              <label htmlFor={option.value}>{option.label}</label>
-            </div>
-          ))}
+        <div
+          className='input-container'
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            marginBottom: 12,
+          }}
+        >
+          <label style={{ fontWeight: 600, fontSize: 14 }}>
+            {fieldData.label as string}
+          </label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {fieldData.options.map(
+              (option: { value: string; label: string }) => (
+                <div
+                  key={option.value}
+                  style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                >
+                  <input
+                    {...field}
+                    type='checkbox'
+                    id={option.value}
+                    onChange={(e) =>
+                      field.onChange(e.target.checked, option.value)
+                    }
+                    checked={field.value?.includes(option.value)}
+                  />
+                  <label htmlFor={option.value}>{option.label}</label>
+                </div>
+              ),
+            )}
+          </div>
           {fieldState.error && (
-            <p className='error-message'>{fieldState.error.message}</p>
+            <p
+              className='error-message'
+              style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+            >
+              {fieldState.error.message}
+            </p>
           )}
         </div>
       );
     }
     return (
-      <div className='input-container'>
-        <label>
+      <div
+        className='input-container'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          marginBottom: 12,
+        }}
+      >
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            cursor: 'pointer',
+          }}
+        >
           <input
             {...field}
             type='checkbox'
@@ -468,31 +877,79 @@ export const defaultComponents: Components = {
           {fieldData.label}
         </label>
         {fieldData.description && (
-          <p className='input-description'>{fieldData.description as string}</p>
+          <p
+            className='input-description'
+            style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+          >
+            {fieldData.description as string}
+          </p>
         )}
         {fieldState.error && (
-          <p className='error-message'>{fieldState.error.message}</p>
+          <p
+            className='error-message'
+            style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+          >
+            {fieldState.error.message}
+          </p>
         )}
       </div>
     );
   },
-  file: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label>{fieldData.label as string}</label>
-      <button type='button'>Upload</button>
-      <input
-        type='file'
-        aria-label='File upload'
-        onChange={(e) => field?.onChange?.(Array.from(e.target.files ?? []))}
-      />
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
-      )}
-      {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
-      )}
-    </div>
-  ),
+  file: ({ field, fieldData, fieldState }: FieldComponentProps) => {
+    const files: File[] = Array.isArray(field.value) ? field.value : [];
+    return (
+      <div
+        className='input-container'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          marginBottom: 12,
+        }}
+      >
+        <label htmlFor={field.name} style={{ fontWeight: 600, fontSize: 14 }}>
+          {fieldData.label as string}
+        </label>
+        {files.length > 0 && (
+          <ul
+            style={{
+              margin: 0,
+              padding: '0 0 0 16px',
+              fontSize: 13,
+              color: '#374151',
+            }}
+          >
+            {files.map((f, i) => (
+              <li key={i}>{f.name}</li>
+            ))}
+          </ul>
+        )}
+        <input
+          type='file'
+          id={field.name}
+          aria-label={fieldData.label as string}
+          onChange={(e) => field?.onChange?.(Array.from(e.target.files ?? []))}
+          style={{ fontSize: 14 }}
+        />
+        {fieldData.description && (
+          <p
+            className='input-description'
+            style={{ margin: 0, fontSize: 12, color: '#6b7280' }}
+          >
+            {fieldData.description as string}
+          </p>
+        )}
+        {fieldState.error && (
+          <p
+            className='error-message'
+            style={{ margin: 0, fontSize: 12, color: '#dc2626' }}
+          >
+            {fieldState.error.message}
+          </p>
+        )}
+      </div>
+    );
+  },
   'multi-select': MultiSelectField,
   fieldsetToggle: ({
     onToggle,
@@ -510,9 +967,24 @@ export const defaultComponents: Components = {
   ),
   'work-schedule': WorkScheduleField,
   statement: ({ data }: StatementComponentProps) => (
-    <div>
-      {data.title && <strong>{data.title}</strong>}
-      {data.description && <p>{data.description}</p>}
+    <div
+      style={{
+        marginBottom: 12,
+        padding: 12,
+        background: '#f9fafb',
+        borderRadius: 6,
+      }}
+    >
+      {data.title && (
+        <strong style={{ display: 'block', marginBottom: 4 }}>
+          {data.title}
+        </strong>
+      )}
+      {data.description && (
+        <p style={{ margin: 0, color: '#374151', fontSize: 14 }}>
+          {data.description}
+        </p>
+      )}
     </div>
   ),
   table: ({
@@ -520,11 +992,24 @@ export const defaultComponents: Components = {
     columns,
     className = '',
   }: TableComponentProps<$TSFixMe>) => (
-    <table className={`RemoteFlows__Table ${className}`}>
+    <table
+      className={`RemoteFlows__Table ${className}`}
+      style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}
+    >
       <thead>
         <tr>
           {columns.map((col) => (
-            <th key={String(col.id)} className={col.className}>
+            <th
+              key={String(col.id)}
+              className={col.className}
+              style={{
+                textAlign: 'left',
+                padding: '8px 12px',
+                borderBottom: '2px solid #e5e7eb',
+                fontWeight: 600,
+                color: '#374151',
+              }}
+            >
               {col.label}
             </th>
           ))}
@@ -532,13 +1017,14 @@ export const defaultComponents: Components = {
       </thead>
       <tbody>
         {data.map((row, rowIndex) => (
-          <tr key={rowIndex}>
+          <tr key={rowIndex} style={{ borderBottom: '1px solid #e5e7eb' }}>
             {columns.map((col) => (
               <td
                 key={String(col.id)}
                 className={[col.className, col.cellClassName]
                   .filter(Boolean)
                   .join(' ')}
+                style={{ padding: '8px 12px', color: '#374151' }}
               >
                 {col.render
                   ? col.render(row[col.id], row, rowIndex)
@@ -558,10 +1044,28 @@ export const defaultComponents: Components = {
     children,
   }: DrawerComponentProps) => (
     <div>
-      <span onClick={() => onOpenChange(!open)}>{trigger}</span>
+      <span onClick={() => onOpenChange(!open)} style={{ cursor: 'pointer' }}>
+        {trigger}
+      </span>
       {open && (
-        <div data-testid='drawer'>
-          <strong>{title}</strong>
+        <div
+          data-testid='drawer'
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: 360,
+            height: '100%',
+            background: '#fff',
+            boxShadow: '-2px 0 8px rgba(0,0,0,0.1)',
+            padding: 24,
+            overflowY: 'auto',
+            zIndex: 100,
+          }}
+        >
+          <strong style={{ display: 'block', marginBottom: 12, fontSize: 16 }}>
+            {title}
+          </strong>
           {children}
         </div>
       )}
@@ -574,19 +1078,49 @@ export const defaultComponents: Components = {
   }: PDFPreviewComponentProps) => {
     if (!base64Data) {
       return (
-        <div>
-          <p>No PDF data available</p>
+        <div
+          style={{
+            padding: 32,
+            textAlign: 'center',
+            background: '#f9fafb',
+            borderRadius: 8,
+            border: '1px solid #e5e7eb',
+          }}
+        >
+          <p style={{ color: '#6b7280', margin: 0 }}>No PDF data available</p>
         </div>
       );
     }
 
     return (
-      <div>
-        <iframe src={base64Data} title={fileName} />
-        <p>{fileName}</p>
-        <a href={base64Data} download={fileName}>
-          Download PDF
-        </a>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <iframe
+          src={base64Data}
+          title={fileName}
+          style={{
+            width: '100%',
+            height: 600,
+            border: '1px solid #e5e7eb',
+            borderRadius: 6,
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: 13,
+          }}
+        >
+          <p style={{ margin: 0, color: '#6b7280' }}>{fileName}</p>
+          <a
+            href={base64Data}
+            download={fileName}
+            style={{ color: '#2563eb', textDecoration: 'none' }}
+          >
+            Download PDF
+          </a>
+        </div>
       </div>
     );
   },
