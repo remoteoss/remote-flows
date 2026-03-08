@@ -1,24 +1,23 @@
 import { useEffect, useState } from 'react';
 import {
+  Components,
   FieldComponentProps,
   WorkScheduleComponentProps,
   StatementComponentProps,
-} from '@/src/types/fields';
-import {
-  Components,
   FieldSetToggleComponentProps,
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
   TableComponentProps,
-  $TSFixMe,
   PDFPreviewComponentProps,
-} from '@/src/types/remoteFlows';
-import {
   DAYS_OF_THE_WEEK,
   calculateHours,
   DailySchedule,
-} from '@/src/components/form/fields/workScheduleUtils';
+} from '@remoteoss/remote-flows';
+
+// $TSFixMe equivalent
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type $TSFixMe = any;
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
@@ -126,7 +125,6 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
     const next = localSchedule.map((d, i) =>
       i === idx ? { ...d, checked } : d,
     );
-    // Recalculate hours for all days on checked state change
     setLocalSchedule(next.map((d) => ({ ...d, hours: calculateHours(d) })));
   };
 
@@ -218,7 +216,7 @@ function WorkScheduleField({ fieldData }: WorkScheduleComponentProps) {
   );
 }
 
-function ZendeskDrawerDefault({
+function ZendeskDrawerSimple({
   open,
   onClose,
   data,
@@ -569,36 +567,26 @@ export const defaultComponents: Components = {
       )}
     </div>
   ),
-  zendeskDrawer: ZendeskDrawerDefault,
+  zendeskDrawer: ZendeskDrawerSimple,
   pdfViewer: ({
     base64Data,
     fileName = 'document.pdf',
   }: PDFPreviewComponentProps) => {
     if (!base64Data) {
       return (
-        <div className='w-full border rounded p-8 text-center bg-gray-50'>
-          <p className='text-gray-500'>No PDF data available</p>
+        <div>
+          <p>No PDF data available</p>
         </div>
       );
     }
 
     return (
-      <div className='w-full space-y-4'>
-        <iframe
-          src={base64Data}
-          className='w-full h-[600px] border rounded'
-          title={fileName}
-        />
-        <div className='flex justify-between items-center text-sm'>
-          <p className='text-gray-600'>{fileName}</p>
-          <a
-            href={base64Data}
-            download={fileName}
-            className='text-blue-600 hover:underline'
-          >
-            Download PDF
-          </a>
-        </div>
+      <div>
+        <iframe src={base64Data} title={fileName} />
+        <p>{fileName}</p>
+        <a href={base64Data} download={fileName}>
+          Download PDF
+        </a>
       </div>
     );
   },
