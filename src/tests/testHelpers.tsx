@@ -117,12 +117,15 @@ export async function fillSelect(selectName: string, selectValue: string) {
 }
 
 export async function fillCheckbox(checkboxName: string) {
-  const user = userEvent.setup();
   const checkbox = screen.getByRole('checkbox', {
     name: new RegExp(checkboxName, 'i'),
   });
   expect(checkbox).toBeInTheDocument();
-  await user.click(checkbox);
+  fireEvent.click(checkbox);
+
+  await waitFor(() => {
+    expect(checkbox).toBeChecked();
+  });
 }
 
 export async function fillDatePicker(date: string, label: string) {

@@ -1,3 +1,4 @@
+// Equivalent of the components that the library uses to do testing
 import { useEffect, useState } from 'react';
 import {
   Components,
@@ -611,7 +612,7 @@ export const defaultComponents: Components = {
         type='date'
         id={field.name}
         data-testid={field.name}
-        value={field.value ?? ''}
+        value={field.value ? String(field.value).slice(0, 10) : ''}
         onChange={(e) => {
           field?.onChange?.(e.target.value);
         }}

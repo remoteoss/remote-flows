@@ -343,7 +343,7 @@ export const defaultComponents: Components = {
         type='date'
         id={field.name}
         data-testid={field.name}
-        value={field.value ?? ''}
+        value={field.value ? String(field.value).slice(0, 10) : ''}
         onChange={(e) => {
           field?.onChange?.(e.target.value);
         }}
@@ -409,7 +409,10 @@ export const defaultComponents: Components = {
     </div>
   ),
   radio: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <fieldset role='radiogroup' aria-label={(fieldData.label || fieldData.name) as string}>
+    <fieldset
+      role='radiogroup'
+      aria-label={(fieldData.label || fieldData.name) as string}
+    >
       <legend>{fieldData.label}</legend>
       {fieldData.description && (
         <p className='input-description'>{fieldData.description as string}</p>
