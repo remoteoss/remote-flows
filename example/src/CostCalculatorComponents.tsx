@@ -7,6 +7,7 @@ import type {
   PDFPreviewComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from './components/ui/file-uploader';
+import { defaultComponents } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -333,6 +334,7 @@ const PDFPreview = ({ base64Data }: PDFPreviewComponentProps) => {
 };
 
 export const components: Components = {
+  ...defaultComponents,
   button: Button,
   text: Input,
   select: Select,
