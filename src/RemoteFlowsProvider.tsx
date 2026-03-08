@@ -38,9 +38,7 @@ export function FormFieldsProvider({
   const resolvedComponents = useMemo(() => components, [components]);
 
   return (
-    <FormFieldsContext.Provider
-      value={{ components: resolvedComponents }}
-    >
+    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
       {children}
     </FormFieldsContext.Provider>
   );
@@ -72,9 +70,7 @@ export function RemoteFlows({
         client={remoteApiClient}
       >
         <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider
-            components={components}
-          >
+          <FormFieldsProvider components={components}>
             <RemoteFlowContextWrapper
               environment={environment}
               debug={debug}

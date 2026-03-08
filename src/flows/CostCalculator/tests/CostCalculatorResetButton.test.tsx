@@ -32,7 +32,6 @@ describe('CostCalculatorResetButton', () => {
 
     mockUseFormFields.mockReturnValue({
       components: { button: defaultComponents.button },
-
     });
   });
 
@@ -102,7 +101,6 @@ describe('CostCalculatorResetButton', () => {
         components: {
           button: CustomButton,
         },
-  
       });
     });
 

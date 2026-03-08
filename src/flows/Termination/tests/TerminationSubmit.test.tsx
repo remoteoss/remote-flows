@@ -26,7 +26,6 @@ describe('TerminationSubmit', () => {
       components: {
         button: defaultComponents.button,
       },
-
     });
   });
 
@@ -69,7 +68,6 @@ describe('TerminationSubmit', () => {
         components: {
           button: CustomButton,
         },
-  
       });
     });
 
