@@ -3,9 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { FormFieldsContext } from '@/src/context';
 import { ReactNode } from 'react';
-import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
-const mockComponents = { components: { drawer: DrawerDefault } };
+const mockComponents = {
+  components: { drawer: defaultComponents.drawer },
+};
 
 const FormFieldsProvider = ({ children }: { children: ReactNode }) => (
   <FormFieldsContext.Provider value={mockComponents}>
@@ -93,7 +95,9 @@ describe('Drawer', () => {
 
   it('should use custom drawer component from components prop', () => {
     const CustomDrawer = vi.fn(() => <div>Custom Drawer</div>);
-    const customComponents = { components: { drawer: CustomDrawer } };
+    const customComponents = {
+      components: { drawer: CustomDrawer },
+    };
 
     render(
       <FormFieldsContext.Provider value={customComponents}>

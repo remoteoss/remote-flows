@@ -8,9 +8,7 @@ import { DailySchedule } from '../workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import { Components } from '@/src/types/remoteFlows';
 import * as yup from 'yup';
-import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
-import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
-import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -105,9 +103,9 @@ describe('WorkScheduleField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        'work-schedule': WorkScheduleFieldDefault,
-        checkbox: CheckboxFieldDefault,
-        text: TextFieldDefault,
+        'work-schedule': defaultComponents['work-schedule'],
+        checkbox: defaultComponents.checkbox,
+        text: defaultComponents.text,
       },
     });
   });

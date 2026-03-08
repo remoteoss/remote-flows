@@ -26,7 +26,7 @@ export function RadioGroupField({
       name={name}
       defaultValue={defaultValue}
       render={({ field, fieldState }) => {
-        const Component = component || components?.radio;
+        const Component = component || components.radio;
         if (!Component) {
           throw new Error(`Radio group component not found for field ${name}`);
         }

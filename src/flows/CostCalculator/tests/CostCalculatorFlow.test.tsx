@@ -1056,8 +1056,14 @@ describe('CostCalculatorFlow', () => {
       expect(defineButton).toHaveAttribute('aria-expanded', 'true');
     });
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', { name: 'Desired monthly management fee' }),
+      ).toBeInTheDocument();
+    });
+
     const managementFeeInput = screen.getByRole('textbox', {
-      name: /management fee/i,
+      name: 'Desired monthly management fee',
     });
     expect(managementFeeInput).toHaveValue('699');
 

@@ -1,7 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-// TODO: we can remove this import in the next major version, we can import styles with import '@remoteoss/remote-flows/styles.css'
-import './styles/global.css';
-
 export {
   buildCostCalculatorEstimationPayload,
   CostCalculatorFlow,
@@ -121,6 +118,7 @@ export type {
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
   DrawerComponentProps,
+  TableComponentProps,
   PDFPreviewComponentProps,
   Meta,
 } from '@/src/types/remoteFlows';
@@ -135,6 +133,7 @@ export type {
   WorkScheduleComponentProps,
   PricingPlanComponentProps,
   PricingPlanDataProps,
+  HelpCenterDataProps,
 } from '@/src/types/fields';
 
 export type {
@@ -152,4 +151,18 @@ export type {
 export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
 export { zendeskArticles } from './components/shared/zendesk-drawer/utils';
+
+export {
+  calculateHours,
+  DAYS_OF_THE_WEEK,
+  getShortWeekday,
+} from './components/form/fields/workScheduleUtils';
+export type { DailySchedule } from './components/form/fields/workScheduleUtils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+export { HelpCenter } from './components/shared/zendesk-drawer/HelpCenter';
+
+export {
+  FormItemContext,
+  useFormField,
+  FormDescription,
+} from '@/src/components/ui/form';

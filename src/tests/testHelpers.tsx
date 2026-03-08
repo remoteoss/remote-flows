@@ -84,27 +84,16 @@ export async function assertRadioValue(
 }
 
 export async function fillRadio(radioName: string, radioValue: string) {
-  const user = userEvent.setup();
-
-  // Wait for the radio group to be available - use role-based query for specificity
-  await waitFor(() => {
-    screen.getByRole('radiogroup', { name: new RegExp(radioName, 'i') });
-  });
-
-  // Get the specific radiogroup by role (not just by text)
-  const radioGroup = screen.getByRole('radiogroup', {
+  const radioGroup = await screen.findByRole('radiogroup', {
     name: new RegExp(radioName, 'i'),
   });
 
-  // Find the radio button within that group
   const radioButton = within(radioGroup).getByRole('radio', {
     name: new RegExp(radioValue, 'i'),
   });
 
-  // Use userEvent to click the radio button
-  await user.click(radioButton);
+  fireEvent.click(radioButton);
 
-  // Wait for the radio button to be checked
   await waitFor(() => {
     expect(radioButton).toBeChecked();
   });
@@ -128,12 +117,15 @@ export async function fillSelect(selectName: string, selectValue: string) {
 }
 
 export async function fillCheckbox(checkboxName: string) {
-  const user = userEvent.setup();
   const checkbox = screen.getByRole('checkbox', {
     name: new RegExp(checkboxName, 'i'),
   });
   expect(checkbox).toBeInTheDocument();
-  await user.click(checkbox);
+  fireEvent.click(checkbox);
+
+  await waitFor(() => {
+    expect(checkbox).toBeChecked();
+  });
 }
 
 export async function fillDatePicker(date: string, label: string) {

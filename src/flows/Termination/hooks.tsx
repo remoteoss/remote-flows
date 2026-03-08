@@ -216,8 +216,12 @@ export const useTermination = ({
 
               return (
                 <PaidTimeOffContainer
-                  employeeName={employment?.basic_information?.name as string}
-                  proposedTerminationDate={formValues.proposed_termination_date}
+                  employeeName={
+                    (employment?.basic_information?.name ?? '') as string
+                  }
+                  proposedTerminationDate={
+                    formValues.proposed_termination_date as string
+                  }
                   employmentId={employmentId}
                   employment={employment}
                   render={(props) => {

@@ -34,7 +34,6 @@ npm install @remoteoss/remote-flows
 
 ```tsx
 import { RemoteFlows, CostCalculator } from '@remoteoss/remote-flows';
-import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import '@remoteoss/remote-flows/styles.css';
 
 function App() {

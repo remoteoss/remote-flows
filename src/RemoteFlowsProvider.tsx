@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useMemo, Suspense, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { ThemeProvider } from '@/src/theme';
 import { FormFieldsContext, RemoteFlowContext } from './context';
@@ -8,9 +8,6 @@ import { Components, RemoteFlowsSDKProps } from './types/remoteFlows';
 import { createClient } from '@/src/auth/createClient';
 import { Client } from '@/src/client/client';
 import { RemoteFlowsErrorBoundary } from '@/src/components/error-handling/RemoteFlowsErrorBoundary';
-import { lazyDefaultComponents } from './lazy-default-components';
-import { FormLoadingFallback } from '@/src/components/form/FormLoadingFallback';
-import { DelayedFallback } from '@/src/components/form/DelayedFallback';
 import { getQueryClient } from '@/src/queryConfig';
 import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
@@ -34,29 +31,14 @@ function RemoteFlowContextWrapper({
 
 export function FormFieldsProvider({
   children,
-  components: userComponents = {},
+  components,
 }: PropsWithChildren<{
-  components?: Components;
+  components: Components;
 }>) {
-  // Merge user components with lazy defaults
-  // User-provided components take precedence, lazy defaults are only used as fallback
-  const resolvedComponents = useMemo(() => {
-    // Spread lazy defaults first, then override with user components
-    return {
-      ...lazyDefaultComponents,
-      ...userComponents,
-    } as Components;
-  }, [userComponents]);
-
+  const value = useMemo(() => ({ components }), [components]);
   return (
-    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
-      <Suspense
-        fallback={
-          <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
-        }
-      >
-        {children}
-      </Suspense>
+    <FormFieldsContext.Provider value={value}>
+      {children}
     </FormFieldsContext.Provider>
   );
 }

@@ -6,7 +6,6 @@ import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
-import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 
@@ -138,8 +137,12 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
-  const ToggleComponent =
-    formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
+  const ToggleComponent = formComponents.fieldsetToggle;
+  if (!ToggleComponent) {
+    throw new Error(
+      'fieldsetToggle is required, please provide the component in the components prop of the RemoteFlows component',
+    );
+  }
   const contentId = `${name}-content`;
   const headerId = `${name}-header`;
 

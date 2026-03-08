@@ -5,6 +5,7 @@ import {
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 
 function AmendmentFlow({
@@ -113,7 +114,10 @@ function AmendmentFlow({
 export function ContractAmendment() {
   const EMPLOYMENT_ID = import.meta.env.VITE_CONTRACT_AMENDMENT_EMPLOYMENT_ID; // set another employment ID here as it will probably fail for you
   return (
-    <RemoteFlows proxy={{ url: window.location.origin }}>
+    <RemoteFlows
+      proxy={{ url: window.location.origin }}
+      components={defaultComponents}
+    >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode='PRT'

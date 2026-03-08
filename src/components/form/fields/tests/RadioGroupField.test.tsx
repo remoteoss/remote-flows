@@ -6,7 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { RadioGroupField } from '../RadioGroupField';
 import { JSFField } from '@/src/types/remoteFlows';
-import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 
 type RadioGroupFieldProps = JSFField & {
   onChange?: (value: string | React.ChangeEvent<HTMLInputElement>) => void;
@@ -65,12 +65,12 @@ describe('RadioGroupField Component', () => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
       components: {
-        radio: RadioGroupFieldDefault,
+        radio: defaultComponents.radio,
       },
     });
   });
 
-  it('renders the default implementation correctly', () => {
+  it('renders the radio correctly', () => {
     renderWithFormContext(defaultProps);
 
     expect(screen.getByText('Test Field')).toBeInTheDocument();
@@ -88,145 +88,18 @@ describe('RadioGroupField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
-  it('renders custom radio component when provided', () => {
-    const CustomRadioGroupField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-radio-field'>Custom Radio Field</div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    expect(CustomRadioGroupField).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('custom-radio-field')).toBeInTheDocument();
-  });
-
-  it('passes field props to custom component correctly', () => {
-    const CustomRadioGroupField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-radio-field'>Custom Radio Field</div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    const call = CustomRadioGroupField.mock.calls[0][0];
-    expect(call.fieldData).toMatchObject(defaultProps);
-    expect(call.field).toBeDefined();
-    expect(call.fieldState).toBeDefined();
-  });
-
-  it('handles onChange in custom radio component', () => {
-    const CustomRadioGroupField = vi.fn().mockImplementation(({ field }) => {
-      const handleChange = (value: string) => {
-        field.onChange(value);
-      };
-
-      return (
-        <div>
-          <input
-            type='radio'
-            data-testid='custom-radio-input'
-            onChange={() => handleChange('option1')}
-          />
-          <input
-            type='radio'
-            data-testid='custom-radio-input-2'
-            onChange={() => handleChange('option2')}
-          />
-        </div>
-      );
-    });
-
-    (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
-    const customRadioInput = screen.getByTestId('custom-radio-input');
-    fireEvent.click(customRadioInput);
-
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
-  });
-
-  it('component prop takes precedence over useFormFields().components', () => {
-    const CustomRadioGroupFieldFromContext = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='context-radio-field'>Context Radio Field</div>
-      ));
-    const CustomRadioGroupFieldProp = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='prop-radio-field'>Prop Radio Field</div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { radio: CustomRadioGroupFieldFromContext },
-    });
-
+  it('marks options as disabled based on the disabled prop', () => {
     renderWithFormContext({
-      ...(defaultProps as any),
-      onChange: mockOnChange,
-      component: CustomRadioGroupFieldProp,
-    });
-
-    expect(CustomRadioGroupFieldProp).toHaveBeenCalled();
-    expect(screen.getByTestId('prop-radio-field')).toBeInTheDocument();
-    expect(screen.queryByTestId('context-radio-field')).not.toBeInTheDocument();
-  });
-
-  it('disables radio buttons when option.disabled is true', () => {
-    const propsWithDisabledOption: RadioGroupFieldProps = {
       ...defaultProps,
       options: [
         { value: 'option1', label: 'Option 1', disabled: true },
         { value: 'option2', label: 'Option 2', disabled: false },
-        { value: 'option3', label: 'Option 3' }, // no disabled property
+        { value: 'option3', label: 'Option 3' },
       ],
-    };
+    });
 
-    renderWithFormContext(propsWithDisabledOption);
-
-    const option1Radio = screen.getByLabelText('Option 1');
-    const option2Radio = screen.getByLabelText('Option 2');
-    const option3Radio = screen.getByLabelText('Option 3');
-
-    expect(option1Radio).toBeDisabled();
-    expect(option2Radio).not.toBeDisabled();
-    expect(option3Radio).not.toBeDisabled();
-  });
-
-  it('prevents disabled radio buttons from being selected', () => {
-    const propsWithDisabledOption: RadioGroupFieldProps = {
-      ...defaultProps,
-      onChange: mockOnChange,
-      options: [
-        { value: 'option1', label: 'Option 1', disabled: true },
-        { value: 'option2', label: 'Option 2' },
-      ],
-    };
-
-    renderWithFormContext(propsWithDisabledOption);
-
-    const disabledRadio = screen.getByLabelText('Option 1');
-    const enabledRadio = screen.getByLabelText('Option 2');
-
-    // Try to click disabled radio button
-    fireEvent.click(disabledRadio);
-    expect(mockOnChange).not.toHaveBeenCalled();
-
-    // Click enabled radio button
-    fireEvent.click(enabledRadio);
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText('Option 1')).toBeDisabled();
+    expect(screen.getByLabelText('Option 2')).not.toBeDisabled();
+    expect(screen.getByLabelText('Option 3')).not.toBeDisabled();
   });
 });

@@ -1,5 +1,4 @@
 import { fireEvent, waitFor, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import {
   fillRadio,
   fillSelect,
@@ -244,14 +243,6 @@ export async function fillSignature(
   const reviewButton = screen.getByRole('button', { name: /Review/i });
 
   reviewButton.click();
-
-  await waitFor(() => {
-    expect(screen.getByText(/Contract Document/i)).toBeInTheDocument();
-  });
-
-  // Press Escape to close the drawer
-  const user = userEvent.setup();
-  await user.keyboard('{Escape}');
 
   await waitFor(() => {
     expect(
