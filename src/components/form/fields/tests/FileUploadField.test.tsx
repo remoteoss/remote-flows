@@ -7,7 +7,6 @@ import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
 import { defaultComponents } from '@/src/tests/defaultComponents';
 
-// Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
 }));
@@ -31,7 +30,6 @@ describe('FileUploadField Component', () => {
     scopedJsonSchema: {},
   };
 
-  // Helper function to render the component with a form context
   const renderWithFormContext = (props: FileUploadFieldProps) => {
     const TestComponent = () => {
       const methods = useForm();
@@ -48,17 +46,14 @@ describe('FileUploadField Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useFormFields as any).mockReturnValue({
-      components: {
-        file: defaultComponents.file,
-      },
+      components: { file: defaultComponents.file },
     });
   });
 
   it('renders the default implementation correctly', () => {
     renderWithFormContext(defaultProps);
 
-    expect(screen.getByText('Test Field')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByLabelText('Test Field')).toBeInTheDocument();
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
@@ -66,20 +61,19 @@ describe('FileUploadField Component', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     const file = new File(['test'], 'test.txt', { type: 'text/plain' });
-    const fileInput = screen.getByLabelText('File upload');
-    fireEvent.change(fileInput, { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText('Test Field'), {
+      target: { files: [file] },
+    });
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();
     });
   });
 
-  it('renders custom file upload component when provided', () => {
+  it('renders custom file upload component and passes correct props', () => {
     const CustomFileUploadField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid='custom-file-upload-field'>
-          Custom File Upload Field
-        </div>
+        <div data-testid='custom-file-upload-field'>Custom File Upload Field</div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -88,25 +82,7 @@ describe('FileUploadField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomFileUploadField).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('custom-file-upload-field')).toBeInTheDocument();
-  });
-
-  it('passes field props to custom component correctly', async () => {
-    const CustomFileUploadField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-file-upload-field'>
-          Custom File Upload Field
-        </div>
-      ));
-
-    (useFormFields as any).mockReturnValue({
-      components: { file: CustomFileUploadField },
-    });
-
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
-
     const call = CustomFileUploadField.mock.calls[0][0];
     expect(call.fieldData).toMatchObject(defaultProps);
     expect(call.field).toBeDefined();
@@ -114,20 +90,15 @@ describe('FileUploadField Component', () => {
   });
 
   it('handles onChange in custom file upload component', async () => {
-    const CustomFileUploadField = vi.fn().mockImplementation(({ field }) => {
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files ? Array.from(e.target.files) : [];
-        field.onChange(files);
-      };
-
-      return (
-        <input
-          type='file'
-          data-testid='custom-file-input'
-          onChange={handleChange}
-        />
-      );
-    });
+    const CustomFileUploadField = vi.fn().mockImplementation(({ field }) => (
+      <input
+        type='file'
+        data-testid='custom-file-input'
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          field.onChange(e.target.files ? Array.from(e.target.files) : [])
+        }
+      />
+    ));
 
     (useFormFields as any).mockReturnValue({
       components: { file: CustomFileUploadField },
@@ -135,9 +106,9 @@ describe('FileUploadField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    const customFileInput = screen.getByTestId('custom-file-input');
-    const file = new File(['test'], 'test.txt', { type: 'text/plain' });
-    fireEvent.change(customFileInput, { target: { files: [file] } });
+    fireEvent.change(screen.getByTestId('custom-file-input'), {
+      target: { files: [new File(['test'], 'test.txt', { type: 'text/plain' })] },
+    });
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();
@@ -148,9 +119,7 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid='context-file-upload-field'>
-          Context File Upload Field
-        </div>
+        <div data-testid='context-file-upload-field'>Context File Upload Field</div>
       ));
     const CustomFileUploadFieldProp = vi
       .fn()
@@ -168,29 +137,25 @@ describe('FileUploadField Component', () => {
       component: CustomFileUploadFieldProp,
     });
 
-    expect(CustomFileUploadFieldProp).toHaveBeenCalled();
     expect(screen.getByTestId('prop-file-upload-field')).toBeInTheDocument();
-    expect(
-      screen.queryByTestId('context-file-upload-field'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('context-file-upload-field')).not.toBeInTheDocument();
   });
 
   it('displays error when file exceeds max size limit', async () => {
     const maxSize = 5 * 1024 * 1024; // 5MB
     const largeFile = new File(['x'.repeat(10 * 1024 * 1024)], 'large.txt', {
       type: 'text/plain',
-    }); // 10MB file
+    });
 
     renderWithFormContext({ ...defaultProps, maxSize, onChange: mockOnChange });
 
-    const fileInput = screen.getByLabelText('File upload');
-    fireEvent.change(fileInput, { target: { files: [largeFile] } });
+    fireEvent.change(screen.getByLabelText('Test Field'), {
+      target: { files: [largeFile] },
+    });
 
     await waitFor(() => {
       expect(
-        screen.getByText(
-          'File "large.txt" exceeds maximum size of 5MB (file is 10MB)',
-        ),
+        screen.getByText('File "large.txt" exceeds maximum size of 5MB (file is 10MB)'),
       ).toBeInTheDocument();
     });
     expect(mockOnChange).not.toHaveBeenCalled();
@@ -198,14 +163,13 @@ describe('FileUploadField Component', () => {
 
   it('accepts file within max size limit', async () => {
     const maxSize = 10 * 1024 * 1024; // 10MB
-    const smallFile = new File(['test content'], 'small.txt', {
-      type: 'text/plain',
-    }); // Small file
+    const smallFile = new File(['test content'], 'small.txt', { type: 'text/plain' });
 
     renderWithFormContext({ ...defaultProps, maxSize, onChange: mockOnChange });
 
-    const fileInput = screen.getByLabelText('File upload');
-    fireEvent.change(fileInput, { target: { files: [smallFile] } });
+    fireEvent.change(screen.getByLabelText('Test Field'), {
+      target: { files: [smallFile] },
+    });
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledOnce();

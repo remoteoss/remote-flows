@@ -478,23 +478,33 @@ export const defaultComponents: Components = {
       </div>
     );
   },
-  file: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <div className='input-container'>
-      <label>{fieldData.label as string}</label>
-      <button type='button'>Upload</button>
-      <input
-        type='file'
-        aria-label='File upload'
-        onChange={(e) => field?.onChange?.(Array.from(e.target.files ?? []))}
-      />
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description as string}</p>
-      )}
-      {fieldState.error && (
-        <p className='error-message'>{fieldState.error.message}</p>
-      )}
-    </div>
-  ),
+  file: ({ field, fieldData, fieldState }: FieldComponentProps) => {
+    const files: File[] = Array.isArray(field.value) ? field.value : [];
+    return (
+      <div className='input-container'>
+        <label htmlFor={field.name}>{fieldData.label as string}</label>
+        {files.length > 0 && (
+          <ul>
+            {files.map((f, i) => (
+              <li key={i}>{f.name}</li>
+            ))}
+          </ul>
+        )}
+        <input
+          type='file'
+          id={field.name}
+          aria-label={fieldData.label as string}
+          onChange={(e) => field?.onChange?.(Array.from(e.target.files ?? []))}
+        />
+        {fieldData.description && (
+          <p className='input-description'>{fieldData.description as string}</p>
+        )}
+        {fieldState.error && (
+          <p className='error-message'>{fieldState.error.message}</p>
+        )}
+      </div>
+    );
+  },
   'multi-select': MultiSelectField,
   fieldsetToggle: ({
     onToggle,
