@@ -23,3 +23,6 @@ export {
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 
 export { Button, buttonVariants } from './components/ui/button';
+
+// Default components for testing and examples
+export { defaultComponents } from './tests/defaultComponents';

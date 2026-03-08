@@ -13,7 +13,7 @@ import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
 import { TerminationSuccessful } from './TerminationSuccesful';
-import { defaultComponents } from './SimpleDefaultComponents';
+import { defaultComponents } from './DefaultComponents';
 import './css/main.css';
 
 const STEPS = [

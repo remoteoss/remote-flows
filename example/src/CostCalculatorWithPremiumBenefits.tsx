@@ -30,7 +30,7 @@ import {
 } from './components/ui/drawer';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import { defaultComponents } from './SimpleDefaultComponents';
+import { defaultComponents } from './DefaultComponents';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
 import 'react-flagpack/dist/style.css';
