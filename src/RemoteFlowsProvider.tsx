@@ -35,10 +35,9 @@ export function FormFieldsProvider({
 }: PropsWithChildren<{
   components: Components;
 }>) {
-  const resolvedComponents = useMemo(() => components, [components]);
-
+  const value = useMemo(() => ({ components }), [components]);
   return (
-    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
+    <FormFieldsContext.Provider value={value}>
       {children}
     </FormFieldsContext.Provider>
   );
