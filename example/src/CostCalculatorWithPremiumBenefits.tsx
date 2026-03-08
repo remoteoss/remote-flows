@@ -30,7 +30,7 @@ import {
 } from './components/ui/drawer';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
-import { defaultComponents } from './DefaultComponents';
+import { components } from './CostCalculatorComponents';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
 import 'react-flagpack/dist/style.css';
@@ -716,7 +716,7 @@ function CostCalculatorFormDemo() {
 
 export function CostCalculatorWithPremiumBenefits() {
   return (
-    <RemoteFlows components={defaultComponents} isClientToken>
+    <RemoteFlows components={components} isClientToken>
       <CostCalculatorFormDemo />
     </RemoteFlows>
   );
