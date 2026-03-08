@@ -7,7 +7,6 @@ import { defaultComponents } from '@/src/tests/defaultComponents';
 
 const mockComponents = {
   components: { drawer: defaultComponents.drawer },
-  makeComponentsRequired: false,
 };
 
 const FormFieldsProvider = ({ children }: { children: ReactNode }) => (
@@ -98,7 +97,6 @@ describe('Drawer', () => {
     const CustomDrawer = vi.fn(() => <div>Custom Drawer</div>);
     const customComponents = {
       components: { drawer: CustomDrawer },
-      makeComponentsRequired: false,
     };
 
     render(

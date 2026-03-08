@@ -469,7 +469,6 @@ export const ContractorOnboardingWithProps = ({
     <div className='contractor-onboarding-container'>
       <RemoteFlows
         components={defaultComponents}
-        makeComponentsRequired
         authType='company-manager'
         proxy={{ url: window.location.origin }}
       >

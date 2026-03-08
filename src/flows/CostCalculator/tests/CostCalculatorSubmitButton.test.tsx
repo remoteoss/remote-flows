@@ -27,7 +27,7 @@ describe('CostCalculatorSubmitButton', () => {
       components: {
         button: defaultComponents.button,
       },
-      makeComponentsRequired: false,
+
     });
   });
 
@@ -71,7 +71,7 @@ describe('CostCalculatorSubmitButton', () => {
         components: {
           button: CustomButton,
         },
-        makeComponentsRequired: false,
+  
       });
     });
 

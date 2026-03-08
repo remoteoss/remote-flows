@@ -194,7 +194,6 @@ export const TerminationWithProps = ({
   return (
     <RemoteFlows
       components={defaultComponents}
-      makeComponentsRequired
       proxy={{ url: proxyURL }}
       authType='company-manager'
     >

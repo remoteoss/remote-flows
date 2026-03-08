@@ -257,7 +257,7 @@ const OnboardingWithProps = ({
   employmentId,
   externalId,
 }: OnboardingFormData) => (
-  <RemoteFlows components={defaultComponents} makeComponentsRequired>
+  <RemoteFlows components={defaultComponents}>
     <OnboardingFlow
       companyId={companyId}
       type={type}

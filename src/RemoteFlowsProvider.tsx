@@ -32,16 +32,14 @@ function RemoteFlowContextWrapper({
 export function FormFieldsProvider({
   children,
   components,
-  makeComponentsRequired = false,
 }: PropsWithChildren<{
   components: Components;
-  makeComponentsRequired?: boolean;
 }>) {
   const resolvedComponents = useMemo(() => components, [components]);
 
   return (
     <FormFieldsContext.Provider
-      value={{ components: resolvedComponents, makeComponentsRequired }}
+      value={{ components: resolvedComponents }}
     >
       {children}
     </FormFieldsContext.Provider>
@@ -60,7 +58,6 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
   credentials,
-  makeComponentsRequired = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   const remoteApiClient = useRef(
     createClient(auth, { proxy, environment, credentials }),
@@ -77,7 +74,6 @@ export function RemoteFlows({
         <QueryClientProvider client={queryClient}>
           <FormFieldsProvider
             components={components}
-            makeComponentsRequired={makeComponentsRequired}
           >
             <RemoteFlowContextWrapper
               environment={environment}

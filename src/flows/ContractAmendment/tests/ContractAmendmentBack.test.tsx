@@ -28,7 +28,7 @@ describe('ContractAmendmentBack', () => {
 
     mockUseFormFields.mockReturnValue({
       components: { button: defaultComponents.button },
-      makeComponentsRequired: false,
+
     });
   });
 
@@ -94,7 +94,7 @@ describe('ContractAmendmentBack', () => {
         components: {
           button: CustomButton,
         },
-        makeComponentsRequired: false,
+  
       });
     });
 
