@@ -1,0 +1,2 @@
+import{a as n}from"./chunk-5WFWHEXV.js";import{a as o}from"./chunk-P37U34EQ.js";var t=o(({render:r})=>r({cards:n}),"AcknowledgeInformationContainer");export{t as a};
+//# sourceMappingURL=chunk-6DHV4GT6.js.map

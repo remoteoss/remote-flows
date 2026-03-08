@@ -1,0 +1,2 @@
+import{a}from"../../chunk-TZ6VJH5U.js";import"../../chunk-TXSUZLOI.js";import"../../chunk-A3LRPGV3.js";import"../../chunk-F663TLXR.js";import"../../chunk-5WIBTOCI.js";import"../../chunk-O6H66UM2.js";import"../../chunk-4T5B7UQY.js";import"../../chunk-WQ4H5V7U.js";import"../../chunk-TSPDJUGG.js";import"../../chunk-Z5WMKCRJ.js";import"../../chunk-NRUY57C2.js";import"../../chunk-T7O3YYOG.js";import"../../chunk-VIGKOVHP.js";import"../../chunk-X6ZAR7ZL.js";import"../../chunk-P37U34EQ.js";export{a as useCreateCompany};
+//# sourceMappingURL=hooks.js.map

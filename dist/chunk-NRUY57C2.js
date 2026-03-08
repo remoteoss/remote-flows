@@ -1,0 +1,2 @@
+import{a as o}from"./chunk-P37U34EQ.js";import{createContext as t,useContext as n}from"react";var r=t(null),i=o(()=>{let e=n(r);if(!e?.components)throw new Error("useFormFields must be used within a FormFieldsProvider");return{components:e.components,makeComponentsRequired:e.makeComponentsRequired}},"useFormFields"),m=t({client:null}),l=o(()=>n(m),"useClient");export{r as a,i as b,m as c,l as d};
+//# sourceMappingURL=chunk-NRUY57C2.js.map

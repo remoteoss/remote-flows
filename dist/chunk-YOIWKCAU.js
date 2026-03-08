@@ -1,0 +1,2 @@
+import{b as r}from"./chunk-NRUY57C2.js";import{b as e}from"./chunk-TVZAFTPT.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as d}from"react/jsx-runtime";function b({children:m,...t}){let{formId:i,contractAmendment:u}=e(),{components:s}=r(),o=s?.button;if(!o)throw new Error("Button component not found");return d(o,{...t,form:i,disabled:t.disabled||u.isSubmitting,children:m})}n(b,"ContractAmendmentSubmit");export{b as a};
+//# sourceMappingURL=chunk-YOIWKCAU.js.map

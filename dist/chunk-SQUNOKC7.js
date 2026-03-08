@@ -1,0 +1,2 @@
+import{b as r}from"./chunk-NRUY57C2.js";import{b as e}from"./chunk-TVZAFTPT.js";import{a as o}from"./chunk-P37U34EQ.js";import{jsx as s}from"react/jsx-runtime";function B({children:m,...t}){let{contractAmendment:{back:u}}=e(),{components:c}=r(),n=c?.button;if(!n)throw new Error("Button component not found");return s(n,{...t,onClick:i=>{u(),t.onClick?.(i)},children:m})}o(B,"ContractAmendmentBack");export{B as a};
+//# sourceMappingURL=chunk-SQUNOKC7.js.map

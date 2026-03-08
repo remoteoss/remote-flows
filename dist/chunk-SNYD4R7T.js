@@ -1,0 +1,2 @@
+import{b as e}from"./chunk-NRUY57C2.js";import{a as o}from"./chunk-P37U34EQ.js";import{jsx as c}from"react/jsx-runtime";var g=o(({open:t,onOpenChange:n,title:p,trigger:s,children:a,className:m="",direction:i="right"})=>{let{components:w}=e(),r=w?.drawer;if(!r)throw new Error("Drawer component not found");return c(r,{open:t,onOpenChange:n,title:p,trigger:s,direction:i,className:m,children:a})},"Drawer");export{g as a};
+//# sourceMappingURL=chunk-SNYD4R7T.js.map

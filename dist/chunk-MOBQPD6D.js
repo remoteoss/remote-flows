@@ -1,0 +1,2 @@
+import{a as e}from"./chunk-4QFUTASW.js";import{b as a}from"./chunk-MRYRNB7Y.js";import{a as i}from"./chunk-P37U34EQ.js";import{jsx as s}from"react/jsx-runtime";function p({onSubmit:t}){let{terminationBag:o}=a(),n=i(async r=>{let m=await o?.parseFormValues(r);await t?.(m),o?.next()},"handleSubmit");return s(e,{defaultValues:o.fieldValues,onSubmit:n})}i(p,"TerminationDetailsForm");export{p as a};
+//# sourceMappingURL=chunk-MOBQPD6D.js.map

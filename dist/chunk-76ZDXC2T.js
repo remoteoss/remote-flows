@@ -1,0 +1,2 @@
+import{a as t}from"./chunk-P37U34EQ.js";import{createContext as o,useContext as r}from"react";var n=o({formId:void 0,createCompanyBag:null}),C=t(()=>{let e=r(n);if(!e.formId||!e.createCompanyBag)throw new Error("useCreateCompanyContext must be used within a CreateCompanyContextProvider");return{formId:e.formId,createCompanyBag:e.createCompanyBag}},"useCreateCompanyContext");export{n as a,C as b};
+//# sourceMappingURL=chunk-76ZDXC2T.js.map

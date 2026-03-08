@@ -1,0 +1,2 @@
+var e={data:{version:7,schema:{additionalProperties:!1,properties:{subscription:{title:"Payment terms",type:"string",oneOf:[],"x-jsf-presentation":{inputType:"radio"}}},required:["subscription"],type:"object","x-jsf-order":["subscription"]}}};export{e as a};
+//# sourceMappingURL=chunk-AP56UUME.js.map

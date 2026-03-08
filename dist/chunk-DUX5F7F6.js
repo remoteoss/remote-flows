@@ -1,0 +1,2 @@
+import{b as i}from"./chunk-Q3ALCPJN.js";import{b as r}from"./chunk-NRUY57C2.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as d}from"react/jsx-runtime";function f({children:u,...t}){let{formId:e,contractorOnboardingBag:m}=i(),{components:s}=r(),o=s?.button;if(!o)throw new Error("Button component not found");return d(o,{...t,form:e,disabled:t.disabled||m.isSubmitting,children:u})}n(f,"OnboardingSubmit");export{f as a};
+//# sourceMappingURL=chunk-DUX5F7F6.js.map

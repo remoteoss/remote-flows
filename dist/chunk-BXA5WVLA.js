@@ -1,0 +1,2 @@
+import{b as i}from"./chunk-MRYRNB7Y.js";import{b as r}from"./chunk-NRUY57C2.js";import{a as n}from"./chunk-P37U34EQ.js";import{jsx as c}from"react/jsx-runtime";function f({children:e,...t}){let{terminationBag:{back:u}}=i(),{components:m}=r(),o=m?.button;if(!o)throw new Error("Button component not found");return c(o,{...t,onClick:s=>{u(),t.onClick?.(s)},children:e})}n(f,"TerminationBack");export{f as a};
+//# sourceMappingURL=chunk-BXA5WVLA.js.map

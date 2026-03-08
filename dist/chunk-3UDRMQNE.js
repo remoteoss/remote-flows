@@ -1,0 +1,2 @@
+import{a as t}from"./chunk-P37U34EQ.js";import{jsx as o,jsxs as s}from"react/jsx-runtime";var a=t(e=>s("div",{className:"text-center space-y-2 mb-6",children:[o("h2",{className:"text-2xl font-bold",children:e.label}),o("p",{className:"text-gray-600",children:e.description})]}),"ContractPreviewHeader");export{a};
+//# sourceMappingURL=chunk-3UDRMQNE.js.map

@@ -1,0 +1,2 @@
+import{K as e}from"./chunk-WQ4H5V7U.js";import{a as t}from"./chunk-P37U34EQ.js";import{queryOptions as i}from"@tanstack/react-query";var a=t((o,n="default")=>i({queryKey:["countries",n],retry:!1,queryFn:t(async()=>{let r=await e({client:o,headers:{Authorization:""}});if(r.error||!r.data)throw new Error("Failed to fetch supported countries");return r},"queryFn")}),"countriesOptions");export{a};
+//# sourceMappingURL=chunk-O6H66UM2.js.map

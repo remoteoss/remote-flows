@@ -1,0 +1,2 @@
+import{a as o}from"./chunk-P37U34EQ.js";import{createContext as n,useContext as r}from"react";var t=n({formId:void 0,onboardingBag:null,creditScore:{showReserveInvoice:!1,showInviteSuccessful:!1},setCreditScore:o(()=>{},"setCreditScore")}),i=o(()=>{let e=r(t);if(!e.formId||!e.onboardingBag)throw new Error("useOnboardingContext must be used within a OnboardingContextProvider");return{formId:e.formId,onboardingBag:e.onboardingBag,creditScore:e.creditScore,setCreditScore:e.setCreditScore}},"useOnboardingContext");export{t as a,i as b};
+//# sourceMappingURL=chunk-PGWKJ6FK.js.map
