@@ -409,7 +409,7 @@ export const defaultComponents: Components = {
     </div>
   ),
   radio: ({ field, fieldData, fieldState }: FieldComponentProps) => (
-    <fieldset role='radiogroup' aria-label={fieldData.label as string}>
+    <fieldset role='radiogroup' aria-label={(fieldData.label || fieldData.name) as string}>
       <legend>{fieldData.label}</legend>
       {fieldData.description && (
         <p className='input-description'>{fieldData.description as string}</p>
