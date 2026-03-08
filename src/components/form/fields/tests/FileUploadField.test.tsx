@@ -73,7 +73,9 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadField = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid='custom-file-upload-field'>Custom File Upload Field</div>
+        <div data-testid='custom-file-upload-field'>
+          Custom File Upload Field
+        </div>
       ));
 
     (useFormFields as any).mockReturnValue({
@@ -90,15 +92,17 @@ describe('FileUploadField Component', () => {
   });
 
   it('handles onChange in custom file upload component', async () => {
-    const CustomFileUploadField = vi.fn().mockImplementation(({ field }) => (
-      <input
-        type='file'
-        data-testid='custom-file-input'
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          field.onChange(e.target.files ? Array.from(e.target.files) : [])
-        }
-      />
-    ));
+    const CustomFileUploadField = vi
+      .fn()
+      .mockImplementation(({ field }) => (
+        <input
+          type='file'
+          data-testid='custom-file-input'
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            field.onChange(e.target.files ? Array.from(e.target.files) : [])
+          }
+        />
+      ));
 
     (useFormFields as any).mockReturnValue({
       components: { file: CustomFileUploadField },
@@ -107,7 +111,9 @@ describe('FileUploadField Component', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
     fireEvent.change(screen.getByTestId('custom-file-input'), {
-      target: { files: [new File(['test'], 'test.txt', { type: 'text/plain' })] },
+      target: {
+        files: [new File(['test'], 'test.txt', { type: 'text/plain' })],
+      },
     });
 
     await waitFor(() => {
@@ -119,7 +125,9 @@ describe('FileUploadField Component', () => {
     const CustomFileUploadFieldFromContext = vi
       .fn()
       .mockImplementation(() => (
-        <div data-testid='context-file-upload-field'>Context File Upload Field</div>
+        <div data-testid='context-file-upload-field'>
+          Context File Upload Field
+        </div>
       ));
     const CustomFileUploadFieldProp = vi
       .fn()
@@ -138,7 +146,9 @@ describe('FileUploadField Component', () => {
     });
 
     expect(screen.getByTestId('prop-file-upload-field')).toBeInTheDocument();
-    expect(screen.queryByTestId('context-file-upload-field')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('context-file-upload-field'),
+    ).not.toBeInTheDocument();
   });
 
   it('displays error when file exceeds max size limit', async () => {
@@ -155,7 +165,9 @@ describe('FileUploadField Component', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('File "large.txt" exceeds maximum size of 5MB (file is 10MB)'),
+        screen.getByText(
+          'File "large.txt" exceeds maximum size of 5MB (file is 10MB)',
+        ),
       ).toBeInTheDocument();
     });
     expect(mockOnChange).not.toHaveBeenCalled();
@@ -163,7 +175,9 @@ describe('FileUploadField Component', () => {
 
   it('accepts file within max size limit', async () => {
     const maxSize = 10 * 1024 * 1024; // 10MB
-    const smallFile = new File(['test content'], 'small.txt', { type: 'text/plain' });
+    const smallFile = new File(['test content'], 'small.txt', {
+      type: 'text/plain',
+    });
 
     renderWithFormContext({ ...defaultProps, maxSize, onChange: mockOnChange });
 
