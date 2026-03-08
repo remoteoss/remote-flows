@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-  FormFieldContext,
   FormItemContext,
   useFormField,
   FormDescription,
@@ -89,12 +88,4 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
-export {
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormFieldContext,
-  FormItemContext,
-};
+export { FormItem, FormLabel, FormControl, FormDescription, FormMessage };

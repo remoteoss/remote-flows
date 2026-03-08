@@ -162,7 +162,6 @@ export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/Zendesk
 export { HelpCenter } from './components/shared/zendesk-drawer/HelpCenter';
 
 export {
-  FormFieldContext,
   FormItemContext,
   useFormField,
   FormDescription,
