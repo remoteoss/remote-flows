@@ -28,7 +28,7 @@ import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
 import { EngagingContractorsModal } from './components/PricingPlanModals';
-import { defaultComponents } from './DefaultComponents';
+import { defaultComponents } from './SimpleDefaultComponents';
 import './css/main.css';
 import './css/contractor-onboarding.css';
 
