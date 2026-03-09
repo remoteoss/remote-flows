@@ -630,7 +630,7 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  // TODO: remove this once the onboarding reserves are enabled
+  // TODO: unskip this test once the onboarding reserves are enabled
   it.skip('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
     let onboardingBagRef: OnboardingRenderProps['onboardingBag'] | null = null;
 
