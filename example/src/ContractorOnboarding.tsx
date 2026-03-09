@@ -248,8 +248,8 @@ const MultiStepForm = ({
                 <div className='ml-3'>
                   <p className='text-sm text-yellow-700'>
                     AI validation detected potential compliance issues. You can
-                    edit the Services and Deliverables field above or continue at
-                    your own risk by clicking Submit again.
+                    edit the Services and Deliverables field above or continue
+                    at your own risk by clicking Submit again.
                   </p>
                 </div>
               </div>
