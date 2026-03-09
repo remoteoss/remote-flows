@@ -997,10 +997,6 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
-        console.log(
-          'contract_details submitted values, we need to check servicesAndDeliverablesErrorSkippable is present',
-          values,
-        );
         const shouldSkipAiChecks =
           values.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
@@ -1248,6 +1244,14 @@ export const useContractorOnboarding = ({
      * @returns Parsed form values
      */
     parseFormValues,
+
+    /**
+     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
+     * True when there's a skippable AI validation error on services_and_deliverables field.
+     * @returns {boolean}
+     */
+    canSkipAiValidation:
+      fieldValues.services_and_deliverables_error_skippable === true,
 
     /**
      * Function to validate form values against the onboarding schema
