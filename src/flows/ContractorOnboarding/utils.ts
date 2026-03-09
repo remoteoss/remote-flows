@@ -4,6 +4,8 @@ import {
   contractorPlusProductIdentifier,
   ProductType,
   PRODUCT_IDENTIFIER_MAP,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
@@ -160,3 +162,19 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'invited',
 ];
+
+/**
+ * Transforms AI error messages to use default localized messages
+ * @param isContractorOfRecord - Whether the contractor is a Contractor of Record
+ * @param errors - Array of error messages from the API
+ * @returns Array containing the appropriate default error message
+ */
+export function transformAiErrorResponse(
+  isContractorOfRecord: boolean,
+  errors: string[],
+): string[] {
+  const remoteAiErrorMessage = isContractorOfRecord
+    ? REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE
+    : REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE;
+  return remoteAiErrorMessage ? [remoteAiErrorMessage] : errors;
+}

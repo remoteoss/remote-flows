@@ -18,6 +18,14 @@ export const PRODUCT_IDENTIFIER_MAP: Record<ProductType, string> = {
 
 export const IR35_FILE_SUBTYPE = 'ir_35';
 
+export const REMOTE_AI_ERROR_SOURCE = 'REMOTE_AI';
+
+export const REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE =
+  "You cannot control how a contractor completes the Services and Deliverables. This means, for example, that you can't specify their working hours or use of subcontractors. Please make sure this field includes only project names, descriptions, and deliverables. We do not allow hyperlinks.";
+
+export const REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE =
+  'The content You have entered may not be consistent with the Contractor of Record terms. You are responsible before proceeding for ensuring that the language entered herein accurately reflects those terms and your relationship with Subcontractors.';
+
 const standardOnboardingWorkflow = [
   {
     title: 'You add a new contractor and their details in Remote.',

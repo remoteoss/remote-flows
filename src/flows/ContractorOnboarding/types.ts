@@ -119,6 +119,8 @@ export type PricingPlanResponse = {
 
 export type ContractorOnboardingContractDetailsFormPayload = {
   services_and_deliverables: string;
+  services_and_deliverables_ai_warning?: string;
+  services_and_deliverables_error_skippable?: boolean;
   service_duration: {
     expiration_date?: string;
     provisional_start_date: string;
@@ -138,6 +140,12 @@ export type ContractorOnboardingContractDetailsFormPayload = {
 
 export type ContractorOnboardingContractDetailsResponse =
   CreateContractDocumentResponse;
+
+export type AiValidationError = {
+  error: string[];
+  source: string;
+  skippable: boolean;
+};
 
 export type ContractPreviewFormPayload = SignContractDocument;
 

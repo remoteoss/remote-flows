@@ -1,16 +1,23 @@
+import { format } from 'date-fns';
+import { FieldValues } from 'react-hook-form';
+import { ChangeEvent } from 'react';
+
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
 import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
+import { ServicesAndDeliverablesAiStatementTitle } from '@/src/flows/ContractorOnboarding/components/ServicesAndDeliverablesAiStatementTitle';
+import { ServicesAndDeliverablesAiStatementDescription } from '@/src/flows/ContractorOnboarding/components/ServicesAndDeliverablesAiStatementDescription';
 import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
-import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
+import {
+  ContractorOnboardingFlowProps,
+  ContractorOnboardingContractDetailsFormPayload,
+} from '@/src/flows/ContractorOnboarding/types';
 import { isNationalityCountryCode } from '@/src/flows/ContractorOnboarding/utils';
 import { JSFModify } from '@/src/flows/types';
 import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
-import { format } from 'date-fns';
-import { FieldValues } from 'react-hook-form';
 
 const isStandardPricingPlan = (pricingPlan: string | undefined) => {
   return pricingPlan === contractorStandardProductIdentifier;
@@ -37,6 +44,23 @@ const showBackDateWarning = (
 };
 
 /**
+ * Handles changes to the services_and_deliverables field to clear AI warning state
+ */
+function onServicesAndDeliverablesChange(
+  _event: ChangeEvent<HTMLTextAreaElement>,
+  values: ContractorOnboardingContractDetailsFormPayload,
+  setValues: (
+    formValues: Partial<ContractorOnboardingContractDetailsFormPayload>,
+  ) => void,
+) {
+  setValues({
+    ...values,
+    services_and_deliverables_ai_warning: '',
+    services_and_deliverables_error_skippable: false,
+  });
+}
+
+/**
  * Merges internal jsfModify modifications with user-provided options for contract_details step
  * This abstracts the logic of applying internal field modifications (like dynamic descriptions)
  * while preserving user customizations
@@ -46,6 +70,7 @@ export const buildContractDetailsJsfModify = (
   provisionalStartDateDescription: string | undefined,
   selectedPricingPlan: string | undefined,
   fieldValues: FieldValues,
+  isContractorOfRecord: boolean,
 ): JSFModify => {
   const isStandardPricingPlanSelected =
     isStandardPricingPlan(selectedPricingPlan);
@@ -57,6 +82,21 @@ export const buildContractDetailsJsfModify = (
   );
   return {
     ...userJsfModify,
+    create: {
+      ...userJsfModify?.create,
+      services_and_deliverables_ai_warning: {
+        type: 'string',
+        'x-jsf-presentation': {
+          inputType: 'hidden',
+        },
+      },
+      services_and_deliverables_error_skippable: {
+        type: 'boolean',
+        'x-jsf-presentation': {
+          inputType: 'hidden',
+        },
+      },
+    },
     fields: {
       ...userJsfModify?.fields,
       ...{
@@ -67,6 +107,24 @@ export const buildContractDetailsJsfModify = (
               ? format(new Date(), 'yyyy-MM-dd')
               : undefined,
             ...statement,
+          },
+        },
+        services_and_deliverables: {
+          onChange: onServicesAndDeliverablesChange,
+          'x-jsf-presentation': {
+            calculateDynamicProperties: (formValues: FieldValues) => ({
+              statement: formValues.services_and_deliverables_ai_warning
+                ? {
+                    severity: 'warning' as const,
+                    title: <ServicesAndDeliverablesAiStatementTitle />,
+                    description: (
+                      <ServicesAndDeliverablesAiStatementDescription
+                        isContractorOfRecord={isContractorOfRecord}
+                      />
+                    ),
+                  }
+                : undefined,
+            }),
           },
         },
       },
