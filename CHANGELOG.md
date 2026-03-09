@@ -4,13 +4,21 @@
 
 ### Minor Changes
 
-- refetch employment after continuing (#772) [#772](https://github.com/remoteoss/remote-flows/pull/772)
-- create intent when eligibility was answered in the past (#779) [#779](https://github.com/remoteoss/remote-flows/pull/779)
-- pass page_size=100 and update mock for paginated response
+#### Features
+
 - mark contract as reviewed (#778) [#778](https://github.com/remoteoss/remote-flows/pull/778)
-- remove react-label (#780) [#780](https://github.com/remoteoss/remote-flows/pull/780)
+
+#### Fixes
+
+- refetch employment after click continue (#772) [#772](https://github.com/remoteoss/remote-flows/pull/772)
+- create contractor of record intent when eligibility was answered in the past (#779) [#779](https://github.com/remoteoss/remote-flows/pull/779)
 - move to latest step when the employment.status is in a certain transitive state (#788) [#788](https://github.com/remoteoss/remote-flows/pull/788)
-- disable them for the time being (#786) [#786](https://github.com/remoteoss/remote-flows/pull/786)
+- disable onboarding reserves to unblock releases (#786) [#786](https://github.com/remoteoss/remote-flows/pull/786)
+
+#### Chores
+
+- remove react-label dependency (#780) [#780](https://github.com/remoteoss/remote-flows/pull/780)
+- pass page_size=100 to the legal entities endpoint (#776) [#776](https://github.com/remoteoss/remote-flows/pull/776)
 
 ## 1.18.0
 
