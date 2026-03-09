@@ -630,7 +630,8 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  it('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
+  // TODO: remove this once the onboarding reserves are enabled
+  it.skip('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
     let onboardingBagRef: OnboardingRenderProps['onboardingBag'] | null = null;
 
     const testRender = ({
