@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.19.0
+
+### Minor Changes
+
+- refetch employment after continuing (#772) [#772](https://github.com/remoteoss/remote-flows/pull/772)
+- create intent when eligibility was answered in the past (#779) [#779](https://github.com/remoteoss/remote-flows/pull/779)
+- pass page_size=100 and update mock for paginated response
+- mark contract as reviewed (#778) [#778](https://github.com/remoteoss/remote-flows/pull/778)
+- remove react-label (#780) [#780](https://github.com/remoteoss/remote-flows/pull/780)
+- move to latest step when the employment.status is in a certain transitive state (#788) [#788](https://github.com/remoteoss/remote-flows/pull/788)
+- disable them for the time being (#786) [#786](https://github.com/remoteoss/remote-flows/pull/786)
+
 ## 1.18.0
 
 ### Minor Changes
