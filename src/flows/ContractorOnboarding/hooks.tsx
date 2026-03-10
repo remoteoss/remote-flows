@@ -998,7 +998,7 @@ export const useContractorOnboarding = ({
       }
       case 'contract_details': {
         const shouldSkipAiChecks =
-          values.services_and_deliverables_error_skippable === true;
+          fieldValues.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
           skip_ai_checks: shouldSkipAiChecks,
