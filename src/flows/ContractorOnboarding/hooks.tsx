@@ -1018,10 +1018,11 @@ export const useContractorOnboarding = ({
           return response;
         } catch (error) {
           const aiError = extractAiValidationError(error);
+          console.log('aiError', aiError);
           if (aiError) {
             const isContractorOfRecord =
               selectedPricingPlan === corProductIdentifier;
-
+            console.log('setting field values');
             setFieldValues({
               ...values,
               services_and_deliverables_ai_warning: transformAiErrorResponse(

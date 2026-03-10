@@ -1322,6 +1322,176 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
+  it('should navigate back to pricing_plan when eligibility questionnaire is blocked, then allow selecting CM and continue to contract_details', async () => {
+    server.use(
+      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        employmentId='test-employment-id'
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor of Record');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+    await fillEligibilityQuestionnaire();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Should navigate back to pricing_plan
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    // Wait for the pricing plan form to be ready
+    await waitFor(() => {
+      const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
+      expect(cmRadio).toBeInTheDocument();
+    });
+
+    // Select Contractor Management plan
+    const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
+    cmRadio.click();
+
+    await waitFor(() => {
+      expect(cmRadio).toBeChecked();
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Assert that we navigate to contract_details step
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Optionally verify form fields are present
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('service_duration.provisional_start_date'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('should display AI validation warning statement when contract document creation fails with non-skippable error for COR', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    // Mock the contract document creation to fail with AI error
+    server.use(
+      http.post('*/v1/contractors/employments/*/contract-documents', () => {
+        return HttpResponse.json(
+          {
+            error: {
+              errors: {
+                services_and_deliverables: {
+                  error: [
+                    "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria. It lacks any contextual clues or keywords related to the non-compliant categories.",
+                  ],
+                  source: 'REMOTE_AI',
+                  skippable: false,
+                },
+              },
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    // Navigate through the flow
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    // Select Contractor of Record (COR)
+    await fillContractorSubscription('Contractor of Record');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Fill eligibility questionnaire (required for COR)
+    await screen.findByText(/Step: Eligibility Questionnaire/i);
+    await fillEligibilityQuestionnaire();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Fill contract details
+    await fillContractDetails();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Should stay on contract details step due to non-skippable error
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify onError was called
+    await waitFor(() => {
+      expect(mockOnError).toHaveBeenCalled();
+    });
+
+    screen.debug();
+
+    // Assert the warning statement appears with COR-specific message
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Possible misclassification risk/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /The content You have entered may not be consistent with the Contractor of Record terms/i,
+        ),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('Saudi Arabia edge case', () => {
     it('should correctly retrieve saudi nationality status from employment.contract_details.nationality', async () => {
       const employmentId = generateUniqueEmploymentId();
@@ -2043,82 +2213,6 @@ describe('ContractorOnboardingFlow', () => {
         expect(cmRadio).toBeInTheDocument();
         expect(corRadio).toBeDisabled();
       });
-    });
-  });
-
-  it('should navigate back to pricing_plan when eligibility questionnaire is blocked, then allow selecting CM and continue to contract_details', async () => {
-    server.use(
-      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
-        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
-      }),
-    );
-
-    mockRender.mockImplementation(
-      createMockRenderImplementation(MultiStepFormWithoutCountry),
-    );
-
-    render(
-      <ContractorOnboardingFlow
-        countryCode='PRT'
-        skipSteps={['select_country']}
-        employmentId='test-employment-id'
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
-
-    await screen.findByText(/Step: Basic Information/i);
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
-
-    await fillBasicInformation();
-
-    let nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Pricing Plan/i);
-
-    await fillContractorSubscription('Contractor of Record');
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Eligibility Questionnaire/i);
-
-    await fillEligibilityQuestionnaire();
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    // Should navigate back to pricing_plan
-    await screen.findByText(/Step: Pricing Plan/i);
-
-    // Wait for the pricing plan form to be ready
-    await waitFor(() => {
-      const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
-      expect(cmRadio).toBeInTheDocument();
-    });
-
-    // Select Contractor Management plan
-    const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
-    cmRadio.click();
-
-    await waitFor(() => {
-      expect(cmRadio).toBeChecked();
-    });
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    // Assert that we navigate to contract_details step
-    await screen.findByText(/Step: Contract Details/i);
-
-    // Optionally verify form fields are present
-    await waitFor(() => {
-      expect(
-        screen.getByTestId('service_duration.provisional_start_date'),
-      ).toBeInTheDocument();
     });
   });
 
