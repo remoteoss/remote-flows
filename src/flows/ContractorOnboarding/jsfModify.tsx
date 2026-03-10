@@ -50,9 +50,17 @@ const showBackDateWarning = (
  */
 function onServicesAndDeliverablesChange(
   _event: ChangeEvent<HTMLTextAreaElement>,
-  values: ContractorOnboardingContractDetailsFormPayload,
+  values: ContractorOnboardingContractDetailsFormPayload & {
+    services_and_deliverables_ai_warning: string;
+    services_and_deliverables_error_skippable: boolean;
+  },
   setValues: (
-    formValues: Partial<ContractorOnboardingContractDetailsFormPayload>,
+    formValues: Partial<
+      ContractorOnboardingContractDetailsFormPayload & {
+        services_and_deliverables_ai_warning: string;
+        services_and_deliverables_error_skippable: boolean;
+      }
+    >,
   ) => void,
 ) {
   setValues({
