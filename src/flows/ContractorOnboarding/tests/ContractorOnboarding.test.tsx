@@ -2886,5 +2886,105 @@ describe('ContractorOnboardingFlow', () => {
 
       expect(mockOnError).toHaveBeenCalled();
     });
+
+    it('should clear canSkipAiValidation when user modifies services_and_deliverables after skippable error', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with skippable AI error
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              error: {
+                errors: {
+                  services_and_deliverables: {
+                    error: [
+                      "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria.",
+                    ],
+                    source: 'REMOTE_AI',
+                    skippable: true,
+                  },
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow to contract details
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step with skippable error
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert warning appears and canSkipAiValidation is true
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Possible misclassification risk/i),
+        ).toBeInTheDocument();
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'true',
+        );
+      });
+
+      // Now modify the services_and_deliverables field
+      const servicesField = screen.getByLabelText(/Services and Deliverables/i);
+      fireEvent.change(servicesField, {
+        target: {
+          value:
+            'Updated service description with more details about the project scope and deliverables',
+        },
+      });
+
+      // Assert canSkipAiValidation is now false after modification
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'false',
+        );
+      });
+    });
   });
 });
