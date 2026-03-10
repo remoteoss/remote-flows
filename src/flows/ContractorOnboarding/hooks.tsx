@@ -914,7 +914,7 @@ export const useContractorOnboarding = ({
   const extractAiValidationError = (
     error: $TSFixMe,
   ): AiValidationError | null => {
-    const errorData = error?.rawError?.errors?.services_and_deliverables;
+    const errorData = error?.rawError?.error?.errors?.services_and_deliverables;
     if (errorData?.source === REMOTE_AI_ERROR_SOURCE) {
       return {
         error: errorData.error,

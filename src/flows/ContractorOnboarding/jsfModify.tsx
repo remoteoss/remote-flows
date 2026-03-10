@@ -7,9 +7,11 @@ import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
 import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
-import { ServicesAndDeliverablesAiStatementTitle } from '@/src/flows/ContractorOnboarding/components/ServicesAndDeliverablesAiStatementTitle';
-import { ServicesAndDeliverablesAiStatementDescription } from '@/src/flows/ContractorOnboarding/components/ServicesAndDeliverablesAiStatementDescription';
-import { contractorStandardProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
+import {
+  contractorStandardProductIdentifier,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
+} from '@/src/flows/ContractorOnboarding/constants';
 import {
   ContractorOnboardingFlowProps,
   ContractorOnboardingContractDetailsFormPayload,
@@ -80,6 +82,13 @@ export const buildContractDetailsJsfModify = (
     isStandardPricingPlanSelected,
     provisionalStartDate,
   );
+  const AiStatementWarning = createStatementProperty({
+    severity: 'warning',
+    title: 'Possible misclassification risk',
+    description: isContractorOfRecord
+      ? REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE
+      : REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
+  });
   return {
     ...userJsfModify,
     create: {
@@ -114,15 +123,7 @@ export const buildContractDetailsJsfModify = (
           'x-jsf-presentation': {
             calculateDynamicProperties: (formValues: FieldValues) => ({
               statement: formValues.services_and_deliverables_ai_warning
-                ? {
-                    severity: 'warning' as const,
-                    title: <ServicesAndDeliverablesAiStatementTitle />,
-                    description: (
-                      <ServicesAndDeliverablesAiStatementDescription
-                        isContractorOfRecord={isContractorOfRecord}
-                      />
-                    ),
-                  }
+                ? AiStatementWarning.statement
                 : undefined,
             }),
           },

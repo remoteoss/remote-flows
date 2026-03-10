@@ -225,6 +225,7 @@ const MultiStepForm = ({
               response: ContractorOnboardingContractDetailsResponse,
             ) => console.log('response', response)}
             onError={({ error, fieldErrors }) => {
+              console.log('error', error);
               setErrors({ apiError: error.message, fieldErrors });
             }}
           />
