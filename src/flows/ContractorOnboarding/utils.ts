@@ -174,10 +174,9 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
  */
 export function transformAiErrorResponse(
   isContractorOfRecord: boolean,
-  errors: string[],
-): string[] {
+): string {
   const remoteAiErrorMessage = isContractorOfRecord
     ? REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE
     : REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE;
-  return remoteAiErrorMessage ? [remoteAiErrorMessage] : errors;
+  return remoteAiErrorMessage;
 }

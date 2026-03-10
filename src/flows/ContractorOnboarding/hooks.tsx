@@ -997,6 +997,7 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
+        console.log('parsedValues', parsedValues);
         const shouldSkipAiChecks =
           fieldValues.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
@@ -1023,10 +1024,8 @@ export const useContractorOnboarding = ({
               selectedPricingPlan === corProductIdentifier;
             setFieldValues({
               ...values,
-              services_and_deliverables_ai_warning: transformAiErrorResponse(
-                isContractorOfRecord,
-                aiError.error,
-              ).join(' '),
+              services_and_deliverables_ai_warning:
+                transformAiErrorResponse(isContractorOfRecord),
               services_and_deliverables_error_skippable: aiError.skippable,
             });
           }
