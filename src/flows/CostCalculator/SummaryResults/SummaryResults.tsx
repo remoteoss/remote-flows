@@ -298,7 +298,7 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
         type='single'
         collapsible
         defaultValue={accordionValue}
-        onValueChange={(value) => setAccordionValue(value ?? 'summary')}
+        onValueChange={(value) => setAccordionValue(value)}
         className='RemoteFlows__SummaryResults__Accordion w-full'
       >
         <AccordionItem
@@ -309,7 +309,7 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
             className={cn(
               'RemoteFlows__SummaryResults__AccordionTriggerContainer',
               {
-                RemoteFlows__Separator: accordionValue === 'summary',
+                RemoteFlows__Separator: !!accordionValue,
               },
             )}
           >

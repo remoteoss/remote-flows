@@ -26,7 +26,7 @@ type AccordionProps = {
   collapsible?: boolean;
   defaultValue?: string;
   value?: string;
-  onValueChange?: (value: string | undefined) => void;
+  onValueChange?: (value: string) => void;
   className?: string;
   children: React.ReactNode;
 };
@@ -53,7 +53,7 @@ function Accordion({
 
       if (openItem === value) {
         // Clicking the open item
-        newValue = collapsible ? undefined : value;
+        newValue = collapsible ? '' : value;
       } else {
         // Clicking a different item
         newValue = value;
@@ -87,6 +87,7 @@ function Accordion({
 type AccordionItemContextValue = {
   value: string;
   isOpen: boolean;
+  contentId: string;
 };
 
 const AccordionItemContext =
@@ -116,10 +117,11 @@ function AccordionItem({
 }: AccordionItemProps) {
   const { openItem } = useAccordion();
   const isOpen = openItem === value;
+  const contentId = React.useId();
 
   const contextValue = React.useMemo(
-    () => ({ value, isOpen }),
-    [value, isOpen],
+    () => ({ value, isOpen, contentId }),
+    [value, isOpen, contentId],
   );
 
   return (
@@ -149,9 +151,8 @@ function AccordionTrigger({
   ...props
 }: AccordionTriggerProps) {
   const { toggleItem } = useAccordion();
-  const { value, isOpen } = useAccordionItem();
+  const { value, isOpen, contentId } = useAccordionItem();
   const triggerId = React.useId();
-  const contentId = React.useId();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     toggleItem(value);
@@ -204,8 +205,7 @@ function AccordionContent({
   children,
   ...props
 }: AccordionContentProps): React.ReactElement | null {
-  const { isOpen } = useAccordionItem();
-  const contentId = React.useId();
+  const { isOpen, contentId } = useAccordionItem();
   const [shouldRender, setShouldRender] = React.useState(isOpen);
 
   React.useEffect(() => {
