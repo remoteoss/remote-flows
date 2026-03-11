@@ -164,7 +164,6 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'invited',
-  'created_awaiting_reserve',
 ];
 
 /**
