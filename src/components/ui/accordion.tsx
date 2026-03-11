@@ -203,7 +203,6 @@ function AccordionContent({
   React.useLayoutEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      setShouldAnimate(false);
       const rafId = requestAnimationFrame(() => {
         void window.getComputedStyle(document.getElementById(contentId)!)
           .height;
