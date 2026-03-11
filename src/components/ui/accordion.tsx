@@ -22,11 +22,10 @@ const useAccordion = () => {
 };
 
 type AccordionProps = {
-  type?: 'single';
   collapsible?: boolean;
   defaultValue?: string;
   value?: string;
-  onValueChange?: (value: string | undefined) => void;
+  onValueChange?: (value: string) => void;
   className?: string;
   children: React.ReactNode;
 };
@@ -53,7 +52,7 @@ function Accordion({
 
       if (openItem === value) {
         // Clicking the open item
-        newValue = collapsible ? undefined : value;
+        newValue = collapsible ? '' : value;
       } else {
         // Clicking a different item
         newValue = value;
@@ -87,6 +86,7 @@ function Accordion({
 type AccordionItemContextValue = {
   value: string;
   isOpen: boolean;
+  contentId: string;
 };
 
 const AccordionItemContext =
@@ -116,10 +116,11 @@ function AccordionItem({
 }: AccordionItemProps) {
   const { openItem } = useAccordion();
   const isOpen = openItem === value;
+  const contentId = React.useId();
 
   const contextValue = React.useMemo(
-    () => ({ value, isOpen }),
-    [value, isOpen],
+    () => ({ value, isOpen, contentId }),
+    [value, isOpen, contentId],
   );
 
   return (
@@ -149,20 +150,12 @@ function AccordionTrigger({
   ...props
 }: AccordionTriggerProps) {
   const { toggleItem } = useAccordion();
-  const { value, isOpen } = useAccordionItem();
+  const { value, isOpen, contentId } = useAccordionItem();
   const triggerId = React.useId();
-  const contentId = React.useId();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     toggleItem(value);
     onClick?.(event);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      toggleItem(value);
-    }
   };
 
   return (
@@ -179,7 +172,6 @@ function AccordionTrigger({
           className,
         )}
         onClick={handleClick}
-        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}
@@ -204,19 +196,24 @@ function AccordionContent({
   children,
   ...props
 }: AccordionContentProps): React.ReactElement | null {
-  const { isOpen } = useAccordionItem();
-  const contentId = React.useId();
+  const { isOpen, contentId } = useAccordionItem();
   const [shouldRender, setShouldRender] = React.useState(isOpen);
+  const [shouldAnimate, setShouldAnimate] = React.useState(isOpen);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      return;
+      const rafId = requestAnimationFrame(() => {
+        void window.getComputedStyle(document.getElementById(contentId)!)
+          .height;
+        setShouldAnimate(true);
+      });
+      return () => cancelAnimationFrame(rafId);
     }
-
+    setShouldAnimate(false);
     const timer = setTimeout(() => setShouldRender(false), 200);
     return () => clearTimeout(timer);
-  }, [isOpen]);
+  }, [isOpen, contentId]);
 
   if (!shouldRender) return null;
 
@@ -228,7 +225,7 @@ function AccordionContent({
       data-state={isOpen ? 'open' : 'closed'}
       className={cn(
         'overflow-hidden text-sm transition-all duration-200 ease-out',
-        isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0',
+        shouldAnimate ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0',
       )}
       {...props}
     >

@@ -90,20 +90,22 @@ export const ReviewContractorOnboardingStep = ({
         Edit Pricing Plan
       </button>
       {onboardingBag.stepState.values?.pricing_plan?.subscription ===
-        corProductIdentifier && (
-        <>
-          <h2 className='title'>Eligibility Questionnaire</h2>
-          <ReviewMeta
-            meta={onboardingBag.meta.fields.eligibility_questionnaire}
-          />
-          <button
-            className='back-button'
-            onClick={() => onboardingBag.goTo('eligibility_questionnaire')}
-          >
-            Edit Eligibility Questionnaire
-          </button>
-        </>
-      )}
+        corProductIdentifier &&
+        Object.keys(onboardingBag.meta.fields.eligibility_questionnaire)
+          .length > 0 && (
+          <>
+            <h2 className='title'>Eligibility Questionnaire</h2>
+            <ReviewMeta
+              meta={onboardingBag.meta.fields.eligibility_questionnaire}
+            />
+            <button
+              className='back-button'
+              onClick={() => onboardingBag.goTo('eligibility_questionnaire')}
+            >
+              Edit Eligibility Questionnaire
+            </button>
+          </>
+        )}
       <h2 className='title'>Contract Details</h2>
       <ReviewMeta meta={onboardingBag.meta.fields.contract_details} />
       <button

@@ -300,13 +300,20 @@ describe('ContractorOnboardingFlow', () => {
       case 'contract_details':
         return (
           <>
-            <ContractDetailsStep
-              onSubmit={mockOnSubmit}
-              onSuccess={mockOnSuccess}
-              onError={mockOnError}
-            />
-            <BackButton>Back</BackButton>
-            <SubmitButton>Next Step</SubmitButton>
+            <div
+              data-testid='contract-details-container'
+              data-can-skip-ai-validation={
+                contractorOnboardingBag.canSkipAiValidation
+              }
+            >
+              <ContractDetailsStep
+                onSubmit={mockOnSubmit}
+                onSuccess={mockOnSuccess}
+                onError={mockOnError}
+              />
+              <BackButton>Back</BackButton>
+              <SubmitButton>Next Step</SubmitButton>
+            </div>
           </>
         );
       case 'contract_preview':
@@ -765,7 +772,7 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it.each(['invited'])(
+  it.each(['invited', 'created_awaiting_reserve', 'created_reserve_paid'])(
     'should automatically navigate to review step when employment status is %s and display employment data',
     async (status) => {
       const employmentId = generateUniqueEmploymentId();
@@ -1319,6 +1326,82 @@ describe('ContractorOnboardingFlow', () => {
         name: /Contractor Management Plus/i,
       });
       expect(plusRadio).toBeChecked();
+    });
+  });
+
+  it('should navigate back to pricing_plan when eligibility questionnaire is blocked, then allow selecting CM and continue to contract_details', async () => {
+    server.use(
+      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
+        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        employmentId='test-employment-id'
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor of Record');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Eligibility Questionnaire/i);
+
+    await fillEligibilityQuestionnaire();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Should navigate back to pricing_plan
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    // Wait for the pricing plan form to be ready
+    await waitFor(() => {
+      const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
+      expect(cmRadio).toBeInTheDocument();
+    });
+
+    // Select Contractor Management plan
+    const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
+    cmRadio.click();
+
+    await waitFor(() => {
+      expect(cmRadio).toBeChecked();
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Assert that we navigate to contract_details step
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Optionally verify form fields are present
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('service_duration.provisional_start_date'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -2046,82 +2129,6 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
-  it('should navigate back to pricing_plan when eligibility questionnaire is blocked, then allow selecting CM and continue to contract_details', async () => {
-    server.use(
-      http.post('*/v1/contractors/eligibility-questionnaire', async () => {
-        return HttpResponse.json(mockBlockedEligibilityQuestionnaireResponse);
-      }),
-    );
-
-    mockRender.mockImplementation(
-      createMockRenderImplementation(MultiStepFormWithoutCountry),
-    );
-
-    render(
-      <ContractorOnboardingFlow
-        countryCode='PRT'
-        skipSteps={['select_country']}
-        employmentId='test-employment-id'
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
-
-    await screen.findByText(/Step: Basic Information/i);
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
-
-    await fillBasicInformation();
-
-    let nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Pricing Plan/i);
-
-    await fillContractorSubscription('Contractor of Record');
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    await screen.findByText(/Step: Eligibility Questionnaire/i);
-
-    await fillEligibilityQuestionnaire();
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    // Should navigate back to pricing_plan
-    await screen.findByText(/Step: Pricing Plan/i);
-
-    // Wait for the pricing plan form to be ready
-    await waitFor(() => {
-      const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
-      expect(cmRadio).toBeInTheDocument();
-    });
-
-    // Select Contractor Management plan
-    const cmRadio = screen.getByLabelText(/^Contractor Management$/i);
-    cmRadio.click();
-
-    await waitFor(() => {
-      expect(cmRadio).toBeChecked();
-    });
-
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
-
-    // Assert that we navigate to contract_details step
-    await screen.findByText(/Step: Contract Details/i);
-
-    // Optionally verify form fields are present
-    await waitFor(() => {
-      expect(
-        screen.getByTestId('service_duration.provisional_start_date'),
-      ).toBeInTheDocument();
-    });
-  });
-
   describe('excludeProducts', () => {
     it('should hide COR option when excludeProducts includes "cor" in pricing plan', async () => {
       mockRender.mockImplementation(
@@ -2602,6 +2609,288 @@ describe('ContractorOnboardingFlow', () => {
       ).not.toBeInTheDocument();
 
       expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+    });
+  });
+
+  describe('AI Validation Errors', () => {
+    it('should display AI validation warning statement when contract document creation fails with non-skippable error for COR', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with AI error
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              error: {
+                errors: {
+                  services_and_deliverables: {
+                    error: [
+                      "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria. It lacks any contextual clues or keywords related to the non-compliant categories.",
+                    ],
+                    source: 'REMOTE_AI',
+                    skippable: false,
+                  },
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      // Select Contractor of Record (COR)
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Fill eligibility questionnaire (required for COR)
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Fill contract details
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step due to non-skippable error
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert the warning statement appears with COR-specific message
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Possible misclassification risk/i),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            /may not be consistent with the Contractor of Record terms/i,
+          ),
+        ).toBeInTheDocument();
+      });
+
+      // Assert canSkipAiValidation is false
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'false',
+        );
+      });
+
+      // Verify onError was called
+      expect(mockOnError).toHaveBeenCalled();
+    });
+
+    it('should set canSkipAiValidation to true when contract document creation fails with skippable error for COR', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with skippable AI error
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              error: {
+                errors: {
+                  services_and_deliverables: {
+                    error: [
+                      "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria.",
+                    ],
+                    source: 'REMOTE_AI',
+                    skippable: true,
+                  },
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert canSkipAiValidation is true via data attribute
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'true',
+        );
+      });
+
+      expect(mockOnError).toHaveBeenCalled();
+    });
+
+    it('should clear canSkipAiValidation when user modifies services_and_deliverables after skippable error', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with skippable AI error
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              error: {
+                errors: {
+                  services_and_deliverables: {
+                    error: [
+                      "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria.",
+                    ],
+                    source: 'REMOTE_AI',
+                    skippable: true,
+                  },
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow to contract details
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step with skippable error
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert warning appears and canSkipAiValidation is true
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Possible misclassification risk/i),
+        ).toBeInTheDocument();
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'true',
+        );
+      });
+
+      // Now modify the services_and_deliverables field
+      const servicesField = screen.getByLabelText(/Services and Deliverables/i);
+      fireEvent.change(servicesField, {
+        target: {
+          value:
+            'Updated service description with more details about the project scope and deliverables',
+        },
+      });
+
+      // Assert canSkipAiValidation is now false after modification
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'false',
+        );
+      });
     });
   });
 });

@@ -147,7 +147,6 @@ function OnboardingTimeline({
 }) {
   return (
     <Accordion
-      type='single'
       collapsible
       className={cn(
         'RemoteFlows__EstimationResults__OnboardingTimeline w-full',
@@ -208,7 +207,6 @@ function HiringSection({
 }) {
   return (
     <Accordion
-      type='single'
       collapsible
       className={cn(
         'RemoteFlows__EstimationResults__HiringSection w-full',

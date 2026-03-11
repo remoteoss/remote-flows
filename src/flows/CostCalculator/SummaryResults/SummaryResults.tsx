@@ -117,7 +117,6 @@ const MultiColumnAccordion = ({
 
   return (
     <Accordion
-      type='single'
       collapsible
       defaultValue={defaultValue}
       className={cn(
@@ -295,10 +294,9 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
   return (
     <Card className='RemoteFlows__SummaryResults__Card p-10'>
       <Accordion
-        type='single'
         collapsible
         defaultValue={accordionValue}
-        onValueChange={(value) => setAccordionValue(value ?? 'summary')}
+        onValueChange={(value) => setAccordionValue(value)}
         className='RemoteFlows__SummaryResults__Accordion w-full'
       >
         <AccordionItem
@@ -309,7 +307,7 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
             className={cn(
               'RemoteFlows__SummaryResults__AccordionTriggerContainer',
               {
-                RemoteFlows__Separator: accordionValue === 'summary',
+                RemoteFlows__Separator: !!accordionValue,
               },
             )}
           >
