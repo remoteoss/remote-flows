@@ -207,16 +207,23 @@ function AccordionContent({
 }: AccordionContentProps): React.ReactElement | null {
   const { isOpen, contentId } = useAccordionItem();
   const [shouldRender, setShouldRender] = React.useState(isOpen);
+  const [shouldAnimate, setShouldAnimate] = React.useState(isOpen);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      return;
+      setShouldAnimate(false);
+      const rafId = requestAnimationFrame(() => {
+        void window.getComputedStyle(document.getElementById(contentId)!)
+          .height;
+        setShouldAnimate(true);
+      });
+      return () => cancelAnimationFrame(rafId);
     }
-
+    setShouldAnimate(false);
     const timer = setTimeout(() => setShouldRender(false), 200);
     return () => clearTimeout(timer);
-  }, [isOpen]);
+  }, [isOpen, contentId]);
 
   if (!shouldRender) return null;
 
@@ -228,7 +235,7 @@ function AccordionContent({
       data-state={isOpen ? 'open' : 'closed'}
       className={cn(
         'overflow-hidden text-sm transition-all duration-200 ease-out',
-        isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0',
+        shouldAnimate ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0',
       )}
       {...props}
     >
