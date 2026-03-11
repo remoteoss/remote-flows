@@ -1,3 +1,4 @@
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogTrigger,
@@ -6,8 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  Button,
-} from '@remoteoss/remote-flows/internals';
+} from './ui/dialog';
 import {
   onboardingWorkflows,
   corProductIdentifier,

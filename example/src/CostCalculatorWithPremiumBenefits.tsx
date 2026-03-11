@@ -20,15 +20,14 @@ import {
   convertFromCents,
   ZendeskTriggerButton,
 } from '@remoteoss/remote-flows';
+import { Card, cn } from '@remoteoss/remote-flows/internals';
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  Card,
-  cn,
-} from '@remoteoss/remote-flows/internals';
+} from './components/ui/drawer';
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './CostCalculatorComponents';

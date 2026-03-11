@@ -19,12 +19,8 @@ import {
   eorProductIdentifier,
   $TSFixMe,
 } from '@remoteoss/remote-flows';
-import {
-  Card,
-  Tabs,
-  TabsTrigger,
-  TabsList,
-} from '@remoteoss/remote-flows/internals';
+import { Card } from '@remoteoss/remote-flows/internals';
+import { Tabs, TabsTrigger, TabsList } from './components/ui/tabs';
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';

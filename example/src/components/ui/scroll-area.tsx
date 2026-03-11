@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 
-import { cn } from '@/src/lib/utils';
+import { cn } from '@remoteoss/remote-flows/internals';
 
 const ScrollArea = React.forwardRef<
   HTMLDivElement,
