@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.20.0
+
+### Minor Changes
+
+- remove react-slot (#781) [#781](https://github.com/remoteoss/remote-flows/pull/781)
+- support skippable errors (#787) [#787](https://github.com/remoteoss/remote-flows/pull/787)
+
 ## 1.19.0
 
 ### Minor Changes
