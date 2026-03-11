@@ -75,6 +75,6 @@
   flex-direction: column;
   gap: 16px;
   flex-direction: column-reverse;
-  max-width: 95px;
+  max-width: 140px;
   margin: 0 auto;
 }

@@ -23,6 +23,9 @@ export const useLegalEntities = () => {
         path: {
           company_id: companyId,
         },
+        query: {
+          page_size: 100,
+        },
       }),
     select: (data) => data.data?.data?.legal_entities,
     enabled: !!companyId,

@@ -139,6 +139,12 @@ export type ContractorOnboardingContractDetailsFormPayload = {
 export type ContractorOnboardingContractDetailsResponse =
   CreateContractDocumentResponse;
 
+export type AiValidationError = {
+  error: string[];
+  source: string;
+  skippable: boolean;
+};
+
 export type ContractPreviewFormPayload = SignContractDocument;
 
 export type ContractPreviewResponse = SuccessResponse;

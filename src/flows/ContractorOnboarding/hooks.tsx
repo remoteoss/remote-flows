@@ -53,12 +53,15 @@ import {
   contractorPlusProductIdentifier,
   corProductIdentifier,
   eorProductIdentifier,
+  REMOTE_AI_ERROR_SOURCE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
   buildContractDetailsJsfModify,
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
+import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils';
+import { AiValidationError } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
 import { useEmploymentQuery } from '@/src/common/api/employment';
@@ -544,6 +547,7 @@ export const useContractorOnboarding = ({
         descriptionProvisionalStartDate,
         selectedPricingPlan,
         fieldValues,
+        selectedPricingPlan === corProductIdentifier,
       ),
     },
   });
@@ -902,6 +906,25 @@ export const useContractorOnboarding = ({
     return {};
   };
 
+  /**
+   * Extracts AI validation error from the error response
+   * @param error - The error object from the API call
+   * @returns The AI validation error if found, null otherwise
+   */
+  const extractAiValidationError = (
+    error: $TSFixMe,
+  ): AiValidationError | null => {
+    const errorData = error?.rawError?.error?.errors?.services_and_deliverables;
+    if (errorData?.source === REMOTE_AI_ERROR_SOURCE) {
+      return {
+        error: errorData.error,
+        source: errorData.source,
+        skippable: errorData.skippable,
+      };
+    }
+    return null;
+  };
+
   async function onSubmit(values: FieldValues) {
     const currentStepName = stepState.currentStep.name;
     if (currentStepName in fieldsMetaRef.current) {
@@ -974,21 +997,40 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
+        const shouldSkipAiChecks =
+          fieldValues.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
           contract_document: parsedValues,
-          skip_ai_checks: true,
+          skip_ai_checks: shouldSkipAiChecks,
         };
-        const response = await createContractorContractDocumentMutationAsync({
-          employmentId: internalEmploymentId as string,
-          payload,
-        });
-        const contractDocumentId = response?.data?.contract_document?.id;
-        if (!contractDocumentId) {
-          throw createStructuredError('Contract document ID not found');
-        }
-        setInternalContractDocumentId(contractDocumentId);
 
-        return response;
+        try {
+          const response = await createContractorContractDocumentMutationAsync({
+            employmentId: internalEmploymentId as string,
+            payload,
+          });
+          const contractDocumentId = response?.data?.contract_document?.id;
+          if (!contractDocumentId) {
+            throw createStructuredError('Contract document ID not found');
+          }
+          setInternalContractDocumentId(contractDocumentId);
+
+          return response;
+        } catch (error) {
+          const aiError = extractAiValidationError(error);
+          if (aiError) {
+            const isContractorOfRecord =
+              selectedPricingPlan === corProductIdentifier;
+            setFieldValues({
+              ...values,
+              services_and_deliverables_ai_warning:
+                transformAiErrorResponse(isContractorOfRecord),
+              services_and_deliverables_error_skippable: aiError.skippable,
+            });
+          }
+
+          throw error;
+        }
       }
 
       case 'contract_preview': {
@@ -1111,6 +1153,12 @@ export const useContractorOnboarding = ({
     }
   }
 
+  const markContractAsReviewed = () => {
+    setFieldValues({
+      review_completed: true,
+    });
+  };
+
   const handleNextStep = () => {
     if (internalEmploymentId) {
       refetchEmployment();
@@ -1141,6 +1189,13 @@ export const useContractorOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates: setFieldValues,
+
+    /**
+     * Function to mark the contract as reviewed
+     * @param values - New form values to check
+     * @returns {boolean}
+     */
+    markContractAsReviewed,
 
     /**
      * Function to handle going back to the previous step
@@ -1187,6 +1242,14 @@ export const useContractorOnboarding = ({
      * @returns Parsed form values
      */
     parseFormValues,
+
+    /**
+     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
+     * True when there's a skippable AI validation error on services_and_deliverables field.
+     * @returns {boolean}
+     */
+    canSkipAiValidation:
+      fieldValues.services_and_deliverables_error_skippable === true,
 
     /**
      * Function to validate form values against the onboarding schema
