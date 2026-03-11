@@ -117,7 +117,6 @@ const MultiColumnAccordion = ({
 
   return (
     <Accordion
-      type='single'
       collapsible
       defaultValue={defaultValue}
       className={cn(
@@ -295,7 +294,6 @@ export const SummaryResults = ({ estimations }: SummaryResultsProps) => {
   return (
     <Card className='RemoteFlows__SummaryResults__Card p-10'>
       <Accordion
-        type='single'
         collapsible
         defaultValue={accordionValue}
         onValueChange={(value) => setAccordionValue(value)}

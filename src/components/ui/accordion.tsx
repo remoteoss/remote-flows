@@ -22,7 +22,6 @@ const useAccordion = () => {
 };
 
 type AccordionProps = {
-  type?: 'single';
   collapsible?: boolean;
   defaultValue?: string;
   value?: string;
@@ -159,13 +158,6 @@ function AccordionTrigger({
     onClick?.(event);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      toggleItem(value);
-    }
-  };
-
   return (
     <div className='flex items-center'>
       <button
@@ -180,7 +172,6 @@ function AccordionTrigger({
           className,
         )}
         onClick={handleClick}
-        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}
