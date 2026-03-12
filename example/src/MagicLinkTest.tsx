@@ -7,7 +7,7 @@ import {
   CardTitle,
   Button,
 } from '@remoteoss/remote-flows/internals';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { ExternalLink, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 
@@ -21,8 +21,22 @@ const MagicLinkTestContent = () => {
   const [userId, setUserId] = useState(import.meta.env.VITE_USER_ID || '');
   const [status, setStatus] = useState<StatusType>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const generateMagicLink = async (path: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
     if (!userId) {
       setStatus('error');
       setErrorMessage('User ID is required');
@@ -41,7 +55,10 @@ const MagicLinkTestContent = () => {
       if (response.data) {
         window.open(response.data.data.url, '_blank', 'noopener,noreferrer');
         setStatus('success');
-        setTimeout(() => setStatus('idle'), 3000);
+        timeoutRef.current = setTimeout(() => {
+          setStatus('idle');
+          timeoutRef.current = null;
+        }, 3000);
       } else {
         setStatus('error');
         setErrorMessage('No URL returned from API');
