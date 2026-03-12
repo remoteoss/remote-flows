@@ -87,11 +87,6 @@ export function ContractorOnboardingForm({
       const { onSuccess, onError } = nativeEvent.draftCallbacks;
 
       try {
-        const isValid = await form.trigger();
-        if (!isValid) {
-          return;
-        }
-
         await contractorOnboardingBag.onSubmit(values);
         onSuccess?.();
       } catch (error: $TSFixMe) {
