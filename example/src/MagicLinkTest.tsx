@@ -138,7 +138,7 @@ const MagicLinkTestContent = () => {
 
 export const MagicLinkTest = () => {
   return (
-    <RemoteFlows authType='company-manager'>
+    <RemoteFlows authType='refresh-token'>
       <MagicLinkTestContent />
     </RemoteFlows>
   );
