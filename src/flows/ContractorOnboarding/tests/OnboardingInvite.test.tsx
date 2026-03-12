@@ -335,7 +335,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       expect(refetchEmploymentMock).toHaveBeenCalled();
       // Should call onSuccess with created_awaiting_reserve status
       expect(mockSuccess).toHaveBeenCalledWith({
-        data: { status: 'ok' },
+        data: { data: { status: 'ok' } },
         employmentStatus: 'created_awaiting_reserve',
       });
     });
