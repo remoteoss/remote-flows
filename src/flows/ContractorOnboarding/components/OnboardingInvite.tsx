@@ -71,7 +71,7 @@ export function OnboardingInvite({
         });
         if (response?.data) {
           await onSuccess?.({
-            data: response?.data as SuccessResponse,
+            data: response,
             employmentStatus: 'created_awaiting_reserve',
           });
 
@@ -84,11 +84,13 @@ export function OnboardingInvite({
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
-        await onSuccess?.({
-          data: data as SuccessResponse,
-          employmentStatus: 'invited',
-        });
-        contractorOnboardingBag.refetchEmployment();
+        if (data) {
+          await onSuccess?.({
+            data: data,
+            employmentStatus: 'invited',
+          });
+          contractorOnboardingBag.refetchEmployment();
+        }
       }
     } catch (error: unknown) {
       if (isStructuredError(error)) {
