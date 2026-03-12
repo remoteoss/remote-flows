@@ -148,6 +148,7 @@ const MultiStepForm = ({
     ContractDetailsStep,
     ContractPreviewStep,
     ContractReviewButton,
+    SaveDraftButton,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -204,6 +205,19 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
+            <SaveDraftButton
+              className='submit-button'
+              onSuccess={() => {
+                console.log('Draft saved successfully');
+                setErrors({ apiError: '', fieldErrors: [] });
+              }}
+              onError={({ error, fieldErrors }) => {
+                console.log('Draft save failed', error);
+                setErrors({ apiError: error.message, fieldErrors });
+              }}
+            >
+              Save Draft
+            </SaveDraftButton>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
@@ -263,6 +277,19 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
+            <SaveDraftButton
+              className='submit-button'
+              onSuccess={() => {
+                console.log('Contract details draft saved successfully');
+                setErrors({ apiError: '', fieldErrors: [] });
+              }}
+              onError={({ error, fieldErrors }) => {
+                console.log('Contract details draft save failed', error);
+                setErrors({ apiError: error.message, fieldErrors });
+              }}
+            >
+              Save Draft
+            </SaveDraftButton>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
