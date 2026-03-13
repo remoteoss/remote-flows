@@ -9,7 +9,6 @@ import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { isStructuredError } from '@/src/lib/utils';
-import { disabledInviteButtonEmploymentStatus } from '@/src/flows/ContractorOnboarding/utils';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -121,10 +120,7 @@ export function OnboardingInvite({
   const disabled =
     employmentInviteMutation.isPending ||
     createReserveInvoiceMutation.isPending ||
-    (contractorOnboardingBag.employment?.status &&
-      disabledInviteButtonEmploymentStatus.includes(
-        contractorOnboardingBag.employment?.status,
-      )) ||
+    contractorOnboardingBag.canInvite ||
     props.disabled;
 
   return (
