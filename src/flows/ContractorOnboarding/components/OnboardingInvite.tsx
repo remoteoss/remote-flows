@@ -52,11 +52,13 @@ export function OnboardingInvite({
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
-        await onSuccess?.({
-          data: data as SuccessResponse,
-          employmentStatus: 'invited',
-        });
-        contractorOnboardingBag.refetchEmployment();
+        if (data) {
+          await onSuccess?.({
+            data: data as SuccessResponse,
+            employmentStatus: 'invited',
+          });
+          contractorOnboardingBag.refetchEmployment();
+        }
       }
     } catch (error: unknown) {
       if (isStructuredError(error)) {
@@ -76,10 +78,16 @@ export function OnboardingInvite({
     throw new Error(`Button component not found`);
   }
 
+  const disabled = Boolean(
+    employmentInviteMutation.isPending ||
+      !contractorOnboardingBag.canInvite ||
+      props.disabled,
+  );
+
   return (
     <CustomButton
       {...props}
-      disabled={employmentInviteMutation.isPending || props.disabled}
+      disabled={disabled}
       onClick={(evt) => {
         handleSubmit();
         props.onClick?.(evt);
