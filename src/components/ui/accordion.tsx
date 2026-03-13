@@ -1,48 +1,177 @@
 import * as React from 'react';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from 'lucide-react';
 
 import { cn } from '@/src/lib/utils';
 
-function Accordion({
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot='accordion' {...props} />;
-}
+type AccordionContextValue = {
+  openItem: string | undefined;
+  toggleItem: (value: string) => void;
+  collapsible: boolean;
+};
 
-function AccordionItem({
+const AccordionContext = React.createContext<AccordionContextValue | null>(
+  null,
+);
+
+const useAccordion = () => {
+  const context = React.useContext(AccordionContext);
+  if (!context) {
+    throw new Error('Accordion components must be used within Accordion');
+  }
+  return context;
+};
+
+type AccordionProps = {
+  collapsible?: boolean;
+  defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  className?: string;
+  children: React.ReactNode;
+};
+
+function Accordion({
+  collapsible = false,
+  defaultValue,
+  value: controlledValue,
+  onValueChange,
   className,
+  children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+}: AccordionProps) {
+  const [uncontrolledValue, setUncontrolledValue] = React.useState<
+    string | undefined
+  >(defaultValue);
+
+  const isControlled = controlledValue !== undefined;
+  const openItem = isControlled ? controlledValue : uncontrolledValue;
+
+  const toggleItem = React.useCallback(
+    (value: string) => {
+      let newValue: string | undefined;
+
+      if (openItem === value) {
+        // Clicking the open item
+        newValue = collapsible ? '' : value;
+      } else {
+        // Clicking a different item
+        newValue = value;
+      }
+
+      if (!isControlled) {
+        setUncontrolledValue(newValue);
+      }
+
+      if (onValueChange) {
+        onValueChange(newValue);
+      }
+    },
+    [openItem, collapsible, isControlled, onValueChange],
+  );
+
+  const contextValue = React.useMemo(
+    () => ({ openItem, toggleItem, collapsible }),
+    [openItem, toggleItem, collapsible],
+  );
+
   return (
-    <AccordionPrimitive.Item
-      data-slot='accordion-item'
-      className={cn('border-b last:border-b-0', className)}
-      {...props}
-    />
+    <AccordionContext.Provider value={contextValue}>
+      <div data-slot='accordion' className={className} {...props}>
+        {children}
+      </div>
+    </AccordionContext.Provider>
   );
 }
 
-type AccordionTriggerProps = React.ComponentProps<
-  typeof AccordionPrimitive.Trigger
-> & {
-  iconClassName?: string;
+type AccordionItemContextValue = {
+  value: string;
+  isOpen: boolean;
+  contentId: string;
 };
+
+const AccordionItemContext =
+  React.createContext<AccordionItemContextValue | null>(null);
+
+const useAccordionItem = () => {
+  const context = React.useContext(AccordionItemContext);
+  if (!context) {
+    throw new Error(
+      'AccordionItem components must be used within AccordionItem',
+    );
+  }
+  return context;
+};
+
+type AccordionItemProps = {
+  value: string;
+  className?: string;
+  children: React.ReactNode;
+};
+
+function AccordionItem({
+  value,
+  className,
+  children,
+  ...props
+}: AccordionItemProps) {
+  const { openItem } = useAccordion();
+  const isOpen = openItem === value;
+  const contentId = React.useId();
+
+  const contextValue = React.useMemo(
+    () => ({ value, isOpen, contentId }),
+    [value, isOpen, contentId],
+  );
+
+  return (
+    <AccordionItemContext.Provider value={contextValue}>
+      <div
+        data-slot='accordion-item'
+        className={cn('border-b last:border-b-0', className)}
+        {...props}
+      >
+        {children}
+      </div>
+    </AccordionItemContext.Provider>
+  );
+}
+
+type AccordionTriggerProps = {
+  className?: string;
+  iconClassName?: string;
+  children: React.ReactNode;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function AccordionTrigger({
   className,
   iconClassName,
   children,
+  onClick,
   ...props
 }: AccordionTriggerProps) {
+  const { toggleItem } = useAccordion();
+  const { value, isOpen, contentId } = useAccordionItem();
+  const triggerId = React.useId();
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    toggleItem(value);
+    onClick?.(event);
+  };
+
   return (
-    <AccordionPrimitive.Header className='flex items-center'>
-      <AccordionPrimitive.Trigger
+    <div className='flex items-center'>
+      <button
+        id={triggerId}
+        type='button'
         data-slot='accordion-trigger'
+        data-state={isOpen ? 'open' : 'closed'}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
         className={cn(
           'focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180',
           className,
         )}
+        onClick={handleClick}
         {...props}
       >
         {children}
@@ -52,24 +181,56 @@ function AccordionTrigger({
             iconClassName,
           )}
         />
-      </AccordionPrimitive.Trigger>
-    </AccordionPrimitive.Header>
+      </button>
+    </div>
   );
 }
+
+type AccordionContentProps = {
+  className?: string;
+  children: React.ReactNode;
+};
 
 function AccordionContent({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: AccordionContentProps): React.ReactElement | null {
+  const { isOpen, contentId } = useAccordionItem();
+  const [shouldRender, setShouldRender] = React.useState(isOpen);
+  const [shouldAnimate, setShouldAnimate] = React.useState(isOpen);
+
+  React.useLayoutEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const rafId = requestAnimationFrame(() => {
+        void window.getComputedStyle(document.getElementById(contentId)!)
+          .height;
+        setShouldAnimate(true);
+      });
+      return () => cancelAnimationFrame(rafId);
+    }
+    setShouldAnimate(false);
+    const timer = setTimeout(() => setShouldRender(false), 200);
+    return () => clearTimeout(timer);
+  }, [isOpen, contentId]);
+
+  if (!shouldRender) return null;
+
   return (
-    <AccordionPrimitive.Content
+    <div
+      id={contentId}
+      role='region'
       data-slot='accordion-content'
-      className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm'
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn(
+        'overflow-hidden text-sm transition-all duration-200 ease-out',
+        shouldAnimate ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0',
+      )}
       {...props}
     >
       <div className={cn('pt-0 pb-4', className)}>{children}</div>
-    </AccordionPrimitive.Content>
+    </div>
   );
 }
 
