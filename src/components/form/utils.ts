@@ -380,8 +380,7 @@ export async function parseFormValuesToAPI(
             const formValue = formValues[extraField.name];
             const fieldTransformValueToAPI =
               extraField?.transformValueToAPI ||
-              fieldTypesTransformations[extraField.inputType]
-                ?.transformValueToAPI;
+              fieldTypesTransformations[extraField.type]?.transformValueToAPI;
 
             if (fieldTransformValueToAPI) {
               const result = fieldTransformValueToAPI(field)(formValue);
@@ -674,10 +673,7 @@ function getInitialSubFieldValues(
       );
     });
 
-    if (
-      (field.type || field.inputType) === supportedTypes.FIELDSET &&
-      field.valueGroupingDisabled
-    ) {
+    if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
       Object.assign(initialValue, subFieldValues);
     } else {
       initialValue[field.name!] = subFieldValues;
@@ -707,7 +703,7 @@ export function getInitialValues(
   fields
     .map((field) => applyFieldDynamicProperties(field, defaultFieldValues))
     .forEach((field) => {
-      switch (field.type || field.inputType) {
+      switch (field.type) {
         case supportedTypes.FIELDSET: {
           if (field.valueGroupingDisabled) {
             Object.assign(

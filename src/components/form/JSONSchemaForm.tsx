@@ -22,8 +22,8 @@ function checkFieldHasForcedValue(field: any) {
   return (
     field.const !== undefined && // Only accepts a specific value
     field.const === field.default && // It can be prefilled, meaning it's not critical
-    field.inputType !== 'checkbox' && // Because checkbox must always be visible
-    field.inputType !== 'hidden' // Because hidden inputs shouldn't be visible
+    field.type !== 'checkbox' && // Because checkbox must always be visible
+    field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
 }
 
