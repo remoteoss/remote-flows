@@ -115,7 +115,7 @@ export function OnboardingInvite({
   const disabled =
     employmentInviteMutation.isPending ||
     createReserveInvoiceMutation.isPending ||
-    contractorOnboardingBag.canInvite ||
+    !contractorOnboardingBag.canInvite ||
     props.disabled;
 
   return (

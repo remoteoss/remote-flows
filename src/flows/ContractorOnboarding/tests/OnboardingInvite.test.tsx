@@ -253,29 +253,39 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
   });
 
   it('should refetch employment after inviting the contractor', async () => {
-    const refetchEmploymentMock = vi.fn();
-    mockRender.mockImplementation(({ contractorOnboardingBag, components }) => {
-      contractorOnboardingBag.refetchEmployment = refetchEmploymentMock;
-      const { OnboardingInvite } = components;
-      return (
-        <OnboardingInvite
-          data-testid='onboarding-invite'
-          onSuccess={mockSuccess}
-          onError={mockError}
-          onSubmit={mockSubmit}
-          render={() => 'Invite Contractor'}
-        />
-      );
-    });
+    const getEmploymentSpy = vi.fn();
 
+    server.use(
+      http.get('*/v1/employments/:id', ({ request }) => {
+        getEmploymentSpy(request.url);
+        return HttpResponse.json(mockContractorEmploymentResponse);
+      }),
+    );
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
     });
-    const button = await screen.findByTestId('onboarding-invite');
+
+    // CRITICAL: Wait for initial load to complete
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Verify initial employment fetch happened
+    expect(getEmploymentSpy).toHaveBeenCalledTimes(1);
+
+    // Find and click the button
+    const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
+    // Wait for the invite to complete and verify refetch happened
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled();
+    });
 
     await waitFor(() => {
-      expect(refetchEmploymentMock).toHaveBeenCalled();
+      expect(mockSuccess).toHaveBeenCalled();
+    });
+
+    // Verify employment was fetched again (refetch happened)
+    await waitFor(() => {
+      expect(getEmploymentSpy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -504,6 +514,86 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       expect(button).toBeInTheDocument();
       expect(button).toHaveTextContent('Default Button');
     });
+
+    it('should disable button when employment status is "invited"', async () => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                status: 'invited',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            data-testid='onboarding-invite'
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Invite Contractor'}
+          />
+        );
+      });
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      const button = await screen.findByTestId('onboarding-invite');
+
+      await waitFor(() => {
+        expect(button).toBeDisabled();
+      });
+    });
+
+    it('should disable button when employment status is "created_awaiting_reserve"', async () => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                status: 'created_awaiting_reserve',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            data-testid='onboarding-invite'
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Invite Contractor'}
+          />
+        );
+      });
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      const button = await screen.findByTestId('onboarding-invite');
+
+      await waitFor(() => {
+        expect(button).toBeDisabled();
+      });
+    });
   });
 
   describe('render prop functionality', () => {
@@ -583,16 +673,17 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       expect(customButton).toBeInTheDocument();
       expect(customButton).toHaveTextContent('Custom Button Label');
 
-      // Verify custom button received correct props
-      expect(MockCustomButton).toHaveBeenCalledWith(
-        expect.objectContaining({
-          className: 'test-class',
-          disabled: false,
-          onClick: expect.any(Function),
-          children: 'Custom Button Label',
-        }),
-        {},
-      );
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            className: 'test-class',
+            disabled: false,
+            onClick: expect.any(Function),
+            children: 'Custom Button Label',
+          }),
+          {},
+        );
+      });
     });
 
     it('should apply disabled state correctly to custom button', async () => {
@@ -649,7 +740,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       });
 
       const customButton = await screen.findByTestId('custom-button');
-      expect(customButton).not.toBeDisabled(); // Initially not disabled
+      await waitFor(() => {
+        expect(customButton).not.toBeDisabled();
+      });
 
       fireEvent.click(customButton);
 
@@ -682,6 +775,15 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
 
       render(<ContractorOnboardingFlow {...defaultProps} />, {
         wrapper: customWrapper,
+      });
+
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            disabled: false,
+          }),
+          expect.anything(),
+        );
       });
 
       const customButton = await screen.findByTestId('custom-button');
@@ -722,6 +824,15 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       });
 
       await screen.findByTestId('custom-button');
+
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            disabled: false,
+          }),
+          expect.anything(),
+        );
+      });
 
       expect(MockCustomButton).toHaveBeenCalledWith(
         expect.objectContaining({
