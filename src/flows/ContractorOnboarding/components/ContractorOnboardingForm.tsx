@@ -87,8 +87,10 @@ export function ContractorOnboardingForm({
       const { onSuccess, onError } = nativeEvent.draftCallbacks;
 
       try {
-        await contractorOnboardingBag.onSubmit(values);
-        onSuccess?.();
+        const response = await contractorOnboardingBag.onSubmit(values);
+        if (response?.data) {
+          onSuccess?.();
+        }
       } catch (error: $TSFixMe) {
         const currentStepName =
           contractorOnboardingBag.stepState.currentStep.name;
