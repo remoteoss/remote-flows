@@ -77,12 +77,6 @@ export function OnboardingForm({
       const { onSuccess, onError } = nativeEvent.draftCallbacks;
 
       try {
-        // Trigger validation
-        const isValid = await form.trigger();
-        if (!isValid) {
-          return; // Don't submit if validation fails
-        }
-
         // Submit the form
         const response = await onboardingBag.onSubmit(values);
 

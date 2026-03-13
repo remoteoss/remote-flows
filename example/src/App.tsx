@@ -45,8 +45,10 @@ import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
+import { MagicLinkTest } from './MagicLinkTest';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
+import MagicLinkTestCode from './MagicLinkTest?raw';
 
 const costCalculatorDemos = [
   {
@@ -156,6 +158,13 @@ const additionalDemos = [
     description: 'Create a company',
     component: CreateCompanyForm,
     sourceCode: CreateCompanyCode,
+  },
+  {
+    id: 'magic-link-test',
+    title: 'Magic Link Test',
+    description: 'Test magic link generation to various paths',
+    component: MagicLinkTest,
+    sourceCode: MagicLinkTestCode,
   },
 ];
 

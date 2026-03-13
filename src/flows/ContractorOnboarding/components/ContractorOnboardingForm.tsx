@@ -12,6 +12,7 @@ import {
   PricingPlanFormPayload,
   ContractorOnboardingContractDetailsFormPayload,
 } from '@/src/flows/ContractorOnboarding/types';
+import { normalizeFieldErrors } from '@/src/lib/mutations';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
@@ -76,8 +77,39 @@ export function ContractorOnboardingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: Record<string, unknown>) => {
-    await onSubmit(values as $TSFixMe);
+  const handleSubmit = async (
+    values: Record<string, unknown>,
+    event?: React.BaseSyntheticEvent,
+  ) => {
+    const nativeEvent = event?.nativeEvent as $TSFixMe;
+
+    if (nativeEvent?.isDraftSubmission) {
+      const { onSuccess, onError } = nativeEvent.draftCallbacks;
+
+      try {
+        await contractorOnboardingBag.onSubmit(values);
+        onSuccess?.();
+      } catch (error: $TSFixMe) {
+        const currentStepName =
+          contractorOnboardingBag.stepState.currentStep.name;
+        const currentStepFields =
+          contractorOnboardingBag.meta?.fields?.[
+            currentStepName as keyof typeof contractorOnboardingBag.meta.fields
+          ];
+
+        const normalizedFieldErrors = normalizeFieldErrors(
+          error?.fieldErrors || [],
+          currentStepFields,
+        );
+        onError?.({
+          error: error?.error || (error as Error),
+          rawError: error?.rawError || (error as Record<string, unknown>),
+          fieldErrors: normalizedFieldErrors,
+        });
+      }
+    } else {
+      await onSubmit(values as $TSFixMe);
+    }
   };
 
   return (
