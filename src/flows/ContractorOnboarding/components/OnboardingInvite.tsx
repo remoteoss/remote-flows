@@ -56,15 +56,13 @@ export function OnboardingInvite({
 
   const isCOR = contractorOnboardingBag.employment?.contractor_type === 'cor';
 
+  const isReserveFlow = isCOR && !contractorOnboardingBag.isEmploymentReadOnly;
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
 
-      if (
-        isCOR &&
-        !contractorOnboardingBag.isEmploymentReadOnly &&
-        contractorOnboardingBag.employmentId
-      ) {
+      if (isReserveFlow && contractorOnboardingBag.employmentId) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: contractorOnboardingBag.employmentId as string,
         });
@@ -106,11 +104,6 @@ export function OnboardingInvite({
   if (!CustomButton) {
     throw new Error(`Button component not found`);
   }
-
-  const isReserveFlow =
-    isCOR &&
-    contractorOnboardingBag.employment?.status &&
-    !contractorOnboardingBag.isEmploymentReadOnly;
 
   const disabled =
     employmentInviteMutation.isPending ||
