@@ -80,7 +80,10 @@ export function OnboardingInvite({
         }
       }
 
-      if (contractorOnboardingBag.employmentId && !isCOR) {
+      if (
+        contractorOnboardingBag.employmentId &&
+        !contractorOnboardingBag.isEmploymentReadOnly
+      ) {
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
