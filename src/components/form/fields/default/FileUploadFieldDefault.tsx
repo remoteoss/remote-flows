@@ -8,12 +8,18 @@ import {
 import { FileUploader } from '@/src/components/ui/file-uploader';
 import { cn } from '@/src/lib/utils';
 import { FileComponentProps } from '@/src/types/fields';
+import { useFormFields } from '@/src/context';
 
 export function FileUploadFieldDefault({
   field,
   fieldState,
   fieldData,
 }: FileComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: FileUploadFieldDefault');
+    return null;
+  }
   const { name, label, description, multiple, accept } = fieldData;
 
   return (

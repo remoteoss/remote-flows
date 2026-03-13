@@ -2,12 +2,18 @@ import { FormDescription, FormMessage } from '@/src/components/ui/form';
 import { FormControl, FormItem, FormLabel } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { TextFieldComponentProps } from '@/src/types/fields';
+import { useFormFields } from '@/src/context';
 
 export function TextFieldDefault({
   field,
   fieldState,
   fieldData,
 }: TextFieldComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: TextFieldDefault');
+    return null;
+  }
   const { name, label, description, maxLength, includeErrorMessage } =
     fieldData;
   return (

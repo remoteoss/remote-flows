@@ -8,6 +8,7 @@ import {
 } from '@/src/components/ui/table';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe, TableComponentProps } from '@/src/types/remoteFlows';
+import { useFormFields } from '@/src/context';
 
 export const TableFieldDefault = ({
   data,
@@ -15,6 +16,11 @@ export const TableFieldDefault = ({
   className,
   ref,
 }: TableComponentProps) => {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: TableFieldDefault');
+    return null;
+  }
   return (
     <TablePrimitive ref={ref} className={cn('RemoteFlows__Table', className)}>
       <TableHeader>

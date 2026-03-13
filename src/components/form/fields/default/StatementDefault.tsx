@@ -1,8 +1,14 @@
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { StatementComponentProps } from '@/src/types/fields';
 import { AlertCircle } from 'lucide-react';
+import { useFormFields } from '@/src/context';
 
 export function StatementDefault({ data }: StatementComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: StatementDefault');
+    return null;
+  }
   const { title, description, severity } = data;
 
   const mapSeverityToVariant: Record<

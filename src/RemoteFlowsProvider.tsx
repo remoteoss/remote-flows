@@ -35,8 +35,10 @@ function RemoteFlowContextWrapper({
 export function FormFieldsProvider({
   children,
   components: userComponents = {},
+  makeComponentsRequired = false,
 }: PropsWithChildren<{
   components?: Components;
+  makeComponentsRequired?: boolean;
 }>) {
   // Merge user components with lazy defaults
   // User-provided components take precedence, lazy defaults are only used as fallback
@@ -49,7 +51,9 @@ export function FormFieldsProvider({
   }, [userComponents]);
 
   return (
-    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
+    <FormFieldsContext.Provider
+      value={{ components: resolvedComponents, makeComponentsRequired }}
+    >
       <Suspense
         fallback={
           <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
@@ -73,6 +77,7 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
   credentials,
+  makeComponentsRequired = false,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   const remoteApiClient = useRef(
     createClient(auth, { proxy, environment, credentials }),
@@ -87,7 +92,10 @@ export function RemoteFlows({
         client={remoteApiClient}
       >
         <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider components={components}>
+          <FormFieldsProvider
+            components={components}
+            makeComponentsRequired={makeComponentsRequired}
+          >
             <RemoteFlowContextWrapper
               environment={environment}
               debug={debug}
