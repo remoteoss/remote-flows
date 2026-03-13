@@ -63,7 +63,7 @@ const mockRender = vi.fn(
           onError={mockError}
           onSubmit={mockSubmit}
           render={({ employmentStatus }) =>
-            employmentStatus === 'created_awaiting_reserve'
+            employmentStatus === 'create_reserve'
               ? 'Create Reserve'
               : 'Invite Contractor'
           }
@@ -307,7 +307,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
           onError={mockError}
           onSubmit={mockSubmit}
           render={({ employmentStatus }) =>
-            employmentStatus === 'created_awaiting_reserve'
+            employmentStatus === 'create_reserve'
               ? 'Create Reserve'
               : 'Invite Contractor'
           }

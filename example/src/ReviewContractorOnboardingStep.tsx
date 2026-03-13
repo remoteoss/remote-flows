@@ -157,7 +157,7 @@ export const ReviewContractorOnboardingStep = ({
         <OnboardingInvite
           className='submit-button'
           render={({ employmentStatus }) => {
-            return employmentStatus === 'created_awaiting_reserve'
+            return employmentStatus === 'create_reserve'
               ? 'Create Reserve'
               : 'Invite Contractor';
           }}
