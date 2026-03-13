@@ -268,6 +268,9 @@ const OnboardingWithProps = ({
           DEU: {
             contract_details: 1,
           },
+          CHN: {
+            contract_details: 2,
+          },
         },
       }}
     />

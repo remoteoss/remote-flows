@@ -226,8 +226,10 @@ export function FieldSetField({
                 return null; // Skip hidden or deprecated fields
               }
 
+              const fieldType = field.type;
+
               // Handle nested fieldsets
-              if (field.inputType === 'fieldset') {
+              if (fieldType === 'fieldset') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -238,7 +240,7 @@ export function FieldSetField({
                 );
               }
 
-              if (field.inputType === 'fieldset-flat') {
+              if (fieldType === 'fieldset-flat') {
                 return (
                   <FieldSetField
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
@@ -249,9 +251,9 @@ export function FieldSetField({
                   />
                 );
               }
-              // We need to do the check after checking field.inputType === 'fieldset' or field.inputType === 'fieldset-flat'
+              // We need to do the check after checking (field.type || field.inputType) === 'fieldset' or (field.type || field.inputType) === 'fieldset-flat'
               // circular dependency most likely
-              let FieldComponent = baseFields[field.inputType as BaseTypes];
+              let FieldComponent = baseFields[fieldType as BaseTypes];
 
               if (field.Component) {
                 const { Component } = field as {
@@ -282,13 +284,11 @@ export function FieldSetField({
 
               if (!FieldComponent) {
                 return (
-                  <p className='error'>
-                    Field type {field.inputType as string} not supported
-                  </p>
+                  <p className='error'>Field type {fieldType} not supported</p>
                 );
               }
 
-              if (field.inputType === 'select' && field.multiple) {
+              if (fieldType === 'select' && field.multiple) {
                 FieldComponent = baseFields['multi-select'];
               }
 
@@ -299,9 +299,7 @@ export function FieldSetField({
                   <FieldComponent
                     {...field}
                     name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    component={
-                      components?.[field.inputType as keyof Components]
-                    }
+                    component={components?.[fieldType as keyof Components]}
                   />
                   {field.statement ? (
                     <Statement
