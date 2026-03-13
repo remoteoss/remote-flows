@@ -106,6 +106,7 @@ describe('Custom JSF Component with setValue', () => {
           label: 'Payment Information',
           description: 'Payment details',
           inputType: 'fieldset' as const,
+          type: 'fieldset' as const,
           fields: [
             {
               name: 'payment_type',
@@ -116,6 +117,7 @@ describe('Custom JSF Component with setValue', () => {
                 { value: 'weekly', label: 'Weekly' },
               ],
               inputType: 'text' as const,
+              type: 'text' as const,
             },
           ],
           isFlatFieldset: false,
@@ -261,6 +263,7 @@ describe('Custom JSF Component with setValue', () => {
           label: 'Payment Information',
           description: 'Payment details',
           inputType: 'fieldset' as const,
+          type: 'fieldset' as const,
           fields: [
             {
               name: 'payment_type',
@@ -271,6 +274,7 @@ describe('Custom JSF Component with setValue', () => {
                 { value: 'weekly', label: 'Weekly' },
               ],
               inputType: 'text' as const,
+              type: 'text' as const,
               statement: {
                 title: 'Fieldset Statement Title',
                 description: 'This statement is inside a fieldset.',
@@ -325,6 +329,7 @@ describe('Custom JSF Component with setValue', () => {
           label: 'Payment Information',
           description: 'Payment details',
           inputType: 'fieldset' as const,
+          type: 'fieldset' as const,
           fields: [
             {
               name: 'payment_type',
@@ -335,6 +340,7 @@ describe('Custom JSF Component with setValue', () => {
                 { value: 'weekly', label: 'Weekly' },
               ],
               inputType: 'text' as const,
+              type: 'text' as const,
               extra: <ExtraContent />,
             },
           ],
