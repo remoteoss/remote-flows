@@ -156,7 +156,6 @@ export const ReviewContractorOnboardingStep = ({
         </BackButton>
         <OnboardingInvite
           className='submit-button'
-          disabled={!onboardingBag.canInvite}
           render={() => {
             return 'Invite Contractor';
           }}
