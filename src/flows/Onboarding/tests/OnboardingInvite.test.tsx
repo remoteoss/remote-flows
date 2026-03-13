@@ -630,8 +630,7 @@ describe('OnboardingInvite', () => {
     });
   });
 
-  // TODO: unskip this test once the onboarding reserves are enabled
-  it.skip('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
+  it('should render "Create Reserve" button when onboardingReservesStatus is deposit_required', async () => {
     let onboardingBagRef: OnboardingRenderProps['onboardingBag'] | null = null;
 
     const testRender = ({
@@ -685,6 +684,9 @@ describe('OnboardingInvite', () => {
         {...defaultProps}
         skipSteps={['select_country']}
         render={testRender}
+        options={{
+          features: ['onboarding_reserves'],
+        }}
       />,
       { wrapper: TestProviders },
     );

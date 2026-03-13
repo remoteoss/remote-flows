@@ -49,6 +49,8 @@ export type OnboardingRenderProps = {
   };
 };
 
+type OnboardingFeatures = 'onboarding_reserves';
+
 export type OnboardingFlowProps = {
   /**
    * The country code to use for the onboarding.
@@ -102,6 +104,12 @@ export type OnboardingFlowProps = {
         contract_details?: number | 'latest';
       };
     };
+    /**
+     * The features to use for the onboarding.
+     * This is used to enable or disable features for the onboarding.
+     * Currently only supports enabling the onboarding reserves feature.
+     */
+    features?: OnboardingFeatures[];
   };
   /**
    * The render prop function with the params passed by the useOnboarding hook and the components available to use for this flow
