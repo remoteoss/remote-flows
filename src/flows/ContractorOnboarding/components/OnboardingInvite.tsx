@@ -77,12 +77,7 @@ export function OnboardingInvite({
           contractorOnboardingBag.refetchEmployment();
           return;
         }
-      }
-
-      if (
-        contractorOnboardingBag.employmentId &&
-        !contractorOnboardingBag.isEmploymentReadOnly
-      ) {
+      } else if (contractorOnboardingBag.employmentId) {
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
