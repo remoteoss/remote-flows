@@ -283,6 +283,86 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       expect(button).toBeInTheDocument();
       expect(button).toHaveTextContent('Default Button');
     });
+
+    it('should disable button when employment status is "invited"', async () => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                status: 'invited',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            data-testid='onboarding-invite'
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Invite Contractor'}
+          />
+        );
+      });
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      const button = await screen.findByTestId('onboarding-invite');
+
+      await waitFor(() => {
+        expect(button).toBeDisabled();
+      });
+    });
+
+    it('should disable button when employment status is "created_awaiting_reserve"', async () => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                status: 'created_awaiting_reserve',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(({ components }) => {
+        const { OnboardingInvite } = components;
+        return (
+          <OnboardingInvite
+            data-testid='onboarding-invite'
+            onSuccess={mockSuccess}
+            onError={mockError}
+            onSubmit={mockSubmit}
+            render={() => 'Invite Contractor'}
+          />
+        );
+      });
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      const button = await screen.findByTestId('onboarding-invite');
+
+      await waitFor(() => {
+        expect(button).toBeDisabled();
+      });
+    });
   });
 
   describe('render prop functionality', () => {
