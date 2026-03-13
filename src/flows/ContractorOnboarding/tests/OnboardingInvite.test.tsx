@@ -271,6 +271,10 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     // Verify initial employment fetch happened
     expect(getEmploymentSpy).toHaveBeenCalledTimes(1);
 
+    await waitFor(() => {
+      expect(screen.getByText(/Invite Contractor/i)).toBeInTheDocument();
+    });
+
     // Find and click the button
     const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
@@ -777,16 +781,12 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         wrapper: customWrapper,
       });
 
+      const customButton = await screen.findByTestId('custom-button');
+
       await waitFor(() => {
-        expect(MockCustomButton).toHaveBeenCalledWith(
-          expect.objectContaining({
-            disabled: false,
-          }),
-          expect.anything(),
-        );
+        expect(customButton).not.toBeDisabled();
       });
 
-      const customButton = await screen.findByTestId('custom-button');
       fireEvent.click(customButton);
 
       await waitFor(() => {
