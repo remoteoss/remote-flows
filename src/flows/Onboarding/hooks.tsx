@@ -214,7 +214,9 @@ export const useOnboarding = ({
   } = useCompany(companyId);
 
   const isOnboardingReservesEnabled =
-    options?.features?.includes('onboarding_reserves') || false;
+    (options?.features?.includes('onboarding_reserves') &&
+      stepState.currentStep.name === 'review') ||
+    false;
 
   const { data: onboardingReservesStatus } =
     useEmploymentOnboardingReservesStatus(
