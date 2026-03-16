@@ -781,6 +781,15 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         wrapper: customWrapper,
       });
 
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            disabled: false,
+          }),
+          expect.anything(),
+        );
+      });
+
       const customButton = await screen.findByTestId('custom-button');
 
       await waitFor(() => {
