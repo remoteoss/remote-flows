@@ -30,7 +30,10 @@ import {
   useContractorOnboardingDetailsSchemaWithCurrencies,
   CONTRACT_PRODUCT_TITLES,
 } from '@/src/flows/ContractorOnboarding/api';
-import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
+import {
+  ContractorOnboardingFlowProps,
+  ContractorOnboardingHookOptions,
+} from '@/src/flows/ContractorOnboarding/types';
 import {
   buildSteps,
   calculateProvisionalStartDateDescription,
@@ -69,8 +72,10 @@ import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
-  'render'
->;
+  'render' | 'options'
+> & {
+  options: ContractorOnboardingHookOptions;
+};
 
 const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,

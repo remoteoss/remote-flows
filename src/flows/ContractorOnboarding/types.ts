@@ -53,6 +53,29 @@ export type ContractorOnboardingRenderProps = {
   };
 };
 
+type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
+  /**
+   * Products to exclude from the available options in pricing_plan step.
+   * By default, all products are shown. Use this to hide specific products.
+   * @example excludeProducts: ['eor'] // Hide EOR option
+   * @example excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
+   */
+  excludeProducts?: ProductType[];
+  /**
+   * The JSON schema modification to use for the onboarding.
+   * This is used to modify the JSON schema for the onboarding.
+   * @see {@link JSFModify}
+   */
+  jsfModify?: {
+    select_country?: JSFModify;
+    basic_information?: JSFModify;
+    contract_details?: JSFModify;
+    contract_preview?: JSFModify;
+    eligibility_questionnaire?: JSFModify;
+    pricing_plan?: JSFModify;
+  };
+};
+
 export type ContractorOnboardingFlowProps = {
   /**
    * The country code to use for the onboarding.
@@ -85,28 +108,7 @@ export type ContractorOnboardingFlowProps = {
   /**
    * The options for the contractor onboarding flow.
    */
-  options?: Omit<FlowOptions, 'jsfModify'> & {
-    /**
-     * Products to exclude from the available options in pricing_plan step.
-     * By default, all products are shown. Use this to hide specific products.
-     * @example excludeProducts: ['eor'] // Hide EOR option
-     * @example excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
-     */
-    excludeProducts?: ProductType[];
-    jsfModify?: {
-      select_country?: JSFModify;
-      basic_information?: JSFModify;
-      contract_details?: JSFModify;
-      contract_preview?: JSFModify;
-      eligibility_questionnaire?: JSFModify;
-      pricing_plan?: JSFModify;
-    };
-    /**
-     * Callback invoked when the contract review is completed.
-     * Use this to sync external form state if implementing custom forms.
-     */
-    onContractReviewed?: () => void;
-  };
+  options?: ContractorOnboardingFlowOptions;
 
   /**
    * Initial values to pre-populate the form fields.
@@ -115,6 +117,15 @@ export type ContractorOnboardingFlowProps = {
    */
   initialValues?: Record<string, unknown>;
 };
+
+export type ContractorOnboardingHookOptions =
+  ContractorOnboardingFlowOptions & {
+    /**
+     * Callback invoked when the contract review is completed.
+     * Use this to sync external form state if implementing custom forms.
+     */
+    onContractReviewed?: () => void;
+  };
 
 export type PricingPlanFormPayload = {
   subscription: string;
