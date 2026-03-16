@@ -213,9 +213,10 @@ export const useOnboarding = ({
     refetch: refetchCompany,
   } = useCompany(companyId);
 
-  // TODO: remove this once the onboarding reserves are enabled, change this to stepState.currentStep.name === 'review'
-  // TODO: Go to src/flows/Onboarding/tests/OnboardingInvite.test.tsx and unskip test should render "Create Reserve" button when onboardingReservesStatus is deposit_required
-  const isOnboardingReservesEnabled = false;
+  const isOnboardingReservesEnabled =
+    (options?.features?.includes('onboarding_reserves') &&
+      stepState.currentStep.name === 'review') ||
+    false;
 
   const { data: onboardingReservesStatus } =
     useEmploymentOnboardingReservesStatus(

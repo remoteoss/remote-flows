@@ -264,6 +264,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       options={{
+        features: ['onboarding_reserves'],
         jsonSchemaVersionByCountry: {
           DEU: {
             contract_details: 1,
