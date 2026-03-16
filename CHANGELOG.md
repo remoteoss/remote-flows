@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.22.0
+
+### Minor Changes
+
+- change how we render conditional fields (#793) [#793](https://github.com/remoteoss/remote-flows/pull/793)
+
 ## 1.21.0
 
 ### Minor Changes
