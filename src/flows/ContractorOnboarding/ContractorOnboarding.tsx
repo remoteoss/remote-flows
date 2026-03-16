@@ -33,13 +33,20 @@ export const ContractorOnboardingFlow = ({
   const formRef = useMemo(() => ({ setValue: setValueRef }), []);
 
   const contractorOnboardingBag = useContractorOnboarding({
-    options,
+    options: {
+      ...options,
+      onContractReviewed: () => {
+        // Sync with internal form when contract is marked as reviewed
+        if (setValueRef.current) {
+          setValueRef.current('review_completed', true);
+        }
+      },
+    },
     employmentId,
     externalId,
     countryCode,
     skipSteps,
     initialValues,
-    formRef,
   });
 
   return (
