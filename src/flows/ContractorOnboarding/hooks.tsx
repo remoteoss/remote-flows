@@ -97,13 +97,13 @@ export const useContractorOnboarding = ({
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
   const excludeProducts = options?.excludeProducts || [];
-  
+
   const onContractReviewedRef = useRef(options?.onContractReviewed);
 
   useEffect(() => {
     onContractReviewedRef.current = options?.onContractReviewed;
   }, [options?.onContractReviewed]);
-  
+
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
