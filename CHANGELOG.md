@@ -1,5 +1,20 @@
 # @remoteoss/remote-flows
 
+## 1.21.0
+
+### Minor Changes
+
+#### Features
+
+- add magic link demo (#792) [#792](https://github.com/remoteoss/remote-flows/pull/792)
+- add save draft button functionality (#791) [#791](https://github.com/remoteoss/remote-flows/pull/791)
+- enable onboarding reserves (#795) [#795](https://github.com/remoteoss/remote-flows/pull/795)
+- move OnboardingInvite canInvite disabled flag inside the component (#794) [#794](https://github.com/remoteoss/remote-flows/pull/794)
+
+#### Chores
+
+- remove accordion dependency (#782) [#782](https://github.com/remoteoss/remote-flows/pull/782)
+
 ## 1.20.0
 
 ### Minor Changes
