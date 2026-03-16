@@ -291,6 +291,7 @@ describe('FieldSetField', () => {
             label: 'Test',
             description: '',
             inputType: 'unknown-type' as $TSFixMe,
+            type: 'unknown-type' as $TSFixMe,
           } as $TSFixMe,
         ],
       });
