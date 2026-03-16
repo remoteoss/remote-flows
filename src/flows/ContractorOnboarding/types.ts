@@ -17,6 +17,8 @@ import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/component
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
 import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
+import { RefObject } from 'react';
+import { UseFormSetValue } from 'react-hook-form';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -109,6 +111,14 @@ export type ContractorOnboardingFlowProps = {
    * Server data will override these values. This happens when you pass employmentId and the server returns an employment object.
    */
   initialValues?: Record<string, unknown>;
+
+  /**
+   * Internal ref to form's setValue method for syncing form state
+   * @internal - This is managed internally by the ContractorOnboardingFlow component
+   */
+  formRef?: {
+    setValue: RefObject<UseFormSetValue<Record<string, unknown>> | undefined>;
+  };
 };
 
 export type PricingPlanFormPayload = {

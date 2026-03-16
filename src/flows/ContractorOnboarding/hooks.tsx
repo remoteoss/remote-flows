@@ -95,6 +95,7 @@ export const useContractorOnboarding = ({
   skipSteps,
   options,
   initialValues: onboardingInitialValues,
+  formRef,
 }: useContractorOnboardingProps) => {
   const excludeProducts = options?.excludeProducts || [];
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
@@ -1153,9 +1154,11 @@ export const useContractorOnboarding = ({
   }
 
   const markContractAsReviewed = () => {
-    setFieldValues({
-      review_completed: true,
-    });
+    // Sync with the form if it's available
+    // avoid setFieldValues as it doesn't update react-hook-form's internal state
+    if (formRef?.setValue?.current) {
+      formRef.setValue.current('review_completed', true);
+    }
   };
 
   const handleNextStep = () => {
