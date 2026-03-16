@@ -31,7 +31,7 @@ export type OnboardingInviteProps = Omit<
     fieldErrors: FieldError[];
   }) => void;
   onSubmit?: () => void | Promise<void>;
-  render: (props: { status: 'invited' | 'create_reserve' }) => ReactNode;
+  render: (props: { status: 'invite' | 'create_reserve' }) => ReactNode;
 } & Record<string, unknown>;
 
 export function OnboardingInvite({
@@ -119,7 +119,7 @@ export function OnboardingInvite({
       }}
     >
       {render({
-        status: isReserveFlow ? 'create_reserve' : 'invited',
+        status: isReserveFlow ? 'create_reserve' : 'invite',
       })}
     </CustomButton>
   );

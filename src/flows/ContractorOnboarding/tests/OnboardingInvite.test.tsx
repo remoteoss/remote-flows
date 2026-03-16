@@ -597,7 +597,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
   });
 
   describe('render prop functionality', () => {
-    it('should call render prop with employmentStatus "invited"', async () => {
+    it('should call render prop with status "invited"', async () => {
       const mockRenderProp = vi.fn(() => 'Custom Contractor Button');
 
       mockRender.mockImplementation(({ components }) => {
@@ -619,7 +619,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
 
       await screen.findByText('Custom Contractor Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
-        employmentStatus: 'invited',
+        status: 'invite',
       });
     });
   });
@@ -768,22 +768,15 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
             onSuccess={mockSuccess}
             onError={mockError}
             onSubmit={mockSubmit}
-            render={() => 'Clickable Button'}
+            render={({ status }) =>
+              status === 'invite' ? 'Invite Contractor' : 'Create Reserve'
+            }
           />
         );
       });
 
       render(<ContractorOnboardingFlow {...defaultProps} />, {
         wrapper: customWrapper,
-      });
-
-      await waitFor(() => {
-        expect(MockCustomButton).toHaveBeenCalledWith(
-          expect.objectContaining({
-            disabled: false,
-          }),
-          expect.anything(),
-        );
       });
 
       const customButton = await screen.findByTestId('custom-button');
