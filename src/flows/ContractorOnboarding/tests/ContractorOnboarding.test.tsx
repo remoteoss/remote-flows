@@ -2901,12 +2901,6 @@ describe('ContractorOnboardingFlow', () => {
     it('should keep signature field visible when typing after marking contract as reviewed', async () => {
       const employmentId = generateUniqueEmploymentId();
 
-      server.use(
-        http.get(`*/v1/employments/${employmentId}`, () => {
-          return HttpResponse.json(mockContractorEmploymentResponse);
-        }),
-      );
-
       mockRender.mockImplementation(
         createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
