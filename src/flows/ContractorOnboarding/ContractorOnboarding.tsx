@@ -41,6 +41,7 @@ export const ContractorOnboardingFlow = ({
     initialValues,
     formRef,
   });
+
   return (
     <ContractorOnboardingContext.Provider
       value={{ contractorOnboardingBag, formId, formRef }}

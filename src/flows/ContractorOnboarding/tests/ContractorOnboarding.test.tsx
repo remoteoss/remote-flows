@@ -330,6 +330,11 @@ describe('ContractorOnboardingFlow', () => {
                 reviewCompleted ? 'Continue' : 'Review'
               }
             />
+            <button
+              onClick={() => contractorOnboardingBag.markContractAsReviewed()}
+            >
+              Mark as reviewed
+            </button>
           </>
         );
 
@@ -2891,6 +2896,91 @@ describe('ContractorOnboardingFlow', () => {
           'false',
         );
       });
+    });
+
+    it('should keep signature field visible when typing after marking contract as reviewed', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json(mockContractorEmploymentResponse);
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      // Navigate through all previous steps
+      await fillBasicInformation();
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription();
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Now at contract preview step
+      await screen.findByText(/Step: Contract Preview/i);
+      await screen.findByText(/Sign contractor services agreement/i);
+
+      // Wait for form to be fully mounted
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /Mark as reviewed/i }),
+        ).toBeInTheDocument();
+      });
+
+      // Click the "Mark as reviewed" button
+      const markAsReviewedButton = screen.getByText(/Mark as reviewed/i);
+      fireEvent.click(markAsReviewedButton);
+
+      // Wait for signature field to appear
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
+      });
+
+      // Get the signature field
+      const signatureField = screen.getByLabelText(/Enter full name/i);
+
+      // Type character by character to test that field doesn't disappear
+      fireEvent.change(signatureField, { target: { value: 'J' } });
+
+      // Field should still be visible after first character
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
+      });
+      expect(signatureField).toHaveValue('J');
+
+      // Continue typing more characters
+      fireEvent.change(signatureField, { target: { value: 'Jo' } });
+      expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
+      expect(signatureField).toHaveValue('Jo');
+
+      fireEvent.change(signatureField, { target: { value: 'John Doe' } });
+
+      // Final check - field is still visible and has the full value
+      expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
+      expect(signatureField).toHaveValue('John Doe');
     });
   });
 });
