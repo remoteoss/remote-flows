@@ -4,8 +4,13 @@
 
 ### Minor Changes
 
+#### Features
+
 - create reserves when COR is selected (#760) [#760](https://github.com/remoteoss/remote-flows/pull/760)
-- fix mark review (#796) [#796](https://github.com/remoteoss/remote-flows/pull/796)
+
+#### Fixes
+
+- fix mark review button making input to hide after first character (#796) [#796](https://github.com/remoteoss/remote-flows/pull/796)
 
 ## 1.21.1
 
