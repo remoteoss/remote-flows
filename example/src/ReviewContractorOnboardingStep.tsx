@@ -156,8 +156,10 @@ export const ReviewContractorOnboardingStep = ({
         </BackButton>
         <OnboardingInvite
           className='submit-button'
-          render={() => {
-            return 'Invite Contractor';
+          render={({ status }) => {
+            return status === 'create_reserve'
+              ? 'Create Reserve'
+              : 'Invite Contractor';
           }}
           onSuccess={() => {
             console.log('Contractor invited');

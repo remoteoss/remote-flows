@@ -1,9 +1,19 @@
+import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import {
+  contractDocumentsResponse,
+  fileResponseWithIR35,
+  filesResponseWithIR35,
+  filesResponseWithoutIR35,
+  mockContractDocumentCreatedResponse,
+  mockContractDocumentPreviewResponse,
+  mockContractDocumentSignedResponse,
   mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import { ContractorOnboardingRenderProps } from '@/src/flows/ContractorOnboarding/types';
+import { employmentUpdatedResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import {
@@ -15,6 +25,16 @@ import {
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
+
+const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
+  [0]: 'Select Country',
+  [1]: 'Basic Information',
+  [2]: 'Pricing Plan',
+  [3]: 'Eligibility Questionnaire',
+  [4]: 'Contract Details',
+  [5]: 'Contract Preview',
+  [6]: 'Review',
+};
 
 const mockSuccess = vi.fn();
 const mockError = vi.fn();
@@ -30,28 +50,21 @@ const mockRender = vi.fn(
 
     const { OnboardingInvite } = components;
 
-    const steps: Record<number, string> = {
-      [0]: 'Select Country',
-      [1]: 'Basic Information',
-      [2]: 'Contract Details',
-      [3]: 'Pricing Plan',
-      [4]: 'Contract Preview',
-      [5]: 'Review',
-    };
-
     if (contractorOnboardingBag.isLoading) {
       return <div data-testid='spinner'>Loading...</div>;
     }
 
     return (
       <>
-        <h1>Step: {steps[currentStepIndex]}</h1>
+        <h1>Step: {CONTRACTOR_ONBOARDING_STEPS[currentStepIndex]}</h1>
         <OnboardingInvite
           data-testid='onboarding-invite'
           onSuccess={mockSuccess}
           onError={mockError}
           onSubmit={mockSubmit}
-          render={() => 'Invite Contractor'}
+          render={({ status }) =>
+            status === 'create_reserve' ? 'Create Reserve' : 'Invite Contractor'
+          }
         />
       </>
     );
@@ -72,18 +85,72 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     queryClient.clear();
 
     server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
+
+        if (!employmentId) {
+          return HttpResponse.json(
+            { error: 'Employment not found' },
+            { status: 404 },
+          );
+        }
+
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              id: employmentId,
+            },
+          },
+        });
+      }),
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(mockContractorBasicInformationSchema);
+      }),
       http.get('*/v1/countries/*/contractor-contract-details*', () => {
         return HttpResponse.json(mockContractorContractDetailsSchema);
       }),
-
-      http.get('*/v1/employments/*', () => {
+      http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
+        return HttpResponse.json(mockContractDocumentPreviewResponse);
+      }),
+      http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),
+      http.post('*/v1/contractors/employments/*/contract-documents', () => {
+        return HttpResponse.json(mockContractDocumentCreatedResponse);
+      }),
+      http.post(
+        '*/v1/contractors/employments/*/contract-documents/*/sign',
+        () => {
+          return HttpResponse.json(mockContractDocumentSignedResponse);
+        },
+      ),
+      http.post('*/v1/employments/*/invite', () => {
+        return HttpResponse.json(mockBaseResponse);
+      }),
+      http.patch('*/v1/employments/*', async () => {
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+      // Mock the files list endpoint
+      http.get(`*/v1/employments/*/files`, ({ request }) => {
+        const url = new URL(request.url);
+        const subType = url.searchParams.get('sub_type');
 
-      http.post('*/v1/employments/:employmentId/invite', () => {
-        return HttpResponse.json({
-          data: { status: 'ok' },
-        });
+        if (subType === 'ir_35') {
+          return HttpResponse.json(filesResponseWithIR35);
+        }
+        return HttpResponse.json(filesResponseWithoutIR35);
+      }),
+
+      // Mock the individual file fetch endpoint
+      http.get(`*/v1/files/*`, () => {
+        return HttpResponse.json(fileResponseWithIR35);
+      }),
+
+      http.get('*/v1/employments/*/contract-documents', () => {
+        return HttpResponse.json(contractDocumentsResponse);
       }),
     );
   });
@@ -105,6 +172,8 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       wrapper: TestProviders,
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/);
 
     const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
@@ -134,6 +203,8 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
+    await screen.findByText(/Step: Select Country/);
+
     const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
 
@@ -160,6 +231,8 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       wrapper: TestProviders,
     });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/);
 
     const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
@@ -196,6 +269,10 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     // Verify initial employment fetch happened
     expect(getEmploymentSpy).toHaveBeenCalledTimes(1);
 
+    await waitFor(() => {
+      expect(screen.getByText(/Invite Contractor/i)).toBeInTheDocument();
+    });
+
     // Find and click the button
     const button = screen.getByText(/Invite Contractor/i);
     fireEvent.click(button);
@@ -211,6 +288,66 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     // Verify employment was fetched again (refetch happened)
     await waitFor(() => {
       expect(getEmploymentSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('should call createReserveInvoice, refetch employment, and change button label when COR is selected', async () => {
+    const refetchEmploymentMock = vi.fn();
+    const reserveInvoiceSpy = vi.fn();
+
+    mockRender.mockImplementation(({ contractorOnboardingBag, components }) => {
+      contractorOnboardingBag.refetchEmployment = refetchEmploymentMock;
+      const { OnboardingInvite } = components;
+      return (
+        <OnboardingInvite
+          data-testid='onboarding-invite'
+          onSuccess={mockSuccess}
+          onError={mockError}
+          onSubmit={mockSubmit}
+          render={({ status }) =>
+            status === 'create_reserve' ? 'Create Reserve' : 'Invite Contractor'
+          }
+        />
+      );
+    });
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              contractor_type: 'cor',
+              status: 'created',
+            },
+          },
+        });
+      }),
+      http.post('*/v1/risk-reserve', () => {
+        reserveInvoiceSpy();
+        return HttpResponse.json({
+          data: { status: 'ok' },
+        });
+      }),
+    );
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
+    // Button should show "Create Reserve" for COR
+    const button = await screen.findByText(/Create Reserve/i);
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
+    await waitFor(() => {
+      // Should call reserve invoice endpoint
+      expect(reserveInvoiceSpy).toHaveBeenCalled();
+      // Should refetch employment
+      expect(refetchEmploymentMock).toHaveBeenCalled();
+      // Should call onSuccess with created_awaiting_reserve status
+      expect(mockSuccess).toHaveBeenCalledWith({
+        data: { data: { status: 'ok' } },
+        employmentStatus: 'created_awaiting_reserve',
+      });
     });
   });
 
@@ -250,6 +387,8 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         wrapper: TestProviders,
       });
 
+      await screen.findByText(/Step: Select Country/);
+
       const button = await screen.findByText(/Invite Contractor/i);
       expect(button).toBeInTheDocument();
 
@@ -259,6 +398,98 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       await waitFor(() => {
         expect(button).toBeDisabled();
       });
+    });
+
+    it('should disable button when createReserveInvoiceMutation is pending', async () => {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) => {
+          const employmentId = params?.id;
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                contractor_type: 'cor',
+              },
+            },
+          });
+        }),
+        http.post('*/v1/risk-reserve', () => {
+          // Return a delayed response to keep the mutation pending
+          return new Promise(() => {}); // Never resolves to keep pending
+        }),
+      );
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      await screen.findByText(/Step: Select Country/);
+
+      const button = await screen.findByText(/Create Reserve/i);
+      expect(button).toBeInTheDocument();
+
+      fireEvent.click(button);
+
+      // Wait a bit and check if button becomes disabled
+      await waitFor(() => {
+        expect(button).toBeDisabled();
+      });
+    });
+
+    it('should disable button when employment status is "invited"', async () => {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) => {
+          const employmentId = params?.id;
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                status: 'invited',
+                id: employmentId,
+              },
+            },
+          });
+        }),
+      );
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      const button = await screen.findByText(/Invite Contractor/i);
+      expect(button).toBeDisabled();
+    });
+
+    it('should disable button when employment status is "created_awaiting_reserve"', async () => {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: params.id,
+                contractor_type: 'cor',
+                status: 'created_awaiting_reserve',
+              },
+            },
+          });
+        }),
+      );
+
+      render(<ContractorOnboardingFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+
+      await screen.findByText(/Step: Review/i);
+      const button = await screen.findByText(/Invite Contractor/i);
+      expect(button).toBeDisabled();
     });
 
     it('should use default Button when no custom button provided', async () => {
@@ -366,7 +597,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
   });
 
   describe('render prop functionality', () => {
-    it('should call render prop with employmentStatus "invited"', async () => {
+    it('should call render prop with status "invited"', async () => {
       const mockRenderProp = vi.fn(() => 'Custom Contractor Button');
 
       mockRender.mockImplementation(({ components }) => {
@@ -388,7 +619,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
 
       await screen.findByText('Custom Contractor Button');
       expect(mockRenderProp).toHaveBeenCalledWith({
-        employmentStatus: 'invited',
+        status: 'invite',
       });
     });
   });
@@ -537,7 +768,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
             onSuccess={mockSuccess}
             onError={mockError}
             onSubmit={mockSubmit}
-            render={() => 'Clickable Button'}
+            render={({ status }) =>
+              status === 'invite' ? 'Invite Contractor' : 'Create Reserve'
+            }
           />
         );
       });
@@ -546,16 +779,12 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
         wrapper: customWrapper,
       });
 
+      const customButton = await screen.findByTestId('custom-button');
+
       await waitFor(() => {
-        expect(MockCustomButton).toHaveBeenCalledWith(
-          expect.objectContaining({
-            disabled: false,
-          }),
-          expect.anything(),
-        );
+        expect(customButton).not.toBeDisabled();
       });
 
-      const customButton = await screen.findByTestId('custom-button');
       fireEvent.click(customButton);
 
       await waitFor(() => {

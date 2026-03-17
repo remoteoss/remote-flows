@@ -47,6 +47,7 @@ import {
   mockCMOnlyResponse,
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
+import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -383,6 +384,9 @@ describe('ContractorOnboardingFlow', () => {
     mockRender.mockReset();
 
     server.use(
+      http.get('*/v1/countries/*/employment_basic_information*', () => {
+        return HttpResponse.json(mockContractorBasicInformationSchema);
+      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         const employmentId = params?.id;
 
@@ -525,6 +529,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -571,6 +576,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     await waitFor(() => {
@@ -686,6 +693,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -743,6 +751,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -1036,6 +1045,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1209,6 +1220,8 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -1260,6 +1273,7 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
     await fillContractorSubscription();
 
@@ -1815,6 +1829,7 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       await fillContractorSubscription('Contractor of Record');
 
@@ -1861,6 +1876,8 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       await fillContractorSubscription('Contractor of Record');
 

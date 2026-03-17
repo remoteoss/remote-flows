@@ -1,6 +1,9 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import omit from 'lodash.omit';
-import { useEmploymentInvite } from '@/src/flows/Onboarding/api';
+import {
+  useCreateReserveInvoice,
+  useEmploymentInvite,
+} from '@/src/flows/Onboarding/api';
 import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useFormFields } from '@/src/context';
@@ -16,7 +19,7 @@ export type OnboardingInviteProps = Omit<
     employmentStatus,
   }: {
     data: SuccessResponse;
-    employmentStatus: 'invited';
+    employmentStatus: 'invited' | 'created_awaiting_reserve';
   }) => void | Promise<void>;
   onError?: ({
     error,
@@ -28,7 +31,7 @@ export type OnboardingInviteProps = Omit<
     fieldErrors: FieldError[];
   }) => void;
   onSubmit?: () => void | Promise<void>;
-  render: (props: { employmentStatus: 'invited' }) => ReactNode;
+  render: (props: { status: 'invite' | 'create_reserve' }) => ReactNode;
 } & Record<string, unknown>;
 
 export function OnboardingInvite({
@@ -41,20 +44,42 @@ export function OnboardingInvite({
   const { components } = useFormFields();
   const { contractorOnboardingBag } = useContractorOnboardingContext();
   const employmentInviteMutation = useEmploymentInvite();
+  const createReserveInvoiceMutation = useCreateReserveInvoice();
 
   const { mutateAsyncOrThrow: employmentInviteMutationAsync } =
     mutationToPromise(employmentInviteMutation);
 
+  const { mutateAsyncOrThrow: createReserveInvoiceMutationAsync } =
+    mutationToPromise(createReserveInvoiceMutation);
+
+  const isCOR = contractorOnboardingBag.employment?.contractor_type === 'cor';
+
+  const isReserveFlow = isCOR && !contractorOnboardingBag.isEmploymentReadOnly;
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
-      if (contractorOnboardingBag.employmentId) {
+
+      if (isReserveFlow && contractorOnboardingBag.employmentId) {
+        const response = await createReserveInvoiceMutationAsync({
+          employment_slug: contractorOnboardingBag.employmentId as string,
+        });
+        if (response?.data) {
+          await onSuccess?.({
+            data: response,
+            employmentStatus: 'created_awaiting_reserve',
+          });
+
+          contractorOnboardingBag.refetchEmployment();
+          return;
+        }
+      } else if (contractorOnboardingBag.employmentId) {
         const data = await employmentInviteMutationAsync({
           employment_id: contractorOnboardingBag.employmentId,
         });
         if (data) {
           await onSuccess?.({
-            data: data as SuccessResponse,
+            data: data,
             employmentStatus: 'invited',
           });
           contractorOnboardingBag.refetchEmployment();
@@ -78,11 +103,11 @@ export function OnboardingInvite({
     throw new Error(`Button component not found`);
   }
 
-  const disabled = Boolean(
+  const disabled =
     employmentInviteMutation.isPending ||
-      !contractorOnboardingBag.canInvite ||
-      props.disabled,
-  );
+    createReserveInvoiceMutation.isPending ||
+    !contractorOnboardingBag.canInvite ||
+    props.disabled;
 
   return (
     <CustomButton
@@ -94,7 +119,7 @@ export function OnboardingInvite({
       }}
     >
       {render({
-        employmentStatus: 'invited',
+        status: isReserveFlow ? 'create_reserve' : 'invite',
       })}
     </CustomButton>
   );
