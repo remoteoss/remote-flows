@@ -24,14 +24,6 @@ export const ContractorOnboardingFlow = ({
   initialValues,
   options,
 }: ContractorOnboardingFlowProps) => {
-  const contractorOnboardingBag = useContractorOnboarding({
-    options,
-    employmentId,
-    externalId,
-    countryCode,
-    skipSteps,
-    initialValues,
-  });
   const formId = useId();
   // Store form's setValue method in ref to allow sibling components
   // to update form state directly (e.g., ContractReviewButton setting review_completed)
@@ -39,6 +31,23 @@ export const ContractorOnboardingFlow = ({
     UseFormSetValue<Record<string, unknown>> | undefined
   >(undefined);
   const formRef = useMemo(() => ({ setValue: setValueRef }), []);
+
+  const contractorOnboardingBag = useContractorOnboarding({
+    options: {
+      ...options,
+      onContractReviewed: () => {
+        // Sync with internal form when contract is marked as reviewed
+        if (setValueRef.current) {
+          setValueRef.current('review_completed', true);
+        }
+      },
+    },
+    employmentId,
+    externalId,
+    countryCode,
+    skipSteps,
+    initialValues,
+  });
 
   return (
     <ContractorOnboardingContext.Provider

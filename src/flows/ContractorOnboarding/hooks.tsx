@@ -30,7 +30,10 @@ import {
   useContractorOnboardingDetailsSchemaWithCurrencies,
   CONTRACT_PRODUCT_TITLES,
 } from '@/src/flows/ContractorOnboarding/api';
-import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
+import {
+  ContractorOnboardingFlowProps,
+  ContractorOnboardingHookOptions,
+} from '@/src/flows/ContractorOnboarding/types';
 import {
   buildSteps,
   calculateProvisionalStartDateDescription,
@@ -69,8 +72,10 @@ import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
   ContractorOnboardingFlowProps,
-  'render'
->;
+  'render' | 'options'
+> & {
+  options: ContractorOnboardingHookOptions;
+};
 
 const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
@@ -97,6 +102,13 @@ export const useContractorOnboarding = ({
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
   const excludeProducts = options?.excludeProducts || [];
+
+  const onContractReviewedRef = useRef(options?.onContractReviewed);
+
+  useEffect(() => {
+    onContractReviewedRef.current = options?.onContractReviewed;
+  }, [options?.onContractReviewed]);
+
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
@@ -1154,9 +1166,8 @@ export const useContractorOnboarding = ({
   }
 
   const markContractAsReviewed = () => {
-    setFieldValues({
-      review_completed: true,
-    });
+    // Notify parent to sync form state
+    onContractReviewedRef.current?.();
   };
 
   const handleNextStep = () => {

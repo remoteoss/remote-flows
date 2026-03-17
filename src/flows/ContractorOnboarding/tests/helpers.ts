@@ -241,7 +241,7 @@ export async function fillSignature(
     ...values,
   };
 
-  const reviewButton = screen.getByRole('button', { name: /Review/i });
+  const reviewButton = screen.getByRole('button', { name: /^Review$/i });
 
   reviewButton.click();
 
