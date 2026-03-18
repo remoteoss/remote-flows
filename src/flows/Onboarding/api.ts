@@ -32,7 +32,10 @@ import {
   JSONSchemaFormType,
   FlowOptions,
 } from '@/src/flows/types';
-import { getContractDetailsSchemaVersion, getBasicInformationSchemaVersion } from '@/src/flows/Onboarding/utils';
+import {
+  getContractDetailsSchemaVersion,
+  getBasicInformationSchemaVersion,
+} from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 
@@ -278,11 +281,11 @@ export const useCreateEmployment = (
   options?: OnboardingFlowProps['options'],
 ) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = {
+    json_schema_version: getBasicInformationSchemaVersion(options),
+  };
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
-      const jsonSchemaQueryParam = {
-        json_schema_version: getBasicInformationSchemaVersion(options),
-      };
       return postCreateEmployment2({
         client: client as Client,
         headers: {

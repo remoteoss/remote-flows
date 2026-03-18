@@ -51,6 +51,26 @@ export type OnboardingRenderProps = {
 
 type OnboardingFeatures = 'onboarding_reserves';
 
+/**
+ * JSON schema version configuration for a specific country
+ */
+type CountryJsonSchemaVersion = {
+  /**
+   * @deprecated Use `jsonSchemaVersion.employment_basic_information` instead for global configuration.
+   * This country-specific override is no longer recommended.
+   *
+   * The json schema version to use for the basic information step by country.
+   * The default value is 1.
+   */
+  employment_basic_information?: number;
+  /**
+   * The json schema version to use for the contract details step by country.
+   * This is used to override the json schema version for the contract details step by country.
+   * The default value is 1.
+   */
+  contract_details?: number | 'latest';
+};
+
 export type OnboardingFlowProps = {
   /**
    * The country code to use for the onboarding.
@@ -86,7 +106,7 @@ export type OnboardingFlowProps = {
   /**
    * The options to use for the onboarding.
    */
-  options?: Omit<FlowOptions, 'jsfModify'> & {
+  options?: Omit<FlowOptions, 'jsfModify' | 'jsonSchemaVersion'> & {
     jsfModify?: {
       select_country?: JSFModify;
       basic_information?: JSFModify;
@@ -94,15 +114,32 @@ export type OnboardingFlowProps = {
       benefits?: JSFModify;
     };
     /**
+     * The json schema version to use for the onboarding.
+     * These versions apply globally to all countries.
+     * For country-specific overrides (e.g., contract_details), use jsonSchemaVersionByCountry instead.
+     * The default value is 1.
+     */
+    jsonSchemaVersion?: {
+      /**
+       * The json schema version to use for the basic information step.
+       * Applies globally to all countries.
+       * The default value is 1.
+       */
+      employment_basic_information?: number | 'latest';
+      /**
+       * The json schema version to use for the benefit offers step.
+       * This is used to override the json schema version for the benefit offers step.
+       * The default value is 1.
+       */
+      benefit_offers_form_schema?: number | 'latest';
+    };
+    /**
      * The json schema version to use for the onboarding by country.
      * This is used to override the json schema version for the onboarding by country.
-     * the old jsonSchemaVersion is not working well at the moment, don't use it for now.
+     * Current use case is to support contract_details
      */
     jsonSchemaVersionByCountry?: {
-      [countryCode: string]: {
-        employment_basic_information?: number;
-        contract_details?: number | 'latest';
-      };
+      [countryCode: string]: CountryJsonSchemaVersion;
     };
     /**
      * The features to use for the onboarding.
