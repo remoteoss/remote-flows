@@ -32,7 +32,7 @@ import {
   JSONSchemaFormType,
   FlowOptions,
 } from '@/src/flows/types';
-import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
+import { getContractDetailsSchemaVersion, getBasicInformationSchemaVersion } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 
@@ -274,14 +274,15 @@ export const useBenefitOffersSchema = (
  * Use this hook to create an employment
  * @returns
  */
-export const useCreateEmployment = () => {
+export const useCreateEmployment = (
+  options?: OnboardingFlowProps['options'],
+) => {
   const { client } = useClient();
-  // TODO: setting 1 as basic_information only supports v1 for now in the API
-  const jsonSchemaQueryParam = {
-    json_schema_version: 1,
-  };
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
+      const jsonSchemaQueryParam = {
+        json_schema_version: getBasicInformationSchemaVersion(options),
+      };
       return postCreateEmployment2({
         client: client as Client,
         headers: {
@@ -302,8 +303,8 @@ export const useUpdateEmployment = (
 ) => {
   const { client } = useClient();
   const jsonSchemaQueryParams = {
-    // TODO: setting 1 as basic_information only supports v1 for now in the API
-    employment_basic_information_json_schema_version: 1,
+    employment_basic_information_json_schema_version:
+      getBasicInformationSchemaVersion(options),
     contract_details_json_schema_version:
       getContractDetailsSchemaVersion(options, countryCode) || 1,
   };

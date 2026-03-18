@@ -77,3 +77,14 @@ export const getContractDetailsSchemaVersion = (
 
   return requestedVersion;
 };
+
+/**
+ * Gets the basic information schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for basic information or default
+ */
+export const getBasicInformationSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+): number | 'latest' => {
+  return options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION;
+};

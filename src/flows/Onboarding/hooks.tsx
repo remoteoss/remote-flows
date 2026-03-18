@@ -9,6 +9,7 @@ import { useStepState, Step } from '@/src/flows/useStepState';
 import {
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
+  getBasicInformationSchemaVersion,
   reviewStepAllowedEmploymentStatus,
   STEPS,
   STEPS_WITHOUT_SELECT_COUNTRY,
@@ -233,7 +234,7 @@ export const useOnboarding = ({
       },
     });
 
-  const createEmploymentMutation = useCreateEmployment();
+  const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
     options,
@@ -328,7 +329,7 @@ export const useOnboarding = ({
         enabled: isBasicInformationDetailsEnabled,
       },
     },
-    jsonSchemaVersion: 1,
+    jsonSchemaVersion: getBasicInformationSchemaVersion(options),
   });
 
   const annualGrossSalaryField =
