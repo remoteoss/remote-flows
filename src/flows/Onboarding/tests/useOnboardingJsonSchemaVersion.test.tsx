@@ -199,6 +199,73 @@ describe('useOnboarding jsonSchemaVersion', () => {
         });
       });
     });
+
+    it('should pass custom jsonSchemaVersion to basic information form', async () => {
+      const options = {
+        jsonSchemaVersion: {
+          employment_basic_information: 2,
+        },
+      };
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'PRT',
+            employmentId: 'test-employment-id',
+            skipSteps: ['select_country'],
+            options,
+          }),
+        { wrapper: TestProviders },
+      );
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+      await waitFor(() => {
+        expect(mockGetShowFormCountry).toHaveBeenCalled();
+      });
+      const call = mockGetShowFormCountry.mock.calls[0][0];
+      expect(call.path).toEqual({
+        country_code: 'PRT',
+        form: 'employment_basic_information',
+      });
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        json_schema_version: 2,
+      });
+    });
+
+    it('should pass custom benefit_offers_form_schema version to getShowSchema', async () => {
+      const options = {
+        jsonSchemaVersion: {
+          benefit_offers_form_schema: 2,
+        },
+      };
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'PRT',
+            employmentId: 'test-employment-id',
+            skipSteps: ['select_country'],
+            options,
+          }),
+        { wrapper: TestProviders },
+      );
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+      // Navigate to benefits step
+      act(() => {
+        result.current.goTo('benefits');
+      });
+      await waitFor(() => {
+        expect(mockGetShowSchema).toHaveBeenCalled();
+      });
+      const call = mockGetShowSchema.mock.calls[0][0];
+      expect(call.query).toEqual({
+        json_schema_version: 2,
+      });
+    });
   });
 
   describe('useUpdateEmployment calls', () => {
