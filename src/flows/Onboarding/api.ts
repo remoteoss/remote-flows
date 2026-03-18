@@ -35,6 +35,7 @@ import {
 import {
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
+  getBenefitOffersSchemaVersion,
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
@@ -235,14 +236,11 @@ export const useBenefitOffersSchema = (
   fieldValues: FieldValues,
   options: OnboardingFlowProps['options'],
 ) => {
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ?.benefit_offers_form_schema
-    ? {
-        json_schema_version:
-          options.jsonSchemaVersion.benefit_offers_form_schema,
-      }
-    : {};
   const { client } = useClient();
+  const jsonSchemaQueryParam = {
+    json_schema_version: getBenefitOffersSchemaVersion(options),
+  };
+
   return useQuery({
     queryKey: ['benefit-offers-schema', employmentId],
     retry: false,
@@ -346,22 +344,17 @@ export const useUpdateBenefitsOffers = (
     }: UnifiedEmploymentUpsertBenefitOffersRequest & {
       employmentId: string;
     }) => {
-      const jsonSchemaQueryParam = options?.jsonSchemaVersion
-        ?.benefit_offers_form_schema
-        ? {
-            json_schema_version:
-              options.jsonSchemaVersion.benefit_offers_form_schema,
-          }
-        : {};
+      const jsonSchemaQueryParam = {
+        json_schema_version: getBenefitOffersSchemaVersion(options),
+      };
+
       return putUpdateBenefitOffer({
         client: client as Client,
         body: payload,
         path: {
           employment_id: employmentId,
         },
-        query: {
-          ...jsonSchemaQueryParam,
-        },
+        query: jsonSchemaQueryParam,
       });
     },
   });
