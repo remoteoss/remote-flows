@@ -38,7 +38,6 @@ const Description = ({
 export type ForcedValueFieldProps = {
   name: string;
   value: string;
-  title: string;
   description: string;
   statement?: {
     title?: string;
