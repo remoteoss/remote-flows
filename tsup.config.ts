@@ -14,7 +14,7 @@ export const tsup: Options = {
     'src/default-components.ts',
     'src/flows',
     '!src/**/*.test.{ts,tsx}',
-    '!src/**/tests/*.{ts,tsx}',
+    '!src/**/tests',
     '!src/**/*.md',
   ],
   keepNames: true,
