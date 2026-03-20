@@ -12,6 +12,7 @@ const mockGetShowSchema = vi.fn();
 const mockPostCreateEmployment2 = vi.fn();
 const mockPatchUpdateEmployment2 = vi.fn();
 const mockPutUpdateBenefitOffer = vi.fn();
+const mockPostCreateContractEligibility = vi.fn();
 
 // Mock the client functions
 vi.mock('@/src/client', () => ({
@@ -23,6 +24,8 @@ vi.mock('@/src/client', () => ({
     mockPatchUpdateEmployment2(...args),
   putUpdateBenefitOffer: (...args: $TSFixMe[]) =>
     mockPutUpdateBenefitOffer(...args),
+  postCreateContractEligibility: (...args: $TSFixMe[]) =>
+    mockPostCreateContractEligibility(...args),
 }));
 
 const queryClient = new QueryClient({
@@ -71,6 +74,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
 
     mockPutUpdateBenefitOffer.mockResolvedValue({
       data: { data: { success: true } },
+    });
+
+    mockPostCreateContractEligibility.mockResolvedValue({
+      data: { data: { status: 'ok' } },
     });
 
     // Mock server responses
@@ -359,6 +366,118 @@ describe('useOnboarding jsonSchemaVersion', () => {
         skip_benefits: true,
         employment_basic_information_json_schema_version: 1,
         contract_details_json_schema_version: 2,
+      });
+    });
+
+    it('should call patchUpdateEmployment2 with custom employment_basic_information_json_schema_version when submitting basic_information', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            employmentId: 'existing-employment-id',
+            companyId: 'test-company-id',
+            countryCode: 'ARG',
+            skipSteps: ['select_country'],
+            options: {
+              jsonSchemaVersion: {
+                employment_basic_information: 3, // ← Test this!
+              },
+            },
+          }),
+        { wrapper: TestProviders },
+      );
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+      // Submit basic_information form (first step)
+      await act(async () => {
+        await result.current.onSubmit({
+          name: 'John Doe',
+          email: 'john@example.com',
+        });
+      });
+      await waitFor(() => {
+        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+      });
+      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+      expect(call.query).toEqual({
+        skip_benefits: true,
+        employment_basic_information_json_schema_version: 3, // ← Assert this
+        contract_details_json_schema_version: 1, // default
+      });
+    });
+  });
+
+  describe('useCreateEmployment calls', () => {
+    it('should call postCreateEmployment2 with default json_schema_version when creating new employment', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            // No employmentId = create new
+            companyId: 'test-company-id',
+            countryCode: 'PRT',
+            skipSteps: ['select_country'],
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Submit basic_information to create employment
+      await act(async () => {
+        await result.current.onSubmit({
+          name: 'John Doe',
+          email: 'john@example.com',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockPostCreateEmployment2).toHaveBeenCalled();
+      });
+
+      const call = mockPostCreateEmployment2.mock.calls[0][0];
+
+      expect(call.query).toEqual({
+        json_schema_version: 1,
+      });
+    });
+
+    it('should call postCreateEmployment2 with custom employment_basic_information_json_schema_version', async () => {
+      const { result } = renderHook(
+        () =>
+          useOnboarding({
+            companyId: 'test-company-id',
+            countryCode: 'ARG',
+            skipSteps: ['select_country'],
+            options: {
+              jsonSchemaVersion: {
+                employment_basic_information: 3,
+              },
+            },
+          }),
+        { wrapper: TestProviders },
+      );
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      await act(async () => {
+        await result.current.onSubmit({
+          name: 'John Doe',
+          email: 'john@example.com',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockPostCreateEmployment2).toHaveBeenCalled();
+      });
+
+      const call = mockPostCreateEmployment2.mock.calls[0][0];
+
+      expect(call.query).toEqual({
+        json_schema_version: 3,
       });
     });
   });
