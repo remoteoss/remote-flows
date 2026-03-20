@@ -1,8 +1,6 @@
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
-  benefitOffersResponse,
-  benefitOffersSchema,
   contractDetailsSchemaV1Portugal,
   employmentCreatedResponse,
   employmentDefaultResponse,
@@ -136,12 +134,6 @@ describe('SaveDraftButton', () => {
             },
           },
         });
-      }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
       }),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);

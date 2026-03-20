@@ -12,9 +12,7 @@ import {
   basicInformationSchemaV3Korea,
   employmentDefaultResponse,
   employmentUpdatedResponse,
-  benefitOffersSchema,
   contractDetailsSchemaV1Portugal,
-  benefitOffersResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   fillDatePickerByTestId,
@@ -117,12 +115,6 @@ describe('OnboardingFlow - Basic Information v3', () => {
             },
           },
         });
-      }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
       }),
     );
   });

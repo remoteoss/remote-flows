@@ -2,8 +2,6 @@ import { mockCompanyResponse } from '@/src/common/api/fixtures/companies';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
-  benefitOffersResponse,
-  benefitOffersSchema,
   contractDetailsSchemaV1Portugal,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
@@ -89,13 +87,6 @@ describe('OnboardingInvite', () => {
         return HttpResponse.json(employmentDefaultResponse);
       }),
 
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
-      }),
       http.post('*/v1/employments/:employmentId/invite', () => {
         return HttpResponse.json({
           data: { status: 'ok' },

@@ -12,10 +12,8 @@ import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
   contractDetailsSchemaV1Portugal,
-  benefitOffersSchema,
   employmentCreatedResponse,
   employmentUpdatedResponse,
-  benefitOffersResponse,
   employmentDefaultResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
@@ -327,12 +325,7 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/contract_details*', () => {
         return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
-      }),
+
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
