@@ -77,3 +77,29 @@ export const getContractDetailsSchemaVersion = (
 
   return requestedVersion;
 };
+
+/**
+ * Gets the basic information schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for basic information or default
+ */
+export const getBasicInformationSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+): number | 'latest' => {
+  return (
+    options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION
+  );
+};
+
+/**
+ * Gets the benefit offers schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for benefit offers or undefined if not set
+ */
+export const getBenefitOffersSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+): number | 'latest' => {
+  return (
+    options?.jsonSchemaVersion?.benefit_offers_form_schema || DEFAULT_VERSION
+  );
+};

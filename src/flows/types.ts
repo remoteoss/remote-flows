@@ -97,6 +97,7 @@ export type FlowOptions = {
     };
     benefit_offers_form_schema?: number;
     contractor_contract_details_form_schema?: number;
+    employment_basic_information?: number | 'latest';
   };
 };
 
