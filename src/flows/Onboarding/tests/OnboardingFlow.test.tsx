@@ -10,8 +10,8 @@ import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  basicInformationSchema,
-  contractDetailsPortugalSchema,
+  basicInformationSchemaV1Portugal,
+  contractDetailsSchemaV1Portugal,
   benefitOffersSchema,
   employmentCreatedResponse,
   employmentUpdatedResponse,
@@ -22,7 +22,7 @@ import {
   companyResponse,
   conversionFromEURToUSD,
   employmentSouthKoreaResponse,
-  contractDetailsSouthKoreaSchema,
+  contractDetailsSchemaV1SouthKorea,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -326,10 +326,10 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.get('*/v1/countries/*/employment_basic_information*', () => {
-        return HttpResponse.json(basicInformationSchema);
+        return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
-        return HttpResponse.json(contractDetailsPortugalSchema);
+        return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
       http.get('*/v1/employments/*/benefit-offers/schema', () => {
         return HttpResponse.json(benefitOffersSchema);
@@ -2409,7 +2409,7 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.get(`*/v1/countries/KOR/contract_details*`, () => {
-        return HttpResponse.json(contractDetailsSouthKoreaSchema);
+        return HttpResponse.json(contractDetailsSchemaV1SouthKorea);
       }),
     );
 

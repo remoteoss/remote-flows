@@ -72,6 +72,7 @@ export function ForcedValueField({
   const titleSanitized = statement?.title
     ? sanitizeHtml(statement?.title)
     : sanitizeHtml(label);
+
   return (
     <div>
       {titleSanitized && (
