@@ -1,7 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { server } from '@/src/tests/server';
-import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TestProviders } from '@/src/tests/testHelpers';
@@ -79,15 +77,6 @@ describe('useOnboarding jsonSchemaVersion', () => {
     mockPostCreateContractEligibility.mockResolvedValue({
       data: { data: { status: 'ok' } },
     });
-
-    // Mock server responses
-    server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json({
-          data: { id: 'test-company-id', desired_currency: 'USD' },
-        });
-      }),
-    );
   });
 
   describe('useJSONSchemaForm calls', () => {
