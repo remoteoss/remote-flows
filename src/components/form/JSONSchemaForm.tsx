@@ -37,6 +37,7 @@ export const JSONSchemaFormFields = ({
 
   if (!fields || fields.length === 0) return null;
 
+  console.log({ fields, fieldsets, fieldValues });
   const maybeFieldWithFlatFieldsets =
     fieldsets && fieldValues
       ? getFieldsWithFlatFieldsets({
@@ -45,6 +46,8 @@ export const JSONSchemaFormFields = ({
           values: fieldValues,
         })
       : fields;
+
+  console.log({ fields, maybeFieldWithFlatFieldsets });
 
   return (
     <>
@@ -57,6 +60,7 @@ export const JSONSchemaFormFields = ({
         }
 
         if (field.isVisible === false || field.deprecated || field.hidden) {
+          console.log('skipping field', field.name);
           return null; // Skip hidden or deprecated fields
         }
 
@@ -135,6 +139,8 @@ export const JSONSchemaFormFields = ({
         if (fieldType === 'select' && field.multiple) {
           FieldComponent = fieldsMap['multi-select'];
         }
+
+        console.log('rendering field', field.name);
 
         return (
           <Fragment key={field.name as string}>

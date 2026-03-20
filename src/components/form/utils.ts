@@ -806,9 +806,13 @@ export function getFieldsWithFlatFieldsets({
     return accumulatedFieldsSorted;
   }, fields);
 
-  const filteredFields = sortedFields.filter(
-    (field) => !flatFieldsetsFieldNames.has(field.name!),
-  );
+  const filteredFields = sortedFields.filter((field) => {
+    //  Always keep the fieldset wrapper
+    if (field.type === 'fieldset-flat') {
+      return true;
+    }
+    return !flatFieldsetsFieldNames.has(field.name!);
+  });
 
   return filteredFields;
 }
