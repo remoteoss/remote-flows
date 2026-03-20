@@ -250,7 +250,7 @@ describe('OnboardingFlow - Basic Information v3', () => {
     });
   });
 
-  describe('Korea (no seniority field)', () => {
+  describe('Korea (no seniority field)', async () => {
     beforeEach(() => {
       server.use(
         http.get('*/v1/countries/KOR/employment_basic_information*', () => {
@@ -259,6 +259,36 @@ describe('OnboardingFlow - Basic Information v3', () => {
       );
     });
 
-    it.todo('should not render seniority field for KOR');
+    it('should render the basic information form correctly', async () => {
+      render(
+        <OnboardingFlow
+          {...defaultProps}
+          countryCode='KOR'
+          skipSteps={['select_country']}
+          options={{
+            jsonSchemaVersion: {
+              employment_basic_information: 3,
+            },
+          }}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByLabelText(/Seniority date/i),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Previous seniority cannot be recognized in South Korea',
+        ),
+      ).toBeInTheDocument();
+    });
   });
 });
