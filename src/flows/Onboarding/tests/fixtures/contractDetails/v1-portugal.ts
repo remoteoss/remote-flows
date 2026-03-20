@@ -1503,4 +1503,3 @@ export const contractDetailsSchemaV1Portugal = {
     ],
   },
 };
-

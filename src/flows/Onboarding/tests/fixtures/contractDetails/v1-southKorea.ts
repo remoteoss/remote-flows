@@ -1280,4 +1280,3 @@ export const contractDetailsSchemaV1SouthKorea = {
     ],
   },
 };
-
