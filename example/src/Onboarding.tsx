@@ -266,7 +266,7 @@ const OnboardingWithProps = ({
       options={{
         features: ['onboarding_reserves'],
         jsonSchemaVersion: {
-          employment_basic_information: 'latest',
+          employment_basic_information: 3,
         },
         jsonSchemaVersionByCountry: {
           DEU: {

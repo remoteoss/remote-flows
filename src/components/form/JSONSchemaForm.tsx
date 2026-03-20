@@ -65,6 +65,7 @@ export const JSONSchemaFormFields = ({
             <ForcedValueField
               key={field.name as string}
               name={field.name as string}
+              title={field.title as string}
               description={field.description as string}
               value={field.const as string}
               statement={field.statement as any}
