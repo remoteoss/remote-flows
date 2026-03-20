@@ -10,7 +10,6 @@ import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV3Portugal,
   basicInformationSchemaV3Korea,
-  companyResponse,
   employmentDefaultResponse,
   employmentUpdatedResponse,
   benefitOffersSchema,
@@ -106,9 +105,6 @@ describe('OnboardingFlow - Basic Information v3', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         const employmentId = params?.id;
         return HttpResponse.json({

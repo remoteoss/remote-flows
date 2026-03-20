@@ -14,7 +14,10 @@ import {
   mockContractorBasicInformationSchema,
   mockContractorCurrenciesResponse,
 } from '@/src/common/api/fixtures/contractors';
-import { mockCompanyPricingPlansResponse } from '@/src/common/api/fixtures/companies';
+import {
+  mockCompanyPricingPlansResponse,
+  mockCompanyResponse,
+} from '@/src/common/api/fixtures/companies';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
@@ -99,6 +102,10 @@ const employmentOnboardingReservesStatus = http.get(
   },
 );
 
+const companyHandler = http.get('*/v1/companies/:companyId', () => {
+  return HttpResponse.json(mockCompanyResponse);
+});
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -112,4 +119,5 @@ export const defaultHandlers = [
   contractorCurrenciesHandler,
   companyPricingPlansHandler,
   contractorBasicInformationHandler,
+  companyHandler,
 ];

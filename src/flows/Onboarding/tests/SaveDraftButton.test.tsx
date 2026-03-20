@@ -3,7 +3,6 @@ import {
   basicInformationSchemaV1Portugal,
   benefitOffersResponse,
   benefitOffersSchema,
-  companyResponse,
   contractDetailsSchemaV1Portugal,
   employmentCreatedResponse,
   employmentDefaultResponse,
@@ -118,9 +117,6 @@ describe('SaveDraftButton', () => {
     mockRender.mockReset();
     queryClient.clear();
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),

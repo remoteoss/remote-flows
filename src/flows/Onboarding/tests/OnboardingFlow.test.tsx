@@ -19,7 +19,6 @@ import {
   employmentDefaultResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
-  companyResponse,
   conversionFromEURToUSD,
   employmentSouthKoreaResponse,
   contractDetailsSchemaV1SouthKorea,
@@ -300,9 +299,6 @@ describe('OnboardingFlow', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         // Create a response with the actual employment ID from the request
         const employmentId = params?.id;

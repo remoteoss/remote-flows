@@ -1,9 +1,9 @@
+import { mockCompanyResponse } from '@/src/common/api/fixtures/companies';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
   benefitOffersResponse,
   benefitOffersSchema,
-  companyResponse,
   contractDetailsSchemaV1Portugal,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
@@ -77,10 +77,6 @@ describe('OnboardingInvite', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
-
       http.get('*/v1/countries/*/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
@@ -132,11 +128,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -228,11 +224,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -286,11 +282,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -330,11 +326,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_not_required',
             },
           },
@@ -354,11 +350,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -392,11 +388,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -502,11 +498,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -545,11 +541,11 @@ describe('OnboardingInvite', () => {
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
-            ...companyResponse,
+            ...mockCompanyResponse,
             data: {
-              ...companyResponse.data,
+              ...mockCompanyResponse.data,
               company: {
-                ...companyResponse.data.company,
+                ...mockCompanyResponse.data.company,
                 default_legal_entity_credit_risk_status: 'deposit_required',
               },
             },
@@ -586,11 +582,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_required',
             },
           },
@@ -644,11 +640,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'no_deposit_required',
             },
           },
@@ -712,11 +708,11 @@ describe('OnboardingInvite', () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
         return HttpResponse.json({
-          ...companyResponse,
+          ...mockCompanyResponse,
           data: {
-            ...companyResponse.data,
+            ...mockCompanyResponse.data,
             company: {
-              ...companyResponse.data.company,
+              ...mockCompanyResponse.data.company,
               default_legal_entity_credit_risk_status: 'deposit_not_required',
             },
           },
@@ -782,11 +778,11 @@ describe('OnboardingInvite', () => {
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
-            ...companyResponse,
+            ...mockCompanyResponse,
             data: {
-              ...companyResponse.data,
+              ...mockCompanyResponse.data,
               company: {
-                ...companyResponse.data.company,
+                ...mockCompanyResponse.data.company,
                 default_legal_entity_credit_risk_status: 'deposit_not_required',
               },
             },
@@ -809,11 +805,11 @@ describe('OnboardingInvite', () => {
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
-            ...companyResponse,
+            ...mockCompanyResponse,
             data: {
-              ...companyResponse.data,
+              ...mockCompanyResponse.data,
               company: {
-                ...companyResponse.data.company,
+                ...mockCompanyResponse.data.company,
                 default_legal_entity_credit_risk_status: 'deposit_required',
               },
             },
@@ -847,11 +843,11 @@ describe('OnboardingInvite', () => {
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
-            ...companyResponse,
+            ...mockCompanyResponse,
             data: {
-              ...companyResponse.data,
+              ...mockCompanyResponse.data,
               company: {
-                ...companyResponse.data.company,
+                ...mockCompanyResponse.data.company,
                 default_legal_entity_credit_risk_status: 'deposit_required',
               },
             },
@@ -1063,11 +1059,11 @@ describe('OnboardingInvite', () => {
       server.use(
         http.get('*/v1/companies/:companyId', () => {
           return HttpResponse.json({
-            ...companyResponse,
+            ...mockCompanyResponse,
             data: {
-              ...companyResponse.data,
+              ...mockCompanyResponse.data,
               company: {
-                ...companyResponse.data.company,
+                ...mockCompanyResponse.data.company,
                 default_legal_entity_credit_risk_status: 'deposit_required',
               },
             },
