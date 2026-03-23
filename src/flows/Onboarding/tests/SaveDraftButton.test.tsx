@@ -1,10 +1,7 @@
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  basicInformationSchema,
-  benefitOffersResponse,
-  benefitOffersSchema,
-  companyResponse,
-  contractDetailsPortugalSchema,
+  basicInformationSchemaV1Portugal,
+  contractDetailsSchemaV1Portugal,
   employmentCreatedResponse,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
@@ -118,14 +115,11 @@ describe('SaveDraftButton', () => {
     mockRender.mockReset();
     queryClient.clear();
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
-        return HttpResponse.json(basicInformationSchema);
+        return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
-        return HttpResponse.json(contractDetailsPortugalSchema);
+        return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
       http.get('*/v1/employments/:id', ({ params }) => {
         // Create a response with the actual employment ID from the request
@@ -140,12 +134,6 @@ describe('SaveDraftButton', () => {
             },
           },
         });
-      }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
       }),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);

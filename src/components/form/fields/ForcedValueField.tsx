@@ -69,30 +69,25 @@ export function ForcedValueField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const titleSanitized = statement?.title
+    ? sanitizeHtml(statement?.title)
+    : sanitizeHtml(label);
+
   return (
     <div>
-      {statement ? (
-        <>
-          {/* if statement?.title is undefined which could be for example belgium contract details form, we need to use the label attribute */}
-          <p
-            className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
-            dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(statement?.title || label),
-            }}
-          />
-          <Description
-            name={name}
-            description={sanitizeHtml(statement?.description || description)}
-            helpCenter={helpCenter}
-          />
-        </>
-      ) : (
-        <Description
-          name={name}
-          description={descriptionSanitized}
-          helpCenter={helpCenter}
+      {titleSanitized && (
+        <p
+          className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
+          dangerouslySetInnerHTML={{
+            __html: titleSanitized,
+          }}
         />
       )}
+      <Description
+        name={name}
+        description={descriptionSanitized}
+        helpCenter={helpCenter}
+      />
     </div>
   );
 }

@@ -18,7 +18,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
-import { companyResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import { mockCOROnlyResponse } from '@/src/common/api/fixtures/contractors-subscriptions';
 
 const mockSuccess = vi.fn();
@@ -103,9 +102,6 @@ describe('SaveDraftButton', () => {
     mockRender.mockReset();
     queryClient.clear();
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/countries/PRT/employment_basic_information*', () => {
         return HttpResponse.json(mockBaseResponse);
       }),

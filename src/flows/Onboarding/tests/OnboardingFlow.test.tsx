@@ -10,19 +10,16 @@ import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  basicInformationSchema,
-  contractDetailsPortugalSchema,
-  benefitOffersSchema,
+  basicInformationSchemaV1Portugal,
+  contractDetailsSchemaV1Portugal,
   employmentCreatedResponse,
   employmentUpdatedResponse,
-  benefitOffersResponse,
   employmentDefaultResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
-  companyResponse,
   conversionFromEURToUSD,
   employmentSouthKoreaResponse,
-  contractDetailsSouthKoreaSchema,
+  contractDetailsSchemaV1SouthKorea,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   assertRadioValue,
@@ -300,9 +297,6 @@ describe('OnboardingFlow', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         // Create a response with the actual employment ID from the request
         const employmentId = params?.id;
@@ -326,17 +320,12 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.get('*/v1/countries/*/employment_basic_information*', () => {
-        return HttpResponse.json(basicInformationSchema);
+        return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
-        return HttpResponse.json(contractDetailsPortugalSchema);
+        return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
-      }),
+
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
@@ -2409,7 +2398,7 @@ describe('OnboardingFlow', () => {
         });
       }),
       http.get(`*/v1/countries/KOR/contract_details*`, () => {
-        return HttpResponse.json(contractDetailsSouthKoreaSchema);
+        return HttpResponse.json(contractDetailsSchemaV1SouthKorea);
       }),
     );
 
