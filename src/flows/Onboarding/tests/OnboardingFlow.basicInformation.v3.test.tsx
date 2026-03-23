@@ -250,7 +250,7 @@ describe('OnboardingFlow - Basic Information v3', () => {
     });
   });
 
-  describe('Korea (no seniority field)', async () => {
+  describe('Korea (no seniority field)', () => {
     beforeEach(() => {
       server.use(
         http.get('*/v1/countries/KOR/employment_basic_information*', () => {
