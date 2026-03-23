@@ -29,13 +29,13 @@ describe('ForcedValueField Component', () => {
   });
 
   describe('when statement is not provided', () => {
-    it('renders only the description', () => {
+    it('renders only the label and description', () => {
       renderWithFormContext(defaultProps);
 
       expect(
         screen.getByText('This is a test description'),
       ).toBeInTheDocument();
-      expect(screen.queryByText('Test Label')).not.toBeInTheDocument();
+      expect(screen.getByText('Test Label')).toBeInTheDocument();
     });
   });
 
