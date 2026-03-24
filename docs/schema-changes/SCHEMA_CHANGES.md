@@ -45,4 +45,3 @@ Track which schema versions are supported by each SDK version.
 - **Recommended** - Use this version for new integrations
 - **Legacy** - Maintained for backward compatibility only
 - **TBD** - Coming soon
-  You can copy either version depending on how much detail you want!
