@@ -10,7 +10,7 @@ This documentation tracks JSON schema version changes across the Remote Flows SD
 
 Schema versions for the Basic Information step in employee onboarding flows.
 
-- **Latest: [v3](./eor/basic-information/v3.md)** (SDK 1.23.0+) - **Recommended for all new integrations**
+- **Latest: [v3](./eor/basic-information/v3/v3.md)** (SDK 1.23.0+) - **Recommended for all new integrations**
   - Removes unused manager/department fields
   - Adds Argentina acknowledgement field
   - Better seniority field coverage (KOR, BRA, JPN)
