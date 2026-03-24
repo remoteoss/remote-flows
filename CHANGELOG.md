@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.23.0
+
+### Minor Changes
+
+#### Features
+
+- let users load dynamic versions of basic_information or benefits (#800) [#800](https://github.com/remoteoss/remote-flows/pull/800)
+
+#### Fixes
+
+- fix force value fields and x-jsf-fieldsets (#801) [#801](https://github.com/remoteoss/remote-flows/pull/801)
+
 ## 1.22.0
 
 ### Minor Changes
