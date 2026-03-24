@@ -1,10 +1,10 @@
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  basicInformationSchema,
+  basicInformationSchemaV1Portugal,
   benefitOffersResponse,
   benefitOffersSchema,
   companyResponse,
-  contractDetailsPortugalSchema,
+  contractDetailsSchemaV1Portugal,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
@@ -82,11 +82,11 @@ describe('OnboardingInvite', () => {
       }),
 
       http.get('*/v1/countries/*/employment_basic_information*', () => {
-        return HttpResponse.json(basicInformationSchema);
+        return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
 
       http.get('*/v1/countries/*/contract_details*', () => {
-        return HttpResponse.json(contractDetailsPortugalSchema);
+        return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
 
       http.get('*/v1/employments/*', () => {
