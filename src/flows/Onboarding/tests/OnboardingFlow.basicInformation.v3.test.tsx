@@ -10,12 +10,9 @@ import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV3Portugal,
   basicInformationSchemaV3Korea,
-  companyResponse,
   employmentDefaultResponse,
   employmentUpdatedResponse,
-  benefitOffersSchema,
   contractDetailsSchemaV1Portugal,
-  benefitOffersResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   fillDatePickerByTestId,
@@ -106,9 +103,6 @@ describe('OnboardingFlow - Basic Information v3', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         const employmentId = params?.id;
         return HttpResponse.json({
@@ -121,12 +115,6 @@ describe('OnboardingFlow - Basic Information v3', () => {
             },
           },
         });
-      }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
       }),
     );
   });

@@ -14,8 +14,15 @@ import {
   mockContractorBasicInformationSchema,
   mockContractorCurrenciesResponse,
 } from '@/src/common/api/fixtures/contractors';
-import { mockCompanyPricingPlansResponse } from '@/src/common/api/fixtures/companies';
+import {
+  mockCompanyPricingPlansResponse,
+  mockCompanyResponse,
+} from '@/src/common/api/fixtures/companies';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import {
+  mockBenefitOffersResponse,
+  mockBenefitOffersSchema,
+} from '@/src/common/api/fixtures/employments';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -99,6 +106,24 @@ const employmentOnboardingReservesStatus = http.get(
   },
 );
 
+const companyHandler = http.get('*/v1/companies/:companyId', () => {
+  return HttpResponse.json(mockCompanyResponse);
+});
+
+const benefitOffersHandler = http.get(
+  '*/v1/employments/*/benefit-offers',
+  () => {
+    return HttpResponse.json(mockBenefitOffersResponse);
+  },
+);
+
+const benefitOffersSchemaHandler = http.get(
+  '*/v1/employments/*/benefit-offers/schema',
+  () => {
+    return HttpResponse.json(mockBenefitOffersSchema);
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -112,4 +137,7 @@ export const defaultHandlers = [
   contractorCurrenciesHandler,
   companyPricingPlansHandler,
   contractorBasicInformationHandler,
+  companyHandler,
+  benefitOffersHandler,
+  benefitOffersSchemaHandler,
 ];

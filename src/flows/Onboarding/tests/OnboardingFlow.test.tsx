@@ -12,14 +12,11 @@ import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
   contractDetailsSchemaV1Portugal,
-  benefitOffersSchema,
   employmentCreatedResponse,
   employmentUpdatedResponse,
-  benefitOffersResponse,
   employmentDefaultResponse,
   benefitOffersUpdatedResponse,
   inviteResponse,
-  companyResponse,
   conversionFromEURToUSD,
   employmentSouthKoreaResponse,
   contractDetailsSchemaV1SouthKorea,
@@ -300,9 +297,6 @@ describe('OnboardingFlow', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/companies/:companyId', () => {
-        return HttpResponse.json(companyResponse);
-      }),
       http.get('*/v1/employments/:id', ({ params }) => {
         // Create a response with the actual employment ID from the request
         const employmentId = params?.id;
@@ -331,12 +325,7 @@ describe('OnboardingFlow', () => {
       http.get('*/v1/countries/PRT/contract_details*', () => {
         return HttpResponse.json(contractDetailsSchemaV1Portugal);
       }),
-      http.get('*/v1/employments/*/benefit-offers/schema', () => {
-        return HttpResponse.json(benefitOffersSchema);
-      }),
-      http.get('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersResponse);
-      }),
+
       http.post('*/v1/employments', () => {
         return HttpResponse.json(employmentCreatedResponse);
       }),
