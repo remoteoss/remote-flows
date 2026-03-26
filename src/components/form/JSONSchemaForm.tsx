@@ -46,11 +46,15 @@ export const JSONSchemaFormFields = ({
         })
       : fields;
 
-  const wrapWithCustomWrapper = (content: React.ReactNode, field: any) => {
+  const wrapWithCustomWrapper = (
+    content: React.ReactNode,
+    field: any,
+    key: string,
+  ) => {
     if (field.WrapperComponent) {
-      return <field.WrapperComponent>{content}</field.WrapperComponent>;
+      return <field.WrapperComponent key={key}>{content}</field.WrapperComponent>;
     }
-    return content;
+    return <Fragment key={key}>{content}</Fragment>;
   };
 
   return (
@@ -70,7 +74,6 @@ export const JSONSchemaFormFields = ({
         if (checkFieldHasForcedValue(field)) {
           return wrapWithCustomWrapper(
             <ForcedValueField
-              key={field.name as string}
               name={field.name as string}
               description={field.description as string}
               value={field.const as string}
@@ -79,6 +82,7 @@ export const JSONSchemaFormFields = ({
               helpCenter={field.meta?.helpCenter}
             />,
             field,
+            field.name as string,
           );
         }
 
@@ -87,7 +91,7 @@ export const JSONSchemaFormFields = ({
             Component: React.ComponentType<any>;
           };
           return wrapWithCustomWrapper(
-            <Fragment key={field.name as string}>
+            <>
               <Component
                 setValue={(value: unknown) => setValue(field.name, value)}
                 {...field}
@@ -98,8 +102,9 @@ export const JSONSchemaFormFields = ({
                 />
               ) : null}
               {field.extra ? field.extra : null}
-            </Fragment>,
+            </>,
             field,
+            field.name as string,
           );
         }
 
@@ -122,23 +127,23 @@ export const JSONSchemaFormFields = ({
         if (fieldType === 'fieldset') {
           return wrapWithCustomWrapper(
             <FieldComponent
-              key={field.name}
               {...field}
               components={components}
             />,
             field,
+            field.name,
           );
         }
 
         if (fieldType === 'fieldset-flat') {
           return wrapWithCustomWrapper(
             <FieldComponent
-              key={field.name}
               {...field}
               components={components}
               isFlatFieldset
             />,
             field,
+            field.name,
           );
         }
 
@@ -148,7 +153,7 @@ export const JSONSchemaFormFields = ({
         }
 
         return wrapWithCustomWrapper(
-          <Fragment key={field.name as string}>
+          <>
             <FieldComponent
               {...field}
               component={
@@ -161,8 +166,9 @@ export const JSONSchemaFormFields = ({
               />
             ) : null}
             {field.extra ? field.extra : null}
-          </Fragment>,
+          </>,
           field,
+          field.name as string,
         );
       })}
     </>

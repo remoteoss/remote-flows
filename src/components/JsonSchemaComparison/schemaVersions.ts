@@ -11,12 +11,6 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
   { value: 'latest', label: 'Latest' },
 ];
 
-export const CONTRACT_DETAILS_VERSIONS: VersionOption[] = [
-  { value: 1, label: 'v1' },
-  { value: 2, label: 'v2' },
-  { value: 'latest', label: 'Latest' },
-];
-
 // AI generated from tiger
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [{ value: 'latest', label: 'Latest' }],
