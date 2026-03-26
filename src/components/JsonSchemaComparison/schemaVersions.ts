@@ -246,6 +246,13 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ZWE: [{ value: 'latest', label: 'Latest' }],
 };
 
+export const COUNTRY_CONTRACT_VERSIONS_WITH_MULTIPLE_VERSIONS =
+  Object.fromEntries(
+    Object.entries(COUNTRY_CONTRACT_VERSIONS).filter(
+      ([, versions]) => versions.length > 1,
+    ),
+  ) as Record<string, VersionOption[]>;
+
 export const FORM_TYPES = [
   { value: 'employment_basic_information', label: 'Basic Information' },
   { value: 'contract_details', label: 'Contract Details' },

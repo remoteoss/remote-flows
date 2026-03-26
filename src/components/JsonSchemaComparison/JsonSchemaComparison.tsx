@@ -20,6 +20,7 @@ import { SchemaFormComparison } from './SchemaFormComparison';
 import {
   BASIC_INFO_VERSIONS,
   COUNTRY_CONTRACT_VERSIONS,
+  COUNTRY_CONTRACT_VERSIONS_WITH_MULTIPLE_VERSIONS,
   FORM_TYPES,
   type FormType,
   type SchemaVersion,
@@ -35,7 +36,7 @@ export const JsonSchemaComparison = () => {
   );
   const [topVersion, setTopVersion] = useState<SchemaVersion>(1);
   const [bottomVersion, setBottomVersion] = useState<SchemaVersion>(1);
-  const [countryCode, setCountryCode] = useState<string>('USA');
+  const [countryCode, setCountryCode] = useState<string>('ARE');
 
   const { client } = useClient();
 
@@ -45,6 +46,11 @@ export const JsonSchemaComparison = () => {
       response.data?.data
         ?.filter(
           (country: { eor_onboarding?: boolean }) => country.eor_onboarding,
+        )
+        .filter((country: { code: string }) =>
+          Object.keys(COUNTRY_CONTRACT_VERSIONS_WITH_MULTIPLE_VERSIONS).includes(
+            country.code,
+          ),
         )
         .map((country: { name: string; code: string }) => ({
           label: country.name,
@@ -181,7 +187,7 @@ export const JsonSchemaComparison = () => {
           <div className='grid grid-cols-2 gap-4'>
             <div>
               <Label htmlFor='top-version' className='mb-2 block'>
-                Top Version
+                Left Version
               </Label>
               <Select
                 value={String(topVersion)}
@@ -207,7 +213,7 @@ export const JsonSchemaComparison = () => {
 
             <div>
               <Label htmlFor='bottom-version' className='mb-2 block'>
-                Bottom Version
+                Right Version
               </Label>
               <Select
                 value={String(bottomVersion)}

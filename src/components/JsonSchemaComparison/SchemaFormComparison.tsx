@@ -9,7 +9,7 @@ import {
 } from '@/src/components/ui/card';
 import type { JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 import { compareFormFields, getDiffStyles } from './formDiffDetector';
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 
 interface SchemaFormComparisonProps {
   topVersion: string | number;
@@ -67,6 +67,7 @@ const FormPanel = ({
   fieldsets,
   diffMap,
   title,
+  scrollRef,
 }: {
   version: string | number;
   fields: JSFField[];
@@ -76,6 +77,7 @@ const FormPanel = ({
     { diffType: 'added' | 'removed' | 'modified' | 'unchanged' }
   >;
   title: string;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }) => {
   const form = useForm({
     mode: 'onBlur',
@@ -104,7 +106,7 @@ const FormPanel = ({
           {title} - Version {version}
         </CardTitle>
       </CardHeader>
-      <CardContent className='overflow-y-auto max-h-[600px]'>
+      <CardContent ref={scrollRef} className='overflow-y-auto max-h-[600px]'>
         <Form {...form}>
           <form className='space-y-4'>
             <JSONSchemaFormFields
@@ -132,6 +134,43 @@ export const SchemaFormComparison = ({
     () => compareFormFields(topFields, bottomFields),
     [topFields, bottomFields],
   );
+
+  const leftScrollRef = useRef<HTMLDivElement>(null);
+  const rightScrollRef = useRef<HTMLDivElement>(null);
+  const isSyncing = useRef(false);
+
+  useEffect(() => {
+    const leftEl = leftScrollRef.current;
+    const rightEl = rightScrollRef.current;
+
+    if (!leftEl || !rightEl) return;
+
+    const handleLeftScroll = () => {
+      if (isSyncing.current) return;
+      isSyncing.current = true;
+      rightEl.scrollTop = leftEl.scrollTop;
+      requestAnimationFrame(() => {
+        isSyncing.current = false;
+      });
+    };
+
+    const handleRightScroll = () => {
+      if (isSyncing.current) return;
+      isSyncing.current = true;
+      leftEl.scrollTop = rightEl.scrollTop;
+      requestAnimationFrame(() => {
+        isSyncing.current = false;
+      });
+    };
+
+    leftEl.addEventListener('scroll', handleLeftScroll);
+    rightEl.addEventListener('scroll', handleRightScroll);
+
+    return () => {
+      leftEl.removeEventListener('scroll', handleLeftScroll);
+      rightEl.removeEventListener('scroll', handleRightScroll);
+    };
+  }, [topFields, bottomFields]);
 
   if (isLoading) {
     return (
@@ -191,20 +230,22 @@ export const SchemaFormComparison = ({
         </CardContent>
       </Card>
 
-      <div className='grid grid-cols-1 gap-6'>
+      <div className='grid grid-cols-2 gap-6'>
         <FormPanel
           version={topVersion}
           fields={topFields}
           fieldsets={topFieldsets}
           diffMap={diff.fieldDiffs}
-          title='Top'
+          title='Left'
+          scrollRef={leftScrollRef}
         />
         <FormPanel
           version={bottomVersion}
           fields={bottomFields}
           fieldsets={bottomFieldsets}
           diffMap={diff.fieldDiffs}
-          title='Bottom'
+          title='Right'
+          scrollRef={rightScrollRef}
         />
       </div>
     </div>
