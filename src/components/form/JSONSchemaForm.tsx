@@ -52,7 +52,9 @@ export const JSONSchemaFormFields = ({
     key: string,
   ) => {
     if (field.WrapperComponent) {
-      return <field.WrapperComponent key={key}>{content}</field.WrapperComponent>;
+      return (
+        <field.WrapperComponent key={key}>{content}</field.WrapperComponent>
+      );
     }
     return <Fragment key={key}>{content}</Fragment>;
   };
@@ -126,10 +128,7 @@ export const JSONSchemaFormFields = ({
 
         if (fieldType === 'fieldset') {
           return wrapWithCustomWrapper(
-            <FieldComponent
-              {...field}
-              components={components}
-            />,
+            <FieldComponent {...field} components={components} />,
             field,
             field.name,
           );

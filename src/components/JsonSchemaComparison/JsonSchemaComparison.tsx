@@ -48,9 +48,9 @@ export const JsonSchemaComparison = () => {
           (country: { eor_onboarding?: boolean }) => country.eor_onboarding,
         )
         .filter((country: { code: string }) =>
-          Object.keys(COUNTRY_CONTRACT_VERSIONS_WITH_MULTIPLE_VERSIONS).includes(
-            country.code,
-          ),
+          Object.keys(
+            COUNTRY_CONTRACT_VERSIONS_WITH_MULTIPLE_VERSIONS,
+          ).includes(country.code),
         )
         .map((country: { name: string; code: string }) => ({
           label: country.name,
