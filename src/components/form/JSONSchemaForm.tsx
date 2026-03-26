@@ -78,7 +78,7 @@ export const JSONSchemaFormFields = ({
               label={field.label as string}
               helpCenter={field.meta?.helpCenter}
             />,
-            field
+            field,
           );
         }
 
@@ -99,7 +99,7 @@ export const JSONSchemaFormFields = ({
               ) : null}
               {field.extra ? field.extra : null}
             </Fragment>,
-            field
+            field,
           );
         }
 
@@ -126,7 +126,7 @@ export const JSONSchemaFormFields = ({
               {...field}
               components={components}
             />,
-            field
+            field,
           );
         }
 
@@ -138,7 +138,7 @@ export const JSONSchemaFormFields = ({
               components={components}
               isFlatFieldset
             />,
-            field
+            field,
           );
         }
 
@@ -162,7 +162,7 @@ export const JSONSchemaFormFields = ({
             ) : null}
             {field.extra ? field.extra : null}
           </Fragment>,
-          field
+          field,
         );
       })}
     </>
