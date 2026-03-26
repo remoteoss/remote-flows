@@ -7,6 +7,7 @@ import {
   DrawerTrigger,
 } from '@/src/components/ui/drawer';
 import { ZendeskDrawerComponentProps } from '@/src/types/remoteFlows';
+import { useFormFields } from '@/src/context';
 
 export function ZendeskDrawerDefault({
   open,
@@ -17,6 +18,11 @@ export function ZendeskDrawerDefault({
   zendeskURL,
   Trigger,
 }: ZendeskDrawerComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: ZendeskDrawerDefault');
+    return null;
+  }
   return (
     <Drawer
       open={open}

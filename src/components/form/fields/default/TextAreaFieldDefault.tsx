@@ -8,12 +8,18 @@ import {
 import { Textarea } from '@/src/components/ui/textarea';
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
+import { useFormFields } from '@/src/context';
 
 export function TextAreaFieldDefault({
   field,
   fieldState,
   fieldData,
 }: FieldComponentProps) {
+  const { makeComponentsRequired } = useFormFields();
+  if (makeComponentsRequired) {
+    console.log('Missing component: TextAreaFieldDefault');
+    return null;
+  }
   const { name, label, description, maxLength } = fieldData;
   const valueLength = field.value?.length ?? 0;
   return (

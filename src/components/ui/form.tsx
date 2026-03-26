@@ -203,4 +203,6 @@ export {
   FormLabel,
   FormMessage,
   useFormField,
+  FormFieldContext,
+  FormItemContext,
 };

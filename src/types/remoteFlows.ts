@@ -194,6 +194,12 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
     fallback?: ReactNode | ((error: Error) => ReactNode);
   };
   /**
+   * When true, built-in default components render nothing.
+   * Users must provide all required components via the `components` prop.
+   * @default false
+   */
+  makeComponentsRequired?: boolean;
+  /**
    * Debug mode to enable logging of telemetry errors to the console.
    * @default false
    */
