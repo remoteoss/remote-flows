@@ -17,6 +17,7 @@ export const CONTRACT_DETAILS_VERSIONS: VersionOption[] = [
   { value: 'latest', label: 'Latest' },
 ];
 
+// AI generated from tiger
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [{ value: 'latest', label: 'Latest' }],
   ARE: [
