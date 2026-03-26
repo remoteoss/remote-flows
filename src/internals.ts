@@ -69,4 +69,22 @@ export {
 export { ScrollArea } from './components/ui/scroll-area';
 
 // JSON Schema Comparison Tool
-export { JsonSchemaComparison } from './components/JsonSchemaComparison';
+export {
+  JsonSchemaComparison,
+  SchemaFormComparison,
+  compareFormFields,
+  getDiffStyles,
+  BASIC_INFO_VERSIONS,
+  CONTRACT_DETAILS_VERSIONS,
+  COUNTRY_CONTRACT_VERSIONS,
+  FORM_TYPES,
+} from './components/JsonSchemaComparison';
+
+export type {
+  SchemaVersion,
+  VersionOption,
+  FormType,
+  DiffType,
+  FieldDiff,
+  FormDiff,
+} from './components/JsonSchemaComparison';

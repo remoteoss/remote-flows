@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Card,
@@ -19,7 +19,7 @@ import { useJSONSchemaForm } from '@/src/flows/Onboarding/api';
 import { SchemaFormComparison } from './SchemaFormComparison';
 import {
   BASIC_INFO_VERSIONS,
-  CONTRACT_DETAILS_VERSIONS,
+  COUNTRY_CONTRACT_VERSIONS,
   FORM_TYPES,
   type FormType,
   type SchemaVersion,
@@ -34,7 +34,7 @@ export const JsonSchemaComparison = () => {
     'employment_basic_information',
   );
   const [topVersion, setTopVersion] = useState<SchemaVersion>(1);
-  const [bottomVersion, setBottomVersion] = useState<SchemaVersion>(3);
+  const [bottomVersion, setBottomVersion] = useState<SchemaVersion>(1);
   const [countryCode, setCountryCode] = useState<string>('USA');
 
   const { client } = useClient();
@@ -80,10 +80,25 @@ export const JsonSchemaComparison = () => {
 
   const isLoading = isLoadingTop || isLoadingBottom;
 
-  const versionOptions =
-    formType === 'employment_basic_information'
+  const countryVersions = COUNTRY_CONTRACT_VERSIONS[countryCode];
+  const hasCountryMapping = countryVersions !== undefined;
+
+  const versionOptions = useMemo(() => {
+    return formType === 'employment_basic_information'
       ? BASIC_INFO_VERSIONS
-      : CONTRACT_DETAILS_VERSIONS;
+      : countryVersions || [{ value: 'latest', label: 'Latest' }];
+  }, [formType, countryVersions]);
+
+  useEffect(() => {
+    const availableVersionValues = versionOptions.map((v) => v.value);
+
+    if (!availableVersionValues.includes(topVersion)) {
+      setTopVersion(versionOptions[0].value);
+    }
+    if (!availableVersionValues.includes(bottomVersion)) {
+      setBottomVersion(versionOptions[0].value);
+    }
+  }, [formType, countryCode, versionOptions, topVersion, bottomVersion]);
 
   return (
     <div className='space-y-6'>
@@ -107,6 +122,39 @@ export const JsonSchemaComparison = () => {
               </TabsList>
             </Tabs>
           </div>
+
+          {isContractDetails && !hasCountryMapping && (
+            <div className='rounded-md bg-yellow-50 p-4 border border-yellow-200'>
+              <div className='flex'>
+                <div className='flex-shrink-0'>
+                  <svg
+                    className='h-5 w-5 text-yellow-400'
+                    viewBox='0 0 20 20'
+                    fill='currentColor'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </div>
+                <div className='ml-3'>
+                  <h3 className='text-sm font-medium text-yellow-800'>
+                    Version mappings not found
+                  </h3>
+                  <div className='mt-2 text-sm text-yellow-700'>
+                    <p>
+                      Country{' '}
+                      <span className='font-semibold'>{countryCode}</span> is
+                      not configured in COUNTRY_CONTRACT_VERSIONS. Using default
+                      (latest only).
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {isContractDetails && (
             <div>
