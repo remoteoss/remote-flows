@@ -66,7 +66,7 @@ export const compareFormFields = (
   const unchanged: string[] = [];
   const fieldDiffs = new Map<string, FieldDiff>();
 
-  fieldMap2.forEach((field2, name) => {
+  fieldMap2.forEach((_, name) => {
     if (!fieldMap1.has(name)) {
       added.push(name);
       fieldDiffs.set(name, {
