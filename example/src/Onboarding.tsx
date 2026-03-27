@@ -340,10 +340,13 @@ const OnboardingWithProps = ({
             // New Zealand
             contract_details: 2,
           },
+<<<<<<< HEAD
           PAK: {
             // Pakistan
             contract_details: 2,
           },
+=======
+>>>>>>> main
           PRT: {
             // Portugal
             contract_details: 3,
