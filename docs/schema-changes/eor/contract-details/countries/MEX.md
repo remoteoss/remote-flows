@@ -20,7 +20,7 @@ Schema versions for employee onboarding in México.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      MUS: { contract_details: 2 },
+      MEX: { contract_details: 2 },
     },
   }}
 />
