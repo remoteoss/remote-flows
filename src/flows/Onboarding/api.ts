@@ -197,7 +197,12 @@ export const useJSONSchemaForm = ({
       }
     : {};
   return useQuery({
-    queryKey: ['onboarding-json-schema-form', countryCode, form],
+    queryKey: [
+      'onboarding-json-schema-form',
+      countryCode,
+      form,
+      jsonSchemaVersion,
+    ],
     retry: false,
     queryFn: async () => {
       const response = await getShowFormCountry({

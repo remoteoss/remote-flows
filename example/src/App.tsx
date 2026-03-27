@@ -46,9 +46,11 @@ import ContractAmendmentCode from './ContractAmendment?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
+import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
+import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
 
 const costCalculatorDemos = [
   {
@@ -165,6 +167,13 @@ const additionalDemos = [
     description: 'Test magic link generation to various paths',
     component: MagicLinkTest,
     sourceCode: MagicLinkTestCode,
+  },
+  {
+    id: 'json-schema-comparison',
+    title: 'JSON Schema Comparison',
+    description: 'Compare different JSON schema versions side-by-side',
+    component: JsonSchemaComparisonDemo,
+    sourceCode: JsonSchemaComparisonCode,
   },
 ];
 

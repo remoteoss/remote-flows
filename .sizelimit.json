@@ -1,6 +1,6 @@
 {
   "limits": {
-    "total": 550000,
+    "total": 600000,
     "totalGzip": 250000,
     "css": 150000,
     "cssGzip": 25000,
