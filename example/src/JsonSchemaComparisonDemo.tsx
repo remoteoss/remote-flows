@@ -3,7 +3,10 @@ import { RemoteFlows } from './RemoteFlows';
 
 export const JsonSchemaComparisonDemo = () => {
   return (
-    <RemoteFlows>
+    <RemoteFlows
+      authType='company-manager'
+      proxy={{ url: window.location.origin }}
+    >
       <JsonSchemaComparison />
     </RemoteFlows>
   );

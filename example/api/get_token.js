@@ -90,6 +90,14 @@ async function fetchClientCredentialsAccessToken() {
 
 // Express route handler
 async function getToken(req, res) {
+  const { NODE_ENV } = process.env;
+
+  if (NODE_ENV === 'production') {
+    return res.status(403).json({
+      error: `This endpoint is not available in production mode`,
+    });
+  }
+
   try {
     const { accessToken, expiresIn } = await fetchAccessToken();
 
