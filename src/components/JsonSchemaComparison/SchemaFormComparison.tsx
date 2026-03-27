@@ -24,7 +24,6 @@ interface SchemaFormComparisonProps {
 const FieldWrapper = ({
   children,
   diffType,
-  fieldName,
   orderChanged,
   changes,
 }: {
@@ -90,12 +89,6 @@ const FieldWrapper = ({
 
   const renderChanges = () => {
     if (!changes || diffType !== 'modified') return null;
-
-    console.error('[FieldWrapper] Rendering changes:', {
-      fieldName: fieldName,
-      changes,
-      diffType,
-    });
 
     const changesList: React.ReactNode[] = [];
 
@@ -272,14 +265,6 @@ const FormPanel = ({
       const diffType = diff?.diffType || 'unchanged';
       const orderChanged = diff?.orderChanged;
       const changes = diff?.changes;
-
-      if (diffType === 'modified') {
-        console.error('[FormPanel] Field with changes:', field.name, {
-          fieldName: field.name,
-          diff,
-          changes,
-        });
-      }
 
       return {
         ...field,
