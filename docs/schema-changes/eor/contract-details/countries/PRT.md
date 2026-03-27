@@ -8,7 +8,15 @@ Schema versions for employee onboarding in Portugal.
 
 ## Contract Details
 
-### v2 - Current (Since SDK 1.23.0, March 2026)
+### v3 - Current (Since SDK 1.23.0, March 2026)
+
+**What changed:**
+
+- New offboarding acknowledgment - requires employers to acknowledge complex statutory requirements about vacation pay, vacation allowance, and Christmas allowance upon termination
+- Enhanced descriptions - provides more detailed and accurate information about allowances, training requirements, and offboarding entitlements
+- Help center links updated - new documentation references added
+
+### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
