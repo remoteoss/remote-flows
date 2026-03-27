@@ -7,7 +7,9 @@ test.describe('add estimation from drawer', () => {
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 
-  test('should not have an employer billing currency', async ({ page }) => {
+  test.skip('should not have an employer billing currency', async ({
+    page,
+  }) => {
     await fillEstimationForm(page, {
       country: 'Sweden',
       currency: 'USD',

@@ -256,7 +256,7 @@ const OnboardingWithProps = ({
   employmentId,
   externalId,
 }: OnboardingFormData) => (
-  <RemoteFlows>
+  <RemoteFlows proxy={{ url: window.location.origin }}>
     <OnboardingFlow
       companyId={companyId}
       type={type}
