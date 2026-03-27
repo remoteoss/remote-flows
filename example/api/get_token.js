@@ -90,8 +90,6 @@ async function fetchClientCredentialsAccessToken() {
 
 // Express route handler
 async function getToken(req, res) {
-  const { NODE_ENV } = process.env;
-
   try {
     const { accessToken, expiresIn } = await fetchAccessToken();
 
