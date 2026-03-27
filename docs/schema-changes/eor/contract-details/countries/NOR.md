@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Norway.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      NOR: { contract_details: 2 }
-    }
+      NOR: { contract_details: 2 },
+    },
   }}
 />
 ```

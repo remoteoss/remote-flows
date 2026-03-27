@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Nigeria.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      NGA: { contract_details: 2 }
-    }
+      NGA: { contract_details: 2 },
+    },
   }}
 />
 ```

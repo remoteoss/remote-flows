@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Serbia.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      SRB: { contract_details: 2 }
-    }
+      SRB: { contract_details: 2 },
+    },
   }}
 />
 ```

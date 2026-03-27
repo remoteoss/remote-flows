@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Mauritius.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      MUS: { contract_details: 2 }
-    }
+      MUS: { contract_details: 2 },
+    },
   }}
 />
 ```

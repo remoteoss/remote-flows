@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Malaysia.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      MYS: { contract_details: 2 }
-    }
+      MYS: { contract_details: 2 },
+    },
   }}
 />
 ```

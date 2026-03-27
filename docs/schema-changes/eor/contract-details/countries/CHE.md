@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Switzerland.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      CHE: { contract_details: 2 }
-    }
+      CHE: { contract_details: 2 },
+    },
   }}
 />
 ```

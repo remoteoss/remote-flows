@@ -29,8 +29,8 @@ Schema versions for employee onboarding in China.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      CHN: { contract_details: 2 }
-    }
+      CHN: { contract_details: 2 },
+    },
   }}
 />
 ```

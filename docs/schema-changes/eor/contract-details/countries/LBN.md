@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Lebanon.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      LBN: { contract_details: 2 }
-    }
+      LBN: { contract_details: 2 },
+    },
   }}
 />
 ```

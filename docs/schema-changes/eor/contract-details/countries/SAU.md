@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Saudi Arabia.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      SAU: { contract_details: 2 }
-    }
+      SAU: { contract_details: 2 },
+    },
   }}
 />
 ```

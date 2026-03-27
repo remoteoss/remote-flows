@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Jamaica.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      JAM: { contract_details: 2 }
-    }
+      JAM: { contract_details: 2 },
+    },
   }}
 />
 ```

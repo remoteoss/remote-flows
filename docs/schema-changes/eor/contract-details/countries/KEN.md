@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Kenya.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      KEN: { contract_details: 2 }
-    }
+      KEN: { contract_details: 2 },
+    },
   }}
 />
 ```

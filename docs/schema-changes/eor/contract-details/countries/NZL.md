@@ -29,8 +29,8 @@ Schema versions for employee onboarding in New Zealand.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      NZL: { contract_details: 2 }
-    }
+      NZL: { contract_details: 2 },
+    },
   }}
 />
 ```

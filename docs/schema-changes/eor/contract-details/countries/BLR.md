@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Belarus.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      BLR: { contract_details: 2 }
-    }
+      BLR: { contract_details: 2 },
+    },
   }}
 />
 ```

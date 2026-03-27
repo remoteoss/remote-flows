@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Hong Kong.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      HKG: { contract_details: 2 }
-    }
+      HKG: { contract_details: 2 },
+    },
   }}
 />
 ```

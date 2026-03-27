@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Sweden.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      SWE: { contract_details: 2 }
-    }
+      SWE: { contract_details: 2 },
+    },
   }}
 />
 ```

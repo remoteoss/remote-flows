@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Iceland.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      ISL: { contract_details: 2 }
-    }
+      ISL: { contract_details: 2 },
+    },
   }}
 />
 ```

@@ -29,8 +29,8 @@ Schema versions for employee onboarding in Singapore.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      SGP: { contract_details: 2 }
-    }
+      SGP: { contract_details: 2 },
+    },
   }}
 />
 ```
