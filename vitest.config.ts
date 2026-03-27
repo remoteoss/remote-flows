@@ -17,6 +17,7 @@ export default defineConfig({
         'src/tests/**/*.{ts,tsx}',
         'src/**/tests/*.{ts,tsx}',
         'src/client/**/*.{ts,tsx}',
+        'src/components/JsonSchemaComparison/**/*.{ts,tsx}',
       ],
       thresholds: {
         lines: COVERAGE_THRESHOLDS.lines,

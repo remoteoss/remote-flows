@@ -67,3 +67,6 @@ export {
   SelectValue,
 } from './components/ui/select';
 export { ScrollArea } from './components/ui/scroll-area';
+
+// JSON Schema Comparison Tool
+export { JsonSchemaComparison } from './components/JsonSchemaComparison';
