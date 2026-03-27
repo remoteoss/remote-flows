@@ -4,7 +4,7 @@ Country-specific schema version history and changelogs for employee onboarding f
 
 ## Why Country-Specific Changelogs?
 
-Schema versions (like v2) can have different implementations per country. Instead of generic version documentation, each country has its own changelog documenting exactly what changed for that country's onboarding flow.
+Schema versions can have different implementations per country. Instead of generic version documentation, each country has its own changelog documenting exactly what changed for that country's onboarding flow.
 
 ## Quick Reference
 
