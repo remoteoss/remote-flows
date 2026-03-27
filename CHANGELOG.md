@@ -1,5 +1,31 @@
 # @remoteoss/remote-flows
 
+## 1.24.0
+
+### Minor Changes
+
+#### Features
+
+- add json-schema onboarding visualization tool (#809) [#809](https://github.com/remoteoss/remote-flows/pull/809)
+
+#### Docs
+
+- add docs about basic information (#807) [#807](https://github.com/remoteoss/remote-flows/pull/807)
+- add docs about v2 notice period (#810) [#810](https://github.com/remoteoss/remote-flows/pull/810)
+- add uk versioning docs (#811) [#811](https://github.com/remoteoss/remote-flows/pull/811)
+- add portugal versioning docs (#812) [#812](https://github.com/remoteoss/remote-flows/pull/812)
+- add china version docs (#813) [#813](https://github.com/remoteoss/remote-flows/pull/813)
+- add india docs (#814) [#814](https://github.com/remoteoss/remote-flows/pull/814)
+- add mex docs (#815) [#815](https://github.com/remoteoss/remote-flows/pull/815)
+- add pakistan contract details versioning (#816) [#816](https://github.com/remoteoss/remote-flows/pull/816)
+- update docs uae (#817) [#817](https://github.com/remoteoss/remote-flows/pull/817)
+
+#### Chores
+
+- add tests for onboarding basic information v3 (#802) [#802](https://github.com/remoteoss/remote-flows/pull/802)
+- centralize mocks (#804) [#804](https://github.com/remoteoss/remote-flows/pull/804)
+- proxy requests (#818) [#818](https://github.com/remoteoss/remote-flows/pull/818)
+
 ## 1.23.0
 
 ### Minor Changes
