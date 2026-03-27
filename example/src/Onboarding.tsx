@@ -269,7 +269,12 @@ const OnboardingWithProps = ({
           employment_basic_information: 3,
         },
         jsonSchemaVersionByCountry: {
+          ARE: {
+            // United Arab Emirates
+            contract_details: 3,
+          },
           DEU: {
+            // Germany
             contract_details: 1,
           },
           BLR: {

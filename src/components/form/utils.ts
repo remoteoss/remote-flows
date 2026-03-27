@@ -854,3 +854,18 @@ export function getMinStartDate(minOnBoardingTime: number) {
   const minDate = addBusinessDays(today, minOnBoardingTime + 1);
   return isWeekend(minDate) ? nextMonday(minDate) : minDate;
 }
+
+/**
+ * Check if a field has a forced value.
+ * @param field - The field to check.
+ * @returns True if the field has a forced value, false otherwise.
+ */
+export function checkFieldHasForcedValue(field: any) {
+  // A field to be considered "forced value" must:
+  return (
+    field.const !== undefined && // Only accepts a specific value
+    field.const === field.default && // It can be prefilled, meaning it's not critical
+    field.type !== 'checkbox' && // Because checkbox must always be visible
+    field.type !== 'hidden' // Because hidden inputs shouldn't be visible
+  );
+}

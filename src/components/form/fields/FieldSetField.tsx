@@ -9,6 +9,8 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
+import { checkFieldHasForcedValue } from '@/src/components/form/utils';
+import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 
 type FieldBase = {
   label: string;
@@ -227,6 +229,22 @@ export function FieldSetField({
               }
 
               const fieldType = field.type;
+
+              const isForcedValue = checkFieldHasForcedValue(field);
+
+              if (isForcedValue) {
+                return (
+                  <ForcedValueField
+                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    description={field.description}
+                    value={field.const}
+                    statement={field.statement}
+                    label={field.label}
+                    helpCenter={field.meta?.helpCenter}
+                  />
+                );
+              }
 
               // Handle nested fieldsets
               if (fieldType === 'fieldset') {
