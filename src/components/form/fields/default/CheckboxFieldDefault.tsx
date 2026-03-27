@@ -1,3 +1,4 @@
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { Checkbox } from '@/src/components/ui/checkbox';
 import {
   FormControl,
@@ -65,7 +66,12 @@ export const CheckboxFieldDefault = ({
           )}
         </>
       </FormControl>
-      {description && <FormDescription>{description}</FormDescription>}
+      {description && (
+        <FormDescription>
+          {fieldData.description}{' '}
+          <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+        </FormDescription>
+      )}
       {fieldState.error && <FormMessage />}
     </FormItem>
   );
