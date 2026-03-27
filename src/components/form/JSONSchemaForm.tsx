@@ -7,7 +7,11 @@ import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { Components, JSFFieldset, JSFFields } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
+<<<<<<< HEAD
 import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
+=======
+import { getFieldsWithFlatFieldsets } from './utils';
+>>>>>>> main
 
 type JSONSchemaFormFieldsProps = {
   fields: JSFFields;
@@ -62,9 +66,13 @@ export const JSONSchemaFormFields = ({
           return null; // Skip hidden or deprecated fields
         }
 
+<<<<<<< HEAD
         const isForcedValue = checkFieldHasForcedValue(field);
 
         if (isForcedValue) {
+=======
+        if (checkFieldHasForcedValue(field)) {
+>>>>>>> main
           const fieldProps = omit(field, 'WrapperComponent');
           return wrapWithCustomWrapper(
             <ForcedValueField

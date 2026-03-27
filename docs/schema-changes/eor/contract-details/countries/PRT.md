@@ -16,6 +16,7 @@ Schema versions for employee onboarding in Portugal.
 - Enhanced descriptions - provides more detailed and accurate information about allowances, training requirements, and offboarding entitlements
 - Help center links updated - new documentation references added
 
+<<<<<<< HEAD
 **Migration:**
 
 ```tsx
@@ -28,6 +29,8 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
+=======
+>>>>>>> main
 ### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
