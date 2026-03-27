@@ -10,7 +10,7 @@ Schema versions (like v2) can have different implementations per country. Instea
 
 ### Countries on Contract Details v2
 
-These countries have upgraded to contract_details v2, which introduces notice_period handling:
+These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
 - [Belarus (BLR)](./BLR.md)
 - [China (CHN)](./CHN.md)
@@ -18,6 +18,7 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 - [Czech Republic (CZE)](./CZE.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
+- [India (IND)](./IND.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
 - [Lebanon (LBN)](./LBN.md)
@@ -27,6 +28,7 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
+- [Pakistan (PAK)](./PAK.md)
 - [Portugal (PRT)](./PRT.md)
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
@@ -48,19 +50,23 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 | Czech Republic | CZE  | v2               | March 2026   |
 | Hong Kong      | HKG  | v2               | March 2026   |
 | Iceland        | ISL  | v2               | March 2026   |
+| India          | IND  | v2               | March 2026   |
 | Jamaica        | JAM  | v2               | March 2026   |
 | Kenya          | KEN  | v2               | March 2026   |
 | Lebanon        | LBN  | v2               | March 2026   |
 | Mauritius      | MUS  | v2               | March 2026   |
 | Malaysia       | MYS  | v2               | March 2026   |
+| Mexico         | MEX  | v2               | March 2026   |
 | Nigeria        | NGA  | v2               | March 2026   |
 | Norway         | NOR  | v2               | March 2026   |
 | New Zealand    | NZL  | v2               | March 2026   |
+| Pakistan       | PAK  | v2               | March 2026   |
+| Portugal       | PRT  | v3               | March 2026   |
 | Saudi Arabia   | SAU  | v2               | March 2026   |
 | Singapore      | SGP  | v2               | March 2026   |
 | Serbia         | SRB  | v2               | March 2026   |
 | Sweden         | SWE  | v2               | March 2026   |
-| Germany        | DEU  | v1               | -            |
+| United Kingdom | GBR  | v2               | March 2026   |
 
 ## How to Use
 

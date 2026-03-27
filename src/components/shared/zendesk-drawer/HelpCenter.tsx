@@ -6,7 +6,7 @@ type HelpCenterProps = {
 };
 
 export function HelpCenter({ helpCenter }: HelpCenterProps) {
-  if (!helpCenter) {
+  if (!helpCenter || !helpCenter.id || !helpCenter.callToAction) {
     return null;
   }
 
