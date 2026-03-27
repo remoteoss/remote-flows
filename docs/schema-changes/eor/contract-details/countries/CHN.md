@@ -4,11 +4,15 @@ Schema versions for employee onboarding in China.
 
 ## Current Version
 
-**Contract Details:** v2 (Since SDK 1.23.0)
+**Contract Details:** v3 (Since SDK 1.23.0)
 
 ## Contract Details
 
-### v2 - Current (Since SDK 1.23.0, March 2026)
+### v3 - Current (Since SDK 1.23.0, March 2026)
+
+- China employment contracts now only support 4 provinces (Beijing, Guangdong, Shanghai, Zhejiang) instead of 8, to align with Remote's officially registered locations where Social Insurance and Housing Fund benefits are available.
+
+### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
