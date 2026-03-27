@@ -272,7 +272,76 @@ const OnboardingWithProps = ({
           DEU: {
             contract_details: 1,
           },
+          BLR: {
+            // Belarus
+            contract_details: 2,
+          },
           CHN: {
+            // China
+            contract_details: 2,
+          },
+          CHE: {
+            // Switzerland
+            contract_details: 2,
+          },
+          CZE: {
+            // Czech Republic
+            contract_details: 2,
+          },
+          HKG: {
+            // Hong Kong
+            contract_details: 2,
+          },
+          ISL: {
+            // Iceland
+            contract_details: 2,
+          },
+          JAM: {
+            // Jamaica
+            contract_details: 2,
+          },
+          KEN: {
+            // Kenya
+            contract_details: 2,
+          },
+          LBN: {
+            // Lebanon
+            contract_details: 2,
+          },
+          MUS: {
+            // Mauritius
+            contract_details: 2,
+          },
+          MYS: {
+            // Malaysia
+            contract_details: 2,
+          },
+          NGA: {
+            // Nigeria
+            contract_details: 2,
+          },
+          NOR: {
+            // Norway
+            contract_details: 2,
+          },
+          NZL: {
+            // New Zealand
+            contract_details: 2,
+          },
+          SAU: {
+            // Saudi Arabia
+            contract_details: 2,
+          },
+          SGP: {
+            // Singapore
+            contract_details: 2,
+          },
+          SRB: {
+            // Serbia
+            contract_details: 2,
+          },
+          SWE: {
+            // Sweden
             contract_details: 2,
           },
         },
