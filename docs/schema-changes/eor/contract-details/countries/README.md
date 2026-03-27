@@ -67,7 +67,6 @@ These countries have upgraded to different versions, check each guide to know ho
 | Serbia         | SRB  | v2               | March 2026   |
 | Sweden         | SWE  | v2               | March 2026   |
 | United Kingdom | GBR  | v2               | March 2026   |
-| Germany        | DEU  | v1               | -            |
 
 ## How to Use
 
