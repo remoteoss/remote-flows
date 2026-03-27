@@ -8,7 +8,7 @@ Schema versions (like v2) can have different implementations per country. Instea
 
 ## Quick Reference
 
-### Countries on Contract Details v2
+### Countries that have migration guide
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
@@ -45,7 +45,7 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
-| United Arab Emirates | ARE  | v2               | March 2026   |
+| United Arab Emirates | ARE  | v3               | March 2026   |
 | Belarus              | BLR  | v2               | March 2026   |
 | China                | CHN  | v2               | March 2026   |
 | Switzerland          | CHE  | v2               | March 2026   |
