@@ -34,7 +34,7 @@ Schema versions for the Contract Details step in employee onboarding flows.
 
 **Important:** Contract details schemas vary by country. Version 2 introduces notice_period handling, but the specific implementation differs per country.
 
-**See country-specific documentation:** [View all countries →](./countries/README.md)
+**See country-specific documentation:** [View all countries →](./eor/contract-details/countries/README.md)
 
 ### Version Availability
 
