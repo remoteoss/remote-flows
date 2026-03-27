@@ -50,8 +50,10 @@ export function SelectField({
             field={{
               ...field,
               onChange: (value: string | number) => {
-                const maybeCastValue =
-                  rest.jsonType === 'number' ? Number(value) : value;
+                const isNumberType = Array.isArray(rest.jsonType)
+                  ? rest.jsonType.includes('number')
+                  : rest.jsonType === 'number';
+                const maybeCastValue = isNumberType ? Number(value) : value;
                 field.onChange(maybeCastValue);
                 onChange?.(maybeCastValue);
               },
