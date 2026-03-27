@@ -296,6 +296,10 @@ const OnboardingWithProps = ({
             // Hong Kong
             contract_details: 2,
           },
+          IND: {
+            // India
+            contract_details: 2,
+          },
           ISL: {
             // Iceland
             contract_details: 2,
