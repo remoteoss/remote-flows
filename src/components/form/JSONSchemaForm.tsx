@@ -7,7 +7,7 @@ import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { Components, JSFFieldset, JSFFields } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
-import { getFieldsWithFlatFieldsets } from './utils';
+import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
 
 type JSONSchemaFormFieldsProps = {
   fields: JSFFields;
@@ -15,16 +15,6 @@ type JSONSchemaFormFieldsProps = {
   fieldsets?: JSFFieldset | null | undefined;
   fieldValues?: Record<string, unknown>;
 };
-
-function checkFieldHasForcedValue(field: any) {
-  // A field to be considered "forced value" must:
-  return (
-    field.const !== undefined && // Only accepts a specific value
-    field.const === field.default && // It can be prefilled, meaning it's not critical
-    field.type !== 'checkbox' && // Because checkbox must always be visible
-    field.type !== 'hidden' // Because hidden inputs shouldn't be visible
-  );
-}
 
 export const JSONSchemaFormFields = ({
   fields,
@@ -72,7 +62,9 @@ export const JSONSchemaFormFields = ({
           return null; // Skip hidden or deprecated fields
         }
 
-        if (checkFieldHasForcedValue(field)) {
+        const isForcedValue = checkFieldHasForcedValue(field);
+
+        if (isForcedValue) {
           const fieldProps = omit(field, 'WrapperComponent');
           return wrapWithCustomWrapper(
             <ForcedValueField
