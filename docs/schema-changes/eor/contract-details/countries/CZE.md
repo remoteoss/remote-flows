@@ -25,7 +25,7 @@ Schema versions for employee onboarding in Czech Republic.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      CZE: { contract_details: 2 },
+      GBR: { contract_details: 2 },
     },
   }}
 />
