@@ -316,6 +316,10 @@ const OnboardingWithProps = ({
             // Lebanon
             contract_details: 2,
           },
+          MEX: {
+            // Mexico
+            contract_details: 2,
+          },
           MUS: {
             // Mauritius
             contract_details: 2,

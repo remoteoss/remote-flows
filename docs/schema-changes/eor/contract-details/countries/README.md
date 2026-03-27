@@ -23,6 +23,7 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 - [Lebanon (LBN)](./LBN.md)
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
+- [Mexico (MEX)](./MEX.md)
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
