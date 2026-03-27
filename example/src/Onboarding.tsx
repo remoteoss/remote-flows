@@ -271,7 +271,7 @@ const OnboardingWithProps = ({
         jsonSchemaVersionByCountry: {
           ARE: {
             // United Arab Emirates
-            contract_details: 2,
+            contract_details: 3,
           },
           DEU: {
             // Germany

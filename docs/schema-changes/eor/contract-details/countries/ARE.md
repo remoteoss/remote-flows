@@ -8,7 +8,25 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ## Contract Details
 
-### v2 - Current (Since SDK 1.23.0, March 2026)
+### v3 - Current (Since SDK 1.23.0, March 2026)
+
+**What changed:**
+
+- refactors `notice_period_days` and `work_address` into reusable components and removes the conditional that hides carryover fields when unlimited PTO is selected.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ARE: { contract_details: 3 },
+    },
+  }}
+/>
+```
+
+### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
