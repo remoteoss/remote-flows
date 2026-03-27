@@ -30,6 +30,7 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 - [Singapore (SGP)](./SGP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
+- [United Kingdom (GBR)](./GBR.md)
 
 ### Countries on Contract Details v1
 
