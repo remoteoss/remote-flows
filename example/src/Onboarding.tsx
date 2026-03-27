@@ -278,7 +278,7 @@ const OnboardingWithProps = ({
           },
           CHN: {
             // China
-            contract_details: 2,
+            contract_details: 3,
           },
           CHE: {
             // Switzerland
