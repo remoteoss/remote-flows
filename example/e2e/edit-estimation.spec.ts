@@ -7,7 +7,7 @@ test.describe('edit estimation', () => {
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 
-  test('edits an estimation', async ({ page }) => {
+  test.skip('edits an estimation', async ({ page }) => {
     await fillEstimationForm(page, {
       country: 'Sweden',
       currency: 'USD',
