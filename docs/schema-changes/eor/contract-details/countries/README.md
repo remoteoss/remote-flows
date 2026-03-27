@@ -26,6 +26,7 @@ These countries have upgraded to contract_details v2, which introduces notice_pe
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
+- [Portugal (PRT)](./PRT.md)
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
 - [Serbia (SRB)](./SRB.md)
