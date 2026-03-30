@@ -246,7 +246,3 @@ We have created an entry point in the package `@remoteoss/remote-flows/internals
 This entry endpoint exports internals utils and shadcn components to avoid duplicating these on the `example` folder.
 
 We don't guarantee `semver` compatiblity if you used them in your project.
-
-```
-
-```
