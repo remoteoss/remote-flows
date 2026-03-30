@@ -56,6 +56,10 @@ I recommend checking each changelog separately and using the [diff tool](https:/
 />
 ```
 
+## Demo
+
+![Walkthough JSON Visualizer](./videos/migrating_onboarding_eor_countries.mp4)
+
 ## FAQ
 
 ### How do I get access to the json diff visualizer?
