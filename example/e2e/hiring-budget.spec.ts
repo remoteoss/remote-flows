@@ -7,7 +7,7 @@ test.describe('hiring budget', () => {
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 
-  test.skip('shows the hiring budget option', async ({ page }) => {
+  test('shows the hiring budget option', async ({ page }) => {
     await page.locator('#my_hiring_budget').click();
 
     await expect(page.locator('[for=salary]')).toHaveText('Hiring budget');

@@ -7,7 +7,7 @@ test.describe('annual gross salary', () => {
     await page.goto('/?demo=with-premium-benefits-cost-calculator');
   });
 
-  test.skip('shows the annual gross salary both in the header and in the table', async ({
+  test('shows the annual gross salary both in the header and in the table', async ({
     page,
   }) => {
     await fillEstimationForm(page, {
