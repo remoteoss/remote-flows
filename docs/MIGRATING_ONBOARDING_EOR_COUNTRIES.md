@@ -58,7 +58,10 @@ I recommend checking each changelog separately and using the [diff tool](https:/
 
 ## Demo
 
-![Walkthough JSON Visualizer](./videos/migrating_onboarding_eor_countries.mp4)
+<video width="100%" controls>
+  <source src="./videos/migrating_onboarding_eor_countries.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## FAQ
 
