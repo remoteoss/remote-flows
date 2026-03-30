@@ -58,8 +58,7 @@ I recommend checking each changelog separately and using the [diff tool](https:/
 
 ## Demo
 
-https://github.com/user-attachments/assets/09d5b456-4536-4412-b37e-b628225d107e
-[Video](https://github.com/user-attachments/assets/09d5b456-4536-4412-b37e-b628225d107e)
+[Walthrough video](https://github.com/user-attachments/assets/09d5b456-4536-4412-b37e-b628225d107e)
 
 ## FAQ
 
