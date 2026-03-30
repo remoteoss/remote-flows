@@ -59,8 +59,7 @@ I recommend checking each changelog separately and using the [diff tool](https:/
 ## Demo
 
 <video width="100%" controls>
-  <source src="./videos/migrating_onboarding_eor_countries.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+  <source src="https://github.com/user-attachments/assets/09d5b456-4536-4412-b37e-b628225d107e" type="video/mp4">
 </video>
 
 ## FAQ
