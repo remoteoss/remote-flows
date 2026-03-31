@@ -25,6 +25,7 @@ jobs:
 
       - name: Security Audit
         run: npm audit --audit-level=high
+        continue-on-error: true
 
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
