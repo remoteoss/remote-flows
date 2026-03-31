@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.24.1
+
+### Patch Changes
+
+- add eor onboarding docs about migrating countries (#821) [#821](https://github.com/remoteoss/remote-flows/pull/821)
+
 ## 1.24.0
 
 ### Minor Changes

@@ -83,7 +83,7 @@ export const useTermination = ({
 
   const hasFutureStartDate = Boolean(
     employment?.provisional_start_date &&
-      isFuture(parseISO(employment.provisional_start_date)),
+    isFuture(parseISO(employment.provisional_start_date)),
   );
 
   const employmentValues = {

@@ -125,12 +125,12 @@ ${changeDescription}
   console.log(`✅ Updated CHANGELOG.md`);
 
   // Format files with prettier
-  console.log(`\n🎨 Formatting files with prettier...`);
+  console.log(`\n🎨 Formatting files with oxfmt...`);
   try {
     execSync('npm run format', { stdio: 'inherit' });
     console.log(`✅ Files formatted`);
   } catch {
-    console.log(`⚠️  Prettier formatting failed, continuing...`);
+    console.log(`⚠️  oxfmt formatting failed, continuing...`);
   }
 
   // Update package-lock.json
