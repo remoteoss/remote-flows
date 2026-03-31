@@ -8,7 +8,7 @@ Schema versions for employee onboarding in Portugal.
 
 ## Contract Details
 
-### v3 - Current (Since SDK 1.23.0, March 2026)
+### v3 - Current (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
