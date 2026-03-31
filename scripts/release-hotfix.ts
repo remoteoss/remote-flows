@@ -124,7 +124,7 @@ ${changeDescription}
   console.log(`✅ Updated version to ${newVersion}`);
   console.log(`✅ Updated CHANGELOG.md`);
 
-  // Format files with prettier
+  // Format files with oxfmt
   console.log(`\n🎨 Formatting files with oxfmt...`);
   try {
     execSync('npm run format', { stdio: 'inherit' });
