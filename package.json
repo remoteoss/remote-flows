@@ -147,7 +147,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.24",
     "filesize": "^10.1.0",
-    "glob": "^10.5.0",
+    "glob": "^13.0.6",
     "globals": "^16.5.0",
     "gzip-size": "^7.0.0",
     "jsdom": "^26.1.0",
