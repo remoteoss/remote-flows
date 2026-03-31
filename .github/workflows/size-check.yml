@@ -8,7 +8,7 @@ on:
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
-      - 'tsup.config.ts'
+      - 'tsdown.config.ts'
       - '.sizelimit.json'
 
 permissions:

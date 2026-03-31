@@ -1,15 +1,15 @@
-import { Options } from 'tsup';
-import { ENVIRONMENTS } from './src/environments';
+import { defineConfig } from 'tsdown/config';
+import { ENVIRONMENTS } from './src/environments.ts';
 
 const env = process.env.NODE_ENV;
 
-export const tsup: Options = {
+export default defineConfig({
   target: 'esnext',
   clean: true,
   dts: true,
+  fixedExtension: false,
   entry: [
     'src/index.tsx',
-    'src/styles.ts',
     'src/internals.ts',
     'src/default-components.ts',
     'src/flows',
@@ -17,7 +17,6 @@ export const tsup: Options = {
     '!src/**/tests',
     '!src/**/*.md',
   ],
-  keepNames: true,
   minify: true,
   sourcemap: true,
   format: ['esm'],
@@ -27,6 +26,11 @@ export const tsup: Options = {
     REMOTE_GATEWAY_URL:
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
   },
-  external: ['react', 'react-dom'],
-  noExternal: ['react-hook-form', '@hookform/resolvers'],
-};
+  deps: {
+    neverBundle: ['react', 'react-dom'],
+    alwaysBundle: ['react-hook-form', '@hookform/resolvers'],
+  },
+  outputOptions: {
+    keepNames: true,
+  },
+});
