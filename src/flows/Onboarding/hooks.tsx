@@ -116,9 +116,9 @@ const getLoadingStates = ({
 
   const isNavigatingToReview = Boolean(
     shouldHandleReadOnlyEmployment &&
-      !initialLoading &&
-      basicInformationFields.length > 0 &&
-      contractDetailsFields.length > 0,
+    !initialLoading &&
+    basicInformationFields.length > 0 &&
+    contractDetailsFields.length > 0,
   );
 
   return {
@@ -308,14 +308,14 @@ export const useOnboarding = ({
 
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        Boolean(employmentId)),
+    (stepState.currentStep.name === 'basic_information' ||
+      Boolean(employmentId)),
   );
 
   const isContractDetailsEnabled = Boolean(
     internalCountryCode &&
-      (stepState.currentStep.name === 'contract_details' ||
-        Boolean(employmentId)),
+    (stepState.currentStep.name === 'contract_details' ||
+      Boolean(employmentId)),
   );
 
   const {

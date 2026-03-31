@@ -378,14 +378,14 @@ export const useContractorOnboarding = ({
 
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
-      (stepState.currentStep.name === 'basic_information' ||
-        Boolean(employmentId)),
+    (stepState.currentStep.name === 'basic_information' ||
+      Boolean(employmentId)),
   );
 
   const isIR35FileEnabled = Boolean(
     internalCountryCode === 'GBR' &&
-      employmentId &&
-      stepState.currentStep.name === 'basic_information',
+    employmentId &&
+    stepState.currentStep.name === 'basic_information',
   );
 
   const { data: ir35File, isLoading: isLoadingIR35File } = useGetIR35File(
@@ -540,7 +540,7 @@ export const useContractorOnboarding = ({
   const isContractorOnboardingDetailsEnabled = Boolean(
     (internalCountryCode &&
       stepState.currentStep.name === 'contract_details') ||
-      isEmploymentReadOnly,
+    isEmploymentReadOnly,
   );
 
   const {
@@ -753,8 +753,8 @@ export const useContractorOnboarding = ({
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId &&
-      isEmploymentReadOnly &&
-      stepState.currentStep.name !== 'review',
+    isEmploymentReadOnly &&
+    stepState.currentStep.name !== 'review',
   );
 
   const initialLoading =
@@ -775,11 +775,11 @@ export const useContractorOnboarding = ({
 
     return Boolean(
       shouldHandleReadOnlyEmployment &&
-        !initialLoading &&
-        Boolean(internalContractDocumentId) &&
-        stepFields.basic_information.length > 0 &&
-        stepFields.contract_details.length > 0 &&
-        hasContractPreviewFields,
+      !initialLoading &&
+      Boolean(internalContractDocumentId) &&
+      stepFields.basic_information.length > 0 &&
+      stepFields.contract_details.length > 0 &&
+      hasContractPreviewFields,
     );
   }, [
     shouldHandleReadOnlyEmployment,
