@@ -23,6 +23,10 @@ jobs:
       - name: Run CI checks and tests
         run: npm run ci
 
+      - name: Security Audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
