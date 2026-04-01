@@ -13,6 +13,7 @@ import {
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
+  TelFieldComponentProps,
 } from '@/src/types/fields';
 
 type AuthResponse = {
@@ -127,7 +128,14 @@ export type PDFPreviewComponentProps = {
 // We exclude some of the types that we are overriding
 type FieldComponentTypes = Exclude<
   BaseTypes,
-  'file' | 'countries' | 'text' | 'work-schedule' | 'hidden' | 'money' | 'date'
+  | 'file'
+  | 'countries'
+  | 'text'
+  | 'work-schedule'
+  | 'hidden'
+  | 'money'
+  | 'date'
+  | 'tel'
 >;
 
 export type Components = {
@@ -145,6 +153,7 @@ export type Components = {
   table?: React.ComponentType<TableComponentProps>;
   'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
   pdfViewer?: React.ComponentType<PDFPreviewComponentProps>;
+  tel?: React.ComponentType<TelFieldComponentProps>;
 };
 
 export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
