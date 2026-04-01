@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.24.1
+
+### Patch Changes
+
+- add eor onboarding docs about migrating countries (#821) [#821](https://github.com/remoteoss/remote-flows/pull/821)
+- migrate to oxfmt (#825) [#825](https://github.com/remoteoss/remote-flows/pull/825)
+- run audit scan for security purposes (#826) [#826](https://github.com/remoteoss/remote-flows/pull/826)
+
 ## 1.24.0
 
 ### Minor Changes

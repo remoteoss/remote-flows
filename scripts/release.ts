@@ -220,6 +220,55 @@ async function main(): Promise<void> {
     output: process.stdout,
   });
 
+  // Ask if the detected version is correct
+  const versionCorrect = await new Promise<string>((resolve) => {
+    rl.question(
+      `Is '${changeset.versionBump}' the correct version bump? (Y/n): `,
+      resolve,
+    );
+  });
+
+  let finalVersionBump = changeset.versionBump;
+
+  // If not correct, ask for the correct type
+  if (versionCorrect.toLowerCase() === 'n') {
+    const userVersionBump = await new Promise<string>((resolve) => {
+      rl.question('Specify version bump (patch/minor/major): ', resolve);
+    });
+
+    const validVersions = ['patch', 'minor', 'major'];
+    if (validVersions.includes(userVersionBump.toLowerCase())) {
+      finalVersionBump = userVersionBump.toLowerCase() as
+        | 'patch'
+        | 'minor'
+        | 'major';
+
+      // Calculate what the new version will be
+      const [major, minor, patch] = latestPublishedVersion
+        .split('.')
+        .map(Number);
+      let newVersion: string;
+      if (finalVersionBump === 'major') {
+        newVersion = `${major + 1}.0.0`;
+      } else if (finalVersionBump === 'minor') {
+        newVersion = `${major}.${minor + 1}.0`;
+      } else {
+        newVersion = `${major}.${minor}.${patch + 1}`;
+      }
+
+      console.log(
+        `📝 Using version bump: ${finalVersionBump} (${latestPublishedVersion} → ${newVersion})`,
+      );
+    } else {
+      console.log('Invalid version bump. Exiting.');
+      rl.close();
+      return;
+    }
+  }
+
+  // Update the changeset with the confirmed version
+  changeset.versionBump = finalVersionBump;
+
   const proceed = await new Promise<string>((resolve) => {
     rl.question('Proceed with release? (y/N): ', resolve);
   });
