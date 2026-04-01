@@ -9,7 +9,6 @@ export function TelFieldDefault({
   fieldData,
 }: TelFieldComponentProps) {
   const { name, label, description, maxLength } = fieldData;
-  console.log('fieldState', fieldState);
 
   return (
     <FormItem
