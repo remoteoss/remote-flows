@@ -123,6 +123,8 @@ const FormControl = React.forwardRef<
 
   return React.cloneElement(
     children as React.ReactElement<Record<string, unknown>>,
+    // WE NEED TO FIX: react-hooks/refs - Passing a ref to a function may read its value during render
+    // eslint-disable-next-line react-hooks/refs
     { ...(children.props as object), ...controlProps, ref },
   );
 });

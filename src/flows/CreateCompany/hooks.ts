@@ -378,6 +378,8 @@ export const useCreateCompany = ({
      * Fields metadata for each step
      */
     meta: {
+      // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
+      // eslint-disable-next-line react-hooks/refs
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
     },

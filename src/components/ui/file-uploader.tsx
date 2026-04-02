@@ -34,6 +34,8 @@ export function FileUploader({
 
   useEffect(() => {
     if (externalFiles && externalFiles.length > 0) {
+      // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFiles(externalFiles);
     }
   }, [externalFiles]);

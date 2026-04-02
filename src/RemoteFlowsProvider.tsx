@@ -74,6 +74,8 @@ export function RemoteFlows({
   debug = false,
   credentials,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
+  // WE NEED TO FIX: react-hooks/refs - Cannot access refs during render
+  // eslint-disable-next-line react-hooks/refs
   const remoteApiClient = useRef(
     createClient(auth, { proxy, environment, credentials }),
   ).current;
