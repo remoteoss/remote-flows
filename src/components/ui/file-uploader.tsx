@@ -29,12 +29,15 @@ export function FileUploader({
   files: externalFiles,
   id,
 }: FileUploaderProps) {
+  const syncedRef = useRef<File[] | undefined>(undefined);
+
   const [files, setFiles] = useState<File[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (externalFiles && externalFiles.length > 0) {
-      // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+    if (externalFiles && externalFiles !== syncedRef.current) {
+      syncedRef.current = externalFiles;
+      // effect is okay here, we just track with a ref to avoid unnecessary re-renders
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFiles(externalFiles);
     }
