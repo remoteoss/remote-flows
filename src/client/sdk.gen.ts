@@ -80,6 +80,9 @@ import type {
   GetIndexBillingDocumentData,
   GetIndexBillingDocumentErrors,
   GetIndexBillingDocumentResponses,
+  GetIndexBulkEmploymentRowData,
+  GetIndexBulkEmploymentRowErrors,
+  GetIndexBulkEmploymentRowResponses,
   GetIndexCompanyCurrencyData,
   GetIndexCompanyCurrencyErrors,
   GetIndexCompanyCurrencyResponses,
@@ -214,6 +217,9 @@ import type {
   GetSchemaBenefitRenewalRequestData,
   GetSchemaBenefitRenewalRequestErrors,
   GetSchemaBenefitRenewalRequestResponses,
+  GetShowAdministrativeDetailsData,
+  GetShowAdministrativeDetailsErrors,
+  GetShowAdministrativeDetailsResponses,
   GetShowBackgroundCheckData,
   GetShowBackgroundCheckErrors,
   GetShowBackgroundCheckResponses,
@@ -223,6 +229,9 @@ import type {
   GetShowBillingDocumentData,
   GetShowBillingDocumentErrors,
   GetShowBillingDocumentResponses,
+  GetShowBulkEmploymentData,
+  GetShowBulkEmploymentErrors,
+  GetShowBulkEmploymentResponses,
   GetShowCompanyComplianceProfileData,
   GetShowCompanyComplianceProfileErrors,
   GetShowCompanyComplianceProfileResponses,
@@ -253,6 +262,9 @@ import type {
   GetShowContractorInvoiceData,
   GetShowContractorInvoiceErrors,
   GetShowContractorInvoiceResponses,
+  GetShowCorTerminationRequestSubscriptionData,
+  GetShowCorTerminationRequestSubscriptionErrors,
+  GetShowCorTerminationRequestSubscriptionResponses,
   GetShowEligibilityQuestionnaireData,
   GetShowEligibilityQuestionnaireErrors,
   GetShowEligibilityQuestionnaireResponses,
@@ -283,6 +295,9 @@ import type {
   GetShowIncentiveData,
   GetShowIncentiveErrors,
   GetShowIncentiveResponses,
+  GetShowLegalEntityFormCountryData,
+  GetShowLegalEntityFormCountryErrors,
+  GetShowLegalEntityFormCountryResponses,
   GetShowOffboardingData,
   GetShowOffboardingErrors,
   GetShowOffboardingResponses,
@@ -441,6 +456,9 @@ import type {
   PostCreateBenefitRenewalRequestData,
   PostCreateBenefitRenewalRequestErrors,
   PostCreateBenefitRenewalRequestResponses,
+  PostCreateBulkEmploymentData,
+  PostCreateBulkEmploymentErrors,
+  PostCreateBulkEmploymentResponses,
   PostCreateCancellationData,
   PostCreateCancellationErrors,
   PostCreateCancellationResponses,
@@ -465,6 +483,9 @@ import type {
   PostCreateContractEligibilityData,
   PostCreateContractEligibilityErrors,
   PostCreateContractEligibilityResponses,
+  PostCreateCorTerminationRequestSubscriptionData,
+  PostCreateCorTerminationRequestSubscriptionErrors,
+  PostCreateCorTerminationRequestSubscriptionResponses,
   PostCreateDataSyncData,
   PostCreateDataSyncErrors,
   PostCreateDataSyncResponses,
@@ -585,6 +606,9 @@ import type {
   PutCancelContractAmendmentData,
   PutCancelContractAmendmentErrors,
   PutCancelContractAmendmentResponses,
+  PutUpdateAdministrativeDetailsData,
+  PutUpdateAdministrativeDetailsErrors,
+  PutUpdateAdministrativeDetailsResponses,
   PutUpdateBenefitOfferData,
   PutUpdateBenefitOfferErrors,
   PutUpdateBenefitOfferResponses,
@@ -623,6 +647,13 @@ export type Options<
  * List Offboarding
  *
  * Lists Offboarding requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
  */
 export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexOffboardingData, ThrowOnError>,
@@ -632,7 +663,10 @@ export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
     GetIndexOffboardingErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/offboardings',
     ...options,
   });
@@ -641,6 +675,13 @@ export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
  * Create Offboarding
  *
  * Creates an Offboarding request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage offboarding (`offboarding:write`) |
  *
  */
 export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
@@ -651,7 +692,10 @@ export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
     PostCreateOffboardingErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/offboardings',
     ...options,
     headers: {
@@ -664,6 +708,13 @@ export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
  * Show timesheet
  *
  * Shows a timesheet by its ID.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
+ *
  */
 export const getShowTimesheet = <ThrowOnError extends boolean = false>(
   options: Options<GetShowTimesheetData, ThrowOnError>,
@@ -691,6 +742,13 @@ export const getShowTimesheet = <ThrowOnError extends boolean = false>(
  * * Employment has to be in `invited`, `created`, `created_awaiting_reserve`, `created_reserve_paid`, `pre_hire` status
  * * Employee must not have signed the employment contract
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage onboarding (`onboarding:write`) |
+ *
  */
 export const postUpdateCancelOnboarding = <
   ThrowOnError extends boolean = false,
@@ -716,6 +774,13 @@ export const postUpdateCancelOnboarding = <
  * Returns the json schema of the `contract_amendment` form for a specific employment.
  * This endpoint requires a company access token, as forms are dependent on certain
  * properties of companies and their current employments.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
  *
  */
 export const getShowContractAmendmentSchema = <
@@ -792,6 +857,13 @@ export const postCreateDataSync = <ThrowOnError extends boolean = false>(
  * List all pricing plans for a company.
  * Currently the endpoint only returns the pricing plans for the EOR monthly product and the contractor products (Standard, Plus and COR).
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
  */
 export const getIndexCompanyPricingPlan = <
   ThrowOnError extends boolean = false,
@@ -821,6 +893,13 @@ export const getIndexCompanyPricingPlan = <
  *
  * The pricing plan is always created in the company's desired currency.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage pricing plans (`pricing_plan:write`) |
+ *
  */
 export const postCreateCompanyPricingPlan = <
   ThrowOnError extends boolean = false,
@@ -845,6 +924,13 @@ export const postCreateCompanyPricingPlan = <
  * Show probation completion letter
  *
  * Show a single probation completion letter.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
+ *
  */
 export const getShowProbationCompletionLetter = <
   ThrowOnError extends boolean = false,
@@ -868,6 +954,13 @@ export const getShowProbationCompletionLetter = <
  * Show Contractor Invoice
  *
  * Shows a single Contractor Invoice record.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
   options: Options<GetShowContractorInvoiceData, ThrowOnError>,
@@ -890,6 +983,13 @@ export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
  *
  * Convert currency using FX rates used in Remote’s estimation tools.
  * These rates are not guaranteed to match final onboarding or contract rates.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
+ *
  */
 export const postConvertRawCurrencyConverter = <
   ThrowOnError extends boolean = false,
@@ -918,6 +1018,13 @@ export const postConvertRawCurrencyConverter = <
  * Show contractor contract details
  *
  * Returns the contract details JSON Schema for contractors given a country
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
  */
 export const getShowContractorContractDetailsCountry = <
   ThrowOnError extends boolean = false,
@@ -1004,6 +1111,13 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateEmployment2Data, ThrowOnError>,
@@ -1032,6 +1146,13 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * The status is the same as the credit risk status but takes the onboarding reserves policies into account.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
  */
 export const getShowCompanyEmploymentOnboardingReservesStatus = <
   ThrowOnError extends boolean = false,
@@ -1058,6 +1179,13 @@ export const getShowCompanyEmploymentOnboardingReservesStatus = <
  * Get Help Center Article
  *
  * Get a help center article by its ID
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View help articles (`help_center_article:read`) | - |
+ *
  */
 export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
   options: Options<GetShowHelpCenterArticleData, ThrowOnError>,
@@ -1095,6 +1223,13 @@ export const getGetUserScim = <ThrowOnError extends boolean = false>(
 
 /**
  * Download a document for the employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
   options: Options<GetShowEmployeeDocumentData, ThrowOnError>,
@@ -1113,6 +1248,13 @@ export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
  * List Contractor Invoices
  *
  * Lists Contractor Invoice records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexContractorInvoiceData, ThrowOnError>,
@@ -1161,6 +1303,13 @@ export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
  * Show the SSO Configuration Details
  *
  * Shows the SSO Configuration details for the company.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
+ *
  */
 export const getDetailsSsoConfiguration = <
   ThrowOnError extends boolean = false,
@@ -1211,6 +1360,13 @@ export const postCreateEstimation = <ThrowOnError extends boolean = false>(
  * Returns the json schema of the requested company form.
  * Currently only supports the `address_details` form.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
  */
 export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
   options: Options<GetShowCompanySchemaData, ThrowOnError>,
@@ -1227,6 +1383,13 @@ export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
 
 /**
  * Get employment benefit offers
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
+ *
  */
 export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexBenefitOfferData, ThrowOnError>,
@@ -1269,6 +1432,13 @@ export const putUpdateBenefitOffer = <ThrowOnError extends boolean = false>(
  *
  * Gets necessary information to perform the identity verification of an employee.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View identity verification (`identity_verification:read`) | Manage identity verification (`identity_verification:write`) |
+ *
  */
 export const getGetIdentityVerificationDataIdentityVerification = <
   ThrowOnError extends boolean = false,
@@ -1296,6 +1466,13 @@ export const getGetIdentityVerificationDataIdentityVerification = <
  *
  * Endpoint that can be used to list contractor subscriptions.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
  */
 export const getIndexSubscription = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexSubscriptionData, ThrowOnError>,
@@ -1317,6 +1494,13 @@ export const getIndexSubscription = <ThrowOnError extends boolean = false>(
  * List Webhook Events
  *
  * List all webhook events
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
+ *
  */
 export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexWebhookEventData, ThrowOnError>,
@@ -1349,7 +1533,10 @@ export const postBypassEligibilityChecksCompany = <
     PostBypassEligibilityChecksCompanyErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
     ...options,
   });
@@ -1376,6 +1563,13 @@ export const getShowTestSchema = <ThrowOnError extends boolean = false>(
  * List all holidays of a country
  *
  * List all holidays of a country for a specific year. Optionally, it can be filtered by country subdivision.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
+ *
  */
 export const getIndexHoliday = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexHolidayData, ThrowOnError>,
@@ -1398,6 +1592,13 @@ export const getIndexHoliday = <ThrowOnError extends boolean = false>(
  * Cancel Time Off
  *
  * Cancel a time off request that was already approved.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCreateCancellation = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateCancellationData, ThrowOnError>,
@@ -1424,6 +1625,13 @@ export const postCreateCancellation = <ThrowOnError extends boolean = false>(
  *
  * Shows an employment job details.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
  */
 export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexEmploymentJobData, ThrowOnError>,
@@ -1446,6 +1654,13 @@ export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
  *
  * List all pricing plan partner templates.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
  */
 export const getIndexPricingPlanPartnerTemplate = <
   ThrowOnError extends boolean = false,
@@ -1466,6 +1681,13 @@ export const getIndexPricingPlanPartnerTemplate = <
  * List EOR Payroll Calendar
  *
  * List all active payroll calendars for EOR.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
+ *
  */
 export const getIndexEorPayrollCalendar = <
   ThrowOnError extends boolean = false,
@@ -1486,6 +1708,13 @@ export const getIndexEorPayrollCalendar = <
  * Update Time Off as Employee
  *
  * Updates a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const patchUpdateEmployeeTimeoff2 = <
   ThrowOnError extends boolean = false,
@@ -1510,6 +1739,13 @@ export const patchUpdateEmployeeTimeoff2 = <
  * Update Time Off as Employee
  *
  * Updates a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const patchUpdateEmployeeTimeoff = <
   ThrowOnError extends boolean = false,
@@ -1535,6 +1771,13 @@ export const patchUpdateEmployeeTimeoff = <
  *
  * List all Recurring Incentives of a company.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
+ *
  */
 export const getIndexRecurringIncentive = <
   ThrowOnError extends boolean = false,
@@ -1546,7 +1789,10 @@ export const getIndexRecurringIncentive = <
     GetIndexRecurringIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/recurring',
     ...options,
   });
@@ -1557,6 +1803,13 @@ export const getIndexRecurringIncentive = <
  * Create a Recurring Incentive, that is, a monthly paid incentive.
  *
  * Incentives use the currency of the employment specified provided in the `employment_id` field.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
 export const postCreateRecurringIncentive = <
@@ -1569,7 +1822,10 @@ export const postCreateRecurringIncentive = <
     PostCreateRecurringIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/recurring',
     ...options,
     headers: {
@@ -1609,6 +1865,13 @@ export const postCreateBenefitRenewalRequest = <
 
 /**
  * Return a base64 encoded version of the contract document
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getShowContractDocument = <ThrowOnError extends boolean = false>(
   options: Options<GetShowContractDocumentData, ThrowOnError>,
@@ -1629,7 +1892,14 @@ export const getShowContractDocument = <ThrowOnError extends boolean = false>(
 /**
  * List contract documents for an employment
  *
- * Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first). Only contractor employment types are supported.
+ * Only contractor employment types are supported. Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getIndexEmploymentContractDocument = <
   ThrowOnError extends boolean = false,
@@ -1653,6 +1923,13 @@ export const getIndexEmploymentContractDocument = <
  * List expenses
  *
  * Lists all expenses records
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
  */
 export const getIndexExpense = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexExpenseData, ThrowOnError>,
@@ -1662,7 +1939,10 @@ export const getIndexExpense = <ThrowOnError extends boolean = false>(
     GetIndexExpenseErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses',
     ...options,
   });
@@ -1671,6 +1951,13 @@ export const getIndexExpense = <ThrowOnError extends boolean = false>(
  * Create expense
  *
  * Creates an **approved** expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
  */
 export const postCreateExpense = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateExpenseData, ThrowOnError>,
@@ -1680,7 +1967,10 @@ export const postCreateExpense = <ThrowOnError extends boolean = false>(
     PostCreateExpenseErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses',
     ...options,
     headers: {
@@ -1693,6 +1983,13 @@ export const postCreateExpense = <ThrowOnError extends boolean = false>(
  * Show the current SSO Configuration
  *
  * Shows the current SSO Configuration for the company.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View SSO configuration (`sso_configuration:read`) | Manage SSO (`sso_configuration:write`) |
+ *
  */
 export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
   options?: Options<GetShowSsoConfigurationData, ThrowOnError>,
@@ -1714,6 +2011,13 @@ export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
  * Create the SSO Configuration
  *
  * Creates the SSO Configuration for the company.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
+ *
  */
 export const postCreateSsoConfiguration = <
   ThrowOnError extends boolean = false,
@@ -1757,7 +2061,10 @@ export const putApproveContractAmendment = <
     PutApproveContractAmendmentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
     ...options,
   });
@@ -1770,6 +2077,13 @@ export const putApproveContractAmendment = <
  * 2. currencies of contractor’s existing withdrawal methods
  * 3. currency of the contractor’s country
  * 4. the rest, alphabetical.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
 export const getIndexContractorCurrency = <
@@ -1794,6 +2108,13 @@ export const getIndexContractorCurrency = <
  * Replay Webhook Events
  *
  * Replay webhook events
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
  */
 export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
   options: Options<PostReplayWebhookEventData, ThrowOnError>,
@@ -1813,9 +2134,52 @@ export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Create a contractor of record (COR) termination request
+ *
+ * Initiates a termination request for a Contractor of Record employment.
+ * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
+ * Currently, only Contractor of Record employments can be terminated.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postCreateCorTerminationRequestSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostCreateCorTerminationRequestSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostCreateCorTerminationRequestSubscriptionResponses,
+    PostCreateCorTerminationRequestSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests',
+    ...options,
+  });
+
+/**
  * Show Background Check
  *
  * Show Background Check details for a given employment and background check request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View background checks (`background_check:read`) | - |
+ *
  */
 export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
   options: Options<GetShowBackgroundCheckData, ThrowOnError>,
@@ -1836,6 +2200,13 @@ export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
  * Returns the json schema of the `benefit_renewal_request` form for a specific request.
  * This endpoint requires a company access token, as forms are dependent on certain
  * properties of companies and their current employments.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
  *
  */
 export const getSchemaBenefitRenewalRequest = <
@@ -1862,6 +2233,13 @@ export const getSchemaBenefitRenewalRequest = <
  * Generates a magic link for a passwordless authentication.
  * To create a magic link for a company admin, you need to provide the `user_id` parameter.
  * To create a magic link for an employee, you need to provide the `employment_id` parameter.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Create magic links (`magic_link:write`) |
  *
  */
 export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
@@ -1893,6 +2271,13 @@ export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
  * Incentives payments that are already scheduled and cannot be deleted will be
  * included in the response, in case you need to reference them.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
  */
 export const deleteDeleteRecurringIncentive = <
   ThrowOnError extends boolean = false,
@@ -1904,7 +2289,10 @@ export const deleteDeleteRecurringIncentive = <
     DeleteDeleteRecurringIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/recurring/{id}',
     ...options,
   });
@@ -1913,6 +2301,13 @@ export const deleteDeleteRecurringIncentive = <
  * List Incentives
  *
  * Lists all Incentives of a company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
+ *
  */
 export const getIndexIncentive = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexIncentiveData, ThrowOnError>,
@@ -1922,7 +2317,10 @@ export const getIndexIncentive = <ThrowOnError extends boolean = false>(
     GetIndexIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives',
     ...options,
   });
@@ -1934,6 +2332,13 @@ export const getIndexIncentive = <ThrowOnError extends boolean = false>(
  *
  * Incentives use the currency of the employment specified provided in the `employment_id` field.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
  */
 export const postCreateIncentive = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateIncentiveData, ThrowOnError>,
@@ -1943,7 +2348,10 @@ export const postCreateIncentive = <ThrowOnError extends boolean = false>(
     PostCreateIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives',
     ...options,
     headers: {
@@ -1956,6 +2364,13 @@ export const postCreateIncentive = <ThrowOnError extends boolean = false>(
  * Create probation completion letter
  *
  * Create a new probation completion letter request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
+ *
  */
 export const postCreateProbationCompletionLetter = <
   ThrowOnError extends boolean = false,
@@ -1983,6 +2398,13 @@ export const postCreateProbationCompletionLetter = <
  * Show Contractor Invoice Schedule
  *
  * Shows a single Contractor Invoice Schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getShowScheduledContractorInvoice = <
   ThrowOnError extends boolean = false,
@@ -2006,6 +2428,13 @@ export const getShowScheduledContractorInvoice = <
  * Updates Contractor Invoice Schedule
  *
  * Updates a contractor invoice schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
  */
 export const patchUpdateScheduledContractorInvoice2 = <
   ThrowOnError extends boolean = false,
@@ -2033,6 +2462,13 @@ export const patchUpdateScheduledContractorInvoice2 = <
  * Updates Contractor Invoice Schedule
  *
  * Updates a contractor invoice schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
  */
 export const patchUpdateScheduledContractorInvoice = <
   ThrowOnError extends boolean = false,
@@ -2062,6 +2498,13 @@ export const patchUpdateScheduledContractorInvoice = <
  * Shows a billing document details.
  *
  * Please contact api-support@remote.com to request access to this endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
 export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
@@ -2111,6 +2554,13 @@ export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
  * Show work authorization request
  *
  * Show a single work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
+ *
  */
 export const getShowWorkAuthorizationRequest = <
   ThrowOnError extends boolean = false,
@@ -2134,6 +2584,13 @@ export const getShowWorkAuthorizationRequest = <
  * Update work authorization request
  *
  * Updates a work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
+ *
  */
 export const patchUpdateWorkAuthorizationRequest2 = <
   ThrowOnError extends boolean = false,
@@ -2161,6 +2618,13 @@ export const patchUpdateWorkAuthorizationRequest2 = <
  * Update work authorization request
  *
  * Updates a work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
+ *
  */
 export const patchUpdateWorkAuthorizationRequest = <
   ThrowOnError extends boolean = false,
@@ -2188,6 +2652,13 @@ export const patchUpdateWorkAuthorizationRequest = <
  * Create Probation Extension
  *
  * Create a probation extension request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
+ *
  */
 export const postCreateProbationExtension = <
   ThrowOnError extends boolean = false,
@@ -2215,6 +2686,13 @@ export const postCreateProbationExtension = <
  * Create risk reserve
  *
  * Create a new risk reserve
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
+ *
  */
 export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateRiskReserveData, ThrowOnError>,
@@ -2240,6 +2718,13 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
  * Get Company Compliance Profile
  *
  * Returns the KYB and credit risk status for the company's default legal entity.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
 export const getShowCompanyComplianceProfile = <
@@ -2267,6 +2752,13 @@ export const getShowCompanyComplianceProfile = <
  * the endpoint currently only returns the product prices for the EOR monthly product and the contractor products (Standard, Plus and COR).
  * the product prices are then used to create a pricing plan for the company.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
  */
 export const getIndexCompanyProductPrice = <
   ThrowOnError extends boolean = false,
@@ -2291,6 +2783,13 @@ export const getIndexCompanyProductPrice = <
  * If the used access token was issued by the OAuth 2.0 Authorization Code flow,
  * then only the associated company can be accessed through the endpoint.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
  */
 export const getShowCompany = <ThrowOnError extends boolean = false>(
   options: Options<GetShowCompanyData, ThrowOnError>,
@@ -2300,7 +2799,10 @@ export const getShowCompany = <ThrowOnError extends boolean = false>(
     GetShowCompanyErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/companies/{company_id}',
     ...options,
   });
@@ -2325,6 +2827,13 @@ export const getShowCompany = <ThrowOnError extends boolean = false>(
  * * Company `name` is not nil (already required when creating the company)
  * * Company has a `desired_currency` in their bank account (already required when creating the company)
  * * Company has accepted terms of service (already required when creating the company)
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
  *
  */
 export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
@@ -2365,6 +2874,13 @@ export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
  * * Company has a `desired_currency` in their bank account (already required when creating the company)
  * * Company has accepted terms of service (already required when creating the company)
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
  */
 export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateCompanyData, ThrowOnError>,
@@ -2387,6 +2903,13 @@ export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
  * Download a resignation letter
  *
  * Downloads a resignation letter from an employment request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View resignation letters (`resignation_letter:read`) | - |
+ *
  */
 export const getDownloadResignationLetter = <
   ThrowOnError extends boolean = false,
@@ -2433,6 +2956,13 @@ export const getDownloadResignationLetter = <
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const putUpdateEmploymentFederalTaxes = <
   ThrowOnError extends boolean = false,
@@ -2460,6 +2990,13 @@ export const putUpdateEmploymentFederalTaxes = <
  * List Contract Amendment
  *
  * List Contract Amendment requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
+ *
  */
 export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexContractAmendmentData, ThrowOnError>,
@@ -2499,6 +3036,13 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
+ *
  */
 export const postCreateContractAmendment = <
   ThrowOnError extends boolean = false,
@@ -2528,6 +3072,13 @@ export const postCreateContractAmendment = <
  * Given an ID, shows a payroll run.
  * `employee_details` field is deprecated in favour of the `employee_details` endpoint and will be removed in the future.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
  */
 export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
   options: Options<GetShowPayrollRunData, ThrowOnError>,
@@ -2553,6 +3104,13 @@ export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
  * Deprecated since late February 2024 in favour of **[Download a receipt by id](#tag/Expenses/operation/get_download_by_id_expense_receipt)** endpoint.
  *
  *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ *
  * @deprecated
  */
 export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
@@ -2575,6 +3133,13 @@ export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
  * Show travel letter request
  *
  * Show a single travel letter request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | View travel letters (`travel_letter:read`) | - |
+ *
  */
 export const getShowTravelLetterRequest = <
   ThrowOnError extends boolean = false,
@@ -2598,6 +3163,13 @@ export const getShowTravelLetterRequest = <
  * Updates a travel letter request
  *
  * Updates a travel letter request
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | - | Manage travel letters (`travel_letter:write`) |
+ *
  */
 export const patchUpdateTravelLetterRequest2 = <
   ThrowOnError extends boolean = false,
@@ -2625,6 +3197,13 @@ export const patchUpdateTravelLetterRequest2 = <
  * Updates a travel letter request
  *
  * Updates a travel letter request
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | - | Manage travel letters (`travel_letter:write`) |
+ *
  */
 export const patchUpdateTravelLetterRequest = <
   ThrowOnError extends boolean = false,
@@ -2656,6 +3235,13 @@ export const patchUpdateTravelLetterRequest = <
  * Deprecated since February 2025 in favour of **[List Leave Policies Summary](#tag/Leave-Policies/operation/get_index_leave_policies_summary)** endpoint.
  *
  *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ *
  * @deprecated
  */
 export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
@@ -2666,7 +3252,10 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
     GetShowTimeoffBalanceErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/timeoff-balances/{employment_id}',
     ...options,
   });
@@ -2694,6 +3283,13 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
 export const putUpdateEmploymentBasicInformation = <
@@ -2731,7 +3327,10 @@ export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
     GetCategoriesExpenseErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses/categories',
     ...options,
   });
@@ -2740,6 +3339,13 @@ export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
  * Cancel Time Off as Employee
  *
  * Cancels a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<PostCancelEmployeeTimeoffData, ThrowOnError>,
@@ -2793,6 +3399,13 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * authentication (without a company).
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
  */
 export const getShowFormCountry = <ThrowOnError extends boolean = false>(
   options: Options<GetShowFormCountryData, ThrowOnError>,
@@ -2816,6 +3429,13 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
  *
  * Downloads a file.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getShowFile = <ThrowOnError extends boolean = false>(
   options: Options<GetShowFileData, ThrowOnError>,
@@ -2837,6 +3457,13 @@ export const getShowFile = <ThrowOnError extends boolean = false>(
  * Show Contract Amendment
  *
  * Show a single Contract Amendment request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
+ *
  */
 export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
   options: Options<GetShowContractAmendmentData, ThrowOnError>,
@@ -2860,6 +3487,13 @@ export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
  * List all company managers of an integration. If filtered by the company_id param,
  * it lists only company managers belonging to the specified company.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
+ *
  */
 export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexCompanyManagerData, ThrowOnError>,
@@ -2869,7 +3503,10 @@ export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
     GetIndexCompanyManagerErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/company-managers',
     ...options,
   });
@@ -2878,6 +3515,13 @@ export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
  * Create and invite a Company Manager
  *
  * Create a Company Manager and sends the invitation email for signing in to the Remote Platform.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
  */
 export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateCompanyManagerData, ThrowOnError>,
@@ -2887,7 +3531,10 @@ export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
     PostCreateCompanyManagerErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/company-managers',
     ...options,
     headers: {
@@ -2924,6 +3571,13 @@ export const getIndexCountry = <ThrowOnError extends boolean = false>(
  *
  * Declines the identity verification of an employee.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
+ *
  */
 export const postDeclineIdentityVerification = <
   ThrowOnError extends boolean = false,
@@ -2947,6 +3601,13 @@ export const postDeclineIdentityVerification = <
  * List Billing Documents
  *
  * List billing documents for a company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexBillingDocumentData, ThrowOnError>,
@@ -2968,6 +3629,13 @@ export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
  * Delete a Webhook Callback
  *
  * Delete a callback previously registered for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
  */
 export const deleteDeleteWebhookCallback = <
   ThrowOnError extends boolean = false,
@@ -2991,6 +3659,13 @@ export const deleteDeleteWebhookCallback = <
  * Update a Webhook Callback
  *
  * Update a callback previously registered for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
  */
 export const patchUpdateWebhookCallback = <
   ThrowOnError extends boolean = false,
@@ -3036,6 +3711,13 @@ export const patchUpdateWebhookCallback = <
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const putUpdateEmploymentPersonalDetails = <
   ThrowOnError extends boolean = false,
@@ -3063,6 +3745,13 @@ export const putUpdateEmploymentPersonalDetails = <
  * List travel letter requests
  *
  * List travel letter requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | View travel letters (`travel_letter:read`) | - |
+ *
  */
 export const getIndexTravelLetterRequest = <
   ThrowOnError extends boolean = false,
@@ -3086,6 +3775,13 @@ export const getIndexTravelLetterRequest = <
  * List Benefit Renewal Requests
  *
  * List Benefit Renewal Requests for each country.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
+ *
  */
 export const getIndexBenefitRenewalRequest = <
   ThrowOnError extends boolean = false,
@@ -3109,6 +3805,13 @@ export const getIndexBenefitRenewalRequest = <
  * Create a Webhook Callback
  *
  * Register a callback to be used for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
  */
 export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateWebhookCallbackData, ThrowOnError>,
@@ -3134,6 +3837,13 @@ export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
  * Approve timesheet
  *
  * Approves the given timesheet.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
  */
 export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
   options: Options<PostApproveTimesheetData, ThrowOnError>,
@@ -3158,6 +3868,13 @@ export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
  *
  * Please contact api-support@remote.com to request access to this endpoint.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
  */
 export const getShowPayslip = <ThrowOnError extends boolean = false>(
   options: Options<GetShowPayslipData, ThrowOnError>,
@@ -3167,7 +3884,10 @@ export const getShowPayslip = <ThrowOnError extends boolean = false>(
     GetShowPayslipErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/payslips/{id}',
     ...options,
   });
@@ -3176,6 +3896,13 @@ export const getShowPayslip = <ThrowOnError extends boolean = false>(
  * List Leave Policies Summary
  *
  * List all the data related to time off for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const getIndexLeavePoliciesSummary = <
   ThrowOnError extends boolean = false,
@@ -3200,6 +3927,13 @@ export const getIndexLeavePoliciesSummary = <
  *
  * Lists all departments for the authorized company specified in the request.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View departments (`company_department:read`) | Manage departments (`company_department:write`) |
+ *
  */
 export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexCompanyDepartmentData, ThrowOnError>,
@@ -3221,6 +3955,13 @@ export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
  * Create New Department
  *
  * Creates a new department in the specified company. Department names may be non-unique and must be non-empty with no more than 255 characters (Unicode code points).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage departments (`company_department:write`) |
+ *
  */
 export const postCreateCompanyDepartment = <
   ThrowOnError extends boolean = false,
@@ -3249,6 +3990,13 @@ export const postCreateCompanyDepartment = <
  *
  * Decline a time off cancellation request.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postDeclineCancellationRequest = <
   ThrowOnError extends boolean = false,
@@ -3274,6 +4022,13 @@ export const postDeclineCancellationRequest = <
 
 /**
  * Get a employment benefit offers JSON schema
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
+ *
  */
 export const getShowSchema = <ThrowOnError extends boolean = false>(
   options: Options<GetShowSchemaData, ThrowOnError>,
@@ -3304,6 +4059,13 @@ export const getShowSchema = <ThrowOnError extends boolean = false>(
  * - Employment must be in `created` status
  * - Responses must conform to the questionnaire JSON schema
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const postCreateEligibilityQuestionnaire = <
   ThrowOnError extends boolean = false,
@@ -3331,6 +4093,13 @@ export const postCreateEligibilityQuestionnaire = <
  * List timesheets
  *
  * Lists all timesheets.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
+ *
  */
 export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexTimesheetData, ThrowOnError>,
@@ -3369,6 +4138,13 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
 export const getShowEmployment = <ThrowOnError extends boolean = false>(
@@ -3433,6 +4209,13 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  *
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
 export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
@@ -3502,6 +4285,13 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  *
  * Please contact Remote if you need to update contractors via API since it's currently not supported.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateEmploymentData, ThrowOnError>,
@@ -3545,6 +4335,13 @@ export const getListUsersScim = <ThrowOnError extends boolean = false>(
  * List Company Payroll Calendar
  *
  * List all payroll calendars for the company within the requested cycle.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
+ *
  */
 export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexPayrollCalendarData, ThrowOnError>,
@@ -3563,6 +4360,72 @@ export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Show Legal Entity Administrative details
+ *
+ * Show administrative details of legal entity for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getShowAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowAdministrativeDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowAdministrativeDetailsResponses,
+    GetShowAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+    ...options,
+  });
+
+/**
+ * Update Legal Entity Administrative details
+ *
+ * Update administrative details of legal entity for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
+ */
+export const putUpdateAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutUpdateAdministrativeDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutUpdateAdministrativeDetailsResponses,
+    PutUpdateAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show region fields
  *
  * Returns required fields JSON Schema for a given region. These are required in order to calculate
@@ -3577,7 +4440,12 @@ export const getShowRegionField = <ThrowOnError extends boolean = false>(
     GetShowRegionFieldErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/cost-calculator/regions/{slug}/fields',
     ...options,
   });
@@ -3586,6 +4454,13 @@ export const getShowRegionField = <ThrowOnError extends boolean = false>(
  * Show Offboarding
  *
  * Shows an Offboarding request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
  */
 export const getShowOffboarding = <ThrowOnError extends boolean = false>(
   options: Options<GetShowOffboardingData, ThrowOnError>,
@@ -3595,7 +4470,10 @@ export const getShowOffboarding = <ThrowOnError extends boolean = false>(
     GetShowOffboardingErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/offboardings/{id}',
     ...options,
   });
@@ -3604,6 +4482,13 @@ export const getShowOffboarding = <ThrowOnError extends boolean = false>(
  * Get Employee Details for a Payroll Run
  *
  * Gets the employee details for a payroll run
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
  */
 export const getEmployeeDetailsPayrollRun = <
   ThrowOnError extends boolean = false,
@@ -3620,6 +4505,34 @@ export const getEmployeeDetailsPayrollRun = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
+    ...options,
+  });
+
+/**
+ * List bulk employment rows
+ *
+ * Returns grouped bulk employment rows, including field-level validation errors in `errors`, row-level failures in `row_errors`, and submission-phase failures in `submission_errors`. If a row passes validation but later fails during Global Payroll activation, that failure is surfaced here after submission rather than in the initial create response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getIndexBulkEmploymentRow = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexBulkEmploymentRowData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexBulkEmploymentRowResponses,
+    GetIndexBulkEmploymentRowErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/bulk-employment-jobs/{job_id}/rows',
     ...options,
   });
 
@@ -3648,7 +4561,10 @@ export const postCreateEmployment = <ThrowOnError extends boolean = false>(
     PostCreateEmploymentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/employments',
     ...options,
     headers: {
@@ -3663,6 +4579,13 @@ export const postCreateEmployment = <ThrowOnError extends boolean = false>(
  * Create contract eligibility for an employment.
  *
  * This will create a new contract eligibility for the employment.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage contract eligibility (`contract_eligibility:write`) |
  *
  */
 export const postCreateContractEligibility = <
@@ -3694,6 +4617,13 @@ export const postCreateContractEligibility = <
  * The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
  * The countries present in the list are the ones where creating a company is allowed.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
+ *
  */
 export const getSupportedCountry = <ThrowOnError extends boolean = false>(
   options: Options<GetSupportedCountryData, ThrowOnError>,
@@ -3703,7 +4633,11 @@ export const getSupportedCountry = <ThrowOnError extends boolean = false>(
     GetSupportedCountryErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/countries',
     ...options,
   });
@@ -3732,6 +4666,13 @@ export const postCreateTokenCompanyToken = <
  * List Company Legal Entities
  *
  * Lists all active legal entities for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
 export const getIndexCompanyLegalEntities = <
@@ -3782,6 +4723,13 @@ export const postCompleteOnboardingEmployment = <
  * List Leave Policies Details
  *
  * Describe the leave policies (custom or not) for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const getIndexLeavePoliciesDetails = <
   ThrowOnError extends boolean = false,
@@ -3809,6 +4757,13 @@ export const getIndexLeavePoliciesDetails = <
  * **Backward compatibility:** Calling this endpoint without the `type` query parameter returns the same response as before (time off types for full-time employments). Existing integrations do not need to change.
  *
  * Optionally, pass `type=contractor` to get time off types for contractor employments, or `type=full_time` for full-time employments (same as omitting the parameter).
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
 export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
@@ -3877,6 +4832,13 @@ export const getListGroupsScim = <ThrowOnError extends boolean = false>(
  *
  * Create a contract document for a contractor.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
  */
 export const postCreateContractDocument = <
   ThrowOnError extends boolean = false,
@@ -3936,6 +4898,13 @@ export const postTriggerWebhookCallback = <
  * Given a Payslip ID, downloads a payslip.
  * It is important to note that each country has a different payslip format and they are not authored by Remote.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
  */
 export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
   options: Options<GetDownloadPayslipPayslipData, ThrowOnError>,
@@ -3945,7 +4914,10 @@ export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
     GetDownloadPayslipPayslipErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/payslips/{payslip_id}/pdf',
     ...options,
   });
@@ -3954,6 +4926,13 @@ export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
  * Convert currency using dynamic rates
  *
  * Convert currency using the rates Remote applies during employment creation and invoicing.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
+ *
  */
 export const postConvertWithSpreadCurrencyConverter = <
   ThrowOnError extends boolean = false,
@@ -3982,6 +4961,13 @@ export const postConvertWithSpreadCurrencyConverter = <
  * Show Time Off
  *
  * Shows a single Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const getShowTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<GetShowTimeoffData, ThrowOnError>,
@@ -4005,6 +4991,13 @@ export const getShowTimeoff = <ThrowOnError extends boolean = false>(
  * Updates a Time Off record.
  * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
  * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
 export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
@@ -4034,6 +5027,13 @@ export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
  * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
  * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateTimeoffData, ThrowOnError>,
@@ -4059,6 +5059,13 @@ export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
  * Decline Time Off
  *
  * Decline a time off request. Please note that only time off requests on the `requested` status can be declined.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCreateDecline = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateDeclineData, ThrowOnError>,
@@ -4104,6 +5111,13 @@ export const postCreateDecline = <ThrowOnError extends boolean = false>(
  * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
+ *
  */
 export const postAutomatableContractAmendment = <
   ThrowOnError extends boolean = false,
@@ -4131,6 +5145,13 @@ export const postAutomatableContractAmendment = <
  * Approve Time Off
  *
  * Approve a time off request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCreateApproval = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateApprovalData, ThrowOnError>,
@@ -4159,6 +5180,13 @@ export const postCreateApproval = <ThrowOnError extends boolean = false>(
  *
  * Supports filtering by file type and sub_type.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexEmploymentFileData, ThrowOnError>,
@@ -4180,6 +5208,13 @@ export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
  * Lists custom fields definitions
  *
  * Returns custom fields definitions
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage custom fields (`custom_field:write`) |
+ *
  */
 export const getIndexEmploymentCustomField = <
   ThrowOnError extends boolean = false,
@@ -4203,6 +5238,13 @@ export const getIndexEmploymentCustomField = <
  * Create Custom Field Definition
  *
  * Creates a new custom field definition.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View custom fields (`custom_field:read`) | Manage custom fields (`custom_field:write`) |
+ *
  */
 export const postCreateEmploymentCustomField = <
   ThrowOnError extends boolean = false,
@@ -4230,6 +5272,13 @@ export const postCreateEmploymentCustomField = <
  * List company supported currencies
  *
  * List company supported currencies
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View company currencies (`company_currencies:read`) | - |
+ *
  */
 export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexCompanyCurrencyData, ThrowOnError>,
@@ -4268,7 +5317,10 @@ export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
     PatchUpdateEmployment4Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/employments/{employment_id}',
     ...options,
     headers: {
@@ -4297,7 +5349,10 @@ export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
     PatchUpdateEmployment3Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/employments/{employment_id}',
     ...options,
     headers: {
@@ -4310,6 +5365,13 @@ export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
  * Get employment contract pending changes
  *
  * Get all the pending changes (waiting for aproval or signature) for the employment contract.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
+ *
  */
 export const getPendingChangesEmploymentContract = <
   ThrowOnError extends boolean = false,
@@ -4333,6 +5395,13 @@ export const getPendingChangesEmploymentContract = <
  * Show Resignation
  *
  * Shows the details of a resignation with status `submitted`.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View resignations (`resignation:read`) | Manage resignations (`resignation:write`) |
+ *
  */
 export const getShowResignation = <ThrowOnError extends boolean = false>(
   options: Options<GetShowResignationData, ThrowOnError>,
@@ -4356,6 +5425,13 @@ export const getShowResignation = <ThrowOnError extends boolean = false>(
  * Uploads a file associated with a specified employment.
  *
  * Please contact api-support@remote.com to request access to this endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
  */
 export const postUploadEmployeeFileFile = <
@@ -4400,6 +5476,13 @@ export const postUploadEmployeeFileFile = <
  *
  * In this case, reselect benefits by updating `contract_details` JSON Schema form.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const postInviteEmploymentInvitation = <
   ThrowOnError extends boolean = false,
@@ -4423,6 +5506,13 @@ export const postInviteEmploymentInvitation = <
  * Show expense
  *
  * Shows a single expense record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
  */
 export const getShowExpense = <ThrowOnError extends boolean = false>(
   options: Options<GetShowExpenseData, ThrowOnError>,
@@ -4432,7 +5522,10 @@ export const getShowExpense = <ThrowOnError extends boolean = false>(
     GetShowExpenseErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses/{id}',
     ...options,
   });
@@ -4441,6 +5534,13 @@ export const getShowExpense = <ThrowOnError extends boolean = false>(
  * Update an expense
  *
  * Updates an expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
  */
 export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateExpense2Data, ThrowOnError>,
@@ -4450,7 +5550,10 @@ export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
     PatchUpdateExpense2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses/{id}',
     ...options,
     headers: {
@@ -4463,6 +5566,13 @@ export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
  * Update an expense
  *
  * Updates an expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
  */
 export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateExpenseData, ThrowOnError>,
@@ -4472,7 +5582,10 @@ export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
     PatchUpdateExpenseErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/expenses/{id}',
     ...options,
     headers: {
@@ -4485,6 +5598,13 @@ export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
  * Show Benefit Renewal Request
  *
  * Show Benefit Renewal Request details.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
+ *
  */
 export const getShowBenefitRenewalRequest = <
   ThrowOnError extends boolean = false,
@@ -4508,6 +5628,13 @@ export const getShowBenefitRenewalRequest = <
  * Updates a Benefit Renewal Request Response
  *
  * Updates a Benefit Renewal Request with the given response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage benefit renewals (`benefit_renewal:write`) |
+ *
  */
 export const postUpdateBenefitRenewalRequest = <
   ThrowOnError extends boolean = false,
@@ -4535,6 +5662,13 @@ export const postUpdateBenefitRenewalRequest = <
  * Show onboarding steps for an employment
  *
  * Returns onboarding steps and substeps in a hierarchical, ordered structure.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
  */
 export const getShowEmploymentOnboardingSteps = <
   ThrowOnError extends boolean = false,
@@ -4559,6 +5693,13 @@ export const getShowEmploymentOnboardingSteps = <
  *
  * Shows all the company structure nodes of an employment.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View company structure (`company_structure:read`) | - |
+ *
  */
 export const getIndexEmploymentCompanyStructureNode = <
   ThrowOnError extends boolean = false,
@@ -4582,6 +5723,13 @@ export const getIndexEmploymentCompanyStructureNode = <
  * List custom field value for an employment
  *
  * Returns a list of custom field values for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
+ *
  */
 export const getIndexEmploymentCustomFieldValue = <
   ThrowOnError extends boolean = false,
@@ -4605,6 +5753,13 @@ export const getIndexEmploymentCustomFieldValue = <
  * Validate resignation request
  *
  * Validates a resignation employment request
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage resignations (`resignation:write`) |
+ *
  */
 export const putValidateResignation = <ThrowOnError extends boolean = false>(
   options: Options<PutValidateResignationData, ThrowOnError>,
@@ -4630,6 +5785,13 @@ export const putValidateResignation = <ThrowOnError extends boolean = false>(
  * List Webhook Callbacks
  *
  * List callbacks for a given company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
+ *
  */
 export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexWebhookCallbackData, ThrowOnError>,
@@ -4654,6 +5816,13 @@ export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
  * and the list of country codes where COR is supported for this legal entity.
  * COR-supported countries exclude sanctioned and signup-prevented countries and apply entity rules (same-country, local-to-local).
  * When the legal entity is not COR-eligible, `cor_supported_country_codes` is an empty list.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
 export const getContractorEligibilityCompanyLegalEntities = <
@@ -4681,6 +5850,13 @@ export const getContractorEligibilityCompanyLegalEntities = <
  * Show a custom field value
  *
  * Returns a custom field value for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
+ *
  */
 export const getShowEmploymentCustomFieldValue = <
   ThrowOnError extends boolean = false,
@@ -4704,6 +5880,13 @@ export const getShowEmploymentCustomFieldValue = <
  * Update a Custom Field Value
  *
  * Updates a custom field value for a given employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage custom field values (`custom_field_value:write`) |
+ *
  */
 export const patchUpdateEmploymentCustomFieldValue2 = <
   ThrowOnError extends boolean = false,
@@ -4731,6 +5914,13 @@ export const patchUpdateEmploymentCustomFieldValue2 = <
  * Update a Custom Field Value
  *
  * Updates a custom field value for a given employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage custom field values (`custom_field_value:write`) |
+ *
  */
 export const patchUpdateEmploymentCustomFieldValue = <
   ThrowOnError extends boolean = false,
@@ -4755,12 +5945,54 @@ export const patchUpdateEmploymentCustomFieldValue = <
   });
 
 /**
+ * Show a contractor of record (COR) termination request
+ *
+ * Retrieves a Contractor of Record termination request by ID.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowCorTerminationRequestSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowCorTerminationRequestSubscriptionData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCorTerminationRequestSubscriptionResponses,
+    GetShowCorTerminationRequestSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
+    ...options,
+  });
+
+/**
  * Terminate contractor of record employment
+ *
+ * **Deprecated.** Use `POST /contractors/employments/{employment_id}/cor-termination-requests` instead.
  *
  * Initiates a termination request for a Contractor of Record employment.
  * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
  * Currently, only Contractor of Record employments can be terminated.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ *
+ * @deprecated
  */
 export const postTerminateContractorOfRecordEmploymentSubscription = <
   ThrowOnError extends boolean = false,
@@ -4785,6 +6017,13 @@ export const postTerminateContractorOfRecordEmploymentSubscription = <
 
 /**
  * Sign a document for a contractor
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
  */
 export const postSignContractDocument = <ThrowOnError extends boolean = false>(
   options: Options<PostSignContractDocumentData, ThrowOnError>,
@@ -4820,7 +6059,11 @@ export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
     GetCurrentIdentityErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/identity/current',
     ...options,
   });
@@ -4834,6 +6077,13 @@ export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
  * * `processing`
  * * `paid`
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
  */
 export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
   options: Options<DeleteDeleteIncentiveData, ThrowOnError>,
@@ -4843,7 +6093,10 @@ export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
     DeleteDeleteIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/{id}',
     ...options,
   });
@@ -4852,6 +6105,13 @@ export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
  * Show Incentive
  *
  * Show an Incentive's details
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
+ *
  */
 export const getShowIncentive = <ThrowOnError extends boolean = false>(
   options: Options<GetShowIncentiveData, ThrowOnError>,
@@ -4861,7 +6121,10 @@ export const getShowIncentive = <ThrowOnError extends boolean = false>(
     GetShowIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/{id}',
     ...options,
   });
@@ -4875,6 +6138,13 @@ export const getShowIncentive = <ThrowOnError extends boolean = false>(
  *
  * The API doesn't support updating paid incentives.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
  */
 export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateIncentive2Data, ThrowOnError>,
@@ -4884,7 +6154,10 @@ export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
     PatchUpdateIncentive2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/{id}',
     ...options,
     headers: {
@@ -4902,6 +6175,13 @@ export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
  *
  * The API doesn't support updating paid incentives.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
  */
 export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
   options: Options<PatchUpdateIncentiveData, ThrowOnError>,
@@ -4911,7 +6191,10 @@ export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
     PatchUpdateIncentiveErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/incentives/{id}',
     ...options,
     headers: {
@@ -4927,6 +6210,13 @@ export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
  *
  * The schema defines the structure and validation rules for the questionnaire responses.
  * Supports versioning to allow for schema evolution while maintaining backwards compatibility.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
 export const getShowEligibilityQuestionnaire = <
@@ -4951,6 +6241,13 @@ export const getShowEligibilityQuestionnaire = <
  * List work authorization requests
  *
  * List work authorization requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
+ *
  */
 export const getIndexWorkAuthorizationRequest = <
   ThrowOnError extends boolean = false,
@@ -4971,9 +6268,42 @@ export const getIndexWorkAuthorizationRequest = <
   });
 
 /**
+ * Show bulk employment job
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowBulkEmploymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowBulkEmploymentResponses,
+    GetShowBulkEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/bulk-employment-jobs/{job_id}',
+    ...options,
+  });
+
+/**
  * List Benefit Offers
  *
  * List benefit offers for each country.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
 export const getIndexBenefitOffersCountrySummary = <
@@ -4998,6 +6328,13 @@ export const getIndexBenefitOffersCountrySummary = <
  * List Benefit Offers By Employment
  *
  * List benefit offers by employment.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
 export const getIndexBenefitOffersByEmployment = <
@@ -5036,7 +6373,10 @@ export const putCancelContractAmendment = <
     PutCancelContractAmendmentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
     ...options,
   });
@@ -5045,6 +6385,13 @@ export const putCancelContractAmendment = <
  * Create a Pending Time Off
  *
  * Creates a pending Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateEmployeeTimeoffData, ThrowOnError>,
@@ -5067,6 +6414,13 @@ export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * Show Probation Extension
  *
  * Shows a Probation Extension Request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
  *
  */
 export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
@@ -5091,6 +6445,13 @@ export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
  * Lists all payslips belonging to a company. Can also filter for a single employment belonging
  * to that company.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
  */
 export const getIndexPayslip = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexPayslipData, ThrowOnError>,
@@ -5100,7 +6461,10 @@ export const getIndexPayslip = <ThrowOnError extends boolean = false>(
     GetIndexPayslipErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/payslips',
     ...options,
   });
@@ -5109,6 +6473,13 @@ export const getIndexPayslip = <ThrowOnError extends boolean = false>(
  * Download a receipt by id
  *
  * Download a receipt by id.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
  */
 export const getDownloadByIdExpenseReceipt = <
   ThrowOnError extends boolean = false,
@@ -5141,7 +6512,7 @@ export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
     PostTokenOAuth2TokenErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [{ scheme: 'basic', type: 'http' }],
     url: '/auth/oauth2/token',
     ...options,
     headers: {
@@ -5151,11 +6522,57 @@ export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Show legal entity administrative details form schema
+ *
+ * Returns the json schema of a supported form. Possible form names are:
+ * ```
+ * - administrative_details
+ * ```
+ *
+ * Most forms require a company access token, as they are dependent on certain
+ * properties of companies and their current employments.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
+ */
+export const getShowLegalEntityFormCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowLegalEntityFormCountryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowLegalEntityFormCountryResponses,
+    GetShowLegalEntityFormCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/countries/{country_code}/legal_entity_forms/{form}',
+    ...options,
+  });
+
+/**
  * Manage contractor plus subscription
  *
  * Endpoint that can be used to upgrade, assign or downgrade a contractor's subscription.
  * This can be used when company admins desire to assign someone to the Contractor Plus plan,
  * but also to change the contractor's subscription between Plus and Standard.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
 export const postManageContractorPlusSubscriptionSubscription = <
@@ -5187,6 +6604,13 @@ export const postManageContractorPlusSubscriptionSubscription = <
  * List Time Off
  *
  * Lists all Time Off records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexTimeoffData, ThrowOnError>,
@@ -5208,6 +6632,13 @@ export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
  * Create Time Off
  *
  * Creates a Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
  */
 export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateTimeoffData, ThrowOnError>,
@@ -5233,6 +6664,13 @@ export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
  * List Company Payroll Runs
  *
  * Lists all payroll runs for a company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
  */
 export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexPayrollRunData, ThrowOnError>,
@@ -5272,6 +6710,13 @@ export const getGetGroupScim = <ThrowOnError extends boolean = false>(
  * List Employment Contract.
  *
  * Get the employment contract history for a given employment. If `only_active` is true, it will return only the active or last active contract.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
+ *
  */
 export const getIndexEmploymentContract = <
   ThrowOnError extends boolean = false,
@@ -5295,6 +6740,13 @@ export const getIndexEmploymentContract = <
  * Convert currency using dynamic rates
  *
  * Convert currency using the rates Remote applies during employment creation and invoicing.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
+ *
  */
 export const postConvertWithSpreadCurrencyConverter2 = <
   ThrowOnError extends boolean = false,
@@ -5323,6 +6775,13 @@ export const postConvertWithSpreadCurrencyConverter2 = <
  * List all companies
  *
  * List all companies that authorized your integration to act on their behalf. In other words, these are all the companies that your integration can manage. Any company that has completed the authorization flow for your integration will be included in the response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
  */
 export const getIndexCompany = <ThrowOnError extends boolean = false>(
   options: Options<GetIndexCompanyData, ThrowOnError>,
@@ -5373,6 +6832,13 @@ export const getIndexCompany = <ThrowOnError extends boolean = false>(
  * [Remote's Terms of Service](https://remote.com/terms-of-service). Also see Remote's
  * [Privacy Policy](https://remote.com/privacy-policy)".
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
  */
 export const postCreateCompany = <ThrowOnError extends boolean = false>(
   options: Options<PostCreateCompanyData, ThrowOnError>,
@@ -5392,9 +6858,48 @@ export const postCreateCompany = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Create bulk employment job
+ *
+ * Creates a job to bulk-create employments for multiple employees at once. Each employee payload must match the employment schema for the selected country.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postCreateBulkEmployment = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateBulkEmploymentData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostCreateBulkEmploymentResponses,
+    PostCreateBulkEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/bulk-employment-jobs',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
  * Send back a timesheet for review or modification
  *
  * Sends the given timesheet back to the employee for review or modification.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
  */
 export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
   options: Options<PostSendBackTimesheetData, ThrowOnError>,
@@ -5420,6 +6925,13 @@ export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
  * Deletes a Company Manager user
  *
  * Deletes a Company Manager user
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
  */
 export const deleteDeleteCompanyManager = <
   ThrowOnError extends boolean = false,
@@ -5431,7 +6943,10 @@ export const deleteDeleteCompanyManager = <
     DeleteDeleteCompanyManagerErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/company-managers/{user_id}',
     ...options,
   });
@@ -5440,6 +6955,13 @@ export const deleteDeleteCompanyManager = <
  * Show company manager user
  *
  * Shows a single company manager user
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
+ *
  */
 export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
   options: Options<GetShowCompanyManagerData, ThrowOnError>,
@@ -5449,7 +6971,10 @@ export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
     GetShowCompanyManagerErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
     url: '/v1/company-managers/{user_id}',
     ...options,
   });
@@ -5458,6 +6983,13 @@ export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
  * Delete contractor of record subscription intent
  *
  * Deletes Contractor of Record subscription intent.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
 export const deleteDeleteContractorCorSubscriptionSubscription = <
@@ -5490,6 +7022,13 @@ export const deleteDeleteContractorCorSubscriptionSubscription = <
  *
  * Requires a non-blocking eligibility questionnaire to be submitted before creating the subscription intent.
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
  */
 export const postManageContractorCorSubscriptionSubscription = <
   ThrowOnError extends boolean = false,
@@ -5516,6 +7055,13 @@ export const postManageContractorCorSubscriptionSubscription = <
  * List Contractor Invoice Schedules
  *
  * Lists Contractor Invoice Schedule records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
  */
 export const getIndexScheduledContractorInvoice = <
   ThrowOnError extends boolean = false,
@@ -5540,6 +7086,13 @@ export const getIndexScheduledContractorInvoice = <
  *
  * Creates many invoice schedules records.
  * It's supposed to return two lists: one containing created records, and another one containing the schedules that failed to be inserted.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
  *
  */
 export const postBulkCreateScheduledContractorInvoice = <
@@ -5568,6 +7121,13 @@ export const postBulkCreateScheduledContractorInvoice = <
  * Get Billing Document Breakdown
  *
  * Get billing document breakdown
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getGetBreakdownBillingDocument = <
   ThrowOnError extends boolean = false,
@@ -5589,6 +7149,13 @@ export const getGetBreakdownBillingDocument = <
 
 /**
  * Indexes all the documents for the employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
  */
 export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
   options?: Options<GetIndexEmployeeDocumentData, ThrowOnError>,
@@ -5608,6 +7175,13 @@ export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
  *
  * Approve a time off cancellation request.
  * In order to approve a time off cancellation request, the timeoff status must be `cancel_requested`.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
 export const postApproveCancellationRequest = <
@@ -5633,6 +7207,13 @@ export const postApproveCancellationRequest = <
  *
  * Endpoint to confirms the employment profile is from the actual employee
  *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
+ *
  */
 export const postVerifyIdentityVerification = <
   ThrowOnError extends boolean = false,
@@ -5656,6 +7237,13 @@ export const postVerifyIdentityVerification = <
  * Download a billing document PDF
  *
  * Downloads a billing document PDF
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
  */
 export const getDownloadPdfBillingDocument = <
   ThrowOnError extends boolean = false,

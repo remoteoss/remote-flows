@@ -127,7 +127,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@eslint/js": "^9.39.1",
-    "@hey-api/openapi-ts": "^0.88.0",
+    "@hey-api/openapi-ts": "^0.94.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
