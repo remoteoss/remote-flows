@@ -22,6 +22,7 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "types": ["vitest/globals", "@types/node"],
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./*"]
     }

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "es2021",
     "lib": ["es2021", "dom"],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "types": ["node", "@playwright/test"],
     "esModuleInterop": true,
     "strict": true,
