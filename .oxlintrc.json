@@ -1,0 +1,13 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "ignorePatterns": ["dist", "src/client/**/*.gen.ts"],
+  "plugins": ["react", "react-hooks", "typescript"],
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
