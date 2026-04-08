@@ -46,10 +46,10 @@ export type ListRecurringIncentivesResponse = {
  */
 export type CreateEmployeeTimeoffParams = {
   document?: TimeoffDocumentParams;
-  end_date: _Date;
+  end_date: Date;
   leave_policy_variant_id: string;
   notes?: string;
-  start_date: _Date;
+  start_date: Date;
   timeoff_days: Array<TimeoffDaysParams>;
   timezone: Timezone;
 };
@@ -218,11 +218,11 @@ export type EmploymentCustomFieldValueResponse = {
  * PeriodProperties
  */
 export type PeriodProperties = {
-  nextPeriodEndDate?: _Date;
-  paymentDate: _Date;
-  periodEndDate: _Date;
-  periodStartDate: _Date;
-  priorPeriodEndDate?: _Date;
+  nextPeriodEndDate?: Date;
+  paymentDate: Date;
+  periodEndDate: Date;
+  periodStartDate: Date;
+  priorPeriodEndDate?: Date;
 };
 
 /**
@@ -244,6 +244,24 @@ export type EmployeeDetailsResponse = {
  */
 export type ResignationResponse = {
   data?: Resignation;
+};
+
+/**
+ * ImportJobDataColumn
+ */
+export type ImportJobDataColumn = {
+  /**
+   * The index of the data column in the file
+   */
+  index: number;
+  /**
+   * The name of the data column
+   */
+  name: string;
+  /**
+   * A sample data value from the data column
+   */
+  sample_data?: string | null;
 };
 
 /**
@@ -360,6 +378,25 @@ export type Base64File = {
 };
 
 /**
+ * SignatoryType
+ *
+ * The role of this signatory in the contract signing process
+ */
+export type SignatoryType =
+  | 'company'
+  | 'employee'
+  | 'admin'
+  | 'external'
+  | 'unknown';
+
+/**
+ * SignatoryStatus
+ *
+ * Current signing status of this signatory
+ */
+export type SignatoryStatus = 'pending' | 'signed' | 'unassigned';
+
+/**
  * EmploymentCustomField
  *
  * EmploymentCustomField
@@ -382,7 +419,7 @@ export type EmploymentCustomField = {
  * Schema for updating a custom field value.
  */
 export type UpdateEmploymentCustomFieldValueParams = {
-  value: string | number | boolean;
+  value: string | number | string | boolean | string;
 };
 
 /**
@@ -1039,10 +1076,10 @@ export type MinimalTimesheet = {
   approval_required: boolean;
   country_code: CountryCode;
   employment_id: UuidSlug;
-  end_date: _Date;
+  end_date: Date;
   id: UuidSlug;
   notes: string | null;
-  start_date: _Date;
+  start_date: Date;
   status: TimesheetStatus;
   submitted_at: string | null;
 };
@@ -1258,14 +1295,14 @@ export type PayrollCalendarsEorResponse = {
 export type BenefitRenewalRequestsBenefitRenewalRequest = {
   benefit_group: BenefitRenewalRequestsMinimalBenefitGroup;
   benefit_renewal_response: BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
-  coverage_end_date: _Date;
-  coverage_start_date: _Date;
+  coverage_end_date: Date;
+  coverage_start_date: Date;
   current_benefit_tier?: NullableMinimalBenefitTier;
   id: string;
   number_of_affected_employees: number;
-  renewal_selection_end_date: _Date;
+  renewal_selection_end_date: Date;
   renewal_selection_instructions: string;
-  renewal_selection_start_date: _Date;
+  renewal_selection_start_date: Date;
 };
 
 /**
@@ -1515,6 +1552,13 @@ export type UnlimitedDaysandHoursResponse = {
 };
 
 /**
+ * ImportDataRow
+ */
+export type ImportDataRow = {
+  [key: string]: unknown;
+};
+
+/**
  * ValidateResignationRequestParams
  */
 export type ValidateResignationRequestParams =
@@ -1545,6 +1589,13 @@ export type PayProcessingFeatureResponse = {
  * Contractor Invoice identifier.
  */
 export type ContractorInvoiceId = string;
+
+/**
+ * AccountsLoginSyncedWith
+ *
+ * Indicates which email type the account login is synchronized with.
+ */
+export type AccountsLoginSyncedWith = 'none' | 'personal' | 'work';
 
 /**
  * NullableMinimalBenefitTier
@@ -1757,6 +1808,16 @@ export type CompanyCreationResponse = {
 };
 
 /**
+ * ContractorContractDocumentStatus
+ *
+ * Contract document status.
+ */
+export type ContractorContractDocumentStatus =
+  | 'draft'
+  | 'awaiting_signatures'
+  | 'finished';
+
+/**
  * ContractDocumentResponse
  *
  * Return a base64 encoded contract document
@@ -1767,20 +1828,43 @@ export type ContractDocumentResponse = {
       content: Blob | File;
       name: string;
       signatories: Array<Signatory>;
-      /**
-       * Contract document status
-       */
-      status:
-        | 'draft'
-        | 'awaiting_signatures'
-        | 'finished'
-        | 'archived'
-        | 'revised'
-        | 'awaiting_customer_approval'
-        | 'approved_by_customer'
-        | 'rejected_by_customer';
+      status: ContractorContractDocumentStatus;
     };
   };
+};
+
+/**
+ * ImportJobRow
+ */
+export type ImportJobRow = {
+  data: ImportDataRow;
+  /**
+   * Fields with their error messages
+   */
+  errors: {
+    [key: string]:
+      | Array<string>
+      | {
+          [key: string]: unknown;
+        };
+  };
+  metadata?: {
+    [key: string]: unknown;
+  };
+  row_errors?: {
+    [key: string]: unknown;
+  };
+  row_number: number;
+  status?:
+    | 'successful'
+    | 'imported'
+    | 'error'
+    | 'unprocessable'
+    | 'pending'
+    | 'deleted'
+    | 'skipped'
+    | 'retryable';
+  submission_errors?: Array<ImportJobRowError>;
 };
 
 export type MaybeCurrencyDefinition = CurrencyDefinition | null;
@@ -1869,6 +1953,22 @@ export type BillingDocumentResponse = {
 };
 
 /**
+ * AdministrativeDetailsParams
+ */
+export type AdministrativeDetailsParams = {
+  /**
+   * Administrative information. As its properties may vary depending on the country,
+   * you must query the `Show legal entity administrative details form schema` endpoint
+   * passing the country code and `administrative_details` as path parameters.
+   *
+   */
+  administrative_details: {
+    [key: string]: unknown;
+  };
+  product_type: 'peo' | 'global_payroll' | 'e2e_payroll';
+};
+
+/**
  * PayDetailDataResponse
  */
 export type PayDetailDataResponse = {
@@ -1876,6 +1976,17 @@ export type PayDetailDataResponse = {
   importantDates: ImportantDates;
   payment: Payment;
   totalPay: TotalPay;
+};
+
+/**
+ * ShowLegalEntityAdministrativeDetailsResponse
+ *
+ * Country specific json schema driven administrative details for legal entities
+ */
+export type ShowLegalEntityAdministrativeDetailsResponse = {
+  data: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -1938,6 +2049,32 @@ export type PayslipResponse = {
 };
 
 /**
+ * CorTerminationRequestCreatedResponse
+ */
+export type CorTerminationRequestCreatedResponse = {
+  data: {
+    /**
+     * The date on which the contractor employment will be deactivated.
+     */
+    employment_deactivation_date: string | null;
+    /**
+     * UuidSlug
+     *
+     * Unique identifier of the termination request.
+     */
+    id: string;
+    /**
+     * Current status of the termination request.
+     */
+    status: 'initiated' | 'executed' | 'cancelled';
+    /**
+     * The date when the termination was initiated.
+     */
+    termination_date: string | null;
+  };
+};
+
+/**
  * NotFoundResponse
  */
 export type NotFoundResponse = {
@@ -1970,6 +2107,19 @@ export type SubmitEligibilityQuestionnaireRequest = {
     [key: string]: string;
   };
   type: 'contractor_of_record';
+};
+
+/**
+ * AccountsAccount
+ *
+ * An Account
+ */
+export type AccountsAccount = {
+  login_email?: Email | null;
+  login_synced_with?: AccountsLoginSyncedWith | null;
+  personal_email?: string | Email | null;
+  slug: Slug;
+  status?: 'created' | 'active' | 'deleted' | 'locked';
 };
 
 /**
@@ -2149,8 +2299,8 @@ export type ClientCredentialsParams = {
  * Stage
  */
 export type Stage = {
-  completionDate?: _Date;
-  dueDate?: _Date;
+  completionDate?: Date;
+  dueDate?: Date;
   label: string;
   state: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
 };
@@ -2441,6 +2591,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -2734,7 +2885,7 @@ export type Currency = {
 export type Payment = {
   bankValueNumber?: Amount;
   fields?: Array<CustomField>;
-  payrollFundedDate: _Date;
+  payrollFundedDate: Date;
 };
 
 /**
@@ -2768,6 +2919,19 @@ export type OptionValue = string;
  */
 export type ListPayrollRunResponse = {
   payroll_runs?: Array<MinimalPayrollRun>;
+};
+
+/**
+ * ImportJobRows
+ */
+export type ImportJobRows = {
+  failures: Array<ImportJobRow>;
+  imported: Array<ImportJobRow>;
+  pending: Array<ImportJobRow>;
+  retryable: Array<ImportJobRow>;
+  skipped: Array<ImportJobRow>;
+  successes: Array<ImportJobRow>;
+  unprocessable: Array<ImportJobRow>;
 };
 
 /**
@@ -2828,6 +2992,17 @@ export type EmploymentSeniorityDate = string;
 export type TaskStatus = 'completed' | 'pending';
 
 /**
+ * BulkEmploymentEmployeePayload
+ *
+ * Employee payload. The nested fields must match the employment schema for the selected country. `activate_global_payroll` is currently supported only for Serbia (SRB) and is controlled by the `bulk_gp_product_activation` feature flag.
+ */
+export type BulkEmploymentEmployeePayload = {
+  activate_global_payroll?: boolean;
+  send_invitation?: boolean;
+  [key: string]: unknown;
+};
+
+/**
  * RegionStatus
  */
 export type RegionStatus = 'active' | 'inactive';
@@ -2840,6 +3015,36 @@ export type RegionStatus = 'active' | 'inactive';
 export type TimeoffTypeResponse = {
   description?: string | null;
   name: TimeoffType;
+};
+
+export type MaybeAccountsLoginSyncedWith = AccountsLoginSyncedWith | null;
+
+/**
+ * MinimalUser
+ */
+export type MinimalUser = {
+  /**
+   * The email used for authentication. It may be hidden in case no permission is given to see sensible data.
+   */
+  email?: string | null;
+  name: string;
+  personal_details?: PersonalDetails | null;
+  /**
+   * URL
+   */
+  profile_picture?: string | null;
+  /**
+   * Slug
+   */
+  slug: string;
+  status?:
+    | 'active'
+    | 'cancelled'
+    | 'deleted'
+    | 'inactive'
+    | 'draft'
+    | 'created'
+    | 'initiated';
 };
 
 /**
@@ -2861,10 +3066,10 @@ export type MinimalPayrollRun = {
   country: Country;
   currency_code: CurrencyCode;
   cutoff_date?: NullableDate;
-  expected_payout_date: _Date;
+  expected_payout_date: Date;
   id: string;
-  period_end: _Date;
-  period_start: _Date;
+  period_end: Date;
+  period_start: Date;
   status:
     | 'preparing'
     | 'processing'
@@ -2938,6 +3143,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -3074,7 +3280,7 @@ export type IntegrationsScimErrorResponse = {
  * Timeoff days params
  */
 export type TimeoffDaysParams = {
-  day?: _Date;
+  day?: Date;
   hours?: number;
 };
 
@@ -3486,6 +3692,51 @@ export type ListLeavePoliciesSummaryResponse = {
 };
 
 /**
+ * ImportJobColumnMapping
+ *
+ * The column mapping for the import job. For times when imported data columns do not match the schema fields and
+ * need to be manually mapped to the correct schema fields.
+ *
+ */
+export type ImportJobColumnMapping = {
+  /**
+   * The column names that have been automatically mapped by Tiger (rawr!) and maybe also by AI.
+   */
+  auto_mapped_columns?: Array<string>;
+  /**
+   * The map of schema fields paths to data columns
+   */
+  mapping: {
+    [key: string]: unknown;
+  };
+  /**
+   * The data columns to map to
+   */
+  source_columns: Array<{
+    /**
+     * The index of the data column in the file
+     */
+    index: number;
+    /**
+     * The name of the data column
+     */
+    name: string;
+    /**
+     * A sample data value from the data column
+     */
+    sample_data?: string | null;
+  }>;
+  /**
+   * The number of columns that have not been mapped
+   */
+  unmapped_column_count: number;
+  /**
+   * The number of required schema field paths that have not been mapped
+   */
+  unmapped_required_field_count: number;
+} | null;
+
+/**
  * OfferedBenefitGroup
  */
 export type OfferedBenefitGroup = {
@@ -3508,7 +3759,7 @@ export type PayrollRun = {
    */
   employee_details: Array<EmployeeDetails>;
   employer_contributions_total: number;
-  expected_payout_date: _Date;
+  expected_payout_date: Date;
   expenses_total: number;
   /**
    * The ID of the payroll run
@@ -3516,8 +3767,8 @@ export type PayrollRun = {
   id: string;
   incentives_total: number;
   other_total: number;
-  period_end: _Date;
-  period_start: _Date;
+  period_end: Date;
+  period_start: Date;
   salary_total: number;
   status:
     | 'preparing'
@@ -3605,7 +3856,7 @@ export type UpdateScheduleContractorInvoiceParams = {
    */
   number?: string | null;
   periodicity?: ContractorInvoiceSchedulePeriodicity;
-  start_date?: _Date;
+  start_date?: Date;
 };
 
 /**
@@ -3819,7 +4070,7 @@ export type UnifiedMinimalBenefitGroup = {
  */
 export type Payslip = {
   employment_id: string;
-  expected_payout_date?: _Date;
+  expected_payout_date?: Date;
   id: string;
   issued_at: string;
   /**
@@ -3865,6 +4116,11 @@ export type ConvertCurrencyParams = {
    */
   target_currency: string;
 };
+
+/**
+ * URL
+ */
+export type Url = string | null;
 
 /**
  * ListPricingPlanPartnerTemplatesResponse
@@ -3962,9 +4218,9 @@ export type ResourceErrorResponse = {
       | 'request_internal_server_error'
       | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
-      | 'parameter_too_many'
       | 'resource_not_supported_for_country';
     message?: string;
     resource_id?: string | null;
@@ -4147,17 +4403,10 @@ export type ContractDocumentItem = {
    */
   name: string | null;
   /**
-   * Contract document status
+   * List of signatories for this contract document
    */
-  status:
-    | 'draft'
-    | 'awaiting_signatures'
-    | 'finished'
-    | 'archived'
-    | 'revised'
-    | 'awaiting_customer_approval'
-    | 'approved_by_customer'
-    | 'rejected_by_customer';
+  signatories: Array<ListSignatory>;
+  status: ContractorContractDocumentStatus;
   /**
    * Contract document type
    */
@@ -4396,9 +4645,9 @@ export type UpdateApprovedTimeoffParams = {
    * The reason for the update. Required when updating the time off data but not changing the status.
    */
   edit_reason: string;
-  end_date?: _Date;
+  end_date?: Date;
   notes?: string;
-  start_date?: _Date;
+  start_date?: Date;
   /**
    * @deprecated
    */
@@ -4480,6 +4729,16 @@ export type ListCompanyDepartmentsPaginatedResponse = {
 };
 
 /**
+ * AccountUserIntegrationUser
+ */
+export type AccountUserIntegrationUser = {
+  external_user_id: string;
+  integration: {
+    name: string;
+  };
+};
+
+/**
  * MagicLinkResponse
  */
 export type MagicLinkResponse = {
@@ -4487,6 +4746,9 @@ export type MagicLinkResponse = {
     url: string;
   };
 };
+
+export type MaybeAccountsMinimalCompanyAdmin =
+  AccountsMinimalCompanyAdmin | null;
 
 /**
  * EmploymentLifecycleStage
@@ -4678,21 +4940,31 @@ export type Incentive = {
 /**
  * Signatory
  *
- * Contract document signatory with signature details
+ * A signatory on a contract document. For company and employee signatories, `user_id` is provided. For other signatory types, `user_id` is null.
  */
 export type Signatory = {
-  email: string | null;
-  name: string | null;
   /**
-   * Base64 encoded signature image
+   * Email address of the signatory
    */
-  signature: string | null;
-  signed_at: string | null;
-  status: 'pending' | 'signed' | 'unassigned';
-  type: 'company' | 'employee' | 'admin' | 'external' | 'unknown';
-  user: {
-    [key: string]: unknown;
-  } | null;
+  email?: string | null;
+  /**
+   * Full name of the signatory
+   */
+  name?: string | null;
+  /**
+   * Signature image as a data URI (e.g. `data:image/png;base64,...`), null if not yet signed
+   */
+  signature?: string | null;
+  /**
+   * Timestamp when the signatory signed the document, null if not yet signed
+   */
+  signed_at?: string | null;
+  status: SignatoryStatus;
+  type: SignatoryType;
+  /**
+   * User identifier for internal signatories, null for external signatories
+   */
+  user_id?: string | null;
 };
 
 /**
@@ -4738,9 +5010,9 @@ export type PayGroup = {
    */
   payGroupName: string;
   payGroupReferences?: Array<string>;
-  paymentDate: _Date;
-  periodEndDate: _Date;
-  periodStartDate: _Date;
+  paymentDate: Date;
+  periodEndDate: Date;
+  periodStartDate: Date;
   runType?: ReferencedItem;
   status?: Status;
 };
@@ -4767,10 +5039,10 @@ export type UpdateEmployeeTimeoffParams = {
    * The reason for the update. Required when updating the time off data but not changing the status.
    */
   edit_reason: string;
-  end_date?: _Date;
+  end_date?: Date;
   leave_policy_variant_id?: string;
   notes?: string;
-  start_date?: _Date;
+  start_date?: Date;
   timeoff_days?: Array<TimeoffDaysParams>;
   timezone?: Timezone;
 };
@@ -5160,6 +5432,28 @@ export type ContractorInvoiceScheduleResponse = {
 };
 
 /**
+ * PersonalDetails
+ *
+ * Personal details for a user, includes sensitive information
+ */
+export type PersonalDetails = {
+  birthdate?: string;
+  full_preferred_name?: string | null;
+  gender?: string | null;
+  gender_description?: string | null;
+  given_name?: string | null;
+  is_us_person?: boolean | null;
+  mobile_number?: string;
+  nationality?: Array<string>;
+  preferred_name?: string | null;
+  preferred_pronouns?: string | null;
+  recovery_number?: string | null;
+  sex?: string | null;
+  surname?: string | null;
+  title?: 'mr' | 'mrs' | 'miss' | 'ms' | 'mx';
+};
+
+/**
  * CreatePricingPlanWithoutPartnerTemplateParams
  *
  * Parameters for creating a pricing plan without a partner template
@@ -5208,6 +5502,17 @@ export type ListFilesResponse = {
 };
 
 /**
+ * BulkEmploymentCreateParams
+ *
+ * Creates an asynchronous bulk employment job. `send_invitation` sets the batch default for onboarding invitations, and each employee can override it with their own `send_invitation` value. Global Payroll activation is currently limited to Serbia (SRB) and requires the `bulk_gp_product_activation` feature flag. Submission happens after the initial `202` response; if a row later fails during Global Payroll activation, the failure is reported through the bulk-employment rows/status endpoints rather than the create response.
+ */
+export type BulkEmploymentCreateParams = {
+  country_code: CountryCode;
+  employees: Array<BulkEmploymentEmployeePayload>;
+  send_invitation?: boolean;
+};
+
+/**
  * BenefitRenewalRequests.MinimalBenefitRenewalResponse
  */
 export type BenefitRenewalRequestsMinimalBenefitRenewalResponse = {
@@ -5228,6 +5533,8 @@ export type ListCompanyPricingPlansResponse = {
 
 /**
  * UuidSlug
+ *
+ * Unique identifier of the termination request.
  */
 export type UuidSlug = string;
 
@@ -5238,9 +5545,18 @@ export type UuidSlug = string;
  */
 export type CreateTimesheetParams = {
   employment_id: UuidSlug;
-  end_date: _Date;
-  start_date: _Date;
+  end_date: Date;
+  start_date: Date;
   time_trackings: Array<TimeTrackingParams>;
+};
+
+/**
+ * ImportJobRowError
+ */
+export type ImportJobRowError = {
+  error?: string | null;
+  field_name?: string | null;
+  messages: Array<string>;
 };
 
 /**
@@ -5284,6 +5600,13 @@ export type CustomNumberLinkable = {
 };
 
 /**
+ * ImportJobResponse
+ */
+export type ImportJobResponse = {
+  data: ImportJob;
+};
+
+/**
  * Timesheet
  *
  * Timesheet
@@ -5293,7 +5616,7 @@ export type Timesheet = {
   break_hours: HoursAndMinutes;
   country_code: CountryCode;
   employment_id: UuidSlug;
-  end_date: _Date;
+  end_date: Date;
   holiday_hours: HoursAndMinutes;
   id: UuidSlug;
   night_hours: HoursAndMinutes;
@@ -5301,7 +5624,7 @@ export type Timesheet = {
   on_call_hours: HoursAndMinutes;
   overtime_hours: HoursAndMinutes;
   regular_hours: HoursAndMinutes;
-  start_date: _Date;
+  start_date: Date;
   status: TimesheetStatus;
   submitted_at: string | null;
   time_trackings: Array<TimeTracking>;
@@ -5584,8 +5907,8 @@ export type TravelLetterRequest = {
     | 'approved_by_remote';
   submitted_at: DateTimeIso8601;
   travel_address: string | null;
-  travel_date_end: _Date;
-  travel_date_start: _Date;
+  travel_date_end: Date;
+  travel_date_start: Date;
   travel_document_number: string;
   travel_reason: string;
   travel_reason_details: string;
@@ -5728,6 +6051,40 @@ export type ListWorkAuthorizationRequestsResponse = {
      */
     total_pages?: number;
     work_authorization_requests?: Array<WorkAuthorizationRequest>;
+  };
+};
+
+/**
+ * ImportJobRowsResponse
+ */
+export type ImportJobRowsResponse = {
+  data: {
+    counts_by_status: {
+      deleted: number;
+      error: number;
+      imported: number;
+      pending: number;
+      retryable: number;
+      skipped: number;
+      successful: number;
+      unprocessable: number;
+    };
+    current_page: number;
+    ordered_rows?: Array<number>;
+    /**
+     * ImportJobRows
+     */
+    rows: {
+      failures: Array<ImportJobRow>;
+      imported: Array<ImportJobRow>;
+      pending: Array<ImportJobRow>;
+      retryable: Array<ImportJobRow>;
+      skipped: Array<ImportJobRow>;
+      successes: Array<ImportJobRow>;
+      unprocessable: Array<ImportJobRow>;
+    };
+    total_count: number;
+    total_pages: number;
   };
 };
 
@@ -5974,6 +6331,18 @@ export type TimesheetStatus =
   | 'processed';
 
 /**
+ * AccountsMinimalCompanyAdmin
+ */
+export type AccountsMinimalCompanyAdmin = {
+  job_title?: string | null;
+  name?: string;
+  /**
+   * Slug
+   */
+  slug?: string;
+};
+
+/**
  * ContractorSubscriptions.Summary
  */
 export type ContractorSubscriptionsSummary = {
@@ -5981,7 +6350,7 @@ export type ContractorSubscriptionsSummary = {
     slug?: UuidSlug;
   };
   company_product_discount: {
-    expiration_date?: _Date;
+    expiration_date?: Date;
     percent?: Decimal;
   };
   currency: Currency;
@@ -6063,6 +6432,23 @@ export type TimeoffEntitlement = {
 export type TooManyRequestsResponse = {
   message?: string;
 };
+
+/**
+ * BulkImport.ImportJobStatus
+ *
+ *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
+ * * `uploaded` - **Deprecated**, replaced by the `draft` status
+ * * `in_progress` - Data is actively being imported
+ * * `finished` - The import job has finished processing
+ * * `failed` - The import job has failed completely, nothing has been imported
+ *
+ */
+export type BulkImportImportJobStatus =
+  | 'draft'
+  | 'uploaded'
+  | 'in_progress'
+  | 'finished'
+  | 'failed';
 
 /**
  * EligibilityQuestionnaire
@@ -6230,6 +6616,32 @@ export type CurrencyDefinition = {
 };
 
 /**
+ * ListSignatory
+ *
+ * A signatory on a contract document. For company and employee signatories, `user_id` is provided. For other signatory types, `user_id` is null.
+ */
+export type ListSignatory = {
+  /**
+   * Email address of the signatory
+   */
+  email?: string | null;
+  /**
+   * Full name of the signatory
+   */
+  name?: string | null;
+  /**
+   * Timestamp when the signatory signed the document, null if not yet signed
+   */
+  signed_at?: string | null;
+  status: SignatoryStatus;
+  type: SignatoryType;
+  /**
+   * User identifier for internal signatories, null for external signatories
+   */
+  user_id?: string | null;
+};
+
+/**
  * WebhookCallback
  */
 export type WebhookCallback = {
@@ -6275,6 +6687,7 @@ export type WebhookCallback = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -6351,13 +6764,15 @@ export type WebhookCallback = {
   url: string;
 };
 
+export type MaybeAccountsAccount = AccountsAccount | null;
+
 /**
  * TimeoffDay
  *
  * TimeoffDay schema
  */
 export type TimeoffDay = {
-  day: _Date;
+  day: Date;
   hours: number;
 };
 
@@ -6443,6 +6858,29 @@ export type NullableDate = string | null;
  * Referenced Items will be listed in the same order they are provided
  */
 export type ReferencedItems = Array<ReferencedItem>;
+
+/**
+ * AccountsUser
+ *
+ * Someone registered in Remote using a unique email address.
+ */
+export type AccountsUser =
+  | MinimalUser
+  | {
+      account?: AccountsAccount | null;
+      integration_users?: Array<AccountUserIntegrationUser>;
+      invited_by?: AccountsMinimalCompanyAdmin | null;
+      login_synced_with?: AccountsLoginSyncedWith;
+      raw_email?: string;
+      role?:
+        | 'admin'
+        | 'employer'
+        | 'employee'
+        | 'freelancer'
+        | 'service_provider'
+        | 'candidate';
+      signup_source?: string | null;
+    };
 
 /**
  * CompanyCurrency
@@ -6679,6 +7117,22 @@ export type BulkContractorInvoiceScheduleCreateResponse = {
     successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
   };
 };
+
+/**
+ * BulkImport.ImportJobStage
+ *
+ *   The stage of the import job.
+ * * `creation` - The import job is in the creation stage, which means the rows are being created.
+ * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+ * * `validation` - The import job is in the validation stage, which means the rows are being validated.
+ * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+ *
+ */
+export type BulkImportImportJobStage =
+  | 'creation'
+  | 'column_mapping'
+  | 'validation'
+  | 'submission';
 
 /**
  * IdentityIntegration
@@ -7049,6 +7503,8 @@ export type CompanyFormResponse = {
  */
 export type DateTimeIso8601 = string;
 
+export type MaybePersonalDetails = PersonalDetails | null;
+
 /**
  * CompaniesResponse
  *
@@ -7083,8 +7539,8 @@ export type WorkAuthorizationRequest = {
     | 'approved_by_manager'
     | 'approved_by_remote';
   submitted_at: DateTimeIso8601;
-  travel_date_end: _Date;
-  travel_date_start: _Date;
+  travel_date_end: Date;
+  travel_date_start: Date;
   travel_document_number: string;
   user: WorkAuthorizationUser;
   will_negotiate_or_sign_contracts: boolean | null;
@@ -7372,7 +7828,7 @@ export type EmploymentBasicInformationParams = {
  *
  * UTC date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
  */
-export type _Date = string;
+export type Date = string;
 
 /**
  * Cycle
@@ -7657,6 +8113,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
+    | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -8130,6 +8587,18 @@ export type IntegrationsScimUserListResponse = {
 };
 
 /**
+ * Email
+ */
+export type Email = {
+  address: string;
+  confirmed_at?: NullableDateTime;
+  login_synced?: boolean;
+  status?: 'pending' | 'confirmed' | 'deleted';
+  type?: 'login' | 'personal';
+  unconfirmed_address?: string | null;
+};
+
+/**
  * ApproveTimeoffParams
  *
  * Approve timeoff params
@@ -8201,12 +8670,14 @@ export type TimeTracking = {
   weekend_hours: HoursAndMinutes;
 };
 
+export type MaybeEmail = Email | null;
+
 /**
  * CustomDate
  */
 export type CustomDate = {
   label: string;
-  value: _Date;
+  value: Date;
 };
 
 /**
@@ -8455,24 +8926,51 @@ export type PayDifference = {
 };
 
 /**
+ * CorTerminationRequestResponse
+ */
+export type CorTerminationRequestResponse = {
+  data: {
+    /**
+     * Timestamp of when the termination was cancelled. Null if not cancelled.
+     */
+    cancelled_at: string | null;
+    /**
+     * The date on which the contractor employment will be deactivated.
+     */
+    employment_deactivation_date: string | null;
+    /**
+     * Timestamp of when the termination was executed. Null if not yet executed.
+     */
+    executed_at: string | null;
+    /**
+     * UuidSlug
+     *
+     * Unique identifier of the termination request.
+     */
+    id: string;
+    /**
+     * Timestamp of when the termination request was initiated.
+     */
+    initiated_at: string | null;
+    /**
+     * Current status of the termination request.
+     */
+    status: 'initiated' | 'executed' | 'cancelled';
+    /**
+     * The date when the termination was initiated.
+     */
+    termination_date: string | null;
+  };
+};
+
+/**
  * ContractDocument
  *
  * ContractDocument schema
  */
 export type ContractDocument = {
   id: string;
-  /**
-   * Contract document status
-   */
-  status:
-    | 'draft'
-    | 'awaiting_signatures'
-    | 'finished'
-    | 'archived'
-    | 'revised'
-    | 'awaiting_customer_approval'
-    | 'approved_by_customer'
-    | 'rejected_by_customer';
+  status: ContractorContractDocumentStatus;
 };
 
 /**
@@ -8589,6 +9087,132 @@ export type BillingDocumentAmountItem = {
   source_amount?: number;
   source_currency?: string | null;
   type: string;
+};
+
+/**
+ * ImportJob
+ */
+export type ImportJob = {
+  /**
+   * ImportJobColumnMapping
+   *
+   * The column mapping for the import job. For times when imported data columns do not match the schema fields and
+   * need to be manually mapped to the correct schema fields.
+   *
+   */
+  column_mapping?: {
+    /**
+     * The column names that have been automatically mapped by Tiger (rawr!) and maybe also by AI.
+     */
+    auto_mapped_columns?: Array<string>;
+    /**
+     * The map of schema fields paths to data columns
+     */
+    mapping: {
+      [key: string]: unknown;
+    };
+    /**
+     * The data columns to map to
+     */
+    source_columns: Array<{
+      /**
+       * The index of the data column in the file
+       */
+      index: number;
+      /**
+       * The name of the data column
+       */
+      name: string;
+      /**
+       * A sample data value from the data column
+       */
+      sample_data?: string | null;
+    }>;
+    /**
+     * The number of columns that have not been mapped
+     */
+    unmapped_column_count: number;
+    /**
+     * The number of required schema field paths that have not been mapped
+     */
+    unmapped_required_field_count: number;
+  } | null;
+  /**
+   * The name to be displayed for the user interface
+   */
+  display_name?: string;
+  errors?: Array<string>;
+  /**
+   * The number of rows that failed to be processed
+   */
+  failed_count: number;
+  finished_at: NullableDateTime;
+  /**
+   * The number of rows that have been imported in previous submission stages
+   */
+  imported_count?: number;
+  inserted_at: DateTime;
+  /**
+   * AccountsUser
+   *
+   * Someone registered in Remote using a unique email address.
+   */
+  inserted_by:
+    | MinimalUser
+    | {
+        account?: AccountsAccount | null;
+        integration_users?: Array<AccountUserIntegrationUser>;
+        invited_by?: AccountsMinimalCompanyAdmin | null;
+        login_synced_with?: AccountsLoginSyncedWith;
+        raw_email?: string;
+        role?:
+          | 'admin'
+          | 'employer'
+          | 'employee'
+          | 'freelancer'
+          | 'service_provider'
+          | 'candidate';
+        signup_source?: string | null;
+      };
+  /**
+   * The metadata for the import job
+   */
+  metadata: {
+    [key: string]: unknown;
+  };
+  name: string;
+  /**
+   * The number of processed rows, regardless of success or failure
+   */
+  processed_count: number;
+  slug: UuidSlug;
+  /**
+   * BulkImport.ImportJobStage
+   *
+   *   The stage of the import job.
+   * * `creation` - The import job is in the creation stage, which means the rows are being created.
+   * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+   * * `validation` - The import job is in the validation stage, which means the rows are being validated.
+   * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+   *
+   */
+  stage: 'creation' | 'column_mapping' | 'validation' | 'submission';
+  /**
+   * BulkImport.ImportJobStatus
+   *
+   *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
+   * * `uploaded` - **Deprecated**, replaced by the `draft` status
+   * * `in_progress` - Data is actively being imported
+   * * `finished` - The import job has finished processing
+   * * `failed` - The import job has failed completely, nothing has been imported
+   *
+   */
+  status: 'draft' | 'uploaded' | 'in_progress' | 'finished' | 'failed';
+  /**
+   * The total number of rows to import
+   */
+  total_count: number;
+  updated_at: DateTime;
 };
 
 /**
@@ -9587,35 +10211,35 @@ export type GetIndexContractorInvoiceData = {
     /**
      * Filters contractor invoices by date greater than or equal to the value.
      */
-    date_from?: _Date;
+    date_from?: Date;
     /**
      * Filters contractor invoices by date less than or equal to the value.
      */
-    date_to?: _Date;
+    date_to?: Date;
     /**
      * Filters contractor invoices by due date greater than or equal to the value.
      */
-    due_date_from?: _Date;
+    due_date_from?: Date;
     /**
      * Filters contractor invoices by due date less than or equal to the value.
      */
-    due_date_to?: _Date;
+    due_date_to?: Date;
     /**
      * Filters contractor invoices by approved date greater than or equal to the value.
      */
-    approved_date_from?: _Date;
+    approved_date_from?: Date;
     /**
      * Filters contractor invoices by approved date less than or equal to the value.
      */
-    approved_date_to?: _Date;
+    approved_date_to?: Date;
     /**
      * Filters contractor invoices by paid out date greater than or equal to the value.
      */
-    paid_out_date_from?: _Date;
+    paid_out_date_from?: Date;
     /**
      * Filters contractor invoices by paid out date less than or equal to the value.
      */
-    paid_out_date_to?: _Date;
+    paid_out_date_to?: Date;
     /**
      * Field to sort by
      */
@@ -10720,29 +11344,11 @@ export type GetIndexEmploymentContractDocumentData = {
     /**
      * Filter by contract document statuses
      */
-    statuses?: Array<
-      | 'draft'
-      | 'awaiting_signatures'
-      | 'finished'
-      | 'archived'
-      | 'revised'
-      | 'awaiting_customer_approval'
-      | 'approved_by_customer'
-      | 'rejected_by_customer'
-    >;
+    statuses?: Array<ContractorContractDocumentStatus>;
     /**
      * Exclude contract documents with specific statuses
      */
-    except_statuses?: Array<
-      | 'draft'
-      | 'awaiting_signatures'
-      | 'finished'
-      | 'archived'
-      | 'revised'
-      | 'awaiting_customer_approval'
-      | 'approved_by_customer'
-      | 'rejected_by_customer'
-    >;
+    except_statuses?: Array<ContractorContractDocumentStatus>;
     /**
      * Starts fetching records after the given page
      */
@@ -11122,6 +11728,50 @@ export type PostReplayWebhookEventResponses = {
 
 export type PostReplayWebhookEventResponse =
   PostReplayWebhookEventResponses[keyof PostReplayWebhookEventResponses];
+
+export type PostCreateCorTerminationRequestSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/cor-termination-requests';
+};
+
+export type PostCreateCorTerminationRequestSubscriptionErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostCreateCorTerminationRequestSubscriptionError =
+  PostCreateCorTerminationRequestSubscriptionErrors[keyof PostCreateCorTerminationRequestSubscriptionErrors];
+
+export type PostCreateCorTerminationRequestSubscriptionResponses = {
+  /**
+   * Created
+   */
+  201: CorTerminationRequestCreatedResponse;
+};
+
+export type PostCreateCorTerminationRequestSubscriptionResponse =
+  PostCreateCorTerminationRequestSubscriptionResponses[keyof PostCreateCorTerminationRequestSubscriptionResponses];
 
 export type GetShowBackgroundCheckData = {
   body?: never;
@@ -14368,6 +15018,113 @@ export type GetIndexPayrollCalendarResponses = {
 export type GetIndexPayrollCalendarResponse =
   GetIndexPayrollCalendarResponses[keyof GetIndexPayrollCalendarResponses];
 
+export type GetShowAdministrativeDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+    /**
+     * Legal entity ID
+     */
+    legal_entity_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+};
+
+export type GetShowAdministrativeDetailsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowAdministrativeDetailsError =
+  GetShowAdministrativeDetailsErrors[keyof GetShowAdministrativeDetailsErrors];
+
+export type GetShowAdministrativeDetailsResponses = {
+  /**
+   * ShowLegalEntityAdministrativeDetailsResponse
+   *
+   * Country specific json schema driven administrative details for legal entities
+   */
+  200: {
+    data: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+export type GetShowAdministrativeDetailsResponse =
+  GetShowAdministrativeDetailsResponses[keyof GetShowAdministrativeDetailsResponses];
+
+export type PutUpdateAdministrativeDetailsData = {
+  /**
+   * Legal entity administrative details params
+   */
+  body?: AdministrativeDetailsParams;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+    /**
+     * Legal entity ID
+     */
+    legal_entity_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+};
+
+export type PutUpdateAdministrativeDetailsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutUpdateAdministrativeDetailsError =
+  PutUpdateAdministrativeDetailsErrors[keyof PutUpdateAdministrativeDetailsErrors];
+
+export type PutUpdateAdministrativeDetailsResponses = {
+  /**
+   * ShowLegalEntityAdministrativeDetailsResponse
+   *
+   * Country specific json schema driven administrative details for legal entities
+   */
+  200: {
+    data: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+export type PutUpdateAdministrativeDetailsResponse =
+  PutUpdateAdministrativeDetailsResponses[keyof PutUpdateAdministrativeDetailsResponses];
+
 export type GetShowRegionFieldData = {
   body?: never;
   path: {
@@ -14505,6 +15262,59 @@ export type GetEmployeeDetailsPayrollRunResponses = {
 
 export type GetEmployeeDetailsPayrollRunResponse =
   GetEmployeeDetailsPayrollRunResponses[keyof GetEmployeeDetailsPayrollRunResponses];
+
+export type GetIndexBulkEmploymentRowData = {
+  body?: never;
+  path: {
+    /**
+     * Bulk employment job slug
+     */
+    job_id: string;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/bulk-employment-jobs/{job_id}/rows';
+};
+
+export type GetIndexBulkEmploymentRowErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetIndexBulkEmploymentRowError =
+  GetIndexBulkEmploymentRowErrors[keyof GetIndexBulkEmploymentRowErrors];
+
+export type GetIndexBulkEmploymentRowResponses = {
+  /**
+   * Success
+   */
+  200: ImportJobRowsResponse;
+};
+
+export type GetIndexBulkEmploymentRowResponse =
+  GetIndexBulkEmploymentRowResponses[keyof GetIndexBulkEmploymentRowResponses];
 
 export type PostCreateEmploymentData = {
   /**
@@ -16655,6 +17465,46 @@ export type PatchUpdateEmploymentCustomFieldValueResponses = {
 export type PatchUpdateEmploymentCustomFieldValueResponse =
   PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
 
+export type GetShowCorTerminationRequestSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+    /**
+     * Termination Request ID
+     */
+    termination_request_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}';
+};
+
+export type GetShowCorTerminationRequestSubscriptionErrors = {
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetShowCorTerminationRequestSubscriptionError =
+  GetShowCorTerminationRequestSubscriptionErrors[keyof GetShowCorTerminationRequestSubscriptionErrors];
+
+export type GetShowCorTerminationRequestSubscriptionResponses = {
+  /**
+   * Success
+   */
+  200: CorTerminationRequestResponse;
+};
+
+export type GetShowCorTerminationRequestSubscriptionResponse =
+  GetShowCorTerminationRequestSubscriptionResponses[keyof GetShowCorTerminationRequestSubscriptionResponses];
+
 export type PostTerminateContractorOfRecordEmploymentSubscriptionData = {
   body?: never;
   path: {
@@ -17149,6 +17999,50 @@ export type GetIndexWorkAuthorizationRequestResponses = {
 export type GetIndexWorkAuthorizationRequestResponse =
   GetIndexWorkAuthorizationRequestResponses[keyof GetIndexWorkAuthorizationRequestResponses];
 
+export type GetShowBulkEmploymentData = {
+  body?: never;
+  path: {
+    /**
+     * Bulk employment job slug
+     */
+    job_id: string;
+  };
+  query?: never;
+  url: '/v1/bulk-employment-jobs/{job_id}';
+};
+
+export type GetShowBulkEmploymentErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowBulkEmploymentError =
+  GetShowBulkEmploymentErrors[keyof GetShowBulkEmploymentErrors];
+
+export type GetShowBulkEmploymentResponses = {
+  /**
+   * Success
+   */
+  200: ImportJobResponse;
+};
+
+export type GetShowBulkEmploymentResponse =
+  GetShowBulkEmploymentResponses[keyof GetShowBulkEmploymentResponses];
+
 export type GetIndexBenefitOffersCountrySummaryData = {
   body?: never;
   headers: {
@@ -17533,6 +18427,71 @@ export type PostTokenOAuth2TokenResponses = {
 export type PostTokenOAuth2TokenResponse =
   PostTokenOAuth2TokenResponses[keyof PostTokenOAuth2TokenResponses];
 
+export type GetShowLegalEntityFormCountryData = {
+  body?: never;
+  path: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes
+     */
+    country_code: string;
+    /**
+     * Name of the desired form
+     */
+    form: string;
+  };
+  query?: {
+    /**
+     * Product type. Default value is global_payroll.
+     */
+    product_type?: 'peo' | 'global_payroll' | 'e2e_payroll';
+    /**
+     * Legal entity id for admistrative_details of e2e payroll products in GBR
+     */
+    legal_entity_id?: UuidSlug;
+    /**
+     * Version of the form schema
+     */
+    json_schema_version?: number | 'latest';
+  };
+  url: '/v1/countries/{country_code}/legal_entity_forms/{form}';
+};
+
+export type GetShowLegalEntityFormCountryErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowLegalEntityFormCountryError =
+  GetShowLegalEntityFormCountryErrors[keyof GetShowLegalEntityFormCountryErrors];
+
+export type GetShowLegalEntityFormCountryResponses = {
+  /**
+   * Success
+   */
+  200: CountryFormResponse;
+};
+
+export type GetShowLegalEntityFormCountryResponse =
+  GetShowLegalEntityFormCountryResponses[keyof GetShowLegalEntityFormCountryResponses];
+
 export type PostManageContractorPlusSubscriptionSubscriptionData = {
   /**
    * Manage Contractor Plus subscription params
@@ -17715,7 +18674,7 @@ export type GetIndexPayrollRunData = {
     /**
      * Filters payroll runs where period_start or period_end match the given date
      */
-    payroll_period?: _Date;
+    payroll_period?: Date;
     /**
      * Starts fetching records after the given page
      */
@@ -18024,6 +18983,48 @@ export type PostCreateCompanyResponses = {
 export type PostCreateCompanyResponse =
   PostCreateCompanyResponses[keyof PostCreateCompanyResponses];
 
+export type PostCreateBulkEmploymentData = {
+  /**
+   * Bulk employment params
+   */
+  body?: BulkEmploymentCreateParams;
+  path?: never;
+  query?: never;
+  url: '/v1/bulk-employment-jobs';
+};
+
+export type PostCreateBulkEmploymentErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostCreateBulkEmploymentError =
+  PostCreateBulkEmploymentErrors[keyof PostCreateBulkEmploymentErrors];
+
+export type PostCreateBulkEmploymentResponses = {
+  /**
+   * Accepted
+   */
+  202: ImportJobResponse;
+};
+
+export type PostCreateBulkEmploymentResponse =
+  PostCreateBulkEmploymentResponses[keyof PostCreateBulkEmploymentResponses];
+
 export type PostSendBackTimesheetData = {
   /**
    * SendBackTimesheetParams
@@ -18264,19 +19265,19 @@ export type GetIndexScheduledContractorInvoiceData = {
     /**
      * Filters contractor invoice schedules by start date greater than or equal to the value.
      */
-    start_date_from?: _Date;
+    start_date_from?: Date;
     /**
      * Filters contractor invoice schedules by start date less than or equal to the value.
      */
-    start_date_to?: _Date;
+    start_date_to?: Date;
     /**
      * Filters contractor invoice schedules by next invoice date greater than or equal to the value.
      */
-    next_invoice_date_from?: _Date;
+    next_invoice_date_from?: Date;
     /**
      * Filters contractor invoice schedules by next invoice date less than or equal to the value.
      */
-    next_invoice_date_to?: _Date;
+    next_invoice_date_to?: Date;
     /**
      * Filters contractor invoice schedules by status matching the value.
      */
@@ -18481,11 +19482,11 @@ export type GetIndexEmployeeDocumentData = {
     /**
      * Filters the results that were uploaded on or after a given date
      */
-    inserted_after?: _Date;
+    inserted_after?: Date;
     /**
      * Filters the results that were uploaded before a given date
      */
-    inserted_before?: _Date;
+    inserted_before?: Date;
     /**
      * Field to sort by
      */

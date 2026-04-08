@@ -202,6 +202,8 @@ export const CostCalculatorFlow = ({
       );
       const currencyCode = currencyData?.label;
       if (currencyCode) {
+        // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrency(currencyCode as CurrencyKey);
         const defaultManagementFee = getDefaultManagementFee(
           BASE_RATES,

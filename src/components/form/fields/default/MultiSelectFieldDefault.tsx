@@ -21,6 +21,8 @@ export const MultiSelectFieldDefault = ({
     options?.filter((option) => field.value?.includes(option.value));
 
   useEffect(() => {
+    // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(
       options?.filter((option) => field.value?.includes(option.value)) || [],
     );

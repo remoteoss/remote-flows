@@ -99,6 +99,8 @@ export const JsonSchemaComparison = () => {
     const availableVersionValues = versionOptions.map((v) => v.value);
 
     if (!availableVersionValues.includes(topVersion)) {
+      // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTopVersion(versionOptions[0].value);
     }
     if (!availableVersionValues.includes(bottomVersion)) {
