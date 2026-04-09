@@ -7,60 +7,276 @@ import {
   ControllerRenderProps,
   FieldValues,
 } from 'react-hook-form';
-import { useEffect } from 'react';
 import { TelFieldComponentProps } from '@/src/types/fields';
+import { useMemo, useCallback } from 'react';
+import * as React from 'react';
+
+export type Country = {
+  name: string;
+  dialCode: string;
+  pattern: string;
+  areaCodes?: string[];
+};
+
+/**
+ * Removes all spaces from input.
+ */
+function removeSpaces(value: string) {
+  return value.replace(/\s/g, '');
+}
+
+function getStructuredNumberFromInternationalNumber(
+  internationalPhoneNumber: string = '',
+  country?: Country,
+) {
+  const baseRegex = new RegExp(
+    `^(\\+|00)(\\d{${country?.dialCode?.length ?? 0}})(.*)$`,
+  );
+  const baseMatch = internationalPhoneNumber?.match(baseRegex);
+
+  if (!baseMatch) {
+    return {
+      prefix: '',
+      dialCode: '',
+      phoneNumber: internationalPhoneNumber,
+    };
+  }
+
+  const [, plusOrCallPrefix, dialCode, phoneNumber] = baseMatch;
+
+  return {
+    prefix: plusOrCallPrefix,
+    dialCode,
+    phoneNumber,
+  };
+}
+
+function getCountryFromPhoneNumber(
+  {
+    dialCodes,
+    dialCodeMaxLength,
+  }: ReturnType<typeof getCountryDataByCountryCode>,
+  internationalPhoneNumber: string,
+) {
+  const { prefix } = getStructuredNumberFromInternationalNumber(
+    internationalPhoneNumber,
+  );
+
+  if (!prefix) {
+    return undefined;
+  }
+
+  // Try longest dial codes first - critical for US/Canada
+  for (let i = dialCodeMaxLength + prefix.length; i > prefix.length; i--) {
+    const dialCode = internationalPhoneNumber.slice(prefix.length, i);
+
+    if (dialCodes[dialCode]) {
+      return dialCodes[dialCode];
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Creates a map of dial codes (including area codes) to country objects.
+ * Handles countries like US/Canada that share +1 with different area codes.
+ */
+export function getCountryDataByCountryCode(countries: Country[]) {
+  const dialCodes: Record<string, Country> = {};
+  let dialCodeMaxLength = 0;
+
+  countries.forEach((country) => {
+    if (country.areaCodes) {
+      // For countries with area codes (e.g., +1204, +1226)
+      country.areaCodes.forEach((areaCode) => {
+        const code = country.dialCode + areaCode;
+        dialCodes[code] = country;
+        if (code.length > dialCodeMaxLength) {
+          dialCodeMaxLength = code.length;
+        }
+      });
+    } else {
+      // For countries with simple dial codes (e.g., +44, +351)
+      dialCodes[country.dialCode] = country;
+      if (country.dialCode.length > dialCodeMaxLength) {
+        dialCodeMaxLength = country.dialCode.length;
+      }
+    }
+  });
+
+  return { dialCodes, dialCodeMaxLength };
+}
+
+function getAreaCodesFromPattern(pattern: string = '') {
+  const codeGroupPattern = /\(([^)]+)\)/g;
+  const groups = pattern.match(codeGroupPattern);
+
+  if (groups?.length === 2) {
+    return groups[1].replace(/\(|\)/g, '').split('|');
+  }
+
+  return undefined;
+}
+
+function transformSchemaToCountries(
+  options: Array<{
+    value: string;
+    label: string;
+    meta: { countryCode: string };
+    pattern: string;
+  }>,
+): Country[] {
+  return options.map((option) => ({
+    name: option.label,
+    dialCode: option.meta.countryCode,
+    pattern: option.pattern,
+    areaCodes: getAreaCodesFromPattern(option.pattern),
+  }));
+}
 
 // Internal component to handle error transformation
-function TelFieldRenderer({
+function TelFieldRendererComponent({
   field,
   fieldState,
   fieldData,
   component: Component,
-  onChange,
+  onChangeCountryCode,
+  onChangePhoneNumber,
 }: {
   field: ControllerRenderProps<FieldValues, string>;
   fieldState: ControllerFieldState;
   fieldData: TelFieldDataProps;
   component: React.ComponentType<TelFieldComponentProps>;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeCountryCode?: (newCountry: Country) => void;
+  onChangePhoneNumber?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
-  const { setError } = useFormContext();
+  const { value: internationalPhoneNumber } = field;
+  const { options } = fieldData;
 
-  useEffect(() => {
-    if (fieldState.error?.message?.includes('is not valid')) {
-      const customMessage =
-        'Please enter a valid phone number with country code (e.g. +15389274785)';
+  const countries = useMemo(
+    () => transformSchemaToCountries(options),
+    [options],
+  );
 
-      setError(field.name, {
-        type: fieldState.error.type,
-        message: customMessage,
-      });
-    }
-  }, [
-    field.name,
-    fieldState.error,
-    fieldState.error?.message,
-    fieldState?.error?.type,
-    setError,
-  ]);
+  const countriesByCountryCode = useMemo(
+    () => getCountryDataByCountryCode(countries),
+    [countries],
+  );
+
+  const country = useMemo(
+    () =>
+      getCountryFromPhoneNumber(
+        countriesByCountryCode,
+        internationalPhoneNumber || '',
+      ),
+    [countriesByCountryCode, internationalPhoneNumber],
+  );
+
+  const { prefix, phoneNumber: nationalPhoneNumber } = useMemo(
+    () =>
+      getStructuredNumberFromInternationalNumber(
+        internationalPhoneNumber,
+        country,
+      ),
+    [internationalPhoneNumber, country],
+  );
+
+  const handleCountryCodeChange = useCallback(
+    (newCountry: Country) => {
+      if (!newCountry) return;
+      const newValue = `+${newCountry.dialCode}${nationalPhoneNumber}`;
+
+      // Update React Hook Form state
+      field.onChange(newValue);
+
+      // Call optional external onChange
+      if (onChangeCountryCode) {
+        onChangeCountryCode(newCountry);
+      }
+    },
+    [nationalPhoneNumber, field, onChangeCountryCode],
+  );
+
+  const handlePhoneNumberChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const valueWithoutSpaces = removeSpaces(event.target.value);
+      let newValue: string;
+      if (country) {
+        newValue = `${prefix}${country.dialCode}${valueWithoutSpaces}`;
+      } else {
+        newValue = `${prefix}${valueWithoutSpaces}`;
+      }
+      // Update React Hook Form state
+      field.onChange(newValue);
+
+      // Call optional external onChange
+      if (onChangePhoneNumber) {
+        const syntheticEvent = {
+          target: { value: newValue, name: field.name },
+        } as React.ChangeEvent<HTMLInputElement>;
+        onChangePhoneNumber(syntheticEvent);
+      }
+    },
+    [country, prefix, field, onChangePhoneNumber],
+  );
+
+  const fieldDataWithComputedValues = useMemo(
+    () => ({
+      ...fieldData,
+      onChangeCountryCode: handleCountryCodeChange,
+      onChangePhoneNumber: handlePhoneNumberChange,
+      currentCountry: country,
+      nationalPhoneNumber,
+    }),
+    [
+      fieldData,
+      handleCountryCodeChange,
+      handlePhoneNumberChange,
+      country,
+      nationalPhoneNumber,
+    ],
+  );
 
   return (
     <Component
-      field={{
-        ...field,
-        onChange: (evt: React.ChangeEvent<HTMLInputElement>) => {
-          field.onChange(evt);
-          onChange?.(evt);
-        },
-      }}
+      field={field}
       fieldState={fieldState}
-      fieldData={fieldData}
+      fieldData={fieldDataWithComputedValues}
     />
   );
 }
 
+// Memoize TelFieldRenderer to prevent unnecessary re-renders
+const TelFieldRenderer = React.memo(TelFieldRendererComponent, (prev, next) => {
+  // Always re-render if phone number or validation state changed
+  if (prev.field.value !== next.field.value) return false;
+  if (prev.fieldState.error !== next.fieldState.error) return false;
+  
+  // Smart options comparison: check if content actually changed
+  const prevOptions = prev.fieldData.options;
+  const nextOptions = next.fieldData.options;
+  
+  if (prevOptions === nextOptions) return true; // Same reference, no change
+  if (prevOptions.length !== nextOptions.length) return false; // Length changed, re-render
+  
+  // Check if any option content changed
+  const optionsChanged = nextOptions.some((opt, idx) => {
+    const prevOpt = prevOptions[idx];
+    return (
+      opt.value !== prevOpt?.value ||
+      opt.label !== prevOpt?.label ||
+      opt.meta?.countryCode !== prevOpt?.meta?.countryCode ||
+      opt.pattern !== prevOpt?.pattern
+    );
+  });
+  
+  return !optionsChanged; // true = skip re-render, false = re-render
+});
+
 export type TelFieldDataProps = Omit<JSFField, 'options'> & {
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeCountryCode?: (newCountry: Country) => void;
+  onChangePhoneNumber?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   component?: Components['tel'];
   options: {
     value: string;
@@ -70,13 +286,17 @@ export type TelFieldDataProps = Omit<JSFField, 'options'> & {
     };
     pattern: string;
   }[];
+  // Computed values passed from TelFieldRenderer
+  currentCountry?: Country;
+  nationalPhoneNumber?: string;
 };
 
 export function TelField({
   name,
   description,
   label,
-  onChange,
+  onChangeCountryCode,
+  onChangePhoneNumber,
   component,
   ...rest
 }: TelFieldDataProps) {
@@ -92,6 +312,7 @@ export function TelField({
         if (!Component) {
           throw new Error(`Tel component not found for field ${name}`);
         }
+
         const customTelFieldProps: TelFieldDataProps = {
           name,
           description,
@@ -105,7 +326,8 @@ export function TelField({
             fieldState={fieldState}
             fieldData={customTelFieldProps}
             component={Component}
-            onChange={onChange}
+            onChangeCountryCode={onChangeCountryCode}
+            onChangePhoneNumber={onChangePhoneNumber}
           />
         );
       }}

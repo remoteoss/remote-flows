@@ -12,6 +12,32 @@ vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
 }));
 
+// Helper function to interact with Radix UI Select
+async function fillRadixSelect(labelText: string, optionText: string) {
+  const user = userEvent.setup();
+
+  const trigger = screen.getByLabelText(labelText);
+  await user.click(trigger);
+
+  await waitFor(() => {
+    expect(
+      screen.getByRole('option', { name: new RegExp(optionText, 'i') }),
+    ).toBeInTheDocument();
+  });
+
+  const option = screen.getByRole('option', {
+    name: new RegExp(optionText, 'i'),
+  });
+  await user.click(option);
+}
+
+// Helper to fill phone number input
+async function fillPhoneInput(phoneNumber: string) {
+  const user = userEvent.setup();
+  const phoneInput = screen.getByLabelText('Phone number');
+  await user.type(phoneInput, phoneNumber);
+}
+
 const mockOptions: TelFieldDataProps['options'] = [
   {
     value: 'US',
@@ -32,10 +58,10 @@ const mockOptions: TelFieldDataProps['options'] = [
     meta: { countryCode: '44' },
   },
   {
-    value: 'FR',
-    label: 'France',
-    pattern: '^(\\+33)[0-9]{9}$',
-    meta: { countryCode: '33' },
+    value: 'ES',
+    label: 'Spain',
+    pattern: '^(\\+34)[0-9]{9}$',
+    meta: { countryCode: '34' },
   },
 ];
 
@@ -48,7 +74,6 @@ const createTelSchema = (options: TelFieldDataProps['options']) => {
     .test('valid-phone', function (value) {
       if (!value) return true;
 
-      // Find matching country pattern
       const sortedOptions = [...options].sort(
         (a, b) => b.meta.countryCode.length - a.meta.countryCode.length,
       );
@@ -69,7 +94,7 @@ const createTelSchema = (options: TelFieldDataProps['options']) => {
     });
 };
 
-describe('TelField Component', () => {
+describe('TelField Component - Split UI', () => {
   const defaultProps: TelFieldDataProps = {
     name: 'phoneNumber',
     label: 'Phone Number',
@@ -92,7 +117,7 @@ describe('TelField Component', () => {
   ) => {
     const TestComponent = () => {
       const methods = useForm({
-        mode: 'onChange',
+        mode: 'onBlur',
         defaultValues: defaultValues || {},
         resolver: yupResolver(
           object().shape({
@@ -116,120 +141,272 @@ describe('TelField Component', () => {
     });
   });
 
-  it('renders the tel field correctly', () => {
-    renderWithFormContext(defaultProps);
+  describe('UI Rendering', () => {
+    it('renders country select and phone input fields', () => {
+      renderWithFormContext(defaultProps);
 
-    expect(screen.getByLabelText('Phone Number')).toBeInTheDocument();
-    expect(screen.getByText('Enter your phone number')).toBeInTheDocument();
-  });
+      expect(screen.getByLabelText('Country code')).toBeInTheDocument();
+      expect(screen.getByLabelText('Phone number')).toBeInTheDocument();
+    });
 
-  it('shows error when phone number does not start with +', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+    it('displays all country options in select', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '1234567890');
-    await user.tab();
+      const countrySelect = screen.getByLabelText('Country code');
+      await user.click(countrySelect);
 
-    await waitFor(() => {
-      expect(screen.getByText('Must start with +')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('option', { name: /United States \+1/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('option', { name: /United Kingdom \+44/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('option', { name: /Spain \+34/i }),
+        ).toBeInTheDocument();
+      });
     });
   });
 
-  it('accepts valid US phone number', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+  describe('Country Selection', () => {
+    it('allows selecting a country from dropdown', async () => {
+      renderWithFormContext(defaultProps);
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+12025551234');
-    await user.tab();
+      await fillRadixSelect('Country code', 'United States +1');
 
-    await waitFor(() => {
-      expect(screen.queryByText(/Invalid/)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText('Unknown country code'),
-      ).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('United States +1')).toBeInTheDocument();
+      });
+    });
+
+    it('updates country when user selects different option', async () => {
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillRadixSelect('Country code', 'United Kingdom +44');
+
+      await waitFor(() => {
+        expect(screen.getByText('United Kingdom +44')).toBeInTheDocument();
+      });
     });
   });
 
-  it('accepts valid UK phone number', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+  describe('Phone Number Input', () => {
+    it('accepts typing in phone number field', async () => {
+      renderWithFormContext(defaultProps);
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+441234567890');
-    await user.tab();
+      await fillPhoneInput('5551234567');
 
-    await waitFor(() => {
-      expect(screen.queryByText(/Invalid/)).not.toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('5551234567');
+    });
+
+    it('combines country code and phone number', async () => {
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('2025551234');
+
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2025551234');
+    });
+
+    it('removes spaces from phone number input', async () => {
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('202 555 1234');
+
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2025551234');
     });
   });
 
-  it('validates Canadian area code correctly (longest match)', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+  describe('Pre-populated Values', () => {
+    it('parses and displays existing international number', () => {
+      renderWithFormContext(defaultProps, { phoneNumber: '+442012345678' });
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+12041234567');
-    await user.tab();
+      expect(screen.getByText('United Kingdom +44')).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.queryByText(/Invalid/)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText('Unknown country code'),
-      ).not.toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2012345678');
+    });
+
+    it('parses US number correctly', () => {
+      renderWithFormContext(defaultProps, { phoneNumber: '+12025551234' });
+
+      expect(screen.getByText('United States +1')).toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2025551234');
+    });
+
+    it('handles Canadian area code numbers', () => {
+      renderWithFormContext(defaultProps, { phoneNumber: '+12041234567' });
+
+      expect(screen.getByText('Canada +1')).toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2041234567');
+    });
+
+    it('parses Spanish number correctly', () => {
+      renderWithFormContext(defaultProps, { phoneNumber: '+34659441270' });
+
+      expect(screen.getByText('Spain +34')).toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('659441270');
     });
   });
 
-  it('shows error for unknown country code', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+  describe('Validation', () => {
+    it('triggers validation on blur', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+999123456789');
-    await user.tab();
+      const phoneInput = screen.getByLabelText('Phone number');
+      await user.click(phoneInput);
+      await user.tab();
 
-    await waitFor(() => {
-      expect(screen.getByText('Unknown country code')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText('Phone number is required'),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('validates complete phone number on blur', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('123');
+
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.getByText('Invalid 1 phone number')).toBeInTheDocument();
+      });
+    });
+
+    it('shows no error for valid complete number', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('2025551234');
+
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Invalid/)).not.toBeInTheDocument();
+      });
+    });
+
+    it('validates UK phone number correctly', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'United Kingdom +44');
+      await fillPhoneInput('2012345678');
+
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Invalid/)).not.toBeInTheDocument();
+      });
     });
   });
 
-  it('shows error when format is invalid for matched country', async () => {
-    const user = userEvent.setup();
-    renderWithFormContext(defaultProps);
+  describe('Country Code Changes', () => {
+    it('preserves national number when changing country', async () => {
+      renderWithFormContext(defaultProps);
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+4412345');
-    await user.tab();
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('2025551234');
+      await fillRadixSelect('Country code', 'United Kingdom +44');
 
-    await waitFor(() => {
-      expect(screen.getByText('Invalid 44 phone number')).toBeInTheDocument();
+      const phoneInput = screen.getByLabelText('Phone number');
+      expect(phoneInput).toHaveValue('2025551234');
     });
   });
 
-  it('calls custom onChange handler when provided', async () => {
-    const mockOnChange = vi.fn();
-    const user = userEvent.setup();
-    renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
+  describe('Custom Handlers', () => {
+    it('calls onChangeCountryCode when country changes', async () => {
+      const mockOnChangeCountry = vi.fn();
 
-    const input = screen.getByLabelText('Phone Number');
-    await user.type(input, '+1');
+      renderWithFormContext({
+        ...defaultProps,
+        onChangeCountryCode: mockOnChangeCountry,
+      });
 
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalled();
+      await fillRadixSelect('Country code', 'United States +1');
+
+      await waitFor(() => {
+        expect(mockOnChangeCountry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: 'United States',
+            dialCode: '1',
+          }),
+        );
+      });
+    });
+
+    it('calls onChangePhoneNumber when typing', async () => {
+      const mockOnChangePhone = vi.fn();
+
+      renderWithFormContext({
+        ...defaultProps,
+        onChangePhoneNumber: mockOnChangePhone,
+      });
+
+      await fillRadixSelect('Country code', 'United States +1');
+      await fillPhoneInput('5');
+
+      await waitFor(() => {
+        expect(mockOnChangePhone).toHaveBeenCalled();
+      });
     });
   });
 
-  it('uses custom tel component when provided', () => {
-    const CustomTelField = vi
-      .fn()
-      .mockImplementation(() => (
-        <div data-testid='custom-tel'>Custom Tel Field</div>
-      ));
+  describe('Custom Component', () => {
+    it('uses custom tel component when provided', () => {
+      const CustomTelField = vi
+        .fn()
+        .mockImplementation(() => (
+          <div data-testid='custom-tel'>Custom Tel Field</div>
+        ));
 
-    renderWithFormContext({ ...defaultProps, component: CustomTelField });
+      renderWithFormContext({ ...defaultProps, component: CustomTelField });
 
-    expect(screen.getByTestId('custom-tel')).toBeInTheDocument();
-    expect(CustomTelField).toHaveBeenCalled();
+      expect(screen.getByTestId('custom-tel')).toBeInTheDocument();
+      expect(CustomTelField).toHaveBeenCalled();
+    });
+
+    it('passes correct props to custom component', () => {
+      const CustomTelField = vi
+        .fn()
+        .mockImplementation(({ fieldData }) => (
+          <div data-testid='custom-tel'>{fieldData.currentCountry?.name}</div>
+        ));
+
+      renderWithFormContext(
+        { ...defaultProps, component: CustomTelField },
+        { phoneNumber: '+442012345678' },
+      );
+
+      expect(CustomTelField).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fieldData: expect.objectContaining({
+            currentCountry: expect.objectContaining({
+              name: 'United Kingdom',
+              dialCode: '44',
+            }),
+            nationalPhoneNumber: '2012345678',
+          }),
+        }),
+        expect.anything(),
+      );
+    });
   });
 });
