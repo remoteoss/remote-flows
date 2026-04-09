@@ -134,7 +134,6 @@ function transformSchemaToCountries(
   }));
 }
 
-// Internal component to handle error transformation
 export function TelFieldRenderer({
   field,
   fieldState,
@@ -269,8 +268,6 @@ export function TelFieldRenderer({
   );
 }
 
-// Memoize TelFieldRenderer to prevent unnecessary re-renders
-
 export type TelFieldDataProps = Omit<JSFField, 'options'> & {
   onChangeCountryCode?: (newCountry: Country) => void;
   onChangePhoneNumber?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -283,7 +280,6 @@ export type TelFieldDataProps = Omit<JSFField, 'options'> & {
     };
     pattern: string;
   }[];
-  // Computed values passed from TelFieldRenderer
   currentCountry?: Country;
   nationalPhoneNumber?: string;
 };
