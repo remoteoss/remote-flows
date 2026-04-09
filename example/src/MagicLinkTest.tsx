@@ -21,7 +21,7 @@ const MagicLinkTestContent = () => {
   const [userId, setUserId] = useState(import.meta.env.VITE_USER_ID || '');
   const [status, setStatus] = useState<StatusType>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
