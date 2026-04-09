@@ -144,9 +144,6 @@ export type PricingPlanComponentProps = Omit<
   fieldData: PricingPlanDataProps;
 };
 
-export type TelFieldComponentProps = Omit<
-  FieldComponentProps,
-  'fieldData'
-> & {
+export type TelFieldComponentProps = Omit<FieldComponentProps, 'fieldData'> & {
   fieldData: TelFieldDataProps;
 };
