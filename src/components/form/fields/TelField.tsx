@@ -175,9 +175,12 @@ export function TelFieldRenderer({
 
   // Re-detect country when phone number changes externally (e.g., form reset or area code typed)
   useEffect(() => {
-    // Skip auto-detection if this was a manual country selection
-    if (isManualSelectionRef.current) {
+    // Reset manual selection flag if field is cleared
+    if (!internationalPhoneNumber || internationalPhoneNumber === '+') {
       isManualSelectionRef.current = false;
+    }
+
+    if (isManualSelectionRef.current) {
       return;
     }
 

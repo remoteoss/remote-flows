@@ -387,4 +387,40 @@ describe('TelField Component - Split UI', () => {
       });
     });
   });
+
+  describe('TelField - Manual Country Selection', () => {
+    it('should preserve manual country selection when typing digits that match different country area codes', async () => {
+      const user = userEvent.setup();
+      renderWithFormContext(defaultProps);
+
+      await fillRadixSelect('Country code', 'Canada');
+
+      await waitFor(() => {
+        const countryTrigger = screen.getByLabelText('Country code');
+        expect(countryTrigger).toHaveTextContent('Canada');
+      });
+
+      const phoneInput = screen.getByLabelText('Phone number');
+      await user.type(phoneInput, '2');
+
+      await waitFor(() => {
+        const countryTrigger = screen.getByLabelText('Country code');
+        expect(countryTrigger).toHaveTextContent('Canada');
+      });
+
+      await user.type(phoneInput, '04'); // Now we have +1204 (Manitoba area code)
+
+      await waitFor(() => {
+        const countryTrigger = screen.getByLabelText('Country code');
+        expect(countryTrigger).toHaveTextContent('Canada');
+      });
+
+      await user.type(phoneInput, '5'); // Now we have +12045
+
+      await waitFor(() => {
+        const countryTrigger = screen.getByLabelText('Country code');
+        expect(countryTrigger).toHaveTextContent('Canada'); // ✅ Should pass after fix
+      });
+    });
+  });
 });
