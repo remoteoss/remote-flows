@@ -1,0 +1,117 @@
+---
+description: useEffect checklist - only use for external system synchronization
+globs: |
+  **/*.tsx
+  **/*.ts
+  **/*.jsx
+  **/*.js
+alwaysApply: false
+---
+
+# Before Writing useEffect
+
+Every time you are about to write a useEffect, stop and answer:
+**Is this syncing with an external system?**
+
+External systems: WebSocket, browser APIs (IntersectionObserver, navigator.onLine), third-party libraries, DOM measurements, timers.
+
+NOT external systems: props, state, derived values, user events.
+
+## Check each case before writing the effect:
+
+1. **Transforming data?** → Compute inline, or useMemo if expensive
+2. **Responding to a user event?** → Put logic in the event handler
+3. **Resetting state on prop change?** → Use the key prop
+4. **Fetching data?** → Use TanStack Query; if useEffect, add cleanup
+5. **Notifying a parent?** → Call callback in the event handler
+6. **Chaining effects?** → Move cascade into one event handler
+7. **Subscribing to external store?** → useSyncExternalStore
+
+If none apply and the answer is genuinely "yes, external system," then useEffect is correct.
+
+## Rules
+
+- NEVER write `useEffect(() => setSomething(derived), [dep])`
+- NEVER use useEffect for click/submit/change events
+- NEVER use useEffect to reset state without considering key prop
+- ALWAYS add cleanup when subscribing to external systems
+- ALWAYS name effect functions for readability
+
+## Examples
+
+### ❌ BAD: Transforming data with useEffect
+
+```typescript
+function TodoList({ todos, filter }) {
+  const [visibleTodos, setVisibleTodos] = useState([]);
+
+  useEffect(() => {
+    setVisibleTodos(todos.filter(todo => 
+      filter === 'active' ? !todo.completed : true
+    ));
+  }, [todos, filter]);
+
+  return <ul>{visibleTodos.map(todo => <li key={todo.id}>{todo.text}</li>)}</ul>;
+}
+```
+
+### ✅ GOOD: Compute inline
+
+```typescript
+function TodoList({ todos, filter }) {
+  const visibleTodos = todos.filter(todo => 
+    filter === 'active' ? !todo.completed : true
+  );
+
+  return <ul>{visibleTodos.map(todo => <li key={todo.id}>{todo.text}</li>)}</ul>;
+}
+```
+
+### ❌ BAD: Syncing prop to state
+
+```typescript
+function Component({ externalValue }) {
+  const [value, setValue] = useState(externalValue);
+  
+  useEffect(() => {
+    setValue(externalValue);
+  }, [externalValue]);
+  
+  return <div>{value}</div>;
+}
+```
+
+### ✅ GOOD: Use the prop directly or make it fully controlled
+
+```typescript
+function Component({ value, onChange }) {
+  // Fully controlled - parent manages state
+  return <input value={value} onChange={e => onChange(e.target.value)} />;
+}
+```
+
+### ✅ GOOD: External system sync with cleanup
+
+```typescript
+function useWebSocket(url: string) {
+  const [data, setData] = useState(null);
+  
+  useEffect(() => {
+    const ws = new WebSocket(url);
+    
+    const handleMessage = (event: MessageEvent) => {
+      setData(JSON.parse(event.data));
+    };
+    
+    ws.addEventListener('message', handleMessage);
+    
+    // Cleanup required for external system
+    return () => {
+      ws.removeEventListener('message', handleMessage);
+      ws.close();
+    };
+  }, [url]);
+  
+  return data;
+}
+```
