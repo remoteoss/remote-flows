@@ -8,8 +8,7 @@ import {
   FieldValues,
 } from 'react-hook-form';
 import { TelFieldComponentProps } from '@/src/types/fields';
-import { useMemo, useCallback } from 'react';
-import * as React from 'react';
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 
 export type Country = {
   name: string;
@@ -136,7 +135,7 @@ function transformSchemaToCountries(
 }
 
 // Internal component to handle error transformation
-function TelFieldRendererComponent({
+export function TelFieldRenderer({
   field,
   fieldState,
   fieldData,
@@ -164,14 +163,31 @@ function TelFieldRendererComponent({
     [countries],
   );
 
-  const country = useMemo(
-    () =>
-      getCountryFromPhoneNumber(
-        countriesByCountryCode,
-        internationalPhoneNumber || '',
-      ),
-    [countriesByCountryCode, internationalPhoneNumber],
+  // Track if the country change was due to manual selection
+  const isManualSelectionRef = useRef(false);
+
+  // Use state to track country, so manual selection is preserved
+  const [country, setCountry] = useState<Country | undefined>(() =>
+    getCountryFromPhoneNumber(
+      getCountryDataByCountryCode(countries),
+      internationalPhoneNumber || '',
+    ),
   );
+
+  // Re-detect country when phone number changes externally (e.g., form reset or area code typed)
+  useEffect(() => {
+    // Skip auto-detection if this was a manual country selection
+    if (isManualSelectionRef.current) {
+      isManualSelectionRef.current = false;
+      return;
+    }
+
+    const detected = getCountryFromPhoneNumber(
+      countriesByCountryCode,
+      internationalPhoneNumber || '',
+    );
+    setCountry(detected);
+  }, [internationalPhoneNumber, countriesByCountryCode]);
 
   const { prefix, phoneNumber: nationalPhoneNumber } = useMemo(
     () =>
@@ -186,6 +202,12 @@ function TelFieldRendererComponent({
     (newCountry: Country) => {
       if (!newCountry) return;
       const newValue = `+${newCountry.dialCode}${nationalPhoneNumber}`;
+
+      // Mark as manual selection to prevent useEffect from overriding
+      isManualSelectionRef.current = true;
+
+      // Update country state to preserve manual selection
+      setCountry(newCountry);
 
       // Update React Hook Form state
       field.onChange(newValue);
@@ -248,31 +270,6 @@ function TelFieldRendererComponent({
 }
 
 // Memoize TelFieldRenderer to prevent unnecessary re-renders
-const TelFieldRenderer = React.memo(TelFieldRendererComponent, (prev, next) => {
-  // Always re-render if phone number or validation state changed
-  if (prev.field.value !== next.field.value) return false;
-  if (prev.fieldState.error !== next.fieldState.error) return false;
-  
-  // Smart options comparison: check if content actually changed
-  const prevOptions = prev.fieldData.options;
-  const nextOptions = next.fieldData.options;
-  
-  if (prevOptions === nextOptions) return true; // Same reference, no change
-  if (prevOptions.length !== nextOptions.length) return false; // Length changed, re-render
-  
-  // Check if any option content changed
-  const optionsChanged = nextOptions.some((opt, idx) => {
-    const prevOpt = prevOptions[idx];
-    return (
-      opt.value !== prevOpt?.value ||
-      opt.label !== prevOpt?.label ||
-      opt.meta?.countryCode !== prevOpt?.meta?.countryCode ||
-      opt.pattern !== prevOpt?.pattern
-    );
-  });
-  
-  return !optionsChanged; // true = skip re-render, false = re-render
-});
 
 export type TelFieldDataProps = Omit<JSFField, 'options'> & {
   onChangeCountryCode?: (newCountry: Country) => void;

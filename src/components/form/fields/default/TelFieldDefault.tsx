@@ -27,6 +27,10 @@ export function TelFieldDefault({
     nationalPhoneNumber,
   } = fieldData;
 
+  const selectedCountryCode = currentCountry
+    ? `${currentCountry.name}-${currentCountry.dialCode}`
+    : '';
+
   return (
     <FormItem
       data-field={name}
@@ -40,10 +44,10 @@ export function TelFieldDefault({
         {/* Country Code Select */}
         <div className='w-[180px]'>
           <Select
-            value={currentCountry?.dialCode || ''}
-            onValueChange={(dialCode) => {
+            value={selectedCountryCode}
+            onValueChange={(value) => {
               const country = options?.find(
-                (opt) => opt.meta?.countryCode === dialCode,
+                (opt) => `${opt.label}-${opt.meta?.countryCode}` === value,
               );
               if (country && onChangeCountryCode) {
                 onChangeCountryCode({
@@ -68,10 +72,10 @@ export function TelFieldDefault({
             </SelectTrigger>
             <SelectContent className='RemoteFlows__TelField__CountryContent'>
               <SelectGroup className='RemoteFlows__TelField__CountryGroup'>
-                {options?.map((option) => (
+                {options?.map((option, index) => (
                   <SelectItem
-                    key={option.meta?.countryCode}
-                    value={option.meta?.countryCode || ''}
+                    key={`${option.label}-${option.meta?.countryCode}-${index}`}
+                    value={`${option.label}-${option.meta?.countryCode}`}
                     className='RemoteFlows__TelField__CountryItem'
                   >
                     {option.label} +{option.meta?.countryCode}
@@ -85,8 +89,8 @@ export function TelFieldDefault({
         {/* Phone Number Input */}
         <div className='flex-1'>
           <Input
+            {...field}
             type='tel'
-            name={field.name}
             value={nationalPhoneNumber || ''}
             onChange={onChangePhoneNumber}
             className='RemoteFlows__TelField__Input'
