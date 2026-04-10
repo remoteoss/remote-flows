@@ -3,9 +3,29 @@
   "extends": ["config:recommended"],
   "minimumReleaseAge": "7 days",
   "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
-    "minimumReleaseAge": "0 days"
-  }
+    "minimumReleaseAge": "0 days",
+    "semanticCommitType": "fix",
+    "semanticCommitScope": "security"
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["major"],
+      "semanticCommitType": "feat",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps-dev"
+    }
+  ]
 }
