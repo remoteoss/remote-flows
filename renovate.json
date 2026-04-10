@@ -1,29 +1,48 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "7 days",
   "rangeStrategy": "bump",
-  "semanticCommits": "enabled",
+  "minimumReleaseAge": "7 days",
+  "internalChecksFilter": "strict",
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
-    "minimumReleaseAge": "0 days",
-    "semanticCommitType": "fix",
-    "semanticCommitScope": "security"
+    "minimumReleaseAge": "0 days"
   },
+  "semanticCommits": "enabled",
   "packageRules": [
     {
+      "description": "Enforce 7-day wait for all non-security updates",
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Security updates bypass wait time",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "matchDatasources": ["npm"],
+      "vulnerabilityAlerts": {
+        "enabled": true
+      },
+      "minimumReleaseAge": "0 days",
+      "semanticCommitType": "fix",
+      "semanticCommitScope": "security"
+    },
+    {
+      "description": "Semantic commit types based on update type",
       "matchUpdateTypes": ["major"],
       "semanticCommitType": "feat",
       "semanticCommitScope": "deps"
     },
     {
+      "description": "Minor and patch updates as chores",
       "matchUpdateTypes": ["minor", "patch"],
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps"
     },
     {
+      "description": "DevDependencies updates",
       "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps-dev"
     }
