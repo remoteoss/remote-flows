@@ -6,7 +6,7 @@
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
 
-  "npmrc": "platform=linux\narch=x64\noptional=true",
+  "npmrc": "optional=true\ninclude=optional",
 
   "postUpdateOptions": ["npmDedupe"],
 
@@ -60,6 +60,11 @@
       "matchUpdateTypes": ["minor", "patch"],
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps"
+    },
+    {
+      "description": "Preserve optional dependencies in lockfile",
+      "matchPackageNames": ["esbuild", "@esbuild/**"],
+      "enabled": true
     }
   ]
 }
