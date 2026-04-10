@@ -269,7 +269,7 @@ jobs:
 
       - name: Install example/ dependencies
         working-directory: ./example
-        run: npm ci --include=optional
+        run: npm ci --include=optional --ignore-scripts
 
       - name: Install Playwright
         working-directory: ./example
