@@ -9,9 +9,11 @@
   "npmrc": "optional=true\ninclude=optional",
 
   "postUpdateOptions": ["npmDedupe"],
+
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": false
+    "automerge": false,
+    "schedule": ["before 3am on Monday"]
   },
 
   "vulnerabilityAlerts": {
