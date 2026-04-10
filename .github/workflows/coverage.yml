@@ -18,7 +18,7 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm ci --include=optional --ignore-scripts
 
       - name: Run tests with coverage
         run: npm run test:coverage
@@ -42,7 +42,7 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm ci --include=optional --ignore-scripts
 
       - name: Download coverage artifacts
         uses: actions/download-artifact@v4

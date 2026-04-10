@@ -6,6 +6,8 @@
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
 
+  "npmrc": "optional=true\ninclude=optional",
+
   "postUpdateOptions": ["npmDedupe"],
   "lockFileMaintenance": {
     "enabled": true,
@@ -56,6 +58,11 @@
       "matchUpdateTypes": ["minor", "patch"],
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps"
+    },
+    {
+      "description": "Preserve optional dependencies in lockfile",
+      "matchPackageNames": ["esbuild", "@esbuild/**"],
+      "enabled": true
     }
   ]
 }
