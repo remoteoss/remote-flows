@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@remoteoss/remote-flows": "file://..",
-    "axios": "^1.14.0",
+    "axios": "^1.15.0",
     "dotenv": "^17.4.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
