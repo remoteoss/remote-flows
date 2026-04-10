@@ -429,6 +429,9 @@ import type {
   PostAutomatableContractAmendmentData,
   PostAutomatableContractAmendmentErrors,
   PostAutomatableContractAmendmentResponses,
+  PostBulkCreatePayItemsData,
+  PostBulkCreatePayItemsErrors,
+  PostBulkCreatePayItemsResponses,
   PostBulkCreateScheduledContractorInvoiceData,
   PostBulkCreateScheduledContractorInvoiceErrors,
   PostBulkCreateScheduledContractorInvoiceResponses,
@@ -522,6 +525,9 @@ import type {
   PostCreateIncentiveData,
   PostCreateIncentiveErrors,
   PostCreateIncentiveResponses,
+  PostCreateLegalEntityCompanyData,
+  PostCreateLegalEntityCompanyErrors,
+  PostCreateLegalEntityCompanyResponses,
   PostCreateOffboardingData,
   PostCreateOffboardingErrors,
   PostCreateOffboardingResponses,
@@ -606,6 +612,9 @@ import type {
   PutCancelContractAmendmentData,
   PutCancelContractAmendmentErrors,
   PutCancelContractAmendmentResponses,
+  PutReassignDefaultEntityCompanyData,
+  PutReassignDefaultEntityCompanyErrors,
+  PutReassignDefaultEntityCompanyResponses,
   PutUpdateAdministrativeDetailsData,
   PutUpdateAdministrativeDetailsErrors,
   PutUpdateAdministrativeDetailsResponses,
@@ -629,7 +638,8 @@ import type {
 export type Options<
   TData extends TDataShape = TDataShape,
   ThrowOnError extends boolean = boolean,
-> = Options2<TData, ThrowOnError> & {
+  TResponse = unknown,
+> = Options2<TData, ThrowOnError, TResponse> & {
   /**
    * You can provide a client instance returned by `createClient()` instead of
    * individual options. This might be also useful if you want to implement a
@@ -799,6 +809,40 @@ export const getShowContractAmendmentSchema = <
     ],
     url: '/v1/contract-amendments/schema',
     ...options,
+  });
+
+/**
+ * Bulk Create Pay Items
+ *
+ * Bulk creates pay items for employments. Supports up to 500 items per request.
+ * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `meta` object.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | - | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
+  options: Options<PostBulkCreatePayItemsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostBulkCreatePayItemsResponses,
+    PostBulkCreatePayItemsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/pay-items/bulk',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -4118,6 +4162,38 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Create a legal entity
+ *
+ * Create a new legal entity for a company in a given country, with KYB automatically passed.
+ *
+ * The entity is created with active status and can be set as the company's default
+ * using the reassign default entity endpoint.
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postCreateLegalEntityCompany = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateLegalEntityCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateLegalEntityCompanyResponses,
+    PostCreateLegalEntityCompanyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sandbox/companies/{company_id}/legal-entities',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show employment
  *
  * Shows all the information of an employment.
@@ -5779,6 +5855,33 @@ export const putValidateResignation = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Reassign default legal entity
+ *
+ * Set a different legal entity as the company's default entity.
+ *
+ * The default entity is used when creating new employments without an explicit entity.
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const putReassignDefaultEntityCompany = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutReassignDefaultEntityCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutReassignDefaultEntityCompanyResponses,
+    PutReassignDefaultEntityCompanyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
+    ...options,
   });
 
 /**

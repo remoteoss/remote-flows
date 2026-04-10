@@ -2592,6 +2592,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
     | 'employment.contractor_management_plan.updated'
+    | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -2935,6 +2936,132 @@ export type ImportJobRows = {
 };
 
 /**
+ * BulkEmploymentImportJob
+ */
+export type BulkEmploymentImportJob = {
+  /**
+   * ImportJobColumnMapping
+   *
+   * The column mapping for the import job. For times when imported data columns do not match the schema fields and
+   * need to be manually mapped to the correct schema fields.
+   *
+   */
+  column_mapping?: {
+    /**
+     * The column names that have been automatically mapped by Tiger (rawr!) and maybe also by AI.
+     */
+    auto_mapped_columns?: Array<string>;
+    /**
+     * The map of schema fields paths to data columns
+     */
+    mapping: {
+      [key: string]: unknown;
+    };
+    /**
+     * The data columns to map to
+     */
+    source_columns: Array<{
+      /**
+       * The index of the data column in the file
+       */
+      index: number;
+      /**
+       * The name of the data column
+       */
+      name: string;
+      /**
+       * A sample data value from the data column
+       */
+      sample_data?: string | null;
+    }>;
+    /**
+     * The number of columns that have not been mapped
+     */
+    unmapped_column_count: number;
+    /**
+     * The number of required schema field paths that have not been mapped
+     */
+    unmapped_required_field_count: number;
+  } | null;
+  /**
+   * The name to be displayed for the user interface
+   */
+  display_name?: string;
+  errors?: Array<string>;
+  /**
+   * The number of rows that failed to be processed
+   */
+  failed_count: number;
+  finished_at: NullableDateTime;
+  id: string;
+  /**
+   * The number of rows that have been imported in previous submission stages
+   */
+  imported_count?: number;
+  inserted_at: DateTime;
+  /**
+   * AccountsUser
+   *
+   * Someone registered in Remote using a unique email address.
+   */
+  inserted_by:
+    | MinimalUser
+    | {
+        account?: AccountsAccount | null;
+        integration_users?: Array<AccountUserIntegrationUser>;
+        invited_by?: AccountsMinimalCompanyAdmin | null;
+        login_synced_with?: AccountsLoginSyncedWith;
+        raw_email?: string;
+        role?:
+          | 'admin'
+          | 'employer'
+          | 'employee'
+          | 'freelancer'
+          | 'service_provider'
+          | 'candidate';
+        signup_source?: string | null;
+      };
+  /**
+   * The metadata for the import job
+   */
+  metadata: {
+    [key: string]: unknown;
+  };
+  name: string;
+  /**
+   * The number of processed rows, regardless of success or failure
+   */
+  processed_count: number;
+  /**
+   * BulkImport.ImportJobStage
+   *
+   *   The stage of the import job.
+   * * `creation` - The import job is in the creation stage, which means the rows are being created.
+   * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+   * * `validation` - The import job is in the validation stage, which means the rows are being validated.
+   * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+   *
+   */
+  stage: 'creation' | 'column_mapping' | 'validation' | 'submission';
+  /**
+   * BulkImport.ImportJobStatus
+   *
+   *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
+   * * `uploaded` - **Deprecated**, replaced by the `draft` status
+   * * `in_progress` - Data is actively being imported
+   * * `finished` - The import job has finished processing
+   * * `failed` - The import job has failed completely, nothing has been imported
+   *
+   */
+  status: 'draft' | 'uploaded' | 'in_progress' | 'finished' | 'failed';
+  /**
+   * The total number of rows to import
+   */
+  total_count: number;
+  updated_at: DateTime;
+};
+
+/**
  * JSONSchema
  *
  * JSON Schema
@@ -2998,6 +3125,9 @@ export type TaskStatus = 'completed' | 'pending';
  */
 export type BulkEmploymentEmployeePayload = {
   activate_global_payroll?: boolean;
+  /**
+   * Per-employee override for onboarding invitations. Takes precedence over the batch-level `send_invitation` value when present.
+   */
   send_invitation?: boolean;
   [key: string]: unknown;
 };
@@ -3144,6 +3274,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
     | 'employment.contractor_management_plan.updated'
+    | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -4307,6 +4438,16 @@ export type TimeoffBalance = {
 export type AmountTaxType = 'gross' | 'net';
 
 /**
+ * BulkCreatePayItemsResponse
+ */
+export type BulkCreatePayItemsResponse = {
+  data: {
+    failures: Array<PayItemBulkCreateFailures>;
+    successes: Array<PayItemBulkCreateSuccesses>;
+  };
+};
+
+/**
  * PricingPlanPartnerTemplate
  *
  * Pricing plan partner template
@@ -4346,6 +4487,37 @@ export type ContractAmendment = {
   status: ContractAmendmentStatus;
   submitted_at: string;
   zendesk_ticket_url: string | null;
+};
+
+/**
+ * PayItemProviderData
+ */
+export type PayItemProviderData = {
+  /**
+   * Correction date for a previously submitted day (YYYY-MM-DD)
+   */
+  adjustment_effective_date?: string;
+  /**
+   * Whether payout_amount should be considered a deduction
+   */
+  is_deduction?: boolean;
+  /**
+   * Overtime rate multiplier (e.g. 1.5)
+   */
+  pay_rate?: number;
+  /**
+   * Associated payout or deduction in cents
+   */
+  payout_amount?: number;
+  payout_currency_code?: CurrencyCode;
+  /**
+   * Shift identifier from partner system
+   */
+  shift_code?: string;
+  /**
+   * Expected work day duration in seconds
+   */
+  work_day_duration?: number;
 };
 
 /**
@@ -5479,6 +5651,13 @@ export type CreatePricingPlanWithoutPartnerTemplateParams = {
 export type Slug = string;
 
 /**
+ * BulkEmploymentImportJobResponse
+ */
+export type BulkEmploymentImportJobResponse = {
+  data: BulkEmploymentImportJob;
+};
+
+/**
  * ListFilesResponse
  *
  * Response schema listing many files
@@ -5504,11 +5683,14 @@ export type ListFilesResponse = {
 /**
  * BulkEmploymentCreateParams
  *
- * Creates an asynchronous bulk employment job. `send_invitation` sets the batch default for onboarding invitations, and each employee can override it with their own `send_invitation` value. Global Payroll activation is currently limited to Serbia (SRB) and requires the `bulk_gp_product_activation` feature flag. Submission happens after the initial `202` response; if a row later fails during Global Payroll activation, the failure is reported through the bulk-employment rows/status endpoints rather than the create response.
+ * Creates an asynchronous bulk employment job. Global Payroll activation is currently limited to Serbia (SRB) and requires the `bulk_gp_product_activation` feature flag. Submission happens after the initial `202` response; if a row later fails during Global Payroll activation, the failure is reported through the bulk-employment rows/status endpoints rather than the create response.
  */
 export type BulkEmploymentCreateParams = {
   country_code: CountryCode;
   employees: Array<BulkEmploymentEmployeePayload>;
+  /**
+   * Batch default for onboarding invitations. Each employee can override it with their own `send_invitation` value. Defaults to `false` when omitted.
+   */
   send_invitation?: boolean;
 };
 
@@ -5551,6 +5733,13 @@ export type CreateTimesheetParams = {
 };
 
 /**
+ * BulkCreatePayItemsParams
+ */
+export type BulkCreatePayItemsParams = {
+  pay_items: Array<PayItemParams>;
+};
+
+/**
  * ImportJobRowError
  */
 export type ImportJobRowError = {
@@ -5565,6 +5754,26 @@ export type ImportJobRowError = {
 export type EmployeeStats = {
   number_of_employees_enrolled: number;
   number_of_employees_offered: number;
+};
+
+/**
+ * PayItemParams
+ */
+export type PayItemParams = {
+  /**
+   * Duration in seconds
+   */
+  amount: number;
+  /**
+   * Pay item type code
+   */
+  code: 'regular_hours' | 'overtime' | 'sick_leave' | 'paid_time_off';
+  /**
+   * Working day date (YYYY-MM-DD)
+   */
+  effective_date: string;
+  employment_id: UuidSlug;
+  provider_data?: PayItemProviderData;
 };
 
 /**
@@ -5597,13 +5806,6 @@ export type CustomNumberLinkable = {
   label: string;
   link?: string;
   value: number;
-};
-
-/**
- * ImportJobResponse
- */
-export type ImportJobResponse = {
-  data: ImportJob;
 };
 
 /**
@@ -6343,6 +6545,14 @@ export type AccountsMinimalCompanyAdmin = {
 };
 
 /**
+ * PayItemBulkCreateFailures
+ */
+export type PayItemBulkCreateFailures = {
+  error?: string | UnprocessableEntityResponse;
+  row_number?: number;
+};
+
+/**
  * ContractorSubscriptions.Summary
  */
 export type ContractorSubscriptionsSummary = {
@@ -6688,6 +6898,7 @@ export type WebhookCallback = {
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
     | 'employment.contractor_management_plan.updated'
+    | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -8114,6 +8325,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.administrative_details.updated'
     | 'employment.basic_information.updated'
     | 'employment.contractor_management_plan.updated'
+    | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
@@ -8248,6 +8460,16 @@ export type BenefitRenewalRequestsListBenefitRenewalRequestResponse = {
      */
     total_pages?: number;
   };
+};
+
+/**
+ * PayItemBulkCreateSuccesses
+ */
+export type PayItemBulkCreateSuccesses = {
+  pay_element: {
+    [key: string]: unknown;
+  };
+  row_number: number;
 };
 
 /**
@@ -9090,132 +9312,6 @@ export type BillingDocumentAmountItem = {
 };
 
 /**
- * ImportJob
- */
-export type ImportJob = {
-  /**
-   * ImportJobColumnMapping
-   *
-   * The column mapping for the import job. For times when imported data columns do not match the schema fields and
-   * need to be manually mapped to the correct schema fields.
-   *
-   */
-  column_mapping?: {
-    /**
-     * The column names that have been automatically mapped by Tiger (rawr!) and maybe also by AI.
-     */
-    auto_mapped_columns?: Array<string>;
-    /**
-     * The map of schema fields paths to data columns
-     */
-    mapping: {
-      [key: string]: unknown;
-    };
-    /**
-     * The data columns to map to
-     */
-    source_columns: Array<{
-      /**
-       * The index of the data column in the file
-       */
-      index: number;
-      /**
-       * The name of the data column
-       */
-      name: string;
-      /**
-       * A sample data value from the data column
-       */
-      sample_data?: string | null;
-    }>;
-    /**
-     * The number of columns that have not been mapped
-     */
-    unmapped_column_count: number;
-    /**
-     * The number of required schema field paths that have not been mapped
-     */
-    unmapped_required_field_count: number;
-  } | null;
-  /**
-   * The name to be displayed for the user interface
-   */
-  display_name?: string;
-  errors?: Array<string>;
-  /**
-   * The number of rows that failed to be processed
-   */
-  failed_count: number;
-  finished_at: NullableDateTime;
-  /**
-   * The number of rows that have been imported in previous submission stages
-   */
-  imported_count?: number;
-  inserted_at: DateTime;
-  /**
-   * AccountsUser
-   *
-   * Someone registered in Remote using a unique email address.
-   */
-  inserted_by:
-    | MinimalUser
-    | {
-        account?: AccountsAccount | null;
-        integration_users?: Array<AccountUserIntegrationUser>;
-        invited_by?: AccountsMinimalCompanyAdmin | null;
-        login_synced_with?: AccountsLoginSyncedWith;
-        raw_email?: string;
-        role?:
-          | 'admin'
-          | 'employer'
-          | 'employee'
-          | 'freelancer'
-          | 'service_provider'
-          | 'candidate';
-        signup_source?: string | null;
-      };
-  /**
-   * The metadata for the import job
-   */
-  metadata: {
-    [key: string]: unknown;
-  };
-  name: string;
-  /**
-   * The number of processed rows, regardless of success or failure
-   */
-  processed_count: number;
-  slug: UuidSlug;
-  /**
-   * BulkImport.ImportJobStage
-   *
-   *   The stage of the import job.
-   * * `creation` - The import job is in the creation stage, which means the rows are being created.
-   * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
-   * * `validation` - The import job is in the validation stage, which means the rows are being validated.
-   * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
-   *
-   */
-  stage: 'creation' | 'column_mapping' | 'validation' | 'submission';
-  /**
-   * BulkImport.ImportJobStatus
-   *
-   *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
-   * * `uploaded` - **Deprecated**, replaced by the `draft` status
-   * * `in_progress` - Data is actively being imported
-   * * `finished` - The import job has finished processing
-   * * `failed` - The import job has failed completely, nothing has been imported
-   *
-   */
-  status: 'draft' | 'uploaded' | 'in_progress' | 'finished' | 'failed';
-  /**
-   * The total number of rows to import
-   */
-  total_count: number;
-  updated_at: DateTime;
-};
-
-/**
  * EmploymentID
  *
  * Employment identifier associated with the contractor invoice.
@@ -9541,6 +9637,52 @@ export type GetShowContractAmendmentSchemaResponses = {
 
 export type GetShowContractAmendmentSchemaResponse =
   GetShowContractAmendmentSchemaResponses[keyof GetShowContractAmendmentSchemaResponses];
+
+export type PostBulkCreatePayItemsData = {
+  /**
+   * Pay Items
+   */
+  body: BulkCreatePayItemsParams;
+  path?: never;
+  query?: never;
+  url: '/v1/pay-items/bulk';
+};
+
+export type PostBulkCreatePayItemsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostBulkCreatePayItemsError =
+  PostBulkCreatePayItemsErrors[keyof PostBulkCreatePayItemsErrors];
+
+export type PostBulkCreatePayItemsResponses = {
+  /**
+   * Success
+   */
+  200: BulkCreatePayItemsResponse;
+};
+
+export type PostBulkCreatePayItemsResponse =
+  PostBulkCreatePayItemsResponses[keyof PostBulkCreatePayItemsResponses];
 
 export type GetIndexDataSyncData = {
   body?: never;
@@ -9931,7 +10073,7 @@ export type GetIndexEmploymentData = {
      * Possible values: `global_payroll`, `peo`, `eor`
      *
      */
-    employment_model?: string;
+    employment_model?: 'global_payroll' | 'peo' | 'eor';
     /**
      * Starts fetching records after the given page
      */
@@ -10703,6 +10845,15 @@ export type GetIndexWebhookEventResponse =
 
 export type PostBypassEligibilityChecksCompanyData = {
   body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
   path: {
     /**
      * Company ID
@@ -12296,7 +12447,12 @@ export type GetShowBillingDocumentData = {
      */
     billing_document_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * When true, includes billing document items whose type is not part of the standard set for the invoice type.
+     */
+    include_unrecognized_types?: boolean;
+  };
   url: '/v1/billing-documents/{billing_document_id}';
 };
 
@@ -14645,6 +14801,86 @@ export type GetIndexTimesheetResponses = {
 export type GetIndexTimesheetResponse =
   GetIndexTimesheetResponses[keyof GetIndexTimesheetResponses];
 
+export type PostCreateLegalEntityCompanyData = {
+  /**
+   * Create legal entity params
+   */
+  body?: {
+    /**
+     * ISO 3166-1 alpha-3 country code
+     */
+    country_code: string;
+  };
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/companies/{company_id}/legal-entities';
+};
+
+export type PostCreateLegalEntityCompanyErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostCreateLegalEntityCompanyError =
+  PostCreateLegalEntityCompanyErrors[keyof PostCreateLegalEntityCompanyErrors];
+
+export type PostCreateLegalEntityCompanyResponses = {
+  /**
+   * Legal entity created
+   */
+  201: {
+    data?: {
+      /**
+       * Legal entity slug
+       */
+      legal_entity_id?: string;
+      /**
+       * Legal entity name
+       */
+      name?: string;
+      /**
+       * Legal entity status
+       */
+      status?: string;
+    };
+  };
+};
+
+export type PostCreateLegalEntityCompanyResponse =
+  PostCreateLegalEntityCompanyResponses[keyof PostCreateLegalEntityCompanyResponses];
+
 export type GetShowEmploymentData = {
   body?: never;
   headers: {
@@ -15267,7 +15503,7 @@ export type GetIndexBulkEmploymentRowData = {
   body?: never;
   path: {
     /**
-     * Bulk employment job slug
+     * Bulk employment job id
      */
     job_id: string;
   };
@@ -17243,6 +17479,67 @@ export type PutValidateResignationResponses = {
 export type PutValidateResignationResponse =
   PutValidateResignationResponses[keyof PutValidateResignationResponses];
 
+export type PutReassignDefaultEntityCompanyData = {
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+    /**
+     * Legal Entity ID to set as the new default
+     */
+    legal_entity_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}';
+};
+
+export type PutReassignDefaultEntityCompanyErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutReassignDefaultEntityCompanyError =
+  PutReassignDefaultEntityCompanyErrors[keyof PutReassignDefaultEntityCompanyErrors];
+
+export type PutReassignDefaultEntityCompanyResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutReassignDefaultEntityCompanyResponse =
+  PutReassignDefaultEntityCompanyResponses[keyof PutReassignDefaultEntityCompanyResponses];
+
 export type GetIndexWebhookCallbackData = {
   body?: never;
   path: {
@@ -18003,7 +18300,7 @@ export type GetShowBulkEmploymentData = {
   body?: never;
   path: {
     /**
-     * Bulk employment job slug
+     * Bulk employment job id
      */
     job_id: string;
   };
@@ -18037,7 +18334,7 @@ export type GetShowBulkEmploymentResponses = {
   /**
    * Success
    */
-  200: ImportJobResponse;
+  200: BulkEmploymentImportJobResponse;
 };
 
 export type GetShowBulkEmploymentResponse =
@@ -19019,7 +19316,7 @@ export type PostCreateBulkEmploymentResponses = {
   /**
    * Accepted
    */
-  202: ImportJobResponse;
+  202: BulkEmploymentImportJobResponse;
 };
 
 export type PostCreateBulkEmploymentResponse =
