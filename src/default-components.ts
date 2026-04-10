@@ -18,6 +18,8 @@ import { CheckboxFieldDefault } from '@/src/components/form/fields/default/Check
 import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
 import { PDFPreviewDefault } from '@/src/components/shared/pdf-preview/PDFPreviewDefault';
+import { TelFieldDefault } from '@/src/components/form/fields/default/TelFieldDefault';
+
 /**
  * Default field components for RemoteFlows.
  *
@@ -45,4 +47,5 @@ export const defaultComponents: Components = {
   table: TableFieldDefault,
   'work-schedule': WorkScheduleFieldDefault,
   pdfViewer: PDFPreviewDefault,
+  tel: TelFieldDefault,
 };

@@ -96,6 +96,11 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
+  tel: lazy(() =>
+    import('./components/form/fields/default/TelFieldDefault').then((m) => ({
+      default: m.TelFieldDefault,
+    })),
+  ),
   text: lazy(() =>
     import('./components/form/fields/default/TextFieldDefault').then((m) => ({
       default: m.TextFieldDefault,

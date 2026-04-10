@@ -1,4 +1,5 @@
 import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
+import { TelFieldDataProps } from '@/src/components/form/fields/TelField';
 import { DailySchedule } from '@/src/components/form/fields/workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import {
@@ -141,4 +142,8 @@ export type PricingPlanComponentProps = Omit<
   'fieldData'
 > & {
   fieldData: PricingPlanDataProps;
+};
+
+export type TelFieldComponentProps = Omit<FieldComponentProps, 'fieldData'> & {
+  fieldData: TelFieldDataProps;
 };

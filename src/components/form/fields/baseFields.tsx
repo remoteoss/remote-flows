@@ -12,6 +12,7 @@ import { HiddenField } from './HiddenField';
 import { WorkScheduleField } from './WorkScheduleField';
 import { MultiSelectField } from './MultiSelectField';
 import { MoneyField } from './MoneyField';
+import { TelField } from './TelField';
 import { SupportedTypes } from './types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
@@ -32,5 +33,6 @@ export const baseFields: Record<
   textarea: TextAreaField,
   countries: CountryField,
   hidden: HiddenField,
+  tel: TelField,
   'work-schedule': WorkScheduleField,
 };
