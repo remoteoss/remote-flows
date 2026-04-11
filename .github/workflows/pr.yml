@@ -11,7 +11,7 @@ jobs:
     name: Checks and Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -48,7 +48,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -111,7 +111,7 @@ jobs:
 
       - name: Checkout PR branch
         if: steps.check-scripts.outputs.exists == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -202,7 +202,7 @@ jobs:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy remote-flows to vercel
         id: vercel-remote-flows
@@ -229,7 +229,7 @@ jobs:
     name: Deploy Example App Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy remote-flows-example-app to vercel
         id: vercel-example-app
@@ -257,7 +257,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [checks-and-tests, deploy-remote-flows, deploy-example-app]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4

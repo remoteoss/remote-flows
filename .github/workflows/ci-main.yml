@@ -10,7 +10,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -27,7 +27,7 @@ jobs:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy remote-flows to vercel
         id: vercel-remote-flows
@@ -54,7 +54,7 @@ jobs:
     name: Deploy Example App Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy remote-flows-example-app to vercel
         id: vercel-example-app
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [unit-tests, deploy-remote-flows, deploy-example-app]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -136,7 +136,7 @@ jobs:
     needs: [unit-tests, e2e-tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Promote remote-flows to production
         uses: amondnet/vercel-action@v20
