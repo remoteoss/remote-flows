@@ -83,8 +83,8 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
