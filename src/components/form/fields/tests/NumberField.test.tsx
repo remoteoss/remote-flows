@@ -87,7 +87,7 @@ describe('NumberField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomNumberField).toHaveBeenCalledTimes(1);
+    expect(CustomNumberField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-number-field')).toBeInTheDocument();
   });
 

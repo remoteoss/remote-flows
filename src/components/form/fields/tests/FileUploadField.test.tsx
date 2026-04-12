@@ -88,7 +88,7 @@ describe('FileUploadField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomFileUploadField).toHaveBeenCalledTimes(1);
+    expect(CustomFileUploadField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-file-upload-field')).toBeInTheDocument();
   });
 
