@@ -64,8 +64,9 @@ export function DatePickerFieldDefault({
             mode='single'
             className='RemoteFlows__DatepickerField__Calendar'
             selected={field.value ? new Date(field.value) : undefined}
-            onSelect={(date) => {
-              field.onChange(date ? format(date, 'yyyy-MM-dd') : null);
+            onDayClick={(day) => {
+              const formattedDate = format(day, 'yyyy-MM-dd');
+              field.onChange(formattedDate);
               setOpen(false);
             }}
             defaultMonth={minDateValue}
