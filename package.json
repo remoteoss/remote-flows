@@ -113,7 +113,7 @@
     "lodash.mergewith": "^4.6.2",
     "lodash.omit": "^4.5.0",
     "lodash.omitby": "^4.6.0",
-    "lucide-react": "0.577.0",
+    "lucide-react": "^1.7.0",
     "postcss": "^8.5.9",
     "react-day-picker": "^8.10.1",
     "react-flagpack": "^2.0.6",
