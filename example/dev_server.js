@@ -23,7 +23,7 @@ const startServer = async () => {
   app.use(vite.middlewares);
 
   // Serve index.html (SSR or SPA fallback)
-  app.use('*', async (req, res, next) => {
+  app.use(async (req, res, next) => {
     try {
       const url = req.originalUrl;
       const template = await vite.transformIndexHtml(
