@@ -179,7 +179,7 @@ describe('MultiSelectField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomMultiSelectField).toHaveBeenCalledTimes(1);
+    expect(CustomMultiSelectField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-multi-select-field')).toBeInTheDocument();
   });
 

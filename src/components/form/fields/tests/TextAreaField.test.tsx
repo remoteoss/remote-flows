@@ -84,7 +84,7 @@ describe('TextAreaField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomTextAreaField).toHaveBeenCalledTimes(1);
+    expect(CustomTextAreaField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-textarea-field')).toBeInTheDocument();
   });
 

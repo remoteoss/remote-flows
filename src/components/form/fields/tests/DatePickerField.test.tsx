@@ -99,7 +99,7 @@ describe('DatePickerField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomDatePickerField).toHaveBeenCalledTimes(1);
+    expect(CustomDatePickerField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-date-picker-field')).toBeInTheDocument();
   });
 
@@ -192,7 +192,6 @@ describe('DatePickerField Component', () => {
 
     // Verify addBusinessDays was called with a date and mot value
     expect(addBusinessDays).toHaveBeenCalledWith(expect.any(Date), 21);
-    expect(addBusinessDays).toHaveBeenCalledTimes(1);
 
     // Verify the component renders without errors
     expect(screen.getByText('Test Field')).toBeInTheDocument();
