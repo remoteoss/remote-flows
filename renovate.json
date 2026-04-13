@@ -10,12 +10,6 @@
 
   "postUpdateOptions": ["npmDedupe"],
 
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": false,
-    "schedule": ["before 3am on Monday"]
-  },
-
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
