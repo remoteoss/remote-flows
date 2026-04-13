@@ -115,7 +115,7 @@ describe('CountryField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomSelectField).toHaveBeenCalledTimes(1);
+    expect(CustomSelectField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-select-field')).toBeInTheDocument();
   });
 

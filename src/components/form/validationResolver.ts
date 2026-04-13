@@ -79,7 +79,7 @@ export const useJsonSchemasValidationFormResolver = <
     if (!result) {
       return {
         values: data,
-        errors: {},
+        errors: {} as Record<string, never>,
       };
     }
 
@@ -88,13 +88,13 @@ export const useJsonSchemasValidationFormResolver = <
     if (Object.keys(formErrors || {}).length > 0) {
       const errors = iterateFormErrors(formErrors);
       return {
-        values: {} as T,
+        values: {} as Record<string, never>,
         errors: errors as FieldErrors<T>,
       };
     }
     return {
       values: data,
-      errors: {},
+      errors: {} as Record<string, never>,
     };
   };
 };

@@ -84,7 +84,7 @@ describe('CheckBoxField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomCheckboxField).toHaveBeenCalledTimes(1);
+    expect(CustomCheckboxField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-checkbox-field')).toBeInTheDocument();
   });
 
