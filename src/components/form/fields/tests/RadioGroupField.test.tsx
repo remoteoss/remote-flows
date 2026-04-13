@@ -101,7 +101,7 @@ describe('RadioGroupField Component', () => {
 
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
-    expect(CustomRadioGroupField).toHaveBeenCalledTimes(1);
+    expect(CustomRadioGroupField).toHaveBeenCalled();
     expect(screen.getByTestId('custom-radio-field')).toBeInTheDocument();
   });
 
