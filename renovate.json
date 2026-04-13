@@ -10,12 +10,6 @@
 
   "postUpdateOptions": ["npmDedupe"],
 
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": false,
-    "schedule": ["before 3am on Monday"]
-  },
-
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
@@ -51,6 +45,7 @@
       "description": "Production major updates trigger minor version bump",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "7 days",
       "semanticCommitType": "feat",
       "semanticCommitScope": "deps"
     },
@@ -58,6 +53,7 @@
       "description": "Production minor/patch updates are chores",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor", "patch"],
+      "minimumReleaseAge": "7 days",
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps"
     },
