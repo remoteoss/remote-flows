@@ -11,13 +11,13 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   Popover,
-  PopoverClose,
   PopoverContent,
   PopoverTrigger,
 } from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { useState } from 'react';
 
 export function DatePickerFieldDefault({
   field,
@@ -27,6 +27,8 @@ export function DatePickerFieldDefault({
   const { name, label, description, minDate, maxDate } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
+  const [open, setOpen] = useState(false);
+
   return (
     <FormItem
       data-field={name}
@@ -35,7 +37,7 @@ export function DatePickerFieldDefault({
       <FormLabel className='RemoteFlows__DatePickerField__Label'>
         {label}
       </FormLabel>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <FormControl>
             <div>
@@ -62,15 +64,12 @@ export function DatePickerFieldDefault({
             mode='single'
             className='RemoteFlows__DatepickerField__Calendar'
             selected={field.value ? new Date(field.value) : undefined}
-            onSelect={(date) => {
-              field.onChange(date ? format(date, 'yyyy-MM-dd') : null);
+            onDayClick={(day) => {
+              const formattedDate = format(day, 'yyyy-MM-dd');
+              field.onChange(formattedDate);
+              setOpen(false);
             }}
             defaultMonth={minDateValue}
-            components={{
-              DayContent: (props) => {
-                return <PopoverClose>{props.date.getDate()}</PopoverClose>;
-              },
-            }}
             disabled={(date: Date) => {
               if (minDateValue && date < minDateValue) return true;
               if (maxDateValue && date > maxDateValue) return true;
