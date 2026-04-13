@@ -211,6 +211,24 @@ import type {
   GetListUsersScimData,
   GetListUsersScimErrors,
   GetListUsersScimResponses,
+  GetPayDetailDataGphData,
+  GetPayDetailDataGphErrors,
+  GetPayDetailDataGphResponses,
+  GetPayDetailGphData,
+  GetPayDetailGphErrors,
+  GetPayDetailGphResponses,
+  GetPayProcessingFeatureGphData,
+  GetPayProcessingFeatureGphErrors,
+  GetPayProcessingFeatureGphResponses,
+  GetPayProgressGphData,
+  GetPayProgressGphErrors,
+  GetPayProgressGphResponses,
+  GetPaySummaryGphData,
+  GetPaySummaryGphErrors,
+  GetPaySummaryGphResponses,
+  GetPayVarianceGphData,
+  GetPayVarianceGphErrors,
+  GetPayVarianceGphResponses,
   GetPendingChangesEmploymentContractData,
   GetPendingChangesEmploymentContractErrors,
   GetPendingChangesEmploymentContractResponses,
@@ -280,6 +298,9 @@ import type {
   GetShowEmploymentOnboardingStepsErrors,
   GetShowEmploymentOnboardingStepsResponses,
   GetShowEmploymentResponses,
+  GetShowEngagementAgreementDetailsCountryData,
+  GetShowEngagementAgreementDetailsCountryErrors,
+  GetShowEngagementAgreementDetailsCountryResponses,
   GetShowExpenseData,
   GetShowExpenseErrors,
   GetShowExpenseResponses,
@@ -423,6 +444,9 @@ import type {
   PostApproveCancellationRequestData,
   PostApproveCancellationRequestErrors,
   PostApproveCancellationRequestResponses,
+  PostApproveReservePaymentRiskReserveData,
+  PostApproveReservePaymentRiskReserveErrors,
+  PostApproveReservePaymentRiskReserveResponses,
   PostApproveTimesheetData,
   PostApproveTimesheetErrors,
   PostApproveTimesheetResponses,
@@ -549,6 +573,9 @@ import type {
   PostCreateTimeoffData,
   PostCreateTimeoffErrors,
   PostCreateTimeoffResponses,
+  PostCreateTimesheetData,
+  PostCreateTimesheetErrors,
+  PostCreateTimesheetResponses,
   PostCreateTokenCompanyTokenData,
   PostCreateTokenCompanyTokenErrors,
   PostCreateTokenCompanyTokenResponses,
@@ -588,6 +615,9 @@ import type {
   PostTerminateContractorOfRecordEmploymentSubscriptionData,
   PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
   PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
+  PostTokenOAuth2Token2Data,
+  PostTokenOAuth2Token2Errors,
+  PostTokenOAuth2Token2Responses,
   PostTokenOAuth2TokenData,
   PostTokenOAuth2TokenErrors,
   PostTokenOAuth2TokenResponses,
@@ -654,190 +684,33 @@ export type Options<
 };
 
 /**
- * List Offboarding
+ * Convert currency using dynamic rates
  *
- * Lists Offboarding requests.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
- *
- */
-export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexOffboardingData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexOffboardingResponses,
-    GetIndexOffboardingErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/offboardings',
-    ...options,
-  });
-
-/**
- * Create Offboarding
- *
- * Creates an Offboarding request.
- *
+ * Convert currency using the rates Remote applies during employment creation and invoicing.
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | - | Manage offboarding (`offboarding:write`) |
+ * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
  *
  */
-export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateOffboardingData, ThrowOnError>,
-) =>
-  (options?.client ?? client).post<
-    PostCreateOffboardingResponses,
-    PostCreateOffboardingErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/offboardings',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-/**
- * Show timesheet
- *
- * Shows a timesheet by its ID.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
- *
- */
-export const getShowTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimesheetData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowTimesheetResponses,
-    GetShowTimesheetErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timesheets/{id}',
-    ...options,
-  });
-
-/**
- * Cancel onboarding
- *
- * Cancel onboarding.
- *
- * Requirements for the cancellation to succeed:
- *
- * * Employment has to be in `invited`, `created`, `created_awaiting_reserve`, `created_reserve_paid`, `pre_hire` status
- * * Employee must not have signed the employment contract
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage onboarding (`onboarding:write`) |
- *
- */
-export const postUpdateCancelOnboarding = <
+export const postConvertWithSpreadCurrencyConverter2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostUpdateCancelOnboardingData, ThrowOnError>,
+  options: Options<PostConvertWithSpreadCurrencyConverter2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostUpdateCancelOnboardingResponses,
-    PostUpdateCancelOnboardingErrors,
+    PostConvertWithSpreadCurrencyConverter2Responses,
+    PostConvertWithSpreadCurrencyConverter2Errors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/cancel-onboarding/{employment_id}',
-    ...options,
-  });
-
-/**
- * Show form schema
- *
- * Returns the json schema of the `contract_amendment` form for a specific employment.
- * This endpoint requires a company access token, as forms are dependent on certain
- * properties of companies and their current employments.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
- *
- */
-export const getShowContractAmendmentSchema = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowContractAmendmentSchemaData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowContractAmendmentSchemaResponses,
-    GetShowContractAmendmentSchemaErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contract-amendments/schema',
-    ...options,
-  });
-
-/**
- * Bulk Create Pay Items
- *
- * Bulk creates pay items for employments. Supports up to 500 items per request.
- * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `meta` object.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | - | - | Manage pay items (`pay_item:write`) |
- *
- */
-export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
-  options: Options<PostBulkCreatePayItemsData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostBulkCreatePayItemsResponses,
-    PostBulkCreatePayItemsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/pay-items/bulk',
+    url: '/api/eor/v1/currency-converter',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -846,179 +719,31 @@ export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Get latest data sync events
+ * List contractor subscriptions
  *
- * Get the latest data sync events for each data type that have passed
- *
- *
- * @deprecated
- */
-export const getIndexDataSync = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexDataSyncData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexDataSyncResponses,
-    GetIndexDataSyncErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/data-sync',
-    ...options,
-  });
-
-/**
- * Create test data sync job
- *
- * Create Test Data Synchronization job that will sync test data to the database from production
- * The job will be handled asynchronously and the response will be a 202 status code.
- *
- * **Heads up:** This endpoint is only available for specific usecases and should not be used for general data sync needs,
- * if you need to request access to this endpoint, please contact the api-support@remote.com.
- *
- *
- * @deprecated
- */
-export const postCreateDataSync = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateDataSyncData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateDataSyncResponses,
-    PostCreateDataSyncErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/data-sync',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List pricing plans
- *
- * List all pricing plans for a company.
- * Currently the endpoint only returns the pricing plans for the EOR monthly product and the contractor products (Standard, Plus and COR).
+ * Endpoint that can be used to list contractor subscriptions.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getIndexCompanyPricingPlan = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexCompanyPricingPlanData, ThrowOnError>,
+export const getIndexSubscription = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexSubscriptionData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyPricingPlanResponses,
-    GetIndexCompanyPricingPlanErrors,
+    GetIndexSubscriptionResponses,
+    GetIndexSubscriptionErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/companies/{company_id}/pricing-plans',
-    ...options,
-  });
-
-/**
- * Create a pricing plan for a company
- *
- * Create a pricing plan for a company, in order to do that we have 2 ways:
- *
- * 1. Create a pricing plan from a partner template
- * 2. Create a pricing plan from a product price
- *
- * The pricing plan is always created in the company's desired currency.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | - | Manage pricing plans (`pricing_plan:write`) |
- *
- */
-export const postCreateCompanyPricingPlan = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateCompanyPricingPlanData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateCompanyPricingPlanResponses,
-    PostCreateCompanyPricingPlanErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/{company_id}/pricing-plans',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show probation completion letter
- *
- * Show a single probation completion letter.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
- *
- */
-export const getShowProbationCompletionLetter = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowProbationCompletionLetterData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowProbationCompletionLetterResponses,
-    GetShowProbationCompletionLetterErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/probation-completion-letter/{id}',
-    ...options,
-  });
-
-/**
- * Show Contractor Invoice
- *
- * Shows a single Contractor Invoice record.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowContractorInvoiceData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowContractorInvoiceResponses,
-    GetShowContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoices/{id}',
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-subscriptions',
     ...options,
   });
 
@@ -1050,7 +775,7 @@ export const postConvertRawCurrencyConverter = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/currency-converter/raw',
+    url: '/api/eor/v1/currency-converter/raw',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1059,123 +784,61 @@ export const postConvertRawCurrencyConverter = <
   });
 
 /**
- * Show contractor contract details
+ * List Incentives
  *
- * Returns the contract details JSON Schema for contractors given a country
+ * Lists all Incentives of a company
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
  *
  */
-export const getShowContractorContractDetailsCountry = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowContractorContractDetailsCountryData, ThrowOnError>,
+export const getIndexIncentive = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexIncentiveData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowContractorContractDetailsCountryResponses,
-    GetShowContractorContractDetailsCountryErrors,
+    GetIndexIncentiveResponses,
+    GetIndexIncentiveErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/countries/{country_code}/contractor-contract-details',
+    url: '/api/eor/v1/incentives',
     ...options,
   });
 
 /**
- * List employments
+ * Create Incentive
  *
- * Lists all employments, except for the deleted ones.
+ * Creates an Incentive.
  *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- */
-export const getIndexEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentResponses,
-    GetIndexEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employments',
-    ...options,
-  });
-
-/**
- * Create employment
- *
- * Creates an employment. We support creating employees and contractors.
- *
- * ## Global Payroll Employees
- *
- * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
- *
- * ## HRIS Employees
- *
- * To create a HRIS employee, pass `hris` as the `type` parameter.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
+ * Incentives use the currency of the employment specified provided in the `employment_id` field.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmployment2Data, ThrowOnError>,
+export const postCreateIncentive = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateIncentiveData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEmployment2Responses,
-    PostCreateEmployment2Errors,
+    PostCreateIncentiveResponses,
+    PostCreateIncentiveErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments',
+    url: '/api/eor/v1/incentives',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1184,193 +847,60 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Get Onboarding Reserves Status for Employment
+ * List Benefit Offers By Employment
  *
- * Returns the onboarding reserves status for a specific employment.
- *
- * The status is the same as the credit risk status but takes the onboarding reserves policies into account.
+ * List benefit offers by employment.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
-export const getShowCompanyEmploymentOnboardingReservesStatus = <
+export const getIndexBenefitOffersByEmployment = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<
-    GetShowCompanyEmploymentOnboardingReservesStatusData,
-    ThrowOnError
-  >,
+  options: Options<GetIndexBenefitOffersByEmploymentData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowCompanyEmploymentOnboardingReservesStatusResponses,
-    GetShowCompanyEmploymentOnboardingReservesStatusErrors,
+    GetIndexBenefitOffersByEmploymentResponses,
+    GetIndexBenefitOffersByEmploymentErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
+    url: '/api/eor/v1/benefit-offers',
     ...options,
   });
 
 /**
- * Get Help Center Article
+ * Complete onboarding
  *
- * Get a help center article by its ID
+ * Completes the employee onboarding. When all tasks are completed, the employee is marked as in `review` status
  *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View help articles (`help_center_article:read`) | - |
- *
+ * @deprecated
  */
-export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowHelpCenterArticleData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowHelpCenterArticleResponses,
-    GetShowHelpCenterArticleErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/help-center-articles/{id}',
-    ...options,
-  });
-
-/**
- * Get user by ID via SCIM v2.0
- *
- * Retrieves a single user for the authenticated company by user ID
- */
-export const getGetUserScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetUserScimData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetGetUserScimResponses,
-    GetGetUserScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/scim/v2/Users/{id}',
-    ...options,
-  });
-
-/**
- * Download a document for the employee
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
- *
- */
-export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowEmployeeDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowEmployeeDocumentResponses,
-    GetShowEmployeeDocumentErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/documents/{id}',
-    ...options,
-  });
-
-/**
- * List Contractor Invoices
- *
- * Lists Contractor Invoice records.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexContractorInvoiceData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexContractorInvoiceResponses,
-    GetIndexContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoices',
-    ...options,
-  });
-
-/**
- * Report SDK errors
- *
- * Receives error telemetry from the frontend SDK.
- * Errors are logged to observability backend for monitoring and debugging.
- *
- */
-export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
-  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+export const postCompleteOnboardingEmployment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCompleteOnboardingEmploymentData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostReportErrorsTelemetryResponses,
-    PostReportErrorsTelemetryErrors,
+    PostCompleteOnboardingEmploymentResponses,
+    PostCompleteOnboardingEmploymentErrors,
     ThrowOnError
   >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sdk/telemetry-errors',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/ready',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
     },
-  });
-
-/**
- * Show the SSO Configuration Details
- *
- * Shows the SSO Configuration details for the company.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
- *
- */
-export const getDetailsSsoConfiguration = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetDetailsSsoConfigurationData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetDetailsSsoConfigurationResponses,
-    GetDetailsSsoConfigurationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sso-configuration/details',
-    ...options,
   });
 
 /**
@@ -1390,419 +920,7 @@ export const postCreateEstimation = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/cost-calculator/estimation',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show form schema
- *
- * Returns the json schema of the requested company form.
- * Currently only supports the `address_details` form.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanySchemaData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowCompanySchemaResponses,
-    GetShowCompanySchemaErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/schema',
-    ...options,
-  });
-
-/**
- * Get employment benefit offers
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
- *
- */
-export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexBenefitOfferData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexBenefitOfferResponses,
-    GetIndexBenefitOfferErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/benefit-offers',
-    ...options,
-  });
-
-/**
- * Upserts employment benefit offers
- */
-export const putUpdateBenefitOffer = <ThrowOnError extends boolean = false>(
-  options: Options<PutUpdateBenefitOfferData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PutUpdateBenefitOfferResponses,
-    PutUpdateBenefitOfferErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employments/{employment_id}/benefit-offers',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get Employment Profile
- *
- * Gets necessary information to perform the identity verification of an employee.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View identity verification (`identity_verification:read`) | Manage identity verification (`identity_verification:write`) |
- *
- */
-export const getGetIdentityVerificationDataIdentityVerification = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    GetGetIdentityVerificationDataIdentityVerificationData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).get<
-    GetGetIdentityVerificationDataIdentityVerificationResponses,
-    GetGetIdentityVerificationDataIdentityVerificationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/identity-verification/{employment_id}',
-    ...options,
-  });
-
-/**
- * List contractor subscriptions
- *
- * Endpoint that can be used to list contractor subscriptions.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getIndexSubscription = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexSubscriptionData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexSubscriptionResponses,
-    GetIndexSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions',
-    ...options,
-  });
-
-/**
- * List Webhook Events
- *
- * List all webhook events
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
- *
- */
-export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexWebhookEventData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexWebhookEventResponses,
-    GetIndexWebhookEventErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/webhook-events',
-    ...options,
-  });
-
-/**
- * Pass KYB
- *
- * Pass KYB and credit risk for a company without the intervention of a Remote admin.
- *
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
- *
- */
-export const postBypassEligibilityChecksCompany = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostBypassEligibilityChecksCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostBypassEligibilityChecksCompanyResponses,
-    PostBypassEligibilityChecksCompanyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
-    ...options,
-  });
-
-/**
- * Get a mock JSON Schema
- *
- * Get a mock JSON Schema for testing purposes
- */
-export const getShowTestSchema = <ThrowOnError extends boolean = false>(
-  options?: Options<GetShowTestSchemaData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetShowTestSchemaResponses,
-    unknown,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/test-schema',
-    ...options,
-  });
-
-/**
- * List all holidays of a country
- *
- * List all holidays of a country for a specific year. Optionally, it can be filtered by country subdivision.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
- *
- */
-export const getIndexHoliday = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexHolidayData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexHolidayResponses,
-    GetIndexHolidayErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/countries/{country_code}/holidays/{year}',
-    ...options,
-  });
-
-/**
- * Cancel Time Off
- *
- * Cancel a time off request that was already approved.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postCreateCancellation = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCancellationData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateCancellationResponses,
-    PostCreateCancellationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{timeoff_id}/cancel',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show employment job
- *
- * Shows an employment job details.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentJobData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentJobResponses,
-    GetIndexEmploymentJobErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/job',
-    ...options,
-  });
-
-/**
- * List pricing plan partner templates
- *
- * List all pricing plan partner templates.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
- *
- */
-export const getIndexPricingPlanPartnerTemplate = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexPricingPlanPartnerTemplateData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexPricingPlanPartnerTemplateResponses,
-    GetIndexPricingPlanPartnerTemplateErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/pricing-plan-partner-templates',
-    ...options,
-  });
-
-/**
- * List EOR Payroll Calendar
- *
- * List all active payroll calendars for EOR.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
- *
- */
-export const getIndexEorPayrollCalendar = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexEorPayrollCalendarData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexEorPayrollCalendarResponses,
-    GetIndexEorPayrollCalendarErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/payroll-calendars',
-    ...options,
-  });
-
-/**
- * Update Time Off as Employee
- *
- * Updates a Time Off record as Employee
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const patchUpdateEmployeeTimeoff2 = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateEmployeeTimeoff2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateEmployeeTimeoff2Responses,
-    PatchUpdateEmployeeTimeoff2Errors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/timeoff/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update Time Off as Employee
- *
- * Updates a Time Off record as Employee
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const patchUpdateEmployeeTimeoff = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateEmployeeTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateEmployeeTimeoffResponses,
-    PatchUpdateEmployeeTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/timeoff/{id}',
+    url: '/api/eor/v1/cost-calculator/estimation',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1837,7 +955,7 @@ export const getIndexRecurringIncentive = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/incentives/recurring',
+    url: '/api/eor/v1/incentives/recurring',
     ...options,
   });
 
@@ -1870,7 +988,7 @@ export const postCreateRecurringIncentive = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/incentives/recurring',
+    url: '/api/eor/v1/incentives/recurring',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1879,148 +997,171 @@ export const postCreateRecurringIncentive = <
   });
 
 /**
- * Creates a Benefit Renewal Request
+ * List timesheets
  *
- * Creates a Benefit Renewal Request for a specific Benefit Group.
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ * Lists all timesheets.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
  *
  */
-export const postCreateBenefitRenewalRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateBenefitRenewalRequestData, ThrowOnError>,
+export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexTimesheetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexTimesheetResponses,
+    GetIndexTimesheetErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timesheets',
+    ...options,
+  });
+
+/**
+ * Create timesheet
+ *
+ * Creates a new timesheet.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const postCreateTimesheet = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateTimesheetData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostCreateTimesheetResponses,
+    PostCreateTimesheetErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timesheets',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Approve timesheet
+ *
+ * Approves the given timesheet.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
+  options: Options<PostApproveTimesheetData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateBenefitRenewalRequestResponses,
-    PostCreateBenefitRenewalRequestErrors,
+    PostApproveTimesheetResponses,
+    PostApproveTimesheetErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/sandbox/benefit-renewal-requests',
+    url: '/api/eor/v1/timesheets/{timesheet_id}/approve',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
- * Return a base64 encoded version of the contract document
+ * Get latest data sync events
  *
- * ## Scopes
+ * Get the latest data sync events for each data type that have passed
  *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
+ * @deprecated
  */
-export const getShowContractDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowContractDocumentData, ThrowOnError>,
+export const getIndexDataSync = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexDataSyncData, ThrowOnError>,
 ) =>
-  (options.client ?? client).get<
-    GetShowContractDocumentResponses,
-    GetShowContractDocumentErrors,
+  (options?.client ?? client).get<
+    GetIndexDataSyncResponses,
+    GetIndexDataSyncErrors,
     ThrowOnError
   >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/data-sync',
     ...options,
   });
 
 /**
- * List contract documents for an employment
+ * Create test data sync job
  *
- * Only contractor employment types are supported. Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first).
+ * Create Test Data Synchronization job that will sync test data to the database from production
+ * The job will be handled asynchronously and the response will be a 202 status code.
  *
- * ## Scopes
+ * **Heads up:** This endpoint is only available for specific usecases and should not be used for general data sync needs,
+ * if you need to request access to this endpoint, please contact the api-support@remote.com.
  *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
+ * @deprecated
  */
-export const getIndexEmploymentContractDocument = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexEmploymentContractDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentContractDocumentResponses,
-    GetIndexEmploymentContractDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/contract-documents',
-    ...options,
-  });
-
-/**
- * List expenses
- *
- * Lists all expenses records
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
- *
- */
-export const getIndexExpense = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexExpenseData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexExpenseResponses,
-    GetIndexExpenseErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/expenses',
-    ...options,
-  });
-
-/**
- * Create expense
- *
- * Creates an **approved** expense
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
- *
- */
-export const postCreateExpense = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateExpenseData, ThrowOnError>,
+export const postCreateDataSync = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateDataSyncData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateExpenseResponses,
-    PostCreateExpenseErrors,
+    PostCreateDataSyncResponses,
+    PostCreateDataSyncErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/data-sync',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show probation completion letter
+ *
+ * Show a single probation completion letter.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
+ *
+ */
+export const getShowProbationCompletionLetter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowProbationCompletionLetterData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowProbationCompletionLetterResponses,
+    GetShowProbationCompletionLetterErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/expenses',
+    url: '/api/eor/v1/probation-completion-letter/{id}',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -2047,7 +1188,7 @@ export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/sso-configuration',
+    url: '/api/eor/v1/sso-configuration',
     ...options,
   });
 
@@ -2077,7 +1218,7 @@ export const postCreateSsoConfiguration = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/sso-configuration',
+    url: '/api/eor/v1/sso-configuration',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2086,507 +1227,59 @@ export const postCreateSsoConfiguration = <
   });
 
 /**
- * Approve Contract Amendment
+ * List Offboarding
  *
- * Approves a contract amendment request without the intervention of a Remote admin.
- * Approvals done via this endpoint are effective immediately,
- * regardless of the effective date entered on the contract amendment creation.
+ * Lists Offboarding requests.
  *
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
  *
  */
-export const putApproveContractAmendment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PutApproveContractAmendmentData, ThrowOnError>,
+export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexOffboardingData, ThrowOnError>,
 ) =>
-  (options.client ?? client).put<
-    PutApproveContractAmendmentResponses,
-    PutApproveContractAmendmentErrors,
+  (options?.client ?? client).get<
+    GetIndexOffboardingResponses,
+    GetIndexOffboardingErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
+    url: '/api/eor/v1/offboardings',
     ...options,
   });
 
 /**
- * List all currencies for the contractor
+ * Create Offboarding
  *
- * The currencies are listed in the following order:
- * 1. billing currency of the company
- * 2. currencies of contractor’s existing withdrawal methods
- * 3. currency of the contractor’s country
- * 4. the rest, alphabetical.
+ * Creates an Offboarding request.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ * | Manage employments (`employments`) | - | Manage offboarding (`offboarding:write`) |
  *
  */
-export const getIndexContractorCurrency = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexContractorCurrencyData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexContractorCurrencyResponses,
-    GetIndexContractorCurrencyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-currencies',
-    ...options,
-  });
-
-/**
- * Replay Webhook Events
- *
- * Replay webhook events
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
- *
- */
-export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
-  options: Options<PostReplayWebhookEventData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostReplayWebhookEventResponses,
-    PostReplayWebhookEventErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/webhook-events/replay',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Create a contractor of record (COR) termination request
- *
- * Initiates a termination request for a Contractor of Record employment.
- * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
- * Currently, only Contractor of Record employments can be terminated.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postCreateCorTerminationRequestSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PostCreateCorTerminationRequestSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).post<
-    PostCreateCorTerminationRequestSubscriptionResponses,
-    PostCreateCorTerminationRequestSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests',
-    ...options,
-  });
-
-/**
- * Show Background Check
- *
- * Show Background Check details for a given employment and background check request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View background checks (`background_check:read`) | - |
- *
- */
-export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBackgroundCheckData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowBackgroundCheckResponses,
-    GetShowBackgroundCheckErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employments/{employment_id}/background-checks/{background_check_id}',
-    ...options,
-  });
-
-/**
- * Show benefit renewal request schema
- *
- * Returns the json schema of the `benefit_renewal_request` form for a specific request.
- * This endpoint requires a company access token, as forms are dependent on certain
- * properties of companies and their current employments.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
- *
- */
-export const getSchemaBenefitRenewalRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetSchemaBenefitRenewalRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetSchemaBenefitRenewalRequestResponses,
-    GetSchemaBenefitRenewalRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
-    ...options,
-  });
-
-/**
- * Magic links generator
- *
- * Generates a magic link for a passwordless authentication.
- * To create a magic link for a company admin, you need to provide the `user_id` parameter.
- * To create a magic link for an employee, you need to provide the `employment_id` parameter.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Create magic links (`magic_link:write`) |
- *
- */
-export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
-  options: Options<PostGenerateMagicLinkData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostGenerateMagicLinkResponses,
-    PostGenerateMagicLinkErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/magic-link',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Delete a Recurring Incentive
- *
- * Delete a Recurring Incentive, that is, a monthly paid incentive.
- *
- * Internally, Remote schedules upcoming incentives. As such, when you attempt to
- * delete a recurring incentive, Remote will **ONLY** delete scheduled incentives
- * with the `pending` status.
- *
- * Incentives payments that are already scheduled and cannot be deleted will be
- * included in the response, in case you need to reference them.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
- *
- */
-export const deleteDeleteRecurringIncentive = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<DeleteDeleteRecurringIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).delete<
-    DeleteDeleteRecurringIncentiveResponses,
-    DeleteDeleteRecurringIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives/recurring/{id}',
-    ...options,
-  });
-
-/**
- * List Incentives
- *
- * Lists all Incentives of a company
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
- *
- */
-export const getIndexIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexIncentiveResponses,
-    GetIndexIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives',
-    ...options,
-  });
-
-/**
- * Create Incentive
- *
- * Creates an Incentive.
- *
- * Incentives use the currency of the employment specified provided in the `employment_id` field.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
- *
- */
-export const postCreateIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateIncentiveResponses,
-    PostCreateIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Create probation completion letter
- *
- * Create a new probation completion letter request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
- *
- */
-export const postCreateProbationCompletionLetter = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateProbationCompletionLetterData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateProbationCompletionLetterResponses,
-    PostCreateProbationCompletionLetterErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/probation-completion-letter',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show Contractor Invoice Schedule
- *
- * Shows a single Contractor Invoice Schedule record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getShowScheduledContractorInvoice = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowScheduledContractorInvoiceData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowScheduledContractorInvoiceResponses,
-    GetShowScheduledContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoice-schedules/{id}',
-    ...options,
-  });
-
-/**
- * Updates Contractor Invoice Schedule
- *
- * Updates a contractor invoice schedule record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
- *
- */
-export const patchUpdateScheduledContractorInvoice2 = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateScheduledContractorInvoice2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateScheduledContractorInvoice2Responses,
-    PatchUpdateScheduledContractorInvoice2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoice-schedules/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Updates Contractor Invoice Schedule
- *
- * Updates a contractor invoice schedule record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
- *
- */
-export const patchUpdateScheduledContractorInvoice = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateScheduledContractorInvoiceData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateScheduledContractorInvoiceResponses,
-    PatchUpdateScheduledContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoice-schedules/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show Billing Document
- *
- * Shows a billing document details.
- *
- * Please contact api-support@remote.com to request access to this endpoint.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBillingDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowBillingDocumentResponses,
-    GetShowBillingDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/billing-documents/{billing_document_id}',
-    ...options,
-  });
-
-/**
- * Creates PDF cost estimation of employments
- *
- * Creates a PDF cost estimation of employments based on the provided parameters.
- */
-export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateEstimationPdfData, ThrowOnError>,
+export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateOffboardingData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostCreateEstimationPdfResponses,
-    PostCreateEstimationPdfErrors,
+    PostCreateOffboardingResponses,
+    PostCreateOffboardingErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/cost-calculator/estimation-pdf',
+    url: '/api/eor/v1/offboardings',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2595,382 +1288,38 @@ export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Show work authorization request
+ * Create a contract document for a contractor
  *
- * Show a single work authorization request.
+ * Create a contract document for a contractor.
  *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
- *
- */
-export const getShowWorkAuthorizationRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowWorkAuthorizationRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowWorkAuthorizationRequestResponses,
-    GetShowWorkAuthorizationRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/work-authorization-requests/{id}',
-    ...options,
-  });
-
-/**
- * Update work authorization request
- *
- * Updates a work authorization request.
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
  */
-export const patchUpdateWorkAuthorizationRequest2 = <
+export const postCreateContractDocument = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateWorkAuthorizationRequest2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateWorkAuthorizationRequest2Responses,
-    PatchUpdateWorkAuthorizationRequest2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/work-authorization-requests/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update work authorization request
- *
- * Updates a work authorization request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
- *
- */
-export const patchUpdateWorkAuthorizationRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateWorkAuthorizationRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateWorkAuthorizationRequestResponses,
-    PatchUpdateWorkAuthorizationRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/work-authorization-requests/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Create Probation Extension
- *
- * Create a probation extension request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
- *
- */
-export const postCreateProbationExtension = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateProbationExtensionData, ThrowOnError>,
+  options: Options<PostCreateContractDocumentData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateProbationExtensionResponses,
-    PostCreateProbationExtensionErrors,
+    PostCreateContractDocumentResponses,
+    PostCreateContractDocumentErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/probation-extensions',
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
     },
-  });
-
-/**
- * Create risk reserve
- *
- * Create a new risk reserve
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
- *
- */
-export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateRiskReserveData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateRiskReserveResponses,
-    PostCreateRiskReserveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/risk-reserve',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get Company Compliance Profile
- *
- * Returns the KYB and credit risk status for the company's default legal entity.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getShowCompanyComplianceProfile = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowCompanyComplianceProfileData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowCompanyComplianceProfileResponses,
-    GetShowCompanyComplianceProfileErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/compliance-profile',
-    ...options,
-  });
-
-/**
- * Show product prices in the company's desired currency
- *
- * list product prices in the company's desired currency.
- * the endpoint currently only returns the product prices for the EOR monthly product and the contractor products (Standard, Plus and COR).
- * the product prices are then used to create a pricing plan for the company.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
- *
- */
-export const getIndexCompanyProductPrice = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexCompanyProductPriceData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexCompanyProductPriceResponses,
-    GetIndexCompanyProductPriceErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/{company_id}/product-prices',
-    ...options,
-  });
-
-/**
- * Show a company
- *
- * Given an ID, shows a company.
- *
- * If the used access token was issued by the OAuth 2.0 Authorization Code flow,
- * then only the associated company can be accessed through the endpoint.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getShowCompany = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowCompanyResponses,
-    GetShowCompanyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}',
-    ...options,
-  });
-
-/**
- * Update a company
- *
- * Given an ID and a request object with new information, updates a company.
- *
- * ### Getting a company and its owner to `active` status
- * If you created a company using the
- * [create a company endpoint](#tag/Companies/operation/post_create_company) without all the required
- * request body parameters, you can use this endpoint to provide the missing data. Once the company
- * and its owner have all the necessary data, both their statuses will be set to `active` and the company
- * onboarding will be marked as "completed".
- *
- * The following constitutes a company with "all the necessary data":
- * * Complete `address`, with valid `address`, `postal_code`, `country` and `state` parameters (Varies by country. Use the
- * [show form schema endpoint](#tag/Countries/operation/get_show_form_country) to see which address parameters
- * are required).
- * * Company `tax_number` or `registration_number` is not nil
- * * Company `name` is not nil (already required when creating the company)
- * * Company has a `desired_currency` in their bank account (already required when creating the company)
- * * Company has accepted terms of service (already required when creating the company)
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
- *
- */
-export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateCompany2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateCompany2Responses,
-    PatchUpdateCompany2Errors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/{company_id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update a company
- *
- * Given an ID and a request object with new information, updates a company.
- *
- * ### Getting a company and its owner to `active` status
- * If you created a company using the
- * [create a company endpoint](#tag/Companies/operation/post_create_company) without all the required
- * request body parameters, you can use this endpoint to provide the missing data. Once the company
- * and its owner have all the necessary data, both their statuses will be set to `active` and the company
- * onboarding will be marked as "completed".
- *
- * The following constitutes a company with "all the necessary data":
- * * Complete `address`, with valid `address`, `postal_code`, `country` and `state` parameters (Varies by country. Use the
- * [show form schema endpoint](#tag/Countries/operation/get_show_form_country) to see which address parameters
- * are required).
- * * Company `tax_number` or `registration_number` is not nil
- * * Company `name` is not nil (already required when creating the company)
- * * Company has a `desired_currency` in their bank account (already required when creating the company)
- * * Company has accepted terms of service (already required when creating the company)
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
- *
- */
-export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateCompanyResponses,
-    PatchUpdateCompanyErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/{company_id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Download a resignation letter
- *
- * Downloads a resignation letter from an employment request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View resignation letters (`resignation_letter:read`) | - |
- *
- */
-export const getDownloadResignationLetter = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetDownloadResignationLetterData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetDownloadResignationLetterResponses,
-    GetDownloadResignationLetterErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/resignations/{offboarding_request_id}/resignation-letter',
-    ...options,
   });
 
 /**
@@ -3022,11 +1371,189 @@ export const putUpdateEmploymentFederalTaxes = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}/federal-taxes',
+    url: '/api/eor/v1/employments/{employment_id}/federal-taxes',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
+    },
+  });
+
+/**
+ * List pricing plans
+ *
+ * List all pricing plans for a company.
+ * Currently the endpoint only returns the pricing plans for the EOR monthly product and the contractor products (Standard, Plus and COR).
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
+ */
+export const getIndexCompanyPricingPlan = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyPricingPlanData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexCompanyPricingPlanResponses,
+    GetIndexCompanyPricingPlanErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/pricing-plans',
+    ...options,
+  });
+
+/**
+ * Create a pricing plan for a company
+ *
+ * Create a pricing plan for a company, in order to do that we have 2 ways:
+ *
+ * 1. Create a pricing plan from a partner template
+ * 2. Create a pricing plan from a product price
+ *
+ * The pricing plan is always created in the company's desired currency.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage pricing plans (`pricing_plan:write`) |
+ *
+ */
+export const postCreateCompanyPricingPlan = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateCompanyPricingPlanData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateCompanyPricingPlanResponses,
+    PostCreateCompanyPricingPlanErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/{company_id}/pricing-plans',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List travel letter requests
+ *
+ * List travel letter requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | View travel letters (`travel_letter:read`) | - |
+ *
+ */
+export const getIndexTravelLetterRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexTravelLetterRequestData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexTravelLetterRequestResponses,
+    GetIndexTravelLetterRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/travel-letter-requests',
+    ...options,
+  });
+
+/**
+ * Payroll processing summary API resource
+ *
+ * API to retrieve summary data for processing pay groups
+ */
+export const getPaySummaryGph = <ThrowOnError extends boolean = false>(
+  options?: Options<GetPaySummaryGphData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetPaySummaryGphResponses,
+    GetPaySummaryGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/paySummary',
+    ...options,
+  });
+
+/**
+ * Show employment job
+ *
+ * Shows an employment job details.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexEmploymentJobData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentJobResponses,
+    GetIndexEmploymentJobErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/job',
+    ...options,
+  });
+
+/**
+ * Create bulk employment job
+ *
+ * Creates a job to bulk-create employments for multiple employees at once. Each employee payload must match the employment schema for the selected country.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postCreateBulkEmployment = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateBulkEmploymentData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostCreateBulkEmploymentResponses,
+    PostCreateBulkEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/bulk-employment-jobs',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
     },
   });
 
@@ -3054,7 +1581,7 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contract-amendments',
+    url: '/api/eor/v1/contract-amendments',
     ...options,
   });
 
@@ -3102,7 +1629,7 @@ export const postCreateContractAmendment = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contract-amendments',
+    url: '/api/eor/v1/contract-amendments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3111,66 +1638,288 @@ export const postCreateContractAmendment = <
   });
 
 /**
- * Show Company Payroll Runs
+ * Delete a Recurring Incentive
  *
- * Given an ID, shows a payroll run.
- * `employee_details` field is deprecated in favour of the `employee_details` endpoint and will be removed in the future.
+ * Delete a Recurring Incentive, that is, a monthly paid incentive.
+ *
+ * Internally, Remote schedules upcoming incentives. As such, when you attempt to
+ * delete a recurring incentive, Remote will **ONLY** delete scheduled incentives
+ * with the `pending` status.
+ *
+ * Incentives payments that are already scheduled and cannot be deleted will be
+ * included in the response, in case you need to reference them.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowPayrollRunData, ThrowOnError>,
+export const deleteDeleteRecurringIncentive = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteDeleteRecurringIncentiveData, ThrowOnError>,
 ) =>
-  (options.client ?? client).get<
-    GetShowPayrollRunResponses,
-    GetShowPayrollRunErrors,
+  (options.client ?? client).delete<
+    DeleteDeleteRecurringIncentiveResponses,
+    DeleteDeleteRecurringIncentiveErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/payroll-runs/{payroll_run_id}',
+    url: '/api/eor/v1/incentives/recurring/{id}',
     ...options,
   });
 
 /**
- * Download a receipt
+ * Show Benefit Renewal Request
  *
- *   Downloads an expense receipt.
- *
- * Deprecated since late February 2024 in favour of **[Download a receipt by id](#tag/Expenses/operation/get_download_by_id_expense_receipt)** endpoint.
- *
+ * Show Benefit Renewal Request details.
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
  *
- *
- * @deprecated
  */
-export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
-  options: Options<GetDownloadExpenseReceiptData, ThrowOnError>,
+export const getShowBenefitRenewalRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowBenefitRenewalRequestData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetDownloadExpenseReceiptResponses,
-    GetDownloadExpenseReceiptErrors,
+    GetShowBenefitRenewalRequestResponses,
+    GetShowBenefitRenewalRequestErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/expenses/{expense_id}/receipt',
+    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
+  });
+
+/**
+ * Updates a Benefit Renewal Request Response
+ *
+ * Updates a Benefit Renewal Request with the given response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage benefit renewals (`benefit_renewal:write`) |
+ *
+ */
+export const postUpdateBenefitRenewalRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostUpdateBenefitRenewalRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostUpdateBenefitRenewalRequestResponses,
+    PostUpdateBenefitRenewalRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List all holidays of a country
+ *
+ * List all holidays of a country for a specific year. Optionally, it can be filtered by country subdivision.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
+ *
+ */
+export const getIndexHoliday = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexHolidayData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexHolidayResponses,
+    GetIndexHolidayErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/countries/{country_code}/holidays/{year}',
+    ...options,
+  });
+
+/**
+ * List custom field value for an employment
+ *
+ * Returns a list of custom field values for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
+ *
+ */
+export const getIndexEmploymentCustomFieldValue = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentCustomFieldValueData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentCustomFieldValueResponses,
+    GetIndexEmploymentCustomFieldValueErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/custom-fields',
+    ...options,
+  });
+
+/**
+ * Show timesheet
+ *
+ * Shows a timesheet by its ID.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const getShowTimesheet = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowTimesheetData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowTimesheetResponses,
+    GetShowTimesheetErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timesheets/{id}',
+    ...options,
+  });
+
+/**
+ * List Company Managers
+ *
+ * List all company managers of an integration. If filtered by the company_id param,
+ * it lists only company managers belonging to the specified company.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
+ *
+ */
+export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexCompanyManagerData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexCompanyManagerResponses,
+    GetIndexCompanyManagerErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/company-managers',
+    ...options,
+  });
+
+/**
+ * Create and invite a Company Manager
+ *
+ * Create a Company Manager and sends the invitation email for signing in to the Remote Platform.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
+ */
+export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateCompanyManagerData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateCompanyManagerResponses,
+    PostCreateCompanyManagerErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/company-managers',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Bulk Create Pay Items
+ *
+ * Bulk creates pay items for employments. Supports up to 500 items per request.
+ * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `meta` object.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | - | - | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
+  options: Options<PostBulkCreatePayItemsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostBulkCreatePayItemsResponses,
+    PostBulkCreatePayItemsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/pay-items/bulk',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -3199,7 +1948,7 @@ export const getShowTravelLetterRequest = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/travel-letter-requests/{id}',
+    url: '/api/eor/v1/travel-letter-requests/{id}',
     ...options,
   });
 
@@ -3229,7 +1978,7 @@ export const patchUpdateTravelLetterRequest2 = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/travel-letter-requests/{id}',
+    url: '/api/eor/v1/travel-letter-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3263,7 +2012,7 @@ export const patchUpdateTravelLetterRequest = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/travel-letter-requests/{id}',
+    url: '/api/eor/v1/travel-letter-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3272,85 +2021,146 @@ export const patchUpdateTravelLetterRequest = <
   });
 
 /**
- * Show Time Off Balance
+ * Pass KYB
  *
- * Shows the time off balance for the given employment_id.
+ * Pass KYB and credit risk for a company without the intervention of a Remote admin.
  *
- * Deprecated since February 2025 in favour of **[List Leave Policies Summary](#tag/Leave-Policies/operation/get_index_leave_policies_summary)** endpoint.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- *
- * @deprecated
- */
-export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimeoffBalanceData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowTimeoffBalanceResponses,
-    GetShowTimeoffBalanceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff-balances/{employment_id}',
-    ...options,
-  });
-
-/**
- * Update basic information
- *
- * Updates employment's basic information.
- *
- * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const putUpdateEmploymentBasicInformation = <
+export const postBypassEligibilityChecksCompany = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutUpdateEmploymentBasicInformationData, ThrowOnError>,
+  options: Options<PostBypassEligibilityChecksCompanyData, ThrowOnError>,
 ) =>
-  (options.client ?? client).put<
-    PutUpdateEmploymentBasicInformationResponses,
-    PutUpdateEmploymentBasicInformationErrors,
+  (options.client ?? client).post<
+    PostBypassEligibilityChecksCompanyResponses,
+    PostBypassEligibilityChecksCompanyErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}/basic_information',
+    url: '/api/eor/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
+    ...options,
+  });
+
+/**
+ * List Webhook Callbacks
+ *
+ * List callbacks for a given company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexWebhookCallbackData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexWebhookCallbackResponses,
+    GetIndexWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/webhook-callbacks',
+    ...options,
+  });
+
+/**
+ * Download a billing document PDF
+ *
+ * Downloads a billing document PDF
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getDownloadPdfBillingDocument = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetDownloadPdfBillingDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetDownloadPdfBillingDocumentResponses,
+    GetDownloadPdfBillingDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/billing-documents/{billing_document_id}/pdf',
+    ...options,
+  });
+
+/**
+ * Delete a Webhook Callback
+ *
+ * Delete a callback previously registered for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const deleteDeleteWebhookCallback = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteDeleteWebhookCallbackData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteDeleteWebhookCallbackResponses,
+    DeleteDeleteWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/webhook-callbacks/{id}',
+    ...options,
+  });
+
+/**
+ * Update a Webhook Callback
+ *
+ * Update a callback previously registered for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const patchUpdateWebhookCallback = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateWebhookCallbackData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateWebhookCallbackResponses,
+    PatchUpdateWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/webhook-callbacks/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3359,48 +2169,102 @@ export const putUpdateEmploymentBasicInformation = <
   });
 
 /**
- * List expense categories
+ * List countries
  *
- * Lists the effective hierarchy of expense categories. Either employment_id or expense_id (or both) must be provided.
+ * Returns a list of all countries that are supported by Remote API alphabetically ordered.
+ * The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
+ * The countries present in the list are the ones where creating a company is allowed.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
+ *
  */
-export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
-  options?: Options<GetCategoriesExpenseData, ThrowOnError>,
+export const getSupportedCountry = <ThrowOnError extends boolean = false>(
+  options: Options<GetSupportedCountryData, ThrowOnError>,
 ) =>
-  (options?.client ?? client).get<
-    GetCategoriesExpenseResponses,
-    GetCategoriesExpenseErrors,
+  (options.client ?? client).get<
+    GetSupportedCountryResponses,
+    GetSupportedCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/countries',
+    ...options,
+  });
+
+/**
+ * Show contractor eligibility and COR-supported countries for legal entity
+ *
+ * Returns which contractor products (standard, plus, cor) the legal entity is eligible to use,
+ * and the list of country codes where COR is supported for this legal entity.
+ * COR-supported countries exclude sanctioned and signup-prevented countries and apply entity rules (same-country, local-to-local).
+ * When the legal entity is not COR-eligible, `cor_supported_country_codes` is an empty list.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getContractorEligibilityCompanyLegalEntities = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetContractorEligibilityCompanyLegalEntitiesData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetContractorEligibilityCompanyLegalEntitiesResponses,
+    GetContractorEligibilityCompanyLegalEntitiesErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/expenses/categories',
+    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
     ...options,
   });
 
 /**
- * Cancel Time Off as Employee
+ * Convert currency using dynamic rates
  *
- * Cancels a Time Off record as Employee
+ * Convert currency using the rates Remote applies during employment creation and invoicing.
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
  *
  */
-export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCancelEmployeeTimeoffData, ThrowOnError>,
+export const postConvertWithSpreadCurrencyConverter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostConvertWithSpreadCurrencyConverterData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCancelEmployeeTimeoffResponses,
-    PostCancelEmployeeTimeoffErrors,
+    PostConvertWithSpreadCurrencyConverterResponses,
+    PostConvertWithSpreadCurrencyConverterErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/timeoff/{id}/cancel',
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/currency-converter/effective',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3464,14 +2328,782 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/countries/{country_code}/{form}',
+    url: '/api/eor/v1/countries/{country_code}/{form}',
     ...options,
   });
 
 /**
- * Download file
+ * List Time Off
  *
- * Downloads a file.
+ * Lists all Time Off records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexTimeoffResponses,
+    GetIndexTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff',
+    ...options,
+  });
+
+/**
+ * Create Time Off
+ *
+ * Creates a Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateTimeoffResponses,
+    PostCreateTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List countries for Cost Calculator
+ *
+ * Lists active and processing countries
+ */
+export const getIndexCountry = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexCountryData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexCountryResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/cost-calculator/countries',
+    ...options,
+  });
+
+/**
+ * Show Background Check
+ *
+ * Show Background Check details for a given employment and background check request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View background checks (`background_check:read`) | - |
+ *
+ */
+export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowBackgroundCheckData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowBackgroundCheckResponses,
+    GetShowBackgroundCheckErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employments/{employment_id}/background-checks/{background_check_id}',
+    ...options,
+  });
+
+/**
+ * Show Time Off Balance
+ *
+ * Shows the time off balance for the given employment_id.
+ *
+ * Deprecated since February 2025 in favour of **[List Leave Policies Summary](#tag/Leave-Policies/operation/get_index_leave_policies_summary)** endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ *
+ * @deprecated
+ */
+export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowTimeoffBalanceData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowTimeoffBalanceResponses,
+    GetShowTimeoffBalanceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff-balances/{employment_id}',
+    ...options,
+  });
+
+/**
+ * Download a resignation letter
+ *
+ * Downloads a resignation letter from an employment request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View resignation letters (`resignation_letter:read`) | - |
+ *
+ */
+export const getDownloadResignationLetter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetDownloadResignationLetterData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetDownloadResignationLetterResponses,
+    GetDownloadResignationLetterErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/resignations/{offboarding_request_id}/resignation-letter',
+    ...options,
+  });
+
+/**
+ * Deletes a Company Manager user
+ *
+ * Deletes a Company Manager user
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
+ */
+export const deleteDeleteCompanyManager = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteDeleteCompanyManagerData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteDeleteCompanyManagerResponses,
+    DeleteDeleteCompanyManagerErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/company-managers/{user_id}',
+    ...options,
+  });
+
+/**
+ * Show company manager user
+ *
+ * Shows a single company manager user
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
+ *
+ */
+export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowCompanyManagerData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyManagerResponses,
+    GetShowCompanyManagerErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/company-managers/{user_id}',
+    ...options,
+  });
+
+/**
+ * Show onboarding steps for an employment
+ *
+ * Returns onboarding steps and substeps in a hierarchical, ordered structure.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowEmploymentOnboardingSteps = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowEmploymentOnboardingStepsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEmploymentOnboardingStepsResponses,
+    GetShowEmploymentOnboardingStepsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/onboarding-steps',
+    ...options,
+  });
+
+/**
+ * Automatable Contract Amendment
+ *
+ * Check if a contract amendment request is automatable.
+ * If the contract amendment request is automatable, then after submission, it will instantly amend the employee's contract
+ * and send them an updated document.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Contract Amendments](#tag/Contract-Amendments) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
+ *
+ */
+export const postAutomatableContractAmendment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAutomatableContractAmendmentData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAutomatableContractAmendmentResponses,
+    PostAutomatableContractAmendmentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contract-amendments/automatable',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List Company Payroll Runs
+ *
+ * Lists all payroll runs for a company
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
+ */
+export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexPayrollRunData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexPayrollRunResponses,
+    GetIndexPayrollRunErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payroll-runs',
+    ...options,
+  });
+
+/**
+ * Update employment
+ *
+ * Updates an employment. Use this endpoint to:
+ * - modify employment states for testing
+ * - Backdate employment start dates
+ *
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
+ *
+ */
+export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateEmployment4Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateEmployment4Responses,
+    PatchUpdateEmployment4Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/employments/{employment_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update employment
+ *
+ * Updates an employment. Use this endpoint to:
+ * - modify employment states for testing
+ * - Backdate employment start dates
+ *
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
+ *
+ */
+export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateEmployment3Data, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateEmployment3Responses,
+    PatchUpdateEmployment3Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/employments/{employment_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show benefit renewal request schema
+ *
+ * Returns the json schema of the `benefit_renewal_request` form for a specific request.
+ * This endpoint requires a company access token, as forms are dependent on certain
+ * properties of companies and their current employments.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
+ *
+ */
+export const getSchemaBenefitRenewalRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetSchemaBenefitRenewalRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetSchemaBenefitRenewalRequestResponses,
+    GetSchemaBenefitRenewalRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
+    ...options,
+  });
+
+/**
+ * Delete an Incentive
+ *
+ * Delete an incentive.
+ *
+ * `one_time` incentives that have the following status **CANNOT** be deleted:
+ * * `processing`
+ * * `paid`
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
+ */
+export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteDeleteIncentiveData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteDeleteIncentiveResponses,
+    DeleteDeleteIncentiveErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/incentives/{id}',
+    ...options,
+  });
+
+/**
+ * Show Incentive
+ *
+ * Show an Incentive's details
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
+ *
+ */
+export const getShowIncentive = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowIncentiveData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowIncentiveResponses,
+    GetShowIncentiveErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/incentives/{id}',
+    ...options,
+  });
+
+/**
+ * Update Incentive
+ *
+ * Updates an Incentive.
+ *
+ * Incentives use the currency of the employment specified provided in the `employment_id` field.
+ *
+ * The API doesn't support updating paid incentives.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
+ */
+export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateIncentive2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateIncentive2Responses,
+    PatchUpdateIncentive2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/incentives/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update Incentive
+ *
+ * Updates an Incentive.
+ *
+ * Incentives use the currency of the employment specified provided in the `employment_id` field.
+ *
+ * The API doesn't support updating paid incentives.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
+ *
+ */
+export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateIncentiveData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateIncentiveResponses,
+    PatchUpdateIncentiveErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/incentives/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show Legal Entity Administrative details
+ *
+ * Show administrative details of legal entity for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getShowAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowAdministrativeDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowAdministrativeDetailsResponses,
+    GetShowAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+    ...options,
+  });
+
+/**
+ * Update Legal Entity Administrative details
+ *
+ * Update administrative details of legal entity for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
+ */
+export const putUpdateAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutUpdateAdministrativeDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutUpdateAdministrativeDetailsResponses,
+    PutUpdateAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List Contractor Invoices
+ *
+ * Lists Contractor Invoice records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexContractorInvoiceData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexContractorInvoiceResponses,
+    GetIndexContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoices',
+    ...options,
+  });
+
+/**
+ * List expense categories
+ *
+ * Lists the effective hierarchy of expense categories. Either employment_id or expense_id (or both) must be provided.
+ */
+export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
+  options?: Options<GetCategoriesExpenseData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetCategoriesExpenseResponses,
+    GetCategoriesExpenseErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/categories',
+    ...options,
+  });
+
+/**
+ * List contract documents for an employment
+ *
+ * Only contractor employment types are supported. Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getIndexEmploymentContractDocument = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentContractDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentContractDocumentResponses,
+    GetIndexEmploymentContractDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/contract-documents',
+    ...options,
+  });
+
+/**
+ * Show contractor contract details
+ *
+ * Returns the contract details JSON Schema for contractors given a country
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
+ */
+export const getShowContractorContractDetailsCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowContractorContractDetailsCountryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowContractorContractDetailsCountryResponses,
+    GetShowContractorContractDetailsCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/countries/{country_code}/contractor-contract-details',
+    ...options,
+  });
+
+/**
+ * Get user by ID via SCIM v2.0
+ *
+ * Retrieves a single user for the authenticated company by user ID
+ */
+export const getGetUserScim = <ThrowOnError extends boolean = false>(
+  options: Options<GetGetUserScimData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetGetUserScimResponses,
+    GetGetUserScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/scim/v2/Users/{id}',
+    ...options,
+  });
+
+/**
+ * List employment files
+ *
+ * Lists files associated with a specific employment.
+ *
+ * Supports filtering by file type and sub_type.
  *
  *
  * ## Scopes
@@ -3481,19 +3113,3590 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getShowFile = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowFileData, ThrowOnError>,
+export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexEmploymentFileData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowFileResponses,
-    GetShowFileErrors,
+    GetIndexEmploymentFileResponses,
+    GetIndexEmploymentFileErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/files/{id}',
+    url: '/api/eor/v1/employments/{employment_id}/files',
+    ...options,
+  });
+
+/**
+ * Manage contractor plus subscription
+ *
+ * Endpoint that can be used to upgrade, assign or downgrade a contractor's subscription.
+ * This can be used when company admins desire to assign someone to the Contractor Plus plan,
+ * but also to change the contractor's subscription between Plus and Standard.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postManageContractorPlusSubscriptionSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostManageContractorPlusSubscriptionSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostManageContractorPlusSubscriptionSubscriptionResponses,
+    PostManageContractorPlusSubscriptionSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Submit eligibility questionnaire
+ *
+ * Submits an eligibility questionnaire for a contractor employment.
+ *
+ * The questionnaire determines if the contractor is eligible for certain products or features.
+ * The responses are validated against the JSON schema for the questionnaire type.
+ *
+ * **Requirements:**
+ * - Employment must be of type `contractor`
+ * - Employment must be in `created` status
+ * - Responses must conform to the questionnaire JSON schema
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postCreateEligibilityQuestionnaire = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateEligibilityQuestionnaireData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateEligibilityQuestionnaireResponses,
+    PostCreateEligibilityQuestionnaireErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/eligibility-questionnaire',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update basic information
+ *
+ * Updates employment's basic information.
+ *
+ * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putUpdateEmploymentBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutUpdateEmploymentBasicInformationData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutUpdateEmploymentBasicInformationResponses,
+    PutUpdateEmploymentBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/basic_information',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show a contractor of record (COR) termination request
+ *
+ * Retrieves a Contractor of Record termination request by ID.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowCorTerminationRequestSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowCorTerminationRequestSubscriptionData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCorTerminationRequestSubscriptionResponses,
+    GetShowCorTerminationRequestSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
+    ...options,
+  });
+
+/**
+ * Create a legal entity
+ *
+ * Create a new legal entity for a company in a given country, with KYB automatically passed.
+ *
+ * The entity is created with active status and can be set as the company's default
+ * using the reassign default entity endpoint.
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postCreateLegalEntityCompany = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateLegalEntityCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateLegalEntityCompanyResponses,
+    PostCreateLegalEntityCompanyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/companies/{company_id}/legal-entities',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Payroll processing details data API resource
+ *
+ * API to retrieve the run details of a pay group
+ */
+export const getPayDetailDataGph = <ThrowOnError extends boolean = false>(
+  options: Options<GetPayDetailDataGphData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetPayDetailDataGphResponses,
+    GetPayDetailDataGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/payDetailData',
+    ...options,
+  });
+
+/**
+ * Show region fields
+ *
+ * Returns required fields JSON Schema for a given region. These are required in order to calculate
+ * the cost of employment for the region. These fields are based on employer contributions that are associated
+ * with the region or any of it's parent regions.
+ */
+export const getShowRegionField = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowRegionFieldData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowRegionFieldResponses,
+    GetShowRegionFieldErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/cost-calculator/regions/{slug}/fields',
+    ...options,
+  });
+
+/**
+ * Cancel onboarding
+ *
+ * Cancel onboarding.
+ *
+ * Requirements for the cancellation to succeed:
+ *
+ * * Employment has to be in `invited`, `created`, `created_awaiting_reserve`, `created_reserve_paid`, `pre_hire` status
+ * * Employee must not have signed the employment contract
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage onboarding (`onboarding:write`) |
+ *
+ */
+export const postUpdateCancelOnboarding = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostUpdateCancelOnboardingData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostUpdateCancelOnboardingResponses,
+    PostUpdateCancelOnboardingErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/cancel-onboarding/{employment_id}',
+    ...options,
+  });
+
+/**
+ * Cancel Time Off as Employee
+ *
+ * Cancels a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostCancelEmployeeTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCancelEmployeeTimeoffResponses,
+    PostCancelEmployeeTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/timeoff/{id}/cancel',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Download a receipt
+ *
+ *   Downloads an expense receipt.
+ *
+ * Deprecated since late February 2024 in favour of **[Download a receipt by id](#tag/Expenses/operation/get_download_by_id_expense_receipt)** endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ *
+ * @deprecated
+ */
+export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
+  options: Options<GetDownloadExpenseReceiptData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetDownloadExpenseReceiptResponses,
+    GetDownloadExpenseReceiptErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/{expense_id}/receipt',
+    ...options,
+  });
+
+/**
+ * List Benefit Offers
+ *
+ * List benefit offers for each country.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
+ *
+ */
+export const getIndexBenefitOffersCountrySummary = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexBenefitOffersCountrySummaryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexBenefitOffersCountrySummaryResponses,
+    GetIndexBenefitOffersCountrySummaryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/benefit-offers/country-summaries',
+    ...options,
+  });
+
+/**
+ * List Leave Policies Details
+ *
+ * Describe the leave policies (custom or not) for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getIndexLeavePoliciesDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexLeavePoliciesDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexLeavePoliciesDetailsResponses,
+    GetIndexLeavePoliciesDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/leave-policies/details/{employment_id}',
+    ...options,
+  });
+
+/**
+ * List work authorization requests
+ *
+ * List work authorization requests.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
+ *
+ */
+export const getIndexWorkAuthorizationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexWorkAuthorizationRequestData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexWorkAuthorizationRequestResponses,
+    GetIndexWorkAuthorizationRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/work-authorization-requests',
+    ...options,
+  });
+
+/**
+ * Get employment benefit offers
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
+ *
+ */
+export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexBenefitOfferData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexBenefitOfferResponses,
+    GetIndexBenefitOfferErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/benefit-offers',
+    ...options,
+  });
+
+/**
+ * Upserts employment benefit offers
+ */
+export const putUpdateBenefitOffer = <ThrowOnError extends boolean = false>(
+  options: Options<PutUpdateBenefitOfferData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutUpdateBenefitOfferResponses,
+    PutUpdateBenefitOfferErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employments/{employment_id}/benefit-offers',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List employments
+ *
+ * Lists all employments, except for the deleted ones.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ */
+export const getIndexEmployment = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexEmploymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentResponses,
+    GetIndexEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employments',
+    ...options,
+  });
+
+/**
+ * Create employment
+ *
+ * Creates an employment. We support creating employees and contractors.
+ *
+ * ## Global Payroll Employees
+ *
+ * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
+ * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
+ *
+ * ## HRIS Employees
+ *
+ * To create a HRIS employee, pass `hris` as the `type` parameter.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateEmployment2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateEmployment2Responses,
+    PostCreateEmployment2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show Time Off
+ *
+ * Shows a single Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getShowTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowTimeoffResponses,
+    GetShowTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{id}',
+    ...options,
+  });
+
+/**
+ * Update Time Off
+ *
+ * Updates a Time Off record.
+ * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
+ * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateTimeoff2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateTimeoff2Responses,
+    PatchUpdateTimeoff2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update Time Off
+ *
+ * Updates a Time Off record.
+ * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
+ * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateTimeoffResponses,
+    PatchUpdateTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get token identity
+ *
+ * Shows information about the entities that can be controlled by the current auth token.
+ *
+ */
+export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
+  options: Options<GetCurrentIdentityData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetCurrentIdentityResponses,
+    GetCurrentIdentityErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/identity/current',
+    ...options,
+  });
+
+/**
+ * Payroll Variance Analysis API resource
+ *
+ * API to retrieve the variance analysis data of a pay group
+ */
+export const getPayVarianceGph = <ThrowOnError extends boolean = false>(
+  options: Options<GetPayVarianceGphData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetPayVarianceGphResponses,
+    GetPayVarianceGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/payVariance',
+    ...options,
+  });
+
+/**
+ * List Company Payroll Calendar
+ *
+ * List all payroll calendars for the company within the requested cycle.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
+ *
+ */
+export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexPayrollCalendarData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexPayrollCalendarResponses,
+    GetIndexPayrollCalendarErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payroll-calendars/{cycle}',
+    ...options,
+  });
+
+/**
+ * Terminate contractor of record employment
+ *
+ * **Deprecated.** Use `POST /contractors/employments/{employment_id}/cor-termination-requests` instead.
+ *
+ * Initiates a termination request for a Contractor of Record employment.
+ * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
+ * Currently, only Contractor of Record employments can be terminated.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ *
+ * @deprecated
+ */
+export const postTerminateContractorOfRecordEmploymentSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostTerminateContractorOfRecordEmploymentSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
+    PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/terminate-cor-employment',
+    ...options,
+  });
+
+/**
+ * Send back a timesheet for review or modification
+ *
+ * Sends the given timesheet back to the employee for review or modification.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
+  options: Options<PostSendBackTimesheetData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostSendBackTimesheetResponses,
+    PostSendBackTimesheetErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timesheets/{timesheet_id}/send-back',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List Benefit Renewal Requests
+ *
+ * List Benefit Renewal Requests for each country.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
+ *
+ */
+export const getIndexBenefitRenewalRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexBenefitRenewalRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexBenefitRenewalRequestResponses,
+    GetIndexBenefitRenewalRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/benefit-renewal-requests',
+    ...options,
+  });
+
+/**
+ * Reassign default legal entity
+ *
+ * Set a different legal entity as the company's default entity.
+ *
+ * The default entity is used when creating new employments without an explicit entity.
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const putReassignDefaultEntityCompany = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutReassignDefaultEntityCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutReassignDefaultEntityCompanyResponses,
+    PutReassignDefaultEntityCompanyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
+    ...options,
+  });
+
+/**
+ * List Employment Contract.
+ *
+ * Get the employment contract history for a given employment. If `only_active` is true, it will return only the active or last active contract.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
+ *
+ */
+export const getIndexEmploymentContract = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentContractData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentContractResponses,
+    GetIndexEmploymentContractErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employment-contracts',
+    ...options,
+  });
+
+/**
+ * Cancel Contract Amendment
+ *
+ * Use this endpoint to cancel an existing contract amendment request.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const putCancelContractAmendment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutCancelContractAmendmentData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutCancelContractAmendmentResponses,
+    PutCancelContractAmendmentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
+    ...options,
+  });
+
+/**
+ * Download payslip in the PDF format
+ *
+ * Given a Payslip ID, downloads a payslip.
+ * It is important to note that each country has a different payslip format and they are not authored by Remote.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
+ */
+export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
+  options: Options<GetDownloadPayslipPayslipData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetDownloadPayslipPayslipResponses,
+    GetDownloadPayslipPayslipErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payslips/{payslip_id}/pdf',
+    ...options,
+  });
+
+/**
+ * Approve Time Off
+ *
+ * Approve a time off request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCreateApproval = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateApprovalData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateApprovalResponses,
+    PostCreateApprovalErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{timeoff_id}/approve',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List all companies
+ *
+ * List all companies that authorized your integration to act on their behalf. In other words, these are all the companies that your integration can manage. Any company that has completed the authorization flow for your integration will be included in the response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getIndexCompany = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexCompanyResponses,
+    GetIndexCompanyErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies',
+    ...options,
+  });
+
+/**
+ * Create a company
+ *
+ *   Creates a new company.
+ *
+ * ### Creating a company with only the required request body parameters
+ * When you call this endpoint and omit all the optional parameters in the request body,
+ * the following resources get created upon a successful response:
+ * * A new company with status `pending`.
+ * * A company owner for the new company with status `initiated`.
+ *
+ * See the [update a company endpoint](#tag/Companies/operation/patch_update_company) for
+ * more details on how to get your company and its owner to `active` status.
+ *
+ * If you'd like to create a company and its owner with `active` status in a single request,
+ * please provide the optional `address_details` parameter as well.
+ *
+ * ### Accepting the Terms of Service
+ *
+ * A required step for creating a company in Remote is to accept our Terms of Service (ToS).
+ *
+ * Company managers need to be aware of our Terms of Service and Privacy Policy,
+ * hence **it's the responsibility of our partners to advise and ensure company managers read
+ * and accept the ToS**. The terms have to be accepted only once, before creating a company,
+ * and the Remote API will collect the acceptance timestamp as its confirmation.
+ *
+ * To ensure users read the most recent version of Remote's Terms of Service, their **acceptance
+ * must be done within the last fifteen minutes prior the company creation action**.
+ *
+ * To retrieve this information, partners can provide an element with any text and a description
+ * explaining that by performing that action they are accepting Remote's Term of Service. For
+ * instance, the partner can add a checkbox or a "Create Remote Account" button followed by a
+ * description saying "By creating an account, you agree to
+ * [Remote's Terms of Service](https://remote.com/terms-of-service). Also see Remote's
+ * [Privacy Policy](https://remote.com/privacy-policy)".
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
+ */
+export const postCreateCompany = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateCompanyResponses,
+    PostCreateCompanyErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List company structure nodes
+ *
+ * Shows all the company structure nodes of an employment.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View company structure (`company_structure:read`) | - |
+ *
+ */
+export const getIndexEmploymentCompanyStructureNode = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexEmploymentCompanyStructureNodeData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexEmploymentCompanyStructureNodeResponses,
+    GetIndexEmploymentCompanyStructureNodeErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/company-structure-nodes',
+    ...options,
+  });
+
+/**
+ * Create probation completion letter
+ *
+ * Create a new probation completion letter request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
+ *
+ */
+export const postCreateProbationCompletionLetter = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateProbationCompletionLetterData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateProbationCompletionLetterResponses,
+    PostCreateProbationCompletionLetterErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/probation-completion-letter',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Creates PDF cost estimation of employments
+ *
+ * Creates a PDF cost estimation of employments based on the provided parameters.
+ */
+export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateEstimationPdfData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostCreateEstimationPdfResponses,
+    PostCreateEstimationPdfErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/cost-calculator/estimation-pdf',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Token
+ *
+ * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
+ */
+export const postTokenOAuth2Token2 = <ThrowOnError extends boolean = false>(
+  options?: Options<PostTokenOAuth2Token2Data, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostTokenOAuth2Token2Responses,
+    PostTokenOAuth2Token2Errors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'basic', type: 'http' }],
+    url: '/api/eor/auth/oauth2/token',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Download a document for the employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowEmployeeDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEmployeeDocumentResponses,
+    GetShowEmployeeDocumentErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/documents/{id}',
+    ...options,
+  });
+
+/**
+ * Replay Webhook Events
+ *
+ * Replay webhook events
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
+  options: Options<PostReplayWebhookEventData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostReplayWebhookEventResponses,
+    PostReplayWebhookEventErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/webhook-events/replay',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Trigger a Webhook
+ *
+ * Triggers a callback previously registered for webhooks. Use this endpoint to
+ * emit a webhook for testing in the Sandbox environment. This endpoint will
+ * respond with a 404 outside of the Sandbox environment.
+ *
+ */
+export const postTriggerWebhookCallback = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<PostTriggerWebhookCallbackData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostTriggerWebhookCallbackResponses,
+    PostTriggerWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/webhook-callbacks/trigger',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Show bulk employment job
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowBulkEmploymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowBulkEmploymentResponses,
+    GetShowBulkEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/bulk-employment-jobs/{job_id}',
+    ...options,
+  });
+
+/**
+ * List bulk employment rows
+ *
+ * Returns grouped bulk employment rows, including field-level validation errors in `errors`, row-level failures in `row_errors`, and submission-phase failures in `submission_errors`. If a row passes validation but later fails during Global Payroll activation, that failure is surfaced here after submission rather than in the initial create response.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getIndexBulkEmploymentRow = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexBulkEmploymentRowData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexBulkEmploymentRowResponses,
+    GetIndexBulkEmploymentRowErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/bulk-employment-jobs/{job_id}/rows',
+    ...options,
+  });
+
+/**
+ * Magic links generator
+ *
+ * Generates a magic link for a passwordless authentication.
+ * To create a magic link for a company admin, you need to provide the `user_id` parameter.
+ * To create a magic link for an employee, you need to provide the `employment_id` parameter.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Create magic links (`magic_link:write`) |
+ *
+ */
+export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
+  options: Options<PostGenerateMagicLinkData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostGenerateMagicLinkResponses,
+    PostGenerateMagicLinkErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/magic-link',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show a company
+ *
+ * Given an ID, shows a company.
+ *
+ * If the used access token was issued by the OAuth 2.0 Authorization Code flow,
+ * then only the associated company can be accessed through the endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getShowCompany = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyResponses,
+    GetShowCompanyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}',
+    ...options,
+  });
+
+/**
+ * Update a company
+ *
+ * Given an ID and a request object with new information, updates a company.
+ *
+ * ### Getting a company and its owner to `active` status
+ * If you created a company using the
+ * [create a company endpoint](#tag/Companies/operation/post_create_company) without all the required
+ * request body parameters, you can use this endpoint to provide the missing data. Once the company
+ * and its owner have all the necessary data, both their statuses will be set to `active` and the company
+ * onboarding will be marked as "completed".
+ *
+ * The following constitutes a company with "all the necessary data":
+ * * Complete `address`, with valid `address`, `postal_code`, `country` and `state` parameters (Varies by country. Use the
+ * [show form schema endpoint](#tag/Countries/operation/get_show_form_country) to see which address parameters
+ * are required).
+ * * Company `tax_number` or `registration_number` is not nil
+ * * Company `name` is not nil (already required when creating the company)
+ * * Company has a `desired_currency` in their bank account (already required when creating the company)
+ * * Company has accepted terms of service (already required when creating the company)
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
+ */
+export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateCompany2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateCompany2Responses,
+    PatchUpdateCompany2Errors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/{company_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update a company
+ *
+ * Given an ID and a request object with new information, updates a company.
+ *
+ * ### Getting a company and its owner to `active` status
+ * If you created a company using the
+ * [create a company endpoint](#tag/Companies/operation/post_create_company) without all the required
+ * request body parameters, you can use this endpoint to provide the missing data. Once the company
+ * and its owner have all the necessary data, both their statuses will be set to `active` and the company
+ * onboarding will be marked as "completed".
+ *
+ * The following constitutes a company with "all the necessary data":
+ * * Complete `address`, with valid `address`, `postal_code`, `country` and `state` parameters (Varies by country. Use the
+ * [show form schema endpoint](#tag/Countries/operation/get_show_form_country) to see which address parameters
+ * are required).
+ * * Company `tax_number` or `registration_number` is not nil
+ * * Company `name` is not nil (already required when creating the company)
+ * * Company has a `desired_currency` in their bank account (already required when creating the company)
+ * * Company has accepted terms of service (already required when creating the company)
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
+ *
+ */
+export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateCompanyData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateCompanyResponses,
+    PatchUpdateCompanyErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/{company_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show form schema
+ *
+ * Returns the json schema of the requested company form.
+ * Currently only supports the `address_details` form.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowCompanySchemaData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanySchemaResponses,
+    GetShowCompanySchemaErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/schema',
+    ...options,
+  });
+
+/**
+ * List pricing plan partner templates
+ *
+ * List all pricing plan partner templates.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
+ */
+export const getIndexPricingPlanPartnerTemplate = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexPricingPlanPartnerTemplateData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexPricingPlanPartnerTemplateResponses,
+    GetIndexPricingPlanPartnerTemplateErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/pricing-plan-partner-templates',
+    ...options,
+  });
+
+/**
+ * Show engagement agreement details JSON Schema
+ *
+ * Returns the engagement agreement details JSON Schema for a given country
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
+ */
+export const getShowEngagementAgreementDetailsCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowEngagementAgreementDetailsCountryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEngagementAgreementDetailsCountryResponses,
+    GetShowEngagementAgreementDetailsCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/countries/{country_code}/engagement-agreement-details',
+    ...options,
+  });
+
+/**
+ * Show product prices in the company's desired currency
+ *
+ * list product prices in the company's desired currency.
+ * the endpoint currently only returns the product prices for the EOR monthly product and the contractor products (Standard, Plus and COR).
+ * the product prices are then used to create a pricing plan for the company.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
+ *
+ */
+export const getIndexCompanyProductPrice = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyProductPriceData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexCompanyProductPriceResponses,
+    GetIndexCompanyProductPriceErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/{company_id}/product-prices',
+    ...options,
+  });
+
+/**
+ * Create a new token for a company
+ *
+ * Creates new tokens for a given company
+ */
+export const postCreateTokenCompanyToken = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateTokenCompanyTokenData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateTokenCompanyTokenResponses,
+    PostCreateTokenCompanyTokenErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/companies/{company_id}/create-token',
+    ...options,
+  });
+
+/**
+ * Get Employment Profile
+ *
+ * Gets necessary information to perform the identity verification of an employee.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View identity verification (`identity_verification:read`) | Manage identity verification (`identity_verification:write`) |
+ *
+ */
+export const getGetIdentityVerificationDataIdentityVerification = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetGetIdentityVerificationDataIdentityVerificationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetGetIdentityVerificationDataIdentityVerificationResponses,
+    GetGetIdentityVerificationDataIdentityVerificationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/identity-verification/{employment_id}',
+    ...options,
+  });
+
+/**
+ * Download a receipt by id
+ *
+ * Download a receipt by id.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ */
+export const getDownloadByIdExpenseReceipt = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetDownloadByIdExpenseReceiptData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetDownloadByIdExpenseReceiptResponses,
+    GetDownloadByIdExpenseReceiptErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/{expense_id}/receipts/{receipt_id}',
+    ...options,
+  });
+
+/**
+ * List groups via SCIM v2.0
+ *
+ * Retrieves a list of groups (departments) for the authenticated company following SCIM 2.0 standard
+ */
+export const getListGroupsScim = <ThrowOnError extends boolean = false>(
+  options?: Options<GetListGroupsScimData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetListGroupsScimResponses,
+    GetListGroupsScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/scim/v2/Groups',
+    ...options,
+  });
+
+/**
+ * Show expense
+ *
+ * Shows a single expense record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ */
+export const getShowExpense = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowExpenseData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowExpenseResponses,
+    GetShowExpenseErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/{id}',
+    ...options,
+  });
+
+/**
+ * Update an expense
+ *
+ * Updates an expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
+ */
+export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateExpense2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateExpense2Responses,
+    PatchUpdateExpense2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update an expense
+ *
+ * Updates an expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
+ */
+export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
+  options: Options<PatchUpdateExpenseData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateExpenseResponses,
+    PatchUpdateExpenseErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Creates a Benefit Renewal Request
+ *
+ * Creates a Benefit Renewal Request for a specific Benefit Group.
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postCreateBenefitRenewalRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateBenefitRenewalRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateBenefitRenewalRequestResponses,
+    PostCreateBenefitRenewalRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/benefit-renewal-requests',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List Leave Policies Summary
+ *
+ * List all the data related to time off for a given employment
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getIndexLeavePoliciesSummary = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexLeavePoliciesSummaryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexLeavePoliciesSummaryResponses,
+    GetIndexLeavePoliciesSummaryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/leave-policies/summary/{employment_id}',
+    ...options,
+  });
+
+/**
+ * Cancel Time Off
+ *
+ * Cancel a time off request that was already approved.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCreateCancellation = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateCancellationData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateCancellationResponses,
+    PostCreateCancellationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get Help Center Article
+ *
+ * Get a help center article by its ID
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View help articles (`help_center_article:read`) | - |
+ *
+ */
+export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowHelpCenterArticleData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowHelpCenterArticleResponses,
+    GetShowHelpCenterArticleErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/help-center-articles/{id}',
+    ...options,
+  });
+
+/**
+ * Upload file
+ *
+ * Uploads a file associated with a specified employment.
+ *
+ * Please contact api-support@remote.com to request access to this endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postUploadEmployeeFileFile = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostUploadEmployeeFileFileData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostUploadEmployeeFileFileResponses,
+    PostUploadEmployeeFileFileErrors,
+    ThrowOnError
+  >({
+    ...formDataBodySerializer,
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/documents',
+    ...options,
+    headers: {
+      'Content-Type': null,
+      ...options.headers,
+    },
+  });
+
+/**
+ * Verify Employment Identity
+ *
+ * Endpoint to confirms the employment profile is from the actual employee
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
+ *
+ */
+export const postVerifyIdentityVerification = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostVerifyIdentityVerificationData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostVerifyIdentityVerificationResponses,
+    PostVerifyIdentityVerificationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/identity-verification/{employment_id}/verify',
+    ...options,
+  });
+
+/**
+ * Lists custom fields definitions
+ *
+ * Returns custom fields definitions
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage custom fields (`custom_field:write`) |
+ *
+ */
+export const getIndexEmploymentCustomField = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexEmploymentCustomFieldData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexEmploymentCustomFieldResponses,
+    GetIndexEmploymentCustomFieldErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/custom-fields',
+    ...options,
+  });
+
+/**
+ * Create Custom Field Definition
+ *
+ * Creates a new custom field definition.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View custom fields (`custom_field:read`) | Manage custom fields (`custom_field:write`) |
+ *
+ */
+export const postCreateEmploymentCustomField = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateEmploymentCustomFieldData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateEmploymentCustomFieldResponses,
+    PostCreateEmploymentCustomFieldErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/custom-fields',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Create a Webhook Callback
+ *
+ * Register a callback to be used for webhooks
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateWebhookCallbackData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateWebhookCallbackResponses,
+    PostCreateWebhookCallbackErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/webhook-callbacks',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Approve reserve payment
+ *
+ * Approve the reserve payment for a Contractor of Record employment without the intervention of a Remote admin.
+ *
+ * This moves the employment past the awaiting reserve payment state and triggers all related processing (state transitions, webhooks, notifications).
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postApproveReservePaymentRiskReserve = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostApproveReservePaymentRiskReserveData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostApproveReservePaymentRiskReserveResponses,
+    PostApproveReservePaymentRiskReserveErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/employments/{employment_id}/approve-reserve-payment',
+    ...options,
+  });
+
+/**
+ * Show the SSO Configuration Details
+ *
+ * Shows the SSO Configuration details for the company.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
+ *
+ */
+export const getDetailsSsoConfiguration = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetDetailsSsoConfigurationData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetDetailsSsoConfigurationResponses,
+    GetDetailsSsoConfigurationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sso-configuration/details',
+    ...options,
+  });
+
+/**
+ * Sign a document for a contractor
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postSignContractDocument = <ThrowOnError extends boolean = false>(
+  options: Options<PostSignContractDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostSignContractDocumentResponses,
+    PostSignContractDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List users via SCIM v2.0
+ *
+ * Retrieves a list of users for the authenticated company following SCIM 2.0 standard
+ */
+export const getListUsersScim = <ThrowOnError extends boolean = false>(
+  options?: Options<GetListUsersScimData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetListUsersScimResponses,
+    GetListUsersScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/scim/v2/Users',
+    ...options,
+  });
+
+/**
+ * Show Resignation
+ *
+ * Shows the details of a resignation with status `submitted`.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View resignations (`resignation:read`) | Manage resignations (`resignation:write`) |
+ *
+ */
+export const getShowResignation = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowResignationData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowResignationResponses,
+    GetShowResignationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/resignations/{offboarding_request_id}',
+    ...options,
+  });
+
+/**
+ * Get Billing Document Breakdown
+ *
+ * Get billing document breakdown
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getGetBreakdownBillingDocument = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetGetBreakdownBillingDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetGetBreakdownBillingDocumentResponses,
+    GetGetBreakdownBillingDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/billing-documents/{billing_document_id}/breakdown',
+    ...options,
+  });
+
+/**
+ * Decline a time off cancellation request
+ *
+ * Decline a time off cancellation request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postDeclineCancellationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostDeclineCancellationRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostDeclineCancellationRequestResponses,
+    PostDeclineCancellationRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/decline',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List EOR Payroll Calendar
+ *
+ * List all active payroll calendars for EOR.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
+ *
+ */
+export const getIndexEorPayrollCalendar = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexEorPayrollCalendarData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexEorPayrollCalendarResponses,
+    GetIndexEorPayrollCalendarErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/payroll-calendars',
+    ...options,
+  });
+
+/**
+ * Payroll processing details API resource
+ *
+ * API to retrieve header details of a pay group
+ */
+export const getPayDetailGph = <ThrowOnError extends boolean = false>(
+  options: Options<GetPayDetailGphData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetPayDetailGphResponses,
+    GetPayDetailGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/payDetail',
+    ...options,
+  });
+
+/**
+ * Show form schema
+ *
+ * Returns the json schema of the `contract_amendment` form for a specific employment.
+ * This endpoint requires a company access token, as forms are dependent on certain
+ * properties of companies and their current employments.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
+ *
+ */
+export const getShowContractAmendmentSchema = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowContractAmendmentSchemaData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowContractAmendmentSchemaResponses,
+    GetShowContractAmendmentSchemaErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contract-amendments/schema',
+    ...options,
+  });
+
+/**
+ * Get a mock JSON Schema
+ *
+ * Get a mock JSON Schema for testing purposes
+ */
+export const getShowTestSchema = <ThrowOnError extends boolean = false>(
+  options?: Options<GetShowTestSchemaData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetShowTestSchemaResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/test-schema',
+    ...options,
+  });
+
+/**
+ * Update Time Off as Employee
+ *
+ * Updates a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const patchUpdateEmployeeTimeoff2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateEmployeeTimeoff2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateEmployeeTimeoff2Responses,
+    PatchUpdateEmployeeTimeoff2Errors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update Time Off as Employee
+ *
+ * Updates a Time Off record as Employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const patchUpdateEmployeeTimeoff = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateEmployeeTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateEmployeeTimeoffResponses,
+    PatchUpdateEmployeeTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/timeoff/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get group by ID via SCIM v2.0
+ *
+ * Retrieves a single group (department) for the authenticated company by group ID
+ */
+export const getGetGroupScim = <ThrowOnError extends boolean = false>(
+  options: Options<GetGetGroupScimData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetGetGroupScimResponses,
+    GetGetGroupScimErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/scim/v2/Groups/{id}',
+    ...options,
+  });
+
+/**
+ * Show legal entity administrative details form schema
+ *
+ * Returns the json schema of a supported form. Possible form names are:
+ * ```
+ * - administrative_details
+ * ```
+ *
+ * Most forms require a company access token, as they are dependent on certain
+ * properties of companies and their current employments.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
+ */
+export const getShowLegalEntityFormCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowLegalEntityFormCountryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowLegalEntityFormCountryResponses,
+    GetShowLegalEntityFormCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/countries/{country_code}/legal_entity_forms/{form}',
+    ...options,
+  });
+
+/**
+ * Get employment contract pending changes
+ *
+ * Get all the pending changes (waiting for aproval or signature) for the employment contract.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
+ *
+ */
+export const getPendingChangesEmploymentContract = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetPendingChangesEmploymentContractData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetPendingChangesEmploymentContractResponses,
+    GetPendingChangesEmploymentContractErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employment-contracts/{employment_id}/pending-changes',
+    ...options,
+  });
+
+/**
+ * Report SDK errors
+ *
+ * Receives error telemetry from the frontend SDK.
+ * Errors are logged to observability backend for monitoring and debugging.
+ *
+ */
+export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
+  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostReportErrorsTelemetryResponses,
+    PostReportErrorsTelemetryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sdk/telemetry-errors',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get Company Compliance Profile
+ *
+ * Returns the KYB and credit risk status for the company's default legal entity.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getShowCompanyComplianceProfile = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowCompanyComplianceProfileData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyComplianceProfileResponses,
+    GetShowCompanyComplianceProfileErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/compliance-profile',
+    ...options,
+  });
+
+/**
+ * Show payslip
+ *
+ * Given an ID, shows a payslip.
+ *
+ * Please contact api-support@remote.com to request access to this endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
+ */
+export const getShowPayslip = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowPayslipData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowPayslipResponses,
+    GetShowPayslipErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payslips/{id}',
+    ...options,
+  });
+
+/**
+ * Approve a time off cancellation request
+ *
+ * Approve a time off cancellation request.
+ * In order to approve a time off cancellation request, the timeoff status must be `cancel_requested`.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postApproveCancellationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostApproveCancellationRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostApproveCancellationRequestResponses,
+    PostApproveCancellationRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/approve',
+    ...options,
+  });
+
+/**
+ * List Webhook Events
+ *
+ * List all webhook events
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
+ *
+ */
+export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexWebhookEventData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexWebhookEventResponses,
+    GetIndexWebhookEventErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/webhook-events',
+    ...options,
+  });
+
+/**
+ * List Time Off Types
+ *
+ * Lists all time off types that can be used for the `timeoff_type` parameter.
+ *
+ * **Backward compatibility:** Calling this endpoint without the `type` query parameter returns the same response as before (time off types for full-time employments). Existing integrations do not need to change.
+ *
+ * Optionally, pass `type=contractor` to get time off types for contractor employments, or `type=full_time` for full-time employments (same as omitting the parameter).
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<GetTimeoffTypesTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetTimeoffTypesTimeoffResponses,
+    GetTimeoffTypesTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/types',
+    ...options,
+  });
+
+/**
+ * List Company Legal Entities
+ *
+ * Lists all active legal entities for the authorized company specified in the request.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getIndexCompanyLegalEntities = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexCompanyLegalEntitiesData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexCompanyLegalEntitiesResponses,
+    GetIndexCompanyLegalEntitiesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/legal-entities',
+    ...options,
+  });
+
+/**
+ * Create contract eligibility
+ *
+ * Create contract eligibility for an employment.
+ *
+ * This will create a new contract eligibility for the employment.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage contract eligibility (`contract_eligibility:write`) |
+ *
+ */
+export const postCreateContractEligibility = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateContractEligibilityData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateContractEligibilityResponses,
+    PostCreateContractEligibilityErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/contract-eligibility',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List all currencies for the contractor
+ *
+ * The currencies are listed in the following order:
+ * 1. billing currency of the company
+ * 2. currencies of contractor’s existing withdrawal methods
+ * 3. currency of the contractor’s country
+ * 4. the rest, alphabetical.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getIndexContractorCurrency = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetIndexContractorCurrencyData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexContractorCurrencyResponses,
+    GetIndexContractorCurrencyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-currencies',
+    ...options,
+  });
+
+/**
+ * List payslips
+ *
+ * Lists all payslips belonging to a company. Can also filter for a single employment belonging
+ * to that company.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
+ */
+export const getIndexPayslip = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexPayslipData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexPayslipResponses,
+    GetIndexPayslipErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payslips',
+    ...options,
+  });
+
+/**
+ * Create employment
+ *
+ * Creates an employment without provisional_start_date validation.
+ *
+ * This endpoint is only available in Sandbox and allows creating employments which
+ * `provisional_start_date` is in the past. This is especially helpful for:
+ * * Testing the Timeoff Balance endpoints
+ * * Testing the Offboarding endpoints
+ * * Testing features around probation periods
+ *
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * For creating an employment's parameters outside of testing purposes, use [this
+ * Employment create endpoint](#operation/post_create_employment)
+ *
+ */
+export const postCreateEmployment = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateEmploymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateEmploymentResponses,
+    PostCreateEmploymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/employments',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show Company Payroll Runs
+ *
+ * Given an ID, shows a payroll run.
+ * `employee_details` field is deprecated in favour of the `employee_details` endpoint and will be removed in the future.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
+ */
+export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowPayrollRunData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowPayrollRunResponses,
+    GetShowPayrollRunErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/payroll-runs/{payroll_run_id}',
+    ...options,
+  });
+
+/**
+ * Show Offboarding
+ *
+ * Shows an Offboarding request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
+ */
+export const getShowOffboarding = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowOffboardingData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowOffboardingResponses,
+    GetShowOffboardingErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/offboardings/{id}',
+    ...options,
+  });
+
+/**
+ * List expenses
+ *
+ * Lists all expenses records
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ */
+export const getIndexExpense = <ThrowOnError extends boolean = false>(
+  options: Options<GetIndexExpenseData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetIndexExpenseResponses,
+    GetIndexExpenseErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses',
+    ...options,
+  });
+
+/**
+ * Create expense
+ *
+ * Creates an **approved** expense
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
+ */
+export const postCreateExpense = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateExpenseData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateExpenseResponses,
+    PostCreateExpenseErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/expenses',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Invite employment
+ *
+ * Invite an employment to start the self-enrollment.
+ *
+ * Requirements for the invitation to succeed:
+ *
+ * * Employment needs to have the following JSON Schema forms filled: `contract_details` and `pricing_plan_details`
+ * * `provisional_start_date` must consider the minimum onboarding time of the employment's country
+ *
+ * If there are validations errors, they are returned with a Conflict HTTP Status (409) and a descriptive message.
+ * HTTP Status OK (200) is returned in case of success.
+ *
+ * In case of the following error message:
+ * `"Please reselect benefits - the previous selection is no longer available"`
+ * it means that the benefit options have been updated and the employment's benefits are no longer compliant with the new schema.
+ *
+ * In this case, reselect benefits by updating `contract_details` JSON Schema form.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postInviteEmploymentInvitation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostInviteEmploymentInvitationData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostInviteEmploymentInvitationResponses,
+    PostInviteEmploymentInvitationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/invite',
+    ...options,
+  });
+
+/**
+ * Create Probation Extension
+ *
+ * Create a probation extension request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
+ *
+ */
+export const postCreateProbationExtension = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostCreateProbationExtensionData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateProbationExtensionResponses,
+    PostCreateProbationExtensionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/probation-extensions',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Approve Contract Amendment
+ *
+ * Approves a contract amendment request without the intervention of a Remote admin.
+ * Approvals done via this endpoint are effective immediately,
+ * regardless of the effective date entered on the contract amendment creation.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const putApproveContractAmendment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutApproveContractAmendmentData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutApproveContractAmendmentResponses,
+    PutApproveContractAmendmentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
+    ...options,
+  });
+
+/**
+ * Get Onboarding Reserves Status for Employment
+ *
+ * Returns the onboarding reserves status for a specific employment.
+ *
+ * The status is the same as the credit risk status but takes the onboarding reserves policies into account.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowCompanyEmploymentOnboardingReservesStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetShowCompanyEmploymentOnboardingReservesStatusData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetShowCompanyEmploymentOnboardingReservesStatusResponses,
+    GetShowCompanyEmploymentOnboardingReservesStatusErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
+    ...options,
+  });
+
+/**
+ * Show Contractor Invoice
+ *
+ * Shows a single Contractor Invoice record.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowContractorInvoiceData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowContractorInvoiceResponses,
+    GetShowContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoices/{id}',
+    ...options,
+  });
+
+/**
+ * Payroll Feature API resource
+ *
+ * API to retrieve feature properties from the vendor system
+ */
+export const getPayProcessingFeatureGph = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetPayProcessingFeatureGphData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetPayProcessingFeatureGphResponses,
+    GetPayProcessingFeatureGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/payProcessingFeature',
+    ...options,
+  });
+
+/**
+ * Payroll processing progress API resource
+ *
+ * API to retrieve the processing stages of a pay group
+ */
+export const getPayProgressGph = <ThrowOnError extends boolean = false>(
+  options: Options<GetPayProgressGphData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetPayProgressGphResponses,
+    GetPayProgressGphErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/wd/gph/payProgress',
+    ...options,
+  });
+
+/**
+ * List company supported currencies
+ *
+ * List company supported currencies
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View company currencies (`company_currencies:read`) | - |
+ *
+ */
+export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexCompanyCurrencyData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexCompanyCurrencyResponses,
+    GetIndexCompanyCurrencyErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/company-currencies',
+    ...options,
+  });
+
+/**
+ * Get a employment benefit offers JSON schema
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
+ *
+ */
+export const getShowSchema = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowSchemaData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowSchemaResponses,
+    GetShowSchemaErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/employments/{employment_id}/benefit-offers/schema',
+    ...options,
+  });
+
+/**
+ * List Contractor Invoice Schedules
+ *
+ * Lists Contractor Invoice Schedule records.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getIndexScheduledContractorInvoice = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetIndexScheduledContractorInvoiceData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexScheduledContractorInvoiceResponses,
+    GetIndexScheduledContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoice-schedules',
+    ...options,
+  });
+
+/**
+ * Create Contractor Invoice Schedules
+ *
+ * Creates many invoice schedules records.
+ * It's supposed to return two lists: one containing created records, and another one containing the schedules that failed to be inserted.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
+ */
+export const postBulkCreateScheduledContractorInvoice = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostBulkCreateScheduledContractorInvoiceData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostBulkCreateScheduledContractorInvoiceResponses,
+    PostBulkCreateScheduledContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoice-schedules',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show work authorization request
+ *
+ * Show a single work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
+ *
+ */
+export const getShowWorkAuthorizationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowWorkAuthorizationRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowWorkAuthorizationRequestResponses,
+    GetShowWorkAuthorizationRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/work-authorization-requests/{id}',
+    ...options,
+  });
+
+/**
+ * Update work authorization request
+ *
+ * Updates a work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
+ *
+ */
+export const patchUpdateWorkAuthorizationRequest2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateWorkAuthorizationRequest2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateWorkAuthorizationRequest2Responses,
+    PatchUpdateWorkAuthorizationRequest2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/work-authorization-requests/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update work authorization request
+ *
+ * Updates a work authorization request.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
+ *
+ */
+export const patchUpdateWorkAuthorizationRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateWorkAuthorizationRequestData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateWorkAuthorizationRequestResponses,
+    PatchUpdateWorkAuthorizationRequestErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/work-authorization-requests/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Decline Time Off
+ *
+ * Decline a time off request. Please note that only time off requests on the `requested` status can be declined.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCreateDecline = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateDeclineData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateDeclineResponses,
+    PostCreateDeclineErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/timeoff/{timeoff_id}/decline',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get eligibility questionnaire schema
+ *
+ * Returns the JSON schema for the eligibility questionnaire by type.
+ *
+ * The schema defines the structure and validation rules for the questionnaire responses.
+ * Supports versioning to allow for schema evolution while maintaining backwards compatibility.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowEligibilityQuestionnaire = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowEligibilityQuestionnaireData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEligibilityQuestionnaireResponses,
+    GetShowEligibilityQuestionnaireErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/schemas/eligibility-questionnaire',
+    ...options,
+  });
+
+/**
+ * Token
+ *
+ * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
+ */
+export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
+  options?: Options<PostTokenOAuth2TokenData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostTokenOAuth2TokenResponses,
+    PostTokenOAuth2TokenErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'basic', type: 'http' }],
+    url: '/api/eor/oauth2/token',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Delete contractor of record subscription intent
+ *
+ * Deletes Contractor of Record subscription intent.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const deleteDeleteContractorCorSubscriptionSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    DeleteDeleteContractorCorSubscriptionSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).delete<
+    DeleteDeleteContractorCorSubscriptionSubscriptionResponses,
+    DeleteDeleteContractorCorSubscriptionSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
+    ...options,
+  });
+
+/**
+ * Create contractor of record subscription intent
+ *
+ * Assigns Contractor of Record subscription in pending state to employment.
+ * Once risk analysis is performed, subscription may start upon contract signing,
+ * or might be denied.
+ *
+ * Requires a non-blocking eligibility questionnaire to be submitted before creating the subscription intent.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postManageContractorCorSubscriptionSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostManageContractorCorSubscriptionSubscriptionData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostManageContractorCorSubscriptionSubscriptionResponses,
+    PostManageContractorCorSubscriptionSubscriptionErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
     ...options,
   });
 
@@ -3521,92 +6724,7 @@ export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contract-amendments/{id}',
-    ...options,
-  });
-
-/**
- * List Company Managers
- *
- * List all company managers of an integration. If filtered by the company_id param,
- * it lists only company managers belonging to the specified company.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
- *
- */
-export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCompanyManagerData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexCompanyManagerResponses,
-    GetIndexCompanyManagerErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/company-managers',
-    ...options,
-  });
-
-/**
- * Create and invite a Company Manager
- *
- * Create a Company Manager and sends the invitation email for signing in to the Remote Platform.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
- *
- */
-export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCompanyManagerData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateCompanyManagerResponses,
-    PostCreateCompanyManagerErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/company-managers',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List countries for Cost Calculator
- *
- * Lists active and processing countries
- */
-export const getIndexCountry = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexCountryData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexCountryResponses,
-    unknown,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/cost-calculator/countries',
+    url: '/api/eor/v1/contract-amendments/{id}',
     ...options,
   });
 
@@ -3637,8 +6755,35 @@ export const postDeclineIdentityVerification = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/identity-verification/{employment_id}/decline',
+    url: '/api/eor/v1/identity-verification/{employment_id}/decline',
     ...options,
+  });
+
+/**
+ * Creates a CSV cost estimation of employments
+ *
+ * Creates CSV cost estimation of employments
+ */
+export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
+  options?: Options<PostCreateEstimationCsvData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostCreateEstimationCsvResponses,
+    PostCreateEstimationCsvErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/cost-calculator/estimation-csv',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 
 /**
@@ -3665,67 +6810,86 @@ export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/billing-documents',
+    url: '/api/eor/v1/billing-documents',
     ...options,
   });
 
 /**
- * Delete a Webhook Callback
+ * Show Billing Document
  *
- * Delete a callback previously registered for webhooks
+ * Shows a billing document details.
+ *
+ * Please contact api-support@remote.com to request access to this endpoint.
+ *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const deleteDeleteWebhookCallback = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<DeleteDeleteWebhookCallbackData, ThrowOnError>,
+export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowBillingDocumentData, ThrowOnError>,
 ) =>
-  (options.client ?? client).delete<
-    DeleteDeleteWebhookCallbackResponses,
-    DeleteDeleteWebhookCallbackErrors,
+  (options.client ?? client).get<
+    GetShowBillingDocumentResponses,
+    GetShowBillingDocumentErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/webhook-callbacks/{id}',
+    url: '/api/eor/v1/billing-documents/{billing_document_id}',
     ...options,
   });
 
 /**
- * Update a Webhook Callback
- *
- * Update a callback previously registered for webhooks
+ * Indexes all the documents for the employee
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const patchUpdateWebhookCallback = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateWebhookCallbackData, ThrowOnError>,
+export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexEmployeeDocumentData, ThrowOnError>,
 ) =>
-  (options.client ?? client).patch<
-    PatchUpdateWebhookCallbackResponses,
-    PatchUpdateWebhookCallbackErrors,
+  (options?.client ?? client).get<
+    GetIndexEmployeeDocumentResponses,
+    GetIndexEmployeeDocumentErrors,
     ThrowOnError
   >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/webhook-callbacks/{id}',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/documents',
+    ...options,
+  });
+
+/**
+ * Create a Pending Time Off
+ *
+ * Creates a pending Time Off record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateEmployeeTimeoffData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateEmployeeTimeoffResponses,
+    PostCreateEmployeeTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/eor/v1/employee/timeoff',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3777,7 +6941,7 @@ export const putUpdateEmploymentPersonalDetails = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}/personal_details',
+    url: '/api/eor/v1/employments/{employment_id}/personal_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3786,183 +6950,60 @@ export const putUpdateEmploymentPersonalDetails = <
   });
 
 /**
- * List travel letter requests
+ * Show Probation Extension
  *
- * List travel letter requests.
+ * Shows a Probation Extension Request.
  *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | - | View travel letters (`travel_letter:read`) | - |
- *
- */
-export const getIndexTravelLetterRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexTravelLetterRequestData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexTravelLetterRequestResponses,
-    GetIndexTravelLetterRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/travel-letter-requests',
-    ...options,
-  });
-
-/**
- * List Benefit Renewal Requests
- *
- * List Benefit Renewal Requests for each country.
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
+ * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
  *
  */
-export const getIndexBenefitRenewalRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexBenefitRenewalRequestData, ThrowOnError>,
+export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowProbationExtensionData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBenefitRenewalRequestResponses,
-    GetIndexBenefitRenewalRequestErrors,
+    GetShowProbationExtensionResponses,
+    GetShowProbationExtensionErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/benefit-renewal-requests',
+    url: '/api/eor/v1/probation-extensions/{id}',
     ...options,
   });
 
 /**
- * Create a Webhook Callback
+ * Download file
  *
- * Register a callback to be used for webhooks
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
- *
- */
-export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateWebhookCallbackData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateWebhookCallbackResponses,
-    PostCreateWebhookCallbackErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/webhook-callbacks',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Approve timesheet
- *
- * Approves the given timesheet.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
- *
- */
-export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<PostApproveTimesheetData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostApproveTimesheetResponses,
-    PostApproveTimesheetErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timesheets/{timesheet_id}/approve',
-    ...options,
-  });
-
-/**
- * Show payslip
- *
- * Given an ID, shows a payslip.
- *
- * Please contact api-support@remote.com to request access to this endpoint.
+ * Downloads a file.
  *
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getShowPayslip = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowPayslipData, ThrowOnError>,
+export const getShowFile = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowFileData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowPayslipResponses,
-    GetShowPayslipErrors,
+    GetShowFileResponses,
+    GetShowFileErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/payslips/{id}',
-    ...options,
-  });
-
-/**
- * List Leave Policies Summary
- *
- * List all the data related to time off for a given employment
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const getIndexLeavePoliciesSummary = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexLeavePoliciesSummaryData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexLeavePoliciesSummaryResponses,
-    GetIndexLeavePoliciesSummaryErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/leave-policies/summary/{employment_id}',
+    url: '/api/eor/v1/files/{id}',
     ...options,
   });
 
@@ -3991,7 +7032,7 @@ export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/company-departments',
+    url: '/api/eor/v1/company-departments',
     ...options,
   });
 
@@ -4021,7 +7062,7 @@ export const postCreateCompanyDepartment = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/company-departments',
+    url: '/api/eor/v1/company-departments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4030,167 +7071,33 @@ export const postCreateCompanyDepartment = <
   });
 
 /**
- * Decline a time off cancellation request
+ * Get Employee Details for a Payroll Run
  *
- * Decline a time off cancellation request.
- *
+ * Gets the employee details for a payroll run
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
  *
  */
-export const postDeclineCancellationRequest = <
+export const getEmployeeDetailsPayrollRun = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostDeclineCancellationRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostDeclineCancellationRequestResponses,
-    PostDeclineCancellationRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get a employment benefit offers JSON schema
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
- *
- */
-export const getShowSchema = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowSchemaData, ThrowOnError>,
+  options: Options<GetEmployeeDetailsPayrollRunData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowSchemaResponses,
-    GetShowSchemaErrors,
+    GetEmployeeDetailsPayrollRunResponses,
+    GetEmployeeDetailsPayrollRunErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}/benefit-offers/schema',
+    url: '/api/eor/v1/payroll-runs/{payroll_run_id}/employee-details',
     ...options,
-  });
-
-/**
- * Submit eligibility questionnaire
- *
- * Submits an eligibility questionnaire for a contractor employment.
- *
- * The questionnaire determines if the contractor is eligible for certain products or features.
- * The responses are validated against the JSON schema for the questionnaire type.
- *
- * **Requirements:**
- * - Employment must be of type `contractor`
- * - Employment must be in `created` status
- * - Responses must conform to the questionnaire JSON schema
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postCreateEligibilityQuestionnaire = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateEligibilityQuestionnaireData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateEligibilityQuestionnaireResponses,
-    PostCreateEligibilityQuestionnaireErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/eligibility-questionnaire',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List timesheets
- *
- * Lists all timesheets.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
- *
- */
-export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexTimesheetData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexTimesheetResponses,
-    GetIndexTimesheetErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timesheets',
-    ...options,
-  });
-
-/**
- * Create a legal entity
- *
- * Create a new legal entity for a company in a given country, with KYB automatically passed.
- *
- * The entity is created with active status and can be set as the company's default
- * using the reassign default entity endpoint.
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
- *
- */
-export const postCreateLegalEntityCompany = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateLegalEntityCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateLegalEntityCompanyResponses,
-    PostCreateLegalEntityCompanyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/companies/{company_id}/legal-entities',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -4235,7 +7142,7 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}',
+    url: '/api/eor/v1/employments/{employment_id}',
     ...options,
   });
 
@@ -4306,7 +7213,7 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}',
+    url: '/api/eor/v1/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4381,1572 +7288,12 @@ export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}',
+    url: '/api/eor/v1/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
     },
-  });
-
-/**
- * List users via SCIM v2.0
- *
- * Retrieves a list of users for the authenticated company following SCIM 2.0 standard
- */
-export const getListUsersScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListUsersScimData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetListUsersScimResponses,
-    GetListUsersScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/scim/v2/Users',
-    ...options,
-  });
-
-/**
- * List Company Payroll Calendar
- *
- * List all payroll calendars for the company within the requested cycle.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
- *
- */
-export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexPayrollCalendarData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexPayrollCalendarResponses,
-    GetIndexPayrollCalendarErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payroll-calendars/{cycle}',
-    ...options,
-  });
-
-/**
- * Show Legal Entity Administrative details
- *
- * Show administrative details of legal entity for the authorized company specified in the request.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getShowAdministrativeDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowAdministrativeDetailsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowAdministrativeDetailsResponses,
-    GetShowAdministrativeDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
-    ...options,
-  });
-
-/**
- * Update Legal Entity Administrative details
- *
- * Update administrative details of legal entity for the authorized company specified in the request.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
- *
- */
-export const putUpdateAdministrativeDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PutUpdateAdministrativeDetailsData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PutUpdateAdministrativeDetailsResponses,
-    PutUpdateAdministrativeDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show region fields
- *
- * Returns required fields JSON Schema for a given region. These are required in order to calculate
- * the cost of employment for the region. These fields are based on employer contributions that are associated
- * with the region or any of it's parent regions.
- */
-export const getShowRegionField = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowRegionFieldData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowRegionFieldResponses,
-    GetShowRegionFieldErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/cost-calculator/regions/{slug}/fields',
-    ...options,
-  });
-
-/**
- * Show Offboarding
- *
- * Shows an Offboarding request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
- *
- */
-export const getShowOffboarding = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowOffboardingData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowOffboardingResponses,
-    GetShowOffboardingErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/offboardings/{id}',
-    ...options,
-  });
-
-/**
- * Get Employee Details for a Payroll Run
- *
- * Gets the employee details for a payroll run
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
- *
- */
-export const getEmployeeDetailsPayrollRun = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetEmployeeDetailsPayrollRunData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetEmployeeDetailsPayrollRunResponses,
-    GetEmployeeDetailsPayrollRunErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
-    ...options,
-  });
-
-/**
- * List bulk employment rows
- *
- * Returns grouped bulk employment rows, including field-level validation errors in `errors`, row-level failures in `row_errors`, and submission-phase failures in `submission_errors`. If a row passes validation but later fails during Global Payroll activation, that failure is surfaced here after submission rather than in the initial create response.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getIndexBulkEmploymentRow = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexBulkEmploymentRowData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexBulkEmploymentRowResponses,
-    GetIndexBulkEmploymentRowErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/bulk-employment-jobs/{job_id}/rows',
-    ...options,
-  });
-
-/**
- * Create employment
- *
- * Creates an employment without provisional_start_date validation.
- *
- * This endpoint is only available in Sandbox and allows creating employments which
- * `provisional_start_date` is in the past. This is especially helpful for:
- * * Testing the Timeoff Balance endpoints
- * * Testing the Offboarding endpoints
- * * Testing features around probation periods
- *
- * This endpoint will respond with a 404 outside of the Sandbox environment.
- *
- * For creating an employment's parameters outside of testing purposes, use [this
- * Employment create endpoint](#operation/post_create_employment)
- *
- */
-export const postCreateEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmploymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateEmploymentResponses,
-    PostCreateEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/employments',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Create contract eligibility
- *
- * Create contract eligibility for an employment.
- *
- * This will create a new contract eligibility for the employment.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage contract eligibility (`contract_eligibility:write`) |
- *
- */
-export const postCreateContractEligibility = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateContractEligibilityData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateContractEligibilityResponses,
-    PostCreateContractEligibilityErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/contract-eligibility',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List countries
- *
- * Returns a list of all countries that are supported by Remote API alphabetically ordered.
- * The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
- * The countries present in the list are the ones where creating a company is allowed.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
- *
- */
-export const getSupportedCountry = <ThrowOnError extends boolean = false>(
-  options: Options<GetSupportedCountryData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetSupportedCountryResponses,
-    GetSupportedCountryErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/countries',
-    ...options,
-  });
-
-/**
- * Create a new token for a company
- *
- * Creates new tokens for a given company
- */
-export const postCreateTokenCompanyToken = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateTokenCompanyTokenData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateTokenCompanyTokenResponses,
-    PostCreateTokenCompanyTokenErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies/{company_id}/create-token',
-    ...options,
-  });
-
-/**
- * List Company Legal Entities
- *
- * Lists all active legal entities for the authorized company specified in the request.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getIndexCompanyLegalEntities = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexCompanyLegalEntitiesData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexCompanyLegalEntitiesResponses,
-    GetIndexCompanyLegalEntitiesErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities',
-    ...options,
-  });
-
-/**
- * Complete onboarding
- *
- * Completes the employee onboarding. When all tasks are completed, the employee is marked as in `review` status
- *
- * @deprecated
- */
-export const postCompleteOnboardingEmployment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCompleteOnboardingEmploymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCompleteOnboardingEmploymentResponses,
-    PostCompleteOnboardingEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/ready',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List Leave Policies Details
- *
- * Describe the leave policies (custom or not) for a given employment
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const getIndexLeavePoliciesDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexLeavePoliciesDetailsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexLeavePoliciesDetailsResponses,
-    GetIndexLeavePoliciesDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/leave-policies/details/{employment_id}',
-    ...options,
-  });
-
-/**
- * List Time Off Types
- *
- * Lists all time off types that can be used for the `timeoff_type` parameter.
- *
- * **Backward compatibility:** Calling this endpoint without the `type` query parameter returns the same response as before (time off types for full-time employments). Existing integrations do not need to change.
- *
- * Optionally, pass `type=contractor` to get time off types for contractor employments, or `type=full_time` for full-time employments (same as omitting the parameter).
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetTimeoffTypesTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetTimeoffTypesTimeoffResponses,
-    GetTimeoffTypesTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/types',
-    ...options,
-  });
-
-/**
- * Creates a CSV cost estimation of employments
- *
- * Creates CSV cost estimation of employments
- */
-export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateEstimationCsvData, ThrowOnError>,
-) =>
-  (options?.client ?? client).post<
-    PostCreateEstimationCsvResponses,
-    PostCreateEstimationCsvErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/cost-calculator/estimation-csv',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-/**
- * List groups via SCIM v2.0
- *
- * Retrieves a list of groups (departments) for the authenticated company following SCIM 2.0 standard
- */
-export const getListGroupsScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListGroupsScimData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetListGroupsScimResponses,
-    GetListGroupsScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/scim/v2/Groups',
-    ...options,
-  });
-
-/**
- * Create a contract document for a contractor
- *
- * Create a contract document for a contractor.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
- *
- */
-export const postCreateContractDocument = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateContractDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateContractDocumentResponses,
-    PostCreateContractDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contract-documents',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Trigger a Webhook
- *
- * Triggers a callback previously registered for webhooks. Use this endpoint to
- * emit a webhook for testing in the Sandbox environment. This endpoint will
- * respond with a 404 outside of the Sandbox environment.
- *
- */
-export const postTriggerWebhookCallback = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<PostTriggerWebhookCallbackData, ThrowOnError>,
-) =>
-  (options?.client ?? client).post<
-    PostTriggerWebhookCallbackResponses,
-    PostTriggerWebhookCallbackErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/webhook-callbacks/trigger',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-/**
- * Download payslip in the PDF format
- *
- * Given a Payslip ID, downloads a payslip.
- * It is important to note that each country has a different payslip format and they are not authored by Remote.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
- *
- */
-export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
-  options: Options<GetDownloadPayslipPayslipData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetDownloadPayslipPayslipResponses,
-    GetDownloadPayslipPayslipErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payslips/{payslip_id}/pdf',
-    ...options,
-  });
-
-/**
- * Convert currency using dynamic rates
- *
- * Convert currency using the rates Remote applies during employment creation and invoicing.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
- *
- */
-export const postConvertWithSpreadCurrencyConverter = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostConvertWithSpreadCurrencyConverterData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostConvertWithSpreadCurrencyConverterResponses,
-    PostConvertWithSpreadCurrencyConverterErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/currency-converter/effective',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show Time Off
- *
- * Shows a single Time Off record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const getShowTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowTimeoffResponses,
-    GetShowTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{id}',
-    ...options,
-  });
-
-/**
- * Update Time Off
- *
- * Updates a Time Off record.
- * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
- * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateTimeoff2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateTimeoff2Responses,
-    PatchUpdateTimeoff2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update Time Off
- *
- * Updates a Time Off record.
- * Warning: Updating the status of a time off through this endpoint is deprecated and will be removed on January 13, 2025.
- * To approve or cancel an approved time off, use the `/approve` and `/cancel` endpoints instead.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateTimeoffResponses,
-    PatchUpdateTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Decline Time Off
- *
- * Decline a time off request. Please note that only time off requests on the `requested` status can be declined.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postCreateDecline = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateDeclineData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateDeclineResponses,
-    PostCreateDeclineErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{timeoff_id}/decline',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Automatable Contract Amendment
- *
- * Check if a contract amendment request is automatable.
- * If the contract amendment request is automatable, then after submission, it will instantly amend the employee's contract
- * and send them an updated document.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Contract Amendments](#tag/Contract-Amendments) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
- *
- */
-export const postAutomatableContractAmendment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostAutomatableContractAmendmentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostAutomatableContractAmendmentResponses,
-    PostAutomatableContractAmendmentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contract-amendments/automatable',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Approve Time Off
- *
- * Approve a time off request.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postCreateApproval = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateApprovalData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateApprovalResponses,
-    PostCreateApprovalErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{timeoff_id}/approve',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List employment files
- *
- * Lists files associated with a specific employment.
- *
- * Supports filtering by file type and sub_type.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
- *
- */
-export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentFileData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentFileResponses,
-    GetIndexEmploymentFileErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/files',
-    ...options,
-  });
-
-/**
- * Lists custom fields definitions
- *
- * Returns custom fields definitions
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage custom fields (`custom_field:write`) |
- *
- */
-export const getIndexEmploymentCustomField = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexEmploymentCustomFieldData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexEmploymentCustomFieldResponses,
-    GetIndexEmploymentCustomFieldErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/custom-fields',
-    ...options,
-  });
-
-/**
- * Create Custom Field Definition
- *
- * Creates a new custom field definition.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View custom fields (`custom_field:read`) | Manage custom fields (`custom_field:write`) |
- *
- */
-export const postCreateEmploymentCustomField = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateEmploymentCustomFieldData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateEmploymentCustomFieldResponses,
-    PostCreateEmploymentCustomFieldErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/custom-fields',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List company supported currencies
- *
- * List company supported currencies
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View company currencies (`company_currencies:read`) | - |
- *
- */
-export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexCompanyCurrencyData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexCompanyCurrencyResponses,
-    GetIndexCompanyCurrencyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/company-currencies',
-    ...options,
-  });
-
-/**
- * Update employment
- *
- * Updates an employment. Use this endpoint to:
- * - modify employment states for testing
- * - Backdate employment start dates
- *
- * This endpoint will respond with a 404 outside of the Sandbox environment.
- *
- * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
- *
- */
-export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmployment4Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateEmployment4Responses,
-    PatchUpdateEmployment4Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/employments/{employment_id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update employment
- *
- * Updates an employment. Use this endpoint to:
- * - modify employment states for testing
- * - Backdate employment start dates
- *
- * This endpoint will respond with a 404 outside of the Sandbox environment.
- *
- * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
- *
- */
-export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmployment3Data, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateEmployment3Responses,
-    PatchUpdateEmployment3Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/employments/{employment_id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get employment contract pending changes
- *
- * Get all the pending changes (waiting for aproval or signature) for the employment contract.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
- *
- */
-export const getPendingChangesEmploymentContract = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetPendingChangesEmploymentContractData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetPendingChangesEmploymentContractResponses,
-    GetPendingChangesEmploymentContractErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employment-contracts/{employment_id}/pending-changes',
-    ...options,
-  });
-
-/**
- * Show Resignation
- *
- * Shows the details of a resignation with status `submitted`.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View resignations (`resignation:read`) | Manage resignations (`resignation:write`) |
- *
- */
-export const getShowResignation = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowResignationData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowResignationResponses,
-    GetShowResignationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/resignations/{offboarding_request_id}',
-    ...options,
-  });
-
-/**
- * Upload file
- *
- * Uploads a file associated with a specified employment.
- *
- * Please contact api-support@remote.com to request access to this endpoint.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
- *
- */
-export const postUploadEmployeeFileFile = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostUploadEmployeeFileFileData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostUploadEmployeeFileFileResponses,
-    PostUploadEmployeeFileFileErrors,
-    ThrowOnError
-  >({
-    ...formDataBodySerializer,
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/documents',
-    ...options,
-    headers: {
-      'Content-Type': null,
-      ...options.headers,
-    },
-  });
-
-/**
- * Invite employment
- *
- * Invite an employment to start the self-enrollment.
- *
- * Requirements for the invitation to succeed:
- *
- * * Employment needs to have the following JSON Schema forms filled: `contract_details` and `pricing_plan_details`
- * * `provisional_start_date` must consider the minimum onboarding time of the employment's country
- *
- * If there are validations errors, they are returned with a Conflict HTTP Status (409) and a descriptive message.
- * HTTP Status OK (200) is returned in case of success.
- *
- * In case of the following error message:
- * `"Please reselect benefits - the previous selection is no longer available"`
- * it means that the benefit options have been updated and the employment's benefits are no longer compliant with the new schema.
- *
- * In this case, reselect benefits by updating `contract_details` JSON Schema form.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postInviteEmploymentInvitation = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostInviteEmploymentInvitationData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostInviteEmploymentInvitationResponses,
-    PostInviteEmploymentInvitationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/invite',
-    ...options,
-  });
-
-/**
- * Show expense
- *
- * Shows a single expense record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
- *
- */
-export const getShowExpense = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowExpenseData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowExpenseResponses,
-    GetShowExpenseErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/expenses/{id}',
-    ...options,
-  });
-
-/**
- * Update an expense
- *
- * Updates an expense
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
- *
- */
-export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateExpense2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateExpense2Responses,
-    PatchUpdateExpense2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/expenses/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update an expense
- *
- * Updates an expense
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
- *
- */
-export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateExpenseData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateExpenseResponses,
-    PatchUpdateExpenseErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/expenses/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show Benefit Renewal Request
- *
- * Show Benefit Renewal Request details.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
- *
- */
-export const getShowBenefitRenewalRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowBenefitRenewalRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowBenefitRenewalRequestResponses,
-    GetShowBenefitRenewalRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
-    ...options,
-  });
-
-/**
- * Updates a Benefit Renewal Request Response
- *
- * Updates a Benefit Renewal Request with the given response.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage benefit renewals (`benefit_renewal:write`) |
- *
- */
-export const postUpdateBenefitRenewalRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostUpdateBenefitRenewalRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostUpdateBenefitRenewalRequestResponses,
-    PostUpdateBenefitRenewalRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show onboarding steps for an employment
- *
- * Returns onboarding steps and substeps in a hierarchical, ordered structure.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getShowEmploymentOnboardingSteps = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowEmploymentOnboardingStepsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowEmploymentOnboardingStepsResponses,
-    GetShowEmploymentOnboardingStepsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/onboarding-steps',
-    ...options,
-  });
-
-/**
- * List company structure nodes
- *
- * Shows all the company structure nodes of an employment.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View company structure (`company_structure:read`) | - |
- *
- */
-export const getIndexEmploymentCompanyStructureNode = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexEmploymentCompanyStructureNodeData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentCompanyStructureNodeResponses,
-    GetIndexEmploymentCompanyStructureNodeErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/company-structure-nodes',
-    ...options,
-  });
-
-/**
- * List custom field value for an employment
- *
- * Returns a list of custom field values for a given employment
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
- *
- */
-export const getIndexEmploymentCustomFieldValue = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexEmploymentCustomFieldValueData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentCustomFieldValueResponses,
-    GetIndexEmploymentCustomFieldValueErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/custom-fields',
-    ...options,
-  });
-
-/**
- * Validate resignation request
- *
- * Validates a resignation employment request
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage resignations (`resignation:write`) |
- *
- */
-export const putValidateResignation = <ThrowOnError extends boolean = false>(
-  options: Options<PutValidateResignationData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PutValidateResignationResponses,
-    PutValidateResignationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/resignations/{offboarding_request_id}/validate',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Reassign default legal entity
- *
- * Set a different legal entity as the company's default entity.
- *
- * The default entity is used when creating new employments without an explicit entity.
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
- *
- */
-export const putReassignDefaultEntityCompany = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PutReassignDefaultEntityCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PutReassignDefaultEntityCompanyResponses,
-    PutReassignDefaultEntityCompanyErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
-    ...options,
-  });
-
-/**
- * List Webhook Callbacks
- *
- * List callbacks for a given company
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
- *
- */
-export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexWebhookCallbackData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexWebhookCallbackResponses,
-    GetIndexWebhookCallbackErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/webhook-callbacks',
-    ...options,
-  });
-
-/**
- * Show contractor eligibility and COR-supported countries for legal entity
- *
- * Returns which contractor products (standard, plus, cor) the legal entity is eligible to use,
- * and the list of country codes where COR is supported for this legal entity.
- * COR-supported countries exclude sanctioned and signup-prevented countries and apply entity rules (same-country, local-to-local).
- * When the legal entity is not COR-eligible, `cor_supported_country_codes` is an empty list.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getContractorEligibilityCompanyLegalEntities = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    GetContractorEligibilityCompanyLegalEntitiesData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).get<
-    GetContractorEligibilityCompanyLegalEntitiesResponses,
-    GetContractorEligibilityCompanyLegalEntitiesErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
-    ...options,
   });
 
 /**
@@ -5975,7 +7322,7 @@ export const getShowEmploymentCustomFieldValue = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
   });
 
@@ -6005,7 +7352,7 @@ export const patchUpdateEmploymentCustomFieldValue2 = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6039,7 +7386,7 @@ export const patchUpdateEmploymentCustomFieldValue = <
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6048,40 +7395,195 @@ export const patchUpdateEmploymentCustomFieldValue = <
   });
 
 /**
- * Show a contractor of record (COR) termination request
+ * Validate resignation request
  *
- * Retrieves a Contractor of Record termination request by ID.
- *
+ * Validates a resignation employment request
  *
  * ## Scopes
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ * | Manage employments (`employments`) | - | Manage resignations (`resignation:write`) |
  *
  */
-export const getShowCorTerminationRequestSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowCorTerminationRequestSubscriptionData, ThrowOnError>,
+export const putValidateResignation = <ThrowOnError extends boolean = false>(
+  options: Options<PutValidateResignationData, ThrowOnError>,
 ) =>
-  (options.client ?? client).get<
-    GetShowCorTerminationRequestSubscriptionResponses,
-    GetShowCorTerminationRequestSubscriptionErrors,
+  (options.client ?? client).put<
+    PutValidateResignationResponses,
+    PutValidateResignationErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
+    url: '/api/eor/v1/resignations/{offboarding_request_id}/validate',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Show Contractor Invoice Schedule
+ *
+ * Shows a single Contractor Invoice Schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const getShowScheduledContractorInvoice = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowScheduledContractorInvoiceData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowScheduledContractorInvoiceResponses,
+    GetShowScheduledContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoice-schedules/{id}',
     ...options,
   });
 
 /**
- * Terminate contractor of record employment
+ * Updates Contractor Invoice Schedule
  *
- * **Deprecated.** Use `POST /contractors/employments/{employment_id}/cor-termination-requests` instead.
+ * Updates a contractor invoice schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
+ */
+export const patchUpdateScheduledContractorInvoice2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateScheduledContractorInvoice2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchUpdateScheduledContractorInvoice2Responses,
+    PatchUpdateScheduledContractorInvoice2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoice-schedules/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Updates Contractor Invoice Schedule
+ *
+ * Updates a contractor invoice schedule record
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
+ *
+ */
+export const patchUpdateScheduledContractorInvoice = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchUpdateScheduledContractorInvoiceData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchUpdateScheduledContractorInvoiceResponses,
+    PatchUpdateScheduledContractorInvoiceErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractor-invoice-schedules/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Create risk reserve
+ *
+ * Create a new risk reserve
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
+ *
+ */
+export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
+  options: Options<PostCreateRiskReserveData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostCreateRiskReserveResponses,
+    PostCreateRiskReserveErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/risk-reserve',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Return a base64 encoded version of the contract document
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getShowContractDocument = <ThrowOnError extends boolean = false>(
+  options: Options<GetShowContractDocumentData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowContractDocumentResponses,
+    GetShowContractDocumentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{id}',
+    ...options,
+  });
+
+/**
+ * Create a contractor of record (COR) termination request
  *
  * Initiates a termination request for a Contractor of Record employment.
  * When a termination request is sent, a stop work order is issued and the contractor remains active until a final invoice is paid or waived.
@@ -6094,1274 +7596,24 @@ export const getShowCorTerminationRequestSubscription = <
  * |---|---|---|
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
- *
- * @deprecated
  */
-export const postTerminateContractorOfRecordEmploymentSubscription = <
+export const postCreateCorTerminationRequestSubscription = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PostTerminateContractorOfRecordEmploymentSubscriptionData,
+    PostCreateCorTerminationRequestSubscriptionData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).post<
-    PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
-    PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
+    PostCreateCorTerminationRequestSubscriptionResponses,
+    PostCreateCorTerminationRequestSubscriptionErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment',
-    ...options,
-  });
-
-/**
- * Sign a document for a contractor
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
- *
- */
-export const postSignContractDocument = <ThrowOnError extends boolean = false>(
-  options: Options<PostSignContractDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostSignContractDocumentResponses,
-    PostSignContractDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get token identity
- *
- * Shows information about the entities that can be controlled by the current auth token.
- *
- */
-export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
-  options: Options<GetCurrentIdentityData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetCurrentIdentityResponses,
-    GetCurrentIdentityErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/identity/current',
-    ...options,
-  });
-
-/**
- * Delete an Incentive
- *
- * Delete an incentive.
- *
- * `one_time` incentives that have the following status **CANNOT** be deleted:
- * * `processing`
- * * `paid`
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
- *
- */
-export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<DeleteDeleteIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).delete<
-    DeleteDeleteIncentiveResponses,
-    DeleteDeleteIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives/{id}',
-    ...options,
-  });
-
-/**
- * Show Incentive
- *
- * Show an Incentive's details
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
- *
- */
-export const getShowIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowIncentiveResponses,
-    GetShowIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives/{id}',
-    ...options,
-  });
-
-/**
- * Update Incentive
- *
- * Updates an Incentive.
- *
- * Incentives use the currency of the employment specified provided in the `employment_id` field.
- *
- * The API doesn't support updating paid incentives.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
- *
- */
-export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateIncentive2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).patch<
-    PatchUpdateIncentive2Responses,
-    PatchUpdateIncentive2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update Incentive
- *
- * Updates an Incentive.
- *
- * Incentives use the currency of the employment specified provided in the `employment_id` field.
- *
- * The API doesn't support updating paid incentives.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
- *
- */
-export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateIncentiveData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PatchUpdateIncentiveResponses,
-    PatchUpdateIncentiveErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/incentives/{id}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get eligibility questionnaire schema
- *
- * Returns the JSON schema for the eligibility questionnaire by type.
- *
- * The schema defines the structure and validation rules for the questionnaire responses.
- * Supports versioning to allow for schema evolution while maintaining backwards compatibility.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getShowEligibilityQuestionnaire = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowEligibilityQuestionnaireData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowEligibilityQuestionnaireResponses,
-    GetShowEligibilityQuestionnaireErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/schemas/eligibility-questionnaire',
-    ...options,
-  });
-
-/**
- * List work authorization requests
- *
- * List work authorization requests.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
- *
- */
-export const getIndexWorkAuthorizationRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexWorkAuthorizationRequestData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexWorkAuthorizationRequestResponses,
-    GetIndexWorkAuthorizationRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/work-authorization-requests',
-    ...options,
-  });
-
-/**
- * Show bulk employment job
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBulkEmploymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowBulkEmploymentResponses,
-    GetShowBulkEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/bulk-employment-jobs/{job_id}',
-    ...options,
-  });
-
-/**
- * List Benefit Offers
- *
- * List benefit offers for each country.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
- *
- */
-export const getIndexBenefitOffersCountrySummary = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexBenefitOffersCountrySummaryData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexBenefitOffersCountrySummaryResponses,
-    GetIndexBenefitOffersCountrySummaryErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/benefit-offers/country-summaries',
-    ...options,
-  });
-
-/**
- * List Benefit Offers By Employment
- *
- * List benefit offers by employment.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
- *
- */
-export const getIndexBenefitOffersByEmployment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexBenefitOffersByEmploymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexBenefitOffersByEmploymentResponses,
-    GetIndexBenefitOffersByEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/benefit-offers',
-    ...options,
-  });
-
-/**
- * Cancel Contract Amendment
- *
- * Use this endpoint to cancel an existing contract amendment request.
- *
- * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
- *
- */
-export const putCancelContractAmendment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PutCancelContractAmendmentData, ThrowOnError>,
-) =>
-  (options.client ?? client).put<
-    PutCancelContractAmendmentResponses,
-    PutCancelContractAmendmentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
-    ...options,
-  });
-
-/**
- * Create a Pending Time Off
- *
- * Creates a pending Time Off record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmployeeTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateEmployeeTimeoffResponses,
-    PostCreateEmployeeTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/timeoff',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Show Probation Extension
- *
- * Shows a Probation Extension Request.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
- *
- */
-export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowProbationExtensionData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowProbationExtensionResponses,
-    GetShowProbationExtensionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/probation-extensions/{id}',
-    ...options,
-  });
-
-/**
- * List payslips
- *
- * Lists all payslips belonging to a company. Can also filter for a single employment belonging
- * to that company.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
- *
- */
-export const getIndexPayslip = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexPayslipData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexPayslipResponses,
-    GetIndexPayslipErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payslips',
-    ...options,
-  });
-
-/**
- * Download a receipt by id
- *
- * Download a receipt by id.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
- *
- */
-export const getDownloadByIdExpenseReceipt = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetDownloadByIdExpenseReceiptData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetDownloadByIdExpenseReceiptResponses,
-    GetDownloadByIdExpenseReceiptErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/expenses/{expense_id}/receipts/{receipt_id}',
-    ...options,
-  });
-
-/**
- * Token
- *
- * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
- */
-export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
-  options?: Options<PostTokenOAuth2TokenData, ThrowOnError>,
-) =>
-  (options?.client ?? client).post<
-    PostTokenOAuth2TokenResponses,
-    PostTokenOAuth2TokenErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'basic', type: 'http' }],
-    url: '/auth/oauth2/token',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-/**
- * Show legal entity administrative details form schema
- *
- * Returns the json schema of a supported form. Possible form names are:
- * ```
- * - administrative_details
- * ```
- *
- * Most forms require a company access token, as they are dependent on certain
- * properties of companies and their current employments.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
- *
- */
-export const getShowLegalEntityFormCountry = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowLegalEntityFormCountryData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowLegalEntityFormCountryResponses,
-    GetShowLegalEntityFormCountryErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/countries/{country_code}/legal_entity_forms/{form}',
-    ...options,
-  });
-
-/**
- * Manage contractor plus subscription
- *
- * Endpoint that can be used to upgrade, assign or downgrade a contractor's subscription.
- * This can be used when company admins desire to assign someone to the Contractor Plus plan,
- * but also to change the contractor's subscription between Plus and Standard.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postManageContractorPlusSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PostManageContractorPlusSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).post<
-    PostManageContractorPlusSubscriptionSubscriptionResponses,
-    PostManageContractorPlusSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List Time Off
- *
- * Lists all Time Off records.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexTimeoffResponses,
-    GetIndexTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff',
-    ...options,
-  });
-
-/**
- * Create Time Off
- *
- * Creates a Time Off record
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateTimeoffData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateTimeoffResponses,
-    PostCreateTimeoffErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List Company Payroll Runs
- *
- * Lists all payroll runs for a company
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
- *
- */
-export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexPayrollRunData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexPayrollRunResponses,
-    GetIndexPayrollRunErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payroll-runs',
-    ...options,
-  });
-
-/**
- * Get group by ID via SCIM v2.0
- *
- * Retrieves a single group (department) for the authenticated company by group ID
- */
-export const getGetGroupScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetGroupScimData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetGetGroupScimResponses,
-    GetGetGroupScimErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/scim/v2/Groups/{id}',
-    ...options,
-  });
-
-/**
- * List Employment Contract.
- *
- * Get the employment contract history for a given employment. If `only_active` is true, it will return only the active or last active contract.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
- *
- */
-export const getIndexEmploymentContract = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexEmploymentContractData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexEmploymentContractResponses,
-    GetIndexEmploymentContractErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employment-contracts',
-    ...options,
-  });
-
-/**
- * Convert currency using dynamic rates
- *
- * Convert currency using the rates Remote applies during employment creation and invoicing.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
- *
- */
-export const postConvertWithSpreadCurrencyConverter2 = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostConvertWithSpreadCurrencyConverter2Data, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostConvertWithSpreadCurrencyConverter2Responses,
-    PostConvertWithSpreadCurrencyConverter2Errors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/currency-converter',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * List all companies
- *
- * List all companies that authorized your integration to act on their behalf. In other words, these are all the companies that your integration can manage. Any company that has completed the authorization flow for your integration will be included in the response.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
- *
- */
-export const getIndexCompany = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetIndexCompanyResponses,
-    GetIndexCompanyErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies',
-    ...options,
-  });
-
-/**
- * Create a company
- *
- *   Creates a new company.
- *
- * ### Creating a company with only the required request body parameters
- * When you call this endpoint and omit all the optional parameters in the request body,
- * the following resources get created upon a successful response:
- * * A new company with status `pending`.
- * * A company owner for the new company with status `initiated`.
- *
- * See the [update a company endpoint](#tag/Companies/operation/patch_update_company) for
- * more details on how to get your company and its owner to `active` status.
- *
- * If you'd like to create a company and its owner with `active` status in a single request,
- * please provide the optional `address_details` parameter as well.
- *
- * ### Accepting the Terms of Service
- *
- * A required step for creating a company in Remote is to accept our Terms of Service (ToS).
- *
- * Company managers need to be aware of our Terms of Service and Privacy Policy,
- * hence **it's the responsibility of our partners to advise and ensure company managers read
- * and accept the ToS**. The terms have to be accepted only once, before creating a company,
- * and the Remote API will collect the acceptance timestamp as its confirmation.
- *
- * To ensure users read the most recent version of Remote's Terms of Service, their **acceptance
- * must be done within the last fifteen minutes prior the company creation action**.
- *
- * To retrieve this information, partners can provide an element with any text and a description
- * explaining that by performing that action they are accepting Remote's Term of Service. For
- * instance, the partner can add a checkbox or a "Create Remote Account" button followed by a
- * description saying "By creating an account, you agree to
- * [Remote's Terms of Service](https://remote.com/terms-of-service). Also see Remote's
- * [Privacy Policy](https://remote.com/privacy-policy)".
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
- *
- */
-export const postCreateCompany = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCompanyData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostCreateCompanyResponses,
-    PostCreateCompanyErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/companies',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Create bulk employment job
- *
- * Creates a job to bulk-create employments for multiple employees at once. Each employee payload must match the employment schema for the selected country.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postCreateBulkEmployment = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateBulkEmploymentData, ThrowOnError>,
-) =>
-  (options?.client ?? client).post<
-    PostCreateBulkEmploymentResponses,
-    PostCreateBulkEmploymentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/bulk-employment-jobs',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  });
-
-/**
- * Send back a timesheet for review or modification
- *
- * Sends the given timesheet back to the employee for review or modification.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
- *
- */
-export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<PostSendBackTimesheetData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostSendBackTimesheetResponses,
-    PostSendBackTimesheetErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timesheets/{timesheet_id}/send-back',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Deletes a Company Manager user
- *
- * Deletes a Company Manager user
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
- *
- */
-export const deleteDeleteCompanyManager = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<DeleteDeleteCompanyManagerData, ThrowOnError>,
-) =>
-  (options.client ?? client).delete<
-    DeleteDeleteCompanyManagerResponses,
-    DeleteDeleteCompanyManagerErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/company-managers/{user_id}',
-    ...options,
-  });
-
-/**
- * Show company manager user
- *
- * Shows a single company manager user
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
- *
- */
-export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanyManagerData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowCompanyManagerResponses,
-    GetShowCompanyManagerErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/company-managers/{user_id}',
-    ...options,
-  });
-
-/**
- * Delete contractor of record subscription intent
- *
- * Deletes Contractor of Record subscription intent.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const deleteDeleteContractorCorSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    DeleteDeleteContractorCorSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).delete<
-    DeleteDeleteContractorCorSubscriptionSubscriptionResponses,
-    DeleteDeleteContractorCorSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
-    ...options,
-  });
-
-/**
- * Create contractor of record subscription intent
- *
- * Assigns Contractor of Record subscription in pending state to employment.
- * Once risk analysis is performed, subscription may start upon contract signing,
- * or might be denied.
- *
- * Requires a non-blocking eligibility questionnaire to be submitted before creating the subscription intent.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const postManageContractorCorSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PostManageContractorCorSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).post<
-    PostManageContractorCorSubscriptionSubscriptionResponses,
-    PostManageContractorCorSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
-    ...options,
-  });
-
-/**
- * List Contractor Invoice Schedules
- *
- * Lists Contractor Invoice Schedule records.
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
- *
- */
-export const getIndexScheduledContractorInvoice = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexScheduledContractorInvoiceData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexScheduledContractorInvoiceResponses,
-    GetIndexScheduledContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoice-schedules',
-    ...options,
-  });
-
-/**
- * Create Contractor Invoice Schedules
- *
- * Creates many invoice schedules records.
- * It's supposed to return two lists: one containing created records, and another one containing the schedules that failed to be inserted.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
- *
- */
-export const postBulkCreateScheduledContractorInvoice = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostBulkCreateScheduledContractorInvoiceData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostBulkCreateScheduledContractorInvoiceResponses,
-    PostBulkCreateScheduledContractorInvoiceErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractor-invoice-schedules',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Get Billing Document Breakdown
- *
- * Get billing document breakdown
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getGetBreakdownBillingDocument = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetGetBreakdownBillingDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetGetBreakdownBillingDocumentResponses,
-    GetGetBreakdownBillingDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/billing-documents/{billing_document_id}/breakdown',
-    ...options,
-  });
-
-/**
- * Indexes all the documents for the employee
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
- *
- */
-export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexEmployeeDocumentData, ThrowOnError>,
-) =>
-  (options?.client ?? client).get<
-    GetIndexEmployeeDocumentResponses,
-    GetIndexEmployeeDocumentErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/employee/documents',
-    ...options,
-  });
-
-/**
- * Approve a time off cancellation request
- *
- * Approve a time off cancellation request.
- * In order to approve a time off cancellation request, the timeoff status must be `cancel_requested`.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
- *
- */
-export const postApproveCancellationRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostApproveCancellationRequestData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostApproveCancellationRequestResponses,
-    PostApproveCancellationRequestErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
-    ...options,
-  });
-
-/**
- * Verify Employment Identity
- *
- * Endpoint to confirms the employment profile is from the actual employee
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
- *
- */
-export const postVerifyIdentityVerification = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostVerifyIdentityVerificationData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostVerifyIdentityVerificationResponses,
-    PostVerifyIdentityVerificationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/identity-verification/{employment_id}/verify',
-    ...options,
-  });
-
-/**
- * Download a billing document PDF
- *
- * Downloads a billing document PDF
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
- *
- */
-export const getDownloadPdfBillingDocument = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetDownloadPdfBillingDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetDownloadPdfBillingDocumentResponses,
-    GetDownloadPdfBillingDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/billing-documents/{billing_document_id}/pdf',
+    url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests',
     ...options,
   });

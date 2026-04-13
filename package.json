@@ -15,7 +15,7 @@
     "build:reset": "postcss src/styles/reset.css -o ./example/src/css/reset.css",
     "lint": "oxlint .",
     "format": "oxfmt",
-    "openapi-ts": "openapi-ts",
+    "openapi-ts": "openapi-ts && npm run format",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
