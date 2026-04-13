@@ -461,8 +461,9 @@ export const useEmploymentOnboardingReservesStatus = (
   });
 };
 
-export const useEngagementAgreementDetails = (countryCode: string) => {
+export const useEngagementAgreementDetailsSchema = (countryCode: string) => {
   const { client } = useClient();
+  const fieldValues = {}; // TODO: Add variable later...
   return useQuery({
     queryKey: ['engagement-agreement-details', countryCode],
     retry: false,
@@ -480,6 +481,18 @@ export const useEngagementAgreementDetails = (countryCode: string) => {
       }
 
       return response;
+    },
+    select: ({ data }) => {
+      const jsfSchema = data?.data?.schema || {};
+
+      return createHeadlessForm(
+        jsfSchema,
+        fieldValues,
+        {},
+        /* {
+          jsfModify: options?.jsfModify?.engagement_agreement_details, // TODO: add later
+        }, */
+      );
     },
   });
 };

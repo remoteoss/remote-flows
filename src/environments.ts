@@ -6,7 +6,7 @@ export type Environment =
   | 'staging';
 
 export const ENVIRONMENTS: Record<Environment, string> = {
-  local: 'http://localhost:4000/api/eor',
+  local: 'http://localhost:4000', // when using openapi-ts locally remove /api/eor from the url
   partners: 'https://gateway.partners.remote-sandbox.com',
   production: 'https://gateway.remote.com',
   sandbox: 'https://gateway.remote-sandbox.com',

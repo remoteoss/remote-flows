@@ -36,6 +36,7 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
   useUpsertContractEligibility,
+  useEngagementAgreementDetailsSchema,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
@@ -72,6 +73,7 @@ const getLoadingStates = ({
   isLoadingBenefitOffers,
   isLoadingCompany,
   isLoadingCountries,
+  isLoadingEngagementAgreementDetails,
   employmentStatus,
   employmentId,
   currentStepName,
@@ -85,6 +87,7 @@ const getLoadingStates = ({
   isLoadingBenefitOffers: boolean;
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
+  isLoadingEngagementAgreementDetails: boolean;
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
@@ -98,7 +101,8 @@ const getLoadingStates = ({
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
     isLoadingCompany ||
-    isLoadingCountries;
+    isLoadingCountries ||
+    isLoadingEngagementAgreementDetails;
 
   const isEmploymentReadOnly =
     employmentStatus &&
@@ -198,6 +202,13 @@ export const useOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const {
+    data: engagementAgreementDetails,
+    isLoading: isLoadingEngagementAgreementDetails,
+  } = useEngagementAgreementDetailsSchema(internalCountryCode as string);
+
+  console.log('engagementAgreementDetails', engagementAgreementDetails);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -589,6 +600,7 @@ export const useOnboarding = ({
           isLoadingBenefitsOffersSchema,
           isLoadingBenefitOffers,
           isLoadingCompany,
+          isLoadingEngagementAgreementDetails,
           isLoadingCountries,
           employmentId,
           employmentStatus: employmentStatus,
@@ -604,6 +616,7 @@ export const useOnboarding = ({
         isLoadingBenefitOffers,
         isLoadingCompany,
         isLoadingCountries,
+        isLoadingEngagementAgreementDetails,
         employmentId,
         employmentStatus,
         stepFields.basic_information,

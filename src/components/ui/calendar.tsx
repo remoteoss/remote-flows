@@ -20,9 +20,9 @@ function Calendar({
         months: 'flex flex-col sm:flex-row gap-4',
         month: 'flex flex-col gap-y-4',
         month_caption: 'flex h-8 w-full items-center justify-center relative',
-        caption_label: 'font-medium text-sm',
-        nav: 'flex items-center justify-between w-full',
-        month_grid: 'w-full border-collapse mt-4',
+        caption_label: 'font-medium text-sm mt-1',
+        nav: 'flex items-center justify-between absolute left-0 right-0 z-10',
+        month_grid: 'w-full border-collapse mt-1',
         weekdays: 'flex',
         weekday:
           'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
