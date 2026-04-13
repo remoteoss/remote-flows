@@ -10,6 +10,7 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
   NormalizedFieldError,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
@@ -35,13 +36,6 @@ export const InviteSection = ({
     </div>
   );
 };
-const STEPS = [
-  'Select Country',
-  'Basic Information',
-  'Contract Details',
-  'Benefits',
-  'Review & Invite',
-];
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -56,6 +50,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     SelectCountryStep,
+    EngagementAgreementDetailsStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -123,6 +118,34 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Create Employment & Continue
             </SubmitButton>
           </div>
+        </>
+      );
+    case 'engagement_agreement_details':
+      return (
+        <>
+          {/* TODO: Add type later... => EngagementAgreementDetailsFormPayload */}
+          <EngagementAgreementDetailsStep
+            onSubmit={(payload: $TSFixMe) => console.log('payload', payload)}
+            onSuccess={(data: EmploymentResponse) => console.log('data', data)}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+          </div>
+          <SubmitButton
+            className='submit-button'
+            onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+          >
+            Continue
+          </SubmitButton>
         </>
       );
     case 'contract_details':
@@ -213,7 +236,7 @@ const OnBoardingRender = ({
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-  const stepTitle = STEPS[currentStepIndex];
+  const stepTitle = onboardingBag.steps[currentStepIndex].label;
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -223,14 +246,16 @@ const OnBoardingRender = ({
     <>
       <div className='steps-navigation'>
         <ul>
-          {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {step}
-            </li>
-          ))}
+          {onboardingBag.steps
+            .filter((step) => step.visible)
+            .map((step, index) => (
+              <li
+                key={step.name}
+                className={`step-item ${step.index === currentStepIndex ? 'active' : ''}`}
+              >
+                {index + 1}. {step.label}
+              </li>
+            ))}
         </ul>
       </div>
 

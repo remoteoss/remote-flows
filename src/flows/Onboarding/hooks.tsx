@@ -11,8 +11,8 @@ import {
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   reviewStepAllowedEmploymentStatus,
-  STEPS,
-  STEPS_WITHOUT_SELECT_COUNTRY,
+  buildSteps,
+  StepKeys,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -54,12 +54,10 @@ const jsonSchemaToEmployment: Partial<
   contract_details: 'contract_details',
 };
 
-const stepToFormSchemaMap: Record<
-  keyof typeof STEPS,
-  JSONSchemaFormType | null
-> = {
+const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  engagement_agreement_details: null,
   contract_details: 'contract_details',
   benefits: null,
   review: null,
@@ -151,43 +149,7 @@ export const useOnboarding = ({
       isUpdating: Boolean(employmentId),
     },
   });
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
 
-  const onStepChange = useCallback(
-    (step: Step<keyof typeof STEPS>) => {
-      updateErrorContext({
-        step: step.name,
-      });
-    },
-    [updateErrorContext],
-  );
-
-  const {
-    fieldValues,
-    stepState,
-    setFieldValues,
-    previousStep,
-    nextStep,
-    goToStep,
-    setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-    onStepChange,
-  );
-
-  const fieldsMetaRef = useRef<{
-    select_country: Meta;
-    basic_information: Meta;
-    contract_details: Meta;
-    benefits: Meta;
-  }>({
-    select_country: {},
-    basic_information: {},
-    contract_details: {},
-    benefits: {},
-  });
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -208,7 +170,52 @@ export const useOnboarding = ({
     isLoading: isLoadingEngagementAgreementDetails,
   } = useEngagementAgreementDetailsSchema(internalCountryCode as string);
 
-  console.log('engagementAgreementDetails', engagementAgreementDetails);
+  const includeEngagementAgreementDetails = Boolean(
+    engagementAgreementDetails?.fields &&
+    engagementAgreementDetails.fields.length > 0,
+  );
+
+  const { steps, stepsArray } = useMemo(
+    () =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEngagementAgreementDetails,
+      }),
+    [includeEngagementAgreementDetails, skipSteps],
+  );
+
+  const onStepChange = useCallback(
+    (step: Step<StepKeys>) => {
+      updateErrorContext({
+        step: step.name,
+      });
+    },
+    [updateErrorContext],
+  );
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+    setStepValues,
+  } = useStepState(steps, onStepChange);
+
+  const fieldsMetaRef = useRef<{
+    select_country: Meta;
+    basic_information: Meta;
+    engagement_agreement_details: Meta;
+    contract_details: Meta;
+    benefits: Meta;
+  }>({
+    select_country: {},
+    basic_information: {},
+    engagement_agreement_details: {},
+    contract_details: {},
+    benefits: {},
+  });
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -457,7 +464,7 @@ export const useOnboarding = ({
   const initialValuesBenefitOffers = useMemo(() => {
     if (stepState.currentStep.name === 'benefits') {
       const benefitsFormValues = {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+        ...stepState.values?.[stepState.currentStep.name as StepKeys],
         ...fieldValues,
       };
       return mergeWith({}, benefitOffers, benefitsFormValues);
@@ -470,10 +477,11 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
+  const stepFields: Record<StepKeys, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
+      engagement_agreement_details: engagementAgreementDetails?.fields || [],
       contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
@@ -481,17 +489,20 @@ export const useOnboarding = ({
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
+      engagementAgreementDetails?.fields,
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
   );
 
   const stepFieldsWithFlatFieldsets: Record<
-    keyof typeof STEPS,
+    StepKeys,
     JSFFieldset | null | undefined
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    engagement_agreement_details:
+      engagementAgreementDetails?.meta['x-jsf-fieldsets'],
     contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
     review: null,
@@ -554,6 +565,18 @@ export const useOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const engagementAgreementDetailsInitialValues = useMemo(() => {
+    // TODO: Check this later...
+    const initialValues = {
+      ...onboardingInitialValues,
+    };
+
+    return getInitialValues(
+      stepFields.engagement_agreement_details,
+      initialValues,
+    );
+  }, [stepFields.engagement_agreement_details, onboardingInitialValues]);
+
   const initialValues = useMemo(() => {
     if (employment) {
       return {
@@ -564,6 +587,7 @@ export const useOnboarding = ({
           stepFields['basic_information'],
           basicInformationInitialValues,
         ),
+        engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details:
           // if contract details is null, it means it has not been filled yet, so we can't enable the ack fields
           employment?.contract_details !== null
@@ -578,12 +602,14 @@ export const useOnboarding = ({
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      engagement_agreement_details: engagementAgreementDetailsInitialValues,
       contract_details: contractDetailsInitialValues,
       benefits: benefitsInitialValues,
     };
   }, [
     selectCountryInitialValues,
     basicInformationInitialValues,
+    engagementAgreementDetailsInitialValues,
     contractDetailsInitialValues,
     benefitsInitialValues,
     employment,
@@ -636,6 +662,10 @@ export const useOnboarding = ({
           basicInformationInitialValues,
           stepFields.basic_information,
         ),
+        engagement_agreement_details: prettifyFormValues(
+          engagementAgreementDetailsInitialValues,
+          stepFields.engagement_agreement_details,
+        ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -649,6 +679,7 @@ export const useOnboarding = ({
       setStepValues({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
+        engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
         review: {},
@@ -658,6 +689,7 @@ export const useOnboarding = ({
     }
   }, [
     basicInformationInitialValues,
+    engagementAgreementDetailsInitialValues,
     benefitsInitialValues,
     contractDetailsInitialValues,
     goToStep,
@@ -665,6 +697,7 @@ export const useOnboarding = ({
     selectCountryInitialValues,
     setStepValues,
     stepFields.basic_information,
+    stepFields.engagement_agreement_details,
     stepFields.benefits,
     stepFields.contract_details,
     stepFields.select_country,
@@ -681,6 +714,19 @@ export const useOnboarding = ({
       return await parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
+    }
+    // TODO: Check this later...
+    if (
+      engagementAgreementDetails &&
+      stepState.currentStep.name === 'engagement_agreement_details'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        engagementAgreementDetails?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     if (
@@ -770,6 +816,12 @@ export const useOnboarding = ({
 
         return;
       }
+      case 'engagement_agreement_details': {
+        // For now, just proceed to next step without saving
+        // The engagement agreement details will be part of the employment data
+        // TODO: Add API call if needed to save engagement agreement details separately
+        return Promise.resolve({ data: {} });
+      }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
@@ -802,7 +854,7 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  function goTo(step: keyof typeof STEPS) {
+  function goTo(step: StepKeys) {
     goToStep(step);
   }
 
@@ -890,6 +942,19 @@ export const useOnboarding = ({
         return basicInformationForm?.handleValidation(parsedValues);
       }
 
+      // TODO: Check this later...
+      if (
+        engagementAgreementDetails &&
+        stepState.currentStep.name === 'engagement_agreement_details'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          engagementAgreementDetails?.fields,
+          { isPartialValidation: false },
+        );
+        return engagementAgreementDetails?.handleValidation(parsedValues);
+      }
+
       if (
         contractDetailsForm &&
         stepState.currentStep.name === 'contract_details'
@@ -972,5 +1037,11 @@ export const useOnboarding = ({
      * @returns {boolean}
      */
     canInvite,
+
+    /**
+     * Steps array
+     * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
+     */
+    steps: stepsArray,
   };
 };

@@ -11,6 +11,7 @@ import { BenefitsStep } from '@/src/flows/Onboarding/components/BenefitsStep';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
+import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
 
 export const OnboardingFlow = ({
   employmentId,
@@ -56,6 +57,7 @@ export const OnboardingFlow = ({
         onboardingBag,
         components: {
           BasicInformationStep: BasicInformationStep,
+          EngagementAgreementDetailsStep: EngagementAgreementDetailsStep,
           ContractDetailsStep: ContractDetailsStep,
           BenefitsStep: BenefitsStep,
           SubmitButton: OnboardingSubmit,
