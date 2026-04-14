@@ -58,6 +58,13 @@
       "semanticCommitScope": "deps"
     },
     {
+      "description": "Disable automatic Node.js engine updates (handle manually for major releases)",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["engines"],
+      "matchPackageNames": ["node"],
+      "enabled": false
+    },
+    {
       "description": "Preserve optional dependencies in lockfile",
       "matchPackageNames": ["esbuild", "@esbuild/**"],
       "enabled": true
