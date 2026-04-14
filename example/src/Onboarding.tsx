@@ -139,13 +139,13 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Previous Step
             </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
           </div>
-          <SubmitButton
-            className='submit-button'
-            onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-          >
-            Continue
-          </SubmitButton>
         </>
       );
     case 'contract_details':

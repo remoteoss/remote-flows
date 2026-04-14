@@ -26,7 +26,10 @@ import {
 
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
+import {
+  OnboardingFlowProps,
+  OnboardingJsfModify,
+} from '@/src/flows/Onboarding/types';
 import {
   JSONSchemaFormResultWithFieldsets,
   JSONSchemaFormType,
@@ -461,13 +464,19 @@ export const useEmploymentOnboardingReservesStatus = (
   });
 };
 
-export const useEngagementAgreementDetailsSchema = (countryCode: string) => {
+export const useEngagementAgreementDetailsSchema = (
+  countryCode: string,
+  fieldValues: FieldValues,
+  options?: {
+    jsfModify?: OnboardingJsfModify;
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
   const { client } = useClient();
-  const fieldValues = {}; // TODO: Add variable later...
   return useQuery({
     queryKey: ['engagement-agreement-details', countryCode],
     retry: false,
-    enabled: !!countryCode,
+    enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
       const response = await getShowEngagementAgreementDetailsCountry({
         client: client as Client,
@@ -485,14 +494,9 @@ export const useEngagementAgreementDetailsSchema = (countryCode: string) => {
     select: ({ data }) => {
       const jsfSchema = data?.data?.schema || {};
 
-      return createHeadlessForm(
-        jsfSchema,
-        fieldValues,
-        {},
-        /* {
-          jsfModify: options?.jsfModify?.engagement_agreement_details, // TODO: add later
-        }, */
-      );
+      return createHeadlessForm(jsfSchema, fieldValues, {
+        jsfModify: options?.jsfModify?.engagement_agreement_details,
+      });
     },
   });
 };

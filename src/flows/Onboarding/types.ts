@@ -74,6 +74,14 @@ type CountryJsonSchemaVersion = {
   contract_details?: number | 'latest';
 };
 
+export type OnboardingJsfModify = {
+  select_country?: JSFModify;
+  basic_information?: JSFModify;
+  engagement_agreement_details?: JSFModify;
+  contract_details?: JSFModify;
+  benefits?: JSFModify;
+};
+
 export type OnboardingFlowProps = {
   /**
    * The country code to use for the onboarding.
@@ -110,12 +118,7 @@ export type OnboardingFlowProps = {
    * The options to use for the onboarding.
    */
   options?: Omit<FlowOptions, 'jsfModify' | 'jsonSchemaVersion'> & {
-    jsfModify?: {
-      select_country?: JSFModify;
-      basic_information?: JSFModify;
-      contract_details?: JSFModify;
-      benefits?: JSFModify;
-    };
+    jsfModify?: OnboardingJsfModify;
     /**
      * The json schema version to use for the onboarding.
      * These versions apply globally to all countries.

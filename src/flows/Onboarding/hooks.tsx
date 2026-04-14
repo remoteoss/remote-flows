@@ -156,6 +156,12 @@ export const useOnboarding = ({
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
+
+  const [
+    includeEngagementAgreementDetails,
+    setIncludeEngagementAgreementDetails,
+  ] = useState<boolean>(false);
+
   const {
     data: employment,
     isLoading: isLoadingEmployment,
@@ -164,16 +170,6 @@ export const useOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
-
-  const {
-    data: engagementAgreementDetails,
-    isLoading: isLoadingEngagementAgreementDetails,
-  } = useEngagementAgreementDetailsSchema(internalCountryCode as string);
-
-  const includeEngagementAgreementDetails = Boolean(
-    engagementAgreementDetails?.fields &&
-    engagementAgreementDetails.fields.length > 0,
-  );
 
   const { steps, stepsArray } = useMemo(
     () =>
@@ -202,6 +198,49 @@ export const useOnboarding = ({
     goToStep,
     setStepValues,
   } = useStepState(steps, onStepChange);
+
+  const engagementAgreementDetailsFieldValues = useMemo(() => {
+    return {
+      // TODO: missing here data from the server if there's ANY
+      ...onboardingInitialValues,
+      ...stepState.values?.engagement_agreement_details,
+      ...fieldValues,
+    };
+  }, [
+    onboardingInitialValues,
+    stepState.values?.engagement_agreement_details,
+    fieldValues,
+  ]);
+
+  const {
+    data: engagementAgreementDetailsSchema,
+    isLoading: isLoadingEngagementAgreementDetails,
+  } = useEngagementAgreementDetailsSchema(
+    internalCountryCode as string,
+    engagementAgreementDetailsFieldValues,
+    {
+      jsfModify: options?.jsfModify,
+      queryOptions: {
+        enabled:
+          !!internalCountryCode &&
+          (stepState.currentStep.name === 'engagement_agreement_details' ||
+            Boolean(employmentId)),
+      },
+    },
+  );
+
+  useEffect(() => {
+    const hasFields = Boolean(
+      engagementAgreementDetailsSchema?.fields &&
+      engagementAgreementDetailsSchema.fields.length > 0,
+    );
+    if (hasFields !== includeEngagementAgreementDetails) {
+      setIncludeEngagementAgreementDetails(hasFields);
+    }
+  }, [
+    engagementAgreementDetailsSchema?.fields,
+    includeEngagementAgreementDetails,
+  ]);
 
   const fieldsMetaRef = useRef<{
     select_country: Meta;
@@ -481,7 +520,8 @@ export const useOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
-      engagement_agreement_details: engagementAgreementDetails?.fields || [],
+      engagement_agreement_details:
+        engagementAgreementDetailsSchema?.fields || [],
       contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
@@ -489,7 +529,7 @@ export const useOnboarding = ({
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
-      engagementAgreementDetails?.fields,
+      engagementAgreementDetailsSchema?.fields,
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
@@ -502,7 +542,7 @@ export const useOnboarding = ({
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     engagement_agreement_details:
-      engagementAgreementDetails?.meta['x-jsf-fieldsets'],
+      engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
     contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
     review: null,
@@ -717,12 +757,12 @@ export const useOnboarding = ({
     }
     // TODO: Check this later...
     if (
-      engagementAgreementDetails &&
+      engagementAgreementDetailsSchema &&
       stepState.currentStep.name === 'engagement_agreement_details'
     ) {
       return await parseJSFToValidate(
         values,
-        engagementAgreementDetails?.fields,
+        engagementAgreementDetailsSchema?.fields,
         {
           isPartialValidation: false,
         },
@@ -944,15 +984,15 @@ export const useOnboarding = ({
 
       // TODO: Check this later...
       if (
-        engagementAgreementDetails &&
+        engagementAgreementDetailsSchema &&
         stepState.currentStep.name === 'engagement_agreement_details'
       ) {
         const parsedValues = await parseJSFToValidate(
           values,
-          engagementAgreementDetails?.fields,
+          engagementAgreementDetailsSchema?.fields,
           { isPartialValidation: false },
         );
-        return engagementAgreementDetails?.handleValidation(parsedValues);
+        return engagementAgreementDetailsSchema?.handleValidation(parsedValues);
       }
 
       if (
