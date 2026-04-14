@@ -349,5 +349,5 @@ export function getNestedValue<T = unknown>(
     result = (result as Record<string, unknown>)[key];
   }
 
-  return (result ?? defaultValue) as T | undefined;
+  return (result === undefined ? defaultValue : result) as T | undefined;
 }
