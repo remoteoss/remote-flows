@@ -4,7 +4,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { JSFFields } from '@/src/types/remoteFlows';
 import { convertFilesToBase64 } from '@/src/lib/files';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
-import get from 'lodash.get';
+import { getNestedValue } from '@/src/lib/utils';
 
 const textInputTypes = {
   TEXT: 'text',
@@ -473,7 +473,7 @@ function excludeValuesInvisible(
           : parentFieldKeyPath;
       }
 
-      const valueOfField = get(values, fieldKeyPath!);
+      const valueOfField = getNestedValue(values, fieldKeyPath!);
 
       // keepTruthyInvisibleValues: false/undefined -> remove invisible field
       // keepTruthyInvisibleValues: true -> keep invisible field if it has a value
@@ -601,9 +601,9 @@ function getInitialDefaultValue(
   defaultValues: Record<string, any>,
   field: Field,
 ) {
-  // lodash get is needed because some values could be nested object, like billing address
+  // getNestedValue is needed because some values could be nested object, like billing address
   // use camelCase to support forms with fields in snake_case or kebab_case.
-  const defaultFieldValue = get(defaultValues, field.name);
+  const defaultFieldValue = getNestedValue(defaultValues, field.name);
   const fieldTransformValueFromAPI =
     field?.transformValueFromAPI ||
     fieldTypesTransformations[field.type]?.transformValueFromAPI;

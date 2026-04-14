@@ -1,6 +1,7 @@
 import { JSFFields } from '@/src/types/remoteFlows';
 import {
   formatCurrency,
+  getNestedValue,
   prettifyFormValues,
   sanitizeHtml,
   sanitizeHtmlWithImageErrorHandling,
@@ -372,6 +373,60 @@ describe('utils lib', () => {
 
     it('should handle zero amount', () => {
       expect(formatCurrency(0, 'USD')).toBe('$0.00');
+    });
+  });
+
+  describe('getNestedValue', () => {
+    it('should get simple property', () => {
+      const obj = { name: 'John', age: 30 };
+      expect(getNestedValue(obj, 'name')).toBe('John');
+      expect(getNestedValue(obj, 'age')).toBe(30);
+    });
+
+    it('should get nested property', () => {
+      const obj = { user: { name: 'John', address: { city: 'Boston' } } };
+      expect(getNestedValue(obj, 'user.name')).toBe('John');
+      expect(getNestedValue(obj, 'user.address.city')).toBe('Boston');
+    });
+
+    it('should preserve null values', () => {
+      const obj = { firstName: 'John', middleName: null, lastName: 'Doe' };
+      expect(getNestedValue(obj, 'middleName')).toBe(null);
+    });
+
+    it('should return undefined for missing properties', () => {
+      const obj = { name: 'John' };
+      expect(getNestedValue(obj, 'age')).toBe(undefined);
+      expect(getNestedValue(obj, 'user.address')).toBe(undefined);
+    });
+
+    it('should return defaultValue only when property is undefined', () => {
+      const obj = { name: 'John', middleName: null };
+      expect(getNestedValue(obj, 'age', 'default')).toBe('default');
+      expect(getNestedValue(obj, 'middleName', 'default')).toBe(null);
+    });
+
+    it('should handle null/undefined object', () => {
+      expect(getNestedValue(null, 'name', 'default')).toBe('default');
+      expect(getNestedValue(undefined, 'name', 'default')).toBe('default');
+    });
+
+    it('should handle empty path', () => {
+      const obj = { name: 'John' };
+      expect(getNestedValue(obj, '', 'default')).toBe('default');
+    });
+
+    it('should return defaultValue when path traversal fails', () => {
+      const obj = { user: null };
+      expect(getNestedValue(obj, 'user.name', 'default')).toBe('default');
+    });
+
+    it('should handle arrays in path', () => {
+      const obj = { users: [{ name: 'John' }, { name: 'Jane' }] };
+      expect(getNestedValue(obj, 'users')).toEqual([
+        { name: 'John' },
+        { name: 'Jane' },
+      ]);
     });
   });
 });
