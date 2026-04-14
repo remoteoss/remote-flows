@@ -1,5 +1,5 @@
 import type { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
-import isEqual from 'lodash.isequal';
+import equal from 'fast-deep-equal';
 
 export type DiffType = 'added' | 'removed' | 'modified' | 'unchanged';
 
@@ -65,7 +65,7 @@ const compareOptions = (
       }>;
     }
   | undefined => {
-  if (isEqual(options1, options2)) return undefined;
+  if (equal(options1, options2)) return undefined;
 
   const map1 = new Map((options1 || []).map((o) => [o.value, o]));
   const map2 = new Map((options2 || []).map((o) => [o.value, o]));
@@ -88,7 +88,7 @@ const compareOptions = (
       removed.push({ value: option1.value, label: option1.label });
     } else {
       const option2 = map2.get(value)!;
-      if (!isEqual(option1, option2)) {
+      if (!equal(option1, option2)) {
         const changes: { label?: { old: string; new: string } } = {};
         if (option1.label !== option2.label) {
           changes.label = { old: option1.label, new: option2.label };
@@ -145,13 +145,13 @@ const isFieldModified = (
 
   // Only compare user-facing schema properties, not internal/computed ones
   // Ignore: schema (Yup), computedAttributes, scopedJsonSchema, errorMessage, meta, description
-  // Note: nested fields are checked via compareNestedFields to avoid deep isEqual with problematic properties
+  // Note: nested fields are checked via compareNestedFields to avoid deep equal with problematic properties
   const checks = {
     label: field1.label !== field2.label,
     required: field1.required !== field2.required,
     inputType: field1.inputType !== field2.inputType,
     type: field1.type !== field2.type,
-    jsonType: !isEqual(field1.jsonType, field2.jsonType), // Use isEqual since jsonType can be an array like ['string', 'null']
+    jsonType: !equal(field1.jsonType, field2.jsonType), // Use equal since jsonType can be an array like ['string', 'null']
     name: field1.name !== field2.name,
     defaultValue: field1.defaultValue !== field2.defaultValue,
     minDate: field1.minDate !== field2.minDate,
@@ -159,7 +159,7 @@ const isFieldModified = (
     maxLength: field1.maxLength !== field2.maxLength,
     multiple: field1.multiple !== field2.multiple,
     isVisible: field1.isVisible !== field2.isVisible,
-    options: !isEqual(field1.options, field2.options),
+    options: !equal(field1.options, field2.options),
   };
 
   // Check for nested field changes using compareNestedFields to avoid deep isEqual
@@ -211,14 +211,14 @@ const getFieldChanges = (field1: JSFField, field2: JSFField) => {
     };
   }
 
-  if (!isEqual(field1.jsonType, field2.jsonType)) {
+  if (!equal(field1.jsonType, field2.jsonType)) {
     changes.jsonType = {
       old: field1.jsonType,
       new: field2.jsonType,
     };
   }
 
-  if (!isEqual(field1.defaultValue, field2.defaultValue)) {
+  if (!equal(field1.defaultValue, field2.defaultValue)) {
     changes.defaultValue = {
       old: field1.defaultValue,
       new: field2.defaultValue,
