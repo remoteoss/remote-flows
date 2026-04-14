@@ -1,19 +1,12 @@
 import { FieldValues } from 'react-hook-form';
 import {
   createHeadlessForm as baseCreateHeadlessForm,
-  FormResult,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
 import { convertToCents } from '@/src/components/form/utils';
-import { JSFModify } from '@/src/flows/types';
+import { JSFModify, JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-
-type CreateHeadlessFormResult = FormResult & {
-  meta: {
-    'x-jsf-fieldsets': JSFFieldset;
-  };
-};
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -26,18 +19,24 @@ export const createHeadlessForm = (
   jsfSchema: Record<string, unknown>,
   fieldValues?: FieldValues,
   options?: { jsfModify?: JSFModify },
-): CreateHeadlessFormResult => {
+): JSONSchemaFormResultWithFieldsets => {
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
     const { schema } = modify(jsfSchema, modifyConfig);
     jsfSchema = schema;
 
     if (required) {
-      jsfSchema.required = [...schema.required, ...required];
+      jsfSchema.required = [
+        ...(Array.isArray(schema.required) ? schema.required : []),
+        ...required,
+      ];
     }
 
     if (allOf) {
-      jsfSchema.allOf = [...(schema.allOf || []), ...allOf];
+      jsfSchema.allOf = [
+        ...(Array.isArray(schema.allOf) ? schema.allOf : []),
+        ...allOf,
+      ];
     }
   }
 

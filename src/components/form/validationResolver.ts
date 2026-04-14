@@ -1,9 +1,7 @@
 import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
-import type {
-  FormErrors,
-  ValidationResult,
-} from '@remoteoss/remote-json-schema-form-kit';
+import type { FormErrors } from '@remoteoss/remote-json-schema-form-kit';
+import type { ValidationResult } from '@/src/flows/types';
 
 // TODO: deprecated only used in the CostCalculatorFlow as we're using yup there
 export function iterateErrors(error: ValidationError) {

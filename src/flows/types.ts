@@ -1,7 +1,8 @@
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import type {
   ModifyConfig,
-  FormResult,
+  createHeadlessForm,
+  FormErrors,
 } from '@remoteoss/remote-json-schema-form-kit';
 
 type Success<T> = {
@@ -101,8 +102,20 @@ export type FlowOptions = {
   };
 };
 
-export type JSONSchemaFormResultWithFieldsets = FormResult & {
+export type JSONSchemaFormResultWithFieldsets = (
+  | ReturnType<typeof createHeadlessForm<false>>
+  | ReturnType<typeof createHeadlessForm<true>>
+) & {
   meta: {
     'x-jsf-fieldsets': JSFFieldset;
   };
+};
+
+// FormErrorsLegacy is the return type of v0's handleValidation method
+type FormErrorsLegacy = ReturnType<
+  ReturnType<typeof createHeadlessForm<false>>['handleValidation']
+>;
+
+export type ValidationResult = {
+  formErrors?: FormErrors | FormErrorsLegacy;
 };

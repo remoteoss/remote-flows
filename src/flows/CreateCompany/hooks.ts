@@ -5,7 +5,7 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
+import { ValidationResult } from '@/src/flows/types';
 import { CreateCompanyFlowProps } from '@/src/flows/CreateCompany/types';
 import { CreateCompanyParams, UpdateCompanyParams } from '@/src/client';
 import { nowUtcFormatted } from '@/src/common/dates';

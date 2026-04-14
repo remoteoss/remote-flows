@@ -11,7 +11,7 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
+import { ValidationResult } from '@/src/flows/types';
 import {
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,

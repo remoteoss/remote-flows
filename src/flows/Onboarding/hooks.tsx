@@ -1,4 +1,4 @@
-import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
+import { ValidationResult } from '@/src/flows/types';
 import {
   Employment,
   EmploymentCreateParams,
