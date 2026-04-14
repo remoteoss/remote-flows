@@ -9,7 +9,6 @@ import {
   getIndexBenefitOffer,
   getShowCompany,
   getShowCompanyEmploymentOnboardingReservesStatus,
-  getShowEmployment,
   getShowFormCountry,
   getShowSchema,
   patchUpdateEmployment2,
@@ -39,37 +38,6 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
-
-export const useEmployment = (employmentId: string | undefined) => {
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['employment', employmentId],
-    retry: false,
-    enabled: !!employmentId,
-    select: ({ data }) => {
-      return data?.data.employment;
-    },
-    queryFn: async () => {
-      const response = await getShowEmployment({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          employment_id: employmentId as string,
-        },
-      });
-
-      // If response status is 404 or other error, throw an error to trigger isError
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch employment data');
-      }
-
-      return response;
-    },
-  });
-};
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();

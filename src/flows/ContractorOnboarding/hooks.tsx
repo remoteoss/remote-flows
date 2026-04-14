@@ -1402,7 +1402,7 @@ export const useContractorOnboarding = ({
     defaultLegalEntity,
     /**
      * Steps array
-     * @returns {Array<{name: string, index: number, label: string}>}
+     * @returns {Array<{name: string, index: number, visible: boolean, label: string}>}
      */
     steps: stepsArray,
   };
