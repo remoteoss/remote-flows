@@ -4,7 +4,10 @@ import {
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
 import { convertToCents } from '@/src/components/form/utils';
-import { JSFModify, JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
+import {
+  JSFModify,
+  JSONSchemaFormResultWithFieldsets,
+} from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 
