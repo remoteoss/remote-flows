@@ -150,7 +150,6 @@ export const useOnboarding = ({
     },
   });
 
-<<<<<<< HEAD
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -179,7 +178,7 @@ export const useOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEngagementAgreementDetails,
-        useDynamicSteps
+        useDynamicSteps,
       }),
     [includeEngagementAgreementDetails, skipSteps, useDynamicSteps],
   );
@@ -726,8 +725,6 @@ export const useOnboarding = ({
         engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
-        // TODO: Fix later when we have the engagement agreement details form
-        engagement_agreement_details: {},
         review: {},
       });
 
