@@ -4,50 +4,25 @@
 
 ### Minor Changes
 
+#### Features
+
+- add support for new tel field (#858) [#858](https://github.com/remoteoss/remote-flows/pull/858)
+- update react-hook-form to v7.72.1 and @hookform/resolvers to v5.2.2 (#902) [#902](https://github.com/remoteoss/remote-flows/pull/902)
+
+
+#### Chores
 - add renovate (#840) [#840](https://github.com/remoteoss/remote-flows/pull/840)
-- move to v6 (#845) [#845](https://github.com/remoteoss/remote-flows/pull/845)
-- wait 7d to make updates (#849) [#849](https://github.com/remoteoss/remote-flows/pull/849)
-- update to latest (#837) [#837](https://github.com/remoteoss/remote-flows/pull/837)
+- move to typescript v6 (#845) [#845](https://github.com/remoteoss/remote-flows/pull/845)
 - move to oxlint (#838) [#838](https://github.com/remoteoss/remote-flows/pull/838)
-- add support for new field (#858) [#858](https://github.com/remoteoss/remote-flows/pull/858)
-- Update deps (#863) [#863](https://github.com/remoteoss/remote-flows/pull/863)
 - update dependency axios to v1.15.0 [SECURITY] (#866) [#866](https://github.com/remoteoss/remote-flows/pull/866)
-- improve rules (#867) [#867](https://github.com/remoteoss/remote-flows/pull/867)
-- update chalk (#870) [#870](https://github.com/remoteoss/remote-flows/pull/870)
-- fix ci & renovate (#874) [#874](https://github.com/remoteoss/remote-flows/pull/874)
 - update dependency dompurify to ^3.3.3 (#872) [#872](https://github.com/remoteoss/remote-flows/pull/872)
-- update dependency filesize to ^10.1.6 (#871) [#871](https://github.com/remoteoss/remote-flows/pull/871)
-- update dependency postcss to ^8.5.9 (#875) [#875](https://github.com/remoteoss/remote-flows/pull/875)
-- update dependency lucide-react to v0.577.0 (#865) [#865](https://github.com/remoteoss/remote-flows/pull/865)
-- update dependency tsx to ^4.21.0 (#877) [#877](https://github.com/remoteoss/remote-flows/pull/877)
-- update dependency express to ^4.22.1 (#878) [#878](https://github.com/remoteoss/remote-flows/pull/878)
 - update dependency tailwind-merge to ^3.5.0 (#880) [#880](https://github.com/remoteoss/remote-flows/pull/880)
-- update schneegans/dynamic-badges-action action to v1.8.0 (#882) [#882](https://github.com/remoteoss/remote-flows/pull/882)
-- update dependency @types/jsdom to v28 (#884) [#884](https://github.com/remoteoss/remote-flows/pull/884)
 - update tailwindcss monorepo to ^4.2.2 (#883) [#883](https://github.com/remoteoss/remote-flows/pull/883)
-- update dependency filesize to v11 (#885) [#885](https://github.com/remoteoss/remote-flows/pull/885)
-- update dependency jsdom to v29 (#886) [#886](https://github.com/remoteoss/remote-flows/pull/886)
-- update actions/checkout action to v6 (#887) [#887](https://github.com/remoteoss/remote-flows/pull/887)
-- update actions/github-script action to v8 (#888) [#888](https://github.com/remoteoss/remote-flows/pull/888)
-- update actions/setup-node action to v6 (#889) [#889](https://github.com/remoteoss/remote-flows/pull/889)
-- update amondnet/vercel-action action to v25 (#890) [#890](https://github.com/remoteoss/remote-flows/pull/890)
-- update github artifact actions (#891) [#891](https://github.com/remoteoss/remote-flows/pull/891)
-- update dependency express to v5 (#895) [#895](https://github.com/remoteoss/remote-flows/pull/895)
 - update dependency lucide-react to v1 (#896) [#896](https://github.com/remoteoss/remote-flows/pull/896)
 - upgrade react-day-picker from v8 to v9 with improved styling (#903) [#903](https://github.com/remoteoss/remote-flows/pull/903)
-- update react-hook-form to v7.72.1 and @hookform/resolvers to v5.2.2 (#902) [#902](https://github.com/remoteoss/remote-flows/pull/902)
-- update dependency lucide-react to ^1.8.0 (#901) [#901](https://github.com/remoteoss/remote-flows/pull/901)
-- update dependency msw to ^2.13.0 (#908) [#908](https://github.com/remoteoss/remote-flows/pull/908)
-- fix renovate rules (#909) [#909](https://github.com/remoteoss/remote-flows/pull/909)
-- update dependency jsdom to ^29.0.2 (#913) [#913](https://github.com/remoteoss/remote-flows/pull/913)
 - update dependency oxfmt to ^0.44.0 (#912) [#912](https://github.com/remoteoss/remote-flows/pull/912)
-- update dependency oxlint to ^1.59.0 (#911) [#911](https://github.com/remoteoss/remote-flows/pull/911)
-- update dependency node to v24.14.1 (#916) [#916](https://github.com/remoteoss/remote-flows/pull/916)
-- fix layout issues (#907) [#907](https://github.com/remoteoss/remote-flows/pull/907)
-- remove deprecated packages (#917) [#917](https://github.com/remoteoss/remote-flows/pull/917)
-- fix any (#920) [#920](https://github.com/remoteoss/remote-flows/pull/920)
-- update dependency msw to ^2.13.1 (#919) [#919](https://github.com/remoteoss/remote-flows/pull/919)
-- update dependency msw to ^2.13.2 (#924) [#924](https://github.com/remoteoss/remote-flows/pull/924)
+- remove lodash deprecated packages (#917) [#917](https://github.com/remoteoss/remote-flows/pull/917)
+- fix any linter (#920) [#920](https://github.com/remoteoss/remote-flows/pull/920)
 
 ## 1.24.1
 
