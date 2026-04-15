@@ -93,7 +93,8 @@ export function convertFromCents(amount?: number | string | null) {
 }
 
 const trimStringValues = (values: Record<string, $TSFixMe>) =>
-  Object.entries(values || {}).reduce<Record<string, $TSFixMe>>((result, [key, value]) => {
+  Object.entries(values || {}).reduce<Record<string, $TSFixMe>>(
+    (result, [key, value]) => {
       if (Array.isArray(value)) {
         // If the value is an array, recursively process each element
         result[key] = value.map((item) =>
@@ -123,7 +124,10 @@ const trimStringValues = (values: Record<string, $TSFixMe>) =>
  * @param {Object} values - List with form values { name: value }.
  * @param {Array} fields - Respective form fields configuration.
  */
-function prefillReadOnlyFields(values: Record<string, $TSFixMe>, fields: $TSFixMe[]) {
+function prefillReadOnlyFields(
+  values: Record<string, $TSFixMe>,
+  fields: $TSFixMe[],
+) {
   const newValues: Record<string, $TSFixMe> = {};
 
   fields.forEach((field) => {
@@ -193,7 +197,8 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
      * @example edge cases: [{name: 'Peru'}, {name: 'Germany'}] -> ['Peru', 'Germany']
      */
     transformValueToAPI:
-      (field: $TSFixMe) => (selectedCountries: string[] | { name: string }[]) => {
+      (field: $TSFixMe) =>
+      (selectedCountries: string[] | { name: string }[]) => {
         if (!field.multiple || typeof selectedCountries === 'string') {
           return selectedCountries;
         }
@@ -357,14 +362,17 @@ export async function parseFormValuesToAPI(
         case supportedTypes.GROUP_ARRAY: {
           // NOTE: The field `name` in group arrays represents a path, but we only
           // need the last part of it which is represented by `nameKey`.
-          const transformedFields = field?.fields?.().map((subField: $TSFixMe) => ({
-            ...subField,
-            name: subField.nameKey || '',
-          }));
+          const transformedFields = field
+            ?.fields?.()
+            .map((subField: $TSFixMe) => ({
+              ...subField,
+              name: subField.nameKey || '',
+            }));
 
           const parsedFieldValues = await Promise.all(
-            formValues[field.name]?.map((fieldValues: Record<string, $TSFixMe>) =>
-              parseFormValuesToAPI(fieldValues, transformedFields),
+            formValues[field.name]?.map(
+              (fieldValues: Record<string, $TSFixMe>) =>
+                parseFormValuesToAPI(fieldValues, transformedFields),
             ) || [],
           );
 
@@ -524,7 +532,9 @@ function removeEmptyValues<T extends Record<string, $TSFixMe>>(
   );
 }
 
-function cleanUnderscoreFields(obj: Record<string, $TSFixMe>): Record<string, $TSFixMe> {
+function cleanUnderscoreFields(
+  obj: Record<string, $TSFixMe>,
+): Record<string, $TSFixMe> {
   if (Array.isArray(obj)) {
     return obj.map(cleanUnderscoreFields);
   }

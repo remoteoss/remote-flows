@@ -2,11 +2,17 @@ import { Meta, $TSFixMe } from '@/src/types/remoteFlows';
 import { UseMutationResult } from '@tanstack/react-query';
 
 type MutationData<T> =
-  T extends UseMutationResult<infer R, $TSFixMe, $TSFixMe, $TSFixMe> ? R : never;
+  T extends UseMutationResult<infer R, $TSFixMe, $TSFixMe, $TSFixMe>
+    ? R
+    : never;
 type MutationVariables<T> =
-  T extends UseMutationResult<$TSFixMe, $TSFixMe, infer V, $TSFixMe> ? V : never;
+  T extends UseMutationResult<$TSFixMe, $TSFixMe, infer V, $TSFixMe>
+    ? V
+    : never;
 type MutationError<T> =
-  T extends UseMutationResult<$TSFixMe, infer E, $TSFixMe, $TSFixMe> ? E : never;
+  T extends UseMutationResult<$TSFixMe, infer E, $TSFixMe, $TSFixMe>
+    ? E
+    : never;
 
 /**
  * Unwraps the .data property from the response type

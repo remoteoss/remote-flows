@@ -4,7 +4,12 @@ import omit from 'lodash.omit';
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { Components, JSFFieldset, JSFFields, $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  Components,
+  JSFFieldset,
+  JSFFields,
+  $TSFixMe,
+} from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
 import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
 

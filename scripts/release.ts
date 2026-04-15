@@ -99,7 +99,8 @@ async function getCommitsFromGitHubAPI(): Promise<Commit[]> {
     // Get all commits, not just merge commits
     const commits = data.commits
       .filter(
-        (commit: $TSFixMe) => !commit.commit.message.includes('Merge pull request'),
+        (commit: $TSFixMe) =>
+          !commit.commit.message.includes('Merge pull request'),
       )
       .map((commit: $TSFixMe) => ({
         hash: commit.sha.substring(0, 7),
