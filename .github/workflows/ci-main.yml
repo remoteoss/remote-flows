@@ -232,6 +232,7 @@ jobs:
         tests,
         example-checks,
         deploy-example-app,
+        e2e-tests,
       ]
     runs-on: ubuntu-latest
     steps:
