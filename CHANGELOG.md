@@ -1,5 +1,29 @@
 # @remoteoss/remote-flows
 
+## 1.25.0
+
+### Minor Changes
+
+#### Features
+
+- add support for new tel field (#858) [#858](https://github.com/remoteoss/remote-flows/pull/858)
+- update react-hook-form to v7.72.1 and @hookform/resolvers to v5.2.2 (#902) [#902](https://github.com/remoteoss/remote-flows/pull/902)
+- update dependency lucide-react to v1 (#896) [#896](https://github.com/remoteoss/remote-flows/pull/896)
+
+#### Chores
+
+- add renovate (#840) [#840](https://github.com/remoteoss/remote-flows/pull/840)
+- move to typescript v6 (#845) [#845](https://github.com/remoteoss/remote-flows/pull/845)
+- move to oxlint (#838) [#838](https://github.com/remoteoss/remote-flows/pull/838)
+- update dependency axios to v1.15.0 [SECURITY] (#866) [#866](https://github.com/remoteoss/remote-flows/pull/866)
+- update dependency dompurify to ^3.3.3 (#872) [#872](https://github.com/remoteoss/remote-flows/pull/872)
+- update dependency tailwind-merge to ^3.5.0 (#880) [#880](https://github.com/remoteoss/remote-flows/pull/880)
+- update tailwindcss monorepo to ^4.2.2 (#883) [#883](https://github.com/remoteoss/remote-flows/pull/883)
+- upgrade react-day-picker from v8 to v9 with improved styling (#903) [#903](https://github.com/remoteoss/remote-flows/pull/903)
+- update dependency oxfmt to ^0.44.0 (#912) [#912](https://github.com/remoteoss/remote-flows/pull/912)
+- remove lodash deprecated packages (#917) [#917](https://github.com/remoteoss/remote-flows/pull/917)
+- fix any linter (#920) [#920](https://github.com/remoteoss/remote-flows/pull/920)
+
 ## 1.24.1
 
 ### Patch Changes
