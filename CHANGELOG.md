@@ -9,8 +9,8 @@
 - add support for new tel field (#858) [#858](https://github.com/remoteoss/remote-flows/pull/858)
 - update react-hook-form to v7.72.1 and @hookform/resolvers to v5.2.2 (#902) [#902](https://github.com/remoteoss/remote-flows/pull/902)
 
-
 #### Chores
+
 - add renovate (#840) [#840](https://github.com/remoteoss/remote-flows/pull/840)
 - move to typescript v6 (#845) [#845](https://github.com/remoteoss/remote-flows/pull/845)
 - move to oxlint (#838) [#838](https://github.com/remoteoss/remote-flows/pull/838)
